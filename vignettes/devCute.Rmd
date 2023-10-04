@@ -1,6 +1,6 @@
 ---
 title: "devCute"
-output: rmarkdown::html_vignette
+output: rmarkdown::html_document
 vignette: >
   %\VignetteIndexEntry{devCute}
   %\VignetteEngine{knitr::rmarkdown}
