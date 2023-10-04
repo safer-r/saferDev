@@ -1,0 +1,201 @@
+######## fun_report() #### print string or data object into output file
+
+
+# Problem with 1D tables : names over the table not printed. In addition, see how the 2D tables are printed. 
+
+#' @title fun_report
+#' @description
+#' Log file function: print a character string or a data object into a same output file.
+#' @param data Object to print in the output file. If NULL, nothing is done, with no warning.
+#' @param output Name of the output file.
+#' @param path Location of the output file.
+#' @param overwrite (logical) if output file already exists, defines if the printing is appended (default FALSE) or if the output file content is erased before printing (TRUE).
+#' @param rownames.kept (logical) defines whether row names have to be removed or not in small tables (less than length.rows rows).
+#' @param vector.cat (logical). If TRUE print a vector of length > 1 using cat() instead of capture.output(). Otherwise (default FALSE) the opposite.
+#' @param noquote (logical). If TRUE no quote are present for the characters.
+#' @param sep Number of separating lines after printed data (must be integer).
+#' @returns Nothing.
+#' @details
+#' REQUIRED PACKAGES
+#' 
+#' none
+#' 
+#' 
+#' REQUIRED FUNCTIONS FROM CUTE_LITTLE_R_FUNCTION
+#' 
+#' fun_check()
+#' 
+#' @examples
+#' #fun_report()
+#' fun_report(data = 1:3, output = "results.txt", path = "C:/Users/yhan/Desktop", overwrite = TRUE, 
+#' rownames.kept = FALSE, vector.cat = FALSE, noquote = FALSE, sep = 2)
+#' @export
+fun_report <- function(
+        data, 
+        output = "results.txt", 
+        path, 
+        overwrite = FALSE, 
+        rownames.kept = FALSE, 
+        vector.cat = FALSE, 
+        noquote = TRUE, 
+        sep = 2
+){
+    # DEBUGGING
+    # data = 1:3 ; output = "results.txt" ; path = "C:/Users/yhan/Desktop" ; overwrite = TRUE ; rownames.kept = FALSE ; vector.cat = FALSE ; noquote = FALSE ; sep = 2 # for function debugging
+
+    # function name
+    function.name <- paste0(as.list(match.call(expand.dots = FALSE))[[1]], "()")
+    arg.names <- names(formals(fun = sys.function(sys.parent(n = 2)))) # names of all the arguments
+    arg.user.setting <- as.list(match.call(expand.dots = FALSE))[-1] # list of the argument settings (excluding default values not provided by the user)
+    # end function name
+    
+    # required function checking
+    req.function <- c(
+        "fun_check"
+    )
+    tempo <- NULL
+    for(i1 in req.function){
+        if(length(find(i1, mode = "function")) == 0L){
+            tempo <- c(tempo, i1)
+        }
+    }
+    if( ! is.null(tempo)){
+        tempo.cat <- paste0("ERROR IN ", function.name, "\nREQUIRED cute FUNCTION", ifelse(length(tempo) > 1, "S ARE", " IS"), " MISSING IN THE R ENVIRONMENT:\n", paste0(tempo, collapse = "()\n"))
+        stop(paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in stop() to be able to add several messages between ==
+    }
+    # end required function checking
+    # reserved words (to avoid bugs)
+    # end reserved words (to avoid bugs)
+    
+    # arg with no default values
+    mandat.args <- c(
+        "data",
+        "path"
+    )
+    tempo <- eval(parse(text = paste0("missing(", paste0(mandat.args, collapse = ") | missing("), ")")))
+    if(any(tempo)){ # normally no NA for missing() output
+        tempo.cat <- paste0("ERROR IN ", function.name, "\nFOLLOWING ARGUMENT", ifelse(sum(tempo, na.rm = TRUE) > 1, "S HAVE", "HAS"), " NO DEFAULT VALUE AND REQUIRE ONE:\n", paste0(mandat.args, collapse = "\n"))
+        stop(paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in stop() to be able to add several messages between ==
+    }
+    # end arg with no default values
+    
+    # argument primary checking
+    arg.check <- NULL #
+    text.check <- NULL #
+    checked.arg.names <- NULL # for function debbuging: used by r_debugging_tools
+    ee <- expression(arg.check <- c(arg.check, tempo$problem) , text.check <- c(text.check, tempo$text) , checked.arg.names <- c(checked.arg.names, tempo$object.name))
+    tempo <- fun_check(data = output, class = "character", length = 1, fun.name = function.name) ; eval(ee)
+    if(tempo$problem == FALSE & output == ""){
+        tempo.cat <- paste0("ERROR IN ", function.name, ": output ARGUMENT AS \"\" DOES NOT CORRESPOND TO A VALID FILE NAME")
+        text.check <- c(text.check, tempo.cat)
+        arg.check <- c(arg.check, TRUE)
+    }
+    tempo <- fun_check(data = path, class = "vector", mode = "character", fun.name = function.name) ; eval(ee)
+    if(tempo$problem == FALSE){
+        if( ! all(dir.exists(path))){ # separation to avoid the problem of tempo$problem == FALSE and lib.path == NA
+            tempo.cat <- paste0("ERROR IN ", function.name, ": path ARGUMENT DOES NOT CORRESPOND TO EXISTING DIRECTORY\n", paste(path, collapse = "\n"))
+            text.check <- c(text.check, tempo.cat)
+            arg.check <- c(arg.check, TRUE)
+        }
+    }
+    tempo <- fun_check(data = overwrite, class = "logical", length = 1, fun.name = function.name) ; eval(ee)
+    tempo <- fun_check(data = rownames.kept, class = "logical", length = 1, fun.name = function.name) ; eval(ee)
+    tempo <- fun_check(data = vector.cat, class = "logical", length = 1, fun.name = function.name) ; eval(ee)
+    tempo <- fun_check(data = noquote, class = "logical", length = 1, fun.name = function.name) ; eval(ee)
+    tempo <- fun_check(data = sep, class = "vector", typeof = "integer", length = 1, double.as.integer.allowed = TRUE, fun.name = function.name) ; eval(ee)
+    if( ! is.null(arg.check)){
+        if(any(arg.check) == TRUE){
+            stop(paste0("\n\n================\n\n", paste(text.check[arg.check], collapse = "\n"), "\n\n================\n\n"), call. = FALSE) #
+        }
+    }
+    # source("C:/Users/Gael/Documents/Git_versions_to_use/debugging_tools_for_r_dev-v1.7/r_debugging_tools-v1.7.R") ; eval(parse(text = str_basic_arg_check_dev)) ; eval(parse(text = str_arg_check_with_fun_check_dev)) # activate this line and use the function (with no arguments left as NULL) to check arguments status and if they have been checked using fun_check()
+    # the 4 next lines are inactivated but kept because at a time, I might have a problem with data (solved with data = NULL). These 4 lines are just to know how to detect a missing argument. Important here because if data is not provided, print the code of the data function
+    # arg.user.list <- as.list(match.call(expand.dots = FALSE))[-1] # recover all the arguments provided by the function user (excluding the argument with defaults values not provided by the user. Thus, it is really the list indicated by the user)
+    # default.arg.list <- formals(fun = sys.function(sys.parent())) # list of all the arguments of the function with their default values (not the values of the user !). It seems that ls() as first line of the function provide the names of the arguments (empty, called, etc., or not)
+    # arg.without.default.value <- sapply(default.arg.list, is.symbol) & sapply(sapply(default.arg.list, as.character), identical, "") # logical to detect argument without default values (these are typeof "symbol" and class "name" and empty character
+    # if( ! all(names(default.arg.list)[arg.without.default.value] %in% names(arg.user.list))){ # test that the arguments with no null values are provided by the user
+    # tempo.cat <- paste0("ERROR IN ", function.name, ": VALUE REQUIRED FOR THESE ARGUMENTS WITH NO DEFAULTS VALUES: ", paste(names(default.arg.list)[arg.without.default.value][ ! names(default.arg.list)[arg.without.default.value] %in% names(arg.user.list)], collapse = " "))
+    # stop(paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in stop() to be able to add several messages between ==
+    # }
+    # end argument primary checking
+    
+    # second round of checking and data preparation
+    # management of NA arguments
+    if( ! (all(class(arg.user.setting) == "list") & length(arg.user.setting) == 0)){
+        tempo.arg <- names(arg.user.setting) # values provided by the user
+        tempo.log <- suppressWarnings(sapply(lapply(lapply(tempo.arg, FUN = get, env = sys.nframe(), inherit = FALSE), FUN = is.na), FUN = any)) & lapply(lapply(tempo.arg, FUN = get, env = sys.nframe(), inherit = FALSE), FUN = length) == 1L # no argument provided by the user can be just NA
+        if(any(tempo.log) == TRUE){ # normally no NA because is.na() used here
+            tempo.cat <- paste0("ERROR IN ", function.name, "\n", ifelse(sum(tempo.log, na.rm = TRUE) > 1, "THESE ARGUMENTS", "THIS ARGUMENT"), " CANNOT JUST BE NA:", paste0(tempo.arg[tempo.log], collapse = "\n"))
+            stop(paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in stop() to be able to add several messages between ==
+        }
+    }
+    # end management of NA arguments
+    
+    # management of NULL arguments
+    tempo.arg <-c(
+        "data", 
+        # "output", # inactivated because can be null 
+        "path"
+        # "overwrite", # inactivated because can be null 
+        # "rownames.kept", # inactivated because can be null 
+        # "vector.cat", # inactivated because can be null 
+        # "noquote", # inactivated because can be null 
+        # "sep" # inactivated because can be null
+    )
+    tempo.log <- sapply(lapply(tempo.arg, FUN = get, env = sys.nframe(), inherit = FALSE), FUN = is.null)
+    if(any(tempo.log) == TRUE){# normally no NA with is.null()
+        tempo.cat <- paste0("ERROR IN ", function.name, ":\n", ifelse(sum(tempo.log, na.rm = TRUE) > 1, "THESE ARGUMENTS\n", "THIS ARGUMENT\n"), paste0(tempo.arg[tempo.log], collapse = "\n"),"\nCANNOT BE NULL")
+        stop(paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in stop() to be able to add several messages between ==
+    }
+    # end management of NULL arguments
+    # code that protects set.seed() in the global environment
+    # end code that protects set.seed() in the global environment
+    # warning initiation
+    # end warning initiation
+    # other checkings
+    # end other checkings
+    # reserved word checking
+    # end reserved word checking
+    # end second round of checking and data preparation
+    # package checking
+    # end package checking
+    
+    
+    # main code
+    if( ! is.null(data)){
+        if(all(class(data) == "data.frame") | all(class(data) == "table") | all(class(data) %in% c("matrix", "array"))){ # before R4.0.0, it was  all(class(data) %in% c("matrix", "data.frame", "table"))
+            if(rownames.kept == FALSE & all(class(data) == "data.frame") & nrow(data) != 0 & nrow(data) <= 4){ # for data frames with nrows <= 4
+                rownames.output.tables <- ""
+                length.rows <- nrow(data)
+                for(i in 1:length.rows){ # replace the rownames of the first 4 rows by increasing number of spaces (because identical row names not allowed in data frames). This method cannot be extended to more rows as the printed data frame is shifted on the right because of "big empty rownames"
+                    rownames.output.tables <- c(rownames.output.tables, paste0(rownames.output.tables[i]," ", collapse=""))
+                }
+                row.names(data) <- rownames.output.tables[1:length.rows]
+            }else if(rownames.kept == FALSE & (all(class(data) == "table") | all(class(data) %in% c("matrix", "array")))){ # before R4.0.0, it was  & all(class(data) %in% c("matrix", "table"))
+                rownames(data) <- rep("", nrow(data)) # identical row names allowed in matrices and tables
+            }
+            if(noquote == TRUE){
+                utils::capture.output(noquote(data), file=paste0(path, "/", output), append = ! overwrite)
+            }else{
+                utils::capture.output(data, file=paste0(path, "/", output), append = ! overwrite)
+            }
+        }else if(is.vector(data) & all(class(data) != "list") & (length(data) == 1L | vector.cat == TRUE)){
+            if(noquote == TRUE){
+                cat(noquote(data), file= paste0(path, "/", output), append = ! overwrite)
+            }else{
+                cat(data, file= paste0(path, "/", output), append = ! overwrite)
+            }
+        }else if(all(base::mode(data) == "character")){ # characters (array, list, factor or vector with vector.cat = FALSE)
+            if(noquote == TRUE){
+                utils::capture.output(noquote(data), file=paste0(path, "/", output), append = ! overwrite)
+            }else{
+                utils::capture.output(data, file=paste0(path, "/", output), append = ! overwrite)
+            }
+        }else{ # other object (S4 for instance, which do not like noquote()
+            utils::capture.output(data, file=paste0(path, "/", output), append = ! overwrite)
+        }
+        sep.final <- paste0(rep("\n", sep), collapse = "")
+        write(sep.final, file= paste0(path, "/", output), append = TRUE) # add a sep
+    }
+    # end main code
+}

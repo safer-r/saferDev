@@ -1,0 +1,11 @@
+url: ~
+template:
+  bootstrap: 5
+  bootswatch: flatly
+
+authors:
+    Gaël Millot:
+        href: https://gitlab.pasteur.fr/gmillot
+    Yushi Han:
+        href: https://gitlab.pasteur.fr/yhan
+
