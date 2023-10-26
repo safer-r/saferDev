@@ -19,20 +19,20 @@
 #' 
 #' Check also other kind of data parameters, is it a proportion? Is it type double but numbers without decimal part?
 #' @param data Object to test.
-#' @param class Character string. Either one of the class() result (But see the warning section above) or "vector" or "ggplot2" (i.e., objects of class c("gg", "ggplot")) or NULL.
-#' @param typeof Character string. Either one of the typeof() result or NULL.
-#' @param mode Character string. Either one of the mode() result (for non-vector object) or NULL.
-#' @param length Numeric value indicating the length of the object. Not considered if NULL.
-#' @param prop Logical. Are the numeric values between 0 and 1 (proportion)? If TRUE, can be used alone, without considering class, etc.
-#' @param double.as.integer.allowed Logical. If TRUE, no error is reported in the cheking message if argument is set to typeof == "integer" or class == "integer", while the reality is typeof == "double" or class == "numeric" but the numbers strictly have zero as modulo (remainder of a division). This means that i <- 1, which is typeof(i) -> "double" is considered as integer with double.as.integer.allowed = TRUE. WARNING: data mod 1 == 0L but not isTRUE(all.equal(data mod 1, 0)) is used here because the argument checks for integers stored as double (does not check for decimal numbers that are approximate integers).
-#' @param options A vector of character strings or integers indicating all the possible option values for the data argument, or NULL. Numbers of type "double" are accepted if they have a 0 modulo.
-#' @param all.options.in.data Logical. If TRUE, all of the options must be present at least once in the data argument, and nothing else. If FALSE, some or all of the options must be present in the data argument, and nothing else. Ignored if options is NULL.
-#' @param na.contain Logical. Can the data argument contain NA?
-#' @param neg.values Logical. Are negative numeric values authorized? Warning: the default setting is TRUE, meaning that, in that case, no check is performed for the presence of negative values. The neg.values argument is activated only when set to FALSE. In addition, (1) neg.values = FALSE can only be used when class, typeof or mode arguments are not NULL, otherwise return an error message, (2) the presence of negative values is not checked with neg.values = FALSE if the tested object is a factor and the following checking message is returned "OBJECT MUST BE MADE OF NON NEGATIVE VALUES BUT IS A FACTOR".
-#' @param inf.values Logical. Are infinite numeric values authorized (Inf or -Inf)? Identical remarks as for the neg.values argument.
-#' @param print Logical. Print the message if $problem is TRUE? Warning: set by default to FALSE, which facilitates the control of the checking message output when using fun_check() inside functions. See the example section.
-#' @param data.name Character string indicating the name of the object to test. If NULL, use what is assigned to the data argument for the returned message.
-#' @param fun.name Character string indicating the name of the function checked (i.e., when fun_check() is used to check the arguments of this function). If non-null, the value of fun.name will be added into the message returned by fun_check().
+#' @param class Single character string. Either one of the class() result (But see the warning section above) or "vector" or "ggplot2" (i.e., objects of class c("gg", "ggplot")) or NULL.
+#' @param typeof Single character string. Either one of the typeof() result or NULL.
+#' @param mode Single character string. Either one of the mode() result (for non-vector object) or NULL.
+#' @param length Single numeric value indicating the length of the object. Not considered if NULL.
+#' @param prop Single logical value. Are the numeric values between 0 and 1 (proportion)? If TRUE, can be used alone, without considering class, etc.
+#' @param double.as.integer.allowed Single logical value. If TRUE, no error is reported in the cheking message if argument is set to typeof == "integer" or class == "integer", while the reality is typeof == "double" or class == "numeric" but the numbers strictly have zero as modulo (remainder of a division). This means that i <- 1, which is typeof(i) -> "double" is considered as integer with double.as.integer.allowed = TRUE. WARNING: data mod 1 == 0L but not isTRUE(all.equal(data mod 1, 0)) is used here because the argument checks for integers stored as double (does not check for decimal numbers that are approximate integers).
+#' @param options Vector of character strings or integers indicating all the possible option values for the data argument, or NULL. Numbers of type "double" are accepted if they have a 0 modulo.
+#' @param all.options.in.data Single logical value. If TRUE, all of the options must be present at least once in the data argument, and nothing else. If FALSE, some or all of the options must be present in the data argument, and nothing else. Ignored if options is NULL.
+#' @param na.contain Single logical value. Can the data argument contain NA?
+#' @param neg.values Single logical value. Are negative numeric values authorized? Warning: the default setting is TRUE, meaning that, in that case, no check is performed for the presence of negative values. The neg.values argument is activated only when set to FALSE. In addition, (1) neg.values = FALSE can only be used when class, typeof or mode arguments are not NULL, otherwise return an error message, (2) the presence of negative values is not checked with neg.values = FALSE if the tested object is a factor and the following checking message is returned "OBJECT MUST BE MADE OF NON NEGATIVE VALUES BUT IS A FACTOR".
+#' @param inf.values Single logical value. Are infinite numeric values authorized (Inf or -Inf)? Identical remarks as for the neg.values argument.
+#' @param print Single logical value. Print the message if $problem is TRUE? Warning: set by default to FALSE, which facilitates the control of the checking message output when using fun_check() inside functions. See the example section.
+#' @param data.name Single character string indicating the name of the object to test. If NULL, use what is assigned to the data argument for the returned message.
+#' @param fun.name Single character string indicating the name of the function checked (i.e., when fun_check() is used to check the arguments of this function). If non-null, the value of fun.name will be added into the message returned by fun_check().
 #' @returns 
 #' A list containing:
 #' - problem: logical. Is there any problem detected?
