@@ -349,12 +349,15 @@ fun_check <- function(
     problem <- FALSE
     text <- paste0(ifelse(is.null(fun.name), "", paste0("IN ", fun.name, ": ")), "NO PROBLEM DETECTED FOR THE ", data.name, " OBJECT")
     if(( ! is.null(options)) & (all(base::typeof(data) == "character") | all(base::typeof(data) == "integer") | all(base::typeof(data) == "double"))){ # all() without na.rm -> ok because typeof() never returns NA
-        if(all(base::typeof(data) == "double", na.rm = TRUE)){ 
+        test.log <- TRUE
+        if(all(base::typeof(data) == "double")){
             if( ! all(data %% 1 == 0L, na.rm = TRUE)){
                 problem <- TRUE
                 text <- paste0(ifelse(is.null(fun.name), "ERROR", paste0("ERROR IN ", fun.name)), ": THE ", data.name, " OBJECT MUST BE SOME OF THESE OPTIONS: ", paste(options, collapse = " "), "\nBUT IS NOT EVEN TYPE CHARACTER OR INTEGER")
+                test.log <- FALSE
             }
-        }else{
+        }
+        if(test.log == TRUE){
             text <- ""
             if( ! all(data %in% options)){ # no need of na.rm = TRUE for all() because %in% does not output NA
                 problem <- TRUE
