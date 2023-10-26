@@ -257,7 +257,7 @@ fun_test <- function(
             tempo.cat <- paste0("ERROR IN ", function.name, ": COMPARTMENT ", i2, " OF val ARGUMENT MUST BE A VECTOR OR A LIST")
             stop(paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE)
         }else if(tempo1$problem == FALSE){ # vector split into list compartments
-            val[[i2]] <- split(x = val[[i2]], f = 1:base::length(val[[i2]]))
+            val[[i2]] <- split(x = val[[i2]], f = 1:base::length(val[[i2]])) # convert a vector into list, with each value of the vector in a compartment
         }
     }
     if(base::length(arg) != base::length(val)){
@@ -285,7 +285,18 @@ fun_test <- function(
                 tempo.cat <- paste0("ERROR IN ", function.name, ": COMPARTMENT ", i3, " OF expect.error ARGUMENT MUST BE TRUE OR FALSE")
                 stop(paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE)
             }else if(tempo1$problem == FALSE){ # vector split into list compartments
-                expect.error[[i3]] <- split(x = expect.error[[i3]], f = 1:base::length(expect.error[[i3]]))
+                expect.error[[i3]] <- split(x = expect.error[[i3]], f = 1:base::length(expect.error[[i3]])) # convert a vector into list, with each value of the vector in a compartment
+            }
+        }
+        for(i2 in 1:length(expect.error)){
+            if(all(class(expect.error[[i2]]) == "list")){
+                if( ! all(class(val[[i2]]) == "list")){
+                    tempo.cat <- paste0("ERROR IN ", function.name, ": expect.error ARGUMENT MUST BE A LIST OF EXACTLY THE SAME STRUCTURE AS val ARGUMENT.\nHERE COMPARTMENT ", i2, " OF expect.error IS CLASS ", paste(class(expect.error[[i2]]), collapse = " "), "\nAND COMPARTMENT ", i2, " OF val IS CLASS ", paste(class(val[[i2]]), collapse = " "))
+                    stop(paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE)
+                }else if(base::length(val[[i2]]) != base::length(expect.error[[i2]])){
+                    tempo.cat <- paste0("ERROR IN ", function.name, ": LENGTH OF COMPARTMENT ", i2, " OF val ARGUMENT MUST BE IDENTICAL TO LENGTH OF COMPARTMENT ", i2, " OF expect.error ARGUMENT:\nHERE IT IS: ", base::length(val[[i2]]), " VERSUS ", base::length(expect.error[[i2]]))
+                    stop(paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE)
+                }
             }
         }
     }
