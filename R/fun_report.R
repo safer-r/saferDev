@@ -1,5 +1,12 @@
 ######## fun_report() #### print string or data object into output file
 
+# todo list check OK
+# Check r_debugging_tools-v1.4.R 
+# Check fun_test() 20201107 (see cute_checks.docx) 
+# example sheet 
+# check all and any OK
+# -> clear to go Apollo
+# -> transferred into the cute package
 
 # Problem with 1D tables : names over the table not printed. In addition, see how the 2D tables are printed. 
 
@@ -7,13 +14,13 @@
 #' @description
 #' Log file function: print a character string or a data object into a same output file.
 #' @param data Object to print in the output file. If NULL, nothing is done, with no warning.
-#' @param output Name of the output file.
+#' @param output Single character string. Name of the output file.
 #' @param path Location of the output file.
-#' @param overwrite (logical) if output file already exists, defines if the printing is appended (default FALSE) or if the output file content is erased before printing (TRUE).
-#' @param rownames.kept (logical) defines whether row names have to be removed or not in small tables (less than length.rows rows).
-#' @param vector.cat (logical). If TRUE print a vector of length > 1 using cat() instead of capture.output(). Otherwise (default FALSE) the opposite.
-#' @param noquote (logical). If TRUE no quote are present for the characters.
-#' @param sep Number of separating lines after printed data (must be integer).
+#' @param overwrite Single logical value. If output file already exists, defines if the printing is appended (default FALSE) or if the output file content is erased before printing (TRUE).
+#' @param rownames.kept Single logical value. Defines whether row names have to be removed or not in small tables (less than length.rows rows).
+#' @param vector.cat Single logical value. If TRUE print a vector of length > 1 using cat() instead of capture.output(). Otherwise (default FALSE) the opposite.
+#' @param noquote Single logical value. If TRUE no quote are present for the characters.
+#' @param sep Single integer representing the number of empty lines after printed data.
 #' @returns Nothing.
 #' @details
 #' REQUIRED PACKAGES
@@ -29,6 +36,7 @@
 #' #fun_report()
 #' fun_report(data = 1:3, output = "results.txt", path = "C:/Users/yhan/Desktop", overwrite = TRUE, 
 #' rownames.kept = FALSE, vector.cat = FALSE, noquote = FALSE, sep = 2)
+#' @importFrom utils capture.output
 #' @export
 fun_report <- function(
         data, 
@@ -92,7 +100,7 @@ fun_report <- function(
     }
     tempo <- fun_check(data = path, class = "vector", mode = "character", fun.name = function.name) ; eval(ee)
     if(tempo$problem == FALSE){
-        if( ! all(dir.exists(path))){ # separation to avoid the problem of tempo$problem == FALSE and lib.path == NA
+        if( ! all(dir.exists(path), na.rm = TRUE)){ # separation to avoid the problem of tempo$problem == FALSE and lib.path == NA
             tempo.cat <- paste0("ERROR IN ", function.name, ": path ARGUMENT DOES NOT CORRESPOND TO EXISTING DIRECTORY\n", paste(path, collapse = "\n"))
             text.check <- c(text.check, tempo.cat)
             arg.check <- c(arg.check, TRUE)
@@ -104,7 +112,7 @@ fun_report <- function(
     tempo <- fun_check(data = noquote, class = "logical", length = 1, fun.name = function.name) ; eval(ee)
     tempo <- fun_check(data = sep, class = "vector", typeof = "integer", length = 1, double.as.integer.allowed = TRUE, fun.name = function.name) ; eval(ee)
     if( ! is.null(arg.check)){
-        if(any(arg.check) == TRUE){
+        if(any(arg.check, na.rm = TRUE) == TRUE){
             stop(paste0("\n\n================\n\n", paste(text.check[arg.check], collapse = "\n"), "\n\n================\n\n"), call. = FALSE) #
         }
     }
@@ -121,7 +129,7 @@ fun_report <- function(
     
     # second round of checking and data preparation
     # management of NA arguments
-    if( ! (all(class(arg.user.setting) == "list") & length(arg.user.setting) == 0)){
+    if( ! (all(class(arg.user.setting) == "list", na.rm = TRUE) & length(arg.user.setting) == 0)){
         tempo.arg <- names(arg.user.setting) # values provided by the user
         tempo.log <- suppressWarnings(sapply(lapply(lapply(tempo.arg, FUN = get, env = sys.nframe(), inherit = FALSE), FUN = is.na), FUN = any)) & lapply(lapply(tempo.arg, FUN = get, env = sys.nframe(), inherit = FALSE), FUN = length) == 1L # no argument provided by the user can be just NA
         if(any(tempo.log) == TRUE){ # normally no NA because is.na() used here
@@ -134,13 +142,13 @@ fun_report <- function(
     # management of NULL arguments
     tempo.arg <-c(
         "data", 
-        # "output", # inactivated because can be null 
-        "path"
-        # "overwrite", # inactivated because can be null 
-        # "rownames.kept", # inactivated because can be null 
-        # "vector.cat", # inactivated because can be null 
-        # "noquote", # inactivated because can be null 
-        # "sep" # inactivated because can be null
+        "output", 
+        "path",
+        "overwrite", 
+        "rownames.kept", 
+        "vector.cat", 
+        "noquote",
+        "sep" 
     )
     tempo.log <- sapply(lapply(tempo.arg, FUN = get, env = sys.nframe(), inherit = FALSE), FUN = is.null)
     if(any(tempo.log) == TRUE){# normally no NA with is.null()
@@ -163,7 +171,7 @@ fun_report <- function(
     
     # main code
     if( ! is.null(data)){
-        if(all(class(data) == "data.frame") | all(class(data) == "table") | all(class(data) %in% c("matrix", "array"))){ # before R4.0.0, it was  all(class(data) %in% c("matrix", "data.frame", "table"))
+        if(all(class(data) == "data.frame") | all(class(data) == "table") | all(class(data) %in% c("matrix", "array"))){ # before R4.0.0, it was  all(class(data) %in% c("matrix", "data.frame", "table")) # class() never returns NA
             if(rownames.kept == FALSE & all(class(data) == "data.frame") & nrow(data) != 0 & nrow(data) <= 4){ # for data frames with nrows <= 4
                 rownames.output.tables <- ""
                 length.rows <- nrow(data)

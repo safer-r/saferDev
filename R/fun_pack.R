@@ -1,10 +1,19 @@
 ######## fun_pack() #### check if R packages are present and import into the working environment
 
+# todo list check OK
+# Check r_debugging_tools-v1.4.R 
+# Check fun_test() 20201107 (see cute_checks.docx)
+# example sheet 
+# check all and any OK
+# -> clear to go Apollo
+# -> transferred into the cute package
+
+
 #' @title fun_pack
 #' @description
 #' Check if the specified R packages are present in the computer and import them into the working environment.
 #' @param req.package Character vector of package names to import.
-#' @param load Logical. Load the package into the environment (using library())? Interesting if packages are not in default folders or for checking the functions names of packages using search().
+#' @param load Single logical value. Load the package into the environment (using library())? Interesting if packages are not in default folders or for checking the functions names of packages using search().
 #' @param lib.path Optional character vector specifying the absolute pathways of the directories containing some of the listed packages in the req.package argument, if not in the default directories. Ignored if NULL.
 #' @returns Nothing.
 #' @details
@@ -21,6 +30,7 @@
 #' # fun_pack(req.package = "nopackage")
 #' fun_pack(req.package = "ggplot2")
 #' fun_pack(req.package = "ggplot2", lib.path = "C:/Users/yhan/AppData/Local/R/win-library/4.3")
+#' @importFrom utils installed.packages
 #' @export
 fun_pack <- function(
         req.package, 
@@ -74,7 +84,7 @@ fun_pack <- function(
     if( ! is.null(lib.path)){
         tempo <- fun_check(data = lib.path, class = "vector", mode = "character", fun.name = function.name) ; eval(ee)
         if(tempo$problem == FALSE){
-            if( ! all(dir.exists(lib.path))){ # separation to avoid the problem of tempo$problem == FALSE and lib.path == NA
+            if( ! all(dir.exists(lib.path), na.rm = TRUE)){ # separation to avoid the problem of tempo$problem == FALSE and lib.path == NA
                 tempo.cat <- paste0("ERROR IN ", function.name, ": DIRECTORY PATH INDICATED IN THE lib.path ARGUMENT DOES NOT EXISTS:\n", paste(lib.path, collapse = "\n"))
                 text.check <- c(text.check, tempo.cat)
                 arg.check <- c(arg.check, TRUE)
@@ -82,7 +92,7 @@ fun_pack <- function(
         }
     }
     if( ! is.null(arg.check)){
-        if(any(arg.check) == TRUE){
+        if(any(arg.check, na.rm = TRUE) == TRUE){
             stop(paste0("\n\n================\n\n", paste(text.check[arg.check], collapse = "\n"), "\n\n================\n\n"), call. = FALSE) #
         }
     }
@@ -92,7 +102,7 @@ fun_pack <- function(
     
     # second round of checking and data preparation
     # management of NA arguments
-    if( ! (all(class(arg.user.setting) == "list") & length(arg.user.setting) == 0)){
+    if( ! (all(class(arg.user.setting) == "list", na.rm = TRUE) & length(arg.user.setting) == 0)){
         tempo.arg <- names(arg.user.setting) # values provided by the user
         tempo.log <- suppressWarnings(sapply(lapply(lapply(tempo.arg, FUN = get, env = sys.nframe(), inherit = FALSE), FUN = is.na), FUN = any)) & lapply(lapply(tempo.arg, FUN = get, env = sys.nframe(), inherit = FALSE), FUN = length) == 1L # no argument provided by the user can be just NA
         if(any(tempo.log) == TRUE){ # normally no NA because is.na() used here
@@ -157,5 +167,7 @@ fun_pack <- function(
             suppressMessages(suppressWarnings(suppressPackageStartupMessages(library(req.package[i2], lib.loc = lib.path, quietly = TRUE, character.only = TRUE))))
         }
     }
+    # output
+    # end output
     # end main code
 }

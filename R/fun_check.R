@@ -35,9 +35,9 @@
 #' @param fun.name Single character string indicating the name of the function checked (i.e., when fun_check() is used to check the arguments of this function). If non-null, the value of fun.name will be added into the message returned by fun_check().
 #' @returns 
 #' A list containing:
-#' - problem: logical. Is there any problem detected?
-#' - text: message indicating the details of the problem, or the absence of problem.
-#' - object.name: value of the data.name argument (i.e., name of the checked object if provided, NULL otherwise).
+#' - §problem: logical. Is there any problem detected?
+#' - §text: message indicating the details of the problem, or the absence of problem.
+#' - §object.name: value of the data.name argument (i.e., name of the checked object if provided, NULL otherwise).
 #' @details
 #'  - If options == NULL, then at least class or type or mode or length argument must be non-null.
 #'  - If options is non-null, then class, type and mode must be NULL, and length can be NULL or specified.
@@ -64,7 +64,8 @@
 #' @examples
 #' test <- matrix(1:3)
 #' fun_check(data = test, print = TRUE, class = "vector", mode = "numeric")
-#' @seealso The page pkgdown html.
+#' @seealso
+#' \code{\link[docs/articles/devCute.html]{Page pkgdown html}} : Page of explication.
 #' @export
 fun_check <- function(
         data, 
@@ -292,7 +293,7 @@ fun_check <- function(
         }
     }
     if( ! is.null(length)){
-        if( ! (is.numeric(length) & base::length(length) == 1L & all( ! grepl(length, pattern = "\\.")))){
+        if( ! (is.numeric(length) & base::length(length) == 1L & all( ! grepl(length, pattern = "\\.")))){ # is.na() already checked for length
             tempo.cat <- paste0("ERROR IN fun_check()", ifelse(is.null(fun.name), "", paste0(" INSIDE ", fun.name)), ": length ARGUMENT MUST BE A SINGLE INTEGER VALUE")
             stop(paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in stop() to be able to add several messages between ==
         }
@@ -348,7 +349,7 @@ fun_check <- function(
     problem <- FALSE
     text <- paste0(ifelse(is.null(fun.name), "", paste0("IN ", fun.name, ": ")), "NO PROBLEM DETECTED FOR THE ", data.name, " OBJECT")
     if(( ! is.null(options)) & (all(base::typeof(data) == "character") | all(base::typeof(data) == "integer") | all(base::typeof(data) == "double"))){ # all() without na.rm -> ok because typeof() never returns NA
-        if(all(base::typeof(data) == "double")){
+        if(all(base::typeof(data) == "double", na.rm = TRUE)){ 
             if( ! all(data %% 1 == 0L, na.rm = TRUE)){
                 problem <- TRUE
                 text <- paste0(ifelse(is.null(fun.name), "ERROR", paste0("ERROR IN ", fun.name)), ": THE ", data.name, " OBJECT MUST BE SOME OF THESE OPTIONS: ", paste(options, collapse = " "), "\nBUT IS NOT EVEN TYPE CHARACTER OR INTEGER")
@@ -465,7 +466,7 @@ if(neg.values == FALSE & all(base::mode(data) %in% "numeric") & ! any(base::clas
     }else{
         text <- paste0(text, " AND ")
     }
-    text <- paste0(text, "THE ", data.name, " OBJECT MUST BE MADE OF NON NEGATIVE VALUES BUT IS ", ifelse(any(base::class(data) %in% "factor"), "A FACTOR", "NOT EVEN MODE NUMERIC"))
+    text <- paste0(text, "THE ", data.name, " OBJECT MUST BE MADE OF NON NEGATIVE VALUES BUT IS ", ifelse(any(base::class(data) %in% "factor"), "A FACTOR", "NOT EVEN MODE NUMERIC")) # no need of na.rm = TRUE
 }
 if(inf.values == FALSE & all(base::typeof(data) %in% "double") & ! any(base::class(data) %in% "factor")){ # no need of na.rm = TRUE for all() because %in% does not output NA
     if(any(is.infinite(data), na.rm = TRUE)){ # Warning: na.rm = TRUE required here for any()
@@ -484,7 +485,7 @@ if(inf.values == FALSE & all(base::typeof(data) %in% "double") & ! any(base::cla
     }else{
         text <- paste0(text, " AND ")
     }
-    text <- paste0(text, "THE ", data.name, " OBJECT MUST BE MADE OF NON INFINITE VALUES BUT IS ", ifelse(any(base::class(data) %in% "factor"), "A FACTOR", "NOT EVEN TYPE DOUBLE"))
+    text <- paste0(text, "THE ", data.name, " OBJECT MUST BE MADE OF NON INFINITE VALUES BUT IS ", ifelse(any(base::class(data) %in% "factor"), "A FACTOR", "NOT EVEN TYPE DOUBLE")) # no need of na.rm = TRUE
 }
 if(print == TRUE & problem == TRUE){
     cat(paste0("\n\n================\n\n", text, "\n\n================\n\n"))

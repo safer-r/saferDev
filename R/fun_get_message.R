@@ -1,5 +1,12 @@
 ######## fun_get_message() #### return error/warning/other messages of an expression (that can be exported)
 
+# todo list check OK
+# Check r_debugging_tools-v1.4.R 
+# Check fun_test() 20201107 (see cute_checks.docx) 
+# example sheet 
+# check all and any OK
+# -> clear to go Apollo
+# -> transferred into the cute package
 
 #' @title fun_get_message
 #' @description
@@ -8,8 +15,8 @@
 #' Using argument print.no = FALSE, return NULL if no message, which is convenient in some cases.
 #' @param data Single character string to evaluate.
 #' @param kind Single character string. Either "error" to get error messages, or "warning" to get warning messages, or "message" to get non error and non warning messages.
-#' @param header Logical. Add a header in the returned message?
-#' @param print.no Logical. Print a message saying that no message reported?
+#' @param header Single logical value. Add a header in the returned message?
+#' @param print.no Single logical value. Print a message saying that no message reported?
 #' @param text Single character string added to the output message (even if no message exists and print.no is TRUE). Inactivated if the header argument is FALSE. Write NULL if not required.
 #' @param env The name of an existing environment. Write NULL if not required.
 #' @returns The message or NULL if no message and print.no is FALSE.
@@ -148,7 +155,7 @@ fun_get_message <- function(
         tempo <- fun_check(data = env, class = "environment", fun.name = function.name) ; eval(ee) #
     }
     if( ! is.null(arg.check)){
-        if(any(arg.check) == TRUE){
+        if(any(arg.check, na.rm = TRUE) == TRUE){
             stop(paste0("\n\n================\n\n", paste(text.check[arg.check], collapse = "\n"), "\n\n================\n\n"), call. = FALSE) #
         }
     }
@@ -158,7 +165,7 @@ fun_get_message <- function(
     
     # second round of checking and data preparation
     # management of NA arguments
-    if( ! (all(class(arg.user.setting) == "list") & length(arg.user.setting) == 0)){
+    if( ! (all(class(arg.user.setting) == "list", na.rm = TRUE) & length(arg.user.setting) == 0)){
         tempo.arg <- names(arg.user.setting) # values provided by the user
         tempo.log <- suppressWarnings(sapply(lapply(lapply(tempo.arg, FUN = get, envir = sys.nframe(), inherits = FALSE), FUN = is.na), FUN = any)) & lapply(lapply(tempo.arg, FUN = get, envir = sys.nframe(), inherits = FALSE), FUN = length) == 1L # no argument provided by the user can be just NA
         if(any(tempo.log) == TRUE){ # normally no NA because is.na() used here
@@ -201,11 +208,11 @@ fun_get_message <- function(
     # last warning cannot be used because suppressWarnings() does not modify last.warning present in the base evironment (created at first warning in a new R session), or warnings() # to reset the warning history : unlockBinding("last.warning", baseenv()) ; assign("last.warning", NULL, envir = baseenv())
     output <- NULL
     tempo.error <- try(suppressMessages(suppressWarnings(eval(parse(text = data), envir = if(is.null(env)){parent.frame()}else{env}))), silent = TRUE) # get error message, not warning or messages
-    if(any(class(tempo.error) %in% c("gg", "ggplot"))){
+    if(any(class(tempo.error) %in% c("gg", "ggplot"))){ # %in% never returns NA
         tempo.error <- try(suppressMessages(suppressWarnings(ggplot2::ggplot_build(tempo.error))), silent = TRUE)[1]
     }
     if(exists("tempo.error", inherits = FALSE) == TRUE){ # inherits = FALSE avoid the portee lexical and thus the declared word
-        if( ! all(class(tempo.error) == "try-error")){ # deal with NULL and S4 objects. Old code:  ! (all(class(tempo.error) == "try-error") & any(grepl(x = tempo.error, pattern = "^Error|^error|^ERROR"))) but problem with S4 objects. Old code : if((length(tempo.error) > 0 & ! any(grepl(x = tempo.error, pattern = "^Error|^error|^ERROR"))) | (length(tempo.error) == 0) ){ but problem when tempo.error is a list but added this did not work: | ! all(class(tempo.error) == "character")
+        if( ! all(class(tempo.error) == "try-error")){ # deal with NULL and S4 objects. Old code:  ! (all(class(tempo.error) == "try-error") & any(grepl(x = tempo.error, pattern = "^Error|^error|^ERROR"))) but problem with S4 objects. Old code : if((length(tempo.error) > 0 & ! any(grepl(x = tempo.error, pattern = "^Error|^error|^ERROR"))) | (length(tempo.error) == 0) ){ but problem when tempo.error is a list but added this did not work: | ! all(class(tempo.error) == "character") # no NA returned using class()
             tempo.error <- NULL
         }
     }else{
@@ -243,7 +250,7 @@ fun_get_message <- function(
         # warn.options.ini <- options()$warn ; options(warn = 1) ; tempo.warn <- utils::capture.output({tempo <- suppressMessages(eval(parse(text = data), envir = if(is.null(env)){parent.frame()}else{env}))}, type = "message") ; options(warn = warn.options.ini) # this recover warnings not messages and not errors but does not work in all enviroments
         tempo.message <- capture.output({
             tempo <- suppressMessages(suppressWarnings(eval(parse(text = data), envir = if(is.null(env)){parent.frame()}else{env})))
-            if(any(class(tempo) %in% c("gg", "ggplot"))){
+            if(any(class(tempo) %in% c("gg", "ggplot"))){ # %in% never returns NA
                 tempo <- ggplot2::ggplot_build(tempo)
             }else{
                 tempo <- suppressWarnings(eval(parse(text = data), envir = if(is.null(env)){parent.frame()}else{env}))
@@ -251,16 +258,16 @@ fun_get_message <- function(
         }, type = "message") # recover messages not warnings and not errors
         if(kind == "warning" & ! is.null(tempo.warn)){
             if(length(tempo.warn) > 0){ # to avoid character(0)
-                if( ! any(sapply(tempo.warn, FUN = "grepl", pattern = "() FUNCTION:$"))){
+                if( ! any(sapply(tempo.warn, FUN = "grepl", pattern = "() FUNCTION:$"), na.rm = TRUE)){
                     tempo.warn <- paste(unique(tempo.warn), collapse = "\n") # if FALSE, means that the tested data is a special function. If TRUE, means that the data is a standard function. In that case, the output of capture.output() is two strings per warning messages: if several warning messages -> identical first string, which is removed in next messages by unique()
                 }else{
                     tempo.warn <- paste(tempo.warn, collapse = "\n")
                 }
                 if(header == TRUE){
-                    if(any(grepl(x = tempo.warn[[1]], pattern = "^simpleWarning i"))){
+                    if(any(grepl(x = tempo.warn[[1]], pattern = "^simpleWarning i"), na.rm = TRUE)){
                         tempo.warn[[1]] <- gsub(x = tempo.warn[[1]], pattern = "^Warning i", replacement = "I")
                     }
-                    if(any(grepl(x = tempo.warn[[1]], pattern = "^Warning i"))){
+                    if(any(grepl(x = tempo.warn[[1]], pattern = "^Warning i"), na.rm = TRUE)){
                         tempo.warn[[1]] <- gsub(x = tempo.warn[[1]], pattern = "^Warning i", replacement = "I")
                     }
                     output <- paste0("WARNING MESSAGE REPORTED", ifelse(is.null(text), "", " "), text, ":\n", tempo.warn) #
