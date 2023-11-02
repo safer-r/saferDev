@@ -59,7 +59,20 @@ fun_secu <- function(
     arg.names <- names(formals(fun = sys.function(sys.parent(n = 2)))) # names of all the arguments
     arg.user.setting <- as.list(match.call(expand.dots = FALSE))[-1] # list of the argument settings (excluding default values not provided by the user)
     # end function name
-    # required function checking
+   # package checking
+    # check of lib.path
+    if( ! is.null(lib.path)){
+        if( ! all(typeof(lib.path) == "character")){ # no na.rm = TRUE with typeof
+            tempo.cat <- paste0("ERROR IN ", function.name, ": DIRECTORY PATH INDICATED IN THE lib.path ARGUMENT MUST BE A VECTOR OF CHARACTERS:\n", paste(lib.path, collapse = "\n"))
+            stop(paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in stop() to be able to add several messages between ==
+        }else if( ! all(dir.exists(lib.path), na.rm = TRUE)){ # separation to avoid the problem of tempo$problem == FALSE and lib.path == NA
+            tempo.cat <- paste0("ERROR IN ", function.name, ": DIRECTORY PATH INDICATED IN THE lib.path ARGUMENT DOES NOT EXISTS:\n", paste(lib.path, collapse = "\n"))
+            stop(paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in stop() to be able to add several messages between ==
+            }
+        }
+    }
+    # end check of lib.path
+    # cuteDev required function checking
     req.function <- c(
         "fun_check"
     )
@@ -70,12 +83,16 @@ fun_secu <- function(
         }
     }
     if( ! is.null(tempo)){
-        tempo.cat <- paste0("ERROR IN ", function.name, "\nREQUIRED cute FUNCTION", ifelse(length(tempo) > 1, "S ARE", " IS"), " MISSING IN THE R ENVIRONMENT:\n", paste0(tempo, collapse = "()\n"))
+        tempo.cat <- paste0("ERROR IN ", function.name, "\nFUNCTION", ifelse(length(tempo) > 1, "S ", ""), " FROM THE cuteDev PACKAGE", ifelse(length(tempo) > 1, " ARE", " IS"), " MISSING IN THE R ENVIRONMENT:\n", paste0(tempo, collapse = "()\n"), "()")
+)
         stop(paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in stop() to be able to add several messages between ==
     }
-    # end required function checking
-    # reserved words (to avoid bugs)
-    # end reserved words (to avoid bugs)
+    # end cutedev required function checking
+    # check of other required packages
+    # end check of other required packages
+    # end package checking
+    # check of the required function from the required packages
+    # end check of the required function from the required packages
     
     # argument primary checking
     # arg with no default values
@@ -83,7 +100,7 @@ fun_secu <- function(
     # using fun_check()
     arg.check <- NULL #
     text.check <- NULL #
-    checked.arg.names <- NULL # for function debbuging: used by r_debugging_tools
+    checked.arg.names <- NULL # for function debugging: used by r_debugging_tools
     ee <- expression(arg.check <- c(arg.check, tempo$problem) , text.check <- c(text.check, tempo$text) , checked.arg.names <- c(checked.arg.names, tempo$object.name))
     tempo <- fun_check(data = pos, class = "vector", typeof = "integer", double.as.integer.allowed = TRUE, length = 1, fun.name = function.name) ; eval(ee)
     if( ! is.null(name)){
@@ -95,7 +112,9 @@ fun_secu <- function(
         }
     }
     # end using fun_check()
-    # source("C:/Users/gmillot/Documents/Git_versions_to_use/debugging_tools_for_r_dev-v1.7/r_debugging_tools-v1.7.R") ; eval(parse(text = str_basic_arg_check_dev)) ; eval(parse(text = str_arg_check_with_fun_check_dev)) # activate this line and use the function (with no arguments left as NULL) to check arguments status and if they have been checked using fun_check()
+    # check with r_debugging_tools
+    # source("C:/Users/yhan/Documents/Git_projects/debugging_tools_for_r_dev/r_debugging_tools.R") ; eval(parse(text = str_basic_arg_check_dev)) ; eval(parse(text = str_arg_check_with_fun_check_dev)) # activate this line and use the function (with no arguments left as NULL) to check arguments status and if they have been checked using fun_check()
+    # end check with r_debugging_tools
     # end argument primary checking
     # second round of checking and data preparation
     # management of NA arguments
@@ -124,8 +143,8 @@ fun_secu <- function(
     # end warning initiation
     # other checkings
     # end other checkings
-    # reserved word checking
-    # end reserved word checking
+    # reserved words (to avoid bugs)
+    # end reserved words (to avoid bugs)
     # end second round of checking and data preparation
     
     # package checking
@@ -157,6 +176,8 @@ fun_secu <- function(
         }
     }
     # output
+    # warning output
+    # end warning output
     if( ! all(sapply(match.list, FUN = is.null), na.rm = TRUE)){
         output <- paste0("SOME VARIABLES ", ifelse(is.null(name), "OF THE CHECKED ENVIRONMENT", paste0("OF ", name)), " ARE ALSO PRESENT IN :\n", paste0(names(match.list[ ! sapply(match.list, FUN = is.null)]), ": ", sapply(match.list[ ! sapply(match.list, FUN = is.null)], FUN = paste0, collapse = " "), collapse = "\n"), "\n")
     }else{
