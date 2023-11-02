@@ -1,4 +1,5 @@
 ######## fun_test() #### test combinations of argument values of a function and return errors (and graphs)
+## -> GitHub
 
 # add traceback https://stackoverflow.com/questions/47414119/how-to-read-a-traceback-in-r
 

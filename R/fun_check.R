@@ -1,5 +1,5 @@
 ######## fun_check() #### check class, type, length, etc., of objects
-
+## -> GitHub
 
 # todo list check OK
 # Check r_debugging_tools-v1.4.R OK

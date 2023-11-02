@@ -1,4 +1,5 @@
 ######## fun_report() #### print string or data object into output file
+## -> GitHub
 
 # todo list check OK
 # Check r_debugging_tools-v1.4.R 

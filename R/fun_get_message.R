@@ -1,4 +1,5 @@
 ######## fun_get_message() #### return error/warning/other messages of an expression (that can be exported)
+## -> GitHub
 
 # todo list check OK
 # Check r_debugging_tools-v1.4.R 

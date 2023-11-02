@@ -1,4 +1,5 @@
 ######## fun_secu() #### verif that local variables are not present in other envs
+## -> GitHub
 
 # todo list check OK
 # Check r_debugging_tools-v1.4.R
