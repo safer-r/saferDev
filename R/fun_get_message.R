@@ -132,6 +132,9 @@ fun_get_message <- function(
     }
     # end cutedev required function checking
     # check of other required packages
+    fun_pack(req.package = c(
+        "ggplot2"
+    ), load = TRUE, lib.path = lib.path) # load = TRUE because otherwise, the "# check of the required function from the required packages" section does not work
     # end check of other required packages
     # end package checking
     # check of the required function from the required packages
