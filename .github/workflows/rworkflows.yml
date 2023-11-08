@@ -6,15 +6,11 @@ name: rworkflows
   push:
     branches:
     - master
-    - devel
     - main
-    - RELEASE_**
   pull_request:
     branches:
     - master
-    - devel
     - main
-    - RELEASE_**
 jobs:
   rworkflows:
     runs-on: ${{ matrix.config.os }}
@@ -58,8 +54,8 @@ jobs:
         has_latex: ${{ false }}
         GITHUB_TOKEN: ${{ secrets.PAT_GITHUB }}
         run_docker: ${{ false }}
-        docker_user: ${{ 'js2264' }}
-        docker_org: ${{ 'js2264' }}
+        docker_user: ${{ 'yushiHn' }}
+        docker_org: ${{ 'yushiHn' }}
         DOCKER_TOKEN: ${{ secrets.DOCKER_TOKEN }}
         runner_os: ${{ runner.os }}
         cache_version: cache-v1
