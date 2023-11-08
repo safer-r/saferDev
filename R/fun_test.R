@@ -46,9 +46,9 @@
 #' - $sys.info: system and packages info.
 #' 
 #' If export is TRUE:
-#' 1. the same list object into a .RData file.
-#' 2. also the $data data frame into a .tsv file.
-#' 3. if expect.error is non NULL and if any discrepancy, the $data data frame into a .tsv file but containing only the rows with discrepancies between expected and observed errors.
+#' - the same list object into a .RData file.
+#' - also the $data data frame into a .tsv file.
+#' - if expect.error is non NULL and if any discrepancy, the $data data frame into a .tsv file but containing only the rows with discrepancies between expected and observed errors.
 #' @details 
 #' REQUIRED PACKAGES
 #' 
@@ -649,7 +649,7 @@ end.loop.string
                 process.id <- Sys.getpid()
                 cat(paste0("\nPROCESS ID ", process.id, " -> TESTS ", x[1], " TO ", x[base::length(x)], "\n"))
                 source(cute.path, local = .GlobalEnv)
-                fun_pack(req.package = "lubridate", lib.path = lib.path, load = TRUE) # load = TRUE to be sure that functions are present in the environment. And this prevent to use R.lib.path argument of fun_python_pack()
+                fun_pack(req.package = "lubridate", lib.path = lib.path, load = TRUE) # load = TRUE to be sure that functions are present in the environment
                 # end check again: very important because another R
                 # plot management
                 if(plot.fun == TRUE){

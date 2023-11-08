@@ -36,7 +36,7 @@
 #' @examples
 #' # example of error message
 #' 
-#' fun_python_pack(req.package = "nopackage")
+#' # fun_python_pack(req.package = "nopackage")
 #' 
 #' 
 #' # example without error message (require the installation of the python serpentine package from https://github.com/koszullab/serpentine
@@ -46,7 +46,7 @@
 #' 
 #' # another example of error message
 #' 
-#' fun_python_pack(req.package = "serpentine", lib.path = "blablabla")
+#' # fun_python_pack(req.package = "serpentine", lib.path = "blablabla")
 #' @export
 fun_python_pack <- function(
         req.package, 
@@ -64,17 +64,17 @@ fun_python_pack <- function(
     # end function name
     
     # package checking
-    # check of lib.path
-    if( ! is.null(lib.path)){
-        if( ! all(typeof(lib.path) == "character")){ # no na.rm = TRUE with typeof
-            tempo.cat <- paste0("ERROR IN ", function.name, ": DIRECTORY PATH INDICATED IN THE lib.path ARGUMENT MUST BE A VECTOR OF CHARACTERS:\n", paste(lib.path, collapse = "\n"))
+    # check of R.lib.path
+    if( ! is.null(R.lib.path)){
+        if( ! all(typeof(R.lib.path) == "character")){ # no na.rm = TRUE with typeof
+            tempo.cat <- paste0("ERROR IN ", function.name, ": DIRECTORY PATH INDICATED IN THE R.lib.path ARGUMENT MUST BE A VECTOR OF CHARACTERS:\n", paste(R.lib.path, collapse = "\n"))
             stop(paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in stop() to be able to add several messages between ==
-        }else if( ! all(dir.exists(lib.path), na.rm = TRUE)){ # separation to avoid the problem of tempo$problem == FALSE and lib.path == NA
-            tempo.cat <- paste0("ERROR IN ", function.name, ": DIRECTORY PATH INDICATED IN THE lib.path ARGUMENT DOES NOT EXISTS:\n", paste(lib.path, collapse = "\n"))
+        }else if( ! all(dir.exists(R.lib.path), na.rm = TRUE)){ # separation to avoid the problem of tempo$problem == FALSE and R.lib.path == NA
+            tempo.cat <- paste0("ERROR IN ", function.name, ": DIRECTORY PATH INDICATED IN THE R.lib.path ARGUMENT DOES NOT EXISTS:\n", paste(R.lib.path, collapse = "\n"))
             stop(paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in stop() to be able to add several messages between ==
         }
     }
-    # end check of lib.path
+    # end check of R.lib.path
     # cuteDev required function checking
     req.function <- c(
         "fun_check",

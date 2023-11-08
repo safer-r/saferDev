@@ -98,7 +98,7 @@ fun_get_message <- function(
     # data = 'ggplot2::ggplot(data = data.frame(X = "a", stringsAsFactors = TRUE), mapping = ggplot2::aes(x = X)) + ggplot2::geom_histogram()' ; kind = "message" ; header = TRUE ; print.no = FALSE ; text = NULL # for function debugging
     # data = 'ggplot2::ggplot(data = data.frame(X = "a", stringsAsFactors = TRUE), mapping = ggplot2::aes(x = X)) + ggplot2::geom_histogram()' ; kind = "warning" ; header = TRUE ; print.no = FALSE ; text = NULL # for function debugging
     # data = "emmeans::emmeans(object = emm.rg, specs = contrast.var)" ; kind = "message" ; header = TRUE ; print.no = FALSE ; text = NULL ; env = NULL # for function debugging
-
+    
     # function name
     function.name <- paste0(as.list(match.call(expand.dots = FALSE))[[1]], "()")
     arg.names <- names(formals(fun = sys.function(sys.parent(n = 2)))) # names of all the arguments
@@ -106,15 +106,6 @@ fun_get_message <- function(
     # end function name
     # package checking
     # check of lib.path
-    if( ! is.null(lib.path)){
-        if( ! all(typeof(lib.path) == "character")){ # no na.rm = TRUE with typeof
-            tempo.cat <- paste0("ERROR IN ", function.name, ": DIRECTORY PATH INDICATED IN THE lib.path ARGUMENT MUST BE A VECTOR OF CHARACTERS:\n", paste(lib.path, collapse = "\n"))
-            stop(paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in stop() to be able to add several messages between ==
-        }else if( ! all(dir.exists(lib.path), na.rm = TRUE)){ # separation to avoid the problem of tempo$problem == FALSE and lib.path == NA
-            tempo.cat <- paste0("ERROR IN ", function.name, ": DIRECTORY PATH INDICATED IN THE lib.path ARGUMENT DOES NOT EXISTS:\n", paste(lib.path, collapse = "\n"))
-            stop(paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in stop() to be able to add several messages between ==
-        }
-    }
     # end check of lib.path
     # cuteDev required function checking
     req.function <- c(
@@ -134,7 +125,7 @@ fun_get_message <- function(
     # check of other required packages
     fun_pack(req.package = c(
         "ggplot2"
-    ), load = TRUE, lib.path = lib.path) # load = TRUE because otherwise, the "# check of the required function from the required packages" section does not work
+    ), load = TRUE, lib.path = NULL) # load = TRUE because otherwise, the "# check of the required function from the required packages" section does not work
     # end check of other required packages
     # end package checking
     # check of the required function from the required packages
@@ -309,6 +300,7 @@ fun_get_message <- function(
         }else if(kind == "message" & exists("tempo.message", inherits = FALSE) == FALSE & print.no == TRUE){
             output <- paste0("NO STANDARD (NON ERROR AND NON WARNING) MESSAGE REPORTED", ifelse(is.null(text), "", " "), text)
         } # no need else{} here because output is already NULL at first
+    }
     invisible(dev.off(window.nb)) # end send plots into a NULL file
     # output
     # warning output
@@ -317,6 +309,3 @@ fun_get_message <- function(
     # end output
     # end main code
 }
-
-
-
