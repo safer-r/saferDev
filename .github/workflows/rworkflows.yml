@@ -6,18 +6,17 @@ name: rworkflows
   push:
     branches:
     - master
-    - main
     - devel
+    - main
     - RELEASE_**
   pull_request:
     branches:
     - master
-    - main
     - devel
+    - main
     - RELEASE_**
 jobs:
   rworkflows:
-    permissions: write-all
     runs-on: ${{ matrix.config.os }}
     name: ${{ matrix.config.os }} (${{ matrix.config.r }})
     container: ${{ matrix.config.cont }}
@@ -26,18 +25,25 @@ jobs:
       matrix:
         config:
         - os: ubuntu-latest
-          r: devel
           bioc: devel
-          cont: ghcr.io/bioconductor/bioconductor_docker:devel
-          python-version: 3.11
-        - os: macOS-latest
-          r: latest
-          bioc: release
-          python-version: 3.11
+          r: auto
+          cont: bioconductor/bioconductor_docker:devel
+          rspm: https://packagemanager.rstudio.com/cran/__linux__/focal/release
+        - os: ubuntu-latest
+          bioc: RELEASE_3_17
+          r: auto
+          cont: bioconductor/bioconductor_docker:RELEASE_3_17
+          rspm: https://packagemanager.rstudio.com/cran/__linux__/focal/release
+        # - os: macOS-latest
+        #   bioc: devel
+        #   r: auto
+        #   cont: ~
+        #   rspm: ~
         - os: windows-latest
-          r: latest
-          bioc: release
-          python-version: 3.11
+          bioc: devel
+          r: auto
+          cont: ~
+          rspm: ~
     steps:
     - uses: neurogenomics/rworkflows@master
       with:
