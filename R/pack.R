@@ -1,4 +1,4 @@
-#' @title fun_pack
+#' @title pack
 #' @description
 #' Check if the specified R packages are present in the computer and import them into the working environment.
 #' @param req.package Character vector of package names to import.
@@ -13,15 +13,15 @@
 #' 
 #' REQUIRED FUNCTIONS FROM CUTE_LITTLE_R_FUNCTION
 #' 
-#' fun_check()
+#' check()
 #' 
 #' @examples
-#' # fun_pack(req.package = "nopackage") # should return an error
-#' fun_pack(req.package = "ggplot2")
-#' fun_pack(req.package = "ggplot2", lib.path = "C:/Users/yhan/AppData/Local/R/win-library/4.3") # should return an error if the lib.path argument is not an existing directory
+#' # pack(req.package = "nopackage") # should return an error
+#' pack(req.package = "ggplot2")
+#' pack(req.package = "ggplot2", lib.path = "C:/Users/yhan/AppData/Local/R/win-library/4.3") # should return an error if the lib.path argument is not an existing directory
 #' @importFrom utils installed.packages
 #' @export
-fun_pack <- function(
+pack <- function(
         req.package, 
         load = FALSE, 
         lib.path = NULL
@@ -48,7 +48,7 @@ fun_pack <- function(
     # end check of lib.path
     # cuteDev required function checking
     req.function <- c(
-        "fun_check"
+        "check"
     )
     tempo <- NULL
     for(i1 in req.function){
@@ -84,10 +84,10 @@ fun_pack <- function(
     text.check <- NULL #
     checked.arg.names <- NULL # for function debbuging: used by r_debugging_tools
     ee <- expression(arg.check <- c(arg.check, tempo$problem) , text.check <- c(text.check, tempo$text) , checked.arg.names <- c(checked.arg.names, tempo$object.name))
-    tempo <- fun_check(data = req.package, class = "vector", mode = "character", fun.name = function.name) ; eval(ee)
-    tempo <- fun_check(data = load, class = "vector", mode = "logical", length = 1, fun.name = function.name) ; eval(ee)
+    tempo <- check(data = req.package, class = "vector", mode = "character", fun.name = function.name) ; eval(ee)
+    tempo <- check(data = load, class = "vector", mode = "logical", length = 1, fun.name = function.name) ; eval(ee)
     if( ! is.null(lib.path)){
-        tempo <- fun_check(data = lib.path, class = "vector", mode = "character", fun.name = function.name) ; eval(ee)
+        tempo <- check(data = lib.path, class = "vector", mode = "character", fun.name = function.name) ; eval(ee)
         if(tempo$problem == FALSE){
             if( ! all(dir.exists(lib.path), na.rm = TRUE)){ # separation to avoid the problem of tempo$problem == FALSE and lib.path == NA
                 tempo.cat <- paste0("ERROR IN ", function.name, ": DIRECTORY PATH INDICATED IN THE lib.path ARGUMENT DOES NOT EXISTS:\n", paste(lib.path, collapse = "\n"))
@@ -102,7 +102,7 @@ fun_pack <- function(
         }
     }
     # check with r_debugging_tools
-    # source("C:/Users/yhan/Documents/Git_projects/debugging_tools_for_r_dev/r_debugging_tools.R") ; eval(parse(text = str_basic_arg_check_dev)) ; eval(parse(text = str_arg_check_with_fun_check_dev)) # activate this line and use the function (with no arguments left as NULL) to check arguments status and if they have been checked using fun_check()
+    # source("C:/Users/yhan/Documents/Git_projects/debugging_tools_for_r_dev/r_debugging_tools.R") ; eval(parse(text = str_basic_arg_check_dev)) ; eval(parse(text = str_arg_check_with_check_dev)) # activate this line and use the function (with no arguments left as NULL) to check arguments status and if they have been checked using check()
     # end check with r_debugging_tools
     # end argument primary checking
     

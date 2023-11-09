@@ -1,9 +1,9 @@
-######## fun_test() #### test combinations of argument values of a function and return errors (and graphs)
+######## test() #### test combinations of argument values of a function and return errors (and graphs)
 
 # add traceback https://stackoverflow.com/questions/47414119/how-to-read-a-traceback-in-r
 
 # remove cute.path argument everywhere in this function. But check that cuteDev packages are accessible in the environment of parallelization
-# in if(exists(env.name, where = -1)){ # verify if still ok when fun_test() is inside a function
+# in if(exists(env.name, where = -1)){ # verify if still ok when test() is inside a function
 # was in red : assign("val", val, envir = get(env.name, env = sys.nframe(), inherit = FALSE)) # var replaced by val
 # was in red : # after return() ? # can we put this after return ? I do not think so
 
@@ -65,25 +65,25 @@
 #' 
 #' Limited to 43 arguments with at least 2 values each. The total number of arguments tested can be more if the additional arguments have a single value. The limit is due to nested "for" loops (https://stat.ethz.ch/pipermail/r-help/2008-March/157341.html), but this limitation is away from the number of tests performed that would be 2^43.
 #' @examples
-#' fun_test(fun = "unique", arg = c("x", "incomparables"), val = list(x = list(1:10, c(1,1,2,8), NA), incomparable = c(TRUE, FALSE, NA)))
+#' test(fun = "unique", arg = c("x", "incomparables"), val = list(x = list(1:10, c(1,1,2,8), NA), incomparable = c(TRUE, FALSE, NA)))
 #' 
-#' fun_test(fun = "unique", arg = c("x", "incomparables"), val = list(x = list(1:10, c(1,1,2,8), NA), incomparable = c(TRUE, FALSE, NA)), expect.error = list(x = list(FALSE, FALSE, TRUE), incomparable = c(FALSE, FALSE, TRUE)))
+#' test(fun = "unique", arg = c("x", "incomparables"), val = list(x = list(1:10, c(1,1,2,8), NA), incomparable = c(TRUE, FALSE, NA)), expect.error = list(x = list(FALSE, FALSE, TRUE), incomparable = c(FALSE, FALSE, TRUE)))
 #' 
-#' fun_test(fun = "unique", arg = c("x", "incomparables"), val = list(x = list(1:10, c(1,1,2,8), NA), incomparable = c(TRUE, FALSE, NA)), expect.error = list(x = list(FALSE, FALSE, TRUE), incomparable = c(FALSE, FALSE, TRUE)), export = TRUE, res.path = getwd())
+#' test(fun = "unique", arg = c("x", "incomparables"), val = list(x = list(1:10, c(1,1,2,8), NA), incomparable = c(TRUE, FALSE, NA)), expect.error = list(x = list(FALSE, FALSE, TRUE), incomparable = c(FALSE, FALSE, TRUE)), export = TRUE, res.path = getwd())
 #' 
-#' fun_test(fun = "fun_round", arg = c("data", "dec.nb", "after.lead.zero"), val = list(L1 = list(c(1, 1.0002256, 1.23568), "a", NA), L2 = list(2, c(1,3), NA), L3 = c(TRUE, FALSE, NA)))
+#' test(fun = "fun_round", arg = c("data", "dec.nb", "after.lead.zero"), val = list(L1 = list(c(1, 1.0002256, 1.23568), "a", NA), L2 = list(2, c(1,3), NA), L3 = c(TRUE, FALSE, NA)))
 #' 
-#' fun_test(fun = "plot", arg = c("x", "y"), val = list(x = list(1:10, 12:13, NA, (1:10)^2), y = list(1:10, NA, NA)),  expect.error = list(x = list(FALSE, TRUE, TRUE, FALSE), y = list(FALSE, TRUE, TRUE)), parall = FALSE, thread.nb = NULL, plot.fun = TRUE, res.path = "C:\\Users\\yhan\\Desktop\\", lib.path = NULL)
+#' test(fun = "plot", arg = c("x", "y"), val = list(x = list(1:10, 12:13, NA, (1:10)^2), y = list(1:10, NA, NA)),  expect.error = list(x = list(FALSE, TRUE, TRUE, FALSE), y = list(FALSE, TRUE, TRUE)), parall = FALSE, thread.nb = NULL, plot.fun = TRUE, res.path = "C:\\Users\\yhan\\Desktop\\", lib.path = NULL)
 #' 
-#' fun_test(fun = "plot", arg = c("x", "y"), val = list(x = list(1:10, 12:13, NA, (1:10)^2), y = list(1:10, NA, NA)), parall = FALSE, thread.nb = 4, plot.fun = TRUE, res.path = "C:\\Users\\yhan\\Desktop\\", lib.path = "C:\\Program Files\\R\\R-4.3.1\\library\\")
+#' test(fun = "plot", arg = c("x", "y"), val = list(x = list(1:10, 12:13, NA, (1:10)^2), y = list(1:10, NA, NA)), parall = FALSE, thread.nb = 4, plot.fun = TRUE, res.path = "C:\\Users\\yhan\\Desktop\\", lib.path = "C:\\Program Files\\R\\R-4.3.1\\library\\")
 #' 
-#' set.seed(1) ; obs1 <- data.frame(Time = c(rnorm(10), rnorm(10) + 2), Group1 = rep(c("G", "H"), each = 10), stringsAsFactors = TRUE) ; fun_test(fun = "fun_gg_boxplot", arg = c("data1", "y", "categ"), val = list(L1 = list(L1 = obs1), L2 = list(L1 = "Time"), L3 = list(L1 = "Group1")))
+#' set.seed(1) ; obs1 <- data.frame(Time = c(rnorm(10), rnorm(10) + 2), Group1 = rep(c("G", "H"), each = 10), stringsAsFactors = TRUE) ; test(fun = "fun_gg_boxplot", arg = c("data1", "y", "categ"), val = list(L1 = list(L1 = obs1), L2 = list(L1 = "Time"), L3 = list(L1 = "Group1")))
 #' 
-#' set.seed(1) ; obs1 <- data.frame(Time = c(rnorm(10), rnorm(10) + 2), Group1 = rep(c("G", "H"), each = 10), stringsAsFactors = TRUE) ; fun_test(fun = "fun_gg_boxplot", arg = c("data1", "y", "categ"), val = list(L1 = list(obs1), L2 = "Time", L3 = "Group1"), parall = FALSE, thread.nb = NULL, plot.fun = TRUE, res.path = "C:\\Users\\yhan\\Desktop\\", lib.path = "C:\\Program Files\\R\\R-4.3.1\\library\\")
+#' set.seed(1) ; obs1 <- data.frame(Time = c(rnorm(10), rnorm(10) + 2), Group1 = rep(c("G", "H"), each = 10), stringsAsFactors = TRUE) ; test(fun = "fun_gg_boxplot", arg = c("data1", "y", "categ"), val = list(L1 = list(obs1), L2 = "Time", L3 = "Group1"), parall = FALSE, thread.nb = NULL, plot.fun = TRUE, res.path = "C:\\Users\\yhan\\Desktop\\", lib.path = "C:\\Program Files\\R\\R-4.3.1\\library\\")
 #' 
-#' library(ggplot2) ; fun_test(fun = "geom_histogram", arg = c("data", "mapping"), val = list(x = list(data.frame(X = "a", stringsAsFactors = TRUE)), y = list(ggplot2::aes(x = X))), parall = FALSE, thread.nb = NULL, plot.fun = TRUE, res.path = "C:\\Users\\yhan\\Desktop\\", lib.path = "C:\\Program Files\\R\\R-4.3.1\\library\\") # BEWARE: ggplot2::geom_histogram does not work
+#' library(ggplot2) ; test(fun = "geom_histogram", arg = c("data", "mapping"), val = list(x = list(data.frame(X = "a", stringsAsFactors = TRUE)), y = list(ggplot2::aes(x = X))), parall = FALSE, thread.nb = NULL, plot.fun = TRUE, res.path = "C:\\Users\\yhan\\Desktop\\", lib.path = "C:\\Program Files\\R\\R-4.3.1\\library\\") # BEWARE: ggplot2::geom_histogram does not work
 #' @export
-fun_test <- function(
+test <- function(
         fun, 
         arg, 
         val, 
@@ -366,11 +366,11 @@ stop(paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), 
     options(warning.length = 8170)
     warn <- NULL
     warn.count <- 0
-    cat("\nfun_test JOB IGNITION\n")
+    cat("\ntest JOB IGNITION\n")
     ini.date <- Sys.time()
     ini.time <- as.numeric(ini.date) # time of process begin, converted into seconds
     if(export == TRUE){
-        res.path <- paste0(res.path, "/fun_test_res_", trunc(ini.time))
+        res.path <- paste0(res.path, "/test_res_", trunc(ini.time))
         if(dir.exists(res.path)){
             tempo.cat <- paste0("ERROR IN ", function.name, ": FOLDER ALREADY EXISTS\n", res.path, "\nPLEASE RERUN ONCE")
             stop(paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n", ifelse(is.null(warn), "", paste0("IN ADDITION\nWARNING", ifelse(warn.count > 1, "S", ""), ":\n\n", warn))), call. = FALSE)
@@ -580,7 +580,7 @@ end.loop.string
         }
         tempo.cat <- paste0("NUMBER OF THREADS USED: ", thread.nb)
         cat(paste0("\n    ", tempo.cat, "\n"))
-        Clust <- parallel::makeCluster(thread.nb, outfile = paste0(res.path, "/fun_test_parall_log.txt")) # outfile to print or cat during parallelization (only possible in a file, outfile = "" do not work on windows)
+        Clust <- parallel::makeCluster(thread.nb, outfile = paste0(res.path, "/test_parall_log.txt")) # outfile to print or cat during parallelization (only possible in a file, outfile = "" do not work on windows)
         tempo.cat <- paste0("SPLIT OF TEST NUMBERS IN PARALLELISATION:")
         cat(paste0("\n    ", tempo.cat, "\n"))
         cluster.list <- parallel::clusterSplit(Clust, 1:total.comp.nb) # split according to the number of cluster
@@ -644,7 +644,7 @@ end.loop.string
                 # end check again: very important because another R
                 # plot management
                 if(plot.fun == TRUE){
-                    pdf(file = paste0(res.path, "/plots_from_fun_test_", x[1], ifelse(base::length(x) == 1L, ".pdf", paste0("-", x[base::length(x)], ".pdf"))))
+                    pdf(file = paste0(res.path, "/plots_from_test_", x[1], ifelse(base::length(x) == 1L, ".pdf", paste0("-", x[base::length(x)], ".pdf"))))
                 }else{
                     pdf(file = NULL) # send plots into a NULL file, no pdf file created
                 }
@@ -655,7 +655,7 @@ end.loop.string
                 ini.date <- Sys.time()
                 ini.time <- as.numeric(ini.date) # time of process begin, converted into 
                 env.name <- paste0("env", ini.time)
-                if(exists(env.name, where = -1)){ # verify if still ok when fun_test() is inside a function
+                if(exists(env.name, where = -1)){ # verify if still ok when test() is inside a function
                     tempo.cat <- paste0("ERROR IN ", function.name, ": ENVIRONMENT env.name ALREADY EXISTS. PLEASE RERUN ONCE")
                     stop(paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n", ifelse(is.null(warn), "", paste0("IN ADDITION\nWARNING", ifelse(warn.count > 1, "S", ""), ":\n\n", warn))), call. = FALSE)
                 }else{
@@ -678,37 +678,37 @@ end.loop.string
                 rm(env.name) # optional, because should disappear at the end of the function execution
                 # output
                 output <- list(fun = fun, ini = ini, data = data, sys.info = sys.info)
-                save(output, file = paste0(res.path, "/fun_test_", x[1], ifelse(base::length(x) == 1L, ".RData", paste0("-", x[base::length(x)], ".RData"))))
+                save(output, file = paste0(res.path, "/test_", x[1], ifelse(base::length(x) == 1L, ".RData", paste0("-", x[base::length(x)], ".RData"))))
                 if(plot.fun == TRUE & plot.count == 0L){
                     warn.count <- warn.count + 1
                     tempo.warn <- paste0("(", warn.count,") IN PROCESS ", process.id, ": NO PDF PLOT BECAUSE ONLY ERRORS REPORTED")
                     warn <- paste0(ifelse(is.null(warn), tempo.warn, paste0(warn, "\n\n", tempo.warn)))
-                    file.remove(paste0(res.path, "/plots_from_fun_test_", x[1], ifelse(base::length(x) == 1L, ".pdf", paste0("-", x[base::length(x)], ".pdf"))))
+                    file.remove(paste0(res.path, "/plots_from_test_", x[1], ifelse(base::length(x) == 1L, ".pdf", paste0("-", x[base::length(x)], ".pdf"))))
                 }
                 table.out <- as.matrix(data)
                 # table.out[table.out == ""] <- " " # does not work # because otherwise read.table() converts "" into NA
                 table.out <- gsub(table.out, pattern = "\n", replacement = " ")
-                write.table(table.out, file = paste0(res.path, "/table_from_fun_test_", x[1], ifelse(base::length(x) == 1L, ".tsv", paste0("-", x[base::length(x)], ".tsv"))), row.names = TRUE, col.names = NA, append = FALSE, quote = FALSE, sep = "\t", eol = "\n", na = "")
+                write.table(table.out, file = paste0(res.path, "/table_from_test_", x[1], ifelse(base::length(x) == 1L, ".tsv", paste0("-", x[base::length(x)], ".tsv"))), row.names = TRUE, col.names = NA, append = FALSE, quote = FALSE, sep = "\t", eol = "\n", na = "")
             }
         )
         parallel::stopCluster(Clust)
         # files assembly
         if(base::length(cluster.list) > 1){
             for(i2 in 1:base::length(cluster.list)){
-                tempo.file <- paste0(res.path, "/table_from_fun_test_", min(cluster.list[[i2]], na.rm = TRUE), ifelse(base::length(cluster.list[[i2]]) == 1L, ".tsv", paste0("-", max(cluster.list[[i2]], na.rm = TRUE), ".tsv"))) # txt file
+                tempo.file <- paste0(res.path, "/table_from_test_", min(cluster.list[[i2]], na.rm = TRUE), ifelse(base::length(cluster.list[[i2]]) == 1L, ".tsv", paste0("-", max(cluster.list[[i2]], na.rm = TRUE), ".tsv"))) # txt file
                 tempo <- read.table(file = tempo.file, header = TRUE, stringsAsFactors = FALSE, sep = "\t", row.names = 1, comment.char = "", colClasses = "character") #  row.names = 1 (1st column) because now read.table() adds a NA in the header if the header starts by a tabulation, comment.char = "" because colors with #, colClasses = "character" otherwise convert "" (from NULL) into NA
-                if(file.exists(paste0(res.path, "/plots_from_fun_test_", min(cluster.list[[i2]], na.rm = TRUE), ifelse(base::length(cluster.list[[i2]]) == 1L, ".pdf", paste0("-", max(cluster.list[[i2]], na.rm = TRUE), ".pdf"))))){
-                    tempo.pdf <- paste0(res.path, "/plots_from_fun_test_", min(cluster.list[[i2]], na.rm = TRUE), ifelse(base::length(cluster.list[[i2]]) == 1L, ".pdf", paste0("-", max(cluster.list[[i2]], na.rm = TRUE), ".pdf"))) # pdf file
+                if(file.exists(paste0(res.path, "/plots_from_test_", min(cluster.list[[i2]], na.rm = TRUE), ifelse(base::length(cluster.list[[i2]]) == 1L, ".pdf", paste0("-", max(cluster.list[[i2]], na.rm = TRUE), ".pdf"))))){
+                    tempo.pdf <- paste0(res.path, "/plots_from_test_", min(cluster.list[[i2]], na.rm = TRUE), ifelse(base::length(cluster.list[[i2]]) == 1L, ".pdf", paste0("-", max(cluster.list[[i2]], na.rm = TRUE), ".pdf"))) # pdf file
                 }else{
                     tempo.pdf <- NULL
                 }
-                tempo.rdata <- paste0(res.path, "/fun_test_", min(cluster.list[[i2]], na.rm = TRUE), ifelse(base::length(cluster.list[[i2]]) == 1L, ".RData", paste0("-", max(cluster.list[[i2]], na.rm = TRUE), ".RData"))) # RData file
+                tempo.rdata <- paste0(res.path, "/test_", min(cluster.list[[i2]], na.rm = TRUE), ifelse(base::length(cluster.list[[i2]]) == 1L, ".RData", paste0("-", max(cluster.list[[i2]], na.rm = TRUE), ".RData"))) # RData file
                 if(i2 == 1L){
                     final.file <- tempo
                     final.pdf <- tempo.pdf
                     # new env for RData combining
                     env.name <- paste0("env", ini.time)
-                    if(exists(env.name, where = -1)){ # verify if still ok when fun_test() is inside a function
+                    if(exists(env.name, where = -1)){ # verify if still ok when test() is inside a function
                         tempo.cat <- paste0("ERROR IN ", function.name, ": ENVIRONMENT env.name ALREADY EXISTS. PLEASE RERUN ONCE")
                         stop(paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n", ifelse(is.null(warn), "", paste0("IN ADDITION\nWARNING", ifelse(warn.count > 1, "S", ""), ":\n\n", warn))), call. = FALSE)
                         # end new env for RData combining
@@ -756,26 +756,26 @@ end.loop.string
             if( ! is.null(final.pdf)){
                 pdftools::pdf_combine(
                     input = final.pdf,
-                    output = paste0(res.path, "/plots_from_fun_test_1-", total.comp.nb, ".pdf")
+                    output = paste0(res.path, "/plots_from_test_1-", total.comp.nb, ".pdf")
                 )
                 file.remove(final.pdf)
             }
             # end combine pdf and save
             # save RData
             assign("output", c(get("final.output", envir = get(env.name)), data = list(final.file)), envir = get(env.name))
-            save(output, file = paste0(res.path, "/fun_test__1-", total.comp.nb, ".RData"), envir = get(env.name))
+            save(output, file = paste0(res.path, "/test__1-", total.comp.nb, ".RData"), envir = get(env.name))
             rm(env.name) # optional, because should disappear at the end of the function execution
             # end save RData
             # save txt
-            write.table(final.file, file = paste0(res.path, "/table_from_fun_test_1-", total.comp.nb, ".tsv"), row.names = TRUE, col.names = NA, append = FALSE, quote = FALSE, sep = "\t", eol = "\n", na = "")
+            write.table(final.file, file = paste0(res.path, "/table_from_test_1-", total.comp.nb, ".tsv"), row.names = TRUE, col.names = NA, append = FALSE, quote = FALSE, sep = "\t", eol = "\n", na = "")
             # end save txt
             if( ! is.null(expect.error)){
                 final.file <- final.file[ ! final.file$problem == final.file$expected.error, ]
                 if(nrow(final.file) == 0L){
                     cat(paste0("NO DISCREPANCY BETWEEN EXPECTED AND OBSERVED ERRORS\n\n"))
                 }else{
-                    cat(paste0("DISCREPANCIES BETWEEN EXPECTED AND OBSERVED ERRORS (SEE THE discrepancy_table_from_fun_test_1-", total.comp.nb, ".tsv FILE)\n\n"))
-                    write.table(final.file, file = paste0(res.path, "/discrepancy_table_from_fun_test_1-", total.comp.nb, ".tsv"), row.names = TRUE, col.names = NA, append = FALSE, quote = FALSE, sep = "\t", eol = "\n", na = "")
+                    cat(paste0("DISCREPANCIES BETWEEN EXPECTED AND OBSERVED ERRORS (SEE THE discrepancy_table_from_test_1-", total.comp.nb, ".tsv FILE)\n\n"))
+                    write.table(final.file, file = paste0(res.path, "/discrepancy_table_from_test_1-", total.comp.nb, ".tsv"), row.names = TRUE, col.names = NA, append = FALSE, quote = FALSE, sep = "\t", eol = "\n", na = "")
                 }
             }
         }
@@ -783,7 +783,7 @@ end.loop.string
     }else{
         # plot management
         if(plot.fun == TRUE){
-            pdf(file = paste0(res.path, "/plots_from_fun_test_1", ifelse(total.comp.nb == 1L, ".pdf", paste0("-", total.comp.nb, ".pdf"))))
+            pdf(file = paste0(res.path, "/plots_from_test_1", ifelse(total.comp.nb == 1L, ".pdf", paste0("-", total.comp.nb, ".pdf"))))
         }else{
             pdf(file = NULL) # send plots into a NULL file, no pdf file created
         }
@@ -825,18 +825,18 @@ end.loop.string
             warn.count <- warn.count + 1
             tempo.warn <- paste0("(", warn.count,") NO PDF PLOT BECAUSE ONLY ERRORS REPORTED")
             warn <- paste0(ifelse(is.null(warn), tempo.warn, paste0(warn, "\n\n", tempo.warn)))
-            file.remove(paste0(res.path, "/plots_from_fun_test_1", ifelse(total.comp.nb == 1L, ".pdf", paste0("-", total.comp.nb, ".pdf"))))
+            file.remove(paste0(res.path, "/plots_from_test_1", ifelse(total.comp.nb == 1L, ".pdf", paste0("-", total.comp.nb, ".pdf"))))
         }
         if( ! is.null(expect.error)){
             expect.data <- output$data[ ! output$data$problem == output$data$expected.error, ]
             if(nrow(expect.data) == 0L){
                 cat(paste0("NO DISCREPANCY BETWEEN EXPECTED AND OBSERVED ERRORS\n\n"))
             }else{
-                cat(paste0("DISCREPANCIES BETWEEN EXPECTED AND OBSERVED ERRORS (SEE THE ", if(export == TRUE){paste0("discrepancy_table_from_fun_test_1", ifelse(total.comp.nb == 1L, "", paste0("-", total.comp.nb)), ".tsv FILE")}else{"$data RESULT"}, ")\n\n"))
+                cat(paste0("DISCREPANCIES BETWEEN EXPECTED AND OBSERVED ERRORS (SEE THE ", if(export == TRUE){paste0("discrepancy_table_from_test_1", ifelse(total.comp.nb == 1L, "", paste0("-", total.comp.nb)), ".tsv FILE")}else{"$data RESULT"}, ")\n\n"))
                 if(export == TRUE){
                     expect.data <- as.matrix(expect.data)
                     expect.data <- gsub(expect.data, pattern = "\n", replacement = "  ")
-                    write.table(expect.data, file = paste0(res.path, "/discrepancy_table_from_fun_test_1", ifelse(total.comp.nb == 1L, ".tsv", paste0("-", total.comp.nb, ".tsv"))), row.names = TRUE, col.names = NA, append = FALSE, quote = FALSE, sep = "\t", eol = "\n", na = "")
+                    write.table(expect.data, file = paste0(res.path, "/discrepancy_table_from_test_1", ifelse(total.comp.nb == 1L, ".tsv", paste0("-", total.comp.nb, ".tsv"))), row.names = TRUE, col.names = NA, append = FALSE, quote = FALSE, sep = "\t", eol = "\n", na = "")
                 }
             }
         }
@@ -846,10 +846,10 @@ end.loop.string
         }
         on.exit(exp = base::options(warning.length = ini.warning.length), add = TRUE)
         if(export == TRUE){
-            save(output, file = paste0(res.path, "/fun_test_1", ifelse(total.comp.nb == 1L, ".RData", paste0("-", total.comp.nb, ".RData"))))
+            save(output, file = paste0(res.path, "/test_1", ifelse(total.comp.nb == 1L, ".RData", paste0("-", total.comp.nb, ".RData"))))
             table.out <- as.matrix(output$data)
             table.out <- gsub(table.out, pattern = "\n", replacement = "  ")
-            write.table(table.out, file = paste0(res.path, "/table_from_fun_test_1", ifelse(total.comp.nb == 1L, ".tsv", paste0("-", total.comp.nb, ".tsv"))), row.names = TRUE, col.names = NA, append = FALSE, quote = FALSE, sep = "\t", eol = "\n", na = "")
+            write.table(table.out, file = paste0(res.path, "/table_from_test_1", ifelse(total.comp.nb == 1L, ".tsv", paste0("-", total.comp.nb, ".tsv"))), row.names = TRUE, col.names = NA, append = FALSE, quote = FALSE, sep = "\t", eol = "\n", na = "")
         }else{
             return(output)
         }
@@ -859,6 +859,6 @@ end.loop.string
     end.date <- Sys.time()
     end.time <- as.numeric(end.date)
     total.lapse <- round(lubridate::seconds_to_period(end.time - ini.time))
-    cat(paste0("fun_test JOB END\n\nTIME: ", end.date, "\n\nTOTAL TIME LAPSE: ", total.lapse, "\n\n\n"))
+    cat(paste0("test JOB END\n\nTIME: ", end.date, "\n\nTOTAL TIME LAPSE: ", total.lapse, "\n\n\n"))
     # end main code
 }

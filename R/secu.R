@@ -1,8 +1,8 @@
 #' @title secu
 #' @description
 #' Verify that object names in the environment defined by the pos parameter are identical or not to object names in the above environment (following R Scope). This can be used to verify that names used for objects inside a function or in the working environment do not override names of objects already present in the above R environments, following the R scope.
-#' @param pos Single non nul positive integer indicating the position of the environment checked (argument n of the parent.frame() function). Value 1 means one step above the fun_secu() local environment (by default). This means that when fun_secu(pos = 1) is used inside a function A, it checks if the name of any object in the local environment of this function A is also present in above environments, following R Scope, starting by the just above environment. When fun_secu(pos = 1) is used in the working (Global) environment (named .GlobalEnv), it checks the object names of this .GlobalEnv environment, in the above environments. See the examples below.
-#' @param name Single character string indicating a string that will be added in the output string, for instance the name of a function inside which fun_secu() is used.
+#' @param pos Single non nul positive integer indicating the position of the environment checked (argument n of the parent.frame() function). Value 1 means one step above the secu() local environment (by default). This means that when secu(pos = 1) is used inside a function A, it checks if the name of any object in the local environment of this function A is also present in above environments, following R Scope, starting by the just above environment. When secu(pos = 1) is used in the working (Global) environment (named .GlobalEnv), it checks the object names of this .GlobalEnv environment, in the above environments. See the examples below.
+#' @param name Single character string indicating a string that will be added in the output string, for instance the name of a function inside which secu() is used.
 #' @details
 #' REQUIRED PACKAGES
 #' 
@@ -11,7 +11,7 @@
 #' 
 #' REQUIRED FUNCTIONS FROM CUTE_LITTLE_R_FUNCTION
 #' 
-#' fun_check()
+#' check()
 #' @examples
 #' # Example in the working environment
 #' 
@@ -20,25 +20,25 @@
 #' search() # current R scope (order of the successive R environments).
 #' find("mean") # where the objects with the name "mean" are present.
 #' find("t.test") # where the objects with the name "mean" are present.
-#' a <- fun_secu(pos = 1) # test if any object name of the global environment are above environments (or fun_secu(), as pos = 1 is the default value).
-#' a # the output string of fun_sec().
+#' a <- secu(pos = 1) # test if any object name of the global environment are above environments (or secu(), as pos = 1 is the default value).
+#' a # the output string of sec().
 #' cat(a) # the evaluated output.
-#' fun_secu(pos = 2) # test if any object of the stats environment (one step above .GlobalEnv) are above environments. Returns NULL since no object names of stats are in above environments
+#' secu(pos = 2) # test if any object of the stats environment (one step above .GlobalEnv) are above environments. Returns NULL since no object names of stats are in above environments
 #' 
 #' 
 #' # Example inside a function
 #' 
-#' fun1 <- function(){t.test <- 0 ; mean <- 5 ; fun_secu(pos = 1)} # fun_secu() will check if the object names inside the fun1 function exist in the .GlobalEnv environment and above.
+#' fun1 <- function(){t.test <- 0 ; mean <- 5 ; secu(pos = 1)} # secu() will check if the object names inside the fun1 function exist in the .GlobalEnv environment and above.
 #' fun1()
-#' fun2 <- function(){t.test <- 0 ; mean <- 5 ; fun_secu(pos = 2)} # fun_secu() will check if the object names inside the fun2 function exist in the stats environment and above.
+#' fun2 <- function(){t.test <- 0 ; mean <- 5 ; secu(pos = 2)} # secu() will check if the object names inside the fun2 function exist in the stats environment and above.
 #' fun2()
-#' fun3 <- function(){t.test <- 0 ; mean <- 5 ; fun_secu(pos = 2, name = "fun3")} # idem fun2() but with the name of the function fun2 indicated. Instead of writting name = "fun3", we can also use name = as.character(sys.calls()[[length(sys.calls())]]), as sys.calls() gives the function name at top stack of the imbricated functions, sys.calls()[[length(sys.calls())]] the name of the just above function. This can also been used for the above function: as.character(sys.call(1))
+#' fun3 <- function(){t.test <- 0 ; mean <- 5 ; secu(pos = 2, name = "fun3")} # idem fun2() but with the name of the function fun2 indicated. Instead of writting name = "fun3", we can also use name = as.character(sys.calls()[[length(sys.calls())]]), as sys.calls() gives the function name at top stack of the imbricated functions, sys.calls()[[length(sys.calls())]] the name of the just above function. This can also been used for the above function: as.character(sys.call(1))
 #' fun3()
 #' test.pos <- 1
-#' fun_secu(pos = test.pos, name = if(length(sys.calls()) >= test.pos){as.character(sys.calls()[[length(sys.calls()) + 1 - test.pos]])}else{search()[ (1:length(search()))[test.pos - length(sys.calls())]]}) # here is a way to have the name of the tested environment according to test.pos value
+#' secu(pos = test.pos, name = if(length(sys.calls()) >= test.pos){as.character(sys.calls()[[length(sys.calls()) + 1 - test.pos]])}else{search()[ (1:length(search()))[test.pos - length(sys.calls())]]}) # here is a way to have the name of the tested environment according to test.pos value
 #' @returns A character string indicating the object names of the tested environment that match object names in the above environments, following the R scope, or NULL if no match.
 #' @export
-fun_secu <- function(
+secu <- function(
         pos = 1, 
         name = NULL
 ){
@@ -54,7 +54,7 @@ fun_secu <- function(
     # end check of lib.path
     # cuteDev required function checking
     req.function <- c(
-        "fun_check"
+        "check"
     )
     tempo <- NULL
     for(i1 in req.function){
@@ -76,23 +76,23 @@ fun_secu <- function(
     # argument primary checking
     # arg with no default values
     # end arg with no default values
-    # using fun_check()
+    # using check()
     arg.check <- NULL #
     text.check <- NULL #
     checked.arg.names <- NULL # for function debugging: used by r_debugging_tools
     ee <- expression(arg.check <- c(arg.check, tempo$problem) , text.check <- c(text.check, tempo$text) , checked.arg.names <- c(checked.arg.names, tempo$object.name))
-    tempo <- fun_check(data = pos, class = "vector", typeof = "integer", double.as.integer.allowed = TRUE, length = 1, fun.name = function.name) ; eval(ee)
+    tempo <- check(data = pos, class = "vector", typeof = "integer", double.as.integer.allowed = TRUE, length = 1, fun.name = function.name) ; eval(ee)
     if( ! is.null(name)){
-        tempo <- fun_check(data = name, class = "vector", typeof = "character", fun.name = function.name) ; eval(ee)
+        tempo <- check(data = name, class = "vector", typeof = "character", fun.name = function.name) ; eval(ee)
     }
     if( ! is.null(arg.check)){
         if(any(arg.check, na.rm = TRUE) == TRUE){
             stop(paste0("\n\n================\n\n", paste(text.check[arg.check], collapse = "\n"), "\n\n================\n\n"), call. = FALSE) #
         }
     }
-    # end using fun_check()
+    # end using check()
     # check with r_debugging_tools
-    # source("C:/Users/yhan/Documents/Git_projects/debugging_tools_for_r_dev/r_debugging_tools.R") ; eval(parse(text = str_basic_arg_check_dev)) ; eval(parse(text = str_arg_check_with_fun_check_dev)) # activate this line and use the function (with no arguments left as NULL) to check arguments status and if they have been checked using fun_check()
+    # source("C:/Users/yhan/Documents/Git_projects/debugging_tools_for_r_dev/r_debugging_tools.R") ; eval(parse(text = str_basic_arg_check_dev)) ; eval(parse(text = str_arg_check_with_check_dev)) # activate this line and use the function (with no arguments left as NULL) to check arguments status and if they have been checked using check()
     # end check with r_debugging_tools
     # end argument primary checking
     # second round of checking and data preparation
@@ -129,7 +129,7 @@ fun_secu <- function(
     # package checking
     # end package checking
     # main code
-    # match.list <- vector("list", length = (length(sys.calls()) - 1 + length(search()) + ifelse(length(sys.calls()) == 1L, -1, 0))) # match.list is a list of all the environment tested (local of functions and R envs), length(sys.calls()) - 1 to remove the level of the fun_secu() function, sys.calls() giving all the names of the imbricated functions, including fun_secu, ifelse(length(sys.calls()) == 1L, -1, 0) to remove Global env if this one is tested
+    # match.list <- vector("list", length = (length(sys.calls()) - 1 + length(search()) + ifelse(length(sys.calls()) == 1L, -1, 0))) # match.list is a list of all the environment tested (local of functions and R envs), length(sys.calls()) - 1 to remove the level of the secu() function, sys.calls() giving all the names of the imbricated functions, including secu, ifelse(length(sys.calls()) == 1L, -1, 0) to remove Global env if this one is tested
     tempo.name <- rev(as.character(unlist(sys.calls()))) # get names of frames (i.e., enclosed env)
     tempo.frame <- rev(sys.frames())  # get frames (i.e., enclosed env)
     # dealing with source()
@@ -142,7 +142,7 @@ fun_secu <- function(
     }
     # end dealing with source()
     # might have a problem if(length(tempo.name) == 0L){
-    match.list <- vector("list", length = length(tempo.name) + length(search())) # match.list is a list of all the environment tested (local of functions and R envs), length(sys.calls()) - 1 to remove the level of the fun_secu() function, sys.calls() giving all the names of the imbricated functions, including fun_secu, ifelse(length(sys.calls()) == 1L, -1, 0) to remove Global env if this one is tested
+    match.list <- vector("list", length = length(tempo.name) + length(search())) # match.list is a list of all the environment tested (local of functions and R envs), length(sys.calls()) - 1 to remove the level of the secu() function, sys.calls() giving all the names of the imbricated functions, including secu, ifelse(length(sys.calls()) == 1L, -1, 0) to remove Global env if this one is tested
     ls.names <- c(tempo.name, search()) # names of the functions + names of the search() environments
     ls.input <- c(tempo.frame, as.list(search())) # environements of the functions + names of the search() environments
     names(match.list) <- ls.names # 

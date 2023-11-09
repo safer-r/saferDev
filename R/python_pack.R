@@ -2,7 +2,7 @@
 #' @description
 #' Check if the specified python packages are present in the computer (no import).
 #' @param req.package Character vector of package names to import.
-#' @param python.exec.path Single optional character vector specifying the absolute pathways of the executable python file to use (associated to the packages to use). If NULL, the reticulate::import_from_path() function used in fun_python_pack() seeks for an available version of python.exe, and then uses python_config(python_version, required_module, python_versions). But might not be the correct one for the lib.path parameter specified. Thus, it is recommanded to do not leave NULL, notably when using computing clusters.
+#' @param python.exec.path Single optional character vector specifying the absolute pathways of the executable python file to use (associated to the packages to use). If NULL, the reticulate::import_from_path() function used in python_pack() seeks for an available version of python.exe, and then uses python_config(python_version, required_module, python_versions). But might not be the correct one for the lib.path parameter specified. Thus, it is recommanded to do not leave NULL, notably when using computing clusters.
 #' @param lib.path Optional character vector specifying the absolute pathways of the directories containing some of the listed packages in the req.package argument, if not in the default directories.
 #' @param R.lib.path Absolute path of the reticulate packages, if not in the default folders.
 #' @returns Nothing.
@@ -14,9 +14,9 @@
 #' 
 #' REQUIRED FUNCTIONS FROM CUTE_LITTLE_R_FUNCTION
 #' 
-#' fun_check()
+#' check()
 #'
-#' fun_pack()
+#' pack()
 #' 
 #' 
 #' WARNINGS
@@ -25,19 +25,19 @@
 #' @examples
 #' # example of error message
 #' 
-#' # fun_python_pack(req.package = "nopackage")
+#' # python_pack(req.package = "nopackage")
 #' 
 #' 
 #' # example without error message (require the installation of the python serpentine package from https://github.com/koszullab/serpentine
 #' 
-#' fun_python_pack(req.package = "serpentine", python.exec.path = "C:/ProgramData/Anaconda3/python.exe", lib.path = "c:/programdata/anaconda3/lib/site-packages/")
+#' python_pack(req.package = "serpentine", python.exec.path = "C:/ProgramData/Anaconda3/python.exe", lib.path = "c:/programdata/anaconda3/lib/site-packages/")
 #' 
 #' 
 #' # another example of error message
 #' 
-#' # fun_python_pack(req.package = "serpentine", lib.path = "blablabla")
+#' # python_pack(req.package = "serpentine", lib.path = "blablabla")
 #' @export
-fun_python_pack <- function(
+python_pack <- function(
         req.package, 
         python.exec.path = NULL, 
         lib.path = NULL, 
@@ -66,8 +66,8 @@ fun_python_pack <- function(
     # end check of R.lib.path
     # cuteDev required function checking
     req.function <- c(
-        "fun_check",
-        "fun_pack"
+        "check",
+        "pack"
     )
     tempo <- NULL
     for(i1 in req.function){
@@ -101,9 +101,9 @@ fun_python_pack <- function(
     text.check <- NULL #
     checked.arg.names <- NULL # for function debbuging: used by r_debugging_tools
     ee <- expression(arg.check <- c(arg.check, tempo$problem) , text.check <- c(text.check, tempo$text) , checked.arg.names <- c(checked.arg.names, tempo$object.name))
-    tempo <- fun_check(data = req.package, class = "character", fun.name = function.name) ; eval(ee)
+    tempo <- check(data = req.package, class = "character", fun.name = function.name) ; eval(ee)
     if( ! is.null(python.exec.path)){
-        tempo <- fun_check(data = python.exec.path, class = "character", length = 1, fun.name = function.name) ; eval(ee)
+        tempo <- check(data = python.exec.path, class = "character", length = 1, fun.name = function.name) ; eval(ee)
         if(tempo$problem == FALSE){
             if( ! all(file.exists(python.exec.path), na.rm = TRUE)){ # separation to avoid the problem of tempo$problem == FALSE and python.exec.path == NA
                 tempo.cat <- paste0("ERROR IN ", function.name, ": FILE PATH INDICATED IN THE python.exec.path ARGUMENT DOES NOT EXISTS:\n", paste(python.exec.path, collapse = "\n"))
@@ -113,7 +113,7 @@ fun_python_pack <- function(
         }
     }
     if( ! is.null(lib.path)){
-        tempo <- fun_check(data = lib.path, class = "vector", mode = "character", fun.name = function.name) ; eval(ee)
+        tempo <- check(data = lib.path, class = "vector", mode = "character", fun.name = function.name) ; eval(ee)
         if(tempo$problem == FALSE){
             if( ! all(dir.exists(lib.path), na.rm = TRUE)){ # separation to avoid the problem of tempo$problem == FALSE and lib.path == NA
                 tempo.cat <- paste0("ERROR IN ", function.name, ": DIRECTORY PATH INDICATED IN THE lib.path ARGUMENT DOES NOT EXISTS:\n", paste(lib.path, collapse = "\n"))
@@ -123,7 +123,7 @@ fun_python_pack <- function(
         }
     }
     if( ! is.null(R.lib.path)){
-        tempo <- fun_check(data = R.lib.path, class = "character", fun.name = function.name) ; eval(ee)
+        tempo <- check(data = R.lib.path, class = "character", fun.name = function.name) ; eval(ee)
         if(tempo$problem == FALSE){
             if( ! all(dir.exists(R.lib.path), na.rm = TRUE)){ # separation to avoid the problem of tempo$problem == FALSE and R.lib.path == NA
                 tempo.cat <- paste0("ERROR IN ", function.name, ": DIRECTORY PATH INDICATED IN THE R.lib.path ARGUMENT DOES NOT EXISTS:\n", paste(R.lib.path, collapse = "\n"))
@@ -138,7 +138,7 @@ fun_python_pack <- function(
         }
     }
     # check with r_debugging_tools
-    # source("C:/Users/Gael/Documents/Git_versions_to_use/debugging_tools_for_r_dev-v1.7/r_debugging_tools-v1.7.R") ; eval(parse(text = str_basic_arg_check_dev)) ; eval(parse(text = str_arg_check_with_fun_check_dev)) # activate this line and use the function (with no arguments left as NULL) to check arguments status and if they have been checked using fun_check()
+    # source("C:/Users/Gael/Documents/Git_versions_to_use/debugging_tools_for_r_dev-v1.7/r_debugging_tools-v1.7.R") ; eval(parse(text = str_basic_arg_check_dev)) ; eval(parse(text = str_arg_check_with_check_dev)) # activate this line and use the function (with no arguments left as NULL) to check arguments status and if they have been checked using check()
     # end check with r_debugging_tools
     # end argument primary checking
     
@@ -171,7 +171,7 @@ fun_python_pack <- function(
     # end second round of checking and data preparation
     
     # package checking
-    fun_pack(req.package = "reticulate", lib.path = R.lib.path)
+    pack(req.package = "reticulate", lib.path = R.lib.path)
     # end package checking
     # main code
     if(is.null(python.exec.path)){
