@@ -1,15 +1,3 @@
-######## fun_pack() #### check if R packages are present and import into the working environment
-## -> GitHub
-
-# todo list check OK
-# Check r_debugging_tools-v1.4.R 
-# Check fun_test() 20201107 (see cute_checks.docx)
-# example sheet 
-# check all and any OK
-# -> clear to go Apollo
-# -> transferred into the cute package
-
-
 #' @title fun_pack
 #' @description
 #' Check if the specified R packages are present in the computer and import them into the working environment.
@@ -79,10 +67,6 @@ fun_pack <- function(
     # end package checking
     # check of the required function from the required packages
     # end check of the required function from the required packages
-
-
-    
-    
     
     
     # argument primary checking

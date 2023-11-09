@@ -1,15 +1,4 @@
-######## fun_get_message() #### return error/warning/other messages of an expression (that can be exported)
-## -> GitHub
-
-# todo list check OK
-# Check r_debugging_tools-v1.4.R 
-# Check fun_test() 20201107 (see cute_checks.docx) 
-# example sheet 
-# check all and any OK
-# -> clear to go Apollo
-# -> transferred into the cute package
-
-#' @title fun_get_message
+#' @title get_message
 #' @description
 #' Evaluate an instruction written between "" and return the first of the error, or warning or standard (non error non warning) messages if ever exist.
 #' 
@@ -29,16 +18,16 @@
 #' 
 #' REQUIRED FUNCTIONS FROM CUTE_LITTLE_R_FUNCTION
 #' 
-#' fun_check()
+#' check()
 #' 
 #' 
 #' WARNINGS
 #' 
 #' Only the first message is returned.
 #' 
-#' Always use the env argument when fun_get_message() is used inside functions.
+#' Always use the env argument when get_message() is used inside functions.
 #' 
-#' The function does not prevent printing if print() is used inside the instruction tested. To prevent that, use tempo <- capture.output(error <- fun_get_message(data = "fun_check(data = 'a', class = mean, neg.values = FALSE, print = TRUE)")). The return of fun_get_message() is assigned into error and the printed messages are captured by capture.output() and assigned into tempo. See the examples.
+#' The function does not prevent printing if print() is used inside the instruction tested. To prevent that, use tempo <- capture.output(error <- get_message(data = "check(data = 'a', class = mean, neg.values = FALSE, print = TRUE)")). The return of get_message() is assigned into error and the printed messages are captured by capture.output() and assigned into tempo. See the examples.
 #' 
 #' 
 #' REQUIRED PACKAGES
@@ -48,30 +37,30 @@
 #' 
 #' REQUIRED FUNCTIONS FROM CUTE_LITTLE_R_FUNCTION
 #' 
-#' fun_check()
-#' fun_pack()
+#' check()
+#' pack()
 #'
 #' @examples
-#' fun_get_message(data = "wilcox.test(c(1,1,3), c(1, 2, 4), paired = TRUE)", kind = "error", print.no = TRUE, text = "IN A")
+#' get_message(data = "wilcox.test(c(1,1,3), c(1, 2, 4), paired = TRUE)", kind = "error", print.no = TRUE, text = "IN A")
 #' 
-#' fun_get_message(data = "wilcox.test(c(1,1,3), c(1, 2, 4), paired = TRUE)", kind = "warning", print.no = TRUE, text = "IN A")
+#' get_message(data = "wilcox.test(c(1,1,3), c(1, 2, 4), paired = TRUE)", kind = "warning", print.no = TRUE, text = "IN A")
 #' 
-#' fun_get_message(data = "wilcox.test(c(1,1,3), c(1, 2, 4), paired = TRUE)", kind = "message", print.no = TRUE, text = "IN A")
+#' get_message(data = "wilcox.test(c(1,1,3), c(1, 2, 4), paired = TRUE)", kind = "message", print.no = TRUE, text = "IN A")
 #' 
-#' fun_get_message(data = "wilcox.test()", kind = "error", print.no = TRUE, text = "IN A")
+#' get_message(data = "wilcox.test()", kind = "error", print.no = TRUE, text = "IN A")
 #' 
-#' fun_get_message(data = "sum(1)", kind = "error", print.no = TRUE, text = "IN A")
+#' get_message(data = "sum(1)", kind = "error", print.no = TRUE, text = "IN A")
 #' 
-#' fun_get_message(data = "message('ahah')", kind = "error", print.no = TRUE, text = "IN A")
+#' get_message(data = "message('ahah')", kind = "error", print.no = TRUE, text = "IN A")
 #' 
-#' fun_get_message(data = "message('ahah')", kind = "message", print.no = TRUE, text = "IN A")
+#' get_message(data = "message('ahah')", kind = "message", print.no = TRUE, text = "IN A")
 #' 
-#' fun_get_message(data = "ggplot(data = data.frame(X = 1:10, stringsAsFactors = TRUE), mapping = aes(x = X)) + geom_histogram()", kind = "message", print.no = TRUE, text = "IN FUNCTION 1")
+#' get_message(data = "ggplot(data = data.frame(X = 1:10, stringsAsFactors = TRUE), mapping = aes(x = X)) + geom_histogram()", kind = "message", print.no = TRUE, text = "IN FUNCTION 1")
 #' 
 #' set.seed(1) ; 
 #' obs1 <- data.frame(Time = c(rnorm(10), rnorm(10) + 2), 
 #' Group1 = rep(c("G", "H"), each = 10), stringsAsFactors = TRUE) ; 
-#' fun_get_message(data = 'fun_gg_boxplot(data = obs1, y = "Time", categ = "Group1")', 
+#' get_message(data = 'gg_boxplot(data = obs1, y = "Time", categ = "Group1")', 
 #' kind = "message", print.no = TRUE, text = "IN FUNCTION 1")
 #' 
 #' @importFrom ggplot2 ggplot_build
@@ -82,7 +71,7 @@
 #' @importFrom utils capture.output
 #' @importFrom utils find
 #' @export
-fun_get_message <- function(
+get_message <- function(
         data, 
         kind = "error", 
         header = TRUE, 
@@ -93,7 +82,7 @@ fun_get_message <- function(
     # DEBUGGING
     # data = "wilcox.test(c(1,1,3), c(1, 2, 4), paired = TRUE)" ; kind = "warning" ; header = TRUE ; print.no = FALSE ; text = NULL ; env = NULL # for function debugging
     # data = "sum(1)" ; kind = "warning" ; header = TRUE ; print.no = FALSE ; text = NULL ; env = NULL  # for function debugging
-    # set.seed(1) ; obs1 <- data.frame(Time = c(rnorm(10), rnorm(10) + 2), Group1 = rep(c("G", "H"), each = 10), stringsAsFactors = TRUE) ; data = 'fun_gg_boxplot(data1 = obs1, y = "Time", categ = "Group1")' ; kind = "warning" ; header = TRUE ; print.no = FALSE ; text = NULL ; env = NULL  # for function debugging
+    # set.seed(1) ; obs1 <- data.frame(Time = c(rnorm(10), rnorm(10) + 2), Group1 = rep(c("G", "H"), each = 10), stringsAsFactors = TRUE) ; data = 'gg_boxplot(data1 = obs1, y = "Time", categ = "Group1")' ; kind = "warning" ; header = TRUE ; print.no = FALSE ; text = NULL ; env = NULL  # for function debugging
     # data = "message('ahah')" ; kind = "error" ; header = TRUE ; print.no = TRUE ; text = "IN A" ; env = NULL 
     # data = 'ggplot2::ggplot(data = data.frame(X = "a", stringsAsFactors = TRUE), mapping = ggplot2::aes(x = X)) + ggplot2::geom_histogram()' ; kind = "message" ; header = TRUE ; print.no = FALSE ; text = NULL # for function debugging
     # data = 'ggplot2::ggplot(data = data.frame(X = "a", stringsAsFactors = TRUE), mapping = ggplot2::aes(x = X)) + ggplot2::geom_histogram()' ; kind = "warning" ; header = TRUE ; print.no = FALSE ; text = NULL # for function debugging
@@ -109,7 +98,7 @@ fun_get_message <- function(
     # end check of lib.path
     # cuteDev required function checking
     req.function <- c(
-        "fun_check"
+        "check"
     )
     tempo <- NULL
     for(i1 in req.function){
@@ -123,7 +112,7 @@ fun_get_message <- function(
     }
     # end cutedev required function checking
     # check of other required packages
-    fun_pack(req.package = c(
+    pack(req.package = c(
         "ggplot2"
     ), load = TRUE, lib.path = NULL) # load = TRUE because otherwise, the "# check of the required function from the required packages" section does not work
     # end check of other required packages
@@ -142,29 +131,29 @@ fun_get_message <- function(
         stop(paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in stop() to be able to add several messages between ==
     }
     # end arg with no default values
-    # argument checking with fun_check()
+    # argument checking with check()
     arg.check <- NULL #
     text.check <- NULL #
     checked.arg.names <- NULL # for function debbuging: used by r_debugging_tools
     ee <- expression(arg.check <- c(arg.check, tempo$problem) , text.check <- c(text.check, tempo$text) , checked.arg.names <- c(checked.arg.names, tempo$object.name))
-    tempo <- fun_check(data = data, class = "vector", typeof = "character", length = 1, fun.name = function.name) ; eval(ee)
-    tempo <- fun_check(data = kind, options = c("error", "warning", "message"), length = 1, fun.name = function.name) ; eval(ee)
-    tempo <- fun_check(data = header, class = "vector", typeof = "logical", length = 1, fun.name = function.name) ; eval(ee)
-    tempo <- fun_check(data = print.no, class = "vector", typeof = "logical", length = 1, fun.name = function.name) ; eval(ee)
+    tempo <- check(data = data, class = "vector", typeof = "character", length = 1, fun.name = function.name) ; eval(ee)
+    tempo <- check(data = kind, options = c("error", "warning", "message"), length = 1, fun.name = function.name) ; eval(ee)
+    tempo <- check(data = header, class = "vector", typeof = "logical", length = 1, fun.name = function.name) ; eval(ee)
+    tempo <- check(data = print.no, class = "vector", typeof = "logical", length = 1, fun.name = function.name) ; eval(ee)
     if( ! is.null(text)){
-        tempo <- fun_check(data = text, class = "character", length = 1, fun.name = function.name) ; eval(ee)
+        tempo <- check(data = text, class = "character", length = 1, fun.name = function.name) ; eval(ee)
     }
     if( ! is.null(env)){
-        tempo <- fun_check(data = env, class = "environment", fun.name = function.name) ; eval(ee) #
+        tempo <- check(data = env, class = "environment", fun.name = function.name) ; eval(ee) #
     }
     if( ! is.null(arg.check)){
         if(any(arg.check, na.rm = TRUE) == TRUE){
             stop(paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) #
         }
     }
-    # end argument checking with fun_check()
+    # end argument checking with check()
     # check with r_debugging_tools
-    # source("C:/Users/yhan/Documents/Git_projects/debugging_tools_for_r_dev/r_debugging_tools.R") ; eval(parse(text = str_basic_arg_check_dev)) ; eval(parse(text = str_arg_check_with_fun_check_dev)) # activate this line and use the function (with no arguments left as NULL) to check arguments status and if they have been checked using fun_check()
+    # source("C:/Users/yhan/Documents/Git_projects/debugging_tools_for_r_dev/r_debugging_tools.R") ; eval(parse(text = str_basic_arg_check_dev)) ; eval(parse(text = str_arg_check_with_check_dev)) # activate this line and use the function (with no arguments left as NULL) to check arguments status and if they have been checked using check()
     # end check with r_debugging_tools
     # end argument primary checking
     

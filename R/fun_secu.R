@@ -1,14 +1,3 @@
-######## fun_secu() #### verif that local variables are not present in other envs
-## -> GitHub
-
-# todo list check OK
-# Check r_debugging_tools-v1.4.R
-# Check fun_test() 20201107 (see cute_checks.docx)
-# example sheet
-# check all and any OK
-# -> clear to go Apollo
-# -> transferred into the cute package
-
 #' @title secu
 #' @description
 #' Verify that object names in the environment defined by the pos parameter are identical or not to object names in the above environment (following R Scope). This can be used to verify that names used for objects inside a function or in the working environment do not override names of objects already present in the above R environments, following the R scope.

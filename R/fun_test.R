@@ -1,5 +1,4 @@
 ######## fun_test() #### test combinations of argument values of a function and return errors (and graphs)
-## -> GitHub
 
 # add traceback https://stackoverflow.com/questions/47414119/how-to-read-a-traceback-in-r
 
@@ -7,14 +6,6 @@
 # in if(exists(env.name, where = -1)){ # verify if still ok when fun_test() is inside a function
 # was in red : assign("val", val, envir = get(env.name, env = sys.nframe(), inherit = FALSE)) # var replaced by val
 # was in red : # after return() ? # can we put this after return ? I do not think so
-
-# todo list check OK
-# Check r_debugging_tools-v1.4.R 
-# Check fun_test() 20201107 (see cute_checks.docx)
-# example sheet 
-# check all and any OK
-# -> clear to go Apollo
-# -> transferred into the cute package
 
 #' @title test
 #' @description

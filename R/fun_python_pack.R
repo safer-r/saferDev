@@ -1,14 +1,3 @@
-######## python_pack() #### check if python packages are present
-## -> GitHub
-
-# todo list check OK
-# Check r_debugging_tools-v1.4.R 
-# Check fun_test() 20201107 (see cute_checks.docx) 
-# example sheet 
-# check all and any OK
-# -> clear to go Apollo
-# -> transferred into the cute package
-
 #' @title python_pack
 #' @description
 #' Check if the specified python packages are present in the computer (no import).
