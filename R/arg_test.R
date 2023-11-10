@@ -1,12 +1,3 @@
-######## test() #### test combinations of argument values of a function and return errors (and graphs)
-
-# add traceback https://stackoverflow.com/questions/47414119/how-to-read-a-traceback-in-r
-
-# remove cute.path argument everywhere in this function. But check that cuteDev packages are accessible in the environment of parallelization
-# in if(exists(env.name, where = -1)){ # verify if still ok when test() is inside a function
-# was in red : assign("val", val, envir = get(env.name, envir = sys.nframe(), inherits = FALSE)) # var replaced by val
-# was in red : # after return() ? # can we put this after return ? I do not think so
-
 #' @title test
 #' @description
 #' Test combinations of argument values of a function.

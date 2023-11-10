@@ -1,5 +1,3 @@
-# Problem with 1D tables : names over the table not printed. In addition, see how the 2D tables are printed. 
-
 #' @title report
 #' @description
 #' Log file function: print a character string or a data object into a same output file.
