@@ -51,8 +51,6 @@
 #' @examples
 #' test <- matrix(1:3)
 #' check(data = test, print = TRUE, class = "vector", mode = "numeric")
-#' @seealso
-#' \code{\link[docs/articles/devCute.html]{Page pkgdown html}} : Page of explication.
 #' @export
 check <- function(
         data, 
