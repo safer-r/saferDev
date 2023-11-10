@@ -1,4 +1,4 @@
-#' @title pack
+#' @title pkg_check
 #' @description
 #' Check if the specified R packages are present in the computer and import them into the working environment.
 #' @param req.package Character vector of package names to import.
@@ -16,13 +16,13 @@
 #' check()
 #' 
 #' @examples
-#' # pack(req.package = "nopackage") # should return an error
-#' pack(req.package = "ggplot2")
-#' pack(req.package = "ggplot2", lib.path = "C:/Users/yhan/AppData/Local/R/win-library/4.3") 
+#' # pkg_check(req.package = "nopackage") # should return an error
+#' pkg_check(req.package = "ggplot2")
+#' pkg_check(req.package = "ggplot2", lib.path = "C:/Users/yhan/AppData/Local/R/win-library/4.3") 
 #' # should return an error if the lib.path argument is not an existing directory
 #' @importFrom utils installed.packages
 #' @export
-pack <- function(
+pkg_check <- function(
         req.package, 
         load = FALSE, 
         lib.path = NULL
