@@ -17,7 +17,7 @@ test(
   res.path = NULL,
   lib.path = NULL,
   cute.path =
-    "C:\\\\Users\\\\yhan\\\\Documents\\\\Git_projects\\\\cute_little_R_functions\\\\cute_little_R_functions.R"
+    "C:/Users/yhan/Documents/Git_projects/cute_little_R_functions/cute_little_R_functions.R"
 )
 }
 \arguments{

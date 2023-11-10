@@ -55,7 +55,7 @@ report <- function(
     )
     tempo <- NULL
     for(i1 in req.function){
-        if(length(find(i1, mode = "function")) == 0L){
+        if(length(utils::find(i1, mode = "function")) == 0L){
             tempo <- c(tempo, i1)
         }
     }

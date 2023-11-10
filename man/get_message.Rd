@@ -51,7 +51,7 @@ Only the first message is returned.
 
 Always use the env argument when get_message() is used inside functions.
 
-The function does not prevent printing if print() is used inside the instruction tested. To prevent that, use tempo <- capture.output(error <- get_message(data = "check(data = 'a', class = mean, neg.values = FALSE, print = TRUE)")). The return of get_message() is assigned into error and the printed messages are captured by capture.output() and assigned into tempo. See the examples.
+The function does not prevent printing if print() is used inside the instruction tested. To prevent that, use tempo <- utils::capture.output(error <- get_message(data = "check(data = 'a', class = mean, neg.values = FALSE, print = TRUE)")). The return of get_message() is assigned into error and the printed messages are captured by utils::capture.output() and assigned into tempo. See the examples.
 
 
 REQUIRED PACKAGES

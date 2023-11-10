@@ -27,7 +27,7 @@
 #' 
 #' Always use the env argument when get_message() is used inside functions.
 #' 
-#' The function does not prevent printing if print() is used inside the instruction tested. To prevent that, use tempo <- capture.output(error <- get_message(data = "check(data = 'a', class = mean, neg.values = FALSE, print = TRUE)")). The return of get_message() is assigned into error and the printed messages are captured by capture.output() and assigned into tempo. See the examples.
+#' The function does not prevent printing if print() is used inside the instruction tested. To prevent that, use tempo <- utils::capture.output(error <- get_message(data = "check(data = 'a', class = mean, neg.values = FALSE, print = TRUE)")). The return of get_message() is assigned into error and the printed messages are captured by utils::capture.output() and assigned into tempo. See the examples.
 #' 
 #' 
 #' REQUIRED PACKAGES
@@ -101,7 +101,7 @@ get_message <- function(
     )
     tempo <- NULL
     for(i1 in req.function){
-        if(length(find(i1, mode = "function")) == 0L){
+        if(length(utils::find(i1, mode = "function")) == 0L){
             tempo <- c(tempo, i1)
         }
     }
@@ -194,9 +194,9 @@ get_message <- function(
     # end second round of checking and data preparation
     
     # main code
-    pdf(file = NULL) # send plots into a NULL file, no pdf file created
-    window.nb <- dev.cur()
-    invisible(dev.set(window.nb))
+    grDevices::pdf(file = NULL) # send plots into a NULL file, no pdf file created
+    window.nb <- grDevices::dev.cur()
+    invisible(grDevices::dev.set(window.nb))
     # last warning cannot be used because suppressWarnings() does not modify last.warning present in the base evironment (created at first warning in a new R session), or warnings() # to reset the warning history : unlockBinding("last.warning", baseenv()) ; assign("last.warning", NULL, envir = baseenv())
     output <- NULL
     tempo.error <- try(suppressMessages(suppressWarnings(eval(parse(text = data), envir = if(is.null(env)){parent.frame()}else{env}))), silent = TRUE) # get error message, not warning or messages
@@ -240,7 +240,7 @@ get_message <- function(
         }
         tempo.warn <- fun.warning.capture(eval(parse(text = data), envir = if(is.null(env)){parent.frame()}else{env}))
         # warn.options.ini <- options()$warn ; options(warn = 1) ; tempo.warn <- utils::capture.output({tempo <- suppressMessages(eval(parse(text = data), envir = if(is.null(env)){parent.frame()}else{env}))}, type = "message") ; options(warn = warn.options.ini) # this recover warnings not messages and not errors but does not work in all enviroments
-        tempo.message <- capture.output({
+        tempo.message <- utils::capture.output({
             tempo <- suppressMessages(suppressWarnings(eval(parse(text = data), envir = if(is.null(env)){parent.frame()}else{env})))
             if(any(class(tempo) %in% c("gg", "ggplot"))){ # %in% never returns NA
                 tempo <- ggplot2::ggplot_build(tempo)
@@ -251,7 +251,7 @@ get_message <- function(
         if(kind == "warning" & ! is.null(tempo.warn)){
             if(length(tempo.warn) > 0){ # to avoid character(0)
                 if( ! any(sapply(tempo.warn, FUN = "grepl", pattern = "() FUNCTION:$"), na.rm = TRUE)){
-                    tempo.warn <- paste(unique(tempo.warn), collapse = "\n") # if FALSE, means that the tested data is a special function. If TRUE, means that the data is a standard function. In that case, the output of capture.output() is two strings per warning messages: if several warning messages -> identical first string, which is removed in next messages by unique()
+                    tempo.warn <- paste(unique(tempo.warn), collapse = "\n") # if FALSE, means that the tested data is a special function. If TRUE, means that the data is a standard function. In that case, the output of utils::capture.output() is two strings per warning messages: if several warning messages -> identical first string, which is removed in next messages by unique()
                 }else{
                     tempo.warn <- paste(tempo.warn, collapse = "\n")
                 }
@@ -289,7 +289,7 @@ get_message <- function(
             output <- paste0("NO STANDARD (NON ERROR AND NON WARNING) MESSAGE REPORTED", ifelse(is.null(text), "", " "), text)
         } # no need else{} here because output is already NULL at first
     }
-    invisible(dev.off(window.nb)) # end send plots into a NULL file
+    invisible(grDevices::dev.off(window.nb)) # end send plots into a NULL file
     # output
     # warning output
     # end warning output

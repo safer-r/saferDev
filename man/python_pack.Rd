@@ -50,9 +50,10 @@ for python 3.7. Previous versions return an error "Error in sys$stdout$flush() :
 
 
 # example without error message 
-# (require the installation of the python serpentine package from https://github.com/koszullab/serpentine
+# (require the installation of the python serpentine package 
+# from https://github.com/koszullab/serpentine
 
-python_pack(req.package = "serpentine")
+# python_pack(req.package = "serpentine")
 
 
 # another example of error message
