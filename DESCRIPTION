@@ -1,9 +1,21 @@
 Package: cuteDev
 Type: Package
-Title: What the package does (short line)
+Title: Functions for analysis and development
 Version: 1.0
 Date: 2023-11-09
-Author: Who wrote it
-Maintainer: Who to complain to <yourfault@somewhere.net>
-Description: More about what it does (maybe more than one line)
-License: What license is it under?
+Authors@R: c(
+    person("Gaël", "Millot", , "gael.millot@pasteur.fr", role = c("aut", "cre")),
+    person("Yushi", "Han", , "yushi.han2000@gmail.com", role = "aut")
+  )
+Author: Gaël Millot [aut, cre], Yushi Han [aut]
+Encoding: UTF-8
+Maintainer: Gaël Millot <gael.millot@pasteur.fr>
+Description: Functions for object analysis, importing, exporting results
+    and for printing.
+License: GPL-3
+Imports: 
+    ggplot2,
+    lubridate,
+    pdftools,
+    reticulate
+RoxygenNote: 7.2.3

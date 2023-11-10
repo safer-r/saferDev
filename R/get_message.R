@@ -41,11 +41,14 @@
 #' pack()
 #'
 #' @examples
-#' get_message(data = "wilcox.test(c(1,1,3), c(1, 2, 4), paired = TRUE)", kind = "error", print.no = TRUE, text = "IN A")
+#' get_message(data = "wilcox.test(c(1,1,3), c(1, 2, 4), paired = TRUE)", kind = "error", 
+#' print.no = TRUE, text = "IN A")
 #' 
-#' get_message(data = "wilcox.test(c(1,1,3), c(1, 2, 4), paired = TRUE)", kind = "warning", print.no = TRUE, text = "IN A")
+#' get_message(data = "wilcox.test(c(1,1,3), c(1, 2, 4), paired = TRUE)", kind = "warning", 
+#' print.no = TRUE, text = "IN A")
 #' 
-#' get_message(data = "wilcox.test(c(1,1,3), c(1, 2, 4), paired = TRUE)", kind = "message", print.no = TRUE, text = "IN A")
+#' get_message(data = "wilcox.test(c(1,1,3), c(1, 2, 4), paired = TRUE)", kind = "message", 
+#' print.no = TRUE, text = "IN A")
 #' 
 #' get_message(data = "wilcox.test()", kind = "error", print.no = TRUE, text = "IN A")
 #' 
@@ -55,7 +58,9 @@
 #' 
 #' get_message(data = "message('ahah')", kind = "message", print.no = TRUE, text = "IN A")
 #' 
-#' get_message(data = "ggplot(data = data.frame(X = 1:10, stringsAsFactors = TRUE), mapping = aes(x = X)) + geom_histogram()", kind = "message", print.no = TRUE, text = "IN FUNCTION 1")
+#' get_message(data = "ggplot(data = data.frame(X = 1:10, stringsAsFactors = TRUE), 
+#' mapping = aes(x = X)) + geom_histogram()", kind = "message", print.no = TRUE, 
+#' text = "IN FUNCTION 1")
 #' 
 #' set.seed(1) ; 
 #' obs1 <- data.frame(Time = c(rnorm(10), rnorm(10) + 2), 
@@ -64,12 +69,6 @@
 #' kind = "message", print.no = TRUE, text = "IN FUNCTION 1")
 #' 
 #' @importFrom ggplot2 ggplot_build
-#' @importFrom grDevices dev.cur
-#' @importFrom grDevices dev.off
-#' @importFrom grDevices dev.set
-#' @importFrom grDevices pdf
-#' @importFrom utils capture.output
-#' @importFrom utils find
 #' @export
 get_message <- function(
         data, 

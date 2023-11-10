@@ -18,7 +18,8 @@
 #' @examples
 #' # pack(req.package = "nopackage") # should return an error
 #' pack(req.package = "ggplot2")
-#' pack(req.package = "ggplot2", lib.path = "C:/Users/yhan/AppData/Local/R/win-library/4.3") # should return an error if the lib.path argument is not an existing directory
+#' pack(req.package = "ggplot2", lib.path = "C:/Users/yhan/AppData/Local/R/win-library/4.3") 
+#' # should return an error if the lib.path argument is not an existing directory
 #' @importFrom utils installed.packages
 #' @export
 pack <- function(

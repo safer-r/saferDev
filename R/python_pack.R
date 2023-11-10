@@ -22,15 +22,19 @@
 #' WARNINGS
 #' 
 #' for python 3.7. Previous versions return an error "Error in sys$stdout$flush() : attempt to apply non-function"
+#' @importFrom reticulate py_run_string
+#' @importFrom reticulate use_python
+#' @importFrom reticulate import_from_path
 #' @examples
 #' # example of error message
 #' 
 #' # python_pack(req.package = "nopackage")
 #' 
 #' 
-#' # example without error message (require the installation of the python serpentine package from https://github.com/koszullab/serpentine
+#' # example without error message 
+#' # (require the installation of the python serpentine package from https://github.com/koszullab/serpentine
 #' 
-#' python_pack(req.package = "serpentine", python.exec.path = "C:/ProgramData/Anaconda3/python.exe", lib.path = "c:/programdata/anaconda3/lib/site-packages/")
+#' python_pack(req.package = "serpentine")
 #' 
 #' 
 #' # another example of error message

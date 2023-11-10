@@ -54,34 +54,64 @@
 #' 
 #' REQUIRED FUNCTIONS FROM CUTE_LITTLE_R_FUNCTION
 #' 
-#' fun_check()
+#' check()
 #' 
-#' fun_get_message()
+#' get_message()
 #' 
-#' fun_pack()
+#' pack()
 #' 
 #' 
 #' WARNINGS
 #' 
 #' Limited to 43 arguments with at least 2 values each. The total number of arguments tested can be more if the additional arguments have a single value. The limit is due to nested "for" loops (https://stat.ethz.ch/pipermail/r-help/2008-March/157341.html), but this limitation is away from the number of tests performed that would be 2^43.
+#' @importFrom lubridate seconds_to_period
+#' @importFrom pdftools pdf_combine
 #' @examples
-#' test(fun = "unique", arg = c("x", "incomparables"), val = list(x = list(1:10, c(1,1,2,8), NA), incomparable = c(TRUE, FALSE, NA)))
+#' test(fun = "unique", arg = c("x", "incomparables"), 
+#' val = list(x = list(1:10, c(1,1,2,8), NA), incomparable = c(TRUE, FALSE, NA)))
 #' 
-#' test(fun = "unique", arg = c("x", "incomparables"), val = list(x = list(1:10, c(1,1,2,8), NA), incomparable = c(TRUE, FALSE, NA)), expect.error = list(x = list(FALSE, FALSE, TRUE), incomparable = c(FALSE, FALSE, TRUE)))
+#' test(fun = "unique", arg = c("x", "incomparables"), 
+#' val = list(x = list(1:10, c(1,1,2,8), NA), 
+#' incomparable = c(TRUE, FALSE, NA)), expect.error = list(x = list(FALSE, FALSE, TRUE), 
+#' incomparable = c(FALSE, FALSE, TRUE)))
 #' 
-#' test(fun = "unique", arg = c("x", "incomparables"), val = list(x = list(1:10, c(1,1,2,8), NA), incomparable = c(TRUE, FALSE, NA)), expect.error = list(x = list(FALSE, FALSE, TRUE), incomparable = c(FALSE, FALSE, TRUE)), export = TRUE, res.path = getwd())
+#' test(fun = "unique", arg = c("x", "incomparables"), 
+#' val = list(x = list(1:10, c(1,1,2,8), NA), incomparable = c(TRUE, FALSE, NA)), 
+#' expect.error = list(x = list(FALSE, FALSE, TRUE), incomparable = c(FALSE, FALSE, TRUE)), 
+#' export = TRUE, res.path = getwd())
 #' 
-#' test(fun = "fun_round", arg = c("data", "dec.nb", "after.lead.zero"), val = list(L1 = list(c(1, 1.0002256, 1.23568), "a", NA), L2 = list(2, c(1,3), NA), L3 = c(TRUE, FALSE, NA)))
+#' test(fun = "round", arg = c("data", "dec.nb", "after.lead.zero"), 
+#' val = list(L1 = list(c(1, 1.0002256, 1.23568), "a", NA), 
+#' L2 = list(2, c(1,3), NA), L3 = c(TRUE, FALSE, NA)))
 #' 
-#' test(fun = "plot", arg = c("x", "y"), val = list(x = list(1:10, 12:13, NA, (1:10)^2), y = list(1:10, NA, NA)),  expect.error = list(x = list(FALSE, TRUE, TRUE, FALSE), y = list(FALSE, TRUE, TRUE)), parall = FALSE, thread.nb = NULL, plot.fun = TRUE, res.path = "C:\\Users\\yhan\\Desktop\\", lib.path = NULL)
+#' test(fun = "plot", arg = c("x", "y"), val = list(x = list(1:10, 12:13, NA, (1:10)^2), 
+#' y = list(1:10, NA, NA)),  expect.error = list(x = list(FALSE, TRUE, TRUE, FALSE), 
+#' y = list(FALSE, TRUE, TRUE)), parall = FALSE, thread.nb = NULL, plot.fun = TRUE, 
+#' res.path = "C:\\Users\\yhan\\Desktop\\", lib.path = NULL)
 #' 
-#' test(fun = "plot", arg = c("x", "y"), val = list(x = list(1:10, 12:13, NA, (1:10)^2), y = list(1:10, NA, NA)), parall = FALSE, thread.nb = 4, plot.fun = TRUE, res.path = "C:\\Users\\yhan\\Desktop\\", lib.path = "C:\\Program Files\\R\\R-4.3.1\\library\\")
+#' test(fun = "plot", arg = c("x", "y"), val = list(x = list(1:10, 12:13, NA, 
+#' (1:10)^2), y = list(1:10, NA, NA)), parall = FALSE, thread.nb = 4, 
+#' plot.fun = TRUE, res.path = "C:\\Users\\yhan\\Desktop\\", 
+#' lib.path = "C:\\Program Files\\R\\R-4.3.1\\library\\")
 #' 
-#' set.seed(1) ; obs1 <- data.frame(Time = c(rnorm(10), rnorm(10) + 2), Group1 = rep(c("G", "H"), each = 10), stringsAsFactors = TRUE) ; test(fun = "fun_gg_boxplot", arg = c("data1", "y", "categ"), val = list(L1 = list(L1 = obs1), L2 = list(L1 = "Time"), L3 = list(L1 = "Group1")))
+#' set.seed(1) ; 
+#' obs1 <- data.frame(Time = c(rnorm(10), rnorm(10) + 2), Group1 = rep(c("G", "H"), each = 10), 
+#' stringsAsFactors = TRUE) ; test(fun = "gg_boxplot", arg = c("data1", "y", "categ"), 
+#' val = list(L1 = list(L1 = obs1), L2 = list(L1 = "Time"), L3 = list(L1 = "Group1")))
 #' 
-#' set.seed(1) ; obs1 <- data.frame(Time = c(rnorm(10), rnorm(10) + 2), Group1 = rep(c("G", "H"), each = 10), stringsAsFactors = TRUE) ; test(fun = "fun_gg_boxplot", arg = c("data1", "y", "categ"), val = list(L1 = list(obs1), L2 = "Time", L3 = "Group1"), parall = FALSE, thread.nb = NULL, plot.fun = TRUE, res.path = "C:\\Users\\yhan\\Desktop\\", lib.path = "C:\\Program Files\\R\\R-4.3.1\\library\\")
+#' set.seed(1) ; 
+#' obs1 <- data.frame(Time = c(rnorm(10), rnorm(10) + 2), Group1 = rep(c("G", "H"), each = 10), 
+#' stringsAsFactors = TRUE) ; 
+#' test(fun = "gg_boxplot", arg = c("data1", "y", "categ"), val = list(L1 = list(obs1), 
+#' L2 = "Time", L3 = "Group1"), parall = FALSE, thread.nb = NULL, plot.fun = TRUE, 
+#' res.path = "C:\\Users\\yhan\\Desktop\\", lib.path = "C:\\Program Files\\R\\R-4.3.1\\library\\")
 #' 
-#' library(ggplot2) ; test(fun = "geom_histogram", arg = c("data", "mapping"), val = list(x = list(data.frame(X = "a", stringsAsFactors = TRUE)), y = list(ggplot2::aes(x = X))), parall = FALSE, thread.nb = NULL, plot.fun = TRUE, res.path = "C:\\Users\\yhan\\Desktop\\", lib.path = "C:\\Program Files\\R\\R-4.3.1\\library\\") # BEWARE: ggplot2::geom_histogram does not work
+#' library(ggplot2) ; test(fun = "geom_histogram", arg = c("data", "mapping"), 
+#' val = list(x = list(data.frame(X = "a", stringsAsFactors = TRUE)), 
+#' y = list(ggplot2::aes(x = X))), parall = FALSE, thread.nb = NULL, 
+#' plot.fun = TRUE, res.path = "C:\\Users\\yhan\\Desktop\\", 
+#' lib.path = "C:\\Program Files\\R\\R-4.3.1\\library\\") 
+#' # BEWARE: ggplot2::geom_histogram does not work
 #' @export
 test <- function(
         fun, 
@@ -98,11 +128,11 @@ test <- function(
         cute.path = "C:\\Users\\yhan\\Documents\\Git_projects\\cute_little_R_functions\\cute_little_R_functions.R"
 ){
     # DEBUGGING
-    # fun = "fun_get_message"; arg = c("data", "kind"); val = list(data = "ls", kind = t26_20201124); list(TRUE, c(unlist(expected.error.t26))) ; parall = FALSE ; thread.nb = NULL ; plot.fun = FALSE ; export = FALSE ; res.path = "C:\\Users\\yhan\\Desktop\\" ; lib.path = NULL ; print.count = 1 ; cute.path = "C:\\Users\\yhan\\Documents\\Git_projects\\cute_little_R_functions\\cute_little_R_functions.R"
+    # fun = "get_message"; arg = c("data", "kind"); val = list(data = "ls", kind = t26_20201124); list(TRUE, c(unlist(expected.error.t26))) ; parall = FALSE ; thread.nb = NULL ; plot.fun = FALSE ; export = FALSE ; res.path = "C:\\Users\\yhan\\Desktop\\" ; lib.path = NULL ; print.count = 1 ; cute.path = "C:\\Users\\yhan\\Documents\\Git_projects\\cute_little_R_functions\\cute_little_R_functions.R"
     # fun = "unique" ; arg = "x" ; val = list(x = list(1:10, c(1,1,2,8), NA)) ; expect.error = list(x = list(FALSE, FALSE, TRUE)) ; parall = FALSE ; thread.nb = NULL ; plot.fun = FALSE ; export = FALSE ; res.path = "C:\\Users\\gmillot\\Desktop\\" ; lib.path = NULL ; print.count = 1 ; cute.path = "C:\\Users\\gmillot\\Documents\\Git_projects\\cute_little_R_functions\\cute_little_R_functions.R" # for function debugging
     # fun = "unique" ; arg = c("x", "incomparables") ; val = list(x = list(1:10, c(1,1,2,8), NA), incomparable = c(TRUE, FALSE, NA)) ; expect.error = NULL ; parall = FALSE ; thread.nb = 2 ; plot.fun = FALSE ; export = TRUE ; res.path = "C:\\Users\\gmillot\\Desktop\\" ; lib.path = NULL ; print.count = 10 ; cute.path = "C:\\Users\\gmillot\\Documents\\Git_projects\\cute_little_R_functions\\cute_little_R_functions.R" # for function debugging
     # fun = "plot" ; arg = c("x", "y") ; val = list(x = list(1:10, 12:13, NA), y = list(1:10, NA, NA)) ; expect.error = list(x = list(FALSE, FALSE, TRUE, FALSE), y = list(FALSE, TRUE, TRUE)) ; print.count = 10 ; parall = FALSE ; thread.nb = NULL ; plot.fun = TRUE ; export = TRUE ; res.path = "C:\\Users\\gmillot\\Desktop\\" ; lib.path = NULL # for function debugging
-    # set.seed(1) ; obs1 <- data.frame(Time = c(rnorm(10), rnorm(10) + 2), Group1 = rep(c("G", "H"), each = 10), stringsAsFactors = TRUE) ; fun = "fun_gg_boxplot" ; arg = c("data1", "y", "categ") ; val = list(L1 = list(L1 = obs1), L2 = list(L1 = "Time"), L3 = list(L1 = "Group1")) ; expect.error = NULL ; print.count = 10 ; parall = FALSE ; thread.nb = NULL ; plot.fun = TRUE ; export = TRUE ; res.path = "C:\\Users\\gmillot\\Desktop\\" ; lib.path = NULL # for function debugging
+    # set.seed(1) ; obs1 <- data.frame(Time = c(rnorm(10), rnorm(10) + 2), Group1 = rep(c("G", "H"), each = 10), stringsAsFactors = TRUE) ; fun = "gg_boxplot" ; arg = c("data1", "y", "categ") ; val = list(L1 = list(L1 = obs1), L2 = list(L1 = "Time"), L3 = list(L1 = "Group1")) ; expect.error = NULL ; print.count = 10 ; parall = FALSE ; thread.nb = NULL ; plot.fun = TRUE ; export = TRUE ; res.path = "C:\\Users\\gmillot\\Desktop\\" ; lib.path = NULL # for function debugging
     # fun = "unique" ; arg = "x" ; val = list(x = list(1:3, mean)) ; expect.error = list(x = list(TRUE, TRUE)) ; parall = FALSE ; thread.nb = NULL ; plot.fun = FALSE ; export = FALSE ; res.path = "C:\\Users\\gmillot\\Desktop\\" ; lib.path = NULL ; print.count = 1 ; cute.path = "C:\\Users\\gmillot\\Documents\\Git_projects\\cute_little_R_functions\\cute_little_R_functions.R" # for function debugging
     # function name
     ini <- match.call(expand.dots = FALSE) # initial parameters
@@ -125,9 +155,9 @@ test <- function(
     # end check of lib.path
     # cuteDev required function checking
     req.function <- c(
-        "fun_check", 
-        "fun_get_message", 
-        "fun_pack"
+        "check", 
+        "get_message", 
+        "pack"
     )
     tempo <- NULL
     for(i1 in req.function){
@@ -163,16 +193,16 @@ stop(paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), 
     text.check <- NULL #
     checked.arg.names <- NULL # for function debbuging: used by r_debugging_tools
     ee <- expression(arg.check <- c(arg.check, tempo$problem) , text.check <- c(text.check, tempo$text) , checked.arg.names <- c(checked.arg.names, tempo$object.name))
-    tempo <- fun_check(data = fun, class = "vector", mode = "character", length = 1, fun.name = function.name) ; eval(ee)
-    tempo <- fun_check(data = arg, class = "vector", mode = "character", fun.name = function.name) ; eval(ee)
-    tempo <- fun_check(data = val, class = "list", na.contain = TRUE, fun.name = function.name) ; eval(ee)
+    tempo <- check(data = fun, class = "vector", mode = "character", length = 1, fun.name = function.name) ; eval(ee)
+    tempo <- check(data = arg, class = "vector", mode = "character", fun.name = function.name) ; eval(ee)
+    tempo <- check(data = val, class = "list", na.contain = TRUE, fun.name = function.name) ; eval(ee)
     if( ! is.null(expect.error)){
-        tempo <- fun_check(data = expect.error, class = "list", fun.name = function.name) ; eval(ee)
+        tempo <- check(data = expect.error, class = "list", fun.name = function.name) ; eval(ee)
     }
-    tempo <- fun_check(data = parall, class = "vector", mode = "logical", length = 1, fun.name = function.name) ; eval(ee)
+    tempo <- check(data = parall, class = "vector", mode = "logical", length = 1, fun.name = function.name) ; eval(ee)
     if(parall == TRUE){
         if( ! is.null(thread.nb)){
-            tempo <- fun_check(data = thread.nb, typeof = "integer", double.as.integer.allowed = TRUE, neg.values = FALSE, length = 1, fun.name = function.name) ; eval(ee)
+            tempo <- check(data = thread.nb, typeof = "integer", double.as.integer.allowed = TRUE, neg.values = FALSE, length = 1, fun.name = function.name) ; eval(ee)
             if(tempo$problem == FALSE & thread.nb < 1){
                 tempo.cat <- paste0("ERROR IN ", function.name, ": thread.nb PARAMETER MUST EQUAL OR GREATER THAN 1: ", thread.nb)
                 text.check <- c(text.check, tempo.cat)
@@ -180,30 +210,30 @@ stop(paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), 
             }
         }
     }
-    tempo <- fun_check(data = print.count, class = "vector", typeof = "integer", length = 1, double.as.integer.allowed = TRUE, neg.values = FALSE, fun.name = function.name) ; eval(ee)
-    tempo <- fun_check(data = plot.fun, class = "vector", mode = "logical", length = 1, fun.name = function.name) ; eval(ee)
-    tempo <- fun_check(data = export, class = "vector", mode = "logical", length = 1, fun.name = function.name) ; eval(ee)
+    tempo <- check(data = print.count, class = "vector", typeof = "integer", length = 1, double.as.integer.allowed = TRUE, neg.values = FALSE, fun.name = function.name) ; eval(ee)
+    tempo <- check(data = plot.fun, class = "vector", mode = "logical", length = 1, fun.name = function.name) ; eval(ee)
+    tempo <- check(data = export, class = "vector", mode = "logical", length = 1, fun.name = function.name) ; eval(ee)
     if( ! is.null(res.path)){
-        tempo <- fun_check(data = res.path, class = "vector", mode = "character", fun.name = function.name) ; eval(ee)
+        tempo <- check(data = res.path, class = "vector", mode = "character", fun.name = function.name) ; eval(ee)
     }
     if( ! is.null(lib.path)){
-        tempo <- fun_check(data = lib.path, class = "vector", mode = "character", fun.name = function.name) ; eval(ee)
+        tempo <- check(data = lib.path, class = "vector", mode = "character", fun.name = function.name) ; eval(ee)
     }
-    tempo <- fun_check(data = cute.path, class = "vector", typeof = "character", length = 1, fun.name = function.name) ; eval(ee)
+    tempo <- check(data = cute.path, class = "vector", typeof = "character", length = 1, fun.name = function.name) ; eval(ee)
     if( ! is.null(arg.check)){
         if(any(arg.check, na.rm = TRUE) == TRUE){
             stop(paste0("\n\n================\n\n", paste(text.check[arg.check], collapse = "\n"), "\n\n================\n\n"), call. = FALSE) #
         }
     }
-    # end using fun_check()
+    # end using check()
     # check with r_debugging_tools
-    # source("C:/Users/yhan/Documents/Git_projects/debugging_tools_for_r_dev/r_debugging_tools.R") ; eval(parse(text = str_basic_arg_check_dev)) ; eval(parse(text = str_arg_check_with_fun_check_dev)) # activate this line and use the function (with no arguments left as NULL) to check arguments status and if they have been checked using fun_check()
+    # source("C:/Users/yhan/Documents/Git_projects/debugging_tools_for_r_dev/r_debugging_tools.R") ; eval(parse(text = str_basic_arg_check_dev)) ; eval(parse(text = str_arg_check_with_check_dev)) # activate this line and use the function (with no arguments left as NULL) to check arguments status and if they have been checked using check()
     # end check with r_debugging_tools
     # end argument primary checking
     # second round of checking and data preparation
     # new environment
     env.name <- paste0("env", as.numeric(Sys.time()))
-    if(exists(env.name, where = -1)){ # verify if still ok when fun_info() is inside a function
+    if(exists(env.name, where = -1)){ # verify if still ok when info() is inside a function
         tempo.cat <- paste0("ERROR IN ", function.name, ": ENVIRONMENT env.name ALREADY EXISTS. PLEASE RERUN ONCE")
         stop(paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in stop() to be able to add several messages between ==
     }else{
@@ -266,8 +296,8 @@ stop(paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), 
         stop(paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n", ifelse(is.null(warn), "", paste0("IN ADDITION\nWARNING", ifelse(warn.count > 1, "S", ""), ":\n\n", warn))), call. = FALSE)
     }
     for(i2 in 1:base::length(val)){ # length(val) must be aequal to nb of arguments
-        tempo1 <- fun_check(data = val[[i2]], class = "vector", na.contain = TRUE, fun.name = function.name)
-        tempo2 <- fun_check(data = val[[i2]], class = "list", na.contain = TRUE, fun.name = function.name)
+        tempo1 <- check(data = val[[i2]], class = "vector", na.contain = TRUE, fun.name = function.name)
+        tempo2 <- check(data = val[[i2]], class = "list", na.contain = TRUE, fun.name = function.name)
         if(tempo1$problem == TRUE & tempo2$problem == TRUE){
             tempo.cat <- paste0("ERROR IN ", function.name, ": COMPARTMENT ", i2, " OF val ARGUMENT MUST BE A VECTOR OR A LIST")
             stop(paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n", ifelse(is.null(warn), "", paste0("IN ADDITION\nWARNING", ifelse(warn.count > 1, "S", ""), ":\n\n", warn))), call. = FALSE)
@@ -294,8 +324,8 @@ stop(paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), 
             stop(paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n", ifelse(is.null(warn), "", paste0("IN ADDITION\nWARNING", ifelse(warn.count > 1, "S", ""), ":\n\n", warn))), call. = FALSE)
         }
         for(i3 in 1:base::length(expect.error)){
-            tempo1 <- fun_check(data = expect.error[[i3]], class = "vector",  mode = "logical", fun.name = function.name)
-            tempo2 <- fun_check(data =  expect.error[[i3]], class = "list", fun.name = function.name)
+            tempo1 <- check(data = expect.error[[i3]], class = "vector",  mode = "logical", fun.name = function.name)
+            tempo2 <- check(data =  expect.error[[i3]], class = "list", fun.name = function.name)
             if(tempo1$problem == TRUE & tempo2$problem == TRUE){
                 tempo.cat <- paste0("ERROR IN ", function.name, ": COMPARTMENT ", i3, " OF expect.error ARGUMENT MUST BE TRUE OR FALSE")
                 stop(paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n", ifelse(is.null(warn), "", paste0("IN ADDITION\nWARNING", ifelse(warn.count > 1, "S", ""), ":\n\n", warn))), call. = FALSE)
@@ -342,7 +372,7 @@ stop(paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), 
     }
     if(parall == TRUE){
         if(grepl(x = cute.path, pattern = "^http")){
-            tempo.error1 <- any(grepl(x = fun_get_message(data = "source(cute.path)", kind = "error", header = FALSE, env = get(env.name, env = sys.nframe(), inherit = FALSE)), pattern = "^[Ee]rror"), na.rm = TRUE)
+            tempo.error1 <- any(grepl(x = get_message(data = "source(cute.path)", kind = "error", header = FALSE, env = get(env.name, env = sys.nframe(), inherit = FALSE)), pattern = "^[Ee]rror"), na.rm = TRUE)
             tempo.error2 <- FALSE
         }else{
             tempo.error1 <- FALSE
@@ -359,7 +389,7 @@ stop(paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), 
     # end second round of checking and data preparation
     
     # declaration of special plot functions
-    sp.plot.fun <- c("fun_gg_scatter", "fun_gg_bar", "fun_gg_boxplot")
+    sp.plot.fun <- c("gg_scatter", "gg_bar", "gg_boxplot")
     # end declaration of special plot functions
     # main code
     ini.warning.length <- base::options()$warning.length
@@ -500,14 +530,14 @@ count <- count + 1
 print.count.loop <- print.count.loop + 1
 arg.values.print <- eval(parse(text = arg.values)) # recover the list of the i1 compartment
 for(j3 in 1:base::length(arg.values.print)){ # WARNING: do not use i1, i2 etc., here because already in loop.string
-tempo.capt <- capture.output(tempo.error <- fun_get_message(data =  paste0("paste(arg.values.print[[", j3, "]])"), kind = "error", header = FALSE, print.no = FALSE, env = get(env.name, env = sys.nframe(), inherit = FALSE))) # collapsing arg.values sometimes does not work (with function for instance)
+tempo.capt <- capture.output(tempo.error <- get_message(data =  paste0("paste(arg.values.print[[", j3, "]])"), kind = "error", header = FALSE, print.no = FALSE, env = get(env.name, env = sys.nframe(), inherit = FALSE))) # collapsing arg.values sometimes does not work (with function for instance)
 if( ! is.null(tempo.error)){
 arg.values.print[[j3]] <- paste0("SPECIAL VALUE OF CLASS ", base::class(arg.values.print[[j3]]), " AND TYPE ", base::typeof(arg.values.print[[j3]]))
 }
 }
 data <- rbind(data, as.character(sapply(arg.values.print, FUN = "paste", collapse = " ")), stringsAsFactors = FALSE) # each colum is a test
-tempo.capt <- capture.output(tempo.try.error <- fun_get_message(data = eval(parse(text = fun.test2)), kind = "error", header = FALSE, print.no = FALSE, env = get(env.name, env = sys.nframe(), inherit = FALSE))) # data argument needs a character string but eval(parse(text = fun.test2)) provides it (eval parse replace the i1, i2, etc., by the correct values, meaning that only val is required in the env.name environment)
-tempo.capt <- capture.output(tempo.try.warning <- fun_get_message(data = eval(parse(text = fun.test2)), kind = "warning", header = FALSE, env = get(env.name, env = sys.nframe(), inherit = FALSE), print.no = FALSE)) # data argument needs a character string but eval(parse(text = fun.test2)) provides it (eval parse replace the i1, i2, etc., by the correct values, meaning that only val is required in the env.name environment)
+tempo.capt <- capture.output(tempo.try.error <- get_message(data = eval(parse(text = fun.test2)), kind = "error", header = FALSE, print.no = FALSE, env = get(env.name, env = sys.nframe(), inherit = FALSE))) # data argument needs a character string but eval(parse(text = fun.test2)) provides it (eval parse replace the i1, i2, etc., by the correct values, meaning that only val is required in the env.name environment)
+tempo.capt <- capture.output(tempo.try.warning <- get_message(data = eval(parse(text = fun.test2)), kind = "warning", header = FALSE, env = get(env.name, env = sys.nframe(), inherit = FALSE), print.no = FALSE)) # data argument needs a character string but eval(parse(text = fun.test2)) provides it (eval parse replace the i1, i2, etc., by the correct values, meaning that only val is required in the env.name environment)
 if( ! is.null(expect.error)){
 expected.error <- c(expected.error, eval(parse(text = error.values)))
 }
@@ -531,7 +561,7 @@ plot.count <- plot.count + 1
 tempo.title <- paste0("test_", sprintf(paste0("%0", nchar(total.comp.nb), "d"), ifelse(parall == FALSE, count, x[count])))
 if(plot.kind == "classic"){
 eval(parse(text = fun.test))
-tempo <- fun_post_plot(corner.text = tempo.title)
+tempo <- post_plot(corner.text = tempo.title)
 }else if(plot.kind == "special"){
 eval(parse(text = fun.test))
 }else{
@@ -586,7 +616,7 @@ end.loop.string
         cluster.list <- parallel::clusterSplit(Clust, 1:total.comp.nb) # split according to the number of cluster
         str(cluster.list) # using print(str()) add a NULL below the result
         cat("\n")
-        paral.output.list <- parallel::clusterApply( # paral.output.list is a list made of thread.nb compartments, each made of n / thread.nb (mat theo column number) compartment. Each compartment receive the corresponding results of fun_permut(), i.e., data (permuted mat1.perm), warning message, cor (final correlation) and count (number of permutations)
+        paral.output.list <- parallel::clusterApply( # paral.output.list is a list made of thread.nb compartments, each made of n / thread.nb (mat theo column number) compartment. Each compartment receive the corresponding results of permut(), i.e., data (permuted mat1.perm), warning message, cor (final correlation) and count (number of permutations)
             cl = Clust,
             x = cluster.list,
             function.name = function.name, 
@@ -640,7 +670,7 @@ end.loop.string
                 process.id <- Sys.getpid()
                 cat(paste0("\nPROCESS ID ", process.id, " -> TESTS ", x[1], " TO ", x[base::length(x)], "\n"))
                 source(cute.path, local = .GlobalEnv)
-                fun_pack(req.package = "lubridate", lib.path = lib.path, load = TRUE) # load = TRUE to be sure that functions are present in the environment
+                pack(req.package = "lubridate", lib.path = lib.path, load = TRUE) # load = TRUE to be sure that functions are present in the environment
                 # end check again: very important because another R
                 # plot management
                 if(plot.fun == TRUE){

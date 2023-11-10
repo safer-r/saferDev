@@ -15,27 +15,42 @@
 #' @examples
 #' # Example in the working environment
 #' 
-#' mean <- 1 # creation of the object mean with value 1 in the .GlobalEnv environment, knowing that the mean() function also exists in the environment base, above .GlobalEnv.
-#' t.test <- 1 # creation of the object t.test with value 1 in the .GlobalEnv environment, knowing that the t.test() function also exists in the environment stats, above .GlobalEnv.
-#' search() # current R scope (order of the successive R environments).
-#' find("mean") # where the objects with the name "mean" are present.
-#' find("t.test") # where the objects with the name "mean" are present.
-#' a <- secu(pos = 1) # test if any object name of the global environment are above environments (or secu(), as pos = 1 is the default value).
+#' mean <- 1 
+#' # creation of the object mean with value 1 in the .GlobalEnv environment, knowing that the mean() function also exists in the environment base, above .GlobalEnv.
+#' t.test <- 1 
+#' # creation of the object t.test with value 1 in the .GlobalEnv environment, knowing that the t.test() function also exists in the environment stats, above .GlobalEnv.
+#' search() 
+#' # current R scope (order of the successive R environments).
+#' find("mean") 
+#' # where the objects with the name "mean" are present.
+#' find("t.test") 
+#' # where the objects with the name "mean" are present.
+#' a <- secu(pos = 1) 
+#' # test if any object name of the global environment are above environments (or secu(), as pos = 1 is the default value).
 #' a # the output string of sec().
 #' cat(a) # the evaluated output.
-#' secu(pos = 2) # test if any object of the stats environment (one step above .GlobalEnv) are above environments. Returns NULL since no object names of stats are in above environments
+#' secu(pos = 2) 
+#' # test if any object of the stats environment (one step above .GlobalEnv) are above environments. Returns NULL since no object names of stats are in above environments
 #' 
 #' 
 #' # Example inside a function
 #' 
-#' fun1 <- function(){t.test <- 0 ; mean <- 5 ; secu(pos = 1)} # secu() will check if the object names inside the fun1 function exist in the .GlobalEnv environment and above.
+#' fun1 <- function(){t.test <- 0 ; mean <- 5 ; secu(pos = 1)} 
+#' # secu() will check if the object names inside the fun1 function exist in the .GlobalEnv environment and above.
 #' fun1()
-#' fun2 <- function(){t.test <- 0 ; mean <- 5 ; secu(pos = 2)} # secu() will check if the object names inside the fun2 function exist in the stats environment and above.
+#' fun2 <- function(){t.test <- 0 ; mean <- 5 ; secu(pos = 2)} 
+#' # secu() will check if the object names inside the fun2 function exist in the stats environment and above.
 #' fun2()
-#' fun3 <- function(){t.test <- 0 ; mean <- 5 ; secu(pos = 2, name = "fun3")} # idem fun2() but with the name of the function fun2 indicated. Instead of writting name = "fun3", we can also use name = as.character(sys.calls()[[length(sys.calls())]]), as sys.calls() gives the function name at top stack of the imbricated functions, sys.calls()[[length(sys.calls())]] the name of the just above function. This can also been used for the above function: as.character(sys.call(1))
+#' fun3 <- function(){t.test <- 0 ; mean <- 5 ; secu(pos = 2, name = "fun3")} 
+#' # idem fun2() but with the name of the function fun2 indicated. 
+#' # Instead of writting name = "fun3", we can also use name = as.character(sys.calls()[[length(sys.calls())]]), as sys.calls() gives the function name at top stack of the imbricated functions, sys.calls()[[length(sys.calls())]] the name of the just above function. This can also been used for the above function: as.character(sys.call(1))
 #' fun3()
 #' test.pos <- 1
-#' secu(pos = test.pos, name = if(length(sys.calls()) >= test.pos){as.character(sys.calls()[[length(sys.calls()) + 1 - test.pos]])}else{search()[ (1:length(search()))[test.pos - length(sys.calls())]]}) # here is a way to have the name of the tested environment according to test.pos value
+#' secu(pos = test.pos, 
+#' name = if(length(sys.calls()) >= test.pos)
+#' {as.character(sys.calls()[[length(sys.calls()) + 1 - test.pos]])}
+#' else{search()[ (1:length(search()))[test.pos - length(sys.calls())]]}) 
+#' # here is a way to have the name of the tested environment according to test.pos value
 #' @returns A character string indicating the object names of the tested environment that match object names in the above environments, following the R scope, or NULL if no match.
 #' @export
 secu <- function(
