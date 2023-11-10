@@ -1,8 +1,8 @@
-#' @title python_pack
+#' @title python_pkg_check
 #' @description
 #' Check if the specified python packages are present in the computer (no import).
 #' @param req.package Character vector of package names to import.
-#' @param python.exec.path Single optional character vector specifying the absolute pathways of the executable python file to use (associated to the packages to use). If NULL, the reticulate::import_from_path() function used in python_pack() seeks for an available version of python.exe, and then uses python_config(python_version, required_module, python_versions). But might not be the correct one for the lib.path parameter specified. Thus, it is recommanded to do not leave NULL, notably when using computing clusters.
+#' @param python.exec.path Single optional character vector specifying the absolute pathways of the executable python file to use (associated to the packages to use). If NULL, the reticulate::import_from_path() function used in python_pkg_check() seeks for an available version of python.exe, and then uses python_config(python_version, required_module, python_versions). But might not be the correct one for the lib.path parameter specified. Thus, it is recommanded to do not leave NULL, notably when using computing clusters.
 #' @param lib.path Optional character vector specifying the absolute pathways of the directories containing some of the listed packages in the req.package argument, if not in the default directories.
 #' @param R.lib.path Absolute path of the reticulate packages, if not in the default folders.
 #' @returns Nothing.
@@ -28,21 +28,21 @@
 #' @examples
 #' # example of error message
 #' 
-#' # python_pack(req.package = "nopackage")
+#' # python_pkg_check(req.package = "nopackage")
 #' 
 #' 
 #' # example without error message 
 #' # (require the installation of the python serpentine package 
 #' # from https://github.com/koszullab/serpentine
 #' 
-#' # python_pack(req.package = "serpentine")
+#' # python_pkg_check(req.package = "serpentine")
 #' 
 #' 
 #' # another example of error message
 #' 
-#' # python_pack(req.package = "serpentine", lib.path = "blablabla")
+#' # python_pkg_check(req.package = "serpentine", lib.path = "blablabla")
 #' @export
-python_pack <- function(
+python_pkg_check <- function(
         req.package, 
         python.exec.path = NULL, 
         lib.path = NULL, 
