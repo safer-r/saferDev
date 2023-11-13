@@ -13,12 +13,14 @@
 #' @details 
 #' REQUIRED PACKAGES
 #' 
-#' None
+#' ggplot2
 #' 
 #' 
 #' REQUIRED FUNCTIONS FROM CUTE_LITTLE_R_FUNCTION
 #' 
-#' check()
+#' arg_check()
+#' 
+#' pkg_check()
 #' 
 #' 
 #' WARNINGS
@@ -27,19 +29,7 @@
 #' 
 #' Always use the env argument when get_message() is used inside functions.
 #' 
-#' The function does not prevent printing if print() is used inside the instruction tested. To prevent that, use tempo <- utils::capture.output(error <- get_message(data = "check(data = 'a', class = mean, neg.values = FALSE, print = TRUE)")). The return of get_message() is assigned into error and the printed messages are captured by utils::capture.output() and assigned into tempo. See the examples.
-#' 
-#' 
-#' REQUIRED PACKAGES
-#' 
-#' none
-#' 
-#' 
-#' REQUIRED FUNCTIONS FROM CUTE_LITTLE_R_FUNCTION
-#' 
-#' check()
-#' pack()
-#'
+#' The function does not prevent printing if print() is used inside the instruction tested. To prevent that, use tempo <- utils::capture.output(error <- get_message(data = "arg_check(data = 'a', class = mean, neg.values = FALSE, print = TRUE)")). The return of get_message() is assigned into error and the printed messages are captured by utils::capture.output() and assigned into tempo. See the examples.
 #' @examples
 #' get_message(data = "wilcox.test(c(1,1,3), c(1, 2, 4), paired = TRUE)", kind = "error", 
 #' print.no = TRUE, text = "IN A")
@@ -111,7 +101,7 @@ get_message <- function(
     }
     # end cutedev required function checking
     # check of other required packages
-    pack(req.package = c(
+    pkg_check(req.package = c(
         "ggplot2"
     ), load = TRUE, lib.path = NULL) # load = TRUE because otherwise, the "# check of the required function from the required packages" section does not work
     # end check of other required packages
@@ -130,29 +120,29 @@ get_message <- function(
         stop(paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in stop() to be able to add several messages between ==
     }
     # end arg with no default values
-    # argument checking with check()
-    arg.check <- NULL #
+    # argument checking with arg_check()
+    argum.check <- NULL #
     text.check <- NULL #
     checked.arg.names <- NULL # for function debbuging: used by r_debugging_tools
-    ee <- expression(arg.check <- c(arg.check, tempo$problem) , text.check <- c(text.check, tempo$text) , checked.arg.names <- c(checked.arg.names, tempo$object.name))
-    tempo <- check(data = data, class = "vector", typeof = "character", length = 1, fun.name = function.name) ; eval(ee)
-    tempo <- check(data = kind, options = c("error", "warning", "message"), length = 1, fun.name = function.name) ; eval(ee)
-    tempo <- check(data = header, class = "vector", typeof = "logical", length = 1, fun.name = function.name) ; eval(ee)
-    tempo <- check(data = print.no, class = "vector", typeof = "logical", length = 1, fun.name = function.name) ; eval(ee)
+    ee <- expression(argum.check <- c(argum.check, tempo$problem) , text.check <- c(text.check, tempo$text) , checked.arg.names <- c(checked.arg.names, tempo$object.name))
+    tempo <- arg_check(data = data, class = "vector", typeof = "character", length = 1, fun.name = function.name) ; eval(ee)
+    tempo <- arg_check(data = kind, options = c("error", "warning", "message"), length = 1, fun.name = function.name) ; eval(ee)
+    tempo <- arg_check(data = header, class = "vector", typeof = "logical", length = 1, fun.name = function.name) ; eval(ee)
+    tempo <- arg_check(data = print.no, class = "vector", typeof = "logical", length = 1, fun.name = function.name) ; eval(ee)
     if( ! is.null(text)){
-        tempo <- check(data = text, class = "character", length = 1, fun.name = function.name) ; eval(ee)
+        tempo <- arg_check(data = text, class = "character", length = 1, fun.name = function.name) ; eval(ee)
     }
     if( ! is.null(env)){
-        tempo <- check(data = env, class = "environment", fun.name = function.name) ; eval(ee) #
+        tempo <- arg_check(data = env, class = "environment", fun.name = function.name) ; eval(ee) #
     }
-    if( ! is.null(arg.check)){
-        if(any(arg.check, na.rm = TRUE) == TRUE){
+    if( ! is.null(argum.check)){
+        if(any(argum.check, na.rm = TRUE) == TRUE){
             stop(paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) #
         }
     }
-    # end argument checking with check()
+    # end argument checking with arg_check()
     # check with r_debugging_tools
-    # source("C:/Users/yhan/Documents/Git_projects/debugging_tools_for_r_dev/r_debugging_tools.R") ; eval(parse(text = str_basic_arg_check_dev)) ; eval(parse(text = str_arg_check_with_check_dev)) # activate this line and use the function (with no arguments left as NULL) to check arguments status and if they have been checked using check()
+    # source("C:/Users/yhan/Documents/Git_projects/debugging_tools_for_r_dev/r_debugging_tools.R") ; eval(parse(text = str_basic_arg_check_dev)) ; eval(parse(text = str_arg_check_with_check_dev)) # activate this line and use the function (with no arguments left as NULL) to check arguments status and if they have been checked using arg_check()
     # end check with r_debugging_tools
     # end argument primary checking
     

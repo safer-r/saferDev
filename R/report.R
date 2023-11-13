@@ -18,7 +18,7 @@
 #' 
 #' REQUIRED FUNCTIONS FROM CUTE_LITTLE_R_FUNCTION
 #' 
-#' check()
+#' arg_check()
 #' 
 #' @examples
 #' #report()
@@ -80,36 +80,36 @@ report <- function(
         stop(paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in stop() to be able to add several messages between ==
     }
     # end arg with no default values
-    arg.check <- NULL #
+    argum.check <- NULL #
     text.check <- NULL #
     checked.arg.names <- NULL # for function debbuging: used by r_debugging_tools
-    ee <- expression(arg.check <- c(arg.check, tempo$problem) , text.check <- c(text.check, tempo$text) , checked.arg.names <- c(checked.arg.names, tempo$object.name))
-    tempo <- check(data = output, class = "character", length = 1, fun.name = function.name) ; eval(ee)
+    ee <- expression(argum.check <- c(argum.check, tempo$problem) , text.check <- c(text.check, tempo$text) , checked.arg.names <- c(checked.arg.names, tempo$object.name))
+    tempo <- arg_check(data = output, class = "character", length = 1, fun.name = function.name) ; eval(ee)
     if(tempo$problem == FALSE & output == ""){
         tempo.cat <- paste0("ERROR IN ", function.name, ": output ARGUMENT AS \"\" DOES NOT CORRESPOND TO A VALID FILE NAME")
         text.check <- c(text.check, tempo.cat)
-        arg.check <- c(arg.check, TRUE)
+        argum.check <- c(argum.check, TRUE)
     }
-    tempo <- check(data = path, class = "vector", mode = "character", fun.name = function.name) ; eval(ee)
+    tempo <- arg_check(data = path, class = "vector", mode = "character", fun.name = function.name) ; eval(ee)
     if(tempo$problem == FALSE){
         if( ! all(dir.exists(path), na.rm = TRUE)){ # separation to avoid the problem of tempo$problem == FALSE and lib.path == NA
             tempo.cat <- paste0("ERROR IN ", function.name, ": path ARGUMENT DOES NOT CORRESPOND TO EXISTING DIRECTORY\n", paste(path, collapse = "\n"))
             text.check <- c(text.check, tempo.cat)
-            arg.check <- c(arg.check, TRUE)
+            argum.check <- c(argum.check, TRUE)
         }
     }
-    tempo <- check(data = overwrite, class = "logical", length = 1, fun.name = function.name) ; eval(ee)
-    tempo <- check(data = rownames.kept, class = "logical", length = 1, fun.name = function.name) ; eval(ee)
-    tempo <- check(data = vector.cat, class = "logical", length = 1, fun.name = function.name) ; eval(ee)
-    tempo <- check(data = noquote, class = "logical", length = 1, fun.name = function.name) ; eval(ee)
-    tempo <- check(data = sep, class = "vector", typeof = "integer", length = 1, double.as.integer.allowed = TRUE, fun.name = function.name) ; eval(ee)
-    if( ! is.null(arg.check)){
-        if(any(arg.check, na.rm = TRUE) == TRUE){
-            stop(paste0("\n\n================\n\n", paste(text.check[arg.check], collapse = "\n"), "\n\n================\n\n"), call. = FALSE) #
+    tempo <- arg_check(data = overwrite, class = "logical", length = 1, fun.name = function.name) ; eval(ee)
+    tempo <- arg_check(data = rownames.kept, class = "logical", length = 1, fun.name = function.name) ; eval(ee)
+    tempo <- arg_check(data = vector.cat, class = "logical", length = 1, fun.name = function.name) ; eval(ee)
+    tempo <- arg_check(data = noquote, class = "logical", length = 1, fun.name = function.name) ; eval(ee)
+    tempo <- arg_check(data = sep, class = "vector", typeof = "integer", length = 1, double.as.integer.allowed = TRUE, fun.name = function.name) ; eval(ee)
+    if( ! is.null(argum.check)){
+        if(any(argum.check, na.rm = TRUE) == TRUE){
+            stop(paste0("\n\n================\n\n", paste(text.check[argum.check], collapse = "\n"), "\n\n================\n\n"), call. = FALSE) #
         }
     }
     # check with r_debugging_tools
-    # source("C:/Users/yhan/Documents/Git_projects/debugging_tools_for_r_dev/r_debugging_tools.R") ; eval(parse(text = str_basic_arg_check_dev)) ; eval(parse(text = str_arg_check_with_check_dev)) # activate this line and use the function (with no arguments left as NULL) to check arguments status and if they have been checked using check()
+    # source("C:/Users/yhan/Documents/Git_projects/debugging_tools_for_r_dev/r_debugging_tools.R") ; eval(parse(text = str_basic_arg_check_dev)) ; eval(parse(text = str_arg_check_with_check_dev)) # activate this line and use the function (with no arguments left as NULL) to check arguments status and if they have been checked using arg_check()
     # end check with r_debugging_tools
     # the 4 next lines are inactivated but kept because at a time, I might have a problem with data (solved with data = NULL). These 4 lines are just to know how to detect a missing argument. Important here because if data is not provided, print the code of the data function
     # arg.user.list <- as.list(match.call(expand.dots = FALSE))[-1] # recover all the arguments provided by the function user (excluding the argument with defaults values not provided by the user. Thus, it is really the list indicated by the user)

@@ -45,11 +45,11 @@
 #' 
 #' REQUIRED FUNCTIONS FROM CUTE_LITTLE_R_FUNCTION
 #' 
-#' check()
+#' arg_check()
 #' 
 #' get_message()
 #' 
-#' pack()
+#' pkg_check()
 #' 
 #' 
 #' WARNINGS
@@ -180,45 +180,45 @@ stop(paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), 
         stop(paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in stop() to be able to add several messages between ==
     }
     # end arg with no default values
-    arg.check <- NULL #
+    argum.check <- NULL #
     text.check <- NULL #
     checked.arg.names <- NULL # for function debbuging: used by r_debugging_tools
-    ee <- expression(arg.check <- c(arg.check, tempo$problem) , text.check <- c(text.check, tempo$text) , checked.arg.names <- c(checked.arg.names, tempo$object.name))
-    tempo <- check(data = fun, class = "vector", mode = "character", length = 1, fun.name = function.name) ; eval(ee)
-    tempo <- check(data = arg, class = "vector", mode = "character", fun.name = function.name) ; eval(ee)
-    tempo <- check(data = val, class = "list", na.contain = TRUE, fun.name = function.name) ; eval(ee)
+    ee <- expression(argum.check <- c(argum.check, tempo$problem) , text.check <- c(text.check, tempo$text) , checked.arg.names <- c(checked.arg.names, tempo$object.name))
+    tempo <- arg_check(data = fun, class = "vector", mode = "character", length = 1, fun.name = function.name) ; eval(ee)
+    tempo <- arg_check(data = arg, class = "vector", mode = "character", fun.name = function.name) ; eval(ee)
+    tempo <- arg_check(data = val, class = "list", na.contain = TRUE, fun.name = function.name) ; eval(ee)
     if( ! is.null(expect.error)){
-        tempo <- check(data = expect.error, class = "list", fun.name = function.name) ; eval(ee)
+        tempo <- arg_check(data = expect.error, class = "list", fun.name = function.name) ; eval(ee)
     }
-    tempo <- check(data = parall, class = "vector", mode = "logical", length = 1, fun.name = function.name) ; eval(ee)
+    tempo <- arg_check(data = parall, class = "vector", mode = "logical", length = 1, fun.name = function.name) ; eval(ee)
     if(parall == TRUE){
         if( ! is.null(thread.nb)){
-            tempo <- check(data = thread.nb, typeof = "integer", double.as.integer.allowed = TRUE, neg.values = FALSE, length = 1, fun.name = function.name) ; eval(ee)
+            tempo <- arg_check(data = thread.nb, typeof = "integer", double.as.integer.allowed = TRUE, neg.values = FALSE, length = 1, fun.name = function.name) ; eval(ee)
             if(tempo$problem == FALSE & thread.nb < 1){
                 tempo.cat <- paste0("ERROR IN ", function.name, ": thread.nb PARAMETER MUST EQUAL OR GREATER THAN 1: ", thread.nb)
                 text.check <- c(text.check, tempo.cat)
-                arg.check <- c(arg.check, TRUE)
+                argum.check <- c(argum.check, TRUE)
             }
         }
     }
-    tempo <- check(data = print.count, class = "vector", typeof = "integer", length = 1, double.as.integer.allowed = TRUE, neg.values = FALSE, fun.name = function.name) ; eval(ee)
-    tempo <- check(data = plot.fun, class = "vector", mode = "logical", length = 1, fun.name = function.name) ; eval(ee)
-    tempo <- check(data = export, class = "vector", mode = "logical", length = 1, fun.name = function.name) ; eval(ee)
+    tempo <- arg_check(data = print.count, class = "vector", typeof = "integer", length = 1, double.as.integer.allowed = TRUE, neg.values = FALSE, fun.name = function.name) ; eval(ee)
+    tempo <- arg_check(data = plot.fun, class = "vector", mode = "logical", length = 1, fun.name = function.name) ; eval(ee)
+    tempo <- arg_check(data = export, class = "vector", mode = "logical", length = 1, fun.name = function.name) ; eval(ee)
     if( ! is.null(res.path)){
-        tempo <- check(data = res.path, class = "vector", mode = "character", fun.name = function.name) ; eval(ee)
+        tempo <- arg_check(data = res.path, class = "vector", mode = "character", fun.name = function.name) ; eval(ee)
     }
     if( ! is.null(lib.path)){
-        tempo <- check(data = lib.path, class = "vector", mode = "character", fun.name = function.name) ; eval(ee)
+        tempo <- arg_check(data = lib.path, class = "vector", mode = "character", fun.name = function.name) ; eval(ee)
     }
-    tempo <- check(data = cute.path, class = "vector", typeof = "character", length = 1, fun.name = function.name) ; eval(ee)
-    if( ! is.null(arg.check)){
-        if(any(arg.check, na.rm = TRUE) == TRUE){
-            stop(paste0("\n\n================\n\n", paste(text.check[arg.check], collapse = "\n"), "\n\n================\n\n"), call. = FALSE) #
+    tempo <- arg_check(data = cute.path, class = "vector", typeof = "character", length = 1, fun.name = function.name) ; eval(ee)
+    if( ! is.null(argum.check)){
+        if(any(argum.check, na.rm = TRUE) == TRUE){
+            stop(paste0("\n\n================\n\n", paste(text.check[argum.check], collapse = "\n"), "\n\n================\n\n"), call. = FALSE) #
         }
     }
-    # end using check()
+    # end using arg_check()
     # check with r_debugging_tools
-    # source("C:/Users/yhan/Documents/Git_projects/debugging_tools_for_r_dev/r_debugging_tools.R") ; eval(parse(text = str_basic_arg_check_dev)) ; eval(parse(text = str_arg_check_with_check_dev)) # activate this line and use the function (with no arguments left as NULL) to check arguments status and if they have been checked using check()
+    # source("C:/Users/yhan/Documents/Git_projects/debugging_tools_for_r_dev/r_debugging_tools.R") ; eval(parse(text = str_basic_arg_check_dev)) ; eval(parse(text = str_arg_check_with_check_dev)) # activate this line and use the function (with no arguments left as NULL) to check arguments status and if they have been checked using arg_check()
     # end check with r_debugging_tools
     # end argument primary checking
     # second round of checking and data preparation
@@ -287,8 +287,8 @@ stop(paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), 
         stop(paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n", ifelse(is.null(warn), "", paste0("IN ADDITION\nWARNING", ifelse(warn.count > 1, "S", ""), ":\n\n", warn))), call. = FALSE)
     }
     for(i2 in 1:base::length(val)){ # length(val) must be aequal to nb of arguments
-        tempo1 <- check(data = val[[i2]], class = "vector", na.contain = TRUE, fun.name = function.name)
-        tempo2 <- check(data = val[[i2]], class = "list", na.contain = TRUE, fun.name = function.name)
+        tempo1 <- arg_check(data = val[[i2]], class = "vector", na.contain = TRUE, fun.name = function.name)
+        tempo2 <- arg_check(data = val[[i2]], class = "list", na.contain = TRUE, fun.name = function.name)
         if(tempo1$problem == TRUE & tempo2$problem == TRUE){
             tempo.cat <- paste0("ERROR IN ", function.name, ": COMPARTMENT ", i2, " OF val ARGUMENT MUST BE A VECTOR OR A LIST")
             stop(paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n", ifelse(is.null(warn), "", paste0("IN ADDITION\nWARNING", ifelse(warn.count > 1, "S", ""), ":\n\n", warn))), call. = FALSE)
@@ -315,8 +315,8 @@ stop(paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), 
             stop(paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n", ifelse(is.null(warn), "", paste0("IN ADDITION\nWARNING", ifelse(warn.count > 1, "S", ""), ":\n\n", warn))), call. = FALSE)
         }
         for(i3 in 1:base::length(expect.error)){
-            tempo1 <- check(data = expect.error[[i3]], class = "vector",  mode = "logical", fun.name = function.name)
-            tempo2 <- check(data =  expect.error[[i3]], class = "list", fun.name = function.name)
+            tempo1 <- arg_check(data = expect.error[[i3]], class = "vector",  mode = "logical", fun.name = function.name)
+            tempo2 <- arg_check(data =  expect.error[[i3]], class = "list", fun.name = function.name)
             if(tempo1$problem == TRUE & tempo2$problem == TRUE){
                 tempo.cat <- paste0("ERROR IN ", function.name, ": COMPARTMENT ", i3, " OF expect.error ARGUMENT MUST BE TRUE OR FALSE")
                 stop(paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n", ifelse(is.null(warn), "", paste0("IN ADDITION\nWARNING", ifelse(warn.count > 1, "S", ""), ":\n\n", warn))), call. = FALSE)
@@ -661,7 +661,7 @@ end.loop.string
                 process.id <- Sys.getpid()
                 cat(paste0("\nPROCESS ID ", process.id, " -> TESTS ", x[1], " TO ", x[base::length(x)], "\n"))
                 source(cute.path, local = .GlobalEnv)
-                pack(req.package = "lubridate", lib.path = lib.path, load = TRUE) # load = TRUE to be sure that functions are present in the environment
+                pkg_check(req.package = "lubridate", lib.path = lib.path, load = TRUE) # load = TRUE to be sure that functions are present in the environment
                 # end check again: very important because another R
                 # plot management
                 if(plot.fun == TRUE){
