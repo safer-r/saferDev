@@ -143,9 +143,9 @@ arg_test <- function(
     # end check of lib.path
     # cuteDev required function checking
     req.function <- c(
-        "check", 
+        "arg_check", 
         "get_message", 
-        "pack"
+        "pkg_check"
     )
     tempo <- NULL
     for(i1 in req.function){
@@ -210,7 +210,7 @@ stop(paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), 
     }
     # end using arg_check()
     # check with r_debugging_tools
-    # source("C:/Users/yhan/Documents/Git_projects/debugging_tools_for_r_dev/r_debugging_tools.R") ; eval(parse(text = str_basic_arg_check_dev)) ; eval(parse(text = str_arg_check_with_check_dev)) # activate this line and use the function (with no arguments left as NULL) to check arguments status and if they have been checked using arg_check()
+    # source("C:/Users/yhan/Documents/Git_projects/debugging_tools_for_r_dev/r_debugging_tools.R") ; eval(parse(text = str_basic_arg_check_dev)) ; eval(parse(text = str_arg_check_with_fun_check_dev)) # activate this line and use the function (with no arguments left as NULL) to check arguments status and if they have been checked using arg_check()
     # end check with r_debugging_tools
     # end argument primary checking
     # second round of checking and data preparation

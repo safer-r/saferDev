@@ -71,8 +71,8 @@ python_pkg_check <- function(
     # end check of R.lib.path
     # cuteDev required function checking
     req.function <- c(
-        "check",
-        "pack"
+        "arg_check",
+        "pkg_check"
     )
     tempo <- NULL
     for(i1 in req.function){
@@ -143,7 +143,7 @@ python_pkg_check <- function(
         }
     }
     # check with r_debugging_tools
-    # source("C:/Users/Gael/Documents/Git_versions_to_use/debugging_tools_for_r_dev-v1.7/r_debugging_tools-v1.7.R") ; eval(parse(text = str_basic_arg_check_dev)) ; eval(parse(text = str_arg_check_with_check_dev)) # activate this line and use the function (with no arguments left as NULL) to check arguments status and if they have been checked using arg_check()
+    # source("C:/Users/Gael/Documents/Git_versions_to_use/debugging_tools_for_r_dev-v1.7/r_debugging_tools-v1.7.R") ; eval(parse(text = str_basic_arg_check_dev)) ; eval(parse(text = str_arg_check_with_fun_check_dev)) # activate this line and use the function (with no arguments left as NULL) to check arguments status and if they have been checked using arg_check()
     # end check with r_debugging_tools
     # end argument primary checking
     
