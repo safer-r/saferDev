@@ -177,6 +177,7 @@ stop(paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), 
         stop(paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in stop() to be able to add several messages between ==
     }
     # end arg with no default values
+    # using check()
     arg.check <- NULL #
     text.check <- NULL #
     checked.arg.names <- NULL # for function debbuging: used by r_debugging_tools
@@ -529,7 +530,11 @@ plot.count <- plot.count + 1
 tempo.title <- paste0("test_", sprintf(paste0("%0", nchar(total.comp.nb), "d"), ifelse(parall == FALSE, count, x[count])))
 if(plot.kind == "classic"){
 eval(parse(text = fun.test))
-tempo <- post_plot(corner.text = tempo.title)
+par(ann=FALSE, xaxt="n", yaxt="n", mar = rep(1, 4), bty = "n", xpd = NA)
+plot(1, 1, type = "n") # no display with type = "n"
+x.left.dev.region <- (par("usr")[1] - ((par("usr")[2] - par("usr")[1]) / (par("plt")[2] - par("plt")[1])) * par("plt")[1] - ((par("usr")[2] - par("usr")[1]) / ((par("omd")[2] - par("omd")[1]) * (par("plt")[2] - par("plt")[1]))) * par("omd")[1])
+y.top.dev.region <- (par("usr")[4] + ((par("usr")[4] - par("usr")[3]) / (par("plt")[4] - par("plt")[3])) * (1 - par("plt")[4]) + ((par("usr")[4] - par("usr")[3]) / ((par("omd")[4] - par("omd")[3]) * (par("plt")[4] - par("plt")[3]))) * (1 - par("omd")[4]))
+text(x = x.left.dev.region, y = y.top.dev.region, labels = tempo.title, adj=c(0, 1), cex = 1.5)
 }else if(plot.kind == "special"){
 eval(parse(text = fun.test))
 }else{
