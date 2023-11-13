@@ -12,7 +12,6 @@
 #' @param export Single logical value. Export the results into a .RData file and into a .tsv file? If FALSE, return a list into the console (see below). BEWARE: will be automatically set to TRUE if parall is TRUE. This means that when using parallelization, the results are systematically exported, not returned into the console.
 #' @param res.path Single character string indicating the absolute pathway of the folder where the txt results and pdfs, containing all the plots, will be saved. Several txt and pdf, one per thread, if parallelization. Ignored if export is FALSE. Must be specified if parall is TRUE or if export is TRUE.
 #' @param lib.path Vector of characters specifying the absolute pathways of the directories containing the required packages if not in the default directories. Ignored if NULL.
-#' @param cute.path Single character string indicating the absolute path of the cute.R file. Will be remove when cute will be a package. Ignored if parall is FALSE.
 #' @returns
 #' One or several pdf if a plotting function is tested and if the plot.fun argument is TRUE. 
 #' 
@@ -114,17 +113,15 @@ arg_test <- function(
         plot.fun = FALSE, 
         export = FALSE, 
         res.path = NULL, 
-        lib.path = NULL, 
-        cute.path = 
-            "C:/Users/yhan/Documents/Git_projects/cute_little_R_functions/cute_little_R_functions.R"
+        lib.path = NULL
 ){
     # DEBUGGING
-    # fun = "get_message"; arg = c("data", "kind"); val = list(data = "ls", kind = t26_20201124); list(TRUE, c(unlist(expected.error.t26))) ; parall = FALSE ; thread.nb = NULL ; plot.fun = FALSE ; export = FALSE ; res.path = "C:\\Users\\yhan\\Desktop\\" ; lib.path = NULL ; print.count = 1 ; cute.path = "C:\\Users\\yhan\\Documents\\Git_projects\\cute_little_R_functions\\cute_little_R_functions.R"
-    # fun = "unique" ; arg = "x" ; val = list(x = list(1:10, c(1,1,2,8), NA)) ; expect.error = list(x = list(FALSE, FALSE, TRUE)) ; parall = FALSE ; thread.nb = NULL ; plot.fun = FALSE ; export = FALSE ; res.path = "C:\\Users\\gmillot\\Desktop\\" ; lib.path = NULL ; print.count = 1 ; cute.path = "C:\\Users\\gmillot\\Documents\\Git_projects\\cute_little_R_functions\\cute_little_R_functions.R" # for function debugging
-    # fun = "unique" ; arg = c("x", "incomparables") ; val = list(x = list(1:10, c(1,1,2,8), NA), incomparable = c(TRUE, FALSE, NA)) ; expect.error = NULL ; parall = FALSE ; thread.nb = 2 ; plot.fun = FALSE ; export = TRUE ; res.path = "C:\\Users\\gmillot\\Desktop\\" ; lib.path = NULL ; print.count = 10 ; cute.path = "C:\\Users\\gmillot\\Documents\\Git_projects\\cute_little_R_functions\\cute_little_R_functions.R" # for function debugging
+    # fun = "get_message"; arg = c("data", "kind"); val = list(data = "ls", kind = t26_20201124); list(TRUE, c(unlist(expected.error.t26))) ; parall = FALSE ; thread.nb = NULL ; plot.fun = FALSE ; export = FALSE ; res.path = "C:\\Users\\yhan\\Desktop\\" ; lib.path = NULL ; print.count = 1
+    # fun = "unique" ; arg = "x" ; val = list(x = list(1:10, c(1,1,2,8), NA)) ; expect.error = list(x = list(FALSE, FALSE, TRUE)) ; parall = FALSE ; thread.nb = NULL ; plot.fun = FALSE ; export = FALSE ; res.path = "C:\\Users\\gmillot\\Desktop\\" ; lib.path = NULL ; print.count = 1 # for function debugging
+    # fun = "unique" ; arg = c("x", "incomparables") ; val = list(x = list(1:10, c(1,1,2,8), NA), incomparable = c(TRUE, FALSE, NA)) ; expect.error = NULL ; parall = FALSE ; thread.nb = 2 ; plot.fun = FALSE ; export = TRUE ; res.path = "C:\\Users\\gmillot\\Desktop\\" ; lib.path = NULL ; print.count = 10 # for function debugging
     # fun = "plot" ; arg = c("x", "y") ; val = list(x = list(1:10, 12:13, NA), y = list(1:10, NA, NA)) ; expect.error = list(x = list(FALSE, FALSE, TRUE, FALSE), y = list(FALSE, TRUE, TRUE)) ; print.count = 10 ; parall = FALSE ; thread.nb = NULL ; plot.fun = TRUE ; export = TRUE ; res.path = "C:\\Users\\gmillot\\Desktop\\" ; lib.path = NULL # for function debugging
     # set.seed(1) ; obs1 <- data.frame(Time = c(rnorm(10), rnorm(10) + 2), Group1 = rep(c("G", "H"), each = 10), stringsAsFactors = TRUE) ; fun = "gg_boxplot" ; arg = c("data1", "y", "categ") ; val = list(L1 = list(L1 = obs1), L2 = list(L1 = "Time"), L3 = list(L1 = "Group1")) ; expect.error = NULL ; print.count = 10 ; parall = FALSE ; thread.nb = NULL ; plot.fun = TRUE ; export = TRUE ; res.path = "C:\\Users\\gmillot\\Desktop\\" ; lib.path = NULL # for function debugging
-    # fun = "unique" ; arg = "x" ; val = list(x = list(1:3, mean)) ; expect.error = list(x = list(TRUE, TRUE)) ; parall = FALSE ; thread.nb = NULL ; plot.fun = FALSE ; export = FALSE ; res.path = "C:\\Users\\gmillot\\Desktop\\" ; lib.path = NULL ; print.count = 1 ; cute.path = "C:\\Users\\gmillot\\Documents\\Git_projects\\cute_little_R_functions\\cute_little_R_functions.R" # for function debugging
+    # fun = "unique" ; arg = "x" ; val = list(x = list(1:3, mean)) ; expect.error = list(x = list(TRUE, TRUE)) ; parall = FALSE ; thread.nb = NULL ; plot.fun = FALSE ; export = FALSE ; res.path = "C:\\Users\\gmillot\\Desktop\\" ; lib.path = NULL ; print.count = 1 # for function debugging
     # function name
     ini <- match.call(expand.dots = FALSE) # initial parameters
     function.name <- paste0(as.list(match.call(expand.dots = FALSE))[[1]], "()")
@@ -210,12 +207,6 @@ stop(paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), 
     if( ! is.null(lib.path)){
         tempo <- check(data = lib.path, class = "vector", mode = "character", fun.name = function.name) ; eval(ee)
     }
-    tempo <- check(data = cute.path, class = "vector", typeof = "character", length = 1, fun.name = function.name) ; eval(ee)
-    if( ! is.null(arg.check)){
-        if(any(arg.check, na.rm = TRUE) == TRUE){
-            stop(paste0("\n\n================\n\n", paste(text.check[arg.check], collapse = "\n"), "\n\n================\n\n"), call. = FALSE) #
-        }
-    }
     # end using check()
     # check with r_debugging_tools
     # source("C:/Users/yhan/Documents/Git_projects/debugging_tools_for_r_dev/r_debugging_tools.R") ; eval(parse(text = str_basic_arg_check_dev)) ; eval(parse(text = str_arg_check_with_check_dev)) # activate this line and use the function (with no arguments left as NULL) to check arguments status and if they have been checked using check()
@@ -254,8 +245,7 @@ stop(paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), 
         "plot.fun", 
         "export", 
         # "res.path", # because can be NULL
-        # "lib.path", # because can be NULL
-        "cute.path"
+        # "lib.path" # because can be NULL
     )
     tempo.log <- sapply(lapply(tempo.arg, FUN = get, env = sys.nframe(), inherit = FALSE), FUN = is.null)
     if(any(tempo.log) == TRUE){# normally no NA with is.null()
@@ -358,19 +348,6 @@ stop(paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), 
     if( ! is.null(lib.path)){
         if( ! all(dir.exists(lib.path), na.rm = TRUE)){ # separation to avoid the problem of tempo$problem == FALSE and lib.path == NA
             tempo.cat <- paste0("ERROR IN ", function.name, ": DIRECTORY PATH INDICATED IN THE lib.path ARGUMENT DOES NOT EXISTS:\n", paste(lib.path, collapse = "\n"))
-            stop(paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n", ifelse(is.null(warn), "", paste0("IN ADDITION\nWARNING", ifelse(warn.count > 1, "S", ""), ":\n\n", warn))), call. = FALSE)
-        }
-    }
-    if(parall == TRUE){
-        if(grepl(x = cute.path, pattern = "^http")){
-            tempo.error1 <- any(grepl(x = get_message(data = "source(cute.path)", kind = "error", header = FALSE, env = get(env.name, envir = sys.nframe(), inherits = FALSE)), pattern = "^[Ee]rror"), na.rm = TRUE)
-            tempo.error2 <- FALSE
-        }else{
-            tempo.error1 <- FALSE
-            tempo.error2 <- ! file.exists(cute.path)
-        }
-        if(tempo.error1 | tempo.error2){
-            tempo.cat <- paste0("ERROR IN ", function.name, ": ", ifelse(grepl(x = cute.path, pattern = "^http"), "URL", "FILE"), " PATH INDICATED IN THE cute.path PARAMETER DOES NOT EXISTS:\n", cute.path)
             stop(paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n", ifelse(is.null(warn), "", paste0("IN ADDITION\nWARNING", ifelse(warn.count > 1, "S", ""), ":\n\n", warn))), call. = FALSE)
         }
     }
@@ -631,7 +608,6 @@ end.loop.string
             plot.fun = plot.fun, 
             res.path = res.path, 
             lib.path = lib.path, 
-            cute.path = cute.path, 
             fun = function(
         x, 
         function.name, 
@@ -654,13 +630,11 @@ end.loop.string
         code, 
         plot.fun, 
         res.path, 
-        lib.path, 
-        cute.path
+        lib.path
             ){
                 # check again: very important because another R
                 process.id <- Sys.getpid()
                 cat(paste0("\nPROCESS ID ", process.id, " -> TESTS ", x[1], " TO ", x[base::length(x)], "\n"))
-                source(cute.path, local = .GlobalEnv)
                 pack(req.package = "lubridate", lib.path = lib.path, load = TRUE) # load = TRUE to be sure that functions are present in the environment
                 # end check again: very important because another R
                 # plot management
