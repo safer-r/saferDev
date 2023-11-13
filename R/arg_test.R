@@ -784,7 +784,7 @@ end.loop.string
             # end combine pdf and save
             # save RData
             assign("output", c(get("final.output", envir = get(env.name)), data = list(final.file)), envir = get(env.name))
-            save(output, file = paste0(res.path, "/arg_test__1-", total.comp.nb, ".RData"), envir = get(env.name))
+            save(output, file = paste0(res.path, "/arg_test_1-", total.comp.nb, ".RData"), envir = get(env.name))
             rm(env.name) # optional, because should disappear at the end of the function execution
             # end save RData
             # save txt
