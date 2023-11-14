@@ -116,7 +116,7 @@ arg_test <- function(
         lib.path = NULL
 ){
     # DEBUGGING
-    # fun = "get_message"; arg = c("data", "kind"); val = list(data = "ls", kind = t26_20201124); list(TRUE, c(unlist(expected.error.t26))) ; parall = FALSE ; thread.nb = NULL ; plot.fun = FALSE ; export = FALSE ; res.path = "C:\\Users\\yhan\\Desktop\\" ; lib.path = NULL ; print.count = 1
+    # fun = "get_message"; arg = c("data", "kind"); val = list(data = "ls", kind = t26_20201124); list(TRUE, c(unlist(expected.error.t26))) ; expect.error = NULL ; parall = FALSE ; thread.nb = NULL ; print.count = 1 ; plot.fun = FALSE ; export = FALSE ; res.path = "C:\\Users\\yhan\\Desktop\\" ; lib.path = NULL 
     # fun = "unique" ; arg = "x" ; val = list(x = list(1:10, c(1,1,2,8), NA)) ; expect.error = list(x = list(FALSE, FALSE, TRUE)) ; parall = FALSE ; thread.nb = NULL ; plot.fun = FALSE ; export = FALSE ; res.path = "C:\\Users\\gmillot\\Desktop\\" ; lib.path = NULL ; print.count = 1 # for function debugging
     # fun = "unique" ; arg = c("x", "incomparables") ; val = list(x = list(1:10, c(1,1,2,8), NA), incomparable = c(TRUE, FALSE, NA)) ; expect.error = NULL ; parall = FALSE ; thread.nb = 2 ; plot.fun = FALSE ; export = TRUE ; res.path = "C:\\Users\\gmillot\\Desktop\\" ; lib.path = NULL ; print.count = 10 # for function debugging
     # fun = "plot" ; arg = c("x", "y") ; val = list(x = list(1:10, 12:13, NA), y = list(1:10, NA, NA)) ; expect.error = list(x = list(FALSE, FALSE, TRUE, FALSE), y = list(FALSE, TRUE, TRUE)) ; print.count = 10 ; parall = FALSE ; thread.nb = NULL ; plot.fun = TRUE ; export = TRUE ; res.path = "C:\\Users\\gmillot\\Desktop\\" ; lib.path = NULL # for function debugging
@@ -139,7 +139,6 @@ arg_test <- function(
             stop(paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in stop() to be able to add several messages between ==
         }
     }
-    
     # end check of lib.path
     # cuteDev required function checking
     req.function <- c(
@@ -244,7 +243,7 @@ stop(paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), 
         # "thread.nb", # because can be NULL
         "print.count", 
         "plot.fun", 
-        "export", 
+        "export"
         # "res.path", # because can be NULL
         # "lib.path" # because can be NULL
     )
@@ -368,6 +367,9 @@ stop(paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), 
     cat("\ntest JOB IGNITION\n")
     ini.date <- Sys.time()
     ini.time <- as.numeric(ini.date) # time of process begin, converted into seconds
+    if(is.null(res.path)){
+        res.path <- "."
+    }
     if(export == TRUE){
         res.path <- paste0(res.path, "/arg_test_res_", trunc(ini.time))
         if(dir.exists(res.path)){
@@ -528,14 +530,15 @@ if(plot.fun == TRUE){
 invisible(grDevices::dev.set(window.nb))
 plot.count <- plot.count + 1
 tempo.title <- paste0("test_", sprintf(paste0("%0", nchar(total.comp.nb), "d"), ifelse(parall == FALSE, count, x[count])))
-if(plot.kind == "classic"){
+if(plot.kind == "classic"){ # not ggplot. So title has to be added in a classical way
+# par(ann=FALSE, xaxt="n", yaxt="n", mar = rep(1, 4), bty = "n", xpd = NA) # old
+par(bty = "n", xpd = NA) # new
 eval(parse(text = fun.test))
-par(ann=FALSE, xaxt="n", yaxt="n", mar = rep(1, 4), bty = "n", xpd = NA)
-plot(1, 1, type = "n") # no display with type = "n"
+# plot(1, 1, type = "n") # no display with type = "n"
 x.left.dev.region <- (par("usr")[1] - ((par("usr")[2] - par("usr")[1]) / (par("plt")[2] - par("plt")[1])) * par("plt")[1] - ((par("usr")[2] - par("usr")[1]) / ((par("omd")[2] - par("omd")[1]) * (par("plt")[2] - par("plt")[1]))) * par("omd")[1])
 y.top.dev.region <- (par("usr")[4] + ((par("usr")[4] - par("usr")[3]) / (par("plt")[4] - par("plt")[3])) * (1 - par("plt")[4]) + ((par("usr")[4] - par("usr")[3]) / ((par("omd")[4] - par("omd")[3]) * (par("plt")[4] - par("plt")[3]))) * (1 - par("omd")[4]))
 text(x = x.left.dev.region, y = y.top.dev.region, labels = tempo.title, adj=c(0, 1), cex = 1.5)
-}else if(plot.kind == "special"){
+}else if(plot.kind == "special"){ # ggplot. title has been added above
 eval(parse(text = fun.test))
 }else{
 tempo.cat <- paste0("INTERNAL CODE ERROR 1 IN ", function.name, ": CODE HAS TO BE MODIFIED")
