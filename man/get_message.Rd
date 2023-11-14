@@ -37,12 +37,14 @@ Using argument print.no = FALSE, return NULL if no message, which is convenient 
 \details{
 REQUIRED PACKAGES
 
-None
+ggplot2
 
 
 REQUIRED FUNCTIONS FROM CUTE_LITTLE_R_FUNCTION
 
-check()
+arg_check()
+
+pkg_check()
 
 
 WARNINGS
@@ -51,18 +53,7 @@ Only the first message is returned.
 
 Always use the env argument when get_message() is used inside functions.
 
-The function does not prevent printing if print() is used inside the instruction tested. To prevent that, use tempo <- utils::capture.output(error <- get_message(data = "check(data = 'a', class = mean, neg.values = FALSE, print = TRUE)")). The return of get_message() is assigned into error and the printed messages are captured by utils::capture.output() and assigned into tempo. See the examples.
-
-
-REQUIRED PACKAGES
-
-none
-
-
-REQUIRED FUNCTIONS FROM CUTE_LITTLE_R_FUNCTION
-
-check()
-pack()
+The function does not prevent printing if print() is used inside the instruction tested. To prevent that, use tempo <- utils::capture.output(error <- get_message(data = "arg_check(data = 'a', class = mean, neg.values = FALSE, print = TRUE)")). The return of get_message() is assigned into error and the printed messages are captured by utils::capture.output() and assigned into tempo. See the examples.
 }
 \examples{
 get_message(data = "wilcox.test(c(1,1,3), c(1, 2, 4), paired = TRUE)", kind = "error", 

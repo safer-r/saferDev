@@ -46,7 +46,7 @@ none
 
 REQUIRED FUNCTIONS FROM CUTE_LITTLE_R_FUNCTION
 
-check()
+arg_check()
 }
 \examples{
 #report()

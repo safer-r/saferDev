@@ -85,13 +85,13 @@
 #' 
 #' set.seed(1) ; 
 #' obs1 <- data.frame(Time = c(rnorm(10), rnorm(10) + 2), Group1 = rep(c("G", "H"), each = 10), 
-#' stringsAsFactors = TRUE) ; arg_test(fun = "gg_boxplot", arg = c("data1", "y", "categ"), 
+#' stringsAsFactors = TRUE) ; arg_test(fun = "fun_gg_boxplot", arg = c("data1", "y", "categ"), 
 #' val = list(L1 = list(L1 = obs1), L2 = list(L1 = "Time"), L3 = list(L1 = "Group1")))
 #' 
 #' set.seed(1) ; 
 #' obs1 <- data.frame(Time = c(rnorm(10), rnorm(10) + 2), Group1 = rep(c("G", "H"), each = 10), 
 #' stringsAsFactors = TRUE) ; 
-#' arg_test(fun = "gg_boxplot", arg = c("data1", "y", "categ"), val = list(L1 = list(obs1), 
+#' arg_test(fun = "fun_gg_boxplot", arg = c("data1", "y", "categ"), val = list(L1 = list(obs1), 
 #' L2 = "Time", L3 = "Group1"), parall = FALSE, thread.nb = NULL, plot.fun = TRUE, 
 #' res.path = "C:\\Users\\yhan\\Desktop\\", lib.path = "C:\\Program Files\\R\\R-4.3.1\\library\\")
 #' 
