@@ -30,8 +30,8 @@ REQUIRED FUNCTIONS FROM CUTE_LITTLE_R_FUNCTION
 arg_check()
 }
 \examples{
-# pkg_check(req.package = "nopackage") # should return an error
+# pkg_check(req.package = "nopackage") # commented because this example returns an error
 pkg_check(req.package = "ggplot2")
 pkg_check(req.package = "ggplot2", lib.path = "C:/Users/yhan/AppData/Local/R/win-library/4.3") 
-# should return an error if the lib.path argument is not an existing directory
+# commented because this example returns an error if the lib.path argument is not an existing directory
 }

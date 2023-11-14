@@ -50,7 +50,7 @@
 #' 
 #' @examples
 #' test <- matrix(1:3)
-#' arg_check(data = test, print = TRUE, class = "vector", mode = "numeric")
+#' # arg_check(data = test, print = TRUE, class = "vector", mode = "numeric") # commented because this example returns an error
 #' @export
 arg_check <- function(
         data, 

@@ -49,7 +49,7 @@ for python 3.7. Previous versions return an error "Error in sys$stdout$flush() :
 # python_pkg_check(req.package = "nopackage")
 
 
-# example without error message 
+# commented because this example returns an error if the python package is not installed on the computer
 # (require the installation of the python serpentine package 
 # from https://github.com/koszullab/serpentine
 
