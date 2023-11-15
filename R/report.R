@@ -22,7 +22,7 @@
 #' 
 #' @examples
 #' #report()
-#' report(data = 1:3, output = "results.txt", path = "C:/Users/yhan/Desktop", overwrite = TRUE, 
+#' report(data = 1:3, output = "results.txt", path = ".", overwrite = TRUE, 
 #' rownames.kept = FALSE, vector.cat = FALSE, noquote = FALSE, sep = 2)
 #' @export
 report <- function(

@@ -108,12 +108,12 @@ export = TRUE, res.path = getwd())
 arg_test(fun = "plot", arg = c("x", "y"), val = list(x = list(1:10, 12:13, NA, (1:10)^2), 
 y = list(1:10, NA, NA)),  expect.error = list(x = list(FALSE, TRUE, TRUE, FALSE), 
 y = list(FALSE, TRUE, TRUE)), parall = FALSE, thread.nb = NULL, plot.fun = TRUE, 
-res.path = "C:\\\\Users\\\\yhan\\\\Desktop\\\\", lib.path = NULL)
+res.path = ".", lib.path = NULL)
 
 arg_test(fun = "plot", arg = c("x", "y"), val = list(x = list(1:10, 12:13, NA, 
 (1:10)^2), y = list(1:10, NA, NA)), parall = FALSE, thread.nb = 4, 
-plot.fun = TRUE, res.path = "C:\\\\Users\\\\yhan\\\\Desktop\\\\", 
-lib.path = "C:\\\\Program Files\\\\R\\\\R-4.3.1\\\\library\\\\")
+plot.fun = TRUE, res.path = ".", 
+lib.path = NULL)
 
 # set.seed(1) ; 
 # obs1 <- data.frame(Time = c(rnorm(10), rnorm(10) + 2), Group1 = rep(c("G", "H"), each = 10), 

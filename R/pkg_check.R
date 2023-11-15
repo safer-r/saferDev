@@ -18,7 +18,7 @@
 #' @examples
 #' # pkg_check(req.package = "nopackage") # commented because this example returns an error
 #' pkg_check(req.package = "ggplot2")
-#' pkg_check(req.package = "ggplot2", lib.path = "C:/Users/yhan/AppData/Local/R/win-library/4.3") 
+#' # pkg_check(req.package = "ggplot2", lib.path = "C:/Users/yhan/AppData/Local/R/win-library/4.3") 
 #' # commented because this example returns an error if the lib.path argument is not an existing directory
 #' @importFrom utils installed.packages
 #' @export
