@@ -76,10 +76,16 @@ arg_check <- function(
     # function name
     # no used in this function for the error message, to avoid env colliding
     # end function name
-    # required function checking
-    # end required function checking
-    # reserved words
-    # end reserved words
+    # check of lib.path
+    # end check of lib.path
+    # cutedev required function checking
+    # end cutedev required function checking
+    # check of other required packages
+    # end check of other required packages
+    # check of the required function from the required packages
+    # end check of the required function from the required packages
+
+    # argument primary checking
     # fun.name checked first because required next
     if( ! is.null(fun.name)){ # I have to use this way to deal with every kind of class for fun.name
         if(all(base::class(fun.name) == "character")){ # all() without na.rm -> ok because class(NA) is "logical"
@@ -106,9 +112,11 @@ arg_check <- function(
         stop(paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in stop() to be able to add several messages between ==
     }
     # end arg with no default values
-    # argument primary checking
-    # source("C:/Users/Gael/Documents/Git_versions_to_use/debugging_tools_for_r_dev-v1.7/r_debugging_tools-v1.7.R") ; eval(parse(text = str_basic_arg_check_dev)) # activate this line and use the function to check arguments status
+    # check with r_debugging_tools
+    # source("C:/Users/yhan/Documents/Git_projects/debugging_tools_for_r_dev/r_debugging_tools.R") ; eval(parse(text = str_basic_arg_check_dev)) ; eval(parse(text = str_arg_check_with_fun_check_dev)) # activate this line and use the function (with no arguments left as NULL) to check arguments status and if they have been checked using arg_check()
+    # end check with r_debugging_tools
     # end argument primary checking
+
     # second round of checking and data preparation
     # management of special classes
     basic.class <- c(
@@ -326,8 +334,6 @@ arg_check <- function(
     # data.name and fun.name tested at the beginning
     # end other checkings
     # end second round of checking and data preparation
-    # package checking
-    # end package checking
     # main code
     if(is.null(data.name)){
         data.name <- deparse(substitute(data))
