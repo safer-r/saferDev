@@ -128,7 +128,6 @@ arg_test <- function(
     arg.names <- names(formals(fun = sys.function(sys.parent(n = 2)))) # names of all the arguments
     arg.user.setting <- as.list(match.call(expand.dots = FALSE))[-1] # list of the argument settings (excluding default values not provided by the user)
     # end function name
-    # package checking
     # check of lib.path
     if( ! is.null(lib.path)){
         if( ! all(typeof(lib.path) == "character")){ # no na.rm = TRUE with typeof
@@ -153,13 +152,20 @@ arg_test <- function(
         }
     }
     if( ! is.null(tempo)){
-        tempo.cat <- paste0("ERROR IN ", function.name, "\nFUNCTION", ifelse(length(tempo) > 1, "S ", ""), " FROM THE cuteDev PACKAGE", ifelse(length(tempo) > 1, " ARE", " IS"), " MISSING IN THE R ENVIRONMENT:\n", paste0(tempo, collapse = "()\n"), "()")
-stop(paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in stop() to be able to add several messages between ==
+        tempo.cat <- paste0("ERROR IN ", function.name, "\nREQUIRED FUNCTION", ifelse(length(tempo) > 1, "S ", ""), " FROM THE cuteDev PACKAGE", ifelse(length(tempo) > 1, " ARE", " IS"), " MISSING IN THE R ENVIRONMENT:\n", paste0(tempo, collapse = "()\n"), "()")
+        stop(paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in stop() to be able to add several messages between ==
     }
     # end cutedev required function checking
     # check of other required packages
+    .pkg_check(
+            req.package = c(
+                "lubridate", 
+                "pdftools"
+            ),
+            lib.path = lib.path,
+            external.function.name = function.name
+    )
     # end check of other required packages
-    # end package checking
     # check of the required function from the required packages
     # end check of the required function from the required packages
     
@@ -176,7 +182,7 @@ stop(paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), 
         stop(paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in stop() to be able to add several messages between ==
     }
     # end arg with no default values
-    # using arg_check()
+    # argument checking with arg_check()
     argum.check <- NULL #
     text.check <- NULL #
     checked.arg.names <- NULL # for function debbuging: used by r_debugging_tools
@@ -207,22 +213,13 @@ stop(paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), 
     if( ! is.null(lib.path)){
         tempo <- arg_check(data = lib.path, class = "vector", mode = "character", fun.name = function.name) ; eval(ee)
     }
-    # end using arg_check()
+    # end argument checking with arg_check()
     # check with r_debugging_tools
     # source("C:/Users/yhan/Documents/Git_projects/debugging_tools_for_r_dev/r_debugging_tools.R") ; eval(parse(text = str_basic_arg_check_dev)) ; eval(parse(text = str_arg_check_with_fun_check_dev)) # activate this line and use the function (with no arguments left as NULL) to check arguments status and if they have been checked using arg_check()
     # end check with r_debugging_tools
     # end argument primary checking
     # second round of checking and data preparation
-    # new environment
-    env.name <- paste0("env", as.numeric(Sys.time()))
-    if(exists(env.name, where = -1)){ # verify if still ok when info() is inside a function
-        tempo.cat <- paste0("ERROR IN ", function.name, ": ENVIRONMENT env.name ALREADY EXISTS. PLEASE RERUN ONCE")
-        stop(paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in stop() to be able to add several messages between ==
-    }else{
-        assign(env.name, new.env())
-        assign("data", data, envir = get(env.name, envir = sys.nframe(), inherits = FALSE)) # data assigned in a new envir for test
-    }
-    # end new environment
+
     # management of NA arguments
     if( ! (all(class(arg.user.setting) == "list", na.rm = TRUE) & length(arg.user.setting) == 0)){
         tempo.arg <- names(arg.user.setting) # values provided by the user
@@ -360,10 +357,16 @@ stop(paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), 
     sp.plot.fun <- c("gg_scatter", "gg_bar", "gg_boxplot")
     # end declaration of special plot functions
     # main code
-    ini.warning.length <- base::options()$warning.length
-    options(warning.length = 8170)
-    warn <- NULL
-    warn.count <- 0
+    # new environment
+    env.name <- paste0("env", as.numeric(Sys.time()))
+    if(exists(env.name, where = -1)){ # verify if still ok when info() is inside a function
+        tempo.cat <- paste0("ERROR IN ", function.name, ": ENVIRONMENT env.name ALREADY EXISTS. PLEASE RERUN ONCE")
+        stop(paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in stop() to be able to add several messages between ==
+    }else{
+        assign(env.name, new.env())
+        assign("data", data, envir = get(env.name, envir = sys.nframe(), inherits = FALSE)) # data assigned in a new envir for test
+    }
+    # end new environment
     cat("\ntest JOB IGNITION\n")
     ini.date <- Sys.time()
     ini.time <- as.numeric(ini.date) # time of process begin, converted into seconds
@@ -816,20 +819,14 @@ end.loop.string
         sys.info$loadedOnly <- sys.info$loadedOnly[order(names(sys.info$loadedOnly))] # sort the packages
         invisible(grDevices::dev.off(window.nb))
         rm(env.name) # optional, because should disappear at the end of the function execution
-        # output
-        # warning output
-        if( ! is.null(warn)){
-            on.exit(warning(paste0("FROM ", function.name, ":\n\n", warn), call. = FALSE))
-        }
-        on.exit(expr = options(warning.length = ini.warning.length), add = TRUE)
-        # end warning output
-        output <- list(fun = fun, ini = ini, data = data, sys.info = sys.info)
         if(plot.fun == TRUE & plot.count == 0L){
             warn.count <- warn.count + 1
             tempo.warn <- paste0("(", warn.count,") NO PDF PLOT BECAUSE ONLY ERRORS REPORTED")
             warn <- paste0(ifelse(is.null(warn), tempo.warn, paste0(warn, "\n\n", tempo.warn)))
             file.remove(paste0(res.path, "/plots_from_arg_test_1", ifelse(total.comp.nb == 1L, ".pdf", paste0("-", total.comp.nb, ".pdf"))))
         }
+        # output
+        output <- list(fun = fun, ini = ini, data = data, sys.info = sys.info)
         if( ! is.null(expect.error)){
             expect.data <- output$data[ ! output$data$problem == output$data$expected.error, ]
             if(nrow(expect.data) == 0L){
@@ -843,11 +840,6 @@ end.loop.string
                 }
             }
         }
-        if( ! is.null(warn)){
-            base::options(warning.length = 8170)
-            on.exit(warning(paste0("FROM ", function.name, ":\n\n", warn), call. = FALSE))
-        }
-        on.exit(expr = base::options(warning.length = ini.warning.length), add = TRUE)
         if(export == TRUE){
             save(output, file = paste0(res.path, "/arg_test_1", ifelse(total.comp.nb == 1L, ".RData", paste0("-", total.comp.nb, ".RData"))))
             table.out <- as.matrix(output$data)
@@ -858,7 +850,12 @@ end.loop.string
         }
         # end output
     }
-    # after return() ?
+    # warning output
+    if( ! is.null(warn)){
+        on.exit(warning(paste0("FROM ", function.name, ":\n\n", warn), call. = FALSE))
+    }
+    on.exit(expr = base::options(warning.length = ini.warning.length), add = TRUE)
+    # end warning output
     end.date <- Sys.time()
     end.time <- as.numeric(end.date)
     total.lapse <- round(lubridate::seconds_to_period(end.time - ini.time))
