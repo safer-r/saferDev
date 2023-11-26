@@ -97,18 +97,20 @@ get_message <- function(
         }
     }
     if( ! is.null(tempo)){
-        tempo.cat <- paste0("ERROR IN ", function.name, "\nFUNCTION", ifelse(length(tempo) > 1, "S ", ""), " FROM THE cuteDev PACKAGE", ifelse(length(tempo) > 1, " ARE", " IS"), " MISSING IN THE R ENVIRONMENT:\n", paste0(tempo, collapse = "()\n"), "()")
+        tempo.cat <- paste0("ERROR IN ", function.name, "\nREQUIRED FUNCTION", ifelse(length(tempo) > 1, "S ", ""), " FROM THE cuteDev PACKAGE", ifelse(length(tempo) > 1, " ARE", " IS"), " MISSING IN THE R ENVIRONMENT:\n", paste0(tempo, collapse = "()\n"), "()")
         stop(paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in stop() to be able to add several messages between ==
     }
     # end cutedev required function checking
-    # check of other required packages
-    pkg_check(req.package = c(
-        "ggplot2"
-    ), load = TRUE, lib.path = NULL) # load = TRUE because otherwise, the "# check of the required function from the required packages" section does not work
-    # end check of other required packages
-    # end package checking
     # check of the required function from the required packages
+    .pack_and_function_check <- function(
+        fun = c(
+            "ggplot2::ggplot_build"
+        ),
+        lib.path = NULL,
+        external.function.name = function.name
+    )
     # end check of the required function from the required packages
+    # end package checking
     
     # argument primary checking
     # arg with no default values

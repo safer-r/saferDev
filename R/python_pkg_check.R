@@ -66,7 +66,12 @@ python_pkg_check <- function(
         }else if( ! all(dir.exists(R.lib.path), na.rm = TRUE)){ # separation to avoid the problem of tempo$problem == FALSE and R.lib.path == NA
             tempo.cat <- paste0("ERROR IN ", function.name, ": DIRECTORY PATH INDICATED IN THE R.lib.path ARGUMENT DOES NOT EXISTS:\n", paste(R.lib.path, collapse = "\n"))
             stop(paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in stop() to be able to add several messages between ==
+        }else{
+            .libPaths(new = sub(x = R.lib.path, pattern = "/$|\\\\$", replacement = "")) # .libPaths(new = ) add path to default path. BEWARE: .libPaths() does not support / at the end of a submitted path. Thus check and replace last / or \\ in path
+            R.lib.path <- .libPaths()
         }
+    }else{
+        R.lib.path <- .libPaths() # .libPaths(new = R.lib.path) # or .libPaths(new = c(.libPaths(), R.lib.path))
     }
     # end check of R.lib.path
     # cuteDev required function checking
@@ -81,15 +86,22 @@ python_pkg_check <- function(
         }
     }
     if( ! is.null(tempo)){
-        tempo.cat <- paste0("ERROR IN ", function.name, "\nFUNCTION", ifelse(length(tempo) > 1, "S ", ""), " FROM THE cuteDev PACKAGE", ifelse(length(tempo) > 1, " ARE", " IS"), " MISSING IN THE R ENVIRONMENT:\n", paste0(tempo, collapse = "()\n"), "()")
+        tempo.cat <- paste0("ERROR IN ", function.name, "\nREQUIRED FUNCTION", ifelse(length(tempo) > 1, "S ", ""), " FROM THE cuteDev PACKAGE", ifelse(length(tempo) > 1, " ARE", " IS"), " MISSING IN THE R ENVIRONMENT:\n", paste0(tempo, collapse = "()\n"), "()")
         stop(paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in stop() to be able to add several messages between ==
     }
     # end cutedev required function checking
-    # check of other required packages
-    # end check of other required packages
-    # end package checking
     # check of the required function from the required packages
+    .pack_and_function_check <- function(
+        fun = c(
+            "reticulate::py_run_string", 
+            "reticulate::use_python",
+            "reticulate::import_from_path"
+        ),
+        lib.path = R.lib.path,
+        external.function.name = function.name
+    )
     # end check of the required function from the required packages
+    # end package checking
     
     # argument primary checking
     # arg with no default values
@@ -127,16 +139,7 @@ python_pkg_check <- function(
             }
         }
     }
-    if( ! is.null(R.lib.path)){
-        tempo <- arg_check(data = R.lib.path, class = "character", fun.name = function.name) ; eval(ee)
-        if(tempo$problem == FALSE){
-            if( ! all(dir.exists(R.lib.path), na.rm = TRUE)){ # separation to avoid the problem of tempo$problem == FALSE and R.lib.path == NA
-                tempo.cat <- paste0("ERROR IN ", function.name, ": DIRECTORY PATH INDICATED IN THE R.lib.path ARGUMENT DOES NOT EXISTS:\n", paste(R.lib.path, collapse = "\n"))
-                text.check <- c(text.check, tempo.cat)
-                argum.check <- c(argum.check, TRUE)
-            }
-        }
-    }
+    # R.lib.path already checked above
     if( ! is.null(argum.check)){
         if(any(argum.check, na.rm = TRUE) == TRUE){
             stop(paste0("\n\n================\n\n", paste(text.check[argum.check], collapse = "\n"), "\n\n================\n\n"), call. = FALSE) #
@@ -175,9 +178,7 @@ python_pkg_check <- function(
     # end reserved words (to avoid bugs)
     # end second round of checking and data preparation
     
-    # package checking
-    pkg_check(req.package = "reticulate", lib.path = R.lib.path)
-    # end package checking
+
     # main code
     if(is.null(python.exec.path)){
         python.exec.path <- reticulate::py_run_string("

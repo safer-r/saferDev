@@ -1,23 +1,21 @@
-#' @title pkg_load
+#' @title is_function_here
 #' @description
-#' Load the specified R packages into the working environment without any message. Warning: the order in the req.package argument will specify the scope order in the search() list.
-#' @param req.package Character vector of package names to import.
-#' @param lib.path Optional character vector specifying the absolute pathways of the directories containing some of the listed packages in the req.package argument, if not in the default directories. Ignored if NULL.
-#' @returns Nothing.
+#' Check if required functions are present in installed packages. This controls a change of function name, for example.
+#' @param fun Character vector of the names of the required functions, preceded by the name of the package they belong to and a double colon. Example: c("ggplot2::geom_point", "grid::gpar").
+#' @param lib.path Character vector specifying the absolute pathways of the directories containing the listed packages in the fun argument, if not in the default directories. Ignored if NULL.
+#' @returns  An error message if at least one of the checked packages is missing in lib.path, or if at least one of the checked functions is missing in the required package, nothing otherwise.
 #' @examples
-#' # pkg_load(req.package = "nopackage") # commented because this example returns an error
-#' pkg_load(req.package = "ggplot2")
-#' # pkg_load(req.package = "ggplot2", lib.path = "C:/Users/yhan/AppData/Local/R/win-library/4.3") 
-#' # commented because this example returns an error if the lib.path argument is not an existing directory
-#' @importFrom utils installed.packages
+#' # is_function_here(fun = "ggplot2::notgood") # commented because this example returns an error
+#' is_function_here(fun = c("ggplot2::geom_point", "grid::gpar"))
 #' @export
-pkg_load <- function(
-        req.package,  
+
+
+is_function_here <- function(
+        fun, 
         lib.path = NULL
 ){
     # DEBUGGING
-    # req.package = "ggplot2" ; lib.path = "C:/Program Files/R/R-4.3.1/library"
-    # req.package = "serpentine" ; lib.path = "C:/Users/yhan/AppData/Local/Temp/RtmpkfYz9V/RLIBS_2cb051b94b38"
+    # fun = "ggplot2::geom_point" ; lib.path = "C:/Program Files/R/R-4.3.1/library" ; external.function.name = "fun1"
     # function name
     function.name <- paste0(as.list(match.call(expand.dots = FALSE))[[1]], "()")
     arg.names <- names(formals(fun = sys.function(sys.parent(n = 2)))) # names of all the arguments
@@ -31,7 +29,12 @@ pkg_load <- function(
         }else if( ! all(dir.exists(lib.path), na.rm = TRUE)){ # separation to avoid the problem of tempo$problem == FALSE and lib.path == NA
             tempo.cat <- paste0("ERROR IN ", function.name, ": DIRECTORY PATH INDICATED IN THE lib.path ARGUMENT DOES NOT EXISTS:\n", paste(lib.path, collapse = "\n"))
             stop(paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in stop() to be able to add several messages between ==
+        }else{
+            .libPaths(new = sub(x = lib.path, pattern = "/$|\\\\$", replacement = "")) # .libPaths(new = ) add path to default path. BEWARE: .libPaths() does not support / at the end of a submitted path. Thus check and replace last / or \\ in path
+            lib.path <- .libPaths()
         }
+    }else{
+        lib.path <- .libPaths() # .libPaths(new = lib.path) # or .libPaths(new = c(.libPaths(), lib.path))
     }
     # end check of lib.path
     # cuteDev required function checking
@@ -49,16 +52,14 @@ pkg_load <- function(
         stop(paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in stop() to be able to add several messages between ==
     }
     # end cutedev required function checking
-    # check of other required packages
-    # end check of other required packages
     # check of the required function from the required packages
     # end check of the required function from the required packages
-    
-    
+    # end package checking
+
     # argument primary checking
     # arg with no default values
     mandat.args <- c(
-        "req.package"
+        "fun"
     )
     tempo <- eval(parse(text = paste0("missing(", paste0(mandat.args, collapse = ") | missing("), ")")))
     if(any(tempo)){ # normally no NA for missing() output
@@ -71,17 +72,8 @@ pkg_load <- function(
     text.check <- NULL #
     checked.arg.names <- NULL # for function debbuging: used by r_debugging_tools
     ee <- expression(argum.check <- c(argum.check, tempo$problem) , text.check <- c(text.check, tempo$text) , checked.arg.names <- c(checked.arg.names, tempo$object.name))
-    tempo <- arg_check(data = req.package, class = "vector", mode = "character", fun.name = function.name) ; eval(ee)
-    if( ! is.null(lib.path)){
-        tempo <- arg_check(data = lib.path, class = "vector", mode = "character", fun.name = function.name) ; eval(ee)
-        if(tempo$problem == FALSE){
-            if( ! all(dir.exists(lib.path), na.rm = TRUE)){ # separation to avoid the problem of tempo$problem == FALSE and lib.path == NA
-                tempo.cat <- paste0("ERROR IN ", function.name, ": DIRECTORY PATH INDICATED IN THE lib.path ARGUMENT DOES NOT EXISTS:\n", paste(lib.path, collapse = "\n"))
-                text.check <- c(text.check, tempo.cat)
-                argum.check <- c(argum.check, TRUE)
-            }
-        }
-    }
+    tempo <- arg_check(data = fun, class = "vector", mode = "character", fun.name = function.name) ; eval(ee)
+    # lib.path already checked above
     if( ! is.null(argum.check)){
         if(any(argum.check, na.rm = TRUE) == TRUE){
             stop(paste0("\n\n================\n\n", paste(text.check[argum.check], collapse = "\n"), "\n\n================\n\n"), call. = FALSE) #
@@ -106,7 +98,7 @@ pkg_load <- function(
     # end management of NA arguments
     # management of NULL arguments
     tempo.arg <-c(
-        "req.package"
+        "fun"
         # "lib.path" # inactivated because can be null
     )
     tempo.log <- sapply(lapply(tempo.arg, FUN = get, env = sys.nframe(), inherit = FALSE), FUN = is.null)
@@ -124,40 +116,41 @@ pkg_load <- function(
     # reserved words (to avoid bugs)
     # end reserved words (to avoid bugs)
     # end second round of checking and data preparation
-    
+
     # main code
-    if(is.null(lib.path)){
-        lib.path <- .libPaths() # .libPaths(new = lib.path) # or .libPaths(new = c(.libPaths(), lib.path))
-    }else{
-        .libPaths(new = sub(x = lib.path, pattern = "/$|\\\\$", replacement = "")) # .libPaths(new = ) add path to default path. BEWARE: .libPaths() does not support / at the end of a submitted path. Thus check and replace last / or \\ in path
-        lib.path <- .libPaths()
+    tempo.log <- grepl(x = fun, pattern = "^.+::.+$")
+    if( ! all(tempo.log)){
+        tempo.cat <- paste0("ERROR IN ", function.name, " (INTERNAL FUNCTION OF THE cuteDev PACKAGE: THE STRING IN fun ARGUMENT MUST CONTAIN \"::\":\n", paste(fun[ ! tempo.log], collapse = "\n"))
+        stop(paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in stop() to be able to add several messages between ==
     }
-    tempo <- NULL
-    for(i1 in 1:length(req.package)){
-        if( ! req.package[i1] %in% rownames(utils::installed.packages(lib.loc = lib.path))){
-            tempo <- c(tempo, req.package[i1])
-        }
-    }
-    if( ! is.null(tempo)){
+    pkg.fun.name.list <- base::strsplit(fun, "::") # package in 1 and function in 2
+    pkg.name <- sapply(X = pkg.fun.name.list, FUN = function(x){x[1]})
+    pkg.log <- pkg.name %in% rownames(utils::installed.packages(lib.loc = lib.path))
+    if( ! all(pkg.log)){
+        tempo <- pkg.name[ ! pkg.log]
         tempo.cat <- paste0(
             "ERROR IN ", 
-            function.name, 
-            ". PACKAGE", 
-            ifelse(length(tempo) == 1L, paste0(":\n", tempo, "\n\n"), paste0("S:\n", paste(tempo, collapse = "\n"), "\n\n")), 
+            external.function.name, 
+            "() OF THE cuteDev PACKAGE. REQUIRED PACKAGE", 
+            ifelse(sum(tempo) == 1L, paste0(":\n", tempo, "\n\n"), paste0("S:\n", paste(tempo, collapse = "\n"), "\n\n")), 
             "MUST BE INSTALLED IN", 
             ifelse(length(lib.path) == 1L, "", " ONE OF THESE FOLDERS"), 
             ":\n", 
             paste(lib.path, collapse = "\n")
         )
         stop(paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in stop() to be able to add several messages between ==
-    }else{
-        for(i2 in 1:length(req.package)){
-            suppressMessages(suppressWarnings(suppressPackageStartupMessages(library(req.package[i2], lib.loc = lib.path, quietly = TRUE, character.only = TRUE))))
-        }
     }
-    # end main code
-    # output
-    # warning output
-    # end warning output
-    # end output
+    fun.log <- sapply(X = pkg.fun.name.list, FUN = function(x){base::exists(x[2], envir = base::asNamespace(x[1]))})
+    if( ! all(fun.log)){
+        tempo <- fun[ ! fun.log]
+        tempo.cat <- paste0(
+            "ERROR IN ", 
+            external.function.name, 
+            "() OF THE cuteDev PACKAGE. REQUIRED FUNCTION",
+            ifelse(sum(tempo) == 1L, " IS ", "S ARE "), 
+            "MISSING IN THE INSTALLED PACKAGE", 
+            ifelse(sum(tempo) == 1L, paste0(":\n", tempo, "\n\n"), paste0("S:\n", paste(tempo, collapse = "\n"), "\n\n"))
+        )
+        stop(paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in stop() to be able to add several messages between ==
+    }
 }

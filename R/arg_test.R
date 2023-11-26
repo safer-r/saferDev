@@ -128,6 +128,7 @@ arg_test <- function(
     arg.names <- names(formals(fun = sys.function(sys.parent(n = 2)))) # names of all the arguments
     arg.user.setting <- as.list(match.call(expand.dots = FALSE))[-1] # list of the argument settings (excluding default values not provided by the user)
     # end function name
+    # package checking
     # check of lib.path
     if( ! is.null(lib.path)){
         if( ! all(typeof(lib.path) == "character")){ # no na.rm = TRUE with typeof
@@ -136,7 +137,12 @@ arg_test <- function(
         }else if( ! all(dir.exists(lib.path), na.rm = TRUE)){ # separation to avoid the problem of tempo$problem == FALSE and lib.path == NA
             tempo.cat <- paste0("ERROR IN ", function.name, ": DIRECTORY PATH INDICATED IN THE lib.path ARGUMENT DOES NOT EXISTS:\n", paste(lib.path, collapse = "\n"))
             stop(paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in stop() to be able to add several messages between ==
+        }else{
+            .libPaths(new = sub(x = lib.path, pattern = "/$|\\\\$", replacement = "")) # .libPaths(new = ) add path to default path. BEWARE: .libPaths() does not support / at the end of a submitted path. Thus check and replace last / or \\ in path
+            lib.path <- .libPaths()
         }
+    }else{
+        lib.path <- .libPaths() # .libPaths(new = lib.path) # or .libPaths(new = c(.libPaths(), lib.path))
     }
     # end check of lib.path
     # cuteDev required function checking
@@ -156,18 +162,22 @@ arg_test <- function(
         stop(paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in stop() to be able to add several messages between ==
     }
     # end cutedev required function checking
-    # check of other required packages
-    .pkg_check(
-            req.package = c(
-                "lubridate", 
-                "pdftools"
-            ),
-            lib.path = lib.path,
-            external.function.name = function.name
-    )
-    # end check of other required packages
     # check of the required function from the required packages
+    .pack_and_function_check <- function(
+        fun = c(
+            "lubridate::seconds_to_period", 
+            "pdftools::pdf_combine",
+            "parallel::detectCores",
+            "parallel::makeCluster",
+            "parallel::clusterSplit",
+            "parallel::clusterApply",
+            "parallel::stopCluster"
+        ),
+        lib.path = lib.path,
+        external.function.name = function.name
+    )
     # end check of the required function from the required packages
+    # end package checking
     
     # argument primary checking
     # arg with no default values
@@ -210,8 +220,11 @@ arg_test <- function(
     if( ! is.null(res.path)){
         tempo <- arg_check(data = res.path, class = "vector", mode = "character", fun.name = function.name) ; eval(ee)
     }
-    if( ! is.null(lib.path)){
-        tempo <- arg_check(data = lib.path, class = "vector", mode = "character", fun.name = function.name) ; eval(ee)
+    # lib.path already checked above
+    if( ! is.null(argum.check)){
+        if(any(argum.check, na.rm = TRUE) == TRUE){
+            stop(paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) #
+        }
     }
     # end argument checking with arg_check()
     # check with r_debugging_tools
