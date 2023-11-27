@@ -91,6 +91,5 @@ None
 }
 \examples{
 test <- matrix(1:3)
-# arg_check(data = test, print = TRUE, class = "vector", mode = "numeric") 
-# commented because this example returns an error
+# arg_check(data = test, print = TRUE, class = "vector", mode = "numeric")  # commented because this example returns an error
 }

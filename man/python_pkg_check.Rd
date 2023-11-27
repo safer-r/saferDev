@@ -7,18 +7,18 @@
 python_pkg_check(
   req.package,
   python.exec.path = NULL,
-  lib.path = NULL,
-  R.lib.path = NULL
+  python.lib.path = NULL,
+  lib.path = NULL
 )
 }
 \arguments{
 \item{req.package}{Character vector of package names to import.}
 
-\item{python.exec.path}{Single optional character vector specifying the absolute pathways of the executable python file to use (associated to the packages to use). If NULL, the reticulate::import_from_path() function used in python_pkg_check() seeks for an available version of python.exe, and then uses python_config(python_version, required_module, python_versions). But might not be the correct one for the lib.path parameter specified. Thus, it is recommanded to do not leave NULL, notably when using computing clusters.}
+\item{python.exec.path}{Single optional character vector specifying the absolute pathways of the executable python file to use (associated to the packages to use). If NULL, the reticulate::import_from_path() function used in python_pkg_check() seeks for an available version of python.exe, and then uses python_config(python_version, required_module, python_versions). But might not be the correct one for the python.lib.path parameter specified. Thus, it is recommanded to do not leave NULL, notably when using computing clusters.}
 
-\item{lib.path}{Optional character vector specifying the absolute pathways of the directories containing some of the listed packages in the req.package argument, if not in the default directories.}
+\item{python.lib.path}{Optional character vector specifying the absolute pathways of the directories containing some of the listed packages in the req.package argument, if not in the default directories.}
 
-\item{R.lib.path}{Absolute path of the reticulate packages, if not in the default folders.}
+\item{lib.path}{Absolute path of the reticulate packages, if not in the default folders.}
 }
 \value{
 Nothing.
@@ -35,9 +35,6 @@ reticulate
 REQUIRED FUNCTIONS FROM CUTE_LITTLE_R_FUNCTION
 
 arg_check()
-
-pkg_check()
-
 
 WARNINGS
 
@@ -58,5 +55,5 @@ for python 3.7. Previous versions return an error "Error in sys$stdout$flush() :
 
 # another example of error message
 
-# python_pkg_check(req.package = "serpentine", lib.path = "blablabla")
+# python_pkg_check(req.package = "serpentine", python.lib.path = "blablabla")
 }

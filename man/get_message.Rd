@@ -44,9 +44,6 @@ REQUIRED FUNCTIONS FROM CUTE_LITTLE_R_FUNCTION
 
 arg_check()
 
-pkg_check()
-
-
 WARNINGS
 
 Only the first message is returned.
