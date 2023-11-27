@@ -125,9 +125,9 @@ is_package_here <- function(
         tempo <- req.package[ ! pkg.log]
         tempo.cat <- paste0(
             "ERROR IN ", 
-            external.function.name, 
-            "() OF THE cuteDev PACKAGE. REQUIRED PACKAGE", 
-            ifelse(sum(tempo) == 1L, paste0(":\n", tempo, "\n\n"), paste0("S:\n", paste(tempo, collapse = "\n"), "\n\n")), 
+            function.name, 
+            "\nREQUIRED PACKAGE", 
+            ifelse(length(tempo) == 1L, paste0(":\n", tempo, "\n\n"), paste0("S:\n", paste(tempo, collapse = "\n"), "\n\n")), 
             "MUST BE INSTALLED IN", 
             ifelse(length(lib.path) == 1L, "", " ONE OF THESE FOLDERS"), 
             ":\n", 

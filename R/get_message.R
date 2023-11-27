@@ -87,8 +87,7 @@ get_message <- function(
     # end check of lib.path
     # cuteDev required function checking
     req.function <- c(
-        "arg_check",
-        "pkg_check"
+        "arg_check"
     )
     tempo <- NULL
     for(i1 in req.function){
@@ -102,7 +101,7 @@ get_message <- function(
     }
     # end cutedev required function checking
     # check of the required function from the required packages
-    .pack_and_function_check <- function(
+    .pack_and_function_check(
         fun = c(
             "ggplot2::ggplot_build"
         ),

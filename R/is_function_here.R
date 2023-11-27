@@ -1,7 +1,7 @@
 #' @title is_function_here
 #' @description
 #' Check if required functions are present in installed packages. This controls a change of function name, for example.
-#' @param fun Character vector of the names of the required functions, preceded by the name of the package they belong to and a double colon. Example: c("ggplot2::geom_point", "grid::gpar").
+#' @param fun Character vector of the names of the required functions, preceded by the name of the package they belong to and a double colon. Example: c("ggplot2::geom_point", "grid::gpar"). Warning: do not write "()" at the end of the function
 #' @param lib.path Character vector specifying the absolute pathways of the directories containing the listed packages in the fun argument, if not in the default directories. Ignored if NULL.
 #' @returns  An error message if at least one of the checked packages is missing in lib.path, or if at least one of the checked functions is missing in the required package, nothing otherwise.
 #' @examples
@@ -120,7 +120,12 @@ is_function_here <- function(
     # main code
     tempo.log <- grepl(x = fun, pattern = "^.+::.+$")
     if( ! all(tempo.log)){
-        tempo.cat <- paste0("ERROR IN ", function.name, " (INTERNAL FUNCTION OF THE cuteDev PACKAGE: THE STRING IN fun ARGUMENT MUST CONTAIN \"::\":\n", paste(fun[ ! tempo.log], collapse = "\n"))
+        tempo.cat <- paste0("ERROR IN ", function.name, "\nTHE STRING IN fun ARGUMENT MUST CONTAIN \"::\":\n", paste(fun[ ! tempo.log], collapse = "\n"))
+        stop(paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in stop() to be able to add several messages between ==
+    }
+    tempo.log <- grepl(x = fun, pattern = "^.+\\(\\)$")
+    if(any(tempo.log)){
+        tempo.cat <- paste0("ERROR IN ", function.name, "\nTHE STRING IN fun ARGUMENT MUST NOT FINISH BY \"()\":\n", paste(fun[tempo.log], collapse = "\n"))
         stop(paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in stop() to be able to add several messages between ==
     }
     pkg.fun.name.list <- base::strsplit(fun, "::") # package in 1 and function in 2
@@ -130,9 +135,9 @@ is_function_here <- function(
         tempo <- pkg.name[ ! pkg.log]
         tempo.cat <- paste0(
             "ERROR IN ", 
-            external.function.name, 
-            "() OF THE cuteDev PACKAGE. REQUIRED PACKAGE", 
-            ifelse(sum(tempo) == 1L, paste0(":\n", tempo, "\n\n"), paste0("S:\n", paste(tempo, collapse = "\n"), "\n\n")), 
+            function.name, 
+            "\nREQUIRED PACKAGE", 
+            ifelse(length(tempo) == 1L, paste0(":\n", tempo), paste0("S:\n", paste(tempo, collapse = "\n"))), 
             "MUST BE INSTALLED IN", 
             ifelse(length(lib.path) == 1L, "", " ONE OF THESE FOLDERS"), 
             ":\n", 
@@ -145,11 +150,11 @@ is_function_here <- function(
         tempo <- fun[ ! fun.log]
         tempo.cat <- paste0(
             "ERROR IN ", 
-            external.function.name, 
-            "() OF THE cuteDev PACKAGE. REQUIRED FUNCTION",
-            ifelse(sum(tempo) == 1L, " IS ", "S ARE "), 
+            function.name, 
+            "\nREQUIRED FUNCTION",
+            ifelse(length(tempo) == 1L, " IS ", "S ARE "), 
             "MISSING IN THE INSTALLED PACKAGE", 
-            ifelse(sum(tempo) == 1L, paste0(":\n", tempo, "\n\n"), paste0("S:\n", paste(tempo, collapse = "\n"), "\n\n"))
+            ifelse(length(tempo) == 1L, paste0(":\n", tempo), paste0("S:\n", paste(tempo, collapse = "\n")))
         )
         stop(paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in stop() to be able to add several messages between ==
     }

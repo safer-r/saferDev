@@ -90,7 +90,7 @@
             "ERROR IN ", 
             external.function.name, 
             "() OF THE cuteDev PACKAGE. REQUIRED PACKAGE", 
-            ifelse(sum(tempo) == 1L, paste0(":\n", tempo, "\n\n"), paste0("S:\n", paste(tempo, collapse = "\n"), "\n\n")), 
+            ifelse(length(tempo) == 1L, paste0(":\n", tempo), paste0("S:\n", paste(tempo, collapse = "\n"))), 
             "MUST BE INSTALLED IN", 
             ifelse(length(lib.path) == 1L, "", " ONE OF THESE FOLDERS"), 
             ":\n", 
@@ -105,9 +105,9 @@
             "ERROR IN ", 
             external.function.name, 
             "() OF THE cuteDev PACKAGE. REQUIRED FUNCTION",
-            ifelse(sum(tempo) == 1L, " IS ", "S ARE "), 
+            ifelse(length(tempo) == 1L, " IS ", "S ARE "), 
             "MISSING IN THE INSTALLED PACKAGE", 
-            ifelse(sum(tempo) == 1L, paste0(":\n", tempo, "\n\n"), paste0("S:\n", paste(tempo, collapse = "\n"), "\n\n"))
+            ifelse(length(tempo) == 1L, paste0(":\n", tempo), paste0("S:\n", paste(tempo, collapse = "\n")))
         )
         stop(paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in stop() to be able to add several messages between ==
     }

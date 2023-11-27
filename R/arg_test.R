@@ -148,8 +148,7 @@ arg_test <- function(
     # cuteDev required function checking
     req.function <- c(
         "arg_check", 
-        "get_message", 
-        "pkg_check"
+        "get_message"
     )
     tempo <- NULL
     for(i1 in req.function){
@@ -163,7 +162,7 @@ arg_test <- function(
     }
     # end cutedev required function checking
     # check of the required function from the required packages
-    .pack_and_function_check <- function(
+    .pack_and_function_check(
         fun = c(
             "lubridate::seconds_to_period", 
             "pdftools::pdf_combine",

@@ -76,8 +76,7 @@ python_pkg_check <- function(
     # end check of R.lib.path
     # cuteDev required function checking
     req.function <- c(
-        "arg_check",
-        "pkg_check"
+        "arg_check"
     )
     tempo <- NULL
     for(i1 in req.function){
@@ -91,7 +90,7 @@ python_pkg_check <- function(
     }
     # end cutedev required function checking
     # check of the required function from the required packages
-    .pack_and_function_check <- function(
+    .pack_and_function_check(
         fun = c(
             "reticulate::py_run_string", 
             "reticulate::use_python",
