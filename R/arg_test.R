@@ -615,9 +615,6 @@ cat(paste0(ifelse(parall == FALSE, "\nLOOP PROCESS ENDED | ", paste0("\nPROCESS 
             plot.fun = plot.fun, 
             res.path = res.path, 
             lib.path = lib.path, 
-            .pack_and_function_check = .pack_and_function_check,
-            arg_check = arg_check, 
-            get_message = get_message, 
             fun = function(
         x, 
         function.name, 
@@ -640,10 +637,7 @@ cat(paste0(ifelse(parall == FALSE, "\nLOOP PROCESS ENDED | ", paste0("\nPROCESS 
         code, 
         plot.fun, 
         res.path, 
-        lib.path,
-        .pack_and_function_check,
-        arg_check,
-        get_message
+        lib.path
             ){
                 # check again: very important because another R
                 process.id <- Sys.getpid()
