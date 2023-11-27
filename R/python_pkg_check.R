@@ -49,7 +49,10 @@ python_pkg_check <- function(
     # req.package = "serpentine" ; python.exec.path = "C:/ProgramData/Anaconda3/python.exe" ; python.lib.path = "c:/programdata/anaconda3/lib/site-packages/" ; lib.path = NULL
     # req.package = "bad" ; python.lib.path = NULL ; lib.path = NULL
     # function name
-    function.name <- paste0(as.list(match.call(expand.dots = FALSE))[[1]], "()")
+    function.name <- paste0(as.list(match.call(expand.dots = FALSE))[[1]], "()") # function name with "()" paste, which split into a vector of three: c("::()", "package()", "function()") if "package::function()" is used.
+    if(function.name[1] == "::()"){
+        function.name <- function.name[3]
+    }
     arg.names <- names(formals(fun = sys.function(sys.parent(n = 2)))) # names of all the arguments
     arg.user.setting <- as.list(match.call(expand.dots = FALSE))[-1] # list of the argument settings (excluding default values not provided by the user)
     # end function name
