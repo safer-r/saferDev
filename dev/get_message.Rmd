@@ -1,0 +1,88 @@
+---
+title: "get_message"
+---
+<br>
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = ">"
+)
+```
+
+```{r setup}
+library(cuteDev)
+```
+<br>
+
+#### get_message() #### return error/warning/other messages of an expression (that can be exported)
+<br>
+
+### Datasets
+
+```{r}
+char1 <- "wilcox.test(c(1,1,3), c(1, 2, 4), paired = TRUE)" # single character string
+char2 <- "message('ahah')" # single character string
+```
+<br>
+
+### Datasets info
+```{r}
+char1 # single character string
+char2 # single character string
+```
+<br>
+
+### Simple example
+```{r}
+get_message(data = char1)
+get_message(data = char2)
+```
+<br>
+
+### Argument kind
+```{r}
+get_message(data = char1, kind = "warning") # to get warning messages of the wilcox test
+```
+<br>
+
+### Argument header
+```{r}
+get_message(data = char1, header = FALSE) # to get error messages (by default) without header
+```
+<br>
+
+### Argument print.no
+```{r}
+get_message(data = char1, print.no = TRUE) # print a message saying that no message reported
+```
+<br>
+
+### Argument text
+```{r}
+get_message(data = char2, print.no = TRUE, text = "IN A") # print a message even if the argument print.no is TRUE
+```
+<br>
+
+### Argument kind, header, print.no, text
+```{r}
+get_message(data = char1, kind = "warning", header = FALSE, print.no = TRUE, text = "IN A") # print the warning message in text
+```
+<br>
+
+### All the arguments
+```{r}
+get_message(
+    data = char1, 
+    kind = "warning", 
+    header = FALSE,
+    print.no = TRUE, 
+    text = "IN A",
+    env = NULL
+) # print the warning message in text in the environment R_GlobalEnv
+```
+
+
+
+
+
