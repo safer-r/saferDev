@@ -4,6 +4,15 @@
     <loc>/404.html</loc>
   </url>
   <url>
+    <loc>/articles/cuteDev.html</loc>
+  </url>
+  <url>
+    <loc>/articles/exemples.html</loc>
+  </url>
+  <url>
+    <loc>/articles/index.html</loc>
+  </url>
+  <url>
     <loc>/authors.html</loc>
   </url>
   <url>
@@ -25,7 +34,13 @@
     <loc>/reference/index.html</loc>
   </url>
   <url>
-    <loc>/reference/pkg_check.html</loc>
+    <loc>/reference/internal_function.html</loc>
+  </url>
+  <url>
+    <loc>/reference/is_function_here.html</loc>
+  </url>
+  <url>
+    <loc>/reference/is_package_here.html</loc>
   </url>
   <url>
     <loc>/reference/python_pkg_check.html</loc>
