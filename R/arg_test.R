@@ -628,6 +628,9 @@ cat(paste0(ifelse(parall == FALSE, "\nLOOP PROCESS ENDED | ", paste0("\nPROCESS 
             plot.fun = plot.fun, 
             res.path = res.path, 
             lib.path = lib.path, 
+            .pack_and_function_check = .pack_and_function_check,
+            arg_check = arg_check, 
+            get_message = get_message, 
             fun = function(
         x, 
         function.name, 
@@ -650,12 +653,21 @@ cat(paste0(ifelse(parall == FALSE, "\nLOOP PROCESS ENDED | ", paste0("\nPROCESS 
         code, 
         plot.fun, 
         res.path, 
-        lib.path
+        lib.path,
+        .pack_and_function_check,
+        arg_check,
+        get_message
             ){
                 # check again: very important because another R
                 process.id <- Sys.getpid()
                 cat(paste0("\nPROCESS ID ", process.id, " -> TESTS ", x[1], " TO ", x[base::length(x)], "\n"))
-                pkg_check(req.package = "lubridate", lib.path = lib.path, load = TRUE) # load = TRUE to be sure that functions are present in the environment
+                .pack_and_function_check(
+                    fun = c(
+                        "lubridate::seconds_to_period"
+                    ),
+                    lib.path = lib.path,
+                    external.function.name = function.name
+                )
                 # end check again: very important because another R
                 # plot management
                 if(plot.fun == TRUE){
