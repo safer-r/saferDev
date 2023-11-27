@@ -48,9 +48,6 @@
 #' 
 #' get_message()
 #' 
-#' pkg_check()
-#' 
-#' 
 #' WARNINGS
 #' 
 #' Limited to 43 arguments with at least 2 values each. The total number of arguments tested can be more if the additional arguments have a single value. The limit is due to nested "for" loops (https://stat.ethz.ch/pipermail/r-help/2008-March/157341.html), but this limitation is away from the number of tests performed that would be 2^43.
