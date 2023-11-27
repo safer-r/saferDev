@@ -1,6 +1,6 @@
 test_that("output of fun_check is a list contains 'problem', 'text', and 'object.name'", {
     vec1 <- -1:3 # vector of integers
-    resultCheck <- fun_check(
+    resultCheck <- arg_check(
         data = vec1, 
         class = "integer", 
         typeof = NULL, 
