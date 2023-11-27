@@ -49,21 +49,6 @@ report <- function(
     # package checking
     # check of lib.path
     # end check of lib.path
-    # cuteDev required function checking
-    req.function <- c(
-        "arg_check"
-    )
-    tempo <- NULL
-    for(i1 in req.function){
-        if(length(utils::find(i1, mode = "function")) == 0L){
-            tempo <- c(tempo, i1)
-        }
-    }
-    if( ! is.null(tempo)){
-        tempo.cat <- paste0("ERROR IN ", function.name, "\nREQUIRED FUNCTION", ifelse(length(tempo) > 1, "S ", ""), " FROM THE cuteDev PACKAGE", ifelse(length(tempo) > 1, " ARE", " IS"), " MISSING IN THE R ENVIRONMENT:\n", paste0(tempo, collapse = "()\n"), "()")
-        stop(paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in stop() to be able to add several messages between ==
-    }
-    # end cutedev required function checking
     # check of the required function from the required packages
     # end check of the required function from the required packages
     # end package checking
