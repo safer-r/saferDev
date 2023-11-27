@@ -87,8 +87,7 @@ get_message <- function(
     # end check of lib.path
     # cuteDev required function checking
     req.function <- c(
-        "arg_check",
-        "pkg_check"
+        "arg_check"
     )
     tempo <- NULL
     for(i1 in req.function){
@@ -97,18 +96,20 @@ get_message <- function(
         }
     }
     if( ! is.null(tempo)){
-        tempo.cat <- paste0("ERROR IN ", function.name, "\nFUNCTION", ifelse(length(tempo) > 1, "S ", ""), " FROM THE cuteDev PACKAGE", ifelse(length(tempo) > 1, " ARE", " IS"), " MISSING IN THE R ENVIRONMENT:\n", paste0(tempo, collapse = "()\n"), "()")
+        tempo.cat <- paste0("ERROR IN ", function.name, "\nREQUIRED FUNCTION", ifelse(length(tempo) > 1, "S ", ""), " FROM THE cuteDev PACKAGE", ifelse(length(tempo) > 1, " ARE", " IS"), " MISSING IN THE R ENVIRONMENT:\n", paste0(tempo, collapse = "()\n"), "()")
         stop(paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in stop() to be able to add several messages between ==
     }
     # end cutedev required function checking
-    # check of other required packages
-    pkg_check(req.package = c(
-        "ggplot2"
-    ), load = TRUE, lib.path = NULL) # load = TRUE because otherwise, the "# check of the required function from the required packages" section does not work
-    # end check of other required packages
-    # end package checking
     # check of the required function from the required packages
+    .pack_and_function_check(
+        fun = c(
+            "ggplot2::ggplot_build"
+        ),
+        lib.path = NULL,
+        external.function.name = function.name
+    )
     # end check of the required function from the required packages
+    # end package checking
     
     # argument primary checking
     # arg with no default values
@@ -179,10 +180,10 @@ get_message <- function(
     # end warning initiation
     # other checkings
     # end other checkings
-    # reserved words to avoid bugs (names of dataframe columns used in this function)
-    # no need to use reserved words to avoid bugs, because it is local, and  exists("tempo.warning", inherits = FALSE), never use the scope
-    # end reserved words to avoid bugs (used in this function)
+    # reserved words (to avoid bugs)
+    # end reserved words (to avoid bugs)
     # end second round of checking and data preparation
+
     
     # main code
     grDevices::pdf(file = NULL) # send plots into a NULL file, no pdf file created
@@ -281,10 +282,10 @@ get_message <- function(
         } # no need else{} here because output is already NULL at first
     }
     invisible(grDevices::dev.off(window.nb)) # end send plots into a NULL file
+    # end main code
     # output
     # warning output
     # end warning output
     return(output) # do not use cat() because the idea is to reuse the message
     # end output
-    # end main code
 }
