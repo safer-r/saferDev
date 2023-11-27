@@ -361,14 +361,14 @@ arg_test <- function(
         }
     }
     # end other checkings
-    # reserved word checking
-    # end reserved word checking
+    # reserved words (to avoid bugs)
+    # end reserved words (to avoid bugs)
     # end second round of checking and data preparation
-    
+
+    # main code
     # declaration of special plot functions
     sp.plot.fun <- c("gg_scatter", "gg_bar", "gg_boxplot")
     # end declaration of special plot functions
-    # main code
     # new environment
     env.name <- paste0("env", as.numeric(Sys.time()))
     if(exists(env.name, where = -1)){ # verify if still ok when info() is inside a function
@@ -574,8 +574,8 @@ tempo.time <- as.numeric(Sys.time())
 tempo.lapse <- round(lubridate::seconds_to_period(tempo.time - ini.time))
 cat(paste0(ifelse(parall == FALSE, "\nLOOP PROCESS ENDED | ", paste0("\nPROCESS ", process.id, " ENDED | ")), "LOOP ", format(count, big.mark=","), " / ", format(ifelse(parall == FALSE, total.comp.nb, base::length(x)), big.mark=","), " | TIME SPENT: ", tempo.lapse, "\n\n"))
 }
-', 
-end.loop.string
+        ', 
+        end.loop.string
     )
     # end creation of the txt instruction that includes several loops
     if(parall == TRUE){

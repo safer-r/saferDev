@@ -50,8 +50,7 @@
 #' 
 #' @examples
 #' test <- matrix(1:3)
-#' # arg_check(data = test, print = TRUE, class = "vector", mode = "numeric") 
-#' # commented because this example returns an error
+#' # arg_check(data = test, print = TRUE, class = "vector", mode = "numeric")  # commented because this example returns an error
 #' @export
 arg_check <- function(
         data, 
@@ -80,8 +79,6 @@ arg_check <- function(
     # end check of lib.path
     # cutedev required function checking
     # end cutedev required function checking
-    # check of other required packages
-    # end check of other required packages
     # check of the required function from the required packages
     # end check of the required function from the required packages
 
@@ -333,7 +330,10 @@ arg_check <- function(
     }
     # data.name and fun.name tested at the beginning
     # end other checkings
+    # reserved words (to avoid bugs)
+    # end reserved words (to avoid bugs)
     # end second round of checking and data preparation
+
     # main code
     if(is.null(data.name)){
         data.name <- deparse(substitute(data))
@@ -395,24 +395,33 @@ text <- paste0(ifelse(is.null(fun.name), "ERROR", paste0("ERROR IN ", fun.name))
 text <- paste0(text, " AND ") ; 
 }
 text <- paste0(text, toupper(arg.names[i2]), " ", if(all(get(arg.names[i2], envir = sys.nframe(), inherits = FALSE) %in% c("matrix", "array"))){"matrix"}else if(all(get(arg.names[i2], envir = sys.nframe(), inherits = FALSE) %in% c("factor", "ordered"))){"factor"}else{get(arg.names[i2], envir = sys.nframe(), inherits = FALSE)})
-' # no need of na.rm = TRUE for all() because %in% does not output NA
-            # end script to execute
-            if(base::typeof(data) == "double" & double.as.integer.allowed == TRUE & ((arg.names[i2] == "class" & all(get(arg.names[i2], envir = sys.nframe(), inherits = FALSE) == "integer")) | (arg.names[i2] == "typeof" & all(get(arg.names[i2], envir = sys.nframe(), inherits = FALSE) == "integer")))){ # no need of na.rm = TRUE for all() because == does not output NA if no NA in left of ==, which is the case for arg.names # typeof(data) == "double" means no factor allowed
-                if( ! all(data %% 1 == 0L, na.rm = TRUE)){ # to check integers (use %%, meaning the remaining of a division): see the precedent line. isTRUE(all.equal(data%%1, rep(0, length(data)))) not used because we strictly need zero as a result. Warning: na.rm = TRUE required here for all()
+                ' # no need of na.rm = TRUE for all() because %in% does not output NA
+                # end script to execute
+                if(base::typeof(data) == "double" & double.as.integer.allowed == TRUE & ((arg.names[i2] == "class" & all(get(arg.names[i2], envir = sys.nframe(), inherits = FALSE) == "integer")) | (arg.names[i2] == "typeof" & all(get(arg.names[i2], envir = sys.nframe(), inherits = FALSE) == "integer")))){ # no need of na.rm = TRUE for all() because == does not output NA if no NA in left of ==, which is the case for arg.names # typeof(data) == "double" means no factor allowed
+                    if( ! all(data %% 1 == 0L, na.rm = TRUE)){ # to check integers (use %%, meaning the remaining of a division): see the precedent line. isTRUE(all.equal(data%%1, rep(0, length(data)))) not used because we strictly need zero as a result. Warning: na.rm = TRUE required here for all()
+                        eval(parse(text = tempo.script)) # execute tempo.script
+                    }
+                }else if( ! any(all(get(arg.names[i2], envir = sys.nframe(), inherits = FALSE) %in% c("vector", "ggplot2"))) & ! all(eval(parse(text = paste0(arg.names[i2], "(data)"))) %in% get(arg.names[i2], envir = sys.nframe(), inherits = FALSE))){ # test the four c("class", "typeof", "mode", "length") arguments with their corresponding function. No need of na.rm = TRUE for all() because %in% does not output NA # no need of na.rm = TRUE for all() because %in% does not output NA # no need of na.rm = TRUE for any() because get get(arg.names) does not contain NA
+                    eval(parse(text = tempo.script)) # execute tempo.script
+                }else if(arg.names[i2] == "class" & all(get(arg.names[i2], envir = sys.nframe(), inherits = FALSE) == "vector") & ! (all(base::class(data) %in% "numeric") | all(base::class(data) %in% "integer") | all(base::class(data) %in% "character") | all(base::class(data) %in% "logical"))){ # test class == "vector". No need of na.rm = TRUE for all() because %in% does not output NA # no need of na.rm = TRUE for all() because == does not output NA if no NA in left of ==, which is the case for arg.names
+                    eval(parse(text = tempo.script)) # execute tempo.script
+                }else if(arg.names[i2] == "class" & all(get(arg.names[i2], envir = sys.nframe(), inherits = FALSE) == "ggplot2") & ! all(base::class(data) %in% c("gg", "ggplot"))){ # test ggplot object # no need of na.rm = TRUE for all() because == does not output NA if no NA in left of ==, which is the case for arg.names # no need of na.rm = TRUE for all() because %in% does not output NA
                     eval(parse(text = tempo.script)) # execute tempo.script
                 }
-            }else if( ! any(all(get(arg.names[i2], envir = sys.nframe(), inherits = FALSE) %in% c("vector", "ggplot2"))) & ! all(eval(parse(text = paste0(arg.names[i2], "(data)"))) %in% get(arg.names[i2], envir = sys.nframe(), inherits = FALSE))){ # test the four c("class", "typeof", "mode", "length") arguments with their corresponding function. No need of na.rm = TRUE for all() because %in% does not output NA # no need of na.rm = TRUE for all() because %in% does not output NA # no need of na.rm = TRUE for any() because get get(arg.names) does not contain NA
-                eval(parse(text = tempo.script)) # execute tempo.script
-            }else if(arg.names[i2] == "class" & all(get(arg.names[i2], envir = sys.nframe(), inherits = FALSE) == "vector") & ! (all(base::class(data) %in% "numeric") | all(base::class(data) %in% "integer") | all(base::class(data) %in% "character") | all(base::class(data) %in% "logical"))){ # test class == "vector". No need of na.rm = TRUE for all() because %in% does not output NA # no need of na.rm = TRUE for all() because == does not output NA if no NA in left of ==, which is the case for arg.names
-                eval(parse(text = tempo.script)) # execute tempo.script
-            }else if(arg.names[i2] == "class" & all(get(arg.names[i2], envir = sys.nframe(), inherits = FALSE) == "ggplot2") & ! all(base::class(data) %in% c("gg", "ggplot"))){ # test ggplot object # no need of na.rm = TRUE for all() because == does not output NA if no NA in left of ==, which is the case for arg.names # no need of na.rm = TRUE for all() because %in% does not output NA
-                eval(parse(text = tempo.script)) # execute tempo.script
-            }
             }
         }
     }
-if(prop == TRUE & all(base::typeof(data) == "double")){ # all() without na.rm -> ok because typeof(NA) is "logical"
-    if(is.null(data) | any(data < 0 | data > 1, na.rm = TRUE)){ # works if data is NULL # Warning: na.rm = TRUE required here for any() # typeof(data) == "double" means no factor allowed
+    if(prop == TRUE & all(base::typeof(data) == "double")){ # all() without na.rm -> ok because typeof(NA) is "logical"
+        if(is.null(data) | any(data < 0 | data > 1, na.rm = TRUE)){ # works if data is NULL # Warning: na.rm = TRUE required here for any() # typeof(data) == "double" means no factor allowed
+            problem <- TRUE
+            if(identical(text, paste0(ifelse(is.null(fun.name), "", paste0("IN ", fun.name, ": ")), "NO PROBLEM DETECTED FOR THE ", data.name, " OBJECT"))){
+                text <- paste0(ifelse(is.null(fun.name), "ERROR", paste0("ERROR IN ", fun.name)), ": ")
+            }else{
+                text <- paste0(text, " AND ")
+            }
+            text <- paste0(text, "THE ", data.name, " OBJECT MUST BE DECIMAL VALUES BETWEEN 0 AND 1")
+        }
+    }else if(prop == TRUE){
         problem <- TRUE
         if(identical(text, paste0(ifelse(is.null(fun.name), "", paste0("IN ", fun.name, ": ")), "NO PROBLEM DETECTED FOR THE ", data.name, " OBJECT"))){
             text <- paste0(ifelse(is.null(fun.name), "ERROR", paste0("ERROR IN ", fun.name)), ": ")
@@ -421,73 +430,66 @@ if(prop == TRUE & all(base::typeof(data) == "double")){ # all() without na.rm ->
         }
         text <- paste0(text, "THE ", data.name, " OBJECT MUST BE DECIMAL VALUES BETWEEN 0 AND 1")
     }
-}else if(prop == TRUE){
-    problem <- TRUE
-    if(identical(text, paste0(ifelse(is.null(fun.name), "", paste0("IN ", fun.name, ": ")), "NO PROBLEM DETECTED FOR THE ", data.name, " OBJECT"))){
-        text <- paste0(ifelse(is.null(fun.name), "ERROR", paste0("ERROR IN ", fun.name)), ": ")
-    }else{
-        text <- paste0(text, " AND ")
+    if(all(base::class(data) %in% "expression")){ # no need of na.rm = TRUE for all() because %in% does not output NA
+        data <- as.character(data) # to evaluate the presence of NA
     }
-    text <- paste0(text, "THE ", data.name, " OBJECT MUST BE DECIMAL VALUES BETWEEN 0 AND 1")
-}
-if(all(base::class(data) %in% "expression")){ # no need of na.rm = TRUE for all() because %in% does not output NA
-    data <- as.character(data) # to evaluate the presence of NA
-}
-if(na.contain == FALSE & (base::mode(data) %in% c("logical", "numeric", "complex", "character", "list"))){ # before it was ! (class(data) %in% c("function", "environment"))
-    if(any(is.na(data)) == TRUE){ # not on the same line because when data is class envir or function , do not like that # normally no NA with is.na()
+    if(na.contain == FALSE & (base::mode(data) %in% c("logical", "numeric", "complex", "character", "list"))){ # before it was ! (class(data) %in% c("function", "environment"))
+        if(any(is.na(data)) == TRUE){ # not on the same line because when data is class envir or function , do not like that # normally no NA with is.na()
+            problem <- TRUE
+            if(identical(text, paste0(ifelse(is.null(fun.name), "", paste0("IN ", fun.name, ": ")), "NO PROBLEM DETECTED FOR THE ", data.name, " OBJECT"))){
+                text <- paste0(ifelse(is.null(fun.name), "ERROR", paste0("ERROR IN ", fun.name)), ": ")
+            }else{
+                text <- paste0(text, " AND ")
+            }
+            text <- paste0(text, "THE ", data.name, " OBJECT CONTAINS NA WHILE NOT AUTHORIZED")
+        }
+    }
+    if(neg.values == FALSE & all(base::mode(data) %in% "numeric") & ! any(base::class(data) %in% "factor")){ # no need of na.rm = TRUE for all() because %in% does not output NA
+        if(any(data < 0, na.rm = TRUE)){ # Warning: na.rm = TRUE required here for any()
+            problem <- TRUE
+            if(identical(text, paste0(ifelse(is.null(fun.name), "", paste0("IN ", fun.name, ": ")), "NO PROBLEM DETECTED FOR THE ", data.name, " OBJECT"))){
+                text <- paste0(ifelse(is.null(fun.name), "ERROR", paste0("ERROR IN ", fun.name)), ": ")
+            }else{
+                text <- paste0(text, " AND ")
+            }
+            text <- paste0(text, "THE ", data.name, " OBJECT MUST BE MADE OF NON NEGATIVE NUMERIC VALUES")
+        }
+    }else if(neg.values == FALSE){
         problem <- TRUE
         if(identical(text, paste0(ifelse(is.null(fun.name), "", paste0("IN ", fun.name, ": ")), "NO PROBLEM DETECTED FOR THE ", data.name, " OBJECT"))){
             text <- paste0(ifelse(is.null(fun.name), "ERROR", paste0("ERROR IN ", fun.name)), ": ")
         }else{
             text <- paste0(text, " AND ")
         }
-        text <- paste0(text, "THE ", data.name, " OBJECT CONTAINS NA WHILE NOT AUTHORIZED")
+        text <- paste0(text, "THE ", data.name, " OBJECT MUST BE MADE OF NON NEGATIVE VALUES BUT IS ", ifelse(any(base::class(data) %in% "factor"), "A FACTOR", "NOT EVEN MODE NUMERIC")) # no need of na.rm = TRUE
     }
-}
-if(neg.values == FALSE & all(base::mode(data) %in% "numeric") & ! any(base::class(data) %in% "factor")){ # no need of na.rm = TRUE for all() because %in% does not output NA
-    if(any(data < 0, na.rm = TRUE)){ # Warning: na.rm = TRUE required here for any()
+    if(inf.values == FALSE & all(base::typeof(data) %in% "double") & ! any(base::class(data) %in% "factor")){ # no need of na.rm = TRUE for all() because %in% does not output NA
+        if(any(is.infinite(data), na.rm = TRUE)){ # Warning: na.rm = TRUE required here for any()
+            problem <- TRUE
+            if(identical(text, paste0(ifelse(is.null(fun.name), "", paste0("IN ", fun.name, ": ")), "NO PROBLEM DETECTED FOR THE ", data.name, " OBJECT"))){
+                text <- paste0(ifelse(is.null(fun.name), "ERROR", paste0("ERROR IN ", fun.name)), ": ")
+            }else{
+                text <- paste0(text, " AND ")
+            }
+            text <- paste0(text, "THE ", data.name, " OBJECT MUST BE MADE OF NON INFINITE NUMERIC VALUES")
+        }
+    }else if(inf.values == FALSE){
         problem <- TRUE
         if(identical(text, paste0(ifelse(is.null(fun.name), "", paste0("IN ", fun.name, ": ")), "NO PROBLEM DETECTED FOR THE ", data.name, " OBJECT"))){
             text <- paste0(ifelse(is.null(fun.name), "ERROR", paste0("ERROR IN ", fun.name)), ": ")
         }else{
             text <- paste0(text, " AND ")
         }
-        text <- paste0(text, "THE ", data.name, " OBJECT MUST BE MADE OF NON NEGATIVE NUMERIC VALUES")
+        text <- paste0(text, "THE ", data.name, " OBJECT MUST BE MADE OF NON INFINITE VALUES BUT IS ", ifelse(any(base::class(data) %in% "factor"), "A FACTOR", "NOT EVEN TYPE DOUBLE")) # no need of na.rm = TRUE
     }
-}else if(neg.values == FALSE){
-    problem <- TRUE
-    if(identical(text, paste0(ifelse(is.null(fun.name), "", paste0("IN ", fun.name, ": ")), "NO PROBLEM DETECTED FOR THE ", data.name, " OBJECT"))){
-        text <- paste0(ifelse(is.null(fun.name), "ERROR", paste0("ERROR IN ", fun.name)), ": ")
-    }else{
-        text <- paste0(text, " AND ")
+    if(print == TRUE & problem == TRUE){
+        cat(paste0("\n\n================\n\n", text, "\n\n================\n\n"))
     }
-    text <- paste0(text, "THE ", data.name, " OBJECT MUST BE MADE OF NON NEGATIVE VALUES BUT IS ", ifelse(any(base::class(data) %in% "factor"), "A FACTOR", "NOT EVEN MODE NUMERIC")) # no need of na.rm = TRUE
-}
-if(inf.values == FALSE & all(base::typeof(data) %in% "double") & ! any(base::class(data) %in% "factor")){ # no need of na.rm = TRUE for all() because %in% does not output NA
-    if(any(is.infinite(data), na.rm = TRUE)){ # Warning: na.rm = TRUE required here for any()
-        problem <- TRUE
-        if(identical(text, paste0(ifelse(is.null(fun.name), "", paste0("IN ", fun.name, ": ")), "NO PROBLEM DETECTED FOR THE ", data.name, " OBJECT"))){
-            text <- paste0(ifelse(is.null(fun.name), "ERROR", paste0("ERROR IN ", fun.name)), ": ")
-        }else{
-            text <- paste0(text, " AND ")
-        }
-        text <- paste0(text, "THE ", data.name, " OBJECT MUST BE MADE OF NON INFINITE NUMERIC VALUES")
-    }
-}else if(inf.values == FALSE){
-    problem <- TRUE
-    if(identical(text, paste0(ifelse(is.null(fun.name), "", paste0("IN ", fun.name, ": ")), "NO PROBLEM DETECTED FOR THE ", data.name, " OBJECT"))){
-        text <- paste0(ifelse(is.null(fun.name), "ERROR", paste0("ERROR IN ", fun.name)), ": ")
-    }else{
-        text <- paste0(text, " AND ")
-    }
-    text <- paste0(text, "THE ", data.name, " OBJECT MUST BE MADE OF NON INFINITE VALUES BUT IS ", ifelse(any(base::class(data) %in% "factor"), "A FACTOR", "NOT EVEN TYPE DOUBLE")) # no need of na.rm = TRUE
-}
-if(print == TRUE & problem == TRUE){
-    cat(paste0("\n\n================\n\n", text, "\n\n================\n\n"))
-}
-# output
-output <- list(problem = problem, text = text, object.name = data.name)
-return(output)
-# end output
-# end main code
+    # end main code
+    # output
+    # warning output
+    # end warning output
+    output <- list(problem = problem, text = text, object.name = data.name)
+    return(output)
+    # end output
 }

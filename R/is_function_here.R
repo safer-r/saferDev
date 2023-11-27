@@ -158,4 +158,9 @@ is_function_here <- function(
         )
         stop(paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in stop() to be able to add several messages between ==
     }
+    # end main code
+    # output
+    # warning output
+    # end warning output
+    # end output
 }

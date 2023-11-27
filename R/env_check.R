@@ -74,7 +74,7 @@ env_check <- function(
     arg.names <- names(formals(fun = sys.function(sys.parent(n = 2)))) # names of all the arguments
     arg.user.setting <- as.list(match.call(expand.dots = FALSE))[-1] # list of the argument settings (excluding default values not provided by the user)
     # end function name
-   # package checking
+    # package checking
     # check of lib.path
     # end check of lib.path
     # cuteDev required function checking
@@ -99,7 +99,7 @@ env_check <- function(
     # argument primary checking
     # arg with no default values
     # end arg with no default values
-    # using arg_check()
+    # argument checking with arg_check()
     argum.check <- NULL #
     text.check <- NULL #
     checked.arg.names <- NULL # for function debugging: used by r_debugging_tools
@@ -113,11 +113,12 @@ env_check <- function(
             stop(paste0("\n\n================\n\n", paste(text.check[argum.check], collapse = "\n"), "\n\n================\n\n"), call. = FALSE) #
         }
     }
-    # end using arg_check()
+    # end argument checking with arg_check()
     # check with r_debugging_tools
     # source("C:/Users/yhan/Documents/Git_projects/debugging_tools_for_r_dev/r_debugging_tools.R") ; eval(parse(text = str_basic_arg_check_dev)) ; eval(parse(text = str_arg_check_with_fun_check_dev)) # activate this line and use the function (with no arguments left as NULL) to check arguments status and if they have been checked using arg_check()
     # end check with r_debugging_tools
     # end argument primary checking
+
     # second round of checking and data preparation
     # management of NA arguments
     if( ! (all(class(arg.user.setting) == "list", na.rm = TRUE) & length(arg.user.setting) == 0)){
@@ -148,9 +149,7 @@ env_check <- function(
     # reserved words (to avoid bugs)
     # end reserved words (to avoid bugs)
     # end second round of checking and data preparation
-    
-    # package checking
-    # end package checking
+
     # main code
     # match.list <- vector("list", length = (length(sys.calls()) - 1 + length(search()) + ifelse(length(sys.calls()) == 1L, -1, 0))) # match.list is a list of all the environment tested (local of functions and R envs), length(sys.calls()) - 1 to remove the level of the env_check() function, sys.calls() giving all the names of the imbricated functions, including env_check, ifelse(length(sys.calls()) == 1L, -1, 0) to remove Global env if this one is tested
     tempo.name <- rev(as.character(unlist(sys.calls()))) # get names of frames (i.e., enclosed env)
@@ -177,6 +176,7 @@ env_check <- function(
             match.list[i1] <- list(ls(name = ls.input[[i1]], all.names = TRUE)[ls(name = ls.input[[i1]], all.names = TRUE) %in% ls(name = ls.tested, all.names = TRUE)])
         }
     }
+    # end main code
     # output
     # warning output
     # end warning output
@@ -187,6 +187,5 @@ env_check <- function(
     }
     return(output)
     # end output
-    # end main code
 }
 

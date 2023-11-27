@@ -180,10 +180,10 @@ get_message <- function(
     # end warning initiation
     # other checkings
     # end other checkings
-    # reserved words to avoid bugs (names of dataframe columns used in this function)
-    # no need to use reserved words to avoid bugs, because it is local, and  exists("tempo.warning", inherits = FALSE), never use the scope
-    # end reserved words to avoid bugs (used in this function)
+    # reserved words (to avoid bugs)
+    # end reserved words (to avoid bugs)
     # end second round of checking and data preparation
+
     
     # main code
     grDevices::pdf(file = NULL) # send plots into a NULL file, no pdf file created
@@ -282,10 +282,10 @@ get_message <- function(
         } # no need else{} here because output is already NULL at first
     }
     invisible(grDevices::dev.off(window.nb)) # end send plots into a NULL file
+    # end main code
     # output
     # warning output
     # end warning output
     return(output) # do not use cat() because the idea is to reuse the message
     # end output
-    # end main code
 }
