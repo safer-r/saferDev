@@ -20,7 +20,7 @@ library(cuteDev)
 f <- "unique"
 argum <- c("x", "incomparables")
 value <- list(x = list(1:10, c(1,1,2,8), NA), incomparable = c(TRUE, FALSE, NA))
-error <- list(x = list(FALSE, FALSE, TRUE))
+error <- list(x = list(FALSE, FALSE, TRUE), incomparable = c(FALSE, FALSE, TRUE))
 ```
 <br>
 
@@ -45,7 +45,7 @@ arg_test(
 
 
 ### All the arguments
-```{r, echo = TRUE, error = TRUE}
+```{r}
 arg_test(
     fun = f, 
     arg = argum, 
@@ -55,8 +55,8 @@ arg_test(
     thread.nb = NULL, 
     print.count = 10, 
     plot.fun = FALSE, 
-    export = FALSE, 
-    res.path = NULL, 
+    export = TRUE, 
+    res.path = ".", 
     lib.path = NULL
 ) # check the function "mean" in the environment one step above the local environment
 ```
