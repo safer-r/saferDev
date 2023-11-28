@@ -38,20 +38,21 @@ env_check(pos = 2)
 
 ### Argument pos
 ```{r}
-env_check(pos = 1) # check all the functions in the environment one step above the local environment(by default)
+env_check(pos = 1) # check the object "NULL" in the environment one step above the env_check() environment
 ```
 <br>
 
 ### Argument name
 ```{r}
-env_check(name = "mean") # check the function "name" in all the environment
+env_check(name = "mean") # check if the object "mean" is in the environment one step above the env_check() environment, and if yes, returns if the same name exists in above environments
 ```
 <br>
 
 ### All the arguments
 ```{r}
+mean <- 2
 env_check(
     pos = 1,
     name = "mean"
-) # check the function "mean" in the environment one step above the local environment
+) # check if the object "mean" is in the environment one step above the env_check() environment, and if yes, returns if the same name exists in above environments
 ```

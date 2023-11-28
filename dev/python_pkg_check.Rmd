@@ -31,16 +31,16 @@ path # character vector specifying the absolute pathways of the directories, thi
 
 ### Argument req.package
 ```{r}
-pkg_check(req.package = req.pkg) # check if the package serpentine is in the environment
+python_pkg_check(req.package = req.pkg) # check if the package serpentine is in the computer
 ```
 <br>
 
 ### Argument lib.path
 ```{r}
-pkg_check(
+python_pkg_check(
     req.package = req.pkg,
     lib.path = path
-    ) # check the function "name" in all the environment
+    ) # check if the package is in the computer
 ```
 <br>
 
@@ -49,7 +49,7 @@ pkg_check(
 python_pkg_check(
     req.package = "serpentine", 
     python.exec.path = ".", 
-    lib.path = ".", 
-    R.lib.path = "."
+    python.lib.path = ".",
+    lib.path = "."
 ) # check if the python package serpentine is present in the computer, returns an error if the package is not in the computer
 ```
