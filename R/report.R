@@ -39,28 +39,16 @@ report <- function(
     # data = 1:3 ; output = "results.txt" ; path = "C:/Users/yhan/Desktop" ; overwrite = TRUE ; rownames.kept = FALSE ; vector.cat = FALSE ; noquote = FALSE ; sep = 2 # for function debugging
 
     # function name
-    function.name <- paste0(as.list(match.call(expand.dots = FALSE))[[1]], "()")
+    function.name <- paste0(as.list(match.call(expand.dots = FALSE))[[1]], "()") # function name with "()" paste, which split into a vector of three: c("::()", "package()", "function()") if "package::function()" is used.
+    if(function.name[1] == "::()"){
+        function.name <- function.name[3]
+    }
     arg.names <- names(formals(fun = sys.function(sys.parent(n = 2)))) # names of all the arguments
     arg.user.setting <- as.list(match.call(expand.dots = FALSE))[-1] # list of the argument settings (excluding default values not provided by the user)
     # end function name
     # package checking
     # check of lib.path
     # end check of lib.path
-    # cuteDev required function checking
-    req.function <- c(
-        "arg_check"
-    )
-    tempo <- NULL
-    for(i1 in req.function){
-        if(length(utils::find(i1, mode = "function")) == 0L){
-            tempo <- c(tempo, i1)
-        }
-    }
-    if( ! is.null(tempo)){
-        tempo.cat <- paste0("ERROR IN ", function.name, "\nREQUIRED FUNCTION", ifelse(length(tempo) > 1, "S ", ""), " FROM THE cuteDev PACKAGE", ifelse(length(tempo) > 1, " ARE", " IS"), " MISSING IN THE R ENVIRONMENT:\n", paste0(tempo, collapse = "()\n"), "()")
-        stop(paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in stop() to be able to add several messages between ==
-    }
-    # end cutedev required function checking
     # check of the required function from the required packages
     # end check of the required function from the required packages
     # end package checking

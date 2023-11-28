@@ -120,8 +120,11 @@ arg_test <- function(
     # set.seed(1) ; obs1 <- data.frame(Time = c(rnorm(10), rnorm(10) + 2), Group1 = rep(c("G", "H"), each = 10), stringsAsFactors = TRUE) ; fun = "gg_boxplot" ; arg = c("data1", "y", "categ") ; val = list(L1 = list(L1 = obs1), L2 = list(L1 = "Time"), L3 = list(L1 = "Group1")) ; expect.error = NULL ; print.count = 10 ; parall = FALSE ; thread.nb = NULL ; plot.fun = TRUE ; export = TRUE ; res.path = "C:\\Users\\gmillot\\Desktop\\" ; lib.path = NULL # for function debugging
     # fun = "unique" ; arg = "x" ; val = list(x = list(1:3, mean)) ; expect.error = list(x = list(TRUE, TRUE)) ; parall = FALSE ; thread.nb = NULL ; plot.fun = FALSE ; export = FALSE ; res.path = "C:\\Users\\gmillot\\Desktop\\" ; lib.path = NULL ; print.count = 1 # for function debugging
     # function name
-    ini <- match.call(expand.dots = FALSE) # initial parameters
-    function.name <- paste0(as.list(match.call(expand.dots = FALSE))[[1]], "()")
+    ini <- match.call(expand.dots = FALSE) # initial parameters (specific of arg_test())
+    function.name <- paste0(as.list(match.call(expand.dots = FALSE))[[1]], "()") # function name with "()" paste, which split into a vector of three: c("::()", "package()", "function()") if "package::function()" is used.
+    if(function.name[1] == "::()"){
+        function.name <- function.name[3]
+    }
     arg.names <- names(formals(fun = sys.function(sys.parent(n = 2)))) # names of all the arguments
     arg.user.setting <- as.list(match.call(expand.dots = FALSE))[-1] # list of the argument settings (excluding default values not provided by the user)
     # end function name
@@ -142,22 +145,6 @@ arg_test <- function(
         lib.path <- .libPaths() # .libPaths(new = lib.path) # or .libPaths(new = c(.libPaths(), lib.path))
     }
     # end check of lib.path
-    # cuteDev required function checking
-    req.function <- c(
-        "arg_check", 
-        "get_message"
-    )
-    tempo <- NULL
-    for(i1 in req.function){
-        if(length(utils::find(i1, mode = "function")) == 0L){
-            tempo <- c(tempo, i1)
-        }
-    }
-    if( ! is.null(tempo)){
-        tempo.cat <- paste0("ERROR IN ", function.name, "\nREQUIRED FUNCTION", ifelse(length(tempo) > 1, "S ", ""), " FROM THE cuteDev PACKAGE", ifelse(length(tempo) > 1, " ARE", " IS"), " MISSING IN THE R ENVIRONMENT:\n", paste0(tempo, collapse = "()\n"), "()")
-        stop(paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in stop() to be able to add several messages between ==
-    }
-    # end cutedev required function checking
     # check of the required function from the required packages
     .pack_and_function_check(
         fun = c(
@@ -655,7 +642,13 @@ cat(paste0(ifelse(parall == FALSE, "\nLOOP PROCESS ENDED | ", paste0("\nPROCESS 
                 # check again: very important because another R
                 process.id <- Sys.getpid()
                 cat(paste0("\nPROCESS ID ", process.id, " -> TESTS ", x[1], " TO ", x[base::length(x)], "\n"))
-                pkg_check(req.package = "lubridate", lib.path = lib.path, load = TRUE) # load = TRUE to be sure that functions are present in the environment
+                .pack_and_function_check(
+                    fun = c(
+                        "lubridate::seconds_to_period"
+                    ),
+                    lib.path = lib.path,
+                    external.function.name = function.name
+                )
                 # end check again: very important because another R
                 # plot management
                 if(plot.fun == TRUE){
