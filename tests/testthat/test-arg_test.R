@@ -27,6 +27,6 @@ test_that("test the function unique and compare the results", {
     p3 <- paste0("\nLOOP PROCESS ENDED | ","\nPROCESS ",9," ENDED | ","LOOP ",format(0, big.mark = ",")," / ",format(9), big.mark = ",", " | TIME SPENT: ",0, "\n\n")
     p4 <- paste0("DISCREPANCIES BETWEEN EXPECTED AND OBSERVED ERRORS (SEE THE discrepancy_table_from_arg_test_1-",9, ".tsv FILE)\n\n")
     p5 <- paste0("test JOB END\n\nTIME: ", end.date, "\n\nTOTAL TIME LAPSE: ", total.lapse, "\n\n\n")
-    expected <- paste0(p1,p2,p3,p4,p5)
+    expected <- cat(paste0(p1,p2,p3,p4,p5))
     expect_equal(result, expected)
 })
