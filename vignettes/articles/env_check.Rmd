@@ -1,0 +1,58 @@
+---
+title: "env_check"
+---
+<br>
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = ">"
+)
+```
+
+```{r setup}
+library(cuteDev)
+```
+<br>
+
+### Datasets
+```{r}
+pos <- 2
+name <- "mean"
+```
+<br>
+
+### Datasets info
+```{r}
+pos # integer indicating the position of the environment checked
+name # character vector of the name of the function that will be checked
+```
+<br>
+
+### Simple example
+```{r}
+env_check(pos = 1)
+env_check(pos = 2)
+```
+<br>
+
+### Argument pos
+```{r}
+env_check(pos = 1) # check the object "NULL" in the environment one step above the env_check() environment
+```
+<br>
+
+### Argument name
+```{r}
+env_check(name = "mean") # check if the object "mean" is in the environment one step above the env_check() environment, and if yes, returns if the same name exists in above environments
+```
+<br>
+
+### All the arguments
+```{r}
+mean <- 2
+env_check(
+    pos = 1,
+    name = "mean"
+) # check if the object "mean" is in the environment one step above the env_check() environment, and if yes, returns if the same name exists in above environments
+```

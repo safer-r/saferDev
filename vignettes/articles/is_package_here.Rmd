@@ -30,7 +30,7 @@ path # character vector specifying the absolute pathways of the directories, thi
 <br>
 
 ### Argument req.package
-```{r}
+```{r, echo = TRUE, error = TRUE}
 is_package_here(req.package = req.pkg) # check if the package serpentine is in the computer
 ```
 <br>

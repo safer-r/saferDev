@@ -45,43 +45,43 @@ report(data = mat2, path = ".") # print the matrix mat2 into the output file in 
 <br>
 
 ### Argument output
-```{r}
+```{r, echo = TRUE, error = TRUE}
 report(data = vec1, output = "test.txt", path = ".") # print the vector vec1 into the output file named "test.txt" in the path
 ```
 <br>
 
 ### Argument overwrite
-```{r}
+```{r, echo = TRUE, error = TRUE}
 report(data = vec2, overwrite = TRUE, path = ".") # if the file exists, the output file content will be erased before printing
 ```
 <br>
 
 ### Argument rownames.kept
-```{r}
+```{r, echo = TRUE, error = TRUE}
 report(data = mat1, rownames.kept = TRUE, path = ".") # keep the row names when print the matrix mat1 in the file
 ```
 <br>
 
 ### Argument vector.cat
-```{r}
+```{r, echo = TRUE, error = TRUE}
 report(data = mat2, vector.cat = TRUE, path = ".") # print a vector of length > 1 using cat() instead of capture.output()
 ```
 <br>
 
 ### Argument noquote
-```{r}
+```{r, echo = TRUE, error = TRUE}
 report(data = mat2, noquote = FALSE, path = ".") # quote are present for the characters.
 ```
 <br>
 
 ### Argument sep
-```{r}
+```{r, echo = TRUE, error = TRUE}
 report(data = vec1, sep = 4, path = ".") # 4 lines after printed data
 ```
 <br>
 
 ### All the arguments
-```{r}
+```{r, echo = TRUE, error = TRUE}
 report(
     data = mat2, 
     output = "test.txt", 

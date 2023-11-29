@@ -30,13 +30,13 @@ path # character vector specifying the absolute pathways of the directories, thi
 <br>
 
 ### Argument req.package
-```{r}
+```{r, echo = TRUE, error = TRUE}
 python_pkg_check(req.package = req.pkg) # check if the package serpentine is in the computer
 ```
 <br>
 
 ### Argument lib.path
-```{r}
+```{r, echo = TRUE, error = TRUE}
 python_pkg_check(
     req.package = req.pkg,
     lib.path = path
