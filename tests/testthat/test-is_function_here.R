@@ -1,3 +1,8 @@
-test_that("multiplication works", {
-  expect_equal(2 * 2, 4)
+test_that("test if the function is in the package", {
+    f <- "ggplot2::geom_point"
+    path <- "blablabla"
+    expect_error(object = is_function_here(
+        fun = f,
+        lib.path = path
+    ), regexp = NULL)
 })
