@@ -1,0 +1,54 @@
+---
+title: "is_function_here"
+---
+<br>
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+    collapse = TRUE,
+    comment = ">"
+)
+```
+
+```{r setup}
+library(cuteDev)
+```
+<br>
+
+### Datasets
+```{r}
+f <- "ggplot2::geom_point"
+path <- "blablabla"
+```
+<br>
+
+### Datasets info
+```{r}
+f # Character vector of function name
+path # character vector specifying the absolute pathways of the directories, this lib.path will return an error
+```
+<br>
+
+### Argument fun
+```{r}
+is_function_here(fun = f) # check if the package serpentine is in the computer
+```
+<br>
+
+### Argument lib.path
+```{r}
+is_function_here(
+    fun = f,
+    lib.path = "."
+    ) # check if the function is present in the package
+```
+<br>
+
+### All the arguments
+```{r, echo = TRUE, error = TRUE}
+is_function_here(
+    fun = f,
+    lib.path = path
+    ) # check if the function is present in the package, returns an error because the path doesn't exist
+```
+```
