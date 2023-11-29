@@ -36,7 +36,7 @@ is_function_here(fun = f) # check if the package serpentine is in the computer
 <br>
 
 ### Argument lib.path
-```{r}
+```{r, echo = TRUE, error = TRUE}
 is_function_here(
     fun = f,
     lib.path = "."

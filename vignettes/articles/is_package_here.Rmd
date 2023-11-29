@@ -36,7 +36,7 @@ is_package_here(req.package = req.pkg) # check if the package serpentine is in t
 <br>
 
 ### Argument lib.path
-```{r}
+```{r, echo = TRUE, error = TRUE}
 is_package_here(
     req.package = req.pkg,
     lib.path = "."
