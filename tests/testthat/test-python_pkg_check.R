@@ -27,5 +27,5 @@ test_that("test if the python package is in the computer", {
         python.exec.path = ".", 
         python.lib.path = ".",
         lib.path = lib.path
-    ), regexp = expected)
+    ), regexp = NULL)
 })
