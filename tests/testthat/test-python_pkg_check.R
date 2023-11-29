@@ -1,11 +1,5 @@
 test_that("test if the python package is in the computer", {
     lib.path <- "."
-    result <- python_pkg_check(
-        req.package = "serpentine", 
-        python.exec.path = ".", 
-        python.lib.path = ".",
-        lib.path = lib.path
-    )
     fun <- c(
         "reticulate::py_run_string", 
         "reticulate::use_python",
@@ -28,5 +22,10 @@ test_that("test if the python package is in the computer", {
     p2 <- paste0("\n\n================\n\n",p1, "\n\n================\n\n")
     expected <- stop(paste0(p1,p2))
     
-    expect_error(object = result, regexp = expected)
+    expect_error(object = python_pkg_check(
+        req.package = "serpentine", 
+        python.exec.path = ".", 
+        python.lib.path = ".",
+        lib.path = lib.path
+    ), regexp = expected)
 })
