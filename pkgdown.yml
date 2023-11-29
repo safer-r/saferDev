@@ -2,7 +2,15 @@ pandoc: 3.1.1
 pkgdown: 2.0.7
 pkgdown_sha: ~
 articles:
+  arg_check: arg_check.html
+  arg_test: arg_test.html
+  env_check: env_check.html
+  get_message: get_message.html
+  is_function_here: is_function_here.html
+  is_package_here: is_package_here.html
+  python_pkg_check: python_pkg_check.html
+  report: report.html
   cuteDev: cuteDev.html
   exemples: exemples.html
-last_built: 2023-11-29T16:51Z
+last_built: 2023-11-29T17:39Z
 
