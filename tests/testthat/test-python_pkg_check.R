@@ -20,7 +20,7 @@ test_that("test if the python package is in the computer", {
         paste(lib.path, collapse = "\n")
     )}
     p2 <- paste0("\n\n================\n\n",p1, "\n\n================\n\n")
-    expected <- stop(paste0(p1,p2))
+    expected <- paste0(p1,p2)
     
     expect_error(object = python_pkg_check(
         req.package = "serpentine", 
