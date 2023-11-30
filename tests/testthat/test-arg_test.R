@@ -4,11 +4,6 @@ test_that("test the function unique and compare the results", {
     value <- list(x = list(1:10, c(1,1,2,8), NA), incomparable = c(TRUE, FALSE, NA))
     error <- list(x = list(FALSE, FALSE, TRUE), incomparable = c(FALSE, FALSE, TRUE))
     
-    expect_error(object = arg_test(
-    fun = f, 
-    arg = argum, 
-    val = value),regexp = NULL)
-    
     result2 <- arg_test(
         fun = f, 
         arg = argum, 

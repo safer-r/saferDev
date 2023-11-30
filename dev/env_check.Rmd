@@ -32,7 +32,7 @@ name # character vector of the name of the function that will be checked
 ### Simple example
 ```{r}
 env_check(pos = 1)
-env_check(pos = 3)
+env_check(pos = 2)
 ```
 <br>
 

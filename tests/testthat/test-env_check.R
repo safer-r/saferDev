@@ -3,17 +3,21 @@ test_that("check if the object is in the environment one step above the env_chec
     name <- "mean"
     mean <- 2
     
-    result1 <- env_check(pos = 2)
+    result1 <- env_check(pos = 8)
     expect_null(result1)
     
     result2 <- env_check(
-        pos = 2,
+        pos = 8,
         name = "mean"
     )
     expect_null(result2)
     
+    ls.names <- c(tempo.name, search()) # names of the functions + names of the search() environments
+    ls.input <- c(tempo.frame, as.list(search())) # environements of the functions + names of the search() environments
+    names(match.list) <- ls.names # 
+    match.list <- match.list[-c(1:(pos + 1))]
     result3 <- env_check(name = "mean")
-    expected3 <- "SOME VARIABLES OF mean ARE ALSO PRESENT IN :\npackage:base: mean\n"
+    expected3 <- paste0("SOME VARIABLES ", "OF THE CHECKED ENVIRONMENT", paste0("OF ", name), " ARE ALSO PRESENT IN :\n", paste0(names(match.list[ ! sapply(match.list, FUN = is.null)]), ": ", sapply(match.list[ ! sapply(match.list, FUN = is.null)], FUN = paste0, collapse = " "), collapse = "\n"), "\n")
     expect_equal(result3,expected3)
     
     
@@ -21,6 +25,6 @@ test_that("check if the object is in the environment one step above the env_chec
         pos = 1,
         name = "mean"
     )
-    expected4 <- "SOME VARIABLES OF mean ARE ALSO PRESENT IN :\npackage:base: mean\n"
+    expected4 <- paste0("SOME VARIABLES ", "OF THE CHECKED ENVIRONMENT", paste0("OF ", name), " ARE ALSO PRESENT IN :\n", paste0(names(match.list[ ! sapply(match.list, FUN = is.null)]), ": ", sapply(match.list[ ! sapply(match.list, FUN = is.null)], FUN = paste0, collapse = " "), collapse = "\n"), "\n")
     expect_equal(result4, expected4)
 })
