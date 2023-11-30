@@ -1,16 +1,17 @@
 test_that("output of fun_check is a list contains 'problem', 'text', and 'object.name'", {
     vec1 <- -1:3 # vector of integers
-    mat2 <- matrix(c(1:3 / 3, NA))
     vec3 <- c(1, 2, 3)
     vec4 <- "pearson"
     vec5 <- c("a", "b","a", "b")
+    mat1 <- matrix(vec1)
+    mat2 <- matrix(c(1:3 / 3, NA))
     
     result1 <- arg_check(data = vec1, class = "numeric")
     expected1 <- list(problem = TRUE, text = "ERROR: THE vec1 OBJECT MUST BE CLASS numeric", object.name = "vec1")
     expect_equal(result1,expected1)
     
     result2 <- arg_check(data = vec1, class = "vector", typeof = "integer", length = 3, neg.values = FALSE, na.contain = FALSE)
-    expected2 <- list(problem = TRUE, text = "ERROR: THE vec1 OBJECT MUST BE MODE character", object.name = "vec1")
+    expected2 <- list(problem = TRUE, text = "ERROR: THE vec1 OBJECT MUST BE LENGTH 3 AND THE vec1 OBJECT MUST BE MADE OF NON NEGATIVE NUMERIC VALUES", object.name = "vec1")
     expect_equal(result2,expected2)
     
     result3 <- arg_check(data = NULL, class = "integer")
