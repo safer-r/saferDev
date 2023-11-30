@@ -4,7 +4,8 @@ test_that("check if the object is in the environment one step above the env_chec
     mean <- 2
     tempo.name <- rev(as.character(unlist(sys.calls())))
     tempo.frame <- rev(sys.frames())
-
+    
+    match.list <- vector("list", length = length(tempo.name) + length(search()))
     ls.names <- c(tempo.name, search()) # names of the functions + names of the search() environments
     ls.input <- c(tempo.frame, as.list(search())) # environements of the functions + names of the search() environments
     names(match.list) <- ls.names # 
