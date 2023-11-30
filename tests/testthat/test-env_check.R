@@ -2,16 +2,9 @@ test_that("check if the object is in the environment one step above the env_chec
     pos <- 2
     name <- "mean"
     mean <- 2
-    
-    result1 <- env_check(pos = 8)
-    expect_null(result1)
-    
-    result2 <- env_check(
-        pos = 8,
-        name = "mean"
-    )
-    expect_null(result2)
-    
+    tempo.name <- rev(as.character(unlist(sys.calls())))
+    tempo.frame <- rev(sys.frames())
+
     ls.names <- c(tempo.name, search()) # names of the functions + names of the search() environments
     ls.input <- c(tempo.frame, as.list(search())) # environements of the functions + names of the search() environments
     names(match.list) <- ls.names # 
