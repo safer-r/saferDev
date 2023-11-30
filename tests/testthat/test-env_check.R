@@ -11,7 +11,7 @@ test_that("check if the object is in the environment one step above the env_chec
     names(match.list) <- ls.names # 
     match.list <- match.list[-c(1:(pos + 1))]
     result3 <- env_check(name = "mean")
-    expected3 <- paste0("SOME VARIABLES ", "OF THE CHECKED ENVIRONMENT", paste0("OF ", name), " ARE ALSO PRESENT IN :\n", paste0(names(match.list[ ! sapply(match.list, FUN = is.null)]), ": ", sapply(match.list[ ! sapply(match.list, FUN = is.null)], FUN = paste0, collapse = " "), collapse = "\n"), "\n")
+    expected3 <- paste0("SOME VARIABLES ", paste0("OF ", name), " ARE ALSO PRESENT IN :\n", paste0(names(match.list[ ! sapply(match.list, FUN = is.null)]), ": ", sapply(match.list[ ! sapply(match.list, FUN = is.null)], FUN = paste0, collapse = " "), collapse = "\n"), "\n")
     expect_equal(result3,expected3)
     
     
@@ -19,6 +19,6 @@ test_that("check if the object is in the environment one step above the env_chec
         pos = 1,
         name = "mean"
     )
-    expected4 <- paste0("SOME VARIABLES ", "OF THE CHECKED ENVIRONMENT", paste0("OF ", name), " ARE ALSO PRESENT IN :\n", paste0(names(match.list[ ! sapply(match.list, FUN = is.null)]), ": ", sapply(match.list[ ! sapply(match.list, FUN = is.null)], FUN = paste0, collapse = " "), collapse = "\n"), "\n")
+    expected4 <- paste0("SOME VARIABLES ", paste0("OF ", name), " ARE ALSO PRESENT IN :\n", paste0(names(match.list[ ! sapply(match.list, FUN = is.null)]), ": ", sapply(match.list[ ! sapply(match.list, FUN = is.null)], FUN = paste0, collapse = " "), collapse = "\n"), "\n")
     expect_equal(result4, expected4)
 })
