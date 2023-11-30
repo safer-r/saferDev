@@ -3,7 +3,7 @@ test_that("test if the package is in the computer", {
     path <- "blablabla"
     
     expect_error(object = is_package_here(
-    req.package = req.pkg,
+    req.package = "wrongname",
     lib.path = "."
     ), regexp = NULL)
     

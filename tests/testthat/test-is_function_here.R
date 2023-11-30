@@ -3,7 +3,7 @@ test_that("test if the function is in the package", {
     path <- "blablabla"
     
     expect_error(object = is_function_here(
-    fun = f,
+    fun = "wrongFct",
     lib.path = "."
     ), regexp = NULL)
     
