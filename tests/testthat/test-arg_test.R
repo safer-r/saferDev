@@ -3,7 +3,13 @@ test_that("test the function unique and compare the results", {
     argum <- c("x", "incomparables")
     value <- list(x = list(1:10, c(1,1,2,8), NA), incomparable = c(TRUE, FALSE, NA))
     error <- list(x = list(FALSE, FALSE, TRUE), incomparable = c(FALSE, FALSE, TRUE))
-    result <- arg_test(
+    
+    expect_error(object = arg_test(
+    fun = f, 
+    arg = argum, 
+    val = value),regexp = NULL)
+    
+    result2 <- arg_test(
         fun = f, 
         arg = argum, 
         val = value, 
@@ -27,6 +33,6 @@ test_that("test the function unique and compare the results", {
     p3 <- paste0("\nLOOP PROCESS ENDED | ","\nPROCESS ",9," ENDED | ","LOOP ",format(0, big.mark = ",")," / ",format(9), big.mark = ",", " | TIME SPENT: ",0, "\n\n")
     p4 <- paste0("DISCREPANCIES BETWEEN EXPECTED AND OBSERVED ERRORS (SEE THE discrepancy_table_from_arg_test_1-",9, ".tsv FILE)\n\n")
     p5 <- paste0("test JOB END\n\nTIME: ", end.date, "\n\nTOTAL TIME LAPSE: ", total.lapse, "\n\n\n")
-    expected <- cat(paste0(p1,p2,p3,p4,p5))
-    expect_equal(result, expected)
+    expected2 <- cat(paste0(p1,p2,p3,p4,p5))
+    expect_equal(result2, expected2)
 })
