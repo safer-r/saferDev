@@ -6,7 +6,7 @@
 #' 
 #' Check also other kind of data parameters, is it a proportion? Is it type double but numbers without decimal part?
 #' @param data Object to test.
-#' @param class Single character string. Either one of the class() result (But see the warning section above) or "vector" or "ggplot2" (i.e., objects of class c("gg", "ggplot")) or NULL.
+#' @param class Single character string. Either one of the class() result or "vector" or "ggplot2" (i.e., objects of class c("gg", "ggplot")) or NULL. See the warning section below.
 #' @param typeof Single character string. Either one of the typeof() result or NULL.
 #' @param mode Single character string. Either one of the mode() result (for non-vector object) or NULL.
 #' @param length Single numeric value indicating the length of the object. Not considered if NULL.
@@ -36,6 +36,8 @@
 #' 
 #' If the tested object is NULL, then the function will always return a checking problem.
 #' 
+#' Argument "class" with value "vector" means that the object is tested for class(data) returning only "numeric", "integer", "character", "logical", "complex" or "expression". Please, use another value of class (e.g., class = "call" or class = "list") for other types and class of objects
+#'
 #' Since R >= 4.0.0, class(matrix()) returns "matrix" "array", and not "matrix" alone as before. However, use argument class = "matrix" to check for matrix object (of class "matrix" "array" in R >= 4.0.0) and use argument class = "array" to check for array object (of class "array" in R >= 4.0.0).
 #' 
 #' 
@@ -403,7 +405,7 @@ text <- paste0(text, toupper(arg.names[i2]), " ", if(all(get(arg.names[i2], envi
                     }
                 }else if( ! any(all(get(arg.names[i2], envir = sys.nframe(), inherits = FALSE) %in% c("vector", "ggplot2"))) & ! all(eval(parse(text = paste0(arg.names[i2], "(data)"))) %in% get(arg.names[i2], envir = sys.nframe(), inherits = FALSE))){ # test the four c("class", "typeof", "mode", "length") arguments with their corresponding function. No need of na.rm = TRUE for all() because %in% does not output NA # no need of na.rm = TRUE for all() because %in% does not output NA # no need of na.rm = TRUE for any() because get get(arg.names) does not contain NA
                     eval(parse(text = tempo.script)) # execute tempo.script
-                }else if(arg.names[i2] == "class" & all(get(arg.names[i2], envir = sys.nframe(), inherits = FALSE) == "vector") & ! (all(base::class(data) %in% "numeric") | all(base::class(data) %in% "integer") | all(base::class(data) %in% "character") | all(base::class(data) %in% "logical"))){ # test class == "vector". No need of na.rm = TRUE for all() because %in% does not output NA # no need of na.rm = TRUE for all() because == does not output NA if no NA in left of ==, which is the case for arg.names
+                }else if(arg.names[i2] == "class" & all(get(arg.names[i2], envir = sys.nframe(), inherits = FALSE) == "vector") & ! (all(base::class(data) %in% "numeric") | all(base::class(data) %in% "integer") | all(base::class(data) %in% "character") | all(base::class(data) %in% "logical") | all(base::class(data) %in% "complex") | all(base::class(data) %in% "expression"))){ # test class == "vector". all(get(arg.names[i2], envir = sys.nframe(), inherits = FALSE) check is user as used the argument class = "vector". If TRUE and length(data) > 1, the class "numeric" "integer" "character" "logical" "complex" "expression" should be returned. No need of na.rm = TRUE for all() because %in% does not output NA # no need of na.rm = TRUE for all() because == does not output NA if no NA in left of ==, which is the case for arg.names. Other classes "list", "name", "symbol", "function", "environment", "S4", "call" return a list if length of data > 1
                     eval(parse(text = tempo.script)) # execute tempo.script
                 }else if(arg.names[i2] == "class" & all(get(arg.names[i2], envir = sys.nframe(), inherits = FALSE) == "ggplot2") & ! all(base::class(data) %in% c("gg", "ggplot"))){ # test ggplot object # no need of na.rm = TRUE for all() because == does not output NA if no NA in left of ==, which is the case for arg.names # no need of na.rm = TRUE for all() because %in% does not output NA
                     eval(parse(text = tempo.script)) # execute tempo.script
