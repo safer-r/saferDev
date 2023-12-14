@@ -1,0 +1,11 @@
+url: ~
+template:
+  bootstrap: 5
+  bootswatch: flatly
+
+authors:
+    Gaël Millot:
+        href: https://github.com/gael-millot
+    Yushi Han:
+        href: https://github.com/yushiHn
+        
