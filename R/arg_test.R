@@ -42,7 +42,7 @@
 #' If the tested function is in a package, this package must be imported first (no parallelization) or must be in the classical R package folder indicated by the lib.path argument (parallelization)
 #' 
 #' 
-#' REQUIRED FUNCTIONS FROM CUTE_LITTLE_R_FUNCTION
+#' REQUIRED FUNCTIONS FROM THE cute PACKAGE
 #' 
 #' arg_check()
 #' 

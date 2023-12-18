@@ -12,7 +12,7 @@
 #' reticulate
 #' 
 #' 
-#' REQUIRED FUNCTIONS FROM CUTE_LITTLE_R_FUNCTION
+#' REQUIRED FUNCTIONS FROM THE cute PACKAGE
 #' 
 #' arg_check()
 #' 
