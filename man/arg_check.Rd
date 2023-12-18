@@ -25,7 +25,7 @@ arg_check(
 \arguments{
 \item{data}{Object to test.}
 
-\item{class}{Single character string. Either one of the class() result (But see the warning section above) or "vector" or "ggplot2" (i.e., objects of class c("gg", "ggplot")) or NULL.}
+\item{class}{Single character string. Either one of the class() result or "vector" or "ggplot2" (i.e., objects of class c("gg", "ggplot")) or NULL. See the warning section below.}
 
 \item{typeof}{Single character string. Either one of the typeof() result or NULL.}
 
@@ -76,6 +76,8 @@ WARNINGS
 The function tests what is written in its arguments, even if what is written is incoherent. For instance, arg_check(data = factor(1), class = "factor", mode = "character") will return a problem, whatever the object tested in the data argument, because no object can be class "factor" and mode "character" (factors are class "factor" and mode "numeric"). Of note, length of object of class "environment" is always 0.
 
 If the tested object is NULL, then the function will always return a checking problem.
+
+Argument "class" with value "vector" means that the object is tested for class(data) returning only "numeric", "integer", "character", "logical", "complex" or "expression". Please, use another value of class (e.g., class = "call" or class = "list") for other types and class of objects
 
 Since R >= 4.0.0, class(matrix()) returns "matrix" "array", and not "matrix" alone as before. However, use argument class = "matrix" to check for matrix object (of class "matrix" "array" in R >= 4.0.0) and use argument class = "array" to check for array object (of class "array" in R >= 4.0.0).
 
