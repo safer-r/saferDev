@@ -129,7 +129,7 @@ is_function_here <- function(
             function.name, 
             " OF THE",
             package.name,
-            " PACKAGE: "
+            " PACKAGE: ",
             "\nREQUIRED PACKAGE", 
             ifelse(length(tempo) == 1L, paste0(":\n", tempo), paste0("S:\n", paste(tempo, collapse = "\n"))), 
             "MUST BE INSTALLED IN", 
@@ -147,7 +147,7 @@ is_function_here <- function(
             function.name, 
             " OF THE",
             package.name,
-            " PACKAGE: "
+            " PACKAGE: ",
             "\nREQUIRED FUNCTION",
             ifelse(length(tempo) == 1L, " IS ", "S ARE "), 
             "MISSING IN THE INSTALLED PACKAGE", 

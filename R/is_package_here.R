@@ -121,7 +121,7 @@ is_package_here <- function(
             function.name, 
             " OF THE",
             package.name,
-            " PACKAGE: "
+            " PACKAGE: ",
             "\nREQUIRED PACKAGE", 
             ifelse(length(tempo) == 1L, paste0(":\n", tempo, "\n\n"), paste0("S:\n", paste(tempo, collapse = "\n"), "\n\n")), 
             "MUST BE INSTALLED IN", 
