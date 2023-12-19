@@ -16,6 +16,9 @@ is_function_here <- function(
 ){
     # DEBUGGING
     # fun = "ggplot2::geom_point" ; lib.path = "C:/Program Files/R/R-4.3.1/library" ; external.function.name = "fun1"
+    # package name
+    package.name <- "cuteDev"
+    # end package name
     # function name
     function.name <- paste0(as.list(match.call(expand.dots = FALSE))[[1]], "()") # function name with "()" paste, which split into a vector of three: c("::()", "package()", "function()") if "package::function()" is used.
     if(function.name[1] == "::()"){
@@ -27,10 +30,10 @@ is_function_here <- function(
     # check of lib.path
     if( ! is.null(lib.path)){
         if( ! all(typeof(lib.path) == "character")){ # no na.rm = TRUE with typeof
-            tempo.cat <- paste0("ERROR IN ", function.name, ": DIRECTORY PATH INDICATED IN THE lib.path ARGUMENT MUST BE A VECTOR OF CHARACTERS:\n", paste(lib.path, collapse = "\n"))
+            tempo.cat <- paste0("ERROR IN ", function.name, " OF THE", package.name, " PACKAGE: DIRECTORY PATH INDICATED IN THE lib.path ARGUMENT MUST BE A VECTOR OF CHARACTERS:\n", paste(lib.path, collapse = "\n"))
             stop(paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in stop() to be able to add several messages between ==
         }else if( ! all(dir.exists(lib.path), na.rm = TRUE)){ # separation to avoid the problem of tempo$problem == FALSE and lib.path == NA
-            tempo.cat <- paste0("ERROR IN ", function.name, ": DIRECTORY PATH INDICATED IN THE lib.path ARGUMENT DOES NOT EXISTS:\n", paste(lib.path, collapse = "\n"))
+            tempo.cat <- paste0("ERROR IN ", function.name, " OF THE", package.name, " PACKAGE: DIRECTORY PATH INDICATED IN THE lib.path ARGUMENT DOES NOT EXISTS:\n", paste(lib.path, collapse = "\n"))
             stop(paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in stop() to be able to add several messages between ==
         }else{
             .libPaths(new = sub(x = lib.path, pattern = "/$|\\\\$", replacement = "")) # .libPaths(new = ) add path to default path. BEWARE: .libPaths() does not support / at the end of a submitted path. Thus check and replace last / or \\ in path
@@ -51,7 +54,7 @@ is_function_here <- function(
     )
     tempo <- eval(parse(text = paste0("missing(", paste0(mandat.args, collapse = ") | missing("), ")")))
     if(any(tempo)){ # normally no NA for missing() output
-        tempo.cat <- paste0("ERROR IN ", function.name, "\nFOLLOWING ARGUMENT", ifelse(sum(tempo, na.rm = TRUE) > 1, "S HAVE", "HAS"), " NO DEFAULT VALUE AND REQUIRE ONE:\n", paste0(mandat.args, collapse = "\n"))
+        tempo.cat <- paste0("ERROR IN ", function.name, " OF THE", package.name, " PACKAGE: \nFOLLOWING ARGUMENT", ifelse(sum(tempo, na.rm = TRUE) > 1, "S HAVE", "HAS"), " NO DEFAULT VALUE AND REQUIRE ONE:\n", paste0(mandat.args, collapse = "\n"))
         stop(paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in stop() to be able to add several messages between ==
     }
     # end arg with no default values
@@ -79,7 +82,7 @@ is_function_here <- function(
         tempo.arg <- names(arg.user.setting) # values provided by the user
         tempo.log <- suppressWarnings(sapply(lapply(lapply(tempo.arg, FUN = get, env = sys.nframe(), inherit = FALSE), FUN = is.na), FUN = any)) & lapply(lapply(tempo.arg, FUN = get, env = sys.nframe(), inherit = FALSE), FUN = length) == 1L # no argument provided by the user can be just NA
         if(any(tempo.log) == TRUE){ # normally no NA because is.na() used here
-            tempo.cat <- paste0("ERROR IN ", function.name, "\n", ifelse(sum(tempo.log, na.rm = TRUE) > 1, "THESE ARGUMENTS", "THIS ARGUMENT"), " CANNOT JUST BE NA:", paste0(tempo.arg[tempo.log], collapse = "\n"))
+            tempo.cat <- paste0("ERROR IN ", function.name, " OF THE", package.name, " PACKAGE: \n", ifelse(sum(tempo.log, na.rm = TRUE) > 1, "THESE ARGUMENTS", "THIS ARGUMENT"), " CANNOT JUST BE NA:", paste0(tempo.arg[tempo.log], collapse = "\n"))
             stop(paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in stop() to be able to add several messages between ==
         }
     }
@@ -91,7 +94,7 @@ is_function_here <- function(
     )
     tempo.log <- sapply(lapply(tempo.arg, FUN = get, env = sys.nframe(), inherit = FALSE), FUN = is.null)
     if(any(tempo.log) == TRUE){# normally no NA with is.null()
-        tempo.cat <- paste0("ERROR IN ", function.name, ":\n", ifelse(sum(tempo.log, na.rm = TRUE) > 1, "THESE ARGUMENTS\n", "THIS ARGUMENT\n"), paste0(tempo.arg[tempo.log], collapse = "\n"),"\nCANNOT BE NULL")
+        tempo.cat <- paste0("ERROR IN ", function.name, "  OF THE", package.name, " PACKAGE:\n", ifelse(sum(tempo.log, na.rm = TRUE) > 1, "THESE ARGUMENTS\n", "THIS ARGUMENT\n"), paste0(tempo.arg[tempo.log], collapse = "\n"),"\nCANNOT BE NULL")
         stop(paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in stop() to be able to add several messages between ==
     }
     # end management of NULL arguments
@@ -108,12 +111,12 @@ is_function_here <- function(
     # main code
     tempo.log <- grepl(x = fun, pattern = "^.+::.+$")
     if( ! all(tempo.log)){
-        tempo.cat <- paste0("ERROR IN ", function.name, "\nTHE STRING IN fun ARGUMENT MUST CONTAIN \"::\":\n", paste(fun[ ! tempo.log], collapse = "\n"))
+        tempo.cat <- paste0("ERROR IN ", function.name, " OF THE", package.name, " PACKAGE: \nTHE STRING IN fun ARGUMENT MUST CONTAIN \"::\":\n", paste(fun[ ! tempo.log], collapse = "\n"))
         stop(paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in stop() to be able to add several messages between ==
     }
     tempo.log <- grepl(x = fun, pattern = "^.+\\(\\)$")
     if(any(tempo.log)){
-        tempo.cat <- paste0("ERROR IN ", function.name, "\nTHE STRING IN fun ARGUMENT MUST NOT FINISH BY \"()\":\n", paste(fun[tempo.log], collapse = "\n"))
+        tempo.cat <- paste0("ERROR IN ", function.name, " OF THE", package.name, " PACKAGE: \nTHE STRING IN fun ARGUMENT MUST NOT FINISH BY \"()\":\n", paste(fun[tempo.log], collapse = "\n"))
         stop(paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in stop() to be able to add several messages between ==
     }
     pkg.fun.name.list <- base::strsplit(fun, "::") # package in 1 and function in 2
@@ -124,6 +127,9 @@ is_function_here <- function(
         tempo.cat <- paste0(
             "ERROR IN ", 
             function.name, 
+            " OF THE",
+            package.name,
+            " PACKAGE: "
             "\nREQUIRED PACKAGE", 
             ifelse(length(tempo) == 1L, paste0(":\n", tempo), paste0("S:\n", paste(tempo, collapse = "\n"))), 
             "MUST BE INSTALLED IN", 
@@ -139,6 +145,9 @@ is_function_here <- function(
         tempo.cat <- paste0(
             "ERROR IN ", 
             function.name, 
+            " OF THE",
+            package.name,
+            " PACKAGE: "
             "\nREQUIRED FUNCTION",
             ifelse(length(tempo) == 1L, " IS ", "S ARE "), 
             "MISSING IN THE INSTALLED PACKAGE", 

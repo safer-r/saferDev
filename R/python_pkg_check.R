@@ -48,6 +48,11 @@ python_pkg_check <- function(
     # DEBUGGING
     # req.package = "serpentine" ; python.exec.path = "C:/ProgramData/Anaconda3/python.exe" ; python.lib.path = "c:/programdata/anaconda3/lib/site-packages/" ; lib.path = NULL
     # req.package = "bad" ; python.lib.path = NULL ; lib.path = NULL
+    
+    # package name
+    package.name <- "cuteDev"
+    # end package name
+    
     # function name
     function.name <- paste0(as.list(match.call(expand.dots = FALSE))[[1]], "()") # function name with "()" paste, which split into a vector of three: c("::()", "package()", "function()") if "package::function()" is used.
     if(function.name[1] == "::()"){
@@ -61,10 +66,10 @@ python_pkg_check <- function(
     # check of lib.path
     if( ! is.null(lib.path)){
         if( ! all(typeof(lib.path) == "character")){ # no na.rm = TRUE with typeof
-            tempo.cat <- paste0("ERROR IN ", function.name, ": DIRECTORY PATH INDICATED IN THE lib.path ARGUMENT MUST BE A VECTOR OF CHARACTERS:\n", paste(lib.path, collapse = "\n"))
+            tempo.cat <- paste0("ERROR IN ", function.name, " OF THE", package.name, " PACKAGE: DIRECTORY PATH INDICATED IN THE lib.path ARGUMENT MUST BE A VECTOR OF CHARACTERS:\n", paste(lib.path, collapse = "\n"))
             stop(paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in stop() to be able to add several messages between ==
         }else if( ! all(dir.exists(lib.path), na.rm = TRUE)){ # separation to avoid the problem of tempo$problem == FALSE and lib.path == NA
-            tempo.cat <- paste0("ERROR IN ", function.name, ": DIRECTORY PATH INDICATED IN THE lib.path ARGUMENT DOES NOT EXISTS:\n", paste(lib.path, collapse = "\n"))
+            tempo.cat <- paste0("ERROR IN ", function.name, " OF THE", package.name, " PACKAGE: DIRECTORY PATH INDICATED IN THE lib.path ARGUMENT DOES NOT EXISTS:\n", paste(lib.path, collapse = "\n"))
             stop(paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in stop() to be able to add several messages between ==
         }else{
             .libPaths(new = sub(x = lib.path, pattern = "/$|\\\\$", replacement = "")) # .libPaths(new = ) add path to default path. BEWARE: .libPaths() does not support / at the end of a submitted path. Thus check and replace last / or \\ in path
@@ -94,7 +99,7 @@ python_pkg_check <- function(
     )
     tempo <- eval(parse(text = paste0("c(missing(", paste0(mandat.args, collapse = "),missing("), "))")))
     if(any(tempo)){ # normally no NA for missing() output
-        tempo.cat <- paste0("ERROR IN ", function.name, "\nFOLLOWING ARGUMENT", ifelse(sum(tempo, na.rm = TRUE) > 1, "S HAVE", " HAS"), " NO DEFAULT VALUE AND REQUIRE ONE:\n", paste0(mandat.args, collapse = "\n"))
+        tempo.cat <- paste0("ERROR IN ", function.name, " OF THE", package.name, " PACKAGE: \nFOLLOWING ARGUMENT", ifelse(sum(tempo, na.rm = TRUE) > 1, "S HAVE", " HAS"), " NO DEFAULT VALUE AND REQUIRE ONE:\n", paste0(mandat.args, collapse = "\n"))
         stop(paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in stop() to be able to add several messages between ==
     }
     # end arg with no default values
@@ -108,7 +113,7 @@ python_pkg_check <- function(
         tempo <- arg_check(data = python.exec.path, class = "character", length = 1, fun.name = function.name) ; eval(ee)
         if(tempo$problem == FALSE){
             if( ! all(file.exists(python.exec.path), na.rm = TRUE)){ # separation to avoid the problem of tempo$problem == FALSE and python.exec.path == NA
-                tempo.cat <- paste0("ERROR IN ", function.name, ": FILE PATH INDICATED IN THE python.exec.path ARGUMENT DOES NOT EXISTS:\n", paste(python.exec.path, collapse = "\n"))
+                tempo.cat <- paste0("ERROR IN ", function.name, " OF THE", package.name, " PACKAGE: FILE PATH INDICATED IN THE python.exec.path ARGUMENT DOES NOT EXISTS:\n", paste(python.exec.path, collapse = "\n"))
                 text.check <- c(text.check, tempo.cat)
                 argum.check <- c(argum.check, TRUE)
             }
@@ -118,7 +123,7 @@ python_pkg_check <- function(
         tempo <- arg_check(data = python.lib.path, class = "vector", mode = "character", fun.name = function.name) ; eval(ee)
         if(tempo$problem == FALSE){
             if( ! all(dir.exists(python.lib.path), na.rm = TRUE)){ # separation to avoid the problem of tempo$problem == FALSE and python.lib.path == NA
-                tempo.cat <- paste0("ERROR IN ", function.name, ": DIRECTORY PATH INDICATED IN THE python.lib.path ARGUMENT DOES NOT EXISTS:\n", paste(python.lib.path, collapse = "\n"))
+                tempo.cat <- paste0("ERROR IN ", function.name, " OF THE", package.name, " PACKAGE: DIRECTORY PATH INDICATED IN THE python.lib.path ARGUMENT DOES NOT EXISTS:\n", paste(python.lib.path, collapse = "\n"))
                 text.check <- c(text.check, tempo.cat)
                 argum.check <- c(argum.check, TRUE)
             }
@@ -142,7 +147,7 @@ python_pkg_check <- function(
         tempo.arg <- names(arg.user.setting) # values provided by the user
         tempo.log <- suppressWarnings(sapply(lapply(lapply(tempo.arg, FUN = get, env = sys.nframe(), inherit = FALSE), FUN = is.na), FUN = any)) & lapply(lapply(tempo.arg, FUN = get, env = sys.nframe(), inherit = FALSE), FUN = length) == 1L # no argument provided by the user can be just NA
         if(any(tempo.log) == TRUE){ # normally no NA because is.na() used here
-            tempo.cat <- paste0("ERROR IN ", function.name, "\n", ifelse(sum(tempo.log, na.rm = TRUE) > 1, "THESE ARGUMENTS", "THIS ARGUMENT"), " CANNOT JUST BE NA:", paste0(tempo.arg[tempo.log], collapse = "\n"))
+            tempo.cat <- paste0("ERROR IN ", function.name, " OF THE", package.name, " PACKAGE\n", ifelse(sum(tempo.log, na.rm = TRUE) > 1, "THESE ARGUMENTS", "THIS ARGUMENT"), " CANNOT JUST BE NA:", paste0(tempo.arg[tempo.log], collapse = "\n"))
             stop(paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in stop() to be able to add several messages between ==
         }
     }
@@ -183,7 +188,7 @@ path_lib = sys.path
         }
         if(all(sapply(tempo.try, FUN = grepl, pattern = "[Ee]rror"), na.rm = TRUE)){
             print(tempo.try)
-            tempo.cat <- paste0("ERROR IN ", function.name, ": PACKAGE ", req.package[i1], " MUST BE INSTALLED IN THE MENTIONNED DIRECTORY:\n", paste(python.lib.path, collapse = "\n"))
+            tempo.cat <- paste0("ERROR IN ", function.name, " OF THE", package.name, " PACKAGE: PACKAGE ", req.package[i1], " MUST BE INSTALLED IN THE MENTIONNED DIRECTORY:\n", paste(python.lib.path, collapse = "\n"))
             stop(paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in stop() to be able to add several messages between ==
         } # else{
         # suppressMessages(suppressWarnings(suppressPackageStartupMessages(assign(req.package[i1], reticulate::import(req.package[i1]))))) # not required because try() already evaluates
