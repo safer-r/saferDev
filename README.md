@@ -46,6 +46,7 @@ Set of R functions for the development of R functions, written according to the 
 | **is_python_package_here()** | Check if required python packages are installed locally. |
 | **report** | Print a character string or a data object into a same log file. |
 
+<br />
 
 Read `vignette("cuteDev")` for more details.
 
