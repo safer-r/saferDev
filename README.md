@@ -13,21 +13,12 @@
 [![CRAN usage](https://jangorecki.gitlab.io/rdeps/cuteDev/CRAN_usage.svg?sanitize=true)](https://gitlab.com/jangorecki/rdeps)
 [![BioC usage](https://jangorecki.gitlab.io/rdeps/cuteDev/BioC_usage.svg?sanitize=true)](https://gitlab.com/jangorecki/rdeps)
 [![indirect usage](https://jangorecki.gitlab.io/rdeps/cuteDev/indirect_usage.svg?sanitize=true)](https://gitlab.com/jangorecki/rdeps)
-
-[//]: # From Serizai
-[//]: # [![](https://img.shields.io/badge/lifecycle-maturing-blue.svg)](https://www.tidyverse.org/lifecycle/#maturing)
-[//]: # [![](https://img.shields.io/badge/license-MIT-green.svg)](https://opensource.org/licenses/MIT)
-[//]: # [![rworkflows](https://github.com/js2264/HiContacts/actions/workflows/rworkflows.yml/badge.svg)](https://github.com/js2264/HiContacts/actions/workflows/rworkflows.yml)
-[//]: # [![Documentation](https://github.com/js2264/HiContacts/workflows/pkgdown/badge.svg)](https://js2264.github.io/HiContacts)
-[//]: # [![OHCA book](https://github.com/js2264/OHCA/actions/workflows/pages/pages-build-deployment/badge.svg)](https://js2264.github.io/OHCA/)
-[//]: # <a href=http://bioconductor.org/packages/release/bioc/html/HiContacts.html><img alt="Static Badge" src="https://img.shields.io/badge/Bioc_(release)-Landing_page-green?link=http%3A%2F%2Fbioconductor.org%2FcheckResults%2Fdevel%2Fbioc-LATEST%2FHiContacts%2F"></a>
-[//]: # <a href=http://bioconductor.org/checkResults/release/bioc-LATEST/HiContacts/><img alt="Bioc build (release)" src="https://img.shields.io/badge/dynamic/yaml?url=https%3A%2F%2Fbioconductor.org%2FcheckResults%2Frelease%2Fbioc-LATEST%2FHiContacts%2Fraw-results%2Fnebbiolo1%2Fbuildsrc-summary.dcf&query=%24.Status&label=Bioc%20build%20(release)&link=https%3A%2F%2Fbioconductor.org%2FcheckResults%2Frelease%2Fbioc-LATEST%2FHiContacts%2F"></a>
-[//]: # <a href=http://bioconductor.org/checkResults/devel/bioc-LATEST/HiContacts/><img alt="Bioc build (devel)" src="https://img.shields.io/badge/dynamic/yaml?url=https%3A%2F%2Fbioconductor.org%2FcheckResults%2Fdevel%2Fbioc-LATEST%2FHiContacts%2Fraw-results%2Fnebbiolo2%2Fbuildsrc-summary.dcf&query=%24.Status&label=Bioc%20build%20(devel)&link=https%3A%2F%2Fbioconductor.org%2FcheckResults%2Fdevel%2Fbioc-LATEST%2FHiContacts%2F"></a>
-[//]: # End From Serizai
-
+[![](https://img.shields.io/badge/license-GPL3.0-green.svg)](https://opensource.org/licenses/MITgpl-3-0)
+[![rworkflows](https://github.com/yushiHn/cuteDev/actions/workflows/rworkflows.yml/badge.svg)](https://github.com/yushiHn/cuteDev/actions/workflows/rworkflows.yml)
+[![Documentation](https://github.com/yushiHn/cuteDev/workflows/pkgdown/badge.svg)](https://yushiHn.github.io/cuteDev)
 <!-- badges: end -->
 
-
+<br /><br />
 ## Table of content
 
    - [Description](#description)
@@ -39,12 +30,12 @@
    - [Credits](#credits)
    - [Acknowledgements](#acknowledgements)
 
-
+<br /><br />
 ## Description
 
 Set of R functions for the development of R functions, written according to the [cute_project](https://github.com/gael-millot/cute_project) specifications.
 
-
+<br /><br />
 ## Content
 
 | Function | Description |
@@ -60,12 +51,12 @@ Set of R functions for the development of R functions, written according to the 
 
 Read `vignette("cuteDev")` for more details.
 
-
+<br /><br />
 ## Versions
 
 The different *cuteDev* releases are tagged [here](https://github.com/yushiHn/cuteDev/tags)
 
-
+<br /><br />
 ## Installation
 
 *cuteDev* can be currently be installed from GitHub:
@@ -82,14 +73,14 @@ v <- "v1.0" # desired tag version
 remotes::install_github(paste0("https://github.com/yushiHn/cuteDev/tree/", v))
 ```
 
-
+<br /><br />
 ## Licence
 
 This package can be redistributed and/or modified under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
 Distributed in the hope that it will be useful, but without any warranty; without even the implied warranty of merchandability or fitness for a particular purpose.
 See the GNU General Public License for more details at https://www.gnu.org/licenses.
 
-
+<br /><br />
 ## Citation
 
 If you are using functions of *cuteDev*, please cite: 
@@ -97,7 +88,7 @@ If you are using functions of *cuteDev*, please cite:
 > Han Y, Serizay J, Millot GA (2023). _The R cuteDev package_.
 > <https://github.com/yushiHn/cuteDev/>.
 
-
+<br /><br />
 ## Credits
 
 [Yushi Han](https://github.com/yushiHn/), Bioinformatics and Biostatistics Hub, Institut Pasteur, Paris, France
@@ -106,7 +97,7 @@ If you are using functions of *cuteDev*, please cite:
 
 [Gael A. Millot](https://gitlab.pasteur.fr/gmillot), Bioinformatics and Biostatistics Hub, Institut Pasteur, Paris, France
 
-
+<br /><br />
 ## Acknowledgements
 
 The developers & maintainers of [R](https://www.r-project.org/) as well as packages used in the *cuteDev* functions.
