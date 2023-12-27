@@ -4,8 +4,8 @@
 <!-- badges: start -->
 
 [![R-CMD-check](https://github.com/yushiHn/cuteDev/workflows/R-CMD-check/badge.svg)](https://github.com/yushiHn/cuteDev/actions)
-[![AppVeyor build status](https://ci.appveyor.com/api/projects/status/kayjdh5qtgymhoxr/branch/master?svg=true)](https://ci.appveyor.com/project/yushiHn/data-table
-[![Codecov test coverage](https://codecov.io/github/yushiHn/cuteDev/coverage.svg?branch=master)](https://app.codecov.io/github/yushiHn/cuteDev?branch=maste
+
+[![Codecov test coverage](https://codecov.io/github/yushiHn/cuteDev/coverage.svg?branch=master)](https://app.codecov.io/github/yushiHn/cuteDev?branch=master)
 [![CRAN_Status_Badge](https://www.r-pkg.org/badges/version/cuteDev)](https://cran.r-project.org/package=cuteDev)
 [![downloads](https://cranlogs.r-pkg.org/badges/cuteDev)](https://www.rdocumentation.org/trends)
 [![CRAN usage](https://jangorecki.gitlab.io/rdeps/cuteDev/CRAN_usage.svg?sanitize=true)](https://gitlab.com/jangorecki/rdeps)
