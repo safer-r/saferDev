@@ -13,7 +13,7 @@
 <!-- badges: end -->
 
 <br />
-<br />
+
 ## Table of content
 
    - [Description](#description)
@@ -24,15 +24,15 @@
    - [Citations](#citations)
    - [Credits](#credits)
    - [Acknowledgements](#acknowledgements)
-   
+
 <br />
-<br />
+
 ## Description
 
 Set of R functions for the development of R functions, written according to the [cute_project](https://github.com/gael-millot/cute_project) specifications.
 
 <br />
-<br />
+
 ## Content
 
 | Function | Description |
@@ -50,13 +50,13 @@ Set of R functions for the development of R functions, written according to the 
 Read `vignette("cuteDev")` for more details.
 
 <br />
-<br />
+
 ## Versions
 
 The different *cuteDev* releases are tagged [here](https://github.com/yushiHn/cuteDev/tags).
 
 <br />
-<br />
+
 ## Installation
 
 *cuteDev* can be currently be installed from GitHub:
@@ -74,7 +74,7 @@ remotes::install_github(paste0("https://github.com/yushiHn/cuteDev/tree/", v))
 ```
 
 <br />
-<br />
+
 ## Licence
 
 This package can be redistributed and/or modified under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
@@ -82,7 +82,7 @@ Distributed in the hope that it will be useful, but without any warranty; withou
 See the GNU General Public License for more details at https://www.gnu.org/licenses.
 
 <br />
-<br />
+
 ## Citation
 
 If you are using functions of *cuteDev*, please cite: 
@@ -91,7 +91,7 @@ If you are using functions of *cuteDev*, please cite:
 > <https://github.com/yushiHn/cuteDev/>.
 
 <br />
-<br />
+
 ## Credits
 
 [Yushi Han](https://github.com/yushiHn/), Bioinformatics and Biostatistics Hub, Institut Pasteur, Paris, France
@@ -101,7 +101,7 @@ If you are using functions of *cuteDev*, please cite:
 [Gael A. Millot](https://gitlab.pasteur.fr/gmillot), Bioinformatics and Biostatistics Hub, Institut Pasteur, Paris, France
 
 <br />
-<br />
+
 ## Acknowledgements
 
 The developers & maintainers of [R](https://www.r-project.org/) as well as packages used in the *cuteDev* functions.
