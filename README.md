@@ -8,7 +8,6 @@
 [![Codecov test coverage](https://codecov.io/github/yushiHn/cuteDev/coverage.svg?branch=master)](https://app.codecov.io/github/yushiHn/cuteDev?branch=master)
 [![CRAN_Status_Badge](https://www.r-pkg.org/badges/version/cuteDev)](https://cran.r-project.org/package=cuteDev)
 [![downloads](https://cranlogs.r-pkg.org/badges/cuteDev)](https://www.rdocumentation.org/trends)
-[![CRAN usage](https://jangorecki.gitlab.io/rdeps/cuteDev/CRAN_usage.svg?sanitize=true)](https://gitlab.com/jangorecki/rdeps)
 [![](https://img.shields.io/badge/license-GPL3.0-green.svg)](https://opensource.org/licenses/MITgpl-3-0)
 [![rworkflows](https://github.com/yushiHn/cuteDev/actions/workflows/rworkflows.yml/badge.svg)](https://github.com/yushiHn/cuteDev/actions/workflows/rworkflows.yml)
 <!-- badges: end -->
