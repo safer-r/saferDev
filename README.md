@@ -27,6 +27,7 @@
 
 <!-- badges: end -->
 
+
 ## Table of content
 
    - [Description](#description)
@@ -38,26 +39,32 @@
    - [Credits](#credits)
    - [Acknowledgements](#acknowledgements)
 
+
 ## Description
 
 Set of R functions for the development of R functions, written according to the [cute_project](https://github.com/gael-millot/cute_project) specifications.
+
 
 ## Content
 
 | Function | Description |
 | --- | --- |
-| **arg_check** | Check expected values of arguments of functions: class, type, mode, length, restricted values panel, kind of numeric values in addition to the distinction between 'integer' and 'double' (proportion only? Inf values authorized? negative values authorized? Integers of type 'double'?). |
-| **arg_test** | Test a set of values for a defined set of arguments of a function. Contrary to testthat::test_that(), the function test a batch of values and control only if an error is returned or not. |
-| **env_check** | Verify that object names in the environment defined by the pos argument are identical or not to object names in the above environments (following R Scope). This can be used to verify that names used for objects inside a function or in the working environment do not override names of objects already present in the above R environments, following the R scope. |
-| **get_message** | Return the error, warning or simple (non error non warning) message if ever exist of an instruction written between quotes. |
-| **is_function_here** | Check if required functions are present in installed packages. This controls modifications in of function names package versions. |
-| **is_package_here** | Check if required packages are installed locally. |
-| **is_python_package_here** | Check if required python packages are installed locally. |
+| **arg_check()** | Check expected values of arguments of functions: class, type, mode, length, restricted values panel, kind of numeric values in addition to the distinction between 'integer' and 'double' (proportion only? Inf values authorized? negative values authorized? Integers of type 'double'?). |
+| **arg_test()** | Test a set of values for a defined set of arguments of a function. Contrary to `testthat::test_that()`, the function test a batch of values and control only if an error is returned or not. |
+| **env_check()** | Verify that object names in the environment defined by the pos argument are identical or not to object names in the above environments (following R Scope). This can be used to verify that names used for objects inside a function or in the working environment do not override names of objects already present in the above R environments, following the R scope. |
+| **get_message()** | Return the error, warning or simple (non error non warning) message if ever exist of an instruction written between quotes. |
+| **is_function_here()** | Check if required functions are present in installed packages. This controls modifications in of function names package versions. |
+| **is_package_here()** | Check if required packages are installed locally. |
+| **is_python_package_here()** | Check if required python packages are installed locally. |
 | **report** | Print a character string or a data object into a same log file. |
+
+Read `vignette("cuteDev")` for more details.
+
 
 ## Versions
 
 The different *cuteDev* releases are tagged [here](https://github.com/yushiHn/cuteDev/tags)
+
 
 ## Installation
 
@@ -75,18 +82,21 @@ v <- "v1.0" # desired tag version
 remotes::install_github(paste0("https://github.com/yushiHn/cuteDev/tree/", v))
 ```
 
+
 ## Licence
 
 This package can be redistributed and/or modified under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
 Distributed in the hope that it will be useful, but without any warranty; without even the implied warranty of merchandability or fitness for a particular purpose.
 See the GNU General Public License for more details at https://www.gnu.org/licenses.
 
+
 ## Citation
 
 If you are using functions of *cuteDev*, please cite: 
 
-> Han Y, Serizay J, Millot GA (2023). *The R cuteDev package.
+> Han Y, Serizay J, Millot GA (2023). _The R cuteDev package_.
 > <https://github.com/yushiHn/cuteDev/>.
+
 
 ## Credits
 
@@ -95,6 +105,7 @@ If you are using functions of *cuteDev*, please cite:
 [Jacques Serizai](https://github.com/js2264), Spatial Regulation of Genomes team, Institut Pasteur, Paris, France
 
 [Gael A. Millot](https://gitlab.pasteur.fr/gmillot), Bioinformatics and Biostatistics Hub, Institut Pasteur, Paris, France
+
 
 ## Acknowledgements
 
