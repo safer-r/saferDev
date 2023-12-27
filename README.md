@@ -5,20 +5,20 @@
 
 <!-- badges: start -->
 [![CRAN status](https://badges.cranchecks.info/flavor/release/cuteDev.svg)](https://cran.r-project.org/web/checks/check_results_cuteDev.html)
-[![R-CMD-check](https://github.com/Rdatatable/cuteDev/workflows/R-CMD-check/badge.svg)](https://github.com/Rdatatable/cuteDev/actions)
-[![AppVeyor build status](https://ci.appveyor.com/api/projects/status/kayjdh5qtgymhoxr/branch/master?svg=true)](https://ci.appveyor.com/project/Rdatatable/data-table)
-[![Codecov test coverage](https://codecov.io/github/Rdatatable/cuteDev/coverage.svg?branch=master)](https://app.codecov.io/github/Rdatatable/cuteDev?branch=master)
-[![GitLab CI build status](https://gitlab.com/Rdatatable/cuteDev/badges/master/pipeline.svg)](https://gitlab.com/Rdatatable/cuteDev/-/pipelines)
+[![R-CMD-check](https://github.com/yushiHn/cuteDev/workflows/R-CMD-check/badge.svg)](https://github.com/yushiHn/cuteDev/actions)
+[![AppVeyor build status](https://ci.appveyor.com/api/projects/status/kayjdh5qtgymhoxr/branch/master?svg=true)](https://ci.appveyor.com/project/yushiHn/data-table)
+[![Codecov test coverage](https://codecov.io/github/yushiHn/cuteDev/coverage.svg?branch=master)](https://app.codecov.io/github/yushiHn/cuteDev?branch=maste
+[![CRAN_Status_Badge](https://www.r-pkg.org/badges/version/ggplot2)](https://cran.r-project.org/package=ggplot2)
+[![GitLab CI build status](https://gitlab.com/yushiHn/cuteDev/badges/master/pipeline.svg)](https://gitlab.com/yushiHn/cuteDev/-/pipelines)
 [![downloads](https://cranlogs.r-pkg.org/badges/cuteDev)](https://www.rdocumentation.org/trends)
 [![CRAN usage](https://jangorecki.gitlab.io/rdeps/cuteDev/CRAN_usage.svg?sanitize=true)](https://gitlab.com/jangorecki/rdeps)
-[![BioC usage](https://jangorecki.gitlab.io/rdeps/cuteDev/BioC_usage.svg?sanitize=true)](https://gitlab.com/jangorecki/rdeps)
 [![indirect usage](https://jangorecki.gitlab.io/rdeps/cuteDev/indirect_usage.svg?sanitize=true)](https://gitlab.com/jangorecki/rdeps)
 [![](https://img.shields.io/badge/license-GPL3.0-green.svg)](https://opensource.org/licenses/MITgpl-3-0)
 [![rworkflows](https://github.com/yushiHn/cuteDev/actions/workflows/rworkflows.yml/badge.svg)](https://github.com/yushiHn/cuteDev/actions/workflows/rworkflows.yml)
 [![Documentation](https://github.com/yushiHn/cuteDev/workflows/pkgdown/badge.svg)](https://yushiHn.github.io/cuteDev)
 <!-- badges: end -->
 
-<br /><br />
+<br />
 ## Table of content
 
    - [Description](#description)
@@ -30,12 +30,12 @@
    - [Credits](#credits)
    - [Acknowledgements](#acknowledgements)
 
-<br /><br />
+<br />
 ## Description
 
 Set of R functions for the development of R functions, written according to the [cute_project](https://github.com/gael-millot/cute_project) specifications.
 
-<br /><br />
+<br />
 ## Content
 
 | Function | Description |
@@ -51,12 +51,12 @@ Set of R functions for the development of R functions, written according to the 
 
 Read `vignette("cuteDev")` for more details.
 
-<br /><br />
+<br />
 ## Versions
 
 The different *cuteDev* releases are tagged [here](https://github.com/yushiHn/cuteDev/tags)
 
-<br /><br />
+<br />
 ## Installation
 
 *cuteDev* can be currently be installed from GitHub:
@@ -73,14 +73,14 @@ v <- "v1.0" # desired tag version
 remotes::install_github(paste0("https://github.com/yushiHn/cuteDev/tree/", v))
 ```
 
-<br /><br />
+<br />
 ## Licence
 
 This package can be redistributed and/or modified under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
 Distributed in the hope that it will be useful, but without any warranty; without even the implied warranty of merchandability or fitness for a particular purpose.
 See the GNU General Public License for more details at https://www.gnu.org/licenses.
 
-<br /><br />
+<br />
 ## Citation
 
 If you are using functions of *cuteDev*, please cite: 
@@ -88,7 +88,7 @@ If you are using functions of *cuteDev*, please cite:
 > Han Y, Serizay J, Millot GA (2023). _The R cuteDev package_.
 > <https://github.com/yushiHn/cuteDev/>.
 
-<br /><br />
+<br />
 ## Credits
 
 [Yushi Han](https://github.com/yushiHn/), Bioinformatics and Biostatistics Hub, Institut Pasteur, Paris, France
@@ -97,7 +97,7 @@ If you are using functions of *cuteDev*, please cite:
 
 [Gael A. Millot](https://gitlab.pasteur.fr/gmillot), Bioinformatics and Biostatistics Hub, Institut Pasteur, Paris, France
 
-<br /><br />
+<br />
 ## Acknowledgements
 
 The developers & maintainers of [R](https://www.r-project.org/) as well as packages used in the *cuteDev* functions.
