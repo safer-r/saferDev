@@ -1,6 +1,6 @@
 #' @title is_function_here
 #' @description
-#' Check if required functions are present in installed packages. This controls a change of function name, for example.
+#' Check if required functions are present in installed packages. This controls modifications in of function names package versions.
 #' @param fun Character vector of the names of the required functions, preceded by the name of the package they belong to and a double colon. Example: c("ggplot2::geom_point", "grid::gpar"). Warning: do not write "()" at the end of the function
 #' @param lib.path Character vector specifying the absolute pathways of the directories containing the listed packages in the fun argument, if not in the default directories. Ignored if NULL.
 #' @returns  An error message if at least one of the checked packages is missing in lib.path, or if at least one of the checked functions is missing in the required package, nothing otherwise.
