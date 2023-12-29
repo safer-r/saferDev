@@ -1,5 +1,5 @@
 ---
-title: "python_pkg_check"
+title: "is_python_package_here"
 ---
 <br>
 
@@ -31,13 +31,13 @@ path # character vector specifying the absolute pathways of the directories, thi
 
 ### Argument req.package
 ```{r, echo = TRUE, error = TRUE}
-python_pkg_check(req.package = req.pkg) # check if the package serpentine is in the computer
+is_python_package_here(req.package = req.pkg) # check if the package serpentine is in the computer
 ```
 <br>
 
 ### Argument lib.path
 ```{r, echo = TRUE, error = TRUE}
-python_pkg_check(
+is_python_package_here(
     req.package = req.pkg,
     lib.path = path
     ) # check if the package is in the computer
@@ -46,7 +46,7 @@ python_pkg_check(
 
 ### All the arguments
 ```{r, echo = TRUE, error = TRUE}
-python_pkg_check(
+is_python_package_here(
     req.package = "serpentine", 
     python.exec.path = ".", 
     python.lib.path = ".",

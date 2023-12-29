@@ -1,11 +1,11 @@
-#' @title python_pkg_check
+#' @title is_python_package_here
 #' @description
-#' Check if the specified python packages are present in the computer (no import).
+#' Check if the specified python packages are installed locally.
 #' @param req.package Character vector of package names to import.
-#' @param python.exec.path Single optional character vector specifying the absolute pathways of the executable python file to use (associated to the packages to use). If NULL, the reticulate::import_from_path() function used in python_pkg_check() seeks for an available version of python.exe, and then uses python_config(python_version, required_module, python_versions). But might not be the correct one for the python.lib.path parameter specified. Thus, it is recommanded to do not leave NULL, notably when using computing clusters.
+#' @param python.exec.path Single optional character vector specifying the absolute pathways of the executable python file to use (associated to the packages to use). If NULL, the reticulate::import_from_path() function used in is_python_package_here() seeks for an available version of python.exe, and then uses python_config(python_version, required_module, python_versions). But might not be the correct one for the python.lib.path parameter specified. Thus, it is recommanded to do not leave NULL, notably when using computing clusters.
 #' @param python.lib.path Optional character vector specifying the absolute pathways of the directories containing some of the listed packages in the req.package argument, if not in the default directories.
 #' @param lib.path Absolute path of the reticulate packages, if not in the default folders.
-#' @returns Nothing.
+#' @returns An error message if at least one of the checked packages is missing in python.lib.path, nothing otherwise.
 #' @details 
 #' REQUIRED PACKAGES
 #' 
@@ -25,21 +25,21 @@
 #' @examples
 #' # example of error message
 #' 
-#' # python_pkg_check(req.package = "nopackage")
+#' # is_python_package_here(req.package = "nopackage")
 #' 
 #' 
 #' # commented because this example returns an error if the python package is not installed on the computer
 #' # (require the installation of the python serpentine package 
 #' # from https://github.com/koszullab/serpentine
 #' 
-#' # python_pkg_check(req.package = "serpentine")
+#' # is_python_package_here(req.package = "serpentine")
 #' 
 #' 
 #' # another example of error message
 #' 
-#' # python_pkg_check(req.package = "serpentine", python.lib.path = "blablabla")
+#' # is_python_package_here(req.package = "serpentine", python.lib.path = "blablabla")
 #' @export
-python_pkg_check <- function(
+is_python_package_here <- function(
         req.package, 
         python.exec.path = NULL, 
         python.lib.path = NULL, 
