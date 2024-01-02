@@ -63,6 +63,80 @@
         )
         stop(paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in stop() to be able to add several messages between ==
     }
+    # end main code
 }
 
 
+#' @title .base_function_check
+#' @description
+#' Check if critical operators of R are not present in other packages or in the global env.
+#' @param external.function.name Name of the function using the .pack_and_function_check() function.
+#' @returns An error message if at least one of the checked operator is present in the R scope, nothing otherwise.
+#' @examples
+#' \dontrun{
+#' # Example that shouldn't be run because this is an internal function
+#' .base_function_check(external.function.name = "test") # commented because this example returns an error
+#' }
+#' @keywords internal
+#' @rdname internal_function
+
+.base_function_check <- function(
+    external.function.name
+){
+    # WARNING
+    # arguments of the .base_function_check() function are not checked, so use carefully inside other functions
+    # DEBUGGING
+    # external.function.name = "test"
+    # main code
+    reserved.objects <- c(
+        "(", 
+        "[", 
+        "{", 
+        "~", 
+        "&", 
+        "|", 
+        "=", 
+        "+", 
+        "-", 
+        "*", 
+        "/", 
+        ">", 
+        "<", 
+        "<=", 
+        ">=", 
+        "!", 
+        "==", 
+        "!=", 
+        "if", 
+        "else", 
+        "", 
+        "<-", 
+        ":", 
+        "::", 
+        "/", 
+        "\\", 
+        "%in%", 
+        "%%"
+    )
+    tempo.log <- sapply(X = reserved.objects, FUN = function(x){ 
+        if( ! all(find(x) == "package:base")){
+            return(TRUE)
+        }else{
+            return(FALSE)
+        }
+    })
+    if(any(tempo.log)){
+        tempo.name <-  reserved.objects[tempo.log]
+        tempo.pos <- sapply(X = tempo.name, FUN = function(x){paste(find(x), collapse = " ")})
+        tempo.cat <- paste0(
+            "ERROR IN ", 
+            external.function.name, 
+            " OF THE cuteMatrix PACKAGE.\nCRITICAL R OBJECT",
+            ifelse(length(tempo.log) == 1L, " ", "S "), 
+            "CANNOT BE PRESENT SOMEWHERE ELSE IN THE R SCOPE THAN IN \"package::base\":\n", 
+            paste(paste(tempo.name, tempo.pos, sep = "\t"), collapse = "\n")
+        )
+        stop(paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in stop() to be able to add several messages between ==
+    }
+    # end main code
+}
