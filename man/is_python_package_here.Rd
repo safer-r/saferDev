@@ -21,10 +21,10 @@ is_python_package_here(
 \item{lib.path}{Absolute path of the reticulate packages, if not in the default folders.}
 }
 \value{
-Nothing.
+An error message if at least one of the checked packages is missing in python.lib.path, nothing otherwise.
 }
 \description{
-Check if the specified python packages are present in the computer (no import).
+Check if the specified python packages are installed locally.
 }
 \details{
 REQUIRED PACKAGES

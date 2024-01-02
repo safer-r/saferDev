@@ -15,7 +15,7 @@ is_function_here(fun, lib.path = NULL)
 An error message if at least one of the checked packages is missing in lib.path, or if at least one of the checked functions is missing in the required package, nothing otherwise.
 }
 \description{
-Check if required functions are present in installed packages. This controls a change of function name, for example.
+Check if required functions are present in installed packages. This controls modifications in of function names package versions.
 }
 \examples{
 # is_function_here(fun = "ggplot2::notgood") # commented because this example returns an error

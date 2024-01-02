@@ -1,5 +1,5 @@
 
-# cuteDev <a href=""><img src=".images/logo.png" align="right" height="140" /></a>
+# cuteDev <a href=""><img src="man/figures/logo.png" align="right" height="140" /></a>
 
 <!-- badges: start -->
 

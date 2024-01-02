@@ -1,11 +1,14 @@
 url: ~
 template:
   bootstrap: 5
-  bootswatch: flatly
+  bslib:
+        primary: "#0054AD"
+        border-radius: 0.5rem
+        btn-border-radius: 0.25rem
 
 authors:
     Gaël Millot:
-        href: https://github.com/gael-millot
+        href: https://gitlab.pasteur.fr/gmillot
     Yushi Han:
         href: https://github.com/yushiHn
         

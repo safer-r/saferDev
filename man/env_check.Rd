@@ -15,7 +15,7 @@ env_check(pos = 1, name = NULL)
 A character string indicating the object names of the tested environment that match object names in the above environments, following the R scope, or NULL if no match.
 }
 \description{
-Verify that object names in the environment defined by the pos parameter are identical or not to object names in the above environment (following R Scope). This can be used to verify that names used for objects inside a function or in the working environment do not override names of objects already present in the above R environments, following the R scope.
+Verify that object names in the environment defined by the pos parameter are identical or not to object names in the above environments (following R Scope). This can be used to verify that names used for objects inside a function or in the working environment do not override names of objects already present in the above R environments, following the R scope.
 }
 \details{
 REQUIRED PACKAGES
