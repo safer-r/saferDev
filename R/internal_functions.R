@@ -91,6 +91,7 @@
     reserved.objects <- c(
         "(", 
         "[", 
+        "[[",
         "{", 
         "~", 
         "&", 
@@ -100,6 +101,7 @@
         "-", 
         "*", 
         "/", 
+        "^", 
         ">", 
         "<", 
         "<=", 
@@ -109,14 +111,13 @@
         "!=", 
         "if", 
         "else", 
-        "", 
         "<-", 
         ":", 
         "::", 
-        "/", 
         "\\", 
         "%in%", 
-        "%%"
+        "%%",
+        "%/%"
     )
     tempo.log <- sapply(X = reserved.objects, FUN = function(x){ 
         if( ! all(find(x) == "package:base")){
