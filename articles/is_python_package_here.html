@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <meta name="description" content="cuteDev">
-<title>env_check • cuteDev</title>
+<title>is_python_package_here • cuteDev</title>
 <!-- favicons --><link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
 <link rel="icon" type="image/png" sizes="32x32" href="../favicon-32x32.png">
 <link rel="apple-touch-icon" type="image/png" sizes="180x180" href="../apple-touch-icon.png">
@@ -18,7 +18,7 @@
 <script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
 <!-- bootstrap-toc --><script src="https://cdn.jsdelivr.net/gh/afeld/bootstrap-toc@v1.0.1/dist/bootstrap-toc.min.js" integrity="sha256-4veVQbu7//Lk5TSmc7YV48MxtMy98e26cf5MrgZYnwo=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- search --><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- pkgdown --><script src="../pkgdown.js"></script><link href="../extra.css" rel="stylesheet">
-<meta property="og:title" content="env_check">
+<meta property="og:title" content="is_python_package_here">
 <meta property="og:description" content="cuteDev">
 <meta property="og:image" content="/logo.png">
 <!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
@@ -79,11 +79,11 @@
 
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
-      <img src="../logo.png" class="logo" alt=""><h1>env_check</h1>
+      <img src="../logo.png" class="logo" alt=""><h1>is_python_package_here</h1>
             
       
       
-      <div class="d-none name"><code>env_check.Rmd</code></div>
+      <div class="d-none name"><code>is_python_package_here.Rmd</code></div>
     </div>
 
     
@@ -96,51 +96,66 @@
 <h3 id="datasets">Datasets<a class="anchor" aria-label="anchor" href="#datasets"></a>
 </h3>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">pos</span> <span class="op">&lt;-</span> <span class="fl">2</span></span>
-<span><span class="va">name</span> <span class="op">&lt;-</span> <span class="st">"mean"</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">req.pkg</span> <span class="op">&lt;-</span> <span class="st">"serpentine"</span></span>
+<span><span class="va">path</span> <span class="op">&lt;-</span> <span class="st">"blablabla"</span></span></code></pre></div>
 <p><br></p>
 </div>
 <div class="section level3">
 <h3 id="datasets-info">Datasets info<a class="anchor" aria-label="anchor" href="#datasets-info"></a>
 </h3>
-<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a>pos <span class="co"># integer indicating the position of the environment checked</span></span>
-<span id="cb3-2"><a href="#cb3-2" tabindex="-1"></a><span class="sc">&gt;</span> [<span class="dv">1</span>] <span class="dv">2</span></span>
-<span id="cb3-3"><a href="#cb3-3" tabindex="-1"></a>name <span class="co"># character vector of the name of the function that will be checked</span></span>
-<span id="cb3-4"><a href="#cb3-4" tabindex="-1"></a><span class="sc">&gt;</span> [<span class="dv">1</span>] <span class="st">"mean"</span></span></code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a>req.pkg <span class="co"># Character vector of package names to import</span></span>
+<span id="cb3-2"><a href="#cb3-2" tabindex="-1"></a><span class="sc">&gt;</span> [<span class="dv">1</span>] <span class="st">"serpentine"</span></span>
+<span id="cb3-3"><a href="#cb3-3" tabindex="-1"></a>path <span class="co"># character vector specifying the absolute pathways of the directories, this lib.path will return an error</span></span>
+<span id="cb3-4"><a href="#cb3-4" tabindex="-1"></a><span class="sc">&gt;</span> [<span class="dv">1</span>] <span class="st">"blablabla"</span></span></code></pre></div>
 <p><br></p>
 </div>
 <div class="section level3">
-<h3 id="simple-example">Simple example<a class="anchor" aria-label="anchor" href="#simple-example"></a>
+<h3 id="argument-req-package">Argument req.package<a class="anchor" aria-label="anchor" href="#argument-req-package"></a>
 </h3>
-<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a><span class="fu">env_check</span>(<span class="at">pos =</span> <span class="dv">1</span>)</span>
-<span id="cb4-2"><a href="#cb4-2" tabindex="-1"></a><span class="sc">&gt;</span> <span class="cn">NULL</span></span>
-<span id="cb4-3"><a href="#cb4-3" tabindex="-1"></a><span class="fu">env_check</span>(<span class="at">pos =</span> <span class="dv">2</span>)</span>
-<span id="cb4-4"><a href="#cb4-4" tabindex="-1"></a><span class="sc">&gt;</span> <span class="cn">NULL</span></span></code></pre></div>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a><span class="fu">is_python_package_here</span>(<span class="at">req.package =</span> req.pkg) <span class="co"># check if the package serpentine is in the computer</span></span>
+<span id="cb4-2"><a href="#cb4-2" tabindex="-1"></a><span class="sc">&gt;</span> Error <span class="cf">in</span> required <span class="sc">&amp;&amp;</span> <span class="sc">!</span><span class="fu">file_test</span>(<span class="st">"-f"</span>, python)<span class="sc">:</span> <span class="st">'length = 14'</span> <span class="cf">in</span> coercion to <span class="st">'logical(1)'</span></span></code></pre></div>
 <p><br></p>
 </div>
 <div class="section level3">
-<h3 id="argument-pos">Argument pos<a class="anchor" aria-label="anchor" href="#argument-pos"></a>
+<h3 id="argument-lib-path">Argument lib.path<a class="anchor" aria-label="anchor" href="#argument-lib-path"></a>
 </h3>
-<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a><span class="fu">env_check</span>(<span class="at">pos =</span> <span class="dv">1</span>) <span class="co"># check the object "NULL" in the environment one step above the env_check() environment</span></span>
-<span id="cb5-2"><a href="#cb5-2" tabindex="-1"></a><span class="sc">&gt;</span> <span class="cn">NULL</span></span></code></pre></div>
-<p><br></p>
-</div>
-<div class="section level3">
-<h3 id="argument-name">Argument name<a class="anchor" aria-label="anchor" href="#argument-name"></a>
-</h3>
-<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a><span class="fu">env_check</span>(<span class="at">name =</span> <span class="st">"mean"</span>) <span class="co"># check if the object "mean" is in the environment one step above the env_check() environment, and if yes, returns if the same name exists in above environments</span></span>
-<span id="cb6-2"><a href="#cb6-2" tabindex="-1"></a><span class="sc">&gt;</span> <span class="cn">NULL</span></span></code></pre></div>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a><span class="fu">is_python_package_here</span>(</span>
+<span id="cb5-2"><a href="#cb5-2" tabindex="-1"></a>    <span class="at">req.package =</span> req.pkg,</span>
+<span id="cb5-3"><a href="#cb5-3" tabindex="-1"></a>    <span class="at">lib.path =</span> path</span>
+<span id="cb5-4"><a href="#cb5-4" tabindex="-1"></a>    ) <span class="co"># check if the package is in the computer</span></span>
+<span id="cb5-5"><a href="#cb5-5" tabindex="-1"></a><span class="sc">&gt;</span> Error<span class="sc">:</span> </span>
+<span id="cb5-6"><a href="#cb5-6" tabindex="-1"></a><span class="er">&gt;</span> </span>
+<span id="cb5-7"><a href="#cb5-7" tabindex="-1"></a><span class="er">&gt;</span> <span class="er">================</span></span>
+<span id="cb5-8"><a href="#cb5-8" tabindex="-1"></a><span class="er">&gt;</span> </span>
+<span id="cb5-9"><a href="#cb5-9" tabindex="-1"></a><span class="er">&gt;</span> ERROR IN <span class="fu">is_python_package_here</span>() OF THE cuteDev PACKAGE<span class="sc">:</span> DIRECTORY PATH INDICATED IN THE lib.path ARGUMENT DOES NOT EXISTS<span class="sc">:</span></span>
+<span id="cb5-10"><a href="#cb5-10" tabindex="-1"></a><span class="er">&gt;</span> blablabla</span>
+<span id="cb5-11"><a href="#cb5-11" tabindex="-1"></a><span class="sc">&gt;</span> </span>
+<span id="cb5-12"><a href="#cb5-12" tabindex="-1"></a><span class="er">&gt;</span> <span class="er">================</span></span></code></pre></div>
 <p><br></p>
 </div>
 <div class="section level3">
 <h3 id="all-the-arguments">All the arguments<a class="anchor" aria-label="anchor" href="#all-the-arguments"></a>
 </h3>
-<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a>mean <span class="ot">&lt;-</span> <span class="dv">2</span></span>
-<span id="cb7-2"><a href="#cb7-2" tabindex="-1"></a><span class="fu">env_check</span>(</span>
-<span id="cb7-3"><a href="#cb7-3" tabindex="-1"></a>    <span class="at">pos =</span> <span class="dv">1</span>,</span>
-<span id="cb7-4"><a href="#cb7-4" tabindex="-1"></a>    <span class="at">name =</span> <span class="st">"mean"</span></span>
-<span id="cb7-5"><a href="#cb7-5" tabindex="-1"></a>) <span class="co"># check if the object "mean" is in the environment one step above the env_check() environment, and if yes, returns if the same name exists in above environments</span></span>
-<span id="cb7-6"><a href="#cb7-6" tabindex="-1"></a><span class="sc">&gt;</span> [<span class="dv">1</span>] <span class="st">"SOME VARIABLES OF mean ARE ALSO PRESENT IN :</span><span class="sc">\n</span><span class="st">package:base: mean</span><span class="sc">\n</span><span class="st">"</span></span></code></pre></div>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a><span class="fu">is_python_package_here</span>(</span>
+<span id="cb6-2"><a href="#cb6-2" tabindex="-1"></a>    <span class="at">req.package =</span> <span class="st">"serpentine"</span>, </span>
+<span id="cb6-3"><a href="#cb6-3" tabindex="-1"></a>    <span class="at">python.exec.path =</span> <span class="st">"."</span>, </span>
+<span id="cb6-4"><a href="#cb6-4" tabindex="-1"></a>    <span class="at">python.lib.path =</span> <span class="st">"."</span>,</span>
+<span id="cb6-5"><a href="#cb6-5" tabindex="-1"></a>    <span class="at">lib.path =</span> <span class="st">"."</span></span>
+<span id="cb6-6"><a href="#cb6-6" tabindex="-1"></a>) <span class="co"># check if the python package serpentine is present in the computer, returns an error if the package is not in the computer</span></span>
+<span id="cb6-7"><a href="#cb6-7" tabindex="-1"></a><span class="sc">&gt;</span> Error<span class="sc">:</span> </span>
+<span id="cb6-8"><a href="#cb6-8" tabindex="-1"></a><span class="er">&gt;</span> </span>
+<span id="cb6-9"><a href="#cb6-9" tabindex="-1"></a><span class="er">&gt;</span> <span class="er">================</span></span>
+<span id="cb6-10"><a href="#cb6-10" tabindex="-1"></a><span class="er">&gt;</span> </span>
+<span id="cb6-11"><a href="#cb6-11" tabindex="-1"></a><span class="er">&gt;</span> ERROR IN <span class="fu">is_python_package_here</span>() OF THE cuteDev PACKAGE. REQUIRED PACKAGES<span class="sc">:</span></span>
+<span id="cb6-12"><a href="#cb6-12" tabindex="-1"></a><span class="er">&gt;</span> reticulate</span>
+<span id="cb6-13"><a href="#cb6-13" tabindex="-1"></a><span class="sc">&gt;</span> reticulate</span>
+<span id="cb6-14"><a href="#cb6-14" tabindex="-1"></a><span class="sc">&gt;</span> reticulate</span>
+<span id="cb6-15"><a href="#cb6-15" tabindex="-1"></a><span class="sc">&gt;</span> MUST BE INSTALLED IN ONE OF THESE FOLDERS<span class="sc">:</span></span>
+<span id="cb6-16"><a href="#cb6-16" tabindex="-1"></a><span class="er">&gt;</span> <span class="er">/</span>__w<span class="sc">/</span>cuteDev<span class="sc">/</span>cuteDev<span class="sc">/</span>vignettes<span class="sc">/</span>articles</span>
+<span id="cb6-17"><a href="#cb6-17" tabindex="-1"></a><span class="sc">&gt;</span> <span class="er">/</span>usr<span class="sc">/</span>local<span class="sc">/</span>lib<span class="sc">/</span>R<span class="sc">/</span>site<span class="sc">-</span>library</span>
+<span id="cb6-18"><a href="#cb6-18" tabindex="-1"></a><span class="sc">&gt;</span> <span class="er">/</span>usr<span class="sc">/</span>local<span class="sc">/</span>lib<span class="sc">/</span>R<span class="sc">/</span>library</span>
+<span id="cb6-19"><a href="#cb6-19" tabindex="-1"></a><span class="sc">&gt;</span> </span>
+<span id="cb6-20"><a href="#cb6-20" tabindex="-1"></a><span class="er">&gt;</span> <span class="er">================</span></span></code></pre></div>
 </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
     </nav></aside>

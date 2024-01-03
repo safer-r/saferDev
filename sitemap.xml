@@ -16,9 +16,6 @@
     <loc>/articles/env_check.html</loc>
   </url>
   <url>
-    <loc>/articles/exemples.html</loc>
-  </url>
-  <url>
     <loc>/articles/get_message.html</loc>
   </url>
   <url>
@@ -31,7 +28,7 @@
     <loc>/articles/is_package_here.html</loc>
   </url>
   <url>
-    <loc>/articles/python_pkg_check.html</loc>
+    <loc>/articles/is_python_package_here.html</loc>
   </url>
   <url>
     <loc>/articles/report.html</loc>
@@ -67,7 +64,7 @@
     <loc>/reference/is_package_here.html</loc>
   </url>
   <url>
-    <loc>/reference/python_pkg_check.html</loc>
+    <loc>/reference/is_python_package_here.html</loc>
   </url>
   <url>
     <loc>/reference/report.html</loc>

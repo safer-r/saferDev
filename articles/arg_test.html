@@ -7,12 +7,20 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <meta name="description" content="cuteDev">
 <title>arg_test • cuteDev</title>
+<!-- favicons --><link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="../favicon-32x32.png">
+<link rel="apple-touch-icon" type="image/png" sizes="180x180" href="../apple-touch-icon.png">
+<link rel="apple-touch-icon" type="image/png" sizes="120x120" href="../apple-touch-icon-120x120.png">
+<link rel="apple-touch-icon" type="image/png" sizes="76x76" href="../apple-touch-icon-76x76.png">
+<link rel="apple-touch-icon" type="image/png" sizes="60x60" href="../apple-touch-icon-60x60.png">
 <script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
 <script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
-<!-- bootstrap-toc --><script src="https://cdn.jsdelivr.net/gh/afeld/bootstrap-toc@v1.0.1/dist/bootstrap-toc.min.js" integrity="sha256-4veVQbu7//Lk5TSmc7YV48MxtMy98e26cf5MrgZYnwo=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- search --><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="arg_test">
+<!-- bootstrap-toc --><script src="https://cdn.jsdelivr.net/gh/afeld/bootstrap-toc@v1.0.1/dist/bootstrap-toc.min.js" integrity="sha256-4veVQbu7//Lk5TSmc7YV48MxtMy98e26cf5MrgZYnwo=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- search --><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- pkgdown --><script src="../pkgdown.js"></script><link href="../extra.css" rel="stylesheet">
+<meta property="og:title" content="arg_test">
 <meta property="og:description" content="cuteDev">
+<meta property="og:image" content="/logo.png">
 <!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
 <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
@@ -22,7 +30,7 @@
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
     
 
-    <nav class="navbar fixed-top navbar-dark navbar-expand-lg bg-primary"><div class="container">
+    <nav class="navbar fixed-top navbar-light navbar-expand-lg bg-light"><div class="container">
     
     <a class="navbar-brand me-2" href="../index.html">cuteDev</a>
 
@@ -50,9 +58,8 @@
     <a class="dropdown-item" href="../articles/get_message.html">get_message</a>
     <a class="dropdown-item" href="../articles/is_function_here.html">is_function_here</a>
     <a class="dropdown-item" href="../articles/is_package_here.html">is_package_here</a>
-    <a class="dropdown-item" href="../articles/python_pkg_check.html">python_pkg_check</a>
+    <a class="dropdown-item" href="../articles/is_python_package_here.html">is_python_package_here</a>
     <a class="dropdown-item" href="../articles/report.html">report</a>
-    <a class="dropdown-item" href="../articles/exemples.html">exemples</a>
   </div>
 </li>
       </ul>
@@ -72,7 +79,7 @@
 
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
-      <img src="" class="logo" alt=""><h1>arg_test</h1>
+      <img src="../logo.png" class="logo" alt=""><h1>arg_test</h1>
             
       
       
@@ -165,8 +172,8 @@
 <span id="cb4-28"><a href="#cb4-28" tabindex="-1"></a><span class="sc">&gt;</span>  arg_test_9                   <span class="cn">NA</span>            <span class="cn">NA</span>   OK   <span class="cn">FALSE</span>        </span>
 <span id="cb4-29"><a href="#cb4-29" tabindex="-1"></a><span class="sc">&gt;</span>  </span>
 <span id="cb4-30"><a href="#cb4-30" tabindex="-1"></a><span class="er">&gt;</span>  <span class="er">$</span>sys.info</span>
-<span id="cb4-31"><a href="#cb4-31" tabindex="-1"></a><span class="sc">&gt;</span>  R Under <span class="fu">development</span> (unstable) (<span class="dv">2023-11-22</span> r85609)</span>
-<span id="cb4-32"><a href="#cb4-32" tabindex="-1"></a><span class="sc">&gt;</span>  Platform<span class="sc">:</span> x86_64<span class="sc">-</span>pc<span class="sc">-</span>linux<span class="sc">-</span>gnu</span>
+<span id="cb4-31"><a href="#cb4-31" tabindex="-1"></a><span class="sc">&gt;</span>  R version <span class="dv">4</span>.<span class="fl">3.2</span> (<span class="dv">2023-10-31</span>)</span>
+<span id="cb4-32"><a href="#cb4-32" tabindex="-1"></a><span class="sc">&gt;</span>  Platform<span class="sc">:</span> x86_64<span class="sc">-</span>pc<span class="sc">-</span>linux<span class="sc">-</span><span class="fu">gnu</span> (<span class="dv">64</span><span class="sc">-</span>bit)</span>
 <span id="cb4-33"><a href="#cb4-33" tabindex="-1"></a><span class="sc">&gt;</span>  Running under<span class="sc">:</span> Ubuntu <span class="dv">22</span>.<span class="fl">04.3</span> LTS</span>
 <span id="cb4-34"><a href="#cb4-34" tabindex="-1"></a><span class="sc">&gt;</span>  </span>
 <span id="cb4-35"><a href="#cb4-35" tabindex="-1"></a><span class="er">&gt;</span>  Matrix products<span class="sc">:</span> default</span>
@@ -192,18 +199,18 @@
 <span id="cb4-55"><a href="#cb4-55" tabindex="-1"></a><span class="sc">&gt;</span>  </span>
 <span id="cb4-56"><a href="#cb4-56" tabindex="-1"></a><span class="er">&gt;</span>  loaded via a <span class="fu">namespace</span> (and not attached)<span class="sc">:</span></span>
 <span id="cb4-57"><a href="#cb4-57" tabindex="-1"></a><span class="er">&gt;</span>   [<span class="dv">1</span>] askpass_1.<span class="fl">2.0</span>     bslib_0.<span class="fl">6.1</span>       cachem_1.<span class="fl">0.8</span>      cli_3.<span class="fl">6.2</span>        </span>
-<span id="cb4-58"><a href="#cb4-58" tabindex="-1"></a><span class="sc">&gt;</span>   [<span class="dv">5</span>] colorspace_2<span class="fl">.1</span><span class="dv">-0</span>  compiler_4.<span class="fl">4.0</span>    desc_1.<span class="fl">4.3</span>        digest_0.<span class="fl">6.33</span>    </span>
+<span id="cb4-58"><a href="#cb4-58" tabindex="-1"></a><span class="sc">&gt;</span>   [<span class="dv">5</span>] colorspace_2<span class="fl">.1</span><span class="dv">-0</span>  compiler_4.<span class="fl">3.2</span>    desc_1.<span class="fl">4.3</span>        digest_0.<span class="fl">6.33</span>    </span>
 <span id="cb4-59"><a href="#cb4-59" tabindex="-1"></a><span class="sc">&gt;</span>   [<span class="dv">9</span>] evaluate_0<span class="fl">.23</span>     fansi_1.<span class="fl">0.6</span>       fastmap_1.<span class="fl">1.1</span>     fs_1.<span class="fl">6.3</span>         </span>
-<span id="cb4-60"><a href="#cb4-60" tabindex="-1"></a><span class="sc">&gt;</span>  [<span class="dv">13</span>] generics_0.<span class="fl">1.3</span>    ggplot2_3.<span class="fl">4.4</span>     glue_1.<span class="fl">6.2</span>        grid_4.<span class="fl">4.0</span>       </span>
+<span id="cb4-60"><a href="#cb4-60" tabindex="-1"></a><span class="sc">&gt;</span>  [<span class="dv">13</span>] generics_0.<span class="fl">1.3</span>    ggplot2_3.<span class="fl">4.4</span>     glue_1.<span class="fl">6.2</span>        grid_4.<span class="fl">3.2</span>       </span>
 <span id="cb4-61"><a href="#cb4-61" tabindex="-1"></a><span class="sc">&gt;</span>  [<span class="dv">17</span>] gtable_0.<span class="fl">3.4</span>      htmltools_0.<span class="fl">5.7</span>   jquerylib_0.<span class="fl">1.4</span>   jsonlite_1.<span class="fl">8.8</span>   </span>
 <span id="cb4-62"><a href="#cb4-62" tabindex="-1"></a><span class="sc">&gt;</span>  [<span class="dv">21</span>] knitr_1<span class="fl">.45</span>        lattice_0<span class="fl">.22</span><span class="dv">-5</span>    lifecycle_1.<span class="fl">0.4</span>   lubridate_1.<span class="fl">9.3</span>  </span>
-<span id="cb4-63"><a href="#cb4-63" tabindex="-1"></a><span class="sc">&gt;</span>  [<span class="dv">25</span>] magrittr_2.<span class="fl">0.3</span>    Matrix_1<span class="fl">.6</span><span class="dv">-4</span>      memoise_2.<span class="fl">0.1</span>     munsell_0.<span class="fl">5.0</span>    </span>
-<span id="cb4-64"><a href="#cb4-64" tabindex="-1"></a><span class="sc">&gt;</span>  [<span class="dv">29</span>] parallel_4.<span class="fl">4.0</span>    pdftools_3.<span class="fl">4.0</span>    pillar_1.<span class="fl">9.0</span>      pkgconfig_2.<span class="fl">0.3</span>  </span>
+<span id="cb4-63"><a href="#cb4-63" tabindex="-1"></a><span class="sc">&gt;</span>  [<span class="dv">25</span>] magrittr_2.<span class="fl">0.3</span>    Matrix_1<span class="fl">.6-1.1</span>    memoise_2.<span class="fl">0.1</span>     munsell_0.<span class="fl">5.0</span>    </span>
+<span id="cb4-64"><a href="#cb4-64" tabindex="-1"></a><span class="sc">&gt;</span>  [<span class="dv">29</span>] parallel_4.<span class="fl">3.2</span>    pdftools_3.<span class="fl">4.0</span>    pillar_1.<span class="fl">9.0</span>      pkgconfig_2.<span class="fl">0.3</span>  </span>
 <span id="cb4-65"><a href="#cb4-65" tabindex="-1"></a><span class="sc">&gt;</span>  [<span class="dv">33</span>] pkgdown_2.<span class="fl">0.7</span>     png_0<span class="fl">.1</span><span class="dv">-8</span>         purrr_1.<span class="fl">0.2</span>       qpdf_1.<span class="fl">3.2</span>       </span>
 <span id="cb4-66"><a href="#cb4-66" tabindex="-1"></a><span class="sc">&gt;</span>  [<span class="dv">37</span>] R6_2.<span class="fl">5.1</span>          ragg_1.<span class="fl">2.6</span>        Rcpp_1.<span class="fl">0.11</span>       reticulate_1.<span class="fl">34.0</span></span>
 <span id="cb4-67"><a href="#cb4-67" tabindex="-1"></a><span class="sc">&gt;</span>  [<span class="dv">41</span>] rlang_1.<span class="fl">1.2</span>       rmarkdown_2<span class="fl">.25</span>    sass_0.<span class="fl">4.8</span>        scales_1.<span class="fl">3.0</span>     </span>
 <span id="cb4-68"><a href="#cb4-68" tabindex="-1"></a><span class="sc">&gt;</span>  [<span class="dv">45</span>] stringi_1.<span class="fl">8.3</span>     stringr_1.<span class="fl">5.1</span>     systemfonts_1.<span class="fl">0.5</span> textshaping_0.<span class="fl">3.7</span></span>
-<span id="cb4-69"><a href="#cb4-69" tabindex="-1"></a><span class="sc">&gt;</span>  [<span class="dv">49</span>] tibble_3.<span class="fl">2.1</span>      timechange_0.<span class="fl">2.0</span>  tools_4.<span class="fl">4.0</span>       utf8_1.<span class="fl">2.4</span>       </span>
+<span id="cb4-69"><a href="#cb4-69" tabindex="-1"></a><span class="sc">&gt;</span>  [<span class="dv">49</span>] tibble_3.<span class="fl">2.1</span>      timechange_0.<span class="fl">2.0</span>  tools_4.<span class="fl">3.2</span>       utf8_1.<span class="fl">2.4</span>       </span>
 <span id="cb4-70"><a href="#cb4-70" tabindex="-1"></a><span class="sc">&gt;</span>  [<span class="dv">53</span>] vctrs_0.<span class="fl">6.5</span>       xfun_0<span class="fl">.41</span>         yaml_2.<span class="fl">3.8</span></span></code></pre></div>
 <p><br></p>
 </div>
@@ -234,7 +241,7 @@
 <span id="cb5-22"><a href="#cb5-22" tabindex="-1"></a><span class="sc">&gt;</span>  </span>
 <span id="cb5-23"><a href="#cb5-23" tabindex="-1"></a><span class="er">&gt;</span>  test JOB END</span>
 <span id="cb5-24"><a href="#cb5-24" tabindex="-1"></a><span class="sc">&gt;</span>  </span>
-<span id="cb5-25"><a href="#cb5-25" tabindex="-1"></a><span class="er">&gt;</span>  TIME<span class="sc">:</span> <span class="dv">2023-12-14</span> <span class="dv">14</span><span class="sc">:</span><span class="dv">58</span><span class="sc">:</span><span class="fl">58.083336</span></span>
+<span id="cb5-25"><a href="#cb5-25" tabindex="-1"></a><span class="er">&gt;</span>  TIME<span class="sc">:</span> <span class="dv">2024-01-03</span> <span class="dv">10</span><span class="sc">:</span><span class="dv">38</span><span class="sc">:</span><span class="fl">19.801757</span></span>
 <span id="cb5-26"><a href="#cb5-26" tabindex="-1"></a><span class="sc">&gt;</span>  </span>
 <span id="cb5-27"><a href="#cb5-27" tabindex="-1"></a><span class="er">&gt;</span>  TOTAL TIME LAPSE<span class="sc">:</span> 0S</span></code></pre></div>
 </div>
@@ -246,7 +253,7 @@
 
     <footer><div class="pkgdown-footer-left">
   <p></p>
-<p>Developed by <a href="https://github.com/gael-millot" class="external-link">Gaël Millot</a>, <a href="https://github.com/yushiHn" class="external-link">Yushi Han</a>.</p>
+<p>Developed by <a href="https://gitlab.pasteur.fr/gmillot" class="external-link">Gaël Millot</a>, <a href="https://github.com/yushiHn" class="external-link">Yushi Han</a>.</p>
 </div>
 
 <div class="pkgdown-footer-right">

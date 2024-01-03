@@ -8,9 +8,8 @@ articles:
   get_message: get_message.html
   is_function_here: is_function_here.html
   is_package_here: is_package_here.html
-  python_pkg_check: python_pkg_check.html
+  is_python_package_here: is_python_package_here.html
   report: report.html
   cuteDev: cuteDev.html
-  exemples: exemples.html
-last_built: 2023-12-14T14:58Z
+last_built: 2024-01-03T10:38Z
 
