@@ -50,6 +50,9 @@ report <- function(
     arg.names <- names(formals(fun = sys.function(sys.parent(n = 2)))) # names of all the arguments
     arg.user.setting <- as.list(match.call(expand.dots = FALSE))[-1] # list of the argument settings (excluding default values not provided by the user)
     # end function name
+    # critical operator checking
+    .base_function_check(external.function.name = function.name)
+    # end critical operator checking
     # package checking
     # check of lib.path
     # end check of lib.path
