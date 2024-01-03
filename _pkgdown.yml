@@ -1,4 +1,5 @@
 url: ~
+
 template:
   bootstrap: 5
   bslib:
@@ -11,9 +12,8 @@ authors:
         href: https://gitlab.pasteur.fr/gmillot
     Yushi Han:
         href: https://github.com/yushiHn
-        
+
 reference:
-title: cuteDev functions
 - title: "arg_check"
   contents: 
   - arg_check
@@ -38,4 +38,5 @@ title: cuteDev functions
 - title: "report"
   contents: 
   - report
+
   
