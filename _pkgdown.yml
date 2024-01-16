@@ -8,10 +8,11 @@ template:
         btn-border-radius: 0.25rem
 
 authors:
-    Gaël Millot:
-        href: https://gitlab.pasteur.fr/gmillot
     Yushi Han:
         href: https://github.com/yushiHn
+    Gaël Millot:
+        href: https://gitlab.pasteur.fr/gmillot
+    
 
 reference:
 - title: "arg_check"
