@@ -1,5 +1,5 @@
 
-# cuteDev <a href="">[<img src="man/figures/logo.png" align="right" height="140" />](https://yushihn.github.io/cuteDev)</a>
+# saferDev <a href="">[<img src="man/figures/logo.png" align="right" height="140" />](https://yushihn.github.io/cuteDev)</a>
 
 <br />
 
@@ -108,4 +108,5 @@ If you are using functions of *cuteDev*, please cite:
 ## Acknowledgements
 
 The developers & maintainers of [R](https://www.r-project.org/) as well as packages used in the *cuteDev* functions.
+
 
