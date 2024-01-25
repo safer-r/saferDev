@@ -1,6 +1,8 @@
 
 # cuteDev <a href="">[<img src="man/figures/logo.png" align="right" height="140" />](https://yushihn.github.io/cuteDev)</a>
 
+<br />
+
 <!-- badges: start -->
 
 [![R-CMD-check](https://github.com/yushiHn/cuteDev/workflows/R-CMD-check/badge.svg)](https://github.com/yushiHn/cuteDev/actions)
