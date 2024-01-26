@@ -15,7 +15,9 @@ library(cuteDev)
 ```
 <br>
 
-#### get_message() #### return error/warning/other messages of an expression (that can be exported)
+#### get_message() 
+
+#### return error/warning/other messages of an expression (that can be exported)
 <br>
 
 ### Datasets
