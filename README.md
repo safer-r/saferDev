@@ -1,17 +1,17 @@
 
-# saferDev <a href="">[<img src="man/figures/logo.png" align="right" height="140" />](https://yushihn.github.io/cuteDev)</a>
+# saferDev <a href="">[<img src="man/figures/saferDev.png" align="right" height="140" />](https://safer-r.github.io/saferDev)</a>
 
 <br />
 
 <!-- badges: start -->
 
-[![R-CMD-check](https://github.com/yushiHn/cuteDev/workflows/R-CMD-check/badge.svg)](https://github.com/yushiHn/cuteDev/actions)
+[![R-CMD-check](https://github.com/safer-r/saferDev/workflows/R-CMD-check/badge.svg)](https://github.com/safer-r/saferDev/actions)
 
-[![Codecov test coverage](https://codecov.io/github/yushiHn/cuteDev/coverage.svg?branch=master)](https://app.codecov.io/github/yushiHn/cuteDev?branch=master)
-[![CRAN_Status_Badge](https://www.r-pkg.org/badges/version/cuteDev)](https://cran.r-project.org/package=cuteDev)
-[![downloads](https://cranlogs.r-pkg.org/badges/cuteDev)](https://www.rdocumentation.org/trends)
+[![Codecov test coverage](https://codecov.io/github/yushiHn/saferDev/coverage.svg?branch=master)](https://app.codecov.io/github/yushiHn/saferDev?branch=master)
+[![CRAN_Status_Badge](https://www.r-pkg.org/badges/version/saferDev)](https://cran.r-project.org/package=saferDev)
+[![downloads](https://cranlogs.r-pkg.org/badges/saferDev)](https://www.rdocumentation.org/trends)
 [![](https://img.shields.io/badge/license-GPL3.0-green.svg)](https://opensource.org/licenses/MITgpl-3-0)
-[![rworkflows](https://github.com/yushiHn/cuteDev/actions/workflows/rworkflows.yml/badge.svg)](https://github.com/yushiHn/cuteDev/actions/workflows/rworkflows.yml)
+[![rworkflows](https://github.com/safer-r/saferDev/actions/workflows/rworkflows.yml/badge.svg)](https://github.com/safer-r/saferDev/actions/workflows/rworkflows.yml)
 <!-- badges: end -->
 
 <br />
@@ -31,7 +31,7 @@
 
 ## Description
 
-Set of R functions for the development of R functions, written according to the [cute_project](https://github.com/gael-millot/cute_project) specifications.
+Set of R functions for the development of R functions, written according to the [safer project](https://github.com/safer-r) specifications.
 
 <br />
 
@@ -50,30 +50,30 @@ Set of R functions for the development of R functions, written according to the 
 
 <br />
 
-Read `vignette("cuteDev")` for more details.
+Read `vignette("saferDev")` for more details.
 
 <br />
 
 ## Versions
 
-The different *cuteDev* releases are tagged [here](https://github.com/yushiHn/cuteDev/tags).
+The different *saferDev* releases are tagged [here](https://github.com/safer-r/saferDev/tags).
 
 <br />
 
 ## Installation
 
-*cuteDev* can be currently be installed from GitHub:
+*saferDev* can be currently be installed from GitHub:
 
 ```r
 install.packages("remotes")
-remotes::install_github("https://github.com/yushiHn/cuteDev")
+remotes::install_github("https://github.com/safer-r/saferDev")
 ```
 
 Older versions can be installed like this:
 
 ```r
 v <- "v1.0" # desired tag version
-remotes::install_github(paste0("https://github.com/yushiHn/cuteDev/tree/", v))
+remotes::install_github(paste0("https://github.com/safer-r/saferDev/tree/", v))
 ```
 
 <br />
@@ -88,10 +88,10 @@ See the GNU General Public License for more details at https://www.gnu.org/licen
 
 ## Citation
 
-If you are using functions of *cuteDev*, please cite: 
+If you are using functions of *saferDev*, please cite: 
 
-> Han Y, Serizay J, Millot GA (2023). _The R cuteDev package_.
-> <https://github.com/yushiHn/cuteDev/>.
+> Han Y, Serizay J, Millot GA (2023). _The R saferDev package_.
+> <https://github.com/safer-r/saferDev/>.
 
 <br />
 
@@ -101,12 +101,15 @@ If you are using functions of *cuteDev*, please cite:
 
 [Jacques Serizai](https://github.com/js2264), Spatial Regulation of Genomes team, Institut Pasteur, Paris, France
 
-[Gael A. Millot](https://gitlab.pasteur.fr/gmillot), Bioinformatics and Biostatistics Hub, Institut Pasteur, Paris, France
+[Gael A. Millot](https://github.com/gael-millot), Bioinformatics and Biostatistics Hub, Institut Pasteur, Paris, France
 
 <br />
 
 ## Acknowledgements
 
-The developers & maintainers of [R](https://www.r-project.org/) as well as packages used in the *cuteDev* functions.
+The developers & maintainers of the mentioned softwares and packages, including:
 
+- [R](https://www.r-project.org/)
+- [Git](https://git-scm.com/)
+- [Github](https://github.com/)
 
