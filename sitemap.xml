@@ -10,9 +10,6 @@
     <loc>/articles/arg_test.html</loc>
   </url>
   <url>
-    <loc>/articles/cuteDev.html</loc>
-  </url>
-  <url>
     <loc>/articles/env_check.html</loc>
   </url>
   <url>
@@ -32,6 +29,9 @@
   </url>
   <url>
     <loc>/articles/report.html</loc>
+  </url>
+  <url>
+    <loc>/articles/saferDev.html</loc>
   </url>
   <url>
     <loc>/authors.html</loc>
