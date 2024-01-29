@@ -17,39 +17,27 @@
 #' 
 #' And then, if export is FALSE a list containing:
 #' - $fun: the tested function.
+#' 
 #' - $ini: the initial input values.
+#' 
 #' - $data: a data frame of all the combination tested, containing the following columns:
+#' 
 #'      # the different values tested, named by arguments
 #'      - $kind: a vector of character strings indicating the kind of test result: either "ERROR", or "WARNING", or "OK".
 #'      - $problem: a logical vector indicating if error or not.
+#'      
 #'      - $expected.error: optional logical vector indicating the expected error specified in the expect.error argument.
 #'      - $message: either NULL if $kind is always "OK", or the messages.
 #' - $sys.info: system and packages info.
 #' 
-#' If export is TRUE:
+#' If export is TRUE: 
+#' 
 #' - the same list object into a .RData file.
+#' 
 #' - also the $data data frame into a .tsv file.
+#' 
 #' - if expect.error is non NULL and if any discrepancy, the $data data frame into a .tsv file but containing only the rows with discrepancies between expected and observed errors.
 #' @details 
-#' REQUIRED PACKAGES
-#' 
-#' lubridate
-#' 
-#' parallel if parall argument is TRUE (included in the R installation packages but not automatically loaded)
-#' 
-#' pdftools if parall argument is TRUE (included in the R installation packages but not automatically loaded)
-#' 
-#' If the tested function is in a package, this package must be imported first (no parallelization) or must be in the classical R package folder indicated by the lib.path argument (parallelization)
-#' 
-#' 
-#' REQUIRED FUNCTIONS FROM THE cute PACKAGE
-#' 
-#' arg_check()
-#' 
-#' get_message()
-#' 
-#' WARNINGS
-#' 
 #' Limited to 43 arguments with at least 2 values each. The total number of arguments tested can be more if the additional arguments have a single value. The limit is due to nested "for" loops (https://stat.ethz.ch/pipermail/r-help/2008-March/157341.html), but this limitation is away from the number of tests performed that would be 2^43.
 #' @importFrom lubridate seconds_to_period
 #' @importFrom pdftools pdf_combine
@@ -120,7 +108,7 @@ arg_test <- function(
     # set.seed(1) ; obs1 <- data.frame(Time = c(rnorm(10), rnorm(10) + 2), Group1 = rep(c("G", "H"), each = 10), stringsAsFactors = TRUE) ; fun = "gg_boxplot" ; arg = c("data1", "y", "categ") ; val = list(L1 = list(L1 = obs1), L2 = list(L1 = "Time"), L3 = list(L1 = "Group1")) ; expect.error = NULL ; print.count = 10 ; parall = FALSE ; thread.nb = NULL ; plot.fun = TRUE ; export = TRUE ; res.path = "C:\\Users\\gmillot\\Desktop\\" ; lib.path = NULL # for function debugging
     # fun = "unique" ; arg = "x" ; val = list(x = list(1:3, mean)) ; expect.error = list(x = list(TRUE, TRUE)) ; parall = FALSE ; thread.nb = NULL ; plot.fun = FALSE ; export = FALSE ; res.path = "C:\\Users\\gmillot\\Desktop\\" ; lib.path = NULL ; print.count = 1 # for function debugging
     # package name
-    package.name <- "cuteDev"
+    package.name <- "saferDev"
     # end package name
     # function name
     ini <- match.call(expand.dots = FALSE) # initial parameters (specific of arg_test())

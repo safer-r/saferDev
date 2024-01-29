@@ -46,43 +46,31 @@ One or several pdf if a plotting function is tested and if the plot.fun argument
 
 And then, if export is FALSE a list containing:
 - $fun: the tested function.
+
 - $ini: the initial input values.
+
 - $data: a data frame of all the combination tested, containing the following columns:
+
      # the different values tested, named by arguments
      - $kind: a vector of character strings indicating the kind of test result: either "ERROR", or "WARNING", or "OK".
      - $problem: a logical vector indicating if error or not.
+     
      - $expected.error: optional logical vector indicating the expected error specified in the expect.error argument.
      - $message: either NULL if $kind is always "OK", or the messages.
 - $sys.info: system and packages info.
 
-If export is TRUE:
+If export is TRUE: 
+
 - the same list object into a .RData file.
+
 - also the $data data frame into a .tsv file.
+
 - if expect.error is non NULL and if any discrepancy, the $data data frame into a .tsv file but containing only the rows with discrepancies between expected and observed errors.
 }
 \description{
 Test combinations of argument values of a function.
 }
 \details{
-REQUIRED PACKAGES
-
-lubridate
-
-parallel if parall argument is TRUE (included in the R installation packages but not automatically loaded)
-
-pdftools if parall argument is TRUE (included in the R installation packages but not automatically loaded)
-
-If the tested function is in a package, this package must be imported first (no parallelization) or must be in the classical R package folder indicated by the lib.path argument (parallelization)
-
-
-REQUIRED FUNCTIONS FROM THE cute PACKAGE
-
-arg_check()
-
-get_message()
-
-WARNINGS
-
 Limited to 43 arguments with at least 2 values each. The total number of arguments tested can be more if the additional arguments have a single value. The limit is due to nested "for" loops (https://stat.ethz.ch/pipermail/r-help/2008-March/157341.html), but this limitation is away from the number of tests performed that would be 2^43.
 }
 \examples{

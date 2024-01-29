@@ -16,7 +16,7 @@
 #' none
 #' 
 #' 
-#' REQUIRED FUNCTIONS FROM THE cute PACKAGE
+#' REQUIRED FUNCTIONS FROM THE safer PACKAGE
 #' 
 #' arg_check()
 #' 
@@ -39,7 +39,7 @@ report <- function(
     # data = 1:3 ; output = "results.txt" ; path = "C:/Users/yhan/Desktop" ; overwrite = TRUE ; rownames.kept = FALSE ; vector.cat = FALSE ; noquote = FALSE ; sep = 2 # for function debugging
     
     # package name
-    package.name <- "cuteDev"
+    package.name <- "saferDev"
     # end package name
 
     # function name

@@ -9,7 +9,7 @@
 #' None
 #' 
 #' 
-#' REQUIRED FUNCTIONS FROM THE cute PACKAGE
+#' REQUIRED FUNCTIONS FROM THE safer PACKAGE
 #' 
 #' arg_check()
 #' @examples
@@ -70,7 +70,7 @@ env_check <- function(
     # DEBUGGING
     # pos = 1 ; name = "mean" # for function debugging
     # package name
-    package.name <- "cuteDev"
+    package.name <- "saferDev"
     # end package name
     # function name
     function.name <- paste0(as.list(match.call(expand.dots = FALSE))[[1]], "()") # function name with "()" paste, which split into a vector of three: c("::()", "package()", "function()") if "package::function()" is used.

@@ -6,12 +6,12 @@ title: "arg_test"
 ```{r, include = FALSE}
 knitr::opts_chunk$set(
     collapse = TRUE,
-    comment = "> "
+    comment = ">"
 )
 ```
 
 ```{r setup}
-library(cuteDev)
+library(saferDev)
 ```
 <br>
 

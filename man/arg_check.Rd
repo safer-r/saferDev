@@ -55,8 +55,11 @@ arg_check(
 }
 \value{
 A list containing:
+
 - §problem: logical. Is there any problem detected?
+
 - §text: message indicating the details of the problem, or the absence of problem.
+
 - §object.name: value of the data.name argument (i.e., name of the checked object if provided, NULL otherwise).
 }
 \description{
@@ -64,11 +67,16 @@ Check expected values of an argument of functions: class, type, mode, length, re
 }
 \details{
 - If options == NULL, then at least class or type or mode or length argument must be non-null.
- - If options is non-null, then class, type and mode must be NULL, and length can be NULL or specified.
- - The function tests what is written in its arguments, even if what is written is incoherent. For instance, arg_check(data = factor(1), class = "factor", mode = "character") will return a problem, whatever the object tested in the data argument, because no object can be class "factor" and mode "character" (factors are class "factor" and mode "numeric"). Of note, length of object of class "environment" is always 0.
- - If the tested object is NULL, then the function will always return a checking problem.
- - Argument "class" with value "vector" means that the object is tested for class(data) returning only "numeric", "integer", "character", "logical", "complex" or "expression". Please, use another value of class (e.g., class = "call" or class = "list") for other types and class of objects
- - Since R >= 4.0.0, class(matrix()) returns "matrix" "array", and not "matrix" alone as before. However, use argument class = "matrix" to check for matrix object (of class "matrix" "array" in R >= 4.0.0) and use argument class = "array" to check for array object (of class "array" in R >= 4.0.0).
+ 
+- If options is non-null, then class, type and mode must be NULL, and length can be NULL or specified.
+ 
+- The function tests what is written in its arguments, even if what is written is incoherent. For instance, arg_check(data = factor(1), class = "factor", mode = "character") will return a problem, whatever the object tested in the data argument, because no object can be class "factor" and mode "character" (factors are class "factor" and mode "numeric"). Of note, length of object of class "environment" is always 0.
+ 
+- If the tested object is NULL, then the function will always return a checking problem.
+ 
+- Argument "class" with value "vector" means that the object is tested for class(data) returning only "numeric", "integer", "character", "logical", "complex" or "expression". Please, use another value of class (e.g., class = "call" or class = "list") for other types and class of objects
+ 
+- Since R >= 4.0.0, class(matrix()) returns "matrix" "array", and not "matrix" alone as before. However, use argument class = "matrix" to check for matrix object (of class "matrix" "array" in R >= 4.0.0) and use argument class = "array" to check for array object (of class "array" in R >= 4.0.0).
 }
 \examples{
 test <- matrix(1:3)

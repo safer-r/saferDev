@@ -1,5 +1,5 @@
 ---
-title: "cuteDev"
+title: "saferDev"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{cuteDev}
@@ -15,5 +15,5 @@ knitr::opts_chunk$set(
 ```
 
 ```{r setup}
-library(cuteDev)
+library(saferDev)
 ```

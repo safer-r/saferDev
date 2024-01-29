@@ -12,7 +12,7 @@
 #' reticulate
 #' 
 #' 
-#' REQUIRED FUNCTIONS FROM THE cute PACKAGE
+#' REQUIRED FUNCTIONS FROM THE safer PACKAGE
 #' 
 #' arg_check()
 #' 
@@ -50,7 +50,7 @@ is_python_package_here <- function(
     # req.package = "bad" ; python.lib.path = NULL ; lib.path = NULL
     
     # package name
-    package.name <- "cuteDev"
+    package.name <- "saferDev"
     # end package name
     
     # function name

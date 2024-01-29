@@ -17,7 +17,7 @@ is_function_here <- function(
     # DEBUGGING
     # fun = "ggplot2::geom_point" ; lib.path = "C:/Program Files/R/R-4.3.1/library" ; external.function.name = "fun1"
     # package name
-    package.name <- "cuteDev"
+    package.name <- "saferDev"
     # end package name
     # function name
     function.name <- paste0(as.list(match.call(expand.dots = FALSE))[[1]], "()") # function name with "()" paste, which split into a vector of three: c("::()", "package()", "function()") if "package::function()" is used.

@@ -1,6 +1,6 @@
-Package: cuteDev
+Package: saferDev
 Type: Package
-Title: Functions for analysis and development
+Title: Function and pipeline development
 Version: 1.0
 Date: 2023-11-09
 Authors@R: c(

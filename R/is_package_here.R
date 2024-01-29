@@ -20,7 +20,7 @@ is_package_here <- function(
     # req.package = "serpentine" ; lib.path = "C:/Users/yhan/AppData/Local/Temp/RtmpkfYz9V/RLIBS_2cb051b94b38"
     
     # package name
-    package.name <- "cuteDev"
+    package.name <- "saferDev"
     # end package name
     
     # function name
