@@ -10,16 +10,6 @@
 #' @param noquote Single logical value. If TRUE no quote are present for the characters.
 #' @param sep Single integer representing the number of empty lines after printed data.
 #' @returns Nothing.
-#' @details
-#' REQUIRED PACKAGES
-#' 
-#' none
-#' 
-#' 
-#' REQUIRED FUNCTIONS FROM THE safer PACKAGE
-#' 
-#' arg_check()
-#' 
 #' @examples
 #' #report()
 #' report(data = 1:3, output = "results.txt", path = ".", overwrite = TRUE, 

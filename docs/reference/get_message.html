@@ -105,12 +105,7 @@ Using argument print.no = FALSE, return NULL if no message, which is convenient 
     </div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
-    <p>REQUIRED PACKAGES</p>
-<p>ggplot2</p>
-
-<p>REQUIRED FUNCTIONS FROM THE cute PACKAGE</p>
-<p>arg_check()</p>
-<p>WARNINGS</p>
+    <p>WARNINGS</p>
 <p>Only the first message is returned.</p>
 <p>Always use the env argument when get_message() is used inside functions.</p>
 <p>The function does not prevent printing if print() is used inside the instruction tested. To prevent that, use tempo &lt;- utils::capture.output(error &lt;- get_message(data = "arg_check(data = 'a', class = mean, neg.values = FALSE, print = TRUE)")). The return of get_message() is assigned into error and the printed messages are captured by utils::capture.output() and assigned into tempo. See the examples.</p>

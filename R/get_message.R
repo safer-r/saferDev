@@ -11,15 +11,6 @@
 #' @param env The name of an existing environment. Write NULL if not required.
 #' @returns The message or NULL if no message and print.no is FALSE.
 #' @details 
-#' REQUIRED PACKAGES
-#' 
-#' ggplot2
-#' 
-#' 
-#' REQUIRED FUNCTIONS FROM THE safer PACKAGE
-#' 
-#' arg_check()
-#' 
 #' WARNINGS
 #' 
 #' Only the first message is returned.

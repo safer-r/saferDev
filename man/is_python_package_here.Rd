@@ -27,15 +27,6 @@ An error message if at least one of the checked packages is missing in python.li
 Check if the specified python packages are installed locally.
 }
 \details{
-REQUIRED PACKAGES
-
-reticulate
-
-
-REQUIRED FUNCTIONS FROM THE safer PACKAGE
-
-arg_check()
-
 WARNINGS
 
 for python 3.7. Previous versions return an error "Error in sys$stdout$flush() : attempt to apply non-function"

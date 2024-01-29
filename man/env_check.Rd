@@ -17,16 +17,6 @@ A character string indicating the object names of the tested environment that ma
 \description{
 Verify that object names in the environment defined by the pos parameter are identical or not to object names in the above environments (following R Scope). This can be used to verify that names used for objects inside a function or in the working environment do not override names of objects already present in the above R environments, following the R scope.
 }
-\details{
-REQUIRED PACKAGES
-
-None
-
-
-REQUIRED FUNCTIONS FROM THE safer PACKAGE
-
-arg_check()
-}
 \examples{
 # Example in the working environment
 

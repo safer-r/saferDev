@@ -45,6 +45,7 @@ arg_test(
 One or several pdf if a plotting function is tested and if the plot.fun argument is TRUE. 
 
 And then, if export is FALSE a list containing:
+
 - $fun: the tested function.
 
 - $ini: the initial input values.
@@ -57,6 +58,7 @@ And then, if export is FALSE a list containing:
      
      - $expected.error: optional logical vector indicating the expected error specified in the expect.error argument.
      - $message: either NULL if $kind is always "OK", or the messages.
+     
 - $sys.info: system and packages info.
 
 If export is TRUE: 

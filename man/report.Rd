@@ -38,16 +38,6 @@ Nothing.
 \description{
 Log file function: print a character string or a data object into a same output file.
 }
-\details{
-REQUIRED PACKAGES
-
-none
-
-
-REQUIRED FUNCTIONS FROM THE safer PACKAGE
-
-arg_check()
-}
 \examples{
 #report()
 report(data = 1:3, output = "results.txt", path = ".", overwrite = TRUE, 

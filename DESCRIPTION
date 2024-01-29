@@ -16,6 +16,7 @@ License: GPL-3
 Imports: 
     ggplot2,
     lubridate,
+    parallel,
     pdftools,
     reticulate
 RoxygenNote: 7.2.3

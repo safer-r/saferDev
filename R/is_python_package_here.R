@@ -7,15 +7,6 @@
 #' @param lib.path Absolute path of the reticulate packages, if not in the default folders.
 #' @returns An error message if at least one of the checked packages is missing in python.lib.path, nothing otherwise.
 #' @details 
-#' REQUIRED PACKAGES
-#' 
-#' reticulate
-#' 
-#' 
-#' REQUIRED FUNCTIONS FROM THE safer PACKAGE
-#' 
-#' arg_check()
-#' 
 #' WARNINGS
 #' 
 #' for python 3.7. Previous versions return an error "Error in sys$stdout$flush() : attempt to apply non-function"

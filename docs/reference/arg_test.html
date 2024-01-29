@@ -126,36 +126,44 @@
 <p>One or several pdf if a plotting function is tested and if the plot.fun argument is TRUE.</p>
 
 
-<p>And then, if export is FALSE a list containing:
-- $fun: the tested function.
-- $ini: the initial input values.
-- $data: a data frame of all the combination tested, containing the following columns:
-     # the different values tested, named by arguments
+<p>And then, if export is FALSE a list containing:</p>
+
+
+<p>- $fun: the tested function.</p>
+
+
+<p>- $ini: the initial input values.</p>
+
+
+<p>- $data: a data frame of all the combination tested, containing the following columns:</p>
+
+
+<p># the different values tested, named by arguments
      - $kind: a vector of character strings indicating the kind of test result: either "ERROR", or "WARNING", or "OK".
-     - $problem: a logical vector indicating if error or not.
-     - $expected.error: optional logical vector indicating the expected error specified in the expect.error argument.
-     - $message: either NULL if $kind is always "OK", or the messages.
-- $sys.info: system and packages info.</p>
+     - $problem: a logical vector indicating if error or not.</p>
+     
+
+<p>- $expected.error: optional logical vector indicating the expected error specified in the expect.error argument.
+     - $message: either NULL if $kind is always "OK", or the messages.</p>
+     
+
+<p>- $sys.info: system and packages info.</p>
 
 
-<p>If export is TRUE:
-- the same list object into a .RData file.
-- also the $data data frame into a .tsv file.
-- if expect.error is non NULL and if any discrepancy, the $data data frame into a .tsv file but containing only the rows with discrepancies between expected and observed errors.</p>
+<p>If export is TRUE:</p>
+
+
+<p>- the same list object into a .RData file.</p>
+
+
+<p>- also the $data data frame into a .tsv file.</p>
+
+
+<p>- if expect.error is non NULL and if any discrepancy, the $data data frame into a .tsv file but containing only the rows with discrepancies between expected and observed errors.</p>
     </div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
-    <p>REQUIRED PACKAGES</p>
-<p>lubridate</p>
-<p>parallel if parall argument is TRUE (included in the R installation packages but not automatically loaded)</p>
-<p>pdftools if parall argument is TRUE (included in the R installation packages but not automatically loaded)</p>
-<p>If the tested function is in a package, this package must be imported first (no parallelization) or must be in the classical R package folder indicated by the lib.path argument (parallelization)</p>
-
-<p>REQUIRED FUNCTIONS FROM THE cute PACKAGE</p>
-<p>arg_check()</p>
-<p>get_message()</p>
-<p>WARNINGS</p>
-<p>Limited to 43 arguments with at least 2 values each. The total number of arguments tested can be more if the additional arguments have a single value. The limit is due to nested "for" loops (https://stat.ethz.ch/pipermail/r-help/2008-March/157341.html), but this limitation is away from the number of tests performed that would be 2^43.</p>
+    <p>Limited to 43 arguments with at least 2 values each. The total number of arguments tested can be more if the additional arguments have a single value. The limit is due to nested "for" loops (https://stat.ethz.ch/pipermail/r-help/2008-March/157341.html), but this limitation is away from the number of tests performed that would be 2^43.</p>
     </div>
 
     <div class="section level2">
@@ -167,7 +175,7 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> THE TOTAL NUMBER OF TESTS IS: 9</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> LOOP PROCESS ENDED | LOOP 9 / 9 | TIME SPENT: 21S</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> LOOP PROCESS ENDED | LOOP 9 / 9 | TIME SPENT: 17S</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $fun</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "unique"</span>
@@ -239,7 +247,7 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> THE TOTAL NUMBER OF TESTS IS: 9</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> LOOP PROCESS ENDED | LOOP 9 / 9 | TIME SPENT: 22S</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> LOOP PROCESS ENDED | LOOP 9 / 9 | TIME SPENT: 17S</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> DISCREPANCIES BETWEEN EXPECTED AND OBSERVED ERRORS (SEE THE $data RESULT)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
@@ -324,15 +332,15 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> THE TOTAL NUMBER OF TESTS IS: 9</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> LOOP PROCESS ENDED | LOOP 9 / 9 | TIME SPENT: 25S</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> LOOP PROCESS ENDED | LOOP 9 / 9 | TIME SPENT: 17S</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> DISCREPANCIES BETWEEN EXPECTED AND OBSERVED ERRORS (SEE THE discrepancy_table_from_arg_test_1-9.tsv FILE)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> test JOB END</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> TIME: 2024-01-29 14:45:59.237966</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> TIME: 2024-01-29 16:16:30.412494</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> TOTAL TIME LAPSE: 25S</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> TOTAL TIME LAPSE: 17S</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"><span></span></span>
@@ -348,8 +356,8 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> THE TOTAL NUMBER OF TESTS IS: 12</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> LOOP 10 / 12 | TIME SPENT: 24S | EXPECTED END: 2024-01-29 14:46:30.305638</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> LOOP PROCESS ENDED | LOOP 12 / 12 | TIME SPENT: 29S</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> LOOP 10 / 12 | TIME SPENT: 19S | EXPECTED END: 2024-01-29 16:16:54.168458</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> LOOP PROCESS ENDED | LOOP 12 / 12 | TIME SPENT: 22S</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> NO DISCREPANCY BETWEEN EXPECTED AND OBSERVED ERRORS</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
@@ -454,8 +462,8 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> THE TOTAL NUMBER OF TESTS IS: 12</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> LOOP 10 / 12 | TIME SPENT: 25S | EXPECTED END: 2024-01-29 14:47:01.514153</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> LOOP PROCESS ENDED | LOOP 12 / 12 | TIME SPENT: 29S</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> LOOP 10 / 12 | TIME SPENT: 18S | EXPECTED END: 2024-01-29 16:17:17.453953</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> LOOP PROCESS ENDED | LOOP 12 / 12 | TIME SPENT: 22S</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $fun</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "plot"</span>

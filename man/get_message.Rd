@@ -35,15 +35,6 @@ Evaluate an instruction written between "" and return the first of the error, or
 Using argument print.no = FALSE, return NULL if no message, which is convenient in some cases.
 }
 \details{
-REQUIRED PACKAGES
-
-ggplot2
-
-
-REQUIRED FUNCTIONS FROM THE safer PACKAGE
-
-arg_check()
-
 WARNINGS
 
 Only the first message is returned.

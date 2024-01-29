@@ -16,6 +16,7 @@
 #' One or several pdf if a plotting function is tested and if the plot.fun argument is TRUE. 
 #' 
 #' And then, if export is FALSE a list containing:
+#' 
 #' - $fun: the tested function.
 #' 
 #' - $ini: the initial input values.
@@ -28,6 +29,7 @@
 #'      
 #'      - $expected.error: optional logical vector indicating the expected error specified in the expect.error argument.
 #'      - $message: either NULL if $kind is always "OK", or the messages.
+#'      
 #' - $sys.info: system and packages info.
 #' 
 #' If export is TRUE: 
@@ -41,6 +43,11 @@
 #' Limited to 43 arguments with at least 2 values each. The total number of arguments tested can be more if the additional arguments have a single value. The limit is due to nested "for" loops (https://stat.ethz.ch/pipermail/r-help/2008-March/157341.html), but this limitation is away from the number of tests performed that would be 2^43.
 #' @importFrom lubridate seconds_to_period
 #' @importFrom pdftools pdf_combine
+#' @importFrom parallel detectCores
+#' @importFrom parallel makeCluster
+#' @importFrom parallel clusterSplit
+#' @importFrom parallel clusterApply
+#' @importFrom parallel stopCluster
 #' @examples
 #' arg_test(fun = "unique", arg = c("x", "incomparables"), 
 #' val = list(x = list(1:10, c(1,1,2,8), NA), incomparable = c(TRUE, FALSE, NA)))
