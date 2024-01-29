@@ -7,6 +7,6 @@
 # * https://testthat.r-lib.org/articles/special-files.html
 
 library(testthat)
-library(cuteDev)
+library(saferDev)
 
-test_check("cuteDev")
+test_check("saferDev")
