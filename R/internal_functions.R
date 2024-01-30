@@ -75,7 +75,7 @@
 #' @examples
 #' \dontrun{
 #' # Example that shouldn't be run because this is an internal function
-#' .base_function_check(external.function.name = "fun1") # commented because this example returns an error
+#' assign("!", 1) ; .base_function_check(external.function.name = "fun1") # commented because this example returns an error
 #' }
 #' @keywords internal
 #' @rdname internal_function
@@ -89,35 +89,42 @@
     # external.function.name = "test"
     # main code
     reserved.objects <- c(
-        "(", 
-        "[", 
-        "[[",
-        "{", 
-        "~", 
-        "&", 
-        "|", 
-        "=", 
-        "+", 
         "-", 
+        "!", 
+        "!=", 
+        "$", 
+        "%%", 
+        "%*%", 
+        "%/%", 
+        "%in%", 
+        "&", 
+        "&&", 
+        "(", 
         "*", 
         "/", 
-        "^", 
-        ">", 
-        "<", 
-        "<=", 
-        ">=", 
-        "!", 
-        "==", 
-        "!=", 
-        "if", 
-        "else", 
-        "<-", 
         ":", 
         "::", 
+        ":::", 
+        "@", 
+        "[", 
+        "[[", 
+        "^", 
+        "{", 
+        "|", 
+        "||", 
+        "~", 
+        "+", 
+        "<", 
+        "<-", 
+        "<<-", 
+        "<=", 
+        "=", 
+        "==", 
+        ">", 
+        ">=", 
         "\\", 
-        "%in%", 
-        "%%",
-        "%/%",
+        "if", 
+        "else", 
         "function"
     )
     tempo.log <- base::sapply(X = reserved.objects, FUN = function(x){ 

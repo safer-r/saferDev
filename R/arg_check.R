@@ -98,7 +98,7 @@ arg_check <- function(
     )
     tempo <- eval(parse(text = paste0("c(missing(", paste0(mandat.args, collapse = "), missing("), "))")))
     if(any(tempo)){ # normally no NA for missing() output
-        tempo.cat <- paste0("ERROR IN ", fun.name, " OF THE ", package.name, " PACKAGE: \nFOLLOWING ARGUMENT", ifelse(sum(tempo, na.rm = TRUE) > 1, "S HAVE", " HAS"), " NO DEFAULT VALUE AND REQUIRE ONE:\n", paste0(mandat.args[tempo], collapse = "\n"))
+        tempo.cat <- paste0("ERROR IN arg_check() OF THE ", package.name, " PACKAGE", ifelse(is.null(fun.name), "", paste0(" INSIDE ", fun.name)), ": FOLLOWING ARGUMENT", ifelse(sum(tempo, na.rm = TRUE) > 1, "S HAVE", " HAS"), " NO DEFAULT VALUE AND REQUIRE ONE:\n", paste0(mandat.args[tempo], collapse = "\n"))
         stop(paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in stop() to be able to add several messages between ==
     }
     # end arg with no default values
@@ -314,11 +314,11 @@ arg_check <- function(
         stop(paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in stop() to be able to add several messages between ==
     }
     if( ! (all(base::class(na.contain) == "logical") & base::length(na.contain) == 1L)){ # all() without na.rm -> ok because class() never returns NA
-        tempo.cat <- paste0("ERROR IN arg_check() OF THE ", package.name, " PACKAGE: THE na.contain ARGUMENT MUST BE TRUE OR FALSE ONLY: ", paste(na.contain, collapse = " "))
+        tempo.cat <- paste0("ERROR IN arg_check() OF THE ", package.name, " PACKAGE", ifelse(is.null(fun.name), "", paste0(" INSIDE ", fun.name)), ": THE na.contain ARGUMENT MUST BE TRUE OR FALSE ONLY: ", paste(na.contain, collapse = " "))
         stop(paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in stop() to be able to add several messages between ==
     }
     if( ! (all(base::class(print) == "logical") & base::length(print) == 1L)){ # all() without na.rm -> ok because class() never returns NA
-        tempo.cat <- paste0("ERROR IN arg_check() OF THE ", package.name, " PACKAGE: THE print ARGUMENT MUST BE TRUE OR FALSE ONLY: ", paste(print, collapse = " "))
+        tempo.cat <- paste0("ERROR IN arg_check() OF THE ", package.name, " PACKAGE", ifelse(is.null(fun.name), "", paste0(" INSIDE ", fun.name)), ": THE print ARGUMENT MUST BE TRUE OR FALSE ONLY: ", paste(print, collapse = " "))
         stop(paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in stop() to be able to add several messages between ==
     }
     # data.name and fun.name tested at the beginning
