@@ -117,7 +117,8 @@
         "\\", 
         "%in%", 
         "%%",
-        "%/%"
+        "%/%",
+        "function"
     )
     tempo.log <- base::sapply(X = reserved.objects, FUN = function(x){ 
         if( ! base::all(utils::find(x) == "package:base")){
