@@ -18,8 +18,7 @@ Imports:
     lubridate,
     parallel,
     pdftools,
-    reticulate,
-    saferDev (>= 1.0)
+    reticulate
 RoxygenNote: 7.2.3
 Suggests: 
     knitr,
