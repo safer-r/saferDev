@@ -125,7 +125,10 @@
         "\\", 
         "if", 
         "else", 
-        "function"
+        "function",
+        "for",
+        "while",
+        "repeat"
     )
     tempo.log <- base::sapply(X = reserved.objects, FUN = function(x){ 
         if( ! base::all(utils::find(x) == "package:base")){
