@@ -1,0 +1,54 @@
+---
+title: "is_package_here"
+---
+<br>
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+    collapse = TRUE,
+    comment = ">"
+)
+```
+
+```{r setup}
+library(cuteDev)
+```
+<br>
+
+### Datasets
+```{r}
+req.pkg <- "ggplot2"
+path <- "blablabla"
+```
+<br>
+
+### Datasets info
+```{r}
+req.pkg # Character vector of package names
+path # character vector specifying the absolute pathways of the directories, this lib.path will return an error
+```
+<br>
+
+### Argument req.package
+```{r}
+is_package_here(req.package = req.pkg) # check if the package serpentine is in the computer
+```
+<br>
+
+### Argument lib.path
+```{r}
+is_package_here(
+    req.package = req.pkg,
+    lib.path = "."
+    ) # check if the package is in the computer
+```
+<br>
+
+### All the arguments
+```{r, echo = TRUE, error = TRUE}
+is_package_here(
+    req.package = req.pkg,
+    lib.path = path
+    ) # check if the package is in the computer
+```
+```

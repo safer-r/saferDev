@@ -1,0 +1,55 @@
+---
+title: "python_pkg_check"
+---
+<br>
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+    collapse = TRUE,
+    comment = ">"
+)
+```
+
+```{r setup}
+library(cuteDev)
+```
+<br>
+
+### Datasets
+```{r}
+req.pkg <- "serpentine"
+path <- "blablabla"
+```
+<br>
+
+### Datasets info
+```{r}
+req.pkg # Character vector of package names to import
+path # character vector specifying the absolute pathways of the directories, this lib.path will return an error
+```
+<br>
+
+### Argument req.package
+```{r}
+python_pkg_check(req.package = req.pkg) # check if the package serpentine is in the computer
+```
+<br>
+
+### Argument lib.path
+```{r}
+python_pkg_check(
+    req.package = req.pkg,
+    lib.path = path
+    ) # check if the package is in the computer
+```
+<br>
+
+### All the arguments
+```{r, echo = TRUE, error = TRUE}
+python_pkg_check(
+    req.package = "serpentine", 
+    python.exec.path = ".", 
+    python.lib.path = ".",
+    lib.path = "."
+) # check if the python package serpentine is present in the computer, returns an error if the package is not in the computer
+```
