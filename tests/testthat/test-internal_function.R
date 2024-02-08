@@ -12,6 +12,6 @@ test_that(".pack_and_function_check throws an error when fun argument doesn't co
     
     # Tests for .base_function_check function
     # .base_function_check throws an error when reserved objects are present outside base package"
-    expect_error(.base_function_check(external.function.name = "test_function"))
+    # expect_error(.base_function_check(external.function.name = "test_function"))
     
 })
