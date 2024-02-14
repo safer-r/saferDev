@@ -1,5 +1,5 @@
 
-double_dot_check <- function(x){
+two_colons_check <- function(x){
     # x = test_fun
     ini.warning.length <- options()$warning.length
     options(warning.length = 8170)
