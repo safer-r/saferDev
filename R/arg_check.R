@@ -66,7 +66,7 @@ arg_check <- function(
     # no used in this function for the error message, to avoid env colliding
     # end function name
     # critical operator checking
-    .base_function_check(external.function.name = "arg_check()")
+    .base_op_check(external.function.name = "arg_check()")
     # end critical operator checking
     # check of lib.path
     # end check of lib.path

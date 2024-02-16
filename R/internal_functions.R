@@ -67,7 +67,7 @@
 }
 
 
-#' @title .base_function_check
+#' @title .base_op_check
 #' @description
 #' Check if critical operators of R are not present in other packages or in the global env.
 #' @param external.function.name Name of the function using the .pack_and_function_check() function.
@@ -75,16 +75,16 @@
 #' @examples
 #' \dontrun{
 #' # Example that shouldn't be run because this is an internal function
-#' assign("!", 1) ; .base_function_check(external.function.name = "fun1") # commented because this example returns an error
+#' assign("!", 1) ; .base_op_check(external.function.name = "fun1") # commented because this example returns an error
 #' }
 #' @keywords internal
 #' @rdname internal_function
 
-.base_function_check <- function(
+.base_op_check <- function(
     external.function.name
 ){
     # WARNING
-    # arguments of the .base_function_check() function are not checked, so use carefully inside other functions
+    # arguments of the .base_op_check() function are not checked, so use carefully inside other functions
     # DEBUGGING
     # external.function.name = "test"
     # main code
