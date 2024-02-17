@@ -2,12 +2,12 @@
 % Please edit documentation in R/internal_functions.R
 \name{.pack_and_function_check}
 \alias{.pack_and_function_check}
-\alias{.base_function_check}
+\alias{.base_op_check}
 \title{.pack_and_function_check}
 \usage{
 .pack_and_function_check(fun, lib.path, external.function.name)
 
-.base_function_check(external.function.name)
+.base_op_check(external.function.name)
 }
 \arguments{
 \item{fun}{Character vector of the names of the required functions, preceded by the name of the package they belong to and a double colon. Example: c("ggplot2::geom_point", "grid::gpar").}
@@ -34,7 +34,7 @@ Check if critical operators of R are not present in other packages or in the glo
 }
 \dontrun{
 # Example that shouldn't be run because this is an internal function
-.base_function_check(external.function.name = "fun1") # commented because this example returns an error
+.base_op_check(external.function.name = "fun1") # commented because this example returns an error
 }
 }
 \keyword{internal}

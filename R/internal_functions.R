@@ -13,8 +13,6 @@
 #' }
 #' @keywords internal
 #' @rdname internal_function
-
-
 .pack_and_function_check <- function(
         fun, 
         lib.path,
@@ -26,6 +24,9 @@
     # fun = "ggplot2::geom_point" ; lib.path = "C:/Program Files/R/R-4.3.1/library" ; external.function.name = "fun1"
     # check of lib.path
     # already done in the main function
+    if(is.null(lib.path)){
+        lib.path <- .libPaths() # .libPaths(new = lib.path) # or .libPaths(new = c(.libPaths(), lib.path))
+    }
     # end check of lib.path
     # main code
     tempo.log <- base::grepl(x = fun, pattern = "^.+::.+$")
@@ -79,7 +80,6 @@
 #' }
 #' @keywords internal
 #' @rdname internal_function
-
 .base_op_check <- function(
     external.function.name
 ){
