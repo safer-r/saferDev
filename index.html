@@ -107,7 +107,51 @@
 <div class="section level2">
 <h2 id="content">Content<a class="anchor" aria-label="anchor" href="#content"></a>
 </h2>
-<p><br> | Function | Description | | :— | :— | | <strong>arg_check()</strong> | Check expected values of arguments of functions: class, type, mode, length, restricted values panel, kind of numeric values in addition to the distinction between ‘integer’ and ‘double’ (proportion only? Inf values authorized? negative values authorized? Integers of type ‘double’?). | | <strong>arg_test()</strong> | Test a set of values for a defined set of arguments of a function. Contrary to <code><a href="https://testthat.r-lib.org/reference/test_that.html" class="external-link">testthat::test_that()</a></code>, the function test a batch of values and control only if an error is returned or not. | | <strong>env_check()</strong> | Verify that object names in the environment defined by the pos argument are identical or not to object names in the above environments (following R Scope). This can be used to verify that names used for objects inside a function or in the working environment do not override names of objects already present in the above R environments, following the R scope. | | <strong>get_message()</strong> | Return the error, warning or simple (non error non warning) message if ever exist of an instruction written between quotes. | | <strong>is_function_here()</strong> | Check if required functions are present in installed packages. This controls modifications in of function names package versions. | | <strong>is_package_here()</strong> | Check if required packages are installed locally. | | <strong>is_python_package_here()</strong> | Check if required python packages are installed locally. | | <strong>report()</strong> | Print a character string or a data object into a same log file. |</p>
+<p><br></p>
+<table class="table">
+<colgroup>
+<col width="50%">
+<col width="50%">
+</colgroup>
+<thead><tr class="header">
+<th align="left">Function</th>
+<th align="left">Description</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td align="left"><strong>arg_check()</strong></td>
+<td align="left">Check expected values of arguments of functions: class, type, mode, length, restricted values panel, kind of numeric values in addition to the distinction between ‘integer’ and ‘double’ (proportion only? Inf values authorized? negative values authorized? Integers of type ‘double’?).</td>
+</tr>
+<tr class="even">
+<td align="left"><strong>arg_test()</strong></td>
+<td align="left">Test a set of values for a defined set of arguments of a function. Contrary to <code><a href="https://testthat.r-lib.org/reference/test_that.html" class="external-link">testthat::test_that()</a></code>, the function test a batch of values and control only if an error is returned or not.</td>
+</tr>
+<tr class="odd">
+<td align="left"><strong>env_check()</strong></td>
+<td align="left">Verify that object names in the environment defined by the pos argument are identical or not to object names in the above environments (following R Scope). This can be used to verify that names used for objects inside a function or in the working environment do not override names of objects already present in the above R environments, following the R scope.</td>
+</tr>
+<tr class="even">
+<td align="left"><strong>get_message()</strong></td>
+<td align="left">Return the error, warning or simple (non error non warning) message if ever exist of an instruction written between quotes.</td>
+</tr>
+<tr class="odd">
+<td align="left"><strong>is_function_here()</strong></td>
+<td align="left">Check if required functions are present in installed packages. This controls modifications in of function names package versions.</td>
+</tr>
+<tr class="even">
+<td align="left"><strong>is_package_here()</strong></td>
+<td align="left">Check if required packages are installed locally.</td>
+</tr>
+<tr class="odd">
+<td align="left"><strong>is_python_package_here()</strong></td>
+<td align="left">Check if required python packages are installed locally.</td>
+</tr>
+<tr class="even">
+<td align="left"><strong>report()</strong></td>
+<td align="left">Print a character string or a data object into a same log file.</td>
+</tr>
+</tbody>
+</table>
 <p><br></p>
 <p>Read <code><a href="articles/saferDev.html">vignette("saferDev")</a></code> for more details.</p>
 <p><br></p>
