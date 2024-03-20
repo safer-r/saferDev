@@ -120,7 +120,7 @@ get_message <- function(
     }
     if( ! is.null(argum.check)){
         if(any(argum.check, na.rm = TRUE) == TRUE){
-            stop(paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) #
+            stop(paste0("\n\n================\n\n", paste(text.check[argum.check], collapse = "\n"), "\n\n================\n\n"), call. = FALSE) #
         }
     }
     # end argument checking with arg_check()

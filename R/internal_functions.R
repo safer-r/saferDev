@@ -24,7 +24,7 @@
     # fun = "ggplot2::geom_point" ; lib.path = "C:/Program Files/R/R-4.3.1/library" ; external.function.name = "fun1"
     # check of lib.path
     # already done in the main function
-    if(is.null(lib.path)){
+    if(base::is.null(lib.path)){
         lib.path <- .libPaths() # .libPaths(new = lib.path) # or .libPaths(new = c(.libPaths(), lib.path))
     }
     # end check of lib.path

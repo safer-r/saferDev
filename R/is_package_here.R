@@ -6,14 +6,15 @@
 #' @returns An error message if at least one of the checked packages is missing in lib.path, nothing otherwise.
 #' @examples
 #' # is_package_here(req.package = "nopackage") # commented because this example returns an error
+#' 
 #' is_package_here(req.package = "ggplot2")
 #' 
-#' # is_package_here(req.package = "ggplot2", lib.path = "C:/Users/yhan/AppData/Local/R/win-library/4.3") 
-#' # commented because this example returns an error if the lib.path argument is not an existing directory
+#' #' # is_package_here(req.package = "ggplot2", lib.path = "C:/Users/yhan/AppData/Local/R/win-library/4.3") # commented because this example returns an error if the lib.path argument is not an existing directory
+#' 
 #' @importFrom utils installed.packages
 #' @export
 is_package_here <- function(
-        req.package,  
+        req.package, 
         lib.path = NULL
 ){
     # DEBUGGING

@@ -34,9 +34,9 @@ Set of R functions for the development of R functions, written according to the 
 <br />
 
 ## Content
-
+<br />
 | Function | Description |
-| --- | --- |
+| :--- | :--- |
 | **arg_check()** | Check expected values of arguments of functions: class, type, mode, length, restricted values panel, kind of numeric values in addition to the distinction between 'integer' and 'double' (proportion only? Inf values authorized? negative values authorized? Integers of type 'double'?). |
 | **arg_test()** | Test a set of values for a defined set of arguments of a function. Contrary to `testthat::test_that()`, the function test a batch of values and control only if an error is returned or not. |
 | **env_check()** | Verify that object names in the environment defined by the pos argument are identical or not to object names in the above environments (following R Scope). This can be used to verify that names used for objects inside a function or in the working environment do not override names of objects already present in the above R environments, following the R scope. |
