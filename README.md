@@ -35,6 +35,7 @@ Set of R functions for the development of R functions, written according to the 
 
 ## Content
 <br />
+
 | Function | Description |
 | :--- | :--- |
 | **arg_check()** | Check expected values of arguments of functions: class, type, mode, length, restricted values panel, kind of numeric values in addition to the distinction between 'integer' and 'double' (proportion only? Inf values authorized? negative values authorized? Integers of type 'double'?). |
