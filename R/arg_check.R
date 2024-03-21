@@ -1,6 +1,6 @@
 #' @title arg_check
 #' @description
-#'Check expected values of an argument of functions: class, type, mode, length, restricted values panel, kind of numeric values in addition to the distinction between 'integer' and 'double' (proportion only? Inf values authorized? negative values authorized? Integers of type 'double'?)
+#' Check expected values of an argument of functions: class, type, mode, length, restricted values panel, kind of numeric values in addition to the distinction between 'integer' and 'double' (proportion only? Inf values authorized? negative values authorized? Integers of type 'double'?)
 #' @param data Object to test.
 #' @param class Single character string. Either one of the class() result or "vector" or "ggplot2" (i.e., objects of class c("gg", "ggplot")) or NULL. See the warning section below.
 #' @param typeof Single character string. Either one of the typeof() result or NULL.
@@ -381,13 +381,13 @@ arg_check <- function(
             if( ! base::is.null(base::get(arg.names[i2], envir = base::sys.nframe(), inherits = FALSE))){
                 # script to execute
                 tempo.script <- '
-problem <- TRUE ;
-if(base::identical(text, base::paste0(base::ifelse(base::is.null(fun.name), "", base::paste0("IN ", fun.name, ": ")), "NO PROBLEM DETECTED FOR THE ", data.name, " OBJECT"))){
-text <- base::paste0(base::ifelse(base::is.null(fun.name), "ERROR", base::paste0("ERROR IN ", fun.name)), ": THE ", data.name, " OBJECT MUST BE ") ;
-}else{
-text <- base::paste0(text, " AND ") ; 
-}
-text <- base::paste0(text, base::toupper(arg.names[i2]), " ", if(base::all(base::get(arg.names[i2], envir = base::sys.nframe(), inherits = FALSE) %in% base::c("matrix", "array"))){"matrix"}else if(base::all(base::get(arg.names[i2], envir = base::sys.nframe(), inherits = FALSE) %in% base::c("factor", "ordered"))){"factor"}else{base::get(arg.names[i2], envir = base::sys.nframe(), inherits = FALSE)})
+                    problem <- TRUE ;
+                    if(base::identical(text, base::paste0(base::ifelse(base::is.null(fun.name), "", base::paste0("IN ", fun.name, ": ")), "NO PROBLEM DETECTED FOR THE ", data.name, " OBJECT"))){
+                        text <- base::paste0(base::ifelse(base::is.null(fun.name), "ERROR", base::paste0("ERROR IN ", fun.name)), ": THE ", data.name, " OBJECT MUST BE ") ;
+                    }else{
+                        text <- base::paste0(text, " AND ") ; 
+                    }
+                    text <- base::paste0(text, base::toupper(arg.names[i2]), " ", if(base::all(base::get(arg.names[i2], envir = base::sys.nframe(), inherits = FALSE) %in% base::c("matrix", "array"))){"matrix"}else if(base::all(base::get(arg.names[i2], envir = base::sys.nframe(), inherits = FALSE) %in% base::c("factor", "ordered"))){"factor"}else{base::get(arg.names[i2], envir = base::sys.nframe(), inherits = FALSE)})
                 ' # no need of na.rm = TRUE for base::all() because %in% does not output NA
                 # end script to execute
                 if(base::typeof(data) == "double" & double.as.integer.allowed == TRUE & ((arg.names[i2] == "class" & base::all(base::get(arg.names[i2], envir = base::sys.nframe(), inherits = FALSE) == "integer")) | (arg.names[i2] == "typeof" & base::all(base::get(arg.names[i2], envir = base::sys.nframe(), inherits = FALSE) == "integer")))){ # no need of na.rm = TRUE for base::all() because == does not output NA if no NA in left of ==, which is the case for arg.names # typeof(data) == "double" means no factor allowed
