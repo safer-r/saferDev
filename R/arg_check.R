@@ -479,6 +479,7 @@ arg_check <- function(
         base::cat(base::paste0("\n\n================\n\n", text, "\n\n================\n\n"))
     }
     # end main code
+    
     # output
     # warning output
     # end warning output
