@@ -108,6 +108,8 @@ arg_check <- function(
     # end argument primary checking
 
     # second round of checking and data preparation
+    # reserved words (to avoid bugs)
+    # end reserved words (to avoid bugs)
     # management of special classes
     basic.class <- base::c(
         "NULL", # because class(NULL) is "NULL". The NULL aspect will be dealt later
@@ -323,8 +325,6 @@ arg_check <- function(
     }
     # data.name and fun.name tested at the beginning
     # end other checkings
-    # reserved words (to avoid bugs)
-    # end reserved words (to avoid bugs)
     # end second round of checking and data preparation
 
     # main code
