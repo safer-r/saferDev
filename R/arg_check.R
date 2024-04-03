@@ -60,7 +60,7 @@ arg_check <- function(
         safer_check = TRUE
 ){
     # DEBUGGING
-    # data = mean ; class = NULL ; typeof = NULL ; mode = NULL ; length = NULL ; prop = FALSE ; double.as.integer.allowed = FALSE ; options = "a" ; all.options.in.data = FALSE ; na.contain = FALSE ; neg.values = TRUE ; inf.values = TRUE ; print = TRUE ; data.name = NULL ; fun.name = NULL
+    # data = mean ; class = NULL ; typeof = NULL ; mode = NULL ; length = NULL ; prop = FALSE ; double.as.integer.allowed = FALSE ; options = "a" ; all.options.in.data = FALSE ; na.contain = FALSE ; neg.values = TRUE ; inf.values = TRUE ; print = TRUE ; data.name = NULL ; fun.name = NULL; safer_check = TRUE
     # package name
     package.name <- "saferDev"
     # end package name
@@ -70,7 +70,7 @@ arg_check <- function(
     # critical operator checking
     if(safer_check == TRUE){
         .base_op_check(external.function.name = "arg_check()")
-        }
+    }
     # end critical operator checking
     # check of lib.path
     # end check of lib.path
@@ -194,7 +194,8 @@ arg_check <- function(
         "na.contain",
         "neg.values",
         "inf.values",
-        "print"
+        "print",
+        "safer_check"
     )
     tempo.log <- base::sapply(base::lapply(tempo.arg, FUN = base::get, envir = base::sys.nframe(), inherits = FALSE), FUN = base::is.null)
     if(base::any(tempo.log) == TRUE){ # normally no NA with base::is.null()
