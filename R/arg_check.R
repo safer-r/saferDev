@@ -2,6 +2,7 @@
 #' @description
 #' Check expected values of an argument of functions: class, type, mode, length, restricted values panel, kind of numeric values in addition to the distinction between 'integer' and 'double' (proportion only? Inf values authorized? negative values authorized? Integers of type 'double'?)
 #' @param data Object to test.
+#' @param safer_check Single logical value. Perform some "safer" checks (see https://github.com/safer-r)? If TRUE, checkings are performed before main code running: 1) R classical operators (like "<-") not overwritten by another package because of the R scope and 2) required functions and related packages effectively present in local R lybraries. Set to FALSE if this fonction is used inside another "safer" function to avoid pointless multiple checkings.
 #' @param class Single character string. Either one of the class() result or "vector" or "ggplot2" (i.e., objects of class c("gg", "ggplot")) or NULL. See the warning section below.
 #' @param typeof Single character string. Either one of the typeof() result or NULL.
 #' @param mode Single character string. Either one of the mode() result (for non-vector object) or NULL.
@@ -55,7 +56,8 @@ arg_check <- function(
         inf.values = TRUE, 
         print = FALSE, 
         data.name = NULL, 
-        fun.name = NULL
+        fun.name = NULL,
+        safer_check = TRUE
 ){
     # DEBUGGING
     # data = mean ; class = NULL ; typeof = NULL ; mode = NULL ; length = NULL ; prop = FALSE ; double.as.integer.allowed = FALSE ; options = "a" ; all.options.in.data = FALSE ; na.contain = FALSE ; neg.values = TRUE ; inf.values = TRUE ; print = TRUE ; data.name = NULL ; fun.name = NULL
@@ -66,7 +68,9 @@ arg_check <- function(
     # no used in this function for the error message, to avoid env colliding
     # end function name
     # critical operator checking
-    .base_op_check(external.function.name = "arg_check()")
+    if(safer_check == TRUE){
+        .base_op_check(external.function.name = "arg_check()")
+        }
     # end critical operator checking
     # check of lib.path
     # end check of lib.path
