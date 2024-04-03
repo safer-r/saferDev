@@ -3,6 +3,7 @@
 #' Verify that object names in the environment defined by the pos parameter are identical or not to object names in the above environments (following R Scope). This can be used to verify that names used for objects inside a function or in the working environment do not override names of objects already present in the above R environments, following the R scope.
 #' @param pos Single non nul positive integer indicating the position of the environment checked (argument n of the parent.frame() function). Value 1 means one step above the env_check() local environment (by default). This means that when env_check(pos = 1) is used inside a function A, it checks if the name of any object in the local environment of this function A is also present in above environments, following R Scope, starting by the just above environment. When env_check(pos = 1) is used in the working (Global) environment (named .GlobalEnv), it checks the object names of this .GlobalEnv environment, in the above environments. See the examples below.
 #' @param name Single character string indicating a string that will be added in the output string, for instance the name of a function inside which env_check() is used.
+#' @param safer_check Single logical value. Perform some "safer" checks (see https://github.com/safer-r)? If TRUE, checkings are performed before main code running: 1) R classical operators (like "<-") not overwritten by another package because of the R scope and 2) required functions and related packages effectively present in local R lybraries. Set to FALSE if this fonction is used inside another "safer" function to avoid pointless multiple checkings.
 #' @examples
 #' # Example in the working environment
 #' 
@@ -56,10 +57,11 @@
 #' @export
 env_check <- function(
         pos = 1, 
-        name = NULL
+        name = NULL,
+        safer_check = TRUE
 ){
     # DEBUGGING
-    # pos = 1 ; name = "mean" # for function debugging
+    # pos = 1 ; name = "mean"; safer_check = TRUE # for function debugging
     # package name
     package.name <- "saferDev"
     # end package name
@@ -72,7 +74,9 @@ env_check <- function(
     arg.user.setting <- as.list(match.call(expand.dots = FALSE))[-1] # list of the argument settings (excluding default values not provided by the user)
     # end function name
     # critical operator checking
-    .base_op_check(external.function.name = function.name)
+    if(safer_check == TRUE){
+        .base_op_check(external.function.name = function.name)
+    }
     # end critical operator checking
     # package checking
     # check of lib.path
@@ -84,27 +88,29 @@ env_check <- function(
     # argument primary checking
     # arg with no default values
     # end arg with no default values
-    # argument checking with arg_check()
+    # argument checking with saferDev::arg_check()
     argum.check <- NULL #
     text.check <- NULL #
     checked.arg.names <- NULL # for function debugging: used by r_debugging_tools
     ee <- expression(argum.check <- c(argum.check, tempo$problem) , text.check <- c(text.check, tempo$text) , checked.arg.names <- c(checked.arg.names, tempo$object.name))
-    tempo <- arg_check(data = pos, class = "vector", typeof = "integer", double.as.integer.allowed = TRUE, length = 1, fun.name = function.name) ; eval(ee)
+    tempo <- saferDev::arg_check(data = pos, class = "vector", typeof = "integer", double.as.integer.allowed = TRUE, length = 1, fun.name = function.name, safer_check = FALSE) ; eval(ee)
     if( ! is.null(name)){
-        tempo <- arg_check(data = name, class = "vector", typeof = "character", fun.name = function.name) ; eval(ee)
+        tempo <- saferDev::arg_check(data = name, class = "vector", typeof = "character", fun.name = function.name, safer_check = FALSE) ; eval(ee)
     }
     if( ! is.null(argum.check)){
         if(any(argum.check, na.rm = TRUE) == TRUE){
             stop(paste0("\n\n================\n\n", paste(text.check[argum.check], collapse = "\n"), "\n\n================\n\n"), call. = FALSE) #
         }
     }
-    # end argument checking with arg_check()
+    # end argument checking with saferDev::arg_check()
     # check with r_debugging_tools
-    # source("C:/Users/yhan/Documents/Git_projects/debugging_tools_for_r_dev/r_debugging_tools.R") ; eval(parse(text = str_basic_arg_check_dev)) ; eval(parse(text = str_arg_check_with_fun_check_dev)) # activate this line and use the function (with no arguments left as NULL) to check arguments status and if they have been checked using arg_check()
+    # source("C:/Users/yhan/Documents/Git_projects/debugging_tools_for_r_dev/r_debugging_tools.R") ; eval(parse(text = str_basic_arg_check_dev)) ; eval(parse(text = str_arg_check_with_fun_check_dev)) # activate this line and use the function (with no arguments left as NULL) to check arguments status and if they have been checked using saferDev::arg_check()
     # end check with r_debugging_tools
     # end argument primary checking
 
     # second round of checking and data preparation
+    # reserved words (to avoid bugs)
+    # end reserved words (to avoid bugs)
     # management of NA arguments
     if( ! (all(class(arg.user.setting) == "list", na.rm = TRUE) & length(arg.user.setting) == 0)){
         tempo.arg <- names(arg.user.setting) # values provided by the user
@@ -117,7 +123,8 @@ env_check <- function(
     # end management of NA arguments
     # management of NULL arguments
     tempo.arg <- c(
-        "pos"
+        "pos",
+        "safer_check"
     )
     tempo.log <- sapply(lapply(tempo.arg, FUN = get, env = sys.nframe(), inherit = FALSE), FUN = is.null)
     if(any(tempo.log) == TRUE){# normally no NA with is.null()
@@ -131,8 +138,6 @@ env_check <- function(
     # end warning initiation
     # other checkings
     # end other checkings
-    # reserved words (to avoid bugs)
-    # end reserved words (to avoid bugs)
     # end second round of checking and data preparation
 
     # main code
