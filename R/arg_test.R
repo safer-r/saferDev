@@ -1,6 +1,7 @@
 #' @title arg_test
 #' @description
 #' Test combinations of argument values of a function.
+#' @param safer_check Single logical value. Perform some "safer" checks (see https://github.com/safer-r)? If TRUE, checkings are performed before main code running: 1) R classical operators (like "<-") not overwritten by another package because of the R scope and 2) required functions and related packages effectively present in local R lybraries. Set to FALSE if this fonction is used inside another "safer" function to avoid pointless multiple checkings.
 #' @param fun Single character string indicating the name of the function tested (without brackets).
 #' @param arg Vector of character strings of arguments of fun. At least arguments that do not have default values must be present in this vector.
 #' @param val List with number of compartments equal to the length of arg, each compartment containing values of the corresponding argument in arg. Each different value must be in a list or in a vector. For instance, argument 3 in arg is a logical argument (values accepted TRUE, FALSE, NA). Thus, compartment 3 of val can be either list(TRUE, FALSE, NA), or c(TRUE, FALSE, NA). NULL value alone must be written list(NULL).
@@ -77,13 +78,13 @@
 #' 
 #' # set.seed(1) ; 
 #' # obs1 <- data.frame(Time = c(rnorm(10), rnorm(10) + 2), Group1 = rep(c("G", "H"), each = 10), 
-#' # stringsAsFactors = TRUE) ; arg_test(fun = "fun_gg_boxplot", arg = c("data1", "y", "categ"), 
+#' # stringsAsFactors = TRUE) ; arg_test(fun = "ggbox", arg = c("data1", "y", "categ"), 
 #' # val = list(L1 = list(L1 = obs1), L2 = list(L1 = "Time"), L3 = list(L1 = "Group1")))
 #' 
 #' # set.seed(1) ; 
 #' # obs1 <- data.frame(Time = c(rnorm(10), rnorm(10) + 2), Group1 = rep(c("G", "H"), each = 10), 
 #' # stringsAsFactors = TRUE) ; 
-#' # arg_test(fun = "fun_gg_boxplot", arg = c("data1", "y", "categ"), val = list(L1 = list(obs1), 
+#' # arg_test(fun = "ggbox", arg = c("data1", "y", "categ"), val = list(L1 = list(obs1), 
 #' # L2 = "Time", L3 = "Group1"), parall = FALSE, thread.nb = NULL, plot.fun = TRUE, 
 #' # res.path = "C:\\Users\\yhan\\Desktop\\", lib.path = "C:\\Program Files\\R\\R-4.3.1\\library\\")
 #' 
@@ -105,10 +106,11 @@ arg_test <- function(
         plot.fun = FALSE, 
         export = FALSE, 
         res.path = NULL, 
-        lib.path = NULL
+        lib.path = NULL,
+        safer_check = TRUE
 ){
     # DEBUGGING
-    # fun = "unique" ; arg = "x" ; val = list(x = list(1:3, mean)) ; expect.error = list(x = list(TRUE, TRUE)) ; parall = FALSE ; thread.nb = NULL ; plot.fun = FALSE ; export = FALSE ; res.path = "C:\\Users\\gmillot\\Desktop\\" ; lib.path = NULL ; print.count = 1 # for function debugging
+    # fun = "unique" ; arg = "x" ; val = list(x = list(1:3, mean)) ; expect.error = list(x = list(TRUE, TRUE)) ; parall = FALSE ; thread.nb = NULL ; plot.fun = FALSE ; export = FALSE ; res.path = "C:\\Users\\gmillot\\Desktop\\" ; lib.path = NULL ; print.count = 1; safer_check = TRUE # for function debugging
     # package name
     package.name <- "saferDev"
     # end package name
@@ -122,7 +124,9 @@ arg_test <- function(
     arg.user.setting <- base::as.list(base::match.call(expand.dots = FALSE))[-1] # list of the argument settings (excluding default values not provided by the user)
     # end function name
     # critical operator checking
-    .base_op_check(external.function.name = function.name)
+    if(safer_check == TRUE){
+        .base_op_check(external.function.name = function.name)
+    }
     # end critical operator checking
     # package checking
     # check of lib.path
@@ -134,7 +138,7 @@ arg_test <- function(
             tempo.cat <- base::paste0("ERROR IN ", function.name, " OF THE ", package.name, " PACKAGE: DIRECTORY PATH INDICATED IN THE lib.path ARGUMENT DOES NOT EXISTS:\n", base::paste(lib.path, collapse = "\n"))
             base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in stop() to be able to add several messages between ==
         }else{
-            .libPaths(new = base::sub(x = lib.path, pattern = "/$|\\\\$", replacement = "")) # .libPaths(new = ) add path to default path. BEWARE: .libPaths() does not support / at the end of a submitted path. Thus check and replace last / or \\ in path
+            base::.libPaths(new = base::sub(x = lib.path, pattern = "/$|\\\\$", replacement = "")) # .libPaths(new = ) add path to default path. BEWARE: .libPaths() does not support / at the end of a submitted path. Thus check and replace last / or \\ in path
             lib.path <- base::.libPaths()
         }
     }else{
@@ -142,7 +146,8 @@ arg_test <- function(
     }
     # end check of lib.path
     # check of the required function from the required packages
-    .pack_and_function_check(
+    if(safer_check == TRUE){
+        .pack_and_function_check(
         fun = c(
             "lubridate::seconds_to_period", 
             "pdftools::pdf_combine",
@@ -155,6 +160,7 @@ arg_test <- function(
         lib.path = lib.path,
         external.function.name = function.name
     )
+    }
     # end check of the required function from the required packages
     # end package checking
     
@@ -165,27 +171,27 @@ arg_test <- function(
         "arg", 
         "val"
     )
-    tempo <- base::eval(base::parse(text = base::paste0("base::c(base::missing(", base::paste0(mandat.args, collapse = "),missing("), "))")))
+    tempo <- base::eval(base::parse(text = base::paste0("base::c(base::missing(", base::paste0(mandat.args, collapse = "),base::missing("), "))")))
     if(base::any(tempo)){ # normally no NA for missing() output
         tempo.cat <- base::paste0("ERROR IN ", function.name, " OF THE ", package.name, " PACKAGE: \nFOLLOWING ARGUMENT", base::ifelse(base::sum(tempo, na.rm = TRUE) > 1, "S HAVE", " HAS"), " NO DEFAULT VALUE AND REQUIRE ONE:\n", base::paste0(mandat.args, collapse = "\n"))
         base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in stop() to be able to add several messages between ==
     }
     # end arg with no default values
-    # argument checking with arg_check()
+    # argument checking with saferDev::arg_check()
     argum.check <- NULL #
     text.check <- NULL #
     checked.arg.names <- NULL # for function debbuging: used by r_debugging_tools
     ee <- base::expression(argum.check <- c(argum.check, tempo$problem) , text.check <- c(text.check, tempo$text) , checked.arg.names <- c(checked.arg.names, tempo$object.name))
-    tempo <- arg_check(data = fun, class = "vector", mode = "character", length = 1, fun.name = function.name) ; base::eval(ee)
-    tempo <- arg_check(data = arg, class = "vector", mode = "character", fun.name = function.name) ; base::eval(ee)
-    tempo <- arg_check(data = val, class = "list", na.contain = TRUE, fun.name = function.name) ; base::eval(ee)
-    if( ! is.null(expect.error)){
-        tempo <- arg_check(data = expect.error, class = "list", fun.name = function.name) ; base::eval(ee)
+    tempo <- saferDev::arg_check(data = fun, class = "vector", mode = "character", length = 1, fun.name = function.name) ; base::eval(ee)
+    tempo <- saferDev::arg_check(data = arg, class = "vector", mode = "character", fun.name = function.name) ; base::eval(ee)
+    tempo <- saferDev::arg_check(data = val, class = "list", na.contain = TRUE, fun.name = function.name) ; base::eval(ee)
+    if( ! base::is.null(expect.error)){
+        tempo <- saferDev::arg_check(data = expect.error, class = "list", fun.name = function.name) ; base::eval(ee)
     }
-    tempo <- arg_check(data = parall, class = "vector", mode = "logical", length = 1, fun.name = function.name) ; base::eval(ee)
+    tempo <- saferDev::arg_check(data = parall, class = "vector", mode = "logical", length = 1, fun.name = function.name) ; base::eval(ee)
     if(parall == TRUE){
         if( ! base::is.null(thread.nb)){
-            tempo <- arg_check(data = thread.nb, typeof = "integer", double.as.integer.allowed = TRUE, neg.values = FALSE, length = 1, fun.name = function.name) ; base::eval(ee)
+            tempo <- saferDev::arg_check(data = thread.nb, typeof = "integer", double.as.integer.allowed = TRUE, neg.values = FALSE, length = 1, fun.name = function.name) ; base::eval(ee)
             if(tempo$problem == FALSE & thread.nb < 1){
                 tempo.cat <- base::paste0("ERROR IN ", function.name, " OF THE ", package.name, " PACKAGE: thread.nb PARAMETER MUST EQUAL OR GREATER THAN 1: ", thread.nb)
                 text.check <- base::c(text.check, tempo.cat)
@@ -193,11 +199,11 @@ arg_test <- function(
             }
         }
     }
-    tempo <- arg_check(data = print.count, class = "vector", typeof = "integer", length = 1, double.as.integer.allowed = TRUE, neg.values = FALSE, fun.name = function.name) ; base::eval(ee)
-    tempo <- arg_check(data = plot.fun, class = "vector", mode = "logical", length = 1, fun.name = function.name) ; base::eval(ee)
-    tempo <- arg_check(data = export, class = "vector", mode = "logical", length = 1, fun.name = function.name) ; base::eval(ee)
+    tempo <- saferDev::arg_check(data = print.count, class = "vector", typeof = "integer", length = 1, double.as.integer.allowed = TRUE, neg.values = FALSE, fun.name = function.name) ; base::eval(ee)
+    tempo <- saferDev::arg_check(data = plot.fun, class = "vector", mode = "logical", length = 1, fun.name = function.name) ; base::eval(ee)
+    tempo <- saferDev::arg_check(data = export, class = "vector", mode = "logical", length = 1, fun.name = function.name) ; base::eval(ee)
     if( ! base::is.null(res.path)){
-        tempo <- arg_check(data = res.path, class = "vector", mode = "character", fun.name = function.name) ; base::eval(ee)
+        tempo <- saferDev::arg_check(data = res.path, class = "vector", mode = "character", fun.name = function.name) ; base::eval(ee)
     }
     # lib.path already checked above
     if( ! base::is.null(argum.check)){
@@ -205,13 +211,15 @@ arg_test <- function(
             base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) #
         }
     }
-    # end argument checking with arg_check()
+    # end argument checking with saferDev::arg_check()
     # check with r_debugging_tools
-    # source("C:/Users/yhan/Documents/Git_projects/debugging_tools_for_r_dev/r_debugging_tools.R") ; eval(parse(text = str_basic_arg_check_dev)) ; eval(parse(text = str_arg_check_with_fun_check_dev)) # activate this line and use the function (with no arguments left as NULL) to check arguments status and if they have been checked using arg_check()
+    # source("C:/Users/yhan/Documents/Git_projects/debugging_tools_for_r_dev/r_debugging_tools.R") ; eval(parse(text = str_basic_arg_check_dev)) ; eval(parse(text = str_arg_check_with_fun_check_dev)) # activate this line and use the function (with no arguments left as NULL) to check arguments status and if they have been checked using saferDev::arg_check()
     # end check with r_debugging_tools
     # end argument primary checking
-    # second round of checking and data preparation
 
+    # second round of checking and data preparation
+    # reserved words (to avoid bugs)
+    # end reserved words (to avoid bugs)
     # management of NA arguments
     if( ! (base::all(base::class(arg.user.setting) == "list", na.rm = TRUE) & base::length(arg.user.setting) == 0)){
         tempo.arg <- base::names(arg.user.setting) # values provided by the user
@@ -232,11 +240,12 @@ arg_test <- function(
         # "thread.nb", # because can be NULL
         "print.count", 
         "plot.fun", 
-        "export"
+        "export",
         # "res.path", # because can be NULL
-        # "lib.path" # because can be NULL
+        # "lib.path", # because can be NULL
+        "safer_check"
     )
-    tempo.log <- base::sapply(base::lapply(tempo.arg, FUN = get, env = base::sys.nframe(), inherit = FALSE), FUN = is.null)
+    tempo.log <- base::sapply(base::lapply(tempo.arg, FUN = base::get, env = base::sys.nframe(), inherit = FALSE), FUN = base::is.null)
     if(base::any(tempo.log) == TRUE){# normally no NA with is.null()
         tempo.cat <- base::paste0("ERROR IN ", function.name, " OF THE ", package.name, " PACKAGE:\n", base::ifelse(base::sum(tempo.log, na.rm = TRUE) > 1, "THESE ARGUMENTS\n", "THIS ARGUMENT\n"), base::paste0(tempo.arg[tempo.log], collapse = "\n"),"\nCANNOT BE NULL")
         base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in stop() to be able to add several messages between ==
@@ -252,7 +261,7 @@ arg_test <- function(
     # end warning initiation
     # other checkings
     if(base::grepl(x = fun, pattern = "()$")){ # remove ()
-        fun <- sub(x = fun, pattern = "()$", replacement = "")
+        fun <- base::sub(x = fun, pattern = "()$", replacement = "")
     }
     if( ! base::exists(fun)){
         tempo.cat <- base::paste0("ERROR IN ", function.name, " OF THE ", package.name, " PACKAGE: CHARACTER STRING IN fun ARGUMENT DOES NOT EXIST IN THE R WORKING ENVIRONMENT: ", base::paste(fun, collapse = "\n"))
@@ -284,8 +293,8 @@ arg_test <- function(
         tempo.cat <- base::paste0("ERROR IN ", function.name, " OF THE ", package.name, " PACKAGE: SOME OF THE STRINGS IN arg ARE NOT ARGUMENTS OF fun\nfun ARGUMENTS: ", base::paste(args, collapse = " "),"\nPROBLEMATIC STRINGS IN arg: ", base::paste(arg[ ! arg %in% args], collapse = " "))
         base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n", base::ifelse(base::is.null(warn), "", base::paste0("IN ADDITION\nWARNING", base::ifelse(warn.count > 1, "S", ""), ":\n\n", warn))), call. = FALSE)
     }
-    if(base::sum(base::sapply(val, FUN = length) > 1) > 43){
-        tempo.cat <- base::paste0("ERROR IN ", function.name, " OF THE ", package.name, " PACKAGE: CANNOT TEST MORE THAN 43 ARGUMENTS IF THEY ALL HAVE AT LEAST 2 VALUES EACH\nHERE THE NUMBER IS: ", base::sum(base::sapply(val, FUN = length) > 1))
+    if(base::sum(base::sapply(val, FUN = base::length) > 1) > 43){
+        tempo.cat <- base::paste0("ERROR IN ", function.name, " OF THE ", package.name, " PACKAGE: CANNOT TEST MORE THAN 43 ARGUMENTS IF THEY ALL HAVE AT LEAST 2 VALUES EACH\nHERE THE NUMBER IS: ", base::sum(base::sapply(val, FUN = base::length) > 1))
         base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n", base::ifelse(base::is.null(warn), "",base:: paste0("IN ADDITION\nWARNING", base::ifelse(warn.count > 1, "S", ""), ":\n\n", warn))), call. = FALSE)
     }
     if( ! base::is.null(expect.error)){
@@ -323,7 +332,7 @@ arg_test <- function(
     }
     if(parall == TRUE & base::is.null(res.path)){
         tempo.cat <- base::paste0("ERROR IN ", function.name, " OF THE ", package.name, " PACKAGE: res.path ARGUMENT MUST BE SPECIFIED IF parall ARGUMENT IS TRUE")
-        base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n", base::ifelse(is.null(warn), "", base::paste0("IN ADDITION\nWARNING", base::ifelse(warn.count > 1, "S", ""), ":\n\n", warn))), call. = FALSE)
+        base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n", base::ifelse(base::is.null(warn), "", base::paste0("IN ADDITION\nWARNING", base::ifelse(warn.count > 1, "S", ""), ":\n\n", warn))), call. = FALSE)
     }
     if(base::is.null(res.path) & export == TRUE){
         tempo.cat <- base::paste0("ERROR IN ", function.name, " OF THE ", package.name, " PACKAGE: res.path ARGUMENT MUST BE SPECIFIED IF export ARGUMENT TRUE")
@@ -341,8 +350,6 @@ arg_test <- function(
         }
     }
     # end other checkings
-    # reserved words (to avoid bugs)
-    # end reserved words (to avoid bugs)
     # end second round of checking and data preparation
 
     # main code
@@ -442,7 +449,7 @@ arg_test <- function(
                 base::paste0("i.list[[", i1, "]][i]")
             }, 
             "]]", 
-            ifelse(i1 == base::length(arg), "", ", ")
+            base::ifelse(i1 == base::length(arg), "", ", ")
         )
         error.values <- base::paste0(
             error.values, 
@@ -473,7 +480,7 @@ arg_test <- function(
                 tempo.match <- base::substring(tempo.match , 1, base::nchar(tempo.match) - 1)
                 fun.test <- base::sub(x = fun.test, pattern = tempo.match, replacement = base::paste0(tempo.match, "\ntempo.title"))
             }else{
-                fun.test <- sub(x = fun.test, pattern = ")$", replacement = ", title = tempo.title)")
+                fun.test <- base::sub(x = fun.test, pattern = ")$", replacement = ", title = tempo.title)")
             }
         }
     }
@@ -494,65 +501,65 @@ arg_test <- function(
         loop.string, '
 count <- count + 1
 print.count.loop <- print.count.loop + 1
-arg.values.print <- eval(parse(text = arg.values)) # recover the list of the i1 compartment
+arg.values.print <- base::eval(base::parse(text = arg.values)) # recover the list of the i1 compartment
 for(j3 in 1:base::length(arg.values.print)){ # WARNING: do not use i1, i2 etc., here because already in loop.string
-tempo.capt <- capture.output(tempo.error <- get_message(data =  paste0("paste(arg.values.print[[", j3, "]])"), kind = "error", header = FALSE, print.no = FALSE, env = get(env.name, envir = sys.nframe(), inherits = FALSE))) # collapsing arg.values sometimes does not work (with function for instance)
-if( ! is.null(tempo.error)){
-arg.values.print[[j3]] <- paste0("SPECIAL VALUE OF CLASS ", base::class(arg.values.print[[j3]]), " AND TYPE ", base::typeof(arg.values.print[[j3]]))
+tempo.capt <- utils::capture.output(tempo.error <- get_message(data =  base::paste0("base::paste(arg.values.print[[", j3, "]])"), kind = "error", header = FALSE, print.no = FALSE, env = base::get(env.name, envir = base::sys.nframe(), inherits = FALSE))) # collapsing arg.values sometimes does not work (with function for instance)
+if( ! base::is.null(tempo.error)){
+arg.values.print[[j3]] <- base::paste0("SPECIAL VALUE OF CLASS ", base::class(arg.values.print[[j3]]), " AND TYPE ", base::typeof(arg.values.print[[j3]]))
 }
 }
-data <- rbind(data, as.character(sapply(arg.values.print, FUN = "paste", collapse = " ")), stringsAsFactors = FALSE) # each colum is a test
-tempo.capt <- capture.output(tempo.try.error <- get_message(data = eval(parse(text = fun.test2)), kind = "error", header = FALSE, print.no = FALSE, env = get(env.name, envir = sys.nframe(), inherits = FALSE))) # data argument needs a character string but eval(parse(text = fun.test2)) provides it (eval parse replace the i1, i2, etc., by the correct values, meaning that only val is required in the env.name environment)
-tempo.capt <- capture.output(tempo.try.warning <- get_message(data = eval(parse(text = fun.test2)), kind = "warning", header = FALSE, env = get(env.name, envir = sys.nframe(), inherits = FALSE), print.no = FALSE)) # data argument needs a character string but eval(parse(text = fun.test2)) provides it (eval parse replace the i1, i2, etc., by the correct values, meaning that only val is required in the env.name environment)
-if( ! is.null(expect.error)){
-expected.error <- c(expected.error, eval(parse(text = error.values)))
+data <- base::rbind(data, base::as.character(base::sapply(arg.values.print, FUN = "paste", collapse = " ")), stringsAsFactors = FALSE) # each colum is a test
+tempo.capt <- utils::capture.output(tempo.try.error <- get_message(data = base::eval(base::parse(text = fun.test2)), kind = "error", header = FALSE, print.no = FALSE, env = base::get(env.name, envir = base::sys.nframe(), inherits = FALSE))) # data argument needs a character string but base::eval(base::parse(text = fun.test2)) provides it (base::eval base::parse replace the i1, i2, etc., by the correct values, meaning that only val is required in the env.name environment)
+tempo.capt <- utils::capture.output(tempo.try.warning <- get_message(data = base::eval(base::parse(text = fun.test2)), kind = "warning", header = FALSE, env = base::get(env.name, envir = base::sys.nframe(), inherits = FALSE), print.no = FALSE)) # data argument needs a character string but base::eval(base::parse(text = fun.test2)) provides it (base::eval base::parse replace the i1, i2, etc., by the correct values, meaning that only val is required in the env.name environment)
+if( ! base::is.null(expect.error)){
+expected.error <- base::c(expected.error, base::eval(base::parse(text = error.values)))
 }
-if( ! is.null(tempo.try.error)){
-kind <- c(kind, "ERROR")
-problem <- c(problem, TRUE)
-res <- c(res, tempo.try.error)
+if( ! base::is.null(tempo.try.error)){
+kind <- base::c(kind, "ERROR")
+problem <- base::c(problem, TRUE)
+res <- base::c(res, tempo.try.error)
 }else{
-if( ! is.null(tempo.try.warning)){
-kind <- c(kind, "WARNING")
-problem <- c(problem, FALSE)
-res <- c(res, tempo.try.warning)
+if( ! base::is.null(tempo.try.warning)){
+kind <- base::c(kind, "WARNING")
+problem <- base::c(problem, FALSE)
+res <- base::c(res, tempo.try.warning)
 }else{
-kind <- c(kind, "OK")
-problem <- c(problem, FALSE)
-res <- c(res, "")
+kind <- base::c(kind, "OK")
+problem <- base::c(problem, FALSE)
+res <- base::c(res, "")
 }
 if(plot.fun == TRUE){
-invisible(grDevices::dev.set(window.nb))
+base::invisible(grDevices::dev.set(window.nb))
 plot.count <- plot.count + 1
-tempo.title <- paste0("test_", sprintf(paste0("%0", nchar(total.comp.nb), "d"), ifelse(parall == FALSE, count, x[count])))
+tempo.title <- base::paste0("test_", base::sprintf(base::paste0("%0", base::nchar(total.comp.nb), "d"), base::ifelse(parall == FALSE, count, x[count])))
 if(plot.kind == "classic"){ # not ggplot. So title has to be added in a classical way
-# par(ann=FALSE, xaxt="n", yaxt="n", mar = rep(1, 4), bty = "n", xpd = NA) # old
-par(bty = "n", xpd = NA) # new
-eval(parse(text = fun.test))
-# plot(1, 1, type = "n") # no display with type = "n"
-x.left.dev.region <- (par("usr")[1] - ((par("usr")[2] - par("usr")[1]) / (par("plt")[2] - par("plt")[1])) * par("plt")[1] - ((par("usr")[2] - par("usr")[1]) / ((par("omd")[2] - par("omd")[1]) * (par("plt")[2] - par("plt")[1]))) * par("omd")[1])
-y.top.dev.region <- (par("usr")[4] + ((par("usr")[4] - par("usr")[3]) / (par("plt")[4] - par("plt")[3])) * (1 - par("plt")[4]) + ((par("usr")[4] - par("usr")[3]) / ((par("omd")[4] - par("omd")[3]) * (par("plt")[4] - par("plt")[3]))) * (1 - par("omd")[4]))
-text(x = x.left.dev.region, y = y.top.dev.region, labels = tempo.title, adj=c(0, 1), cex = 1.5)
+# base::par(ann=FALSE, xaxt="n", yaxt="n", mar = base::rep(1, 4), bty = "n", xpd = NA) # old
+base::par(bty = "n", xpd = NA) # new
+base::eval(base::parse(text = fun.test))
+# base::plot(1, 1, type = "n") # no display with type = "n"
+x.left.dev.region <- (base::par("usr")[1] - ((base::par("usr")[2] - base::par("usr")[1]) / (base::par("plt")[2] - base::par("plt")[1])) * base::par("plt")[1] - ((base::par("usr")[2] - base::par("usr")[1]) / ((base::par("omd")[2] - base::par("omd")[1]) * (base::par("plt")[2] - base::par("plt")[1]))) * base::par("omd")[1])
+y.top.dev.region <- (base::par("usr")[4] + ((base::par("usr")[4] - base::par("usr")[3]) / (base::par("plt")[4] - base::par("plt")[3])) * (1 - base::par("plt")[4]) + ((base::par("usr")[4] - base::par("usr")[3]) / ((base::par("omd")[4] - base::par("omd")[3]) * (base::par("plt")[4] - base::par("plt")[3]))) * (1 - base::par("omd")[4]))
+text(x = x.left.dev.region, y = y.top.dev.region, labels = tempo.title, adj=base::c(0, 1), cex = 1.5)
 }else if(plot.kind == "special"){ # ggplot. title has been added above
-eval(parse(text = fun.test))
+base::eval(base::parse(text = fun.test))
 }else{
-tempo.cat <- paste0("INTERNAL CODE ERROR 1 IN ", function.name, " OF THE ", package.name, " PACKAGE: CODE HAS TO BE MODIFIED")
-stop(paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in stop() to be able to add several messages between ==
+tempo.cat <- base::paste0("INTERNAL CODE ERROR 1 IN ", function.name, " OF THE ", package.name, " PACKAGE: CODE HAS TO BE MODIFIED")
+base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
 }
 }
 }
 if(print.count.loop == print.count){
 print.count.loop <- 0
-tempo.time <- as.numeric(Sys.time())
-tempo.lapse <- round(lubridate::seconds_to_period(tempo.time - ini.time))
-final.loop <- (tempo.time - ini.time) / count * ifelse(parall == FALSE, total.comp.nb, base::length(x)) # expected duration in seconds # intra nb.compar loop lapse: time lapse / cycles done * cycles remaining
-final.exp <- as.POSIXct(final.loop, origin = ini.date)
-cat(paste0(ifelse(parall == FALSE, "\n", paste0("\nIN PROCESS ", process.id, " | ")), "LOOP ", format(count, big.mark=","), " / ", format(ifelse(parall == FALSE, total.comp.nb, base::length(x)), big.mark=","), " | TIME SPENT: ", tempo.lapse, " | EXPECTED END: ", final.exp))
+tempo.time <- base::as.numeric(base::Sys.time())
+tempo.lapse <- base::round(lubridate::seconds_to_period(tempo.time - ini.time))
+final.loop <- (tempo.time - ini.time) / count * base::ifelse(parall == FALSE, total.comp.nb, base::length(x)) # expected duration in seconds # intra nb.compar loop lapse: time lapse / cycles done * cycles remaining
+final.exp <- base::as.POSIXct(final.loop, origin = ini.date)
+base::cat(base::paste0(base::ifelse(parall == FALSE, "\n", base::paste0("\nIN PROCESS ", process.id, " | ")), "LOOP ", base::format(count, big.mark=","), " / ", base::format(base::ifelse(parall == FALSE, total.comp.nb, base::length(x)), big.mark=","), " | TIME SPENT: ", tempo.lapse, " | EXPECTED END: ", final.exp))
 }
-if(count == ifelse(parall == FALSE, total.comp.nb, base::length(x))){
-tempo.time <- as.numeric(Sys.time())
-tempo.lapse <- round(lubridate::seconds_to_period(tempo.time - ini.time))
-cat(paste0(ifelse(parall == FALSE, "\nLOOP PROCESS ENDED | ", paste0("\nPROCESS ", process.id, " ENDED | ")), "LOOP ", format(count, big.mark=","), " / ", format(ifelse(parall == FALSE, total.comp.nb, base::length(x)), big.mark=","), " | TIME SPENT: ", tempo.lapse, "\n\n"))
+if(count == base::ifelse(parall == FALSE, total.comp.nb, base::length(x))){
+tempo.time <- base::as.numeric(base::Sys.time())
+tempo.lapse <- base::round(lubridate::seconds_to_period(tempo.time - ini.time))
+base::cat(base::paste0(base::ifelse(parall == FALSE, "\nLOOP PROCESS ENDED | ", base::paste0("\nPROCESS ", process.id, " ENDED | ")), "LOOP ", base::format(count, big.mark=","), " / ", base::format(base::ifelse(parall == FALSE, total.comp.nb, base::length(x)), big.mark=","), " | TIME SPENT: ", tempo.lapse, "\n\n"))
 }
         ', 
         end.loop.string
@@ -564,11 +571,11 @@ cat(paste0(ifelse(parall == FALSE, "\nLOOP PROCESS ENDED | ", paste0("\nPROCESS 
         for(i2 in 1:base::length(arg)){
             if(i2 == 1L){
                 tempo.divisor <- total.comp.nb / base::length(val[[i2]])
-                i.list[[i2]] <- base::rep(1:base::length(val[[i2]]), each = as.integer(tempo.divisor))
+                i.list[[i2]] <- base::rep(1:base::length(val[[i2]]), each = base::as.integer(tempo.divisor))
                 tempo.multi <- base::length(val[[i2]])
             }else{
                 tempo.divisor <- tempo.divisor / base::length(val[[i2]])
-                i.list[[i2]] <- base::rep(base::rep(1:base::length(val[[i2]]), each = base::as.integer(tempo.divisor)), time = as.integer(tempo.multi))
+                i.list[[i2]] <- base::rep(base::rep(1:base::length(val[[i2]]), each = base::as.integer(tempo.divisor)), time = base::as.integer(tempo.multi))
                 tempo.multi <- tempo.multi * base::length(val[[i2]])
             }
         }
@@ -682,7 +689,7 @@ cat(paste0(ifelse(parall == FALSE, "\nLOOP PROCESS ENDED | ", paste0("\nPROCESS 
                 base::rm(env.name) # optional, because should disappear at the end of the function execution
                 # output
                 output <- base::list(fun = fun, ini = ini, data = data, sys.info = sys.info)
-                base::save(output, file = base::paste0(res.path, "/arg_test_", x[1], ifelse(base::length(x) == 1L, ".RData", base::paste0("-", x[base::length(x)], ".RData"))))
+                base::save(output, file = base::paste0(res.path, "/arg_test_", x[1], base::ifelse(base::length(x) == 1L, ".RData", base::paste0("-", x[base::length(x)], ".RData"))))
                 if(plot.fun == TRUE & plot.count == 0L){
                     warn.count <- warn.count + 1
                     tempo.warn <- base::paste0("(", warn.count,") IN PROCESS ", process.id, ": NO PDF PLOT BECAUSE ONLY ERRORS REPORTED")
@@ -701,8 +708,8 @@ cat(paste0(ifelse(parall == FALSE, "\nLOOP PROCESS ENDED | ", paste0("\nPROCESS 
             for(i2 in 1:base::length(cluster.list)){
                 tempo.file <- base::paste0(res.path, "/table_from_arg_test_", base::min(cluster.list[[i2]], na.rm = TRUE), base::ifelse(base::length(cluster.list[[i2]]) == 1L, ".tsv", base::paste0("-", base::max(cluster.list[[i2]], na.rm = TRUE), ".tsv"))) # txt file
                 tempo <- utils::read.table(file = tempo.file, header = TRUE, stringsAsFactors = FALSE, sep = "\t", row.names = 1, comment.char = "", colClasses = "character") #  row.names = 1 (1st column) because now utils::read.table() adds a NA in the header if the header starts by a tabulation, comment.char = "" because colors with #, colClasses = "character" otherwise convert "" (from NULL) into NA
-                if(base::file.exists(base::paste0(res.path, "/plots_from_arg_test_", min(cluster.list[[i2]], na.rm = TRUE), base::ifelse(base::length(cluster.list[[i2]]) == 1L, ".pdf", base::paste0("-", base::max(cluster.list[[i2]], na.rm = TRUE), ".pdf"))))){
-                    tempo.pdf <- base::paste0(res.path, "/plots_from_arg_test_", min(cluster.list[[i2]], na.rm = TRUE), base::ifelse(base::length(cluster.list[[i2]]) == 1L, ".pdf", base::paste0("-", base::max(cluster.list[[i2]], na.rm = TRUE), ".pdf"))) # pdf file
+                if(base::file.exists(base::paste0(res.path, "/plots_from_arg_test_", base::min(cluster.list[[i2]], na.rm = TRUE), base::ifelse(base::length(cluster.list[[i2]]) == 1L, ".pdf", base::paste0("-", base::max(cluster.list[[i2]], na.rm = TRUE), ".pdf"))))){
+                    tempo.pdf <- base::paste0(res.path, "/plots_from_arg_test_", base::min(cluster.list[[i2]], na.rm = TRUE), base::ifelse(base::length(cluster.list[[i2]]) == 1L, ".pdf", base::paste0("-", base::max(cluster.list[[i2]], na.rm = TRUE), ".pdf"))) # pdf file
                 }else{
                     tempo.pdf <- NULL
                 }
@@ -731,55 +738,55 @@ cat(paste0(ifelse(parall == FALSE, "\nLOOP PROCESS ENDED | ", paste0("\nPROCESS 
                         base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n", base::ifelse(base::is.null(warn), "", base::paste0("IN ADDITION\nWARNING", base::ifelse(warn.count > 1, "S", ""), ":\n\n", warn))), call. = FALSE)
                     }else{
                         # add the differences in RData $sysinfo into final.output
-                        tempo.base1 <- sort(get("final.output", envir = get(env.name))$sys.info$basePkgs)
-                        tempo.base2 <- sort(get("output", envir = get(env.name))$sys.info$basePkgs)
-                        tempo.other1 <- names(get("final.output", envir = get(env.name))$sys.info$otherPkgs)
-                        tempo.other2 <- names(get("output", envir = get(env.name))$sys.info$otherPkgs)
-                        tempo.loaded1 <- names(get("final.output", envir = get(env.name))$sys.info$loadedOnly)
-                        tempo.loaded2 <- names(get("output", envir = get(env.name))$sys.info$loadedOnly)
-                        assign("final.output", {
-                            x <- get("final.output", envir = get(env.name))
-                            y <- get("output", envir = get(env.name))
-                            x$sys.info$basePkgs <- sort(unique(tempo.base1, tempo.base2))
-                            if( ! all(tempo.other2 %in% tempo.other1)){
-                                x$sys.info$otherPkgs <- c(x$sys.info$otherPkgs, y$sys.info$otherPkgs[ ! (tempo.other2 %in% tempo.other1)])
-                                x$sys.info$otherPkgs <- x$sys.info$otherPkgs[order(names(x$sys.info$otherPkgs))]
+                        tempo.base1 <- base::sort(base::get("final.output", envir = base::get(env.name))$sys.info$basePkgs)
+                        tempo.base2 <- base::sort(base::get("output", envir = base::get(env.name))$sys.info$basePkgs)
+                        tempo.other1 <- base::names(base::get("final.output", envir = base::get(env.name))$sys.info$otherPkgs)
+                        tempo.other2 <- base::names(base::get("output", envir = base::get(env.name))$sys.info$otherPkgs)
+                        tempo.loaded1 <- base::names(base::get("final.output", envir = base::get(env.name))$sys.info$loadedOnly)
+                        tempo.loaded2 <- base::names(base::get("output", envir = base::get(env.name))$sys.info$loadedOnly)
+                        base::assign("final.output", {
+                            x <- base::get("final.output", envir = base::get(env.name))
+                            y <- base::get("output", envir = base::get(env.name))
+                            x$sys.info$basePkgs <- base::sort(base::unique(tempo.base1, tempo.base2))
+                            if( ! base::all(tempo.other2 %in% tempo.other1)){
+                                x$sys.info$otherPkgs <- base::c(x$sys.info$otherPkgs, y$sys.info$otherPkgs[ ! (tempo.other2 %in% tempo.other1)])
+                                x$sys.info$otherPkgs <- x$sys.info$otherPkgs[base::order(base::names(x$sys.info$otherPkgs))]
                             }
-                            if( ! all(tempo.loaded2 %in% tempo.loaded1)){
-                                x$sys.info$loadedOnly <- c(x$sys.info$loadedOnly, y$sys.info$loadedOnly[ ! (tempo.loaded2 %in% tempo.loaded1)])
-                                x$sys.info$loadedOnly <- x$sys.info$loadedOnly[order(names(x$sys.info$loadedOnly))]
+                            if( ! base::all(tempo.loaded2 %in% tempo.loaded1)){
+                                x$sys.info$loadedOnly <- base::c(x$sys.info$loadedOnly, y$sys.info$loadedOnly[ ! (tempo.loaded2 %in% tempo.loaded1)])
+                                x$sys.info$loadedOnly <- x$sys.info$loadedOnly[base::order(base::names(x$sys.info$loadedOnly))]
                             }
                             x
-                        }, envir = get(env.name))
+                        }, envir = base::get(env.name))
                         # add the differences in RData $sysinfo into final.output
                     }
                 }
-                file.remove(c(tempo.file, tempo.rdata))
+                base::file.remove(c(tempo.file, tempo.rdata))
             }
             # combine pdf and save
-            if( ! is.null(final.pdf)){
+            if( ! base::is.null(final.pdf)){
                 pdftools::pdf_combine(
                     input = final.pdf,
-                    output = paste0(res.path, "/plots_from_arg_test_1-", total.comp.nb, ".pdf")
+                    output = base::paste0(res.path, "/plots_from_arg_test_1-", total.comp.nb, ".pdf")
                 )
-                file.remove(final.pdf)
+                base::file.remove(final.pdf)
             }
             # end combine pdf and save
             # save RData
-            assign("output", c(get("final.output", envir = get(env.name)), data = list(final.file)), envir = get(env.name))
-            save(output, file = paste0(res.path, "/arg_test_1-", total.comp.nb, ".RData"), envir = get(env.name))
-            rm(env.name) # optional, because should disappear at the end of the function execution
+            base::assign("output", base::c(base::get("final.output", envir = base::get(env.name)), data = base::list(final.file)), envir = base::get(env.name))
+            base::save(output, file = base::paste0(res.path, "/arg_test_1-", total.comp.nb, ".RData"), envir = base::get(env.name))
+            base::rm(env.name) # optional, because should disappear at the end of the function execution
             # end save RData
             # save txt
-            utils::write.table(final.file, file = paste0(res.path, "/table_from_arg_test_1-", total.comp.nb, ".tsv"), row.names = TRUE, col.names = NA, append = FALSE, quote = FALSE, sep = "\t", eol = "\n", na = "")
+            utils::write.table(final.file, file = base::paste0(res.path, "/table_from_arg_test_1-", total.comp.nb, ".tsv"), row.names = TRUE, col.names = NA, append = FALSE, quote = FALSE, sep = "\t", eol = "\n", na = "")
             # end save txt
-            if( ! is.null(expect.error)){
+            if( ! base::is.null(expect.error)){
                 final.file <- final.file[ ! final.file$problem == final.file$expected.error, ]
-                if(nrow(final.file) == 0L){
-                    cat(paste0("NO DISCREPANCY BETWEEN EXPECTED AND OBSERVED ERRORS\n\n"))
+                if(base::nrow(final.file) == 0L){
+                    base::cat(base::paste0("NO DISCREPANCY BETWEEN EXPECTED AND OBSERVED ERRORS\n\n"))
                 }else{
-                    cat(paste0("DISCREPANCIES BETWEEN EXPECTED AND OBSERVED ERRORS (SEE THE discrepancy_table_from_arg_test_1-", total.comp.nb, ".tsv FILE)\n\n"))
-                    utils::write.table(final.file, file = paste0(res.path, "/discrepancy_table_from_arg_test_1-", total.comp.nb, ".tsv"), row.names = TRUE, col.names = NA, append = FALSE, quote = FALSE, sep = "\t", eol = "\n", na = "")
+                    base::cat(base::paste0("DISCREPANCIES BETWEEN EXPECTED AND OBSERVED ERRORS (SEE THE discrepancy_table_from_arg_test_1-", total.comp.nb, ".tsv FILE)\n\n"))
+                    utils::write.table(final.file, file = base::paste0(res.path, "/discrepancy_table_from_arg_test_1-", total.comp.nb, ".tsv"), row.names = TRUE, col.names = NA, append = FALSE, quote = FALSE, sep = "\t", eol = "\n", na = "")
                 }
             }
         }
@@ -787,76 +794,76 @@ cat(paste0(ifelse(parall == FALSE, "\nLOOP PROCESS ENDED | ", paste0("\nPROCESS 
     }else{
         # plot management
         if(plot.fun == TRUE){
-            grDevices::pdf(file = paste0(res.path, "/plots_from_arg_test_1", ifelse(total.comp.nb == 1L, ".pdf", paste0("-", total.comp.nb, ".pdf"))))
+            grDevices::pdf(file = base::paste0(res.path, "/plots_from_arg_test_1", base::ifelse(total.comp.nb == 1L, ".pdf", base::paste0("-", total.comp.nb, ".pdf"))))
         }else{
             grDevices::pdf(file = NULL) # send plots into a NULL file, no pdf file created
         }
         window.nb <- grDevices::dev.cur()
-        invisible(grDevices::dev.set(window.nb))
+        base::invisible(grDevices::dev.set(window.nb))
         # end plot management
         # new environment
-        env.name <- paste0("env", ini.time)
-        if(exists(env.name, where = -1)){
-            tempo.cat <- paste0("ERROR IN ", function.name, " OF THE ", package.name, " PACKAGE: ENVIRONMENT env.name ALREADY EXISTS. PLEASE RERUN ONCE")
-            stop(paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n", ifelse(is.null(warn), "", paste0("IN ADDITION\nWARNING", ifelse(warn.count > 1, "S", ""), ":\n\n", warn))), call. = FALSE)
+        env.name <- base::paste0("env", ini.time)
+        if(base::exists(env.name, where = -1)){
+            tempo.cat <- base::paste0("ERROR IN ", function.name, " OF THE ", package.name, " PACKAGE: ENVIRONMENT env.name ALREADY EXISTS. PLEASE RERUN ONCE")
+            base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n", base::ifelse(base::is.null(warn), "", base::paste0("IN ADDITION\nWARNING", base::ifelse(warn.count > 1, "S", ""), ":\n\n", warn))), call. = FALSE)
         }else{
-            assign(env.name, new.env())
-            assign("val", val, envir = get(env.name, envir = sys.nframe(), inherits = FALSE)) # var replaced by val
+            base::assign(env.name, base::new.env())
+            base::assign("val", val, envir = base::get(env.name, envir = base::sys.nframe(), inherits = FALSE)) # var replaced by val
         }
         # end new environment
-        suppressMessages(suppressWarnings(eval(parse(text = code))))
-        colnames(data) <- arg
-        expect.data <- data.frame()
-        if( ! is.null(expect.error)){
-            data <- data.frame(data, kind = kind, problem = problem, expected.error = expected.error, message = res, stringsAsFactors = FALSE)
+        base::suppressMessages(base::suppressWarnings(base::eval(base::parse(text = code))))
+        base::colnames(data) <- arg
+        expect.data <- base::data.frame()
+        if( ! base::is.null(expect.error)){
+            data <- base::data.frame(data, kind = kind, problem = problem, expected.error = expected.error, message = res, stringsAsFactors = FALSE)
         }else{
-            data <- data.frame(data, kind = kind, problem = problem, message = res, stringsAsFactors = FALSE)
+            data <- base::data.frame(data, kind = kind, problem = problem, message = res, stringsAsFactors = FALSE)
         }
-        row.names(data) <- paste0("arg_test_", sprintf(paste0("%0", nchar(total.comp.nb), "d"), 1:total.comp.nb))
+        base::row.names(data) <- base::paste0("arg_test_", base::sprintf(base::paste0("%0", base::nchar(total.comp.nb), "d"), 1:total.comp.nb))
         sys.info <- utils::sessionInfo()
-        sys.info$loadedOnly <- sys.info$loadedOnly[order(names(sys.info$loadedOnly))] # sort the packages
-        invisible(grDevices::dev.off(window.nb))
-        rm(env.name) # optional, because should disappear at the end of the function execution
+        sys.info$loadedOnly <- sys.info$loadedOnly[base::order(base::names(sys.info$loadedOnly))] # sort the packages
+        base::invisible(grDevices::dev.off(window.nb))
+        base::rm(env.name) # optional, because should disappear at the end of the function execution
         if(plot.fun == TRUE & plot.count == 0L){
             warn.count <- warn.count + 1
-            tempo.warn <- paste0("(", warn.count,") NO PDF PLOT BECAUSE ONLY ERRORS REPORTED")
-            warn <- paste0(ifelse(is.null(warn), tempo.warn, paste0(warn, "\n\n", tempo.warn)))
-            file.remove(paste0(res.path, "/plots_from_arg_test_1", ifelse(total.comp.nb == 1L, ".pdf", paste0("-", total.comp.nb, ".pdf"))))
+            tempo.warn <- base::paste0("(", warn.count,") NO PDF PLOT BECAUSE ONLY ERRORS REPORTED")
+            warn <- base::paste0(base::ifelse(base::is.null(warn), tempo.warn, base::paste0(warn, "\n\n", tempo.warn)))
+            base::file.remove(base::paste0(res.path, "/plots_from_arg_test_1", base::ifelse(total.comp.nb == 1L, ".pdf", base::paste0("-", total.comp.nb, ".pdf"))))
         }
         # output
-        output <- list(fun = fun, ini = ini, data = data, sys.info = sys.info)
-        if( ! is.null(expect.error)){
+        output <- base::list(fun = fun, ini = ini, data = data, sys.info = sys.info)
+        if( ! base::is.null(expect.error)){
             expect.data <- output$data[ ! output$data$problem == output$data$expected.error, ]
-            if(nrow(expect.data) == 0L){
-                cat(paste0("NO DISCREPANCY BETWEEN EXPECTED AND OBSERVED ERRORS\n\n"))
+            if(base::nrow(expect.data) == 0L){
+                base::cat(base::paste0("NO DISCREPANCY BETWEEN EXPECTED AND OBSERVED ERRORS\n\n"))
             }else{
-                cat(paste0("DISCREPANCIES BETWEEN EXPECTED AND OBSERVED ERRORS (SEE THE ", if(export == TRUE){paste0("discrepancy_table_from_arg_test_1", ifelse(total.comp.nb == 1L, "", paste0("-", total.comp.nb)), ".tsv FILE")}else{"$data RESULT"}, ")\n\n"))
+                base::cat(base::paste0("DISCREPANCIES BETWEEN EXPECTED AND OBSERVED ERRORS (SEE THE ", if(export == TRUE){base::paste0("discrepancy_table_from_arg_test_1", base::ifelse(total.comp.nb == 1L, "", base::paste0("-", total.comp.nb)), ".tsv FILE")}else{"$data RESULT"}, ")\n\n"))
                 if(export == TRUE){
-                    expect.data <- as.matrix(expect.data)
-                    expect.data <- gsub(expect.data, pattern = "\n", replacement = "  ")
-                    utils::write.table(expect.data, file = paste0(res.path, "/discrepancy_table_from_arg_test_1", ifelse(total.comp.nb == 1L, ".tsv", paste0("-", total.comp.nb, ".tsv"))), row.names = TRUE, col.names = NA, append = FALSE, quote = FALSE, sep = "\t", eol = "\n", na = "")
+                    expect.data <- base::as.matrix(expect.data)
+                    expect.data <- base::gsub(expect.data, pattern = "\n", replacement = "  ")
+                    utils::write.table(expect.data, file = base::paste0(res.path, "/discrepancy_table_from_arg_test_1", base::ifelse(total.comp.nb == 1L, ".tsv", base::paste0("-", total.comp.nb, ".tsv"))), row.names = TRUE, col.names = NA, append = FALSE, quote = FALSE, sep = "\t", eol = "\n", na = "")
                 }
             }
         }
         if(export == TRUE){
-            save(output, file = paste0(res.path, "/arg_test_1", ifelse(total.comp.nb == 1L, ".RData", paste0("-", total.comp.nb, ".RData"))))
-            table.out <- as.matrix(output$data)
-            table.out <- gsub(table.out, pattern = "\n", replacement = "  ")
-            utils::write.table(table.out, file = paste0(res.path, "/table_from_arg_test_1", ifelse(total.comp.nb == 1L, ".tsv", paste0("-", total.comp.nb, ".tsv"))), row.names = TRUE, col.names = NA, append = FALSE, quote = FALSE, sep = "\t", eol = "\n", na = "")
+            base::save(output, file = base::paste0(res.path, "/arg_test_1", base::ifelse(total.comp.nb == 1L, ".RData", base::paste0("-", total.comp.nb, ".RData"))))
+            table.out <- base::as.matrix(output$data)
+            table.out <- base::gsub(table.out, pattern = "\n", replacement = "  ")
+            utils::write.table(table.out, file = base::paste0(res.path, "/table_from_arg_test_1", base::ifelse(total.comp.nb == 1L, ".tsv", base::paste0("-", total.comp.nb, ".tsv"))), row.names = TRUE, col.names = NA, append = FALSE, quote = FALSE, sep = "\t", eol = "\n", na = "")
         }else{
-            return(output)
+            base::return(output)
         }
         # end output
     }
     # warning output
-    if( ! is.null(warn)){
-        on.exit(warning(paste0("FROM ", function.name, ":\n\n", warn), call. = FALSE))
+    if( ! base::is.null(warn)){
+        base::on.exit(base::warning(base::paste0("FROM ", function.name, ":\n\n", warn), call. = FALSE))
     }
-    on.exit(expr = base::options(warning.length = ini.warning.length), add = TRUE)
+    base::on.exit(expr = base::options(warning.length = ini.warning.length), add = TRUE)
     # end warning output
-    end.date <- Sys.time()
-    end.time <- as.numeric(end.date)
-    total.lapse <- round(lubridate::seconds_to_period(end.time - ini.time))
-    cat(paste0("test JOB END\n\nTIME: ", end.date, "\n\nTOTAL TIME LAPSE: ", total.lapse, "\n\n\n"))
+    end.date <- base::Sys.time()
+    end.time <- base::as.numeric(end.date)
+    total.lapse <- base::round(lubridate::seconds_to_period(end.time - ini.time))
+    base::cat(base::paste0("test JOB END\n\nTIME: ", end.date, "\n\nTOTAL TIME LAPSE: ", total.lapse, "\n\n\n"))
     # end main code
 }
