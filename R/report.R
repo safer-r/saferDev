@@ -9,6 +9,7 @@
 #' @param vector.cat Single logical value. If TRUE print a vector of length > 1 using cat() instead of capture.output(). Otherwise (default FALSE) the opposite.
 #' @param noquote Single logical value. If TRUE no quote are present for the characters.
 #' @param sep Single integer representing the number of empty lines after printed data.
+#' @param safer_check Single logical value. Perform some "safer" checks (see https://github.com/safer-r)? If TRUE, checkings are performed before main code running: 1) R classical operators (like "<-") not overwritten by another package because of the R scope and 2) required functions and related packages effectively present in local R lybraries. Set to FALSE if this fonction is used inside another "safer" function to avoid pointless multiple checkings.
 #' @returns Nothing.
 #' @examples
 #' #report()
@@ -23,10 +24,11 @@ report <- function(
         rownames.kept = FALSE, 
         vector.cat = FALSE, 
         noquote = TRUE, 
-        sep = 2
+        sep = 2,
+        safer_check = TRUE
 ){
     # DEBUGGING
-    # data = 1:3 ; output = "results.txt" ; path = "C:/Users/yhan/Desktop" ; overwrite = TRUE ; rownames.kept = FALSE ; vector.cat = FALSE ; noquote = FALSE ; sep = 2 # for function debugging
+    # data = 1:3 ; output = "results.txt" ; path = "C:/Users/yhan/Desktop" ; overwrite = TRUE ; rownames.kept = FALSE ; vector.cat = FALSE ; noquote = FALSE ; sep = 2 ; safer_check = TRUE # for function debugging
     
     # package name
     package.name <- "saferDev"
@@ -41,7 +43,10 @@ report <- function(
     arg.user.setting <- base::as.list(base::match.call(expand.dots = FALSE))[-1] # list of the argument settings (excluding default values not provided by the user)
     # end function name
     # critical operator checking
-    .base_op_check(external.function.name = function.name)
+    if(safer_check == TRUE){
+        .base_op_check(external.function.name = function.name
+        )
+    }
     # end critical operator checking
     # package checking
     # check of lib.path
@@ -67,13 +72,13 @@ report <- function(
     text.check <- NULL #
     checked.arg.names <- NULL # for function debbuging: used by r_debugging_tools
     ee <- base::expression(argum.check <- base::c(argum.check, tempo$problem) , text.check <- base::c(text.check, tempo$text) , checked.arg.names <- base::c(checked.arg.names, tempo$object.name))
-    tempo <- arg_check(data = output, class = "character", length = 1, fun.name = function.name) ; base::eval(ee)
+    tempo <- arg_check(data = output, class = "character", length = 1, fun.name = function.name, safer_check = FALSE) ; base::eval(ee)
     if(tempo$problem == FALSE & output == ""){
         tempo.cat <- base::paste0("ERROR IN ", function.name, " OF THE ", package.name, " PACKAGE: output ARGUMENT AS \"\" DOES NOT CORRESPOND TO A VALID FILE NAME")
         text.check <- base::c(text.check, tempo.cat)
         argum.check <- base::c(argum.check, TRUE)
     }
-    tempo <- arg_check(data = path, class = "vector", mode = "character", fun.name = function.name) ; base::eval(ee)
+    tempo <- arg_check(data = path, class = "vector", mode = "character", fun.name = function.name, safer_check = FALSE) ; base::eval(ee)
     if(tempo$problem == FALSE){
         if( ! base::all(base::dir.exists(path), na.rm = TRUE)){ # separation to avoid the problem of tempo$problem == FALSE and lib.path == NA
             tempo.cat <- base::paste0("ERROR IN ", function.name, " OF THE ", package.name, " PACKAGE: path ARGUMENT DOES NOT CORRESPOND TO EXISTING DIRECTORY\n", base::paste(path, collapse = "\n"))
@@ -81,11 +86,11 @@ report <- function(
             argum.check <- base::c(argum.check, TRUE)
         }
     }
-    tempo <- arg_check(data = overwrite, class = "logical", length = 1, fun.name = function.name) ; base::eval(ee)
-    tempo <- arg_check(data = rownames.kept, class = "logical", length = 1, fun.name = function.name) ; base::eval(ee)
-    tempo <- arg_check(data = vector.cat, class = "logical", length = 1, fun.name = function.name) ; base::eval(ee)
-    tempo <- arg_check(data = noquote, class = "logical", length = 1, fun.name = function.name) ; base::eval(ee)
-    tempo <- arg_check(data = sep, class = "vector", typeof = "integer", length = 1, double.as.integer.allowed = TRUE, fun.name = function.name) ; base::eval(ee)
+    tempo <- arg_check(data = overwrite, class = "logical", length = 1, fun.name = function.name, safer_check = FALSE) ; base::eval(ee)
+    tempo <- arg_check(data = rownames.kept, class = "logical", length = 1, fun.name = function.name, safer_check = FALSE) ; base::eval(ee)
+    tempo <- arg_check(data = vector.cat, class = "logical", length = 1, fun.name = function.name, safer_check = FALSE) ; base::eval(ee)
+    tempo <- arg_check(data = noquote, class = "logical", length = 1, fun.name = function.name, safer_check = FALSE) ; base::eval(ee)
+    tempo <- arg_check(data = sep, class = "vector", typeof = "integer", length = 1, double.as.integer.allowed = TRUE, fun.name = function.name, safer_check = FALSE) ; base::eval(ee)
     if( ! base::is.null(argum.check)){
         if(base::any(argum.check, na.rm = TRUE) == TRUE){
             base::stop(base::paste0("\n\n================\n\n", base::paste(text.check[argum.check], collapse = "\n"), "\n\n================\n\n"), call. = FALSE) #
@@ -107,6 +112,8 @@ report <- function(
     # end argument primary checking
     
     # second round of checking and data preparation
+    # reserved words (to avoid bugs)
+    # end reserved words (to avoid bugs)
     # management of NA arguments
     if( ! (base::all(base::class(arg.user.setting) == "list", na.rm = TRUE) & base::length(arg.user.setting) == 0)){
         tempo.arg <- base::names(arg.user.setting) # values provided by the user
@@ -126,7 +133,8 @@ report <- function(
         "rownames.kept", 
         "vector.cat", 
         "noquote",
-        "sep" 
+        "sep",
+        "safer_check"
     )
     tempo.log <- base::sapply(base::lapply(tempo.arg, FUN = base::get, env = base::sys.nframe(), inherit = FALSE), FUN = base::is.null)
     if(base::any(tempo.log) == TRUE){# normally no NA with is.null()
@@ -140,8 +148,6 @@ report <- function(
     # end warning initiation
     # other checkings
     # end other checkings
-    # reserved words (to avoid bugs)
-    # end reserved words (to avoid bugs)
     # end second round of checking and data preparation
 
     # main code
