@@ -68,12 +68,12 @@ get_message <- function(
     package.name <- "saferDev"
     # end package name
     # function name
-    function.name <- paste0(as.list(match.call(expand.dots = FALSE))[[1]], "()") # function name with "()" paste, which split into a vector of three: c("::()", "package()", "function()") if "package::function()" is used.
+    function.name <- base::paste0(base::as.list(base::match.call(expand.dots = FALSE))[[1]], "()") # function name with "()" paste, which split into a vector of three: c("::()", "package()", "function()") if "package::function()" is used.
     if(function.name[1] == "::()"){
         function.name <- function.name[3]
     }
-    arg.names <- names(formals(fun = sys.function(sys.parent(n = 2)))) # names of all the arguments
-    arg.user.setting <- as.list(match.call(expand.dots = FALSE))[-1] # list of the argument settings (excluding default values not provided by the user)
+    arg.names <- base::names(base::formals(fun = base::sys.function(base::sys.parent(n = 2)))) # names of all the arguments
+    arg.user.setting <- base::as.list(base::match.call(expand.dots = FALSE))[-1] # list of the argument settings (excluding default values not provided by the user)
     # end function name
     # critical operator checking
     .base_op_check(external.function.name = function.name)
@@ -83,7 +83,7 @@ get_message <- function(
     # end check of lib.path
     # check of the required function from the required packages
     .pack_and_function_check(
-        fun = c(
+        fun = base::c(
             "ggplot2::ggplot_build"
         ),
         lib.path = NULL,
@@ -94,33 +94,33 @@ get_message <- function(
     
     # argument primary checking
     # arg with no default values
-    mandat.args <- c(
+    mandat.args <- base::c(
         "data"
     )
-    tempo <- eval(parse(text = paste0("missing(", paste0(mandat.args, collapse = ") | missing("), ")")))
-    if(any(tempo)){ # normally no NA for missing() output
-        tempo.cat <- paste0("ERROR IN ", function.name, " OF THE ", package.name, " PACKAGE\nFOLLOWING ARGUMENT", ifelse(sum(tempo, na.rm = TRUE) > 1, "S HAVE", "HAS"), " NO DEFAULT VALUE AND REQUIRE ONE:\n", paste0(mandat.args, collapse = "\n"))
-        stop(paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in stop() to be able to add several messages between ==
+    tempo <- base::eval(base::parse(text = base::paste0("base::missing(", base::paste0(mandat.args, collapse = ") | base::missing("), ")")))
+    if(base::any(tempo)){ # normally no NA for missing() output
+        tempo.cat <- base::paste0("ERROR IN ", function.name, " OF THE ", package.name, " PACKAGE\nFOLLOWING ARGUMENT", base::ifelse(base::sum(tempo, na.rm = TRUE) > 1, "S HAVE", "HAS"), " NO DEFAULT VALUE AND REQUIRE ONE:\n", base::paste0(mandat.args, collapse = "\n"))
+        base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in stop() to be able to add several messages between ==
     }
     # end arg with no default values
     # argument checking with arg_check()
     argum.check <- NULL #
     text.check <- NULL #
     checked.arg.names <- NULL # for function debbuging: used by r_debugging_tools
-    ee <- expression(argum.check <- c(argum.check, tempo$problem) , text.check <- c(text.check, tempo$text) , checked.arg.names <- c(checked.arg.names, tempo$object.name))
-    tempo <- arg_check(data = data, class = "vector", typeof = "character", length = 1, fun.name = function.name) ; eval(ee)
-    tempo <- arg_check(data = kind, options = c("error", "warning", "message"), length = 1, fun.name = function.name) ; eval(ee)
-    tempo <- arg_check(data = header, class = "vector", typeof = "logical", length = 1, fun.name = function.name) ; eval(ee)
-    tempo <- arg_check(data = print.no, class = "vector", typeof = "logical", length = 1, fun.name = function.name) ; eval(ee)
-    if( ! is.null(text)){
-        tempo <- arg_check(data = text, class = "character", length = 1, fun.name = function.name) ; eval(ee)
+    ee <- base::expression(argum.check <- base::c(argum.check, tempo$problem) , text.check <- base::c(text.check, tempo$text) , checked.arg.names <- base::c(checked.arg.names, tempo$object.name))
+    tempo <- arg_check(data = data, class = "vector", typeof = "character", length = 1, fun.name = function.name) ; base::eval(ee)
+    tempo <- arg_check(data = kind, options = base::c("error", "warning", "message"), length = 1, fun.name = function.name) ; base::eval(ee)
+    tempo <- arg_check(data = header, class = "vector", typeof = "logical", length = 1, fun.name = function.name) ; base::eval(ee)
+    tempo <- arg_check(data = print.no, class = "vector", typeof = "logical", length = 1, fun.name = function.name) ; base::eval(ee)
+    if( ! base::is.null(text)){
+        tempo <- arg_check(data = text, class = "character", length = 1, fun.name = function.name) ; base::eval(ee)
     }
-    if( ! is.null(env)){
-        tempo <- arg_check(data = env, class = "environment", fun.name = function.name) ; eval(ee) #
+    if( ! base::is.null(env)){
+        tempo <- arg_check(data = env, class = "environment", fun.name = function.name) ; base::eval(ee) #
     }
-    if( ! is.null(argum.check)){
-        if(any(argum.check, na.rm = TRUE) == TRUE){
-            stop(paste0("\n\n================\n\n", paste(text.check[argum.check], collapse = "\n"), "\n\n================\n\n"), call. = FALSE) #
+    if( ! base::is.null(argum.check)){
+        if(base::any(argum.check, na.rm = TRUE) == TRUE){
+            base::stop(base::paste0("\n\n================\n\n", base::paste(text.check[argum.check], collapse = "\n"), "\n\n================\n\n"), call. = FALSE) #
         }
     }
     # end argument checking with arg_check()
@@ -131,17 +131,17 @@ get_message <- function(
     
     # second round of checking and data preparation
     # management of NA arguments
-    if( ! (all(class(arg.user.setting) == "list", na.rm = TRUE) & length(arg.user.setting) == 0)){
-        tempo.arg <- names(arg.user.setting) # values provided by the user
-        tempo.log <- suppressWarnings(sapply(lapply(lapply(tempo.arg, FUN = get, envir = sys.nframe(), inherits = FALSE), FUN = is.na), FUN = any)) & lapply(lapply(tempo.arg, FUN = get, envir = sys.nframe(), inherits = FALSE), FUN = length) == 1L # no argument provided by the user can be just NA
-        if(any(tempo.log) == TRUE){ # normally no NA because is.na() used here
-            tempo.cat <- paste0("ERROR IN ", function.name, " OF THE ", package.name, " PACKAGE\n", ifelse(sum(tempo.log, na.rm = TRUE) > 1, "THESE ARGUMENTS", "THIS ARGUMENT"), " CANNOT JUST BE NA:", paste0(tempo.arg[tempo.log], collapse = "\n"))
-            stop(paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in stop() to be able to add several messages between ==
+    if( ! (base::all(base::class(arg.user.setting) == "list", na.rm = TRUE) & base::length(arg.user.setting) == 0)){
+        tempo.arg <- base::names(arg.user.setting) # values provided by the user
+        tempo.log <- base::suppressWarnings(base::sapply(base::lapply(base::lapply(tempo.arg, FUN = base::get, envir = base::sys.nframe(), inherits = FALSE), FUN = base::is.na), FUN = base::any)) & base::lapply(base::lapply(tempo.arg, FUN = base::get, envir = base::sys.nframe(), inherits = FALSE), FUN = base::length) == 1L # no argument provided by the user can be just NA
+        if(base::any(tempo.log) == TRUE){ # normally no NA because is.na() used here
+            tempo.cat <- base::paste0("ERROR IN ", function.name, " OF THE ", package.name, " PACKAGE\n", base::ifelse(base::sum(tempo.log, na.rm = TRUE) > 1, "THESE ARGUMENTS", "THIS ARGUMENT"), " CANNOT JUST BE NA:", base::paste0(tempo.arg[tempo.log], collapse = "\n"))
+            base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in stop() to be able to add several messages between ==
         }
     }
     # end management of NA arguments
     # management of NULL arguments
-    tempo.arg <-c(
+    tempo.arg <-base::c(
         "data", 
         "kind", 
         "header", 
@@ -149,10 +149,10 @@ get_message <- function(
         # "text",  # inactivated because can be null
         # "env"  # inactivated because can be null
     )
-    tempo.log <- sapply(lapply(tempo.arg, FUN = get, envir = sys.nframe(), inherits = FALSE), FUN = is.null)
-    if(any(tempo.log) == TRUE){# normally no NA with is.null()
-        tempo.cat <- paste0("ERROR IN ", function.name, " OF THE ", package.name, " PACKAGE:\n", ifelse(sum(tempo.log, na.rm = TRUE) > 1, "THESE ARGUMENTS\n", "THIS ARGUMENT\n"), paste0(tempo.arg[tempo.log], collapse = "\n"),"\nCANNOT BE NULL")
-        stop(paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in stop() to be able to add several messages between ==
+    tempo.log <- base::sapply(base::lapply(tempo.arg, FUN = base::get, envir = base::sys.nframe(), inherits = FALSE), FUN = is.null)
+    if(base::any(tempo.log) == TRUE){# normally no NA with is.null()
+        tempo.cat <- base::paste0("ERROR IN ", function.name, " OF THE ", package.name, " PACKAGE:\n", base::ifelse(base::sum(tempo.log, na.rm = TRUE) > 1, "THESE ARGUMENTS\n", "THIS ARGUMENT\n"), base::paste0(tempo.arg[tempo.log], collapse = "\n"),"\nCANNOT BE NULL")
+        base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in stop() to be able to add several messages between ==
     }
     # end management of NULL arguments
     # code that protects set.seed() in the global environment
@@ -169,32 +169,34 @@ get_message <- function(
     # main code
     grDevices::pdf(file = NULL) # send plots into a NULL file, no pdf file created
     window.nb <- grDevices::dev.cur()
-    invisible(grDevices::dev.set(window.nb))
+    base::invisible(grDevices::dev.set(window.nb))
     # last warning cannot be used because suppressWarnings() does not modify last.warning present in the base evironment (created at first warning in a new R session), or warnings() # to reset the warning history : unlockBinding("last.warning", baseenv()) ; assign("last.warning", NULL, envir = baseenv())
     output <- NULL
-    tempo.error <- try(suppressMessages(suppressWarnings(eval(parse(text = data), envir = if(is.null(env)){parent.frame()}else{env}))), silent = TRUE) # get error message, not warning or messages
-    if(any(class(tempo.error) %in% c("gg", "ggplot"))){ # %in% never returns NA
-        tempo.error <- try(suppressMessages(suppressWarnings(ggplot2::ggplot_build(tempo.error))), silent = TRUE)[1]
+    tempo.error <- base::try(base::suppressMessages(base::suppressWarnings(base::eval(base::parse(text = data), envir = if(base::is.null(env)){base::parent.frame()}else{env}))), silent = TRUE) # get error message, not warning or messages
+    if(base::any(base::class(tempo.error) %in% base::c("gg", "ggplot"))){ # %in% never returns NA
+        tempo.error <- base::try(base::suppressMessages(base::suppressWarnings(ggplot2::ggplot_build(tempo.error))), silent = TRUE)[1]
     }
-    if(exists("tempo.error", inherits = FALSE) == TRUE){ # inherits = FALSE avoid the portee lexical and thus the declared word
-        if( ! all(class(tempo.error) == "try-error")){ # deal with NULL and S4 objects. Old code:  ! (all(class(tempo.error) == "try-error") & any(grepl(x = tempo.error, pattern = "^Error|^error|^ERROR"))) but problem with S4 objects. Old code : if((length(tempo.error) > 0 & ! any(grepl(x = tempo.error, pattern = "^Error|^error|^ERROR"))) | (length(tempo.error) == 0) ){ but problem when tempo.error is a list but added this did not work: | ! all(class(tempo.error) == "character") # no NA returned using class()
+    if(base::exists("tempo.error", inherits = FALSE) == TRUE){ # inherits = FALSE avoid the portee lexical and thus the declared word
+        if( ! base::all(base::class(tempo.error) == "try-error")){ # deal with NULL and S4 objects. Old code:  ! (all(class(tempo.error) == "try-error") & any(grepl(x = tempo.error, pattern = "^Error|^error|^ERROR"))) but problem with S4 objects. Old code : if((length(tempo.error) > 0 & ! any(grepl(x = tempo.error, pattern = "^Error|^error|^ERROR"))) | (length(tempo.error) == 0) ){ but problem when tempo.error is a list but added this did not work: | ! all(class(tempo.error) == "character") # no NA returned using class()
             tempo.error <- NULL
         }
     }else{
         tempo.error <- NULL
     }
-    if(kind == "error" & ! is.null(tempo.error)){ # 
+    if(kind == "error" & ! base::is.null(tempo.error)){ # 
         if(header == TRUE){
-            tempo.error[1] <- gsub(x = tempo.error[1], pattern = "^Error i|^error i|^ERROR I", replacement = "I")
-            output <- paste0("ERROR MESSAGE REPORTED", ifelse(is.null(text), "", " "), text, ":\n", tempo.error[1]) #
+            tempo.error[1] <- base::gsub(x = tempo.error[1], pattern = "^Error i|^error i|^ERROR I", replacement = "I")
+            output <- base::paste0("ERROR MESSAGE REPORTED", base::ifelse(base::is.null(text), "", " "), text, ":\n", tempo.error[1]) #
         }else{
             output <- tempo.error[1] #
         }
-    }else if(kind == "error" & is.null(tempo.error) & print.no == TRUE){
-        output <- paste0("NO ERROR MESSAGE REPORTED", ifelse(is.null(text), "", " "), text)
-    }else if(kind != "error" & ( ! is.null(tempo.error)) & print.no == TRUE){
-        output <- paste0("NO ", ifelse(kind == "warning", "WARNING", "STANDARD (NON ERROR AND NON WARNING)"), " MESSAGE BECAUSE OF ERROR MESSAGE REPORTED", ifelse(is.null(text), "", " "), text)
-    }else if(is.null(tempo.error)){
+    }else if(kind == "error" & base::
+    
+    is.null(tempo.error) & print.no == TRUE){
+        output <- base::paste0("NO ERROR MESSAGE REPORTED", base::ifelse(base::is.null(text), "", " "), text)
+    }else if(kind != "error" & ( ! base::is.null(tempo.error)) & print.no == TRUE){
+        output <- base::paste0("NO ", base::ifelse(kind == "warning", "WARNING", "STANDARD (NON ERROR AND NON WARNING)"), " MESSAGE BECAUSE OF ERROR MESSAGE REPORTED", base::ifelse(base::is.null(text), "", " "), text)
+    }else if(base::is.null(tempo.error)){
         fun.warning.capture <- function(expr){
             # from demo(error.catching) typed in the R console, coming from ?tryCatch
             # see also http://mazamascience.com/WorkingWithData/?p=912
@@ -203,70 +205,70 @@ get_message <- function(
             W <- NULL
             w.handler <- function(w){ # warning handler
                 W <<- w # send to the above env, i.e., the inside of the fun.warning.capture function
-                invokeRestart("muffleWarning") # here w.handler() muffles all the warnings. See http://romainfrancois.blog.free.fr/index.php?post/2009/05/20/Disable-specific-warnings to muffle specific warnings and print others
+                base::invokeRestart("muffleWarning") # here w.handler() muffles all the warnings. See http://romainfrancois.blog.free.fr/index.php?post/2009/05/20/Disable-specific-warnings to muffle specific warnings and print others
             }
-            output <- list(
-                value = suppressMessages(withCallingHandlers(tryCatch(expr, error = function(e){e}), warning = w.handler)), # BEWARE: w.handler is a function written without (), like in other functions with FUN argument
+            output <- base::list(
+                value = base::suppressMessages(base::withCallingHandlers(base::tryCatch(expr, error = function(e){e}), warning = w.handler)), # BEWARE: w.handler is a function written without (), like in other functions with FUN argument
                 warning = W # processed by w.handler()
             )
-            return(if(is.null(output$warning)){NULL}else{as.character(output$warning)})
+            base::return(if(base::is.null(output$warning)){NULL}else{base::as.character(output$warning)})
         }
-        tempo.warn <- fun.warning.capture(eval(parse(text = data), envir = if(is.null(env)){parent.frame()}else{env}))
+        tempo.warn <- fun.warning.capture(base::eval(base::parse(text = data), envir = if(base::is.null(env)){base::parent.frame()}else{env}))
         # warn.options.ini <- options()$warn ; options(warn = 1) ; tempo.warn <- utils::capture.output({tempo <- suppressMessages(eval(parse(text = data), envir = if(is.null(env)){parent.frame()}else{env}))}, type = "message") ; options(warn = warn.options.ini) # this recover warnings not messages and not errors but does not work in all enviroments
         tempo.message <- utils::capture.output({
-            tempo <- suppressMessages(suppressWarnings(eval(parse(text = data), envir = if(is.null(env)){parent.frame()}else{env})))
-            if(any(class(tempo) %in% c("gg", "ggplot"))){ # %in% never returns NA
+            tempo <- base::suppressMessages(base::suppressWarnings(base::eval(base::parse(text = data), envir = if(base::is.null(env)){base::parent.frame()}else{env})))
+            if(base::any(base::class(tempo) %in% base::c("gg", "ggplot"))){ # %in% never returns NA
                 tempo <- ggplot2::ggplot_build(tempo)
             }else{
-                tempo <- suppressWarnings(eval(parse(text = data), envir = if(is.null(env)){parent.frame()}else{env}))
+                tempo <- base::suppressWarnings(base::eval(base::parse(text = data), envir = if(base::is.null(env)){base::parent.frame()}else{env}))
             }
         }, type = "message") # recover messages not warnings and not errors
-        if(kind == "warning" & ! is.null(tempo.warn)){
-            if(length(tempo.warn) > 0){ # to avoid character(0)
-                if( ! any(sapply(tempo.warn, FUN = "grepl", pattern = "() FUNCTION:$"), na.rm = TRUE)){
-                    tempo.warn <- paste(unique(tempo.warn), collapse = "\n") # if FALSE, means that the tested data is a special function. If TRUE, means that the data is a standard function. In that case, the output of utils::capture.output() is two strings per warning messages: if several warning messages -> identical first string, which is removed in next messages by unique()
+        if(kind == "warning" & ! base::is.null(tempo.warn)){
+            if(base::length(tempo.warn) > 0){ # to avoid character(0)
+                if( ! base::any(base::sapply(tempo.warn, FUN = "grepl", pattern = "() FUNCTION:$"), na.rm = TRUE)){
+                    tempo.warn <- base::paste(base::unique(tempo.warn), collapse = "\n") # if FALSE, means that the tested data is a special function. If TRUE, means that the data is a standard function. In that case, the output of utils::capture.output() is two strings per warning messages: if several warning messages -> identical first string, which is removed in next messages by unique()
                 }else{
-                    tempo.warn <- paste(tempo.warn, collapse = "\n")
+                    tempo.warn <- base::paste(tempo.warn, collapse = "\n")
                 }
                 if(header == TRUE){
-                    if(any(grepl(x = tempo.warn[[1]], pattern = "^simpleWarning i"), na.rm = TRUE)){
-                        tempo.warn[[1]] <- gsub(x = tempo.warn[[1]], pattern = "^Warning i", replacement = "I")
+                    if(base::any(base::grepl(x = tempo.warn[[1]], pattern = "^simpleWarning i"), na.rm = TRUE)){
+                        tempo.warn[[1]] <- base::gsub(x = tempo.warn[[1]], pattern = "^Warning i", replacement = "I")
                     }
-                    if(any(grepl(x = tempo.warn[[1]], pattern = "^Warning i"), na.rm = TRUE)){
-                        tempo.warn[[1]] <- gsub(x = tempo.warn[[1]], pattern = "^Warning i", replacement = "I")
+                    if(base::any(base::grepl(x = tempo.warn[[1]], pattern = "^Warning i"), na.rm = TRUE)){
+                        tempo.warn[[1]] <- base::gsub(x = tempo.warn[[1]], pattern = "^Warning i", replacement = "I")
                     }
-                    output <- paste0("WARNING MESSAGE REPORTED", ifelse(is.null(text), "", " "), text, ":\n", tempo.warn) #
+                    output <- base::paste0("WARNING MESSAGE REPORTED", base::ifelse(base::is.null(text), "", " "), text, ":\n", tempo.warn) #
                 }else{
                     output <- tempo.warn #
                 }
             }else{
                 if(print.no == TRUE){
-                    output <- paste0("NO WARNING MESSAGE REPORTED", ifelse(is.null(text), "", " "), text)
+                    output <- base::paste0("NO WARNING MESSAGE REPORTED", base::ifelse(base::is.null(text), "", " "), text)
                 } # no need else{} here because output is already NULL at first
             }
-        }else if(kind == "warning" & is.null(tempo.warn) & print.no == TRUE){
-            output <- paste0("NO WARNING MESSAGE REPORTED", ifelse(is.null(text), "", " "), text)
-        }else if(kind == "message" & exists("tempo.message", inherits = FALSE) == TRUE){ # inherits = FALSE avoid the portee lexical and thus the declared word
-            if(length(tempo.message) > 0){ # if something is returned by capture.ouptput() (only in this env) with a length more than 1
+        }else if(kind == "warning" & base::is.null(tempo.warn) & print.no == TRUE){
+            output <- base::paste0("NO WARNING MESSAGE REPORTED", base::ifelse(base::is.null(text), "", " "), text)
+        }else if(kind == "message" & base::exists("tempo.message", inherits = FALSE) == TRUE){ # inherits = FALSE avoid the portee lexical and thus the declared word
+            if(base::length(tempo.message) > 0){ # if something is returned by capture.ouptput() (only in this env) with a length more than 1
                 if(header == TRUE){
-                    output <- paste0("STANDARD (NON ERROR AND NON WARNING) MESSAGE REPORTED", ifelse(is.null(text), "", " "), text, ":\n", tempo.message) #
+                    output <- base::paste0("STANDARD (NON ERROR AND NON WARNING) MESSAGE REPORTED", base::ifelse(base::is.null(text), "", " "), text, ":\n", tempo.message) #
                 }else{
                     output <- tempo.message #
                 }
             }else{
                 if(print.no == TRUE){
-                    output <- paste0("NO STANDARD (NON ERROR AND NON WARNING) MESSAGE REPORTED", ifelse(is.null(text), "", " "), text)
+                    output <- base::paste0("NO STANDARD (NON ERROR AND NON WARNING) MESSAGE REPORTED", base::ifelse(base::is.null(text), "", " "), text)
                 } # no need else{} here because output is already NULL at first
             }
-        }else if(kind == "message" & exists("tempo.message", inherits = FALSE) == FALSE & print.no == TRUE){
-            output <- paste0("NO STANDARD (NON ERROR AND NON WARNING) MESSAGE REPORTED", ifelse(is.null(text), "", " "), text)
+        }else if(kind == "message" & base::exists("tempo.message", inherits = FALSE) == FALSE & print.no == TRUE){
+            output <- base::paste0("NO STANDARD (NON ERROR AND NON WARNING) MESSAGE REPORTED", base::ifelse(base::is.null(text), "", " "), text)
         } # no need else{} here because output is already NULL at first
     }
-    invisible(grDevices::dev.off(window.nb)) # end send plots into a NULL file
+    base::invisible(grDevices::dev.off(window.nb)) # end send plots into a NULL file
     # end main code
     # output
     # warning output
     # end warning output
-    return(output) # do not use cat() because the idea is to reuse the message
+    base::return(output) # do not use cat() because the idea is to reuse the message
     # end output
 }
