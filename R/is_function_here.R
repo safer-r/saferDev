@@ -3,6 +3,7 @@
 #' Check if required functions are present in installed packages. This controls modifications in of function names package versions.
 #' @param fun Character vector of the names of the required functions, preceded by the name of the package they belong to and a double colon. Example: c("ggplot2::geom_point", "grid::gpar"). Warning: do not write "()" at the end of the function
 #' @param lib.path Character vector specifying the absolute pathways of the directories containing the listed packages in the fun argument, if not in the default directories. Ignored if NULL.
+#' @param safer_check Single logical value. Perform some "safer" checks (see https://github.com/safer-r)? If TRUE, checkings are performed before main code running: 1) R classical operators (like "<-") not overwritten by another package because of the R scope and 2) required functions and related packages effectively present in local R lybraries. Set to FALSE if this fonction is used inside another "safer" function to avoid pointless multiple checkings.
 #' @returns  An error message if at least one of the checked packages is missing in lib.path, or if at least one of the checked functions is missing in the required package, nothing otherwise.
 #' @examples
 #' # is_function_here(fun = "ggplot2::notgood") # commented because this example returns an error
@@ -12,10 +13,11 @@
 
 is_function_here <- function(
         fun, 
-        lib.path = NULL
+        lib.path = NULL,
+        safer_check = TRUE
 ){
     # DEBUGGING
-    # fun = "ggplot2::geom_point" ; lib.path = "C:/Program Files/R/R-4.3.1/library" ; external.function.name = "fun1"
+    # fun = "ggplot2::geom_point" ; lib.path = "C:/Program Files/R/R-4.3.1/library" ; external.function.name = "fun1" ; safer_check = TRUE
     # package name
     package.name <- "saferDev"
     # end package name
@@ -28,7 +30,9 @@ is_function_here <- function(
     arg.user.setting <- base::as.list(base::match.call(expand.dots = FALSE))[-1] # list of the argument settings (excluding default values not provided by the user)
     # end function name
     # critical operator checking
-    .base_op_check(external.function.name = function.name)
+    if(safer_check == TRUE){
+        .base_op_check(external.function.name = function.name)
+    }
     # end critical operator checking
     # check of lib.path
     if( ! base::is.null(lib.path)){
@@ -66,7 +70,7 @@ is_function_here <- function(
     text.check <- NULL #
     checked.arg.names <- NULL # for function debbuging: used by r_debugging_tools
     ee <- base::expression(argum.check <- base::c(argum.check, tempo$problem) , text.check <- base::c(text.check, tempo$text) , checked.arg.names <- base::c(checked.arg.names, tempo$object.name))
-    tempo <- arg_check(data = fun, class = "vector", mode = "character", fun.name = function.name) ; base::eval(ee)
+    tempo <- arg_check(data = fun, class = "vector", mode = "character", fun.name = function.name, safer_check = FALSE) ; base::eval(ee)
     # lib.path already checked above
     if( ! base::is.null(argum.check)){
         if(base::any(argum.check, na.rm = TRUE) == TRUE){
@@ -80,6 +84,8 @@ is_function_here <- function(
     # end argument primary checking
 
     # second round of checking and data preparation
+    # reserved words (to avoid bugs)
+    # end reserved words (to avoid bugs)
     # management of NA arguments
     if( ! (base::all(base::class(arg.user.setting) == "list", na.rm = TRUE) & base::length(arg.user.setting) == 0)){
         tempo.arg <- base::names(arg.user.setting) # values provided by the user
@@ -92,8 +98,9 @@ is_function_here <- function(
     # end management of NA arguments
     # management of NULL arguments
     tempo.arg <-base::c(
-        "fun"
-        # "lib.path" # inactivated because can be null
+        "fun",
+        # "lib.path", # inactivated because can be null
+        "safer_check"
     )
     tempo.log <- base::sapply(base::lapply(tempo.arg, FUN = base::get, env = base::sys.nframe(), inherit = FALSE), FUN = base::is.null)
     if(base::any(tempo.log) == TRUE){# normally no NA with is.null()
@@ -107,8 +114,6 @@ is_function_here <- function(
     # end warning initiation
     # other checkings
     # end other checkings
-    # reserved words (to avoid bugs)
-    # end reserved words (to avoid bugs)
     # end second round of checking and data preparation
 
     # main code
@@ -143,7 +148,7 @@ is_function_here <- function(
         base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in stop() to be able to add several messages between ==
     }
     fun.log <- base::sapply(X = pkg.fun.name.list, FUN = function(x){base::exists(x[2], envir = base::asNamespace(x[1]))})
-    if( ! all(fun.log)){
+    if( ! base::all(fun.log)){
         tempo <- fun[ ! fun.log]
         tempo.cat <- base::paste0(
             "ERROR IN ", 
