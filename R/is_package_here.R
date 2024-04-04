@@ -3,6 +3,7 @@
 #' Check if required packages are installed locally.
 #' @param req.package Character vector of package names to check.
 #' @param lib.path Character vector specifying the absolute pathways of the directories containing the listed packages in the req.package argument, if not in the default directories. If NULL, the function checks only in the .libPaths() default R library folders.
+#' @param safer_check Single logical value. Perform some "safer" checks (see https://github.com/safer-r)? If TRUE, checkings are performed before main code running: 1) R classical operators (like "<-") not overwritten by another package because of the R scope and 2) required functions and related packages effectively present in local R lybraries. Set to FALSE if this fonction is used inside another "safer" function to avoid pointless multiple checkings.
 #' @returns An error message if at least one of the checked packages is missing in lib.path, nothing otherwise.
 #' @examples
 #' # is_package_here(req.package = "nopackage") # commented because this example returns an error
@@ -15,11 +16,12 @@
 #' @export
 is_package_here <- function(
         req.package, 
-        lib.path = NULL
+        lib.path = NULL,
+        safer_check = TRUE
 ){
     # DEBUGGING
-    # req.package = "ggplot2" ; lib.path = "C:/Program Files/R/R-4.3.1/library"
-    # req.package = "serpentine" ; lib.path = "C:/Users/yhan/AppData/Local/Temp/RtmpkfYz9V/RLIBS_2cb051b94b38"
+    # req.package = "ggplot2" ; lib.path = "C:/Program Files/R/R-4.3.1/library" ; safer_check = TRUE
+    # req.package = "serpentine" ; lib.path = "C:/Users/yhan/AppData/Local/Temp/RtmpkfYz9V/RLIBS_2cb051b94b38" ; safer_check = TRUE
     
     # package name
     package.name <- "saferDev"
@@ -34,7 +36,10 @@ is_package_here <- function(
     arg.user.setting <- base::as.list(base::match.call(expand.dots = FALSE))[-1] # list of the argument settings (excluding default values not provided by the user)
     # end function name
     # critical operator checking
-    .base_op_check(external.function.name = function.name)
+    if(safer_check == TRUE){
+        .base_op_check(external.function.name = function.name
+        )
+    }
     # end critical operator checking
     # check of lib.path
     if( ! base::is.null(lib.path)){
@@ -72,7 +77,7 @@ is_package_here <- function(
     text.check <- NULL #
     checked.arg.names <- NULL # for function debbuging: used by r_debugging_tools
     ee <- base::expression(argum.check <- base::c(argum.check, tempo$problem) , text.check <- base::c(text.check, tempo$text) , checked.arg.names <- base::c(checked.arg.names, tempo$object.name))
-    tempo <- arg_check(data = req.package, class = "vector", mode = "character", fun.name = function.name) ; base::eval(ee)
+    tempo <- arg_check(data = req.package, class = "vector", mode = "character", fun.name = function.name, safer_check = FALSE) ; base::eval(ee)
     # lib.path already checked above
     if( ! base::is.null(argum.check)){
         if(base::any(argum.check, na.rm = TRUE) == TRUE){
@@ -86,6 +91,8 @@ is_package_here <- function(
     # end argument primary checking
 
     # second round of checking and data preparation
+    # reserved words (to avoid bugs)
+    # end reserved words (to avoid bugs)
     # management of NA arguments
     if( ! (base::all(base::class(arg.user.setting) == "list", na.rm = TRUE) & base::length(arg.user.setting) == 0)){
         tempo.arg <- base::names(arg.user.setting) # values provided by the user
@@ -98,8 +105,9 @@ is_package_here <- function(
     # end management of NA arguments
     # management of NULL arguments
     tempo.arg <-base::c(
-        "req.package"
-        # "lib.path" # inactivated because can be null
+        "req.package",
+        # "lib.path", # inactivated because can be null
+        "safer_check"
     )
     tempo.log <- base::sapply(base::lapply(tempo.arg, FUN = base::get, env = base::sys.nframe(), inherit = FALSE), FUN = base::is.null)
     if(base::any(tempo.log) == TRUE){# normally no NA with is.null()
@@ -113,8 +121,6 @@ is_package_here <- function(
     # end warning initiation
     # other checkings
     # end other checkings
-    # reserved words (to avoid bugs)
-    # end reserved words (to avoid bugs)
     # end second round of checking and data preparation
     
     # main code
