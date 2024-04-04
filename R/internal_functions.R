@@ -93,7 +93,7 @@
     # DEBUGGING
     # external.function.name = "test"
     # main code
-    reserved.objects <- c(
+    reserved.objects <- base::c(
         "-", 
         "!", 
         "!=", 
