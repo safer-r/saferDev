@@ -5,6 +5,7 @@
 #' @param python.exec.path Single optional character vector specifying the absolute pathways of the executable python file to use (associated to the packages to use). If NULL, the reticulate::import_from_path() function used in is_python_package_here() seeks for an available version of python.exe, and then uses python_config(python_version, required_module, python_versions). But might not be the correct one for the python.lib.path parameter specified. Thus, it is recommanded to do not leave NULL, notably when using computing clusters.
 #' @param python.lib.path Optional character vector specifying the absolute pathways of the directories containing some of the listed packages in the req.package argument, if not in the default directories.
 #' @param lib.path Absolute path of the reticulate packages, if not in the default folders.
+#' @param safer_check Single logical value. Perform some "safer" checks (see https://github.com/safer-r)? If TRUE, checkings are performed before main code running: 1) R classical operators (like "<-") not overwritten by another package because of the R scope and 2) required functions and related packages effectively present in local R lybraries. Set to FALSE if this fonction is used inside another "safer" function to avoid pointless multiple checkings.
 #' @returns An error message if at least one of the checked packages is missing in python.lib.path, nothing otherwise.
 #' @details 
 #' WARNINGS
@@ -34,11 +35,12 @@ is_python_package_here <- function(
         req.package, 
         python.exec.path = NULL, 
         python.lib.path = NULL, 
-        lib.path = NULL
+        lib.path = NULL,
+        safer_check = TRUE
 ){
     # DEBUGGING
-    # req.package = "serpentine" ; python.exec.path = "C:/ProgramData/Anaconda3/python.exe" ; python.lib.path = "c:/programdata/anaconda3/lib/site-packages/" ; lib.path = NULL
-    # req.package = "bad" ; python.lib.path = NULL ; lib.path = NULL
+    # req.package = "serpentine" ; python.exec.path = "C:/ProgramData/Anaconda3/python.exe" ; python.lib.path = "c:/programdata/anaconda3/lib/site-packages/" ; lib.path = NULL ; safer_check = TRUE
+    # req.package = "bad" ; python.lib.path = NULL ; lib.path = NULL ; safer_check = TRUE
     
     # package name
     package.name <- "saferDev"
@@ -53,7 +55,10 @@ is_python_package_here <- function(
     arg.user.setting <- base::as.list(base::match.call(expand.dots = FALSE))[-1] # list of the argument settings (excluding default values not provided by the user)
     # end function name
     # critical operator checking
-    .base_op_check(external.function.name = function.name)
+    if(safer_check == TRUE){
+        .base_op_check(external.function.name = function.name
+        )
+    }
     # end critical operator checking
     # package checking
     # check of lib.path
@@ -73,7 +78,8 @@ is_python_package_here <- function(
     }
     # end check of lib.path
     # check of the required function from the required packages
-    .pack_and_function_check(
+    if(safer_check == TRUE){
+        .pack_and_function_check(
         fun = base::c(
             "reticulate::py_run_string", 
             "reticulate::use_python",
@@ -81,7 +87,8 @@ is_python_package_here <- function(
         ),
         lib.path = lib.path,
         external.function.name = function.name
-    )
+        )
+    }
     # end check of the required function from the required packages
     # end package checking
     
@@ -101,9 +108,9 @@ is_python_package_here <- function(
     text.check <- NULL #
     checked.arg.names <- NULL # for function debbuging: used by r_debugging_tools
     ee <- base::expression(argum.check <- base::c(argum.check, tempo$problem) , text.check <- base::c(text.check, tempo$text) , checked.arg.names <- base::c(checked.arg.names, tempo$object.name))
-    tempo <- arg_check(data = req.package, class = "character", fun.name = function.name) ; base::eval(ee)
+    tempo <- arg_check(data = req.package, class = "character", fun.name = function.name, safer_check = FALSE) ; base::eval(ee)
     if( ! base::is.null(python.exec.path)){
-        tempo <- arg_check(data = python.exec.path, class = "character", length = 1, fun.name = function.name) ; base::eval(ee)
+        tempo <- arg_check(data = python.exec.path, class = "character", length = 1, fun.name = function.name, safer_check = FALSE) ; base::eval(ee)
         if(tempo$problem == FALSE){
             if( ! base::all(base::file.exists(python.exec.path), na.rm = TRUE)){ # separation to avoid the problem of tempo$problem == FALSE and python.exec.path == NA
                 tempo.cat <- base::paste0("ERROR IN ", function.name, " OF THE ", package.name, " PACKAGE: FILE PATH INDICATED IN THE python.exec.path ARGUMENT DOES NOT EXISTS:\n", base::paste(python.exec.path, collapse = "\n"))
@@ -113,7 +120,7 @@ is_python_package_here <- function(
         }
     }
     if( ! base::is.null(python.lib.path)){
-        tempo <- arg_check(data = python.lib.path, class = "vector", mode = "character", fun.name = function.name) ; base::eval(ee)
+        tempo <- arg_check(data = python.lib.path, class = "vector", mode = "character", fun.name = function.name, safer_check = FALSE) ; base::eval(ee)
         if(tempo$problem == FALSE){
             if( ! base::all(base::dir.exists(python.lib.path), na.rm = TRUE)){ # separation to avoid the problem of tempo$problem == FALSE and python.lib.path == NA
                 tempo.cat <- base::paste0("ERROR IN ", function.name, " OF THE ", package.name, " PACKAGE: DIRECTORY PATH INDICATED IN THE python.lib.path ARGUMENT DOES NOT EXISTS:\n", base::paste(python.lib.path, collapse = "\n"))
@@ -135,6 +142,8 @@ is_python_package_here <- function(
     # end argument primary checking
     
     # second round of checking and data preparation
+    # reserved words (to avoid bugs)
+    # end reserved words (to avoid bugs)
     # management of NA arguments
     if( ! (base::all(base::class(arg.user.setting) == "list", na.rm = TRUE) & base::length(arg.user.setting) == 0)){
         tempo.arg <- base::names(arg.user.setting) # values provided by the user
@@ -146,6 +155,18 @@ is_python_package_here <- function(
     }
     # end management of NA arguments
     # management of NULL arguments
+     tempo.arg <-base::c(
+        "req.package",
+        # "python.exec.path", # inactivated because can be null
+        # "python.lib.path", # inactivated because can be null
+        # "lib.path", # inactivated because can be null
+        "safer_check"
+    )
+    tempo.log <- base::sapply(base::lapply(tempo.arg, FUN = base::get, env = base::sys.nframe(), inherit = FALSE), FUN = base::is.null)
+    if(base::any(tempo.log) == TRUE){# normally no NA with is.null()
+        tempo.cat <- base::paste0("ERROR IN ", function.name, " OF THE ", package.name, " PACKAGE:\n", base::ifelse(base::sum(tempo.log, na.rm = TRUE) > 1, "THESE ARGUMENTS\n", "THIS ARGUMENT\n"), base::paste0(tempo.arg[tempo.log], collapse = "\n"),"\nCANNOT BE NULL")
+        base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in stop() to be able to add several messages between ==
+    }
     # end management of NULL arguments
     # code that protects set.seed() in the global environment
     # end code that protects set.seed() in the global environment
@@ -153,8 +174,6 @@ is_python_package_here <- function(
     # end warning initiation
     # other checkings
     # end other checkings
-    # reserved words (to avoid bugs)
-    # end reserved words (to avoid bugs)
     # end second round of checking and data preparation
 
     # main code
