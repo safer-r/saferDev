@@ -9,6 +9,7 @@
 #' @param print.no Single logical value. Print a message saying that no message reported?
 #' @param text Single character string added to the output message (even if no message exists and print.no is TRUE). Inactivated if the header argument is FALSE. Write NULL if not required.
 #' @param env The name of an existing environment. Write NULL if not required.
+#' @param safer_check Single logical value. Perform some "safer" checks (see https://github.com/safer-r)? If TRUE, checkings are performed before main code running: 1) R classical operators (like "<-") not overwritten by another package because of the R scope and 2) required functions and related packages effectively present in local R lybraries. Set to FALSE if this fonction is used inside another "safer" function to avoid pointless multiple checkings.
 #' @returns The message or NULL if no message and print.no is FALSE.
 #' @details 
 #' WARNINGS
@@ -53,17 +54,17 @@ get_message <- function(
         header = TRUE, 
         print.no = FALSE, 
         text = NULL, 
-        env = NULL
+        env = NULL,
+        safer_check = TRUE
 ){  
     # DEBUGGING
-    # data = "wilcox.test(c(1,1,3), c(1, 2, 4), paired = TRUE)" ; kind = "warning" ; header = TRUE ; print.no = FALSE ; text = NULL ; env = NULL # for function debugging
-    # data = "sum(1)" ; kind = "warning" ; header = TRUE ; print.no = FALSE ; text = NULL ; env = NULL  # for function debugging
-    # set.seed(1) ; obs1 <- data.frame(Time = c(rnorm(10), rnorm(10) + 2), Group1 = rep(c("G", "H"), each = 10), stringsAsFactors = TRUE) ; data = 'gg_boxplot(data1 = obs1, y = "Time", categ = "Group1")' ; kind = "warning" ; header = TRUE ; print.no = FALSE ; text = NULL ; env = NULL  # for function debugging
-    # data = "message('ahah')" ; kind = "error" ; header = TRUE ; print.no = TRUE ; text = "IN A" ; env = NULL 
-    # data = 'ggplot2::ggplot(data = data.frame(X = "a", stringsAsFactors = TRUE), mapping = ggplot2::aes(x = X)) + ggplot2::geom_histogram()' ; kind = "message" ; header = TRUE ; print.no = FALSE ; text = NULL # for function debugging
-    # data = 'ggplot2::ggplot(data = data.frame(X = "a", stringsAsFactors = TRUE), mapping = ggplot2::aes(x = X)) + ggplot2::geom_histogram()' ; kind = "warning" ; header = TRUE ; print.no = FALSE ; text = NULL # for function debugging
-    # data = "emmeans::emmeans(object = emm.rg, specs = contrast.var)" ; kind = "message" ; header = TRUE ; print.no = FALSE ; text = NULL ; env = NULL # for function debugging
-    
+    # data = "wilcox.test(c(1,1,3), c(1, 2, 4), paired = TRUE)" ; kind = "warning" ; header = TRUE ; print.no = FALSE ; text = NULL ; env = NULL ; safer_check = TRUE # for function debugging
+    # data = "sum(1)" ; kind = "warning" ; header = TRUE ; print.no = FALSE ; text = NULL ; env = NULL; safer_check = TRUE  # for function debugging
+    # set.seed(1) ; obs1 <- data.frame(Time = c(rnorm(10), rnorm(10) + 2), Group1 = rep(c("G", "H"), each = 10), stringsAsFactors = TRUE) ; data = 'gg_boxplot(data1 = obs1, y = "Time", categ = "Group1")' ; kind = "warning" ; header = TRUE ; print.no = FALSE ; text = NULL ; env = NULL ; safer_check = TRUE  # for function debugging
+    # data = "message('ahah')" ; kind = "error" ; header = TRUE ; print.no = TRUE ; text = "IN A" ; env = NULL ; safer_check = TRUE 
+    # data = 'ggplot2::ggplot(data = data.frame(X = "a", stringsAsFactors = TRUE), mapping = ggplot2::aes(x = X)) + ggplot2::geom_histogram()' ; kind = "message" ; header = TRUE ; print.no = FALSE ; text = NULL ; safer_check = TRUE # for function debugging
+    # data = 'ggplot2::ggplot(data = data.frame(X = "a", stringsAsFactors = TRUE), mapping = ggplot2::aes(x = X)) + ggplot2::geom_histogram()' ; kind = "warning" ; header = TRUE ; print.no = FALSE ; text = NULL ; safer_check = TRUE # for function debugging
+    # data = "emmeans::emmeans(object = emm.rg, specs = contrast.var)" ; kind = "message" ; header = TRUE ; print.no = FALSE ; text = NULL ; env = NULL ; safer_check = TRUE# for function debugging
     # package name
     package.name <- "saferDev"
     # end package name
@@ -76,19 +77,23 @@ get_message <- function(
     arg.user.setting <- base::as.list(base::match.call(expand.dots = FALSE))[-1] # list of the argument settings (excluding default values not provided by the user)
     # end function name
     # critical operator checking
-    .base_op_check(external.function.name = function.name)
+    if(safer_check == TRUE){
+        .base_op_check(external.function.name = function.name)
+    }
     # end critical operator checking
     # package checking
     # check of lib.path
     # end check of lib.path
     # check of the required function from the required packages
-    .pack_and_function_check(
+    if(safer_check == TRUE){
+        .pack_and_function_check(
         fun = base::c(
             "ggplot2::ggplot_build"
         ),
         lib.path = NULL,
         external.function.name = function.name
-    )
+        )
+    }
     # end check of the required function from the required packages
     # end package checking
     
@@ -108,15 +113,15 @@ get_message <- function(
     text.check <- NULL #
     checked.arg.names <- NULL # for function debbuging: used by r_debugging_tools
     ee <- base::expression(argum.check <- base::c(argum.check, tempo$problem) , text.check <- base::c(text.check, tempo$text) , checked.arg.names <- base::c(checked.arg.names, tempo$object.name))
-    tempo <- arg_check(data = data, class = "vector", typeof = "character", length = 1, fun.name = function.name) ; base::eval(ee)
-    tempo <- arg_check(data = kind, options = base::c("error", "warning", "message"), length = 1, fun.name = function.name) ; base::eval(ee)
-    tempo <- arg_check(data = header, class = "vector", typeof = "logical", length = 1, fun.name = function.name) ; base::eval(ee)
-    tempo <- arg_check(data = print.no, class = "vector", typeof = "logical", length = 1, fun.name = function.name) ; base::eval(ee)
+    tempo <- arg_check(data = data, class = "vector", typeof = "character", length = 1, fun.name = function.name, safer_check = FALSE) ; base::eval(ee)
+    tempo <- arg_check(data = kind, options = base::c("error", "warning", "message"), length = 1, fun.name = function.name, safer_check = FALSE) ; base::eval(ee)
+    tempo <- arg_check(data = header, class = "vector", typeof = "logical", length = 1, fun.name = function.name, safer_check = FALSE) ; base::eval(ee)
+    tempo <- arg_check(data = print.no, class = "vector", typeof = "logical", length = 1, fun.name = function.name, safer_check = FALSE) ; base::eval(ee)
     if( ! base::is.null(text)){
-        tempo <- arg_check(data = text, class = "character", length = 1, fun.name = function.name) ; base::eval(ee)
+        tempo <- arg_check(data = text, class = "character", length = 1, fun.name = function.name, safer_check = FALSE) ; base::eval(ee)
     }
     if( ! base::is.null(env)){
-        tempo <- arg_check(data = env, class = "environment", fun.name = function.name) ; base::eval(ee) #
+        tempo <- arg_check(data = env, class = "environment", fun.name = function.name, safer_check = FALSE) ; base::eval(ee) #
     }
     if( ! base::is.null(argum.check)){
         if(base::any(argum.check, na.rm = TRUE) == TRUE){
@@ -130,6 +135,8 @@ get_message <- function(
     # end argument primary checking
     
     # second round of checking and data preparation
+    # reserved words (to avoid bugs)
+    # end reserved words (to avoid bugs)
     # management of NA arguments
     if( ! (base::all(base::class(arg.user.setting) == "list", na.rm = TRUE) & base::length(arg.user.setting) == 0)){
         tempo.arg <- base::names(arg.user.setting) # values provided by the user
@@ -147,7 +154,8 @@ get_message <- function(
         "header", 
         "print.no"
         # "text",  # inactivated because can be null
-        # "env"  # inactivated because can be null
+        # "env",  # inactivated because can be null
+        "safer_check"
     )
     tempo.log <- base::sapply(base::lapply(tempo.arg, FUN = base::get, envir = base::sys.nframe(), inherits = FALSE), FUN = is.null)
     if(base::any(tempo.log) == TRUE){# normally no NA with is.null()
@@ -161,8 +169,6 @@ get_message <- function(
     # end warning initiation
     # other checkings
     # end other checkings
-    # reserved words (to avoid bugs)
-    # end reserved words (to avoid bugs)
     # end second round of checking and data preparation
 
     
