@@ -50,7 +50,7 @@
 #' @importFrom parallel clusterApply
 #' @importFrom parallel stopCluster
 #' @examples
-#' arg_test(fun = "unique", arg = c("x", "incomparables")), 
+#' arg_test(fun = "unique", arg = c("x", "incomparables"), 
 #' val = list(x = list(1:10, c(1,1,2,8), NA), incomparable = c(TRUE, FALSE, NA)))
 #' 
 #' arg_test(fun = "unique", arg = c("x", "incomparables"), 
