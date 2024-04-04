@@ -69,7 +69,8 @@ arg_check <- function(
     # end function name
     # critical operator checking
     if(safer_check == TRUE){
-        .base_op_check(external.function.name = "arg_check()")
+        .base_op_check(external.function.name = function.name
+)
     }
     # end critical operator checking
     # check of lib.path
