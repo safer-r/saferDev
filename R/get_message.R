@@ -93,7 +93,8 @@ get_message <- function(
             "ggplot2::ggplot_build"
         ),
         lib.path = NULL,
-        external.function.name = function.name
+        external.function.name = function.name,
+        external.package.name = package.name
         )
     }
     # end check of the required function from the required packages
