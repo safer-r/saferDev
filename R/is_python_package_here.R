@@ -88,7 +88,8 @@ is_python_package_here <- function(
             "reticulate::import_from_path"
         ),
         lib.path = lib.path,
-        external.function.name = function.name
+        external.function.name = function.name,
+        external.package.name = package.name
         )
     }
     # end check of the required function from the required packages
