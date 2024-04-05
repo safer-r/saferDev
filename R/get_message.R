@@ -152,7 +152,7 @@ get_message <- function(
         "data", 
         "kind", 
         "header", 
-        "print.no"
+        "print.no",
         # "text",  # inactivated because can be null
         # "env",  # inactivated because can be null
         "safer_check"
