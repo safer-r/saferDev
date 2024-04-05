@@ -75,7 +75,9 @@ env_check <- function(
     # end function name
     # critical operator checking
     if(safer_check == TRUE){
-        .base_op_check(external.function.name = function.name)
+        .base_op_check(
+            external.function.name = function.name,
+            external.package.name = package.name)
     }
     # end critical operator checking
     # package checking
