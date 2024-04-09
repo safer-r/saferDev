@@ -4,12 +4,14 @@
 \alias{env_check}
 \title{env_check}
 \usage{
-env_check(pos = 1, name = NULL)
+env_check(pos = 1, name = NULL, safer_check = TRUE)
 }
 \arguments{
 \item{pos}{Single non nul positive integer indicating the position of the environment checked (argument n of the parent.frame() function). Value 1 means one step above the env_check() local environment (by default). This means that when env_check(pos = 1) is used inside a function A, it checks if the name of any object in the local environment of this function A is also present in above environments, following R Scope, starting by the just above environment. When env_check(pos = 1) is used in the working (Global) environment (named .GlobalEnv), it checks the object names of this .GlobalEnv environment, in the above environments. See the examples below.}
 
 \item{name}{Single character string indicating a string that will be added in the output string, for instance the name of a function inside which env_check() is used.}
+
+\item{safer_check}{Single logical value. Perform some "safer" checks (see https://github.com/safer-r)? If TRUE, checkings are performed before main code running: 1) R classical operators (like "<-") not overwritten by another package because of the R scope and 2) required functions and related packages effectively present in local R lybraries. Set to FALSE if this fonction is used inside another "safer" function to avoid pointless multiple checkings.}
 }
 \value{
 A character string indicating the object names of the tested environment that match object names in the above environments, following the R scope, or NULL if no match.

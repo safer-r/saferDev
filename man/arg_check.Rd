@@ -19,7 +19,8 @@ arg_check(
   inf.values = TRUE,
   print = FALSE,
   data.name = NULL,
-  fun.name = NULL
+  fun.name = NULL,
+  safer_check = TRUE
 )
 }
 \arguments{
@@ -52,6 +53,8 @@ arg_check(
 \item{data.name}{Single character string indicating the name of the object to test. If NULL, use what is assigned to the data argument for the returned message.}
 
 \item{fun.name}{Single character string indicating the name of the function checked (i.e., when arg_check() is used to check the arguments of this function). If non-null, the value of fun.name will be added into the message returned by arg_check().}
+
+\item{safer_check}{Single logical value. Perform some "safer" checks (see https://github.com/safer-r)? If TRUE, checkings are performed before main code running: 1) R classical operators (like "<-") not overwritten by another package because of the R scope and 2) required functions and related packages effectively present in local R lybraries. Set to FALSE if this fonction is used inside another "safer" function to avoid pointless multiple checkings.}
 }
 \value{
 A list containing:
