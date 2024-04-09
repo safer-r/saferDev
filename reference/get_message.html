@@ -67,7 +67,8 @@ Using argument print.no = FALSE, return NULL if no message, which is convenient 
 <span>  header <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  print.no <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  text <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  env <span class="op">=</span> <span class="cn">NULL</span></span>
+<span>  env <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  safer_check <span class="op">=</span> <span class="cn">TRUE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -96,6 +97,10 @@ Using argument print.no = FALSE, return NULL if no message, which is convenient 
 <dt>env</dt>
 <dd><p>The name of an existing environment. Write NULL if not required.</p></dd>
 
+
+<dt>safer_check</dt>
+<dd><p>Single logical value. Perform some "safer" checks (see https://github.com/safer-r)? If TRUE, checkings are performed before main code running: 1) R classical operators (like "&lt;-") not overwritten by another package because of the R scope and 2) required functions and related packages effectively present in local R lybraries. Set to FALSE if this fonction is used inside another "safer" function to avoid pointless multiple checkings.</p></dd>
+
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
@@ -113,8 +118,7 @@ Using argument print.no = FALSE, return NULL if no message, which is convenient 
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu">get_message</span><span class="op">(</span>data <span class="op">=</span> <span class="st">"wilcox.test(c(1,1,3), c(1, 2, 4), paired = TRUE)"</span>, kind <span class="op">=</span> <span class="st">"error"</span>, </span></span>
-<span class="r-in"><span>print.no <span class="op">=</span> <span class="cn">TRUE</span>, text <span class="op">=</span> <span class="st">"IN A"</span><span class="op">)</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu">get_message</span><span class="op">(</span>data <span class="op">=</span> <span class="st">"wilcox.test(c(1,1,3), c(1, 2, 4), paired = TRUE)"</span>, kind <span class="op">=</span> <span class="st">"error"</span>, print.no <span class="op">=</span> <span class="cn">TRUE</span>, text <span class="op">=</span> <span class="st">"IN A"</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "NO ERROR MESSAGE REPORTED IN A"</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu">get_message</span><span class="op">(</span>data <span class="op">=</span> <span class="st">"wilcox.test(c(1,1,3), c(1, 2, 4), paired = TRUE)"</span>, kind <span class="op">=</span> <span class="st">"warning"</span>, </span></span>

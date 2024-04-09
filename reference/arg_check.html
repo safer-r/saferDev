@@ -73,7 +73,8 @@
 <span>  inf.values <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  print <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  data.name <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  fun.name <span class="op">=</span> <span class="cn">NULL</span></span>
+<span>  fun.name <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  safer_check <span class="op">=</span> <span class="cn">TRUE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -137,6 +138,10 @@
 
 <dt>fun.name</dt>
 <dd><p>Single character string indicating the name of the function checked (i.e., when arg_check() is used to check the arguments of this function). If non-null, the value of fun.name will be added into the message returned by arg_check().</p></dd>
+
+
+<dt>safer_check</dt>
+<dd><p>Single logical value. Perform some "safer" checks (see https://github.com/safer-r)? If TRUE, checkings are performed before main code running: 1) R classical operators (like "&lt;-") not overwritten by another package because of the R scope and 2) required functions and related packages effectively present in local R lybraries. Set to FALSE if this fonction is used inside another "safer" function to avoid pointless multiple checkings.</p></dd>
 
 </dl></div>
     <div class="section level2">

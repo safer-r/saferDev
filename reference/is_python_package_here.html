@@ -62,7 +62,8 @@
 <span>  <span class="va">req.package</span>,</span>
 <span>  python.exec.path <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  python.lib.path <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  lib.path <span class="op">=</span> <span class="cn">NULL</span></span>
+<span>  lib.path <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  safer_check <span class="op">=</span> <span class="cn">TRUE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -82,6 +83,10 @@
 
 <dt>lib.path</dt>
 <dd><p>Absolute path of the reticulate packages, if not in the default folders.</p></dd>
+
+
+<dt>safer_check</dt>
+<dd><p>Single logical value. Perform some "safer" checks (see https://github.com/safer-r)? If TRUE, checkings are performed before main code running: 1) R classical operators (like "&lt;-") not overwritten by another package because of the R scope and 2) required functions and related packages effectively present in local R lybraries. Set to FALSE if this fonction is used inside another "safer" function to avoid pointless multiple checkings.</p></dd>
 
 </dl></div>
     <div class="section level2">

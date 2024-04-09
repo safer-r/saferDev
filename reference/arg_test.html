@@ -69,7 +69,8 @@
 <span>  plot.fun <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  export <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  res.path <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  lib.path <span class="op">=</span> <span class="cn">NULL</span></span>
+<span>  lib.path <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  safer_check <span class="op">=</span> <span class="cn">TRUE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -117,6 +118,10 @@
 
 <dt>lib.path</dt>
 <dd><p>Vector of characters specifying the absolute pathways of the directories containing the required packages if not in the default directories. Ignored if NULL.</p></dd>
+
+
+<dt>safer_check</dt>
+<dd><p>Single logical value. Perform some "safer" checks (see https://github.com/safer-r)? If TRUE, checkings are performed before main code running: 1) R classical operators (like "&lt;-") not overwritten by another package because of the R scope and 2) required functions and related packages effectively present in local R lybraries. Set to FALSE if this fonction is used inside another "safer" function to avoid pointless multiple checkings.</p></dd>
 
 </dl></div>
     <div class="section level2">
@@ -175,7 +180,7 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> THE TOTAL NUMBER OF TESTS IS: 9</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> LOOP PROCESS ENDED | LOOP 9 / 9 | TIME SPENT: 15S</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> LOOP PROCESS ENDED | LOOP 9 / 9 | TIME SPENT: 0S</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $fun</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "unique"</span>
@@ -224,21 +229,21 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> loaded via a namespace (and not attached):</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  [1] Matrix_1.6-1.1     R6_2.5.1           Rcpp_1.0.12        askpass_1.2.0     </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [5] brio_1.1.4         bslib_0.6.1        cachem_1.0.8       cli_3.6.2         </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [5] brio_1.1.4         bslib_0.7.0        cachem_1.0.8       cli_3.6.2         </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  [9] colorspace_2.1-0   compiler_4.3.2     curl_5.2.1         desc_1.4.3        </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [13] digest_0.6.35      downlit_0.4.3      evaluate_0.23      fansi_1.0.6       </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [17] fastmap_1.1.1      fs_1.6.3           generics_0.1.3     ggplot2_3.5.0     </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [21] glue_1.7.0         grid_4.3.2         gtable_0.3.4       htmltools_0.5.7   </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [25] httr_1.4.7         jquerylib_0.1.4    jsonlite_1.8.8     knitr_1.45        </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [21] glue_1.7.0         grid_4.3.2         gtable_0.3.4       htmltools_0.5.8.1 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [25] httr_1.4.7         jquerylib_0.1.4    jsonlite_1.8.8     knitr_1.46        </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [29] lattice_0.22-5     lifecycle_1.0.4    lubridate_1.9.3    magrittr_2.0.3    </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [33] memoise_2.0.1      munsell_0.5.0      parallel_4.3.2     pdftools_3.4.0    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [33] memoise_2.0.1      munsell_0.5.1      parallel_4.3.2     pdftools_3.4.0    </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [37] pillar_1.9.0       pkgconfig_2.0.3    pkgdown_2.0.7      png_0.1-8         </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [41] purrr_1.0.2        qpdf_1.3.2         ragg_1.2.6         remotes_2.5.0.9000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [41] purrr_1.0.2        qpdf_1.3.3         ragg_1.2.6         remotes_2.5.0.9000</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [45] reticulate_1.35.0  rlang_1.1.3        rmarkdown_2.26     rstudioapi_0.15.0 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [49] sass_0.4.9         scales_1.3.0       systemfonts_1.0.5  testthat_3.2.1    </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [53] textshaping_0.3.7  tibble_3.2.1       timechange_0.3.0   tools_4.3.2       </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [57] utf8_1.2.4         vctrs_0.6.5        whisker_0.4.1      withr_3.0.0       </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [61] xfun_0.42          xml2_1.3.5         yaml_2.3.8        </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [61] xfun_0.43          xml2_1.3.5         yaml_2.3.8        </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu">arg_test</span><span class="op">(</span>fun <span class="op">=</span> <span class="st">"unique"</span>, arg <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"x"</span>, <span class="st">"incomparables"</span><span class="op">)</span>, </span></span>
@@ -250,7 +255,7 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> THE TOTAL NUMBER OF TESTS IS: 9</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> LOOP PROCESS ENDED | LOOP 9 / 9 | TIME SPENT: 15S</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> LOOP PROCESS ENDED | LOOP 9 / 9 | TIME SPENT: 0S</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> DISCREPANCIES BETWEEN EXPECTED AND OBSERVED ERRORS (SEE THE $data RESULT)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
@@ -312,21 +317,21 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> loaded via a namespace (and not attached):</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  [1] Matrix_1.6-1.1     R6_2.5.1           Rcpp_1.0.12        askpass_1.2.0     </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [5] brio_1.1.4         bslib_0.6.1        cachem_1.0.8       cli_3.6.2         </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [5] brio_1.1.4         bslib_0.7.0        cachem_1.0.8       cli_3.6.2         </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  [9] colorspace_2.1-0   compiler_4.3.2     curl_5.2.1         desc_1.4.3        </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [13] digest_0.6.35      downlit_0.4.3      evaluate_0.23      fansi_1.0.6       </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [17] fastmap_1.1.1      fs_1.6.3           generics_0.1.3     ggplot2_3.5.0     </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [21] glue_1.7.0         grid_4.3.2         gtable_0.3.4       htmltools_0.5.7   </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [25] httr_1.4.7         jquerylib_0.1.4    jsonlite_1.8.8     knitr_1.45        </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [21] glue_1.7.0         grid_4.3.2         gtable_0.3.4       htmltools_0.5.8.1 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [25] httr_1.4.7         jquerylib_0.1.4    jsonlite_1.8.8     knitr_1.46        </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [29] lattice_0.22-5     lifecycle_1.0.4    lubridate_1.9.3    magrittr_2.0.3    </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [33] memoise_2.0.1      munsell_0.5.0      parallel_4.3.2     pdftools_3.4.0    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [33] memoise_2.0.1      munsell_0.5.1      parallel_4.3.2     pdftools_3.4.0    </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [37] pillar_1.9.0       pkgconfig_2.0.3    pkgdown_2.0.7      png_0.1-8         </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [41] purrr_1.0.2        qpdf_1.3.2         ragg_1.2.6         remotes_2.5.0.9000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [41] purrr_1.0.2        qpdf_1.3.3         ragg_1.2.6         remotes_2.5.0.9000</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [45] reticulate_1.35.0  rlang_1.1.3        rmarkdown_2.26     rstudioapi_0.15.0 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [49] sass_0.4.9         scales_1.3.0       systemfonts_1.0.5  testthat_3.2.1    </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [53] textshaping_0.3.7  tibble_3.2.1       timechange_0.3.0   tools_4.3.2       </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [57] utf8_1.2.4         vctrs_0.6.5        whisker_0.4.1      withr_3.0.0       </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [61] xfun_0.42          xml2_1.3.5         yaml_2.3.8        </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [61] xfun_0.43          xml2_1.3.5         yaml_2.3.8        </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu">arg_test</span><span class="op">(</span>fun <span class="op">=</span> <span class="st">"unique"</span>, arg <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"x"</span>, <span class="st">"incomparables"</span><span class="op">)</span>, </span></span>
@@ -338,15 +343,15 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> THE TOTAL NUMBER OF TESTS IS: 9</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> LOOP PROCESS ENDED | LOOP 9 / 9 | TIME SPENT: 15S</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> LOOP PROCESS ENDED | LOOP 9 / 9 | TIME SPENT: 0S</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> DISCREPANCIES BETWEEN EXPECTED AND OBSERVED ERRORS (SEE THE discrepancy_table_from_arg_test_1-9.tsv FILE)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> test JOB END</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> TIME: 2024-03-20 21:31:48.539257</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> TIME: 2024-04-09 15:25:43.651882</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> TOTAL TIME LAPSE: 15S</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> TOTAL TIME LAPSE: 0S</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"><span></span></span>
@@ -362,8 +367,8 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> THE TOTAL NUMBER OF TESTS IS: 12</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> LOOP 10 / 12 | TIME SPENT: 17S | EXPECTED END: 2024-03-20 21:32:09.667892</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> LOOP PROCESS ENDED | LOOP 12 / 12 | TIME SPENT: 20S</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> LOOP 10 / 12 | TIME SPENT: 0S | EXPECTED END: 2024-04-09 15:25:43.860394</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> LOOP PROCESS ENDED | LOOP 12 / 12 | TIME SPENT: 0S</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> NO DISCREPANCY BETWEEN EXPECTED AND OBSERVED ERRORS</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
@@ -445,21 +450,21 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> loaded via a namespace (and not attached):</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  [1] Matrix_1.6-1.1     R6_2.5.1           Rcpp_1.0.12        askpass_1.2.0     </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [5] brio_1.1.4         bslib_0.6.1        cachem_1.0.8       cli_3.6.2         </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [5] brio_1.1.4         bslib_0.7.0        cachem_1.0.8       cli_3.6.2         </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  [9] colorspace_2.1-0   compiler_4.3.2     curl_5.2.1         desc_1.4.3        </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [13] digest_0.6.35      downlit_0.4.3      evaluate_0.23      fansi_1.0.6       </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [17] fastmap_1.1.1      fs_1.6.3           generics_0.1.3     ggplot2_3.5.0     </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [21] glue_1.7.0         grid_4.3.2         gtable_0.3.4       htmltools_0.5.7   </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [25] httr_1.4.7         jquerylib_0.1.4    jsonlite_1.8.8     knitr_1.45        </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [21] glue_1.7.0         grid_4.3.2         gtable_0.3.4       htmltools_0.5.8.1 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [25] httr_1.4.7         jquerylib_0.1.4    jsonlite_1.8.8     knitr_1.46        </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [29] lattice_0.22-5     lifecycle_1.0.4    lubridate_1.9.3    magrittr_2.0.3    </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [33] memoise_2.0.1      munsell_0.5.0      parallel_4.3.2     pdftools_3.4.0    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [33] memoise_2.0.1      munsell_0.5.1      parallel_4.3.2     pdftools_3.4.0    </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [37] pillar_1.9.0       pkgconfig_2.0.3    pkgdown_2.0.7      png_0.1-8         </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [41] purrr_1.0.2        qpdf_1.3.2         ragg_1.2.6         remotes_2.5.0.9000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [41] purrr_1.0.2        qpdf_1.3.3         ragg_1.2.6         remotes_2.5.0.9000</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [45] reticulate_1.35.0  rlang_1.1.3        rmarkdown_2.26     rstudioapi_0.15.0 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [49] sass_0.4.9         scales_1.3.0       systemfonts_1.0.5  testthat_3.2.1    </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [53] textshaping_0.3.7  tibble_3.2.1       timechange_0.3.0   tools_4.3.2       </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [57] utf8_1.2.4         vctrs_0.6.5        whisker_0.4.1      withr_3.0.0       </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [61] xfun_0.42          xml2_1.3.5         yaml_2.3.8        </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [61] xfun_0.43          xml2_1.3.5         yaml_2.3.8        </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu">arg_test</span><span class="op">(</span>fun <span class="op">=</span> <span class="st">"plot"</span>, arg <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"x"</span>, <span class="st">"y"</span><span class="op">)</span>, val <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">10</span>, <span class="fl">12</span><span class="op">:</span><span class="fl">13</span>, <span class="cn">NA</span>, </span></span>
@@ -471,8 +476,8 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> THE TOTAL NUMBER OF TESTS IS: 12</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> LOOP 10 / 12 | TIME SPENT: 17S | EXPECTED END: 2024-03-20 21:32:30.474443</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> LOOP PROCESS ENDED | LOOP 12 / 12 | TIME SPENT: 20S</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> LOOP 10 / 12 | TIME SPENT: 0S | EXPECTED END: 2024-04-09 15:25:44.081958</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> LOOP PROCESS ENDED | LOOP 12 / 12 | TIME SPENT: 0S</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $fun</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "plot"</span>
@@ -538,32 +543,32 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> loaded via a namespace (and not attached):</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  [1] Matrix_1.6-1.1     R6_2.5.1           Rcpp_1.0.12        askpass_1.2.0     </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [5] brio_1.1.4         bslib_0.6.1        cachem_1.0.8       cli_3.6.2         </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [5] brio_1.1.4         bslib_0.7.0        cachem_1.0.8       cli_3.6.2         </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  [9] colorspace_2.1-0   compiler_4.3.2     curl_5.2.1         desc_1.4.3        </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [13] digest_0.6.35      downlit_0.4.3      evaluate_0.23      fansi_1.0.6       </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [17] fastmap_1.1.1      fs_1.6.3           generics_0.1.3     ggplot2_3.5.0     </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [21] glue_1.7.0         grid_4.3.2         gtable_0.3.4       htmltools_0.5.7   </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [25] httr_1.4.7         jquerylib_0.1.4    jsonlite_1.8.8     knitr_1.45        </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [21] glue_1.7.0         grid_4.3.2         gtable_0.3.4       htmltools_0.5.8.1 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [25] httr_1.4.7         jquerylib_0.1.4    jsonlite_1.8.8     knitr_1.46        </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [29] lattice_0.22-5     lifecycle_1.0.4    lubridate_1.9.3    magrittr_2.0.3    </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [33] memoise_2.0.1      munsell_0.5.0      parallel_4.3.2     pdftools_3.4.0    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [33] memoise_2.0.1      munsell_0.5.1      parallel_4.3.2     pdftools_3.4.0    </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [37] pillar_1.9.0       pkgconfig_2.0.3    pkgdown_2.0.7      png_0.1-8         </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [41] purrr_1.0.2        qpdf_1.3.2         ragg_1.2.6         remotes_2.5.0.9000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [41] purrr_1.0.2        qpdf_1.3.3         ragg_1.2.6         remotes_2.5.0.9000</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [45] reticulate_1.35.0  rlang_1.1.3        rmarkdown_2.26     rstudioapi_0.15.0 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [49] sass_0.4.9         scales_1.3.0       systemfonts_1.0.5  testthat_3.2.1    </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [53] textshaping_0.3.7  tibble_3.2.1       timechange_0.3.0   tools_4.3.2       </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [57] utf8_1.2.4         vctrs_0.6.5        whisker_0.4.1      withr_3.0.0       </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [61] xfun_0.42          xml2_1.3.5         yaml_2.3.8        </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [61] xfun_0.43          xml2_1.3.5         yaml_2.3.8        </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># set.seed(1) ; </span></span></span>
 <span class="r-in"><span><span class="co"># obs1 &lt;- data.frame(Time = c(rnorm(10), rnorm(10) + 2), Group1 = rep(c("G", "H"), each = 10), </span></span></span>
-<span class="r-in"><span><span class="co"># stringsAsFactors = TRUE) ; arg_test(fun = "fun_gg_boxplot", arg = c("data1", "y", "categ"), </span></span></span>
+<span class="r-in"><span><span class="co"># stringsAsFactors = TRUE) ; arg_test(fun = "ggbox", arg = c("data1", "y", "categ"), </span></span></span>
 <span class="r-in"><span><span class="co"># val = list(L1 = list(L1 = obs1), L2 = list(L1 = "Time"), L3 = list(L1 = "Group1")))</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># set.seed(1) ; </span></span></span>
 <span class="r-in"><span><span class="co"># obs1 &lt;- data.frame(Time = c(rnorm(10), rnorm(10) + 2), Group1 = rep(c("G", "H"), each = 10), </span></span></span>
 <span class="r-in"><span><span class="co"># stringsAsFactors = TRUE) ; </span></span></span>
-<span class="r-in"><span><span class="co"># arg_test(fun = "fun_gg_boxplot", arg = c("data1", "y", "categ"), val = list(L1 = list(obs1), </span></span></span>
+<span class="r-in"><span><span class="co"># arg_test(fun = "ggbox", arg = c("data1", "y", "categ"), val = list(L1 = list(obs1), </span></span></span>
 <span class="r-in"><span><span class="co"># L2 = "Time", L3 = "Group1"), parall = FALSE, thread.nb = NULL, plot.fun = TRUE, </span></span></span>
 <span class="r-in"><span><span class="co"># res.path = "C:\Users\yhan\Desktop\", lib.path = "C:\Program Files\R\R-4.3.1\library\")</span></span></span>
 <span class="r-in"><span></span></span>

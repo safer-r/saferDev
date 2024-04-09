@@ -66,7 +66,8 @@
 <span>  rownames.kept <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  vector.cat <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  noquote <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  sep <span class="op">=</span> <span class="fl">2</span></span>
+<span>  sep <span class="op">=</span> <span class="fl">2</span>,</span>
+<span>  safer_check <span class="op">=</span> <span class="cn">TRUE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -102,6 +103,10 @@
 
 <dt>sep</dt>
 <dd><p>Single integer representing the number of empty lines after printed data.</p></dd>
+
+
+<dt>safer_check</dt>
+<dd><p>Single logical value. Perform some "safer" checks (see https://github.com/safer-r)? If TRUE, checkings are performed before main code running: 1) R classical operators (like "&lt;-") not overwritten by another package because of the R scope and 2) required functions and related packages effectively present in local R lybraries. Set to FALSE if this fonction is used inside another "safer" function to avoid pointless multiple checkings.</p></dd>
 
 </dl></div>
     <div class="section level2">
