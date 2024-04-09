@@ -150,14 +150,18 @@ arg_test <- function(
     # check of the required function from the required packages
     if(safer_check == TRUE){
         .pack_and_function_check(
-        fun = c(
+        fun = base::c(
             "lubridate::seconds_to_period", 
             "pdftools::pdf_combine",
             "parallel::detectCores",
             "parallel::makeCluster",
             "parallel::clusterSplit",
             "parallel::clusterApply",
-            "parallel::stopCluster"
+            "parallel::stopCluster",
+            "utils::read.table",
+            "utils::sessionInfo",
+            "utils::str",
+            "utils::write.table"
         ),
         lib.path = lib.path,
         external.function.name = function.name,
@@ -184,7 +188,7 @@ arg_test <- function(
     argum.check <- NULL #
     text.check <- NULL #
     checked.arg.names <- NULL # for function debbuging: used by r_debugging_tools
-    ee <- base::expression(argum.check <- c(argum.check, tempo$problem) , text.check <- c(text.check, tempo$text) , checked.arg.names <- c(checked.arg.names, tempo$object.name))
+    ee <- base::expression(argum.check <- base::c(argum.check, tempo$problem) , text.check <- base::c(text.check, tempo$text) , checked.arg.names <- base::c(checked.arg.names, tempo$object.name))
     tempo <- arg_check(data = fun, class = "vector", mode = "character", length = 1, fun.name = function.name, safer_check = FALSE) ; base::eval(ee)
     tempo <- arg_check(data = arg, class = "vector", mode = "character", fun.name = function.name, safer_check = FALSE) ; base::eval(ee)
     tempo <- arg_check(data = val, class = "list", na.contain = TRUE, fun.name = function.name, safer_check = FALSE) ; base::eval(ee)
@@ -224,7 +228,7 @@ arg_test <- function(
     # reserved words (to avoid bugs)
     # end reserved words (to avoid bugs)
     # management of NA arguments
-    if( ! (base::all(base::class(arg.user.setting) %in% c("list", "NULL"), na.rm = TRUE) & base::length(arg.user.setting) == 0)){
+    if( ! (base::all(base::class(arg.user.setting) %in% base::c("list", "NULL"), na.rm = TRUE) & base::length(arg.user.setting) == 0)){
         tempo.arg <- base::names(arg.user.setting) # values provided by the user
         tempo.log <- base::suppressWarnings(base::sapply(base::lapply(base::lapply(tempo.arg, FUN = get, env = base::sys.nframe(), inherit = FALSE), FUN = is.na), FUN = any)) & base::lapply(base::lapply(tempo.arg, FUN = get, env = base::sys.nframe(), inherit = FALSE), FUN = length) == 1L # no argument provided by the user can be just NA
         if(base::any(tempo.log, na.rm = TRUE) == TRUE){
@@ -307,7 +311,7 @@ arg_test <- function(
         }
         for(i3 in 1:base::length(expect.error)){
             tempo1 <- arg_check(data = expect.error[[i3]], class = "vector",  mode = "logical", fun.name = function.name, safer_check = FALSE)
-            tempo2 <- arg_check(data =  expect.error[[i3]], class = "list", fun.name = function.name, safer_check = FALSE)
+            tempo2 <- arg_check(data = expect.error[[i3]], class = "list", fun.name = function.name, safer_check = FALSE)
             if(tempo1$problem == TRUE & tempo2$problem == TRUE){
                 tempo.cat <- base::paste0("ERROR IN ", function.name, " OF THE ", package.name, " PACKAGE: COMPARTMENT ", i3, " OF expect.error ARGUMENT MUST BE TRUE OR FALSE")
                 base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n", base::ifelse(base::is.null(warn), "", base::paste0("IN ADDITION\nWARNING", base::ifelse(warn.count > 1, "S", ""), ":\n\n", warn))), call. = FALSE)
@@ -536,12 +540,12 @@ base::invisible(grDevices::dev.set(window.nb))
 plot.count <- plot.count + 1
 tempo.title <- base::paste0("test_", base::sprintf(base::paste0("%0", base::nchar(total.comp.nb), "d"), base::ifelse(parall == FALSE, count, x[count])))
 if(plot.kind == "classic"){ # not ggplot. So title has to be added in a classical way
-# base::par(ann=FALSE, xaxt="n", yaxt="n", mar = base::rep(1, 4), bty = "n", xpd = NA) # old
-base::par(bty = "n", xpd = NA) # new
+# graphics::par(ann=FALSE, xaxt="n", yaxt="n", mar = base::rep(1, 4), bty = "n", xpd = NA) # old
+graphics::par(bty = "n", xpd = NA) # new
 base::eval(base::parse(text = fun.test))
 # base::plot(1, 1, type = "n") # no display with type = "n"
-x.left.dev.region <- (base::par("usr")[1] - ((base::par("usr")[2] - base::par("usr")[1]) / (base::par("plt")[2] - base::par("plt")[1])) * base::par("plt")[1] - ((base::par("usr")[2] - base::par("usr")[1]) / ((base::par("omd")[2] - base::par("omd")[1]) * (base::par("plt")[2] - base::par("plt")[1]))) * base::par("omd")[1])
-y.top.dev.region <- (base::par("usr")[4] + ((base::par("usr")[4] - base::par("usr")[3]) / (base::par("plt")[4] - base::par("plt")[3])) * (1 - base::par("plt")[4]) + ((base::par("usr")[4] - base::par("usr")[3]) / ((base::par("omd")[4] - base::par("omd")[3]) * (base::par("plt")[4] - base::par("plt")[3]))) * (1 - base::par("omd")[4]))
+x.left.dev.region <- (graphics::par("usr")[1] - ((graphics::par("usr")[2] - graphics::par("usr")[1]) / (graphics::par("plt")[2] - graphics::par("plt")[1])) * graphics::par("plt")[1] - ((graphics::par("usr")[2] - graphics::par("usr")[1]) / ((graphics::par("omd")[2] - graphics::par("omd")[1]) * (graphics::par("plt")[2] - graphics::par("plt")[1]))) * graphics::par("omd")[1])
+y.top.dev.region <- (graphics::par("usr")[4] + ((graphics::par("usr")[4] - graphics::par("usr")[3]) / (graphics::par("plt")[4] - graphics::par("plt")[3])) * (1 - graphics::par("plt")[4]) + ((graphics::par("usr")[4] - graphics::par("usr")[3]) / ((graphics::par("omd")[4] - graphics::par("omd")[3]) * (graphics::par("plt")[4] - graphics::par("plt")[3]))) * (1 - graphics::par("omd")[4]))
 text(x = x.left.dev.region, y = y.top.dev.region, labels = tempo.title, adj=base::c(0, 1), cex = 1.5)
 }else if(plot.kind == "special"){ # ggplot. title has been added above
 base::eval(base::parse(text = fun.test))
@@ -764,7 +768,7 @@ base::cat(base::paste0(base::ifelse(parall == FALSE, "\nLOOP PROCESS ENDED | ", 
                         # add the differences in RData $sysinfo into final.output
                     }
                 }
-                base::file.remove(c(tempo.file, tempo.rdata))
+                base::file.remove(base::c(tempo.file, tempo.rdata))
             }
             # combine pdf and save
             if( ! base::is.null(final.pdf)){
