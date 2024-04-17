@@ -49,6 +49,10 @@
 #' @importFrom parallel clusterSplit
 #' @importFrom parallel clusterApply
 #' @importFrom parallel stopCluster
+#' @importFrom utils read.table
+#' @importFrom utils sessionInfo
+#' @importFrom utils str
+#' @importFrom utils write.table
 #' @examples
 #' arg_test(fun = "unique", arg = c("x", "incomparables"), 
 #' val = list(x = list(1:10, c(1,1,2,8), NA), incomparable = c(TRUE, FALSE, NA)))
