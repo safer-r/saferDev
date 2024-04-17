@@ -47,6 +47,10 @@
 #' kind = "message", print.no = TRUE, text = "IN FUNCTION 1")
 #' 
 #' @importFrom ggplot2 ggplot_build
+#' @importFrom grDevices dev.cur
+#' @importFrom grDevices dev.off
+#' @importFrom grDevices pdf
+#' @importFrom grDevices dev.set
 #' @importFrom utils capture.output
 #' @export
 get_message <- function(
