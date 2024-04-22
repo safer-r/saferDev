@@ -47,11 +47,6 @@
 #' kind = "message", print.no = TRUE, text = "IN FUNCTION 1")
 #' 
 #' @importFrom ggplot2 ggplot_build
-#' @importFrom grDevices dev.cur
-#' @importFrom grDevices dev.off
-#' @importFrom grDevices pdf
-#' @importFrom grDevices dev.set
-#' @importFrom utils capture.output
 #' @export
 get_message <- function(
         data, 
@@ -95,12 +90,7 @@ get_message <- function(
     if(safer_check == TRUE){
         .pack_and_function_check(
         fun = base::c(
-            "ggplot2::ggplot_build",
-            "grDevices::dev.cur",
-            "grDevices::dev.off",
-            "grDevices::pdf",
-            "grDevices::dev.set",
-            "utils::capture.output"
+            "ggplot2::ggplot_build"
         ),
         lib.path = NULL,
         external.function.name = function.name,
