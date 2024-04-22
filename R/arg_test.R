@@ -510,68 +510,68 @@ arg_test <- function(
     }
     code <- base::paste(
         loop.string, '
-count <- count + 1
-print.count.loop <- print.count.loop + 1
-arg.values.print <- base::eval(base::parse(text = arg.values)) # recover the list of the i1 compartment
-for(j3 in 1:base::length(arg.values.print)){ # WARNING: do not use i1, i2 etc., here because already in loop.string
-tempo.capt <- utils::capture.output(tempo.error <- get_message(data =  base::paste0("base::paste(arg.values.print[[", j3, "]])"), kind = "error", header = FALSE, print.no = FALSE, env = base::get(env.name, envir = base::sys.nframe(), inherits = FALSE), safer_check = FALSE)) # collapsing arg.values sometimes does not work (with function for instance)
-if( ! base::is.null(tempo.error)){
-arg.values.print[[j3]] <- base::paste0("SPECIAL VALUE OF CLASS ", base::class(arg.values.print[[j3]]), " AND TYPE ", base::typeof(arg.values.print[[j3]]))
-}
-}
-data <- base::rbind(data, base::as.character(base::sapply(arg.values.print, FUN = "paste", collapse = " ")), stringsAsFactors = FALSE) # each colum is a test
-tempo.capt <- utils::capture.output(tempo.try.error <- get_message(data = base::eval(base::parse(text = fun.test2)), kind = "error", header = FALSE, print.no = FALSE, env = base::get(env.name, envir = base::sys.nframe(), inherits = FALSE),safer_check = FALSE)) # data argument needs a character string but base::eval(base::parse(text = fun.test2)) provides it (base::eval base::parse replace the i1, i2, etc., by the correct values, meaning that only val is required in the env.name environment)
-tempo.capt <- utils::capture.output(tempo.try.warning <- get_message(data = base::eval(base::parse(text = fun.test2)), kind = "warning", header = FALSE, env = base::get(env.name, envir = base::sys.nframe(), inherits = FALSE), print.no = FALSE, safer_check = FALSE)) # data argument needs a character string but base::eval(base::parse(text = fun.test2)) provides it (base::eval base::parse replace the i1, i2, etc., by the correct values, meaning that only val is required in the env.name environment)
-if( ! base::is.null(expect.error)){
-expected.error <- base::c(expected.error, base::eval(base::parse(text = error.values)))
-}
-if( ! base::is.null(tempo.try.error)){
-kind <- base::c(kind, "ERROR")
-problem <- base::c(problem, TRUE)
-res <- base::c(res, tempo.try.error)
-}else{
-if( ! base::is.null(tempo.try.warning)){
-kind <- base::c(kind, "WARNING")
-problem <- base::c(problem, FALSE)
-res <- base::c(res, tempo.try.warning)
-}else{
-kind <- base::c(kind, "OK")
-problem <- base::c(problem, FALSE)
-res <- base::c(res, "")
-}
-if(plot.fun == TRUE){
-base::invisible(grDevices::dev.set(window.nb))
-plot.count <- plot.count + 1
-tempo.title <- base::paste0("test_", base::sprintf(base::paste0("%0", base::nchar(total.comp.nb), "d"), base::ifelse(parall == FALSE, count, x[count])))
-if(plot.kind == "classic"){ # not ggplot. So title has to be added in a classical way
-# graphics::par(ann=FALSE, xaxt="n", yaxt="n", mar = base::rep(1, 4), bty = "n", xpd = NA) # old
-graphics::par(bty = "n", xpd = NA) # new
-base::eval(base::parse(text = fun.test))
-# base::plot(1, 1, type = "n") # no display with type = "n"
-x.left.dev.region <- (graphics::par("usr")[1] - ((graphics::par("usr")[2] - graphics::par("usr")[1]) / (graphics::par("plt")[2] - graphics::par("plt")[1])) * graphics::par("plt")[1] - ((graphics::par("usr")[2] - graphics::par("usr")[1]) / ((graphics::par("omd")[2] - graphics::par("omd")[1]) * (graphics::par("plt")[2] - graphics::par("plt")[1]))) * graphics::par("omd")[1])
-y.top.dev.region <- (graphics::par("usr")[4] + ((graphics::par("usr")[4] - graphics::par("usr")[3]) / (graphics::par("plt")[4] - graphics::par("plt")[3])) * (1 - graphics::par("plt")[4]) + ((graphics::par("usr")[4] - graphics::par("usr")[3]) / ((graphics::par("omd")[4] - graphics::par("omd")[3]) * (graphics::par("plt")[4] - graphics::par("plt")[3]))) * (1 - graphics::par("omd")[4]))
-text(x = x.left.dev.region, y = y.top.dev.region, labels = tempo.title, adj=base::c(0, 1), cex = 1.5)
-}else if(plot.kind == "special"){ # ggplot. title has been added above
-base::eval(base::parse(text = fun.test))
-}else{
-tempo.cat <- base::paste0("INTERNAL CODE ERROR 1 IN ", function.name, " OF THE ", package.name, " PACKAGE: CODE HAS TO BE MODIFIED")
-base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
-}
-}
-}
-if(print.count.loop == print.count){
-print.count.loop <- 0
-tempo.time <- base::as.numeric(base::Sys.time())
-tempo.lapse <- base::round(lubridate::seconds_to_period(tempo.time - ini.time))
-final.loop <- (tempo.time - ini.time) / count * base::ifelse(parall == FALSE, total.comp.nb, base::length(x)) # expected duration in seconds # intra nb.compar loop lapse: time lapse / cycles done * cycles remaining
-final.exp <- base::as.POSIXct(final.loop, origin = ini.date)
-base::cat(base::paste0(base::ifelse(parall == FALSE, "\n", base::paste0("\nIN PROCESS ", process.id, " | ")), "LOOP ", base::format(count, big.mark=","), " / ", base::format(base::ifelse(parall == FALSE, total.comp.nb, base::length(x)), big.mark=","), " | TIME SPENT: ", tempo.lapse, " | EXPECTED END: ", final.exp))
-}
-if(count == base::ifelse(parall == FALSE, total.comp.nb, base::length(x))){
-tempo.time <- base::as.numeric(base::Sys.time())
-tempo.lapse <- base::round(lubridate::seconds_to_period(tempo.time - ini.time))
-base::cat(base::paste0(base::ifelse(parall == FALSE, "\nLOOP PROCESS ENDED | ", base::paste0("\nPROCESS ", process.id, " ENDED | ")), "LOOP ", base::format(count, big.mark=","), " / ", base::format(base::ifelse(parall == FALSE, total.comp.nb, base::length(x)), big.mark=","), " | TIME SPENT: ", tempo.lapse, "\n\n"))
-}
+            count <- count + 1
+            print.count.loop <- print.count.loop + 1
+            arg.values.print <- base::eval(base::parse(text = arg.values)) # recover the list of the i1 compartment
+            for(j3 in 1:base::length(arg.values.print)){ # WARNING: do not use i1, i2 etc., here because already in loop.string
+                tempo.capt <- utils::capture.output(tempo.error <- get_message(data =  base::paste0("base::paste(arg.values.print[[", j3, "]])"), kind = "error", header = FALSE, print.no = FALSE, env = base::get(env.name, envir = base::sys.nframe(), inherits = FALSE), safer_check = FALSE)) # collapsing arg.values sometimes does not work (with function for instance)
+                if( ! base::is.null(tempo.error)){
+                    arg.values.print[[j3]] <- base::paste0("SPECIAL VALUE OF CLASS ", base::class(arg.values.print[[j3]]), " AND TYPE ", base::typeof(arg.values.print[[j3]]))
+                }
+            }
+            data <- base::rbind(data, base::as.character(base::sapply(arg.values.print, FUN = "paste", collapse = " ")), stringsAsFactors = FALSE) # each colum is a test
+            tempo.capt <- utils::capture.output(tempo.try.error <- get_message(data = base::eval(base::parse(text = fun.test2)), kind = "error", header = FALSE, print.no = FALSE, env = base::get(env.name, envir = base::sys.nframe(), inherits = FALSE),safer_check = FALSE)) # data argument needs a character string but base::eval(base::parse(text = fun.test2)) provides it (base::eval base::parse replace the i1, i2, etc., by the correct values, meaning that only val is required in the env.name environment)
+            tempo.capt <- utils::capture.output(tempo.try.warning <- get_message(data = base::eval(base::parse(text = fun.test2)), kind = "warning", header = FALSE, env = base::get(env.name, envir = base::sys.nframe(), inherits = FALSE), print.no = FALSE, safer_check = FALSE)) # data argument needs a character string but base::eval(base::parse(text = fun.test2)) provides it (base::eval base::parse replace the i1, i2, etc., by the correct values, meaning that only val is required in the env.name environment)
+            if( ! base::is.null(expect.error)){
+                expected.error <- base::c(expected.error, base::eval(base::parse(text = error.values)))
+            }
+            if( ! base::is.null(tempo.try.error)){
+                kind <- base::c(kind, "ERROR")
+                problem <- base::c(problem, TRUE)
+                res <- base::c(res, tempo.try.error)
+            }else{
+                if( ! base::is.null(tempo.try.warning)){
+                    kind <- base::c(kind, "WARNING")
+                    problem <- base::c(problem, FALSE)
+                    res <- base::c(res, tempo.try.warning)
+                }else{
+                    kind <- base::c(kind, "OK")
+                    problem <- base::c(problem, FALSE)
+                    res <- base::c(res, "")
+                }
+                if(plot.fun == TRUE){
+                    base::invisible(grDevices::dev.set(window.nb))
+                    plot.count <- plot.count + 1
+                    tempo.title <- base::paste0("test_", base::sprintf(base::paste0("%0", base::nchar(total.comp.nb), "d"), base::ifelse(parall == FALSE, count, x[count])))
+                    if(plot.kind == "classic"){ # not ggplot. So title has to be added in a classical way
+                        # graphics::par(ann=FALSE, xaxt="n", yaxt="n", mar = base::rep(1, 4), bty = "n", xpd = NA) # old
+                        graphics::par(bty = "n", xpd = NA) # new
+                        base::eval(base::parse(text = fun.test))
+                        # base::plot(1, 1, type = "n") # no display with type = "n"
+                        x.left.dev.region <- (graphics::par("usr")[1] - ((graphics::par("usr")[2] - graphics::par("usr")[1]) / (graphics::par("plt")[2] - graphics::par("plt")[1])) * graphics::par("plt")[1] - ((graphics::par("usr")[2] - graphics::par("usr")[1]) / ((graphics::par("omd")[2] - graphics::par("omd")[1]) * (graphics::par("plt")[2] - graphics::par("plt")[1]))) * graphics::par("omd")[1])
+                        y.top.dev.region <- (graphics::par("usr")[4] + ((graphics::par("usr")[4] - graphics::par("usr")[3]) / (graphics::par("plt")[4] - graphics::par("plt")[3])) * (1 - graphics::par("plt")[4]) + ((graphics::par("usr")[4] - graphics::par("usr")[3]) / ((graphics::par("omd")[4] - graphics::par("omd")[3]) * (graphics::par("plt")[4] - graphics::par("plt")[3]))) * (1 - graphics::par("omd")[4]))
+                        text(x = x.left.dev.region, y = y.top.dev.region, labels = tempo.title, adj=base::c(0, 1), cex = 1.5)
+                    }else if(plot.kind == "special"){ # ggplot. title has been added above
+                        base::eval(base::parse(text = fun.test))
+                    }else{
+                        tempo.cat <- base::paste0("INTERNAL CODE ERROR 1 IN ", function.name, " OF THE ", package.name, " PACKAGE: CODE HAS TO BE MODIFIED")
+                        base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
+                    }
+                }
+            }
+            if(print.count.loop == print.count){
+                print.count.loop <- 0
+                tempo.time <- base::as.numeric(base::Sys.time())
+                tempo.lapse <- base::round(lubridate::seconds_to_period(tempo.time - ini.time))
+                final.loop <- (tempo.time - ini.time) / count * base::ifelse(parall == FALSE, total.comp.nb, base::length(x)) # expected duration in seconds # intra nb.compar loop lapse: time lapse / cycles done * cycles remaining
+                final.exp <- base::as.POSIXct(final.loop, origin = ini.date)
+                base::cat(base::paste0(base::ifelse(parall == FALSE, "\n", base::paste0("\nIN PROCESS ", process.id, " | ")), "LOOP ", base::format(count, big.mark=","), " / ", base::format(base::ifelse(parall == FALSE, total.comp.nb, base::length(x)), big.mark=","), " | TIME SPENT: ", tempo.lapse, " | EXPECTED END: ", final.exp))
+            }
+            if(count == base::ifelse(parall == FALSE, total.comp.nb, base::length(x))){
+                tempo.time <- base::as.numeric(base::Sys.time())
+                tempo.lapse <- base::round(lubridate::seconds_to_period(tempo.time - ini.time))
+                base::cat(base::paste0(base::ifelse(parall == FALSE, "\nLOOP PROCESS ENDED | ", base::paste0("\nPROCESS ", process.id, " ENDED | ")), "LOOP ", base::format(count, big.mark=","), " / ", base::format(base::ifelse(parall == FALSE, total.comp.nb, base::length(x)), big.mark=","), " | TIME SPENT: ", tempo.lapse, "\n\n"))
+            }
         ', 
         end.loop.string
     )
