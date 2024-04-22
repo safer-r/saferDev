@@ -4,12 +4,14 @@
 \alias{is_package_here}
 \title{is_package_here}
 \usage{
-is_package_here(req.package, lib.path = NULL)
+is_package_here(req.package, lib.path = NULL, safer_check = TRUE)
 }
 \arguments{
 \item{req.package}{Character vector of package names to check.}
 
 \item{lib.path}{Character vector specifying the absolute pathways of the directories containing the listed packages in the req.package argument, if not in the default directories. If NULL, the function checks only in the .libPaths() default R library folders.}
+
+\item{safer_check}{Single logical value. Perform some "safer" checks (see https://github.com/safer-r)? If TRUE, checkings are performed before main code running: 1) R classical operators (like "<-") not overwritten by another package because of the R scope and 2) required functions and related packages effectively present in local R lybraries. Set to FALSE if this fonction is used inside another "safer" function to avoid pointless multiple checkings.}
 }
 \value{
 An error message if at least one of the checked packages is missing in lib.path, nothing otherwise.
@@ -19,8 +21,9 @@ Check if required packages are installed locally.
 }
 \examples{
 # is_package_here(req.package = "nopackage") # commented because this example returns an error
+
 is_package_here(req.package = "ggplot2")
 
-# is_package_here(req.package = "ggplot2", lib.path = "C:/Users/yhan/AppData/Local/R/win-library/4.3") 
-# commented because this example returns an error if the lib.path argument is not an existing directory
+#' # is_package_here(req.package = "ggplot2", lib.path = "C:/Users/yhan/AppData/Local/R/win-library/4.3") # commented because this example returns an error if the lib.path argument is not an existing directory
+
 }

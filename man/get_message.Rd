@@ -10,7 +10,8 @@ get_message(
   header = TRUE,
   print.no = FALSE,
   text = NULL,
-  env = NULL
+  env = NULL,
+  safer_check = TRUE
 )
 }
 \arguments{
@@ -25,6 +26,8 @@ get_message(
 \item{text}{Single character string added to the output message (even if no message exists and print.no is TRUE). Inactivated if the header argument is FALSE. Write NULL if not required.}
 
 \item{env}{The name of an existing environment. Write NULL if not required.}
+
+\item{safer_check}{Single logical value. Perform some "safer" checks (see https://github.com/safer-r)? If TRUE, checkings are performed before main code running: 1) R classical operators (like "<-") not overwritten by another package because of the R scope and 2) required functions and related packages effectively present in local R lybraries. Set to FALSE if this fonction is used inside another "safer" function to avoid pointless multiple checkings.}
 }
 \value{
 The message or NULL if no message and print.no is FALSE.
@@ -44,8 +47,7 @@ Always use the env argument when get_message() is used inside functions.
 The function does not prevent printing if print() is used inside the instruction tested. To prevent that, use tempo <- utils::capture.output(error <- get_message(data = "arg_check(data = 'a', class = mean, neg.values = FALSE, print = TRUE)")). The return of get_message() is assigned into error and the printed messages are captured by utils::capture.output() and assigned into tempo. See the examples.
 }
 \examples{
-get_message(data = "wilcox.test(c(1,1,3), c(1, 2, 4), paired = TRUE)", kind = "error", 
-print.no = TRUE, text = "IN A")
+get_message(data = "wilcox.test(c(1,1,3), c(1, 2, 4), paired = TRUE)", kind = "error", print.no = TRUE, text = "IN A")
 
 get_message(data = "wilcox.test(c(1,1,3), c(1, 2, 4), paired = TRUE)", kind = "warning", 
 print.no = TRUE, text = "IN A")
