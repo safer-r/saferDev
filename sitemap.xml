@@ -34,6 +34,9 @@
     <loc>/articles/saferDev.html</loc>
   </url>
   <url>
+    <loc>/articles/two_colons_check.html</loc>
+  </url>
+  <url>
     <loc>/authors.html</loc>
   </url>
   <url>
@@ -68,5 +71,8 @@
   </url>
   <url>
     <loc>/reference/report.html</loc>
+  </url>
+  <url>
+    <loc>/reference/two_colons_check.html</loc>
   </url>
 </urlset>
