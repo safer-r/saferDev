@@ -4,13 +4,7 @@
 #' @param x a function name, written without quotes and brackets.
 #' @param safer_check Single logical value. Perform some "safer" checks (see https://github.com/safer-r) ? If TRUE, two_colons_check() checks before running that 1) the R scope for R operators (like "<-") is not overwritten by another package and 2) functions and related packages used are present in R lybraries. Set to FALSE if two_colons_check() is used inside another "safer" function to avoid pointless multiple checking.
 #' @returns 
-#' A message indicating the missing ::
-#' 
-#'- §problem: logical. Is there any problem detected?
-#' 
-#'- §text: message indicating the details of the problem, or the absence of problem.
-#' 
-#' - §object.name: value of the data.name argument (i.e., name of the checked object if provided, NULL otherwise).
+#' A message indicating the missing :: or a message saying that everything seems fine.
 #' @details
 #' - More precisely, two_colons_check() verifies that all the strings before an opening bracket "(" are preceeded by "::"
 #' 
@@ -139,7 +133,7 @@ two_colons_check <- function(
     fun <- base::unlist(base::sapply(X = s, FUN = function(x){base::ls(x, all.names = TRUE)})) # all the basic functions of R in all the scope
     # end recovering the basic functions of R
     # recovering the input function string
-    ini <- base::paste0(base::deparse(x), collapse = "\\n") # recovering as single string separated by \\n (and not \n to avoid the eval(\n) when printing the error message)
+    ini <- base::paste0(base::deparse(x), collapse = " \\n ") # recovering as single string separated by \\n (and not \n to avoid the eval(\n) when printing the error message)
     ini <- base::gsub(x = ini, pattern = " +", replacement = " ") # removal of multiple spaces
     # end recovering the input function string
     # all function names in x
