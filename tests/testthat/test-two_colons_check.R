@@ -14,7 +14,7 @@ test_that("two_colons_check function works correctly", {
   fun2 <- function(mat1){
     nc <- base::ncol(mat1)
     means <- numeric(nc)
-    fot (i in 1:nc){
+    for (i in 1:nc){
       means[i] <- mean(mat1[,i])
     }
     base::return(means)
