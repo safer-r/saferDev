@@ -24,7 +24,7 @@ A message indicating the missing ::
 Verify that all the functions used inside a function are all referenced by their package attribution. For instance: base::mean()
 }
 \details{
-- #' More precisely, two_colons_check() verifies that all the strings before an opening bracket "(" are preceeded by "::"
+- More precisely, two_colons_check() verifies that all the strings before an opening bracket "(" are preceeded by "::"
 
 - The regex used is: "\\b[a-zA-Z.]{1}[a-zA-Z0-9._]+\\b(?= *\\()"
  
