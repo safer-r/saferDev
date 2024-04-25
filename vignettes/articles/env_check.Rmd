@@ -53,6 +53,7 @@ env_check(name = "mean") # check if the object "mean" is in the environment one 
 mean <- 2
 env_check(
     pos = 1,
-    name = "mean"
+    name = "mean",
+    safer_check = TRUE
 ) # check if the object "mean" is in the environment one step above the env_check() environment, and if yes, returns if the same name exists in above environments
 ```
