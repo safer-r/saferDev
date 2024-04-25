@@ -12,13 +12,7 @@ two_colons_check(x, safer_check = TRUE)
 \item{safer_check}{Single logical value. Perform some "safer" checks (see https://github.com/safer-r) ? If TRUE, two_colons_check() checks before running that 1) the R scope for R operators (like "<-") is not overwritten by another package and 2) functions and related packages used are present in R lybraries. Set to FALSE if two_colons_check() is used inside another "safer" function to avoid pointless multiple checking.}
 }
 \value{
-A message indicating the missing ::
-
-- §problem: logical. Is there any problem detected?
-
-- §text: message indicating the details of the problem, or the absence of problem.
-
-- §object.name: value of the data.name argument (i.e., name of the checked object if provided, NULL otherwise).
+A message indicating the missing :: or a message saying that everything seems fine.
 }
 \description{
 Verify that all the functions used inside a function are all referenced by their package attribution. For instance: base::mean()
