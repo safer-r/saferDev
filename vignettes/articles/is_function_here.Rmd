@@ -48,7 +48,8 @@ is_function_here(
 ```{r, echo = TRUE, error = TRUE}
 is_function_here(
     fun = f,
-    lib.path = path
+    lib.path = path,
+    safer_check = TRUE
     ) # check if the function is present in the package, returns an error because the path doesn't exist
 ```
-```
+<br>
