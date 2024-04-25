@@ -1,6 +1,7 @@
 test_that("test if the function is in the package", {
     f <- "ggplot2::geom_point"
     path <- "blablabla"
+    f2 <- "base::sum"
     
     expect_error(object = is_function_here(
     fun = "wrongFct",
@@ -12,8 +13,8 @@ test_that("test if the function is in the package", {
         lib.path = path
     ), regexp = NULL)
 
-    expect_no_error(is_package_here(
-        fun = "grid::gpar",
+    expect_no_error(is_function_here(
+        fun = f2,
         lib.path = ".",
         safer_check = TRUE
     ))
