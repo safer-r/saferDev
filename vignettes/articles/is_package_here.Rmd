@@ -44,11 +44,21 @@ is_package_here(
 ```
 <br>
 
+### Argument safer_check
+```{r, echo = TRUE, error = TRUE}
+is_package_here(
+    req.package = req.pkg,
+    safer_check = TRUE
+    ) # check if the package is in the computer
+```
+<br>
+
 ### All the arguments
 ```{r, echo = TRUE, error = TRUE}
 is_package_here(
     req.package = req.pkg,
-    lib.path = path
+    lib.path = path,
+    safer_check = TRUE
     ) # check if the package is in the computer
 ```
 ```
