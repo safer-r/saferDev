@@ -15,7 +15,8 @@ test_that("test the function unique and compare the results", {
         plot.fun = FALSE, 
         export = TRUE, 
         res.path = ".", 
-        lib.path = NULL
+        lib.path = NULL,
+        safer_check = TRUE
     )
     ini.date <- Sys.time()
     ini.time <- as.numeric(ini.date)

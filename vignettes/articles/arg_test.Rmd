@@ -57,6 +57,7 @@ arg_test(
     plot.fun = FALSE, 
     export = TRUE, 
     res.path = ".", 
-    lib.path = NULL
+    lib.path = NULL,
+    safer_check = TRUE
 ) # check the function "mean" in the environment one step above the local environment
 ```
