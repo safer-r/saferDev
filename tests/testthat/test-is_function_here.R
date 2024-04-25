@@ -13,7 +13,7 @@ test_that("test if the function is in the package", {
     ), regexp = NULL)
 
     expect_no_error(is_package_here(
-        fun = "sum",
+        fun = "grid::gpar",
         lib.path = ".",
         safer_check = TRUE
     ))
