@@ -11,9 +11,9 @@ test_that("test if the function is in the package", {
         fun = f,
         lib.path = path
     ), regexp = NULL)
+})
 
-    expect_no_error(object = is_function_here(
-        fun = f,
-        lib.path = NULL,
-        safer_check = TRUE))
+# Test to check if function f exists and runs without errors
+test_that("Function f runs without errors", {
+  expect_no_error(is_function_here(fun = f, lib.path = NULL, safer_check = TRUE))
 })
