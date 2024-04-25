@@ -13,7 +13,7 @@ test_that("test if the package is in the computer", {
     ), regexp = NULL)
 
     expect_no_error(is_package_here(
-        req.package = req.pkg,
+        req.package = "utils",
         lib.path = ".",
         safer_check = TRUE
     ))
