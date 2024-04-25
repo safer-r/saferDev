@@ -138,9 +138,10 @@
 <div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a>mean <span class="ot">&lt;-</span> <span class="dv">2</span></span>
 <span id="cb7-2"><a href="#cb7-2" tabindex="-1"></a><span class="fu">env_check</span>(</span>
 <span id="cb7-3"><a href="#cb7-3" tabindex="-1"></a>    <span class="at">pos =</span> <span class="dv">1</span>,</span>
-<span id="cb7-4"><a href="#cb7-4" tabindex="-1"></a>    <span class="at">name =</span> <span class="st">"mean"</span></span>
-<span id="cb7-5"><a href="#cb7-5" tabindex="-1"></a>) <span class="co"># check if the object "mean" is in the environment one step above the env_check() environment, and if yes, returns if the same name exists in above environments</span></span>
-<span id="cb7-6"><a href="#cb7-6" tabindex="-1"></a><span class="sc">&gt;</span> [<span class="dv">1</span>] <span class="st">"SOME VARIABLES OF mean ARE ALSO PRESENT IN :</span><span class="sc">\n</span><span class="st">package:base: mean</span><span class="sc">\n</span><span class="st">"</span></span></code></pre></div>
+<span id="cb7-4"><a href="#cb7-4" tabindex="-1"></a>    <span class="at">name =</span> <span class="st">"mean"</span>,</span>
+<span id="cb7-5"><a href="#cb7-5" tabindex="-1"></a>    <span class="at">safer_check =</span> <span class="cn">TRUE</span></span>
+<span id="cb7-6"><a href="#cb7-6" tabindex="-1"></a>) <span class="co"># check if the object "mean" is in the environment one step above the env_check() environment, and if yes, returns if the same name exists in above environments</span></span>
+<span id="cb7-7"><a href="#cb7-7" tabindex="-1"></a><span class="sc">&gt;</span> [<span class="dv">1</span>] <span class="st">"SOME VARIABLES OF mean ARE ALSO PRESENT IN :</span><span class="sc">\n</span><span class="st">package:base: mean</span><span class="sc">\n</span><span class="st">"</span></span></code></pre></div>
 </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
     </nav></aside>
