@@ -39,7 +39,7 @@ Set of R functions for the development of R functions, written according to the 
 | Function | Description |
 | :--- | :--- |
 | **arg_check()** | Check expected values of arguments of functions: class, type, mode, length, restricted values panel, kind of numeric values in addition to the distinction between 'integer' and 'double' (proportion only? Inf values authorized? negative values authorized? Integers of type 'double'?). |
-| **arg_test()** | Test a set of values for a defined set of arguments of a function. Contrary to `testthat::test_that()`, the function test a batch of values and control only if an error is returned or not. |
+| **arg_test()** | Test a set of values for a defined set of arguments of a function. Contrary to `testthat::test_that()`, the function 1) test a batch of argument values and 2) does not control that the result is identical to an expected one but control only if an error is returned or not. |
 | **env_check()** | Verify that object names in the environment defined by the pos argument are identical or not to object names in the above environments (following R Scope). This can be used to verify that names used for objects inside a function or in the working environment do not override names of objects already present in the above R environments, following the R scope. |
 | **get_message()** | Return the error, warning or simple (non error non warning) message if ever exist of an instruction written between quotes. |
 | **is_function_here()** | Check if required functions are present in installed packages. This controls modifications in of function names package versions. |
@@ -89,14 +89,16 @@ See the GNU General Public License for more details at https://www.gnu.org/licen
 
 If you are using functions of *saferDev*, please cite: 
 
-> Han Y, Serizay J, Millot GA (2023). _The R saferDev package_.
+> Wang H, Han Y, Serizay J, Millot GA (2023). _The R saferDev package_.
 > <https://github.com/safer-r/saferDev/>.
 
 <br />
 
 ## Credits
 
-[Yushi Han](https://github.com/yushiHn/), Bioinformatics and Biostatistics Hub, Institut Pasteur, Paris, France
+[Haiding Wang](https://github.com/Tintin2710), Bioinformatics and Biostatistics Hub, Institut Pasteur, Paris, France
+
+[Yushi Han](https://github.com/yushiHn), Bioinformatics and Biostatistics Hub, Institut Pasteur, Paris, France
 
 [Jacques Serizai](https://github.com/js2264), Spatial Regulation of Genomes team, Institut Pasteur, Paris, France
 
