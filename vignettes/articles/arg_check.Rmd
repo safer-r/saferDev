@@ -192,6 +192,13 @@ fun1(arg1 = vec4) # error message because arg1 requires a vector of integers
 ```
 <br>
 
+### Argument safer_check
+```{r}
+arg_check(data = mat1, class = "matrix", safer_check = TRUE # with TRUE, checkings are performed before main code running
+)
+```
+<br>
+
 ### All the arguments
 ```{r}
 # See the examples of fun_info() to test different classes of objects
