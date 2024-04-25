@@ -14,8 +14,12 @@ test_that("test if the function is in the package", {
 })
 
 # Test to check if function f exists and runs without errors
-test_that("Function f runs without errors", {
+test_that("test if the function is in the package", {
   f2 <- "ggplot2::geom_line"
 
-  expect_no_error(is_function_here(fun = f2, lib.path = NULL, safer_check = TRUE))
+  expect_no_error(object = 
+  is_function_here(
+    fun = f2, 
+    lib.path = ".", 
+    safer_check = TRUE))
 })
