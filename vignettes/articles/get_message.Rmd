@@ -74,7 +74,7 @@ get_message(data = char1, kind = "warning", header = FALSE, print.no = TRUE, tex
 
 ### Argument safer_check
 ```{r}
-get_message(data = char2, print.no = TRUE, safer_check = TRUE) # check required functions and related packages effectively present in local R lybraries
+get_message(data = char2, safer_check = TRUE) # with TRUE, checkings are performed before main code running
 ```
 <br>
 

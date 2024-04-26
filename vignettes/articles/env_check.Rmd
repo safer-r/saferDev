@@ -50,7 +50,7 @@ env_check(name = "mean") # check if the object "mean" is in the environment one 
 
 ### Argument safer_check
 ```{r}
-env_check(name = 'mean', safer_check = TRUE) 
+env_check(safer_check = TRUE) # with TRUE, checkings are performed before main code running
 ```
 <br>
 
