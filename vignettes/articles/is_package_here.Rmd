@@ -49,7 +49,7 @@ is_package_here(
 is_package_here(
     req.package = req.pkg,
     safer_check = TRUE
-    ) # check if the package is in the computer
+    ) # check if the package is in the computer, safer_check = TRUE, checkings are performed before main code running 
 ```
 <br>
 

@@ -44,6 +44,15 @@ is_python_package_here(
 ```
 <br>
 
+### Argument safer_check
+```{r, echo = TRUE, error = TRUE}
+is_python_package_here(
+    req.package = req.pkg,
+    safer_check = TRUE
+    ) # check if the package is in the computer, safer_check = TRUE, checkings are performed before main code running 
+```
+<br>
+
 ### All the arguments
 ```{r, echo = TRUE, error = TRUE}
 is_python_package_here(

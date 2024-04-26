@@ -90,7 +90,8 @@ report(
     rownames.kept = TRUE, 
     vector.cat = TRUE, 
     noquote = FALSE, 
-    sep = 4
+    sep = 4,
+    safer_check = TRUE
 )
 # matrix mat2 will be print in the file "text.txt" in the path, with quote and row names being kept, and 4 lines after printing data
 ```

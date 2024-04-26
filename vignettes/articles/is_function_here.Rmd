@@ -44,6 +44,12 @@ is_function_here(
 ```
 <br>
 
+### Argument safer_check
+```{r, echo = TRUE, error = TRUE}
+is_function_here(safer_check = TRUE) # with TRUE, checkings are performed before main code running
+```
+<br>
+
 ### All the arguments
 ```{r, echo = TRUE, error = TRUE}
 is_function_here(
