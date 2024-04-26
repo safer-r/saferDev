@@ -1,14 +1,59 @@
 ---
 title: "two_colons_check"
 ---
+<br>
 
 ```{r, include = FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
-  comment = "#>"
+  comment = ">"
 )
 ```
 
 ```{r setup}
 library(saferDev)
 ```
+<br>
+
+### Datasets
+
+```{r}
+vec1 <- 3 
+vec2 <- 5 
+fun1 <- function(
+    vec1,
+    vec2
+  ){
+    output <- base::sum(vec1,vec3)
+    base::return(output)
+  }
+```
+<br>
+
+### Datasets info
+
+```{r}
+vec1 # vector of integers
+vec2 # vector of integers
+fun1 # function for adding two vectors
+```
+<br>
+
+### Argument x
+```{r, echo = TRUE, error = TRUE}
+two_colons_check(x = fun1) # check if all the R functions in the fun were preceded by the corresponding package
+```
+<br>
+
+### Argument safer_chek 
+```{r, echo = TRUE, error = TRUE}
+two_colons_check(safer_check = TRUE) # safer_check = TRUE, checkings are performed before main code running
+```
+<br>
+
+### All the arguments
+```{r, echo = TRUE, error = TRUE}
+two_colons_check(
+    x = fun1,safer_check = TRUE) # check if all the R functions in the fun were preceded by the corresponding package
+```
+<br>
