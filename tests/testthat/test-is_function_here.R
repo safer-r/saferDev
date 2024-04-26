@@ -15,7 +15,7 @@ test_that("test if the function is in the package", {
 
     expect_no_error(is_function_here(
         fun = f2,
-        lib.path = ".",
+        lib.path = NULL,
         safer_check = TRUE
     ))
 })
