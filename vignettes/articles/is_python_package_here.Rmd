@@ -50,6 +50,7 @@ is_python_package_here(
     req.package = "serpentine", 
     python.exec.path = ".", 
     python.lib.path = ".",
-    lib.path = "."
+    lib.path = ".",
+    safer_check =TRUE
 ) # check if the python package serpentine is present in the computer, returns an error if the package is not in the computer
 ```
