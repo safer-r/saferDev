@@ -74,3 +74,13 @@ get_message(data = 'gg_boxplot(data = obs1, y = "Time", categ = "Group1")',
 kind = "message", print.no = TRUE, text = "IN FUNCTION 1")
 
 }
+\seealso{
+\code{\link{try}}
+}
+\author{
+Gael Millot <gael.millot@pasteur.fr>
+
+Yushi Han <yushi.han2000@gmail.com>
+
+Haiding Wang <haiding.wang@etu.u-paris.fr>
+}
