@@ -124,3 +124,13 @@ lib.path = NULL)
 # lib.path = "C:\\Program Files\\R\\R-4.3.1\\library\\") 
 # BEWARE: ggplot2::geom_histogram does not work
 }
+\seealso{
+\code{\link{pdf}} to open a file for plotting output in PDF format, \code{\link[ggplot2]{ggsave}} to saves the last plot that you created or any ggplot object you specify to a file, including PDF
+}
+\author{
+Gael Millot <gael.millot@pasteur.fr>
+
+Yushi Han <yushi.han2000@gmail.com>
+
+Haiding Wang <haiding.wang@etu.u-paris.fr>
+}

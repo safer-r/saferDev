@@ -49,6 +49,10 @@
 #' @importFrom parallel clusterSplit
 #' @importFrom parallel clusterApply
 #' @importFrom parallel stopCluster
+#' @seealso \code{\link{pdf}} to open a file for plotting output in PDF format, \code{\link[ggplot2]{ggsave}} to saves the last plot that you created or any ggplot object you specify to a file, including PDF
+#' @author Gael Millot <gael.millot@pasteur.fr>
+#' @author Yushi Han <yushi.han2000@gmail.com>
+#' @author Haiding Wang <haiding.wang@etu.u-paris.fr>
 #' @examples
 #' arg_test(fun = "unique", arg = c("x", "incomparables"), 
 #' val = list(x = list(1:10, c(1,1,2,8), NA), incomparable = c(TRUE, FALSE, NA)))
