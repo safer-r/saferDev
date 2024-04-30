@@ -13,7 +13,7 @@ test_that("the function prints the warning message", {
     expected3 <- "NO ERROR MESSAGE REPORTED IN A"
     expect_equal(result3,expected3)
     
-    result4 <- get_message(
+    result5 <- get_message(
         data = char1, 
         kind = "warning", 
         header = FALSE,
@@ -22,6 +22,6 @@ test_that("the function prints the warning message", {
         env = NULL,
         safer_check = TRUE
     )
-    expected4 <- "simpleWarning in wilcox.test.default(c(1, 1, 3), c(1, 2, 4), paired = TRUE): impossible de calculer une p-value exacte avec des zéros\n"
-    expect_equal(result4, expected4)
+    expected5 <- "simpleWarning in wilcox.test.default(c(1, 1, 3), c(1, 2, 4), paired = TRUE): cannot compute exact p-value with zeroes\n"
+    expect_equal(result5, expected5)
 })
