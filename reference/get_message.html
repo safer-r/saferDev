@@ -116,6 +116,16 @@ Using argument print.no = FALSE, return NULL if no message, which is convenient 
 <p>Always use the env argument when get_message() is used inside functions.</p>
 <p>The function does not prevent printing if print() is used inside the instruction tested. To prevent that, use tempo &lt;- utils::capture.output(error &lt;- get_message(data = "arg_check(data = 'a', class = mean, neg.values = FALSE, print = TRUE)")). The return of get_message() is assigned into error and the printed messages are captured by utils::capture.output() and assigned into tempo. See the examples.</p>
     </div>
+    <div class="section level2">
+    <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
+    <div class="dont-index"><p><code><a href="https://rdrr.io/r/base/try.html" class="external-link">try</a></code></p></div>
+    </div>
+    <div class="section level2">
+    <h2 id="author">Author<a class="anchor" aria-label="anchor" href="#author"></a></h2>
+    <p>Gael Millot &lt;gael.millot@pasteur.fr&gt;</p>
+<p>Yushi Han &lt;yushi.han2000@gmail.com&gt;</p>
+<p>Haiding Wang &lt;haiding.wang@etu.u-paris.fr&gt;</p>
+    </div>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
