@@ -7,4 +7,13 @@ test_that("check if the object is in the environment one step above the env_chec
     )
     expected <- "SOME VARIABLES OF mean ARE ALSO PRESENT IN :\npackage:base: mean\n"
     expect_equal(result, expected)
+
+    sum <- "change"
+    result2 <- env_check(
+        pos = 1,
+        name = "sum",
+        safer_check = TRUE
+    )
+    expected2 <- "SOME VARIABLES OF sum ARE ALSO PRESENT IN :\npackage:base: mean sum\n"
+    expect_equal(result2, expected2)
 })

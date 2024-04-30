@@ -19,7 +19,7 @@
 #' Always use the env argument when get_message() is used inside functions.
 #' 
 #' The function does not prevent printing if print() is used inside the instruction tested. To prevent that, use tempo <- utils::capture.output(error <- get_message(data = "arg_check(data = 'a', class = mean, neg.values = FALSE, print = TRUE)")). The return of get_message() is assigned into error and the printed messages are captured by utils::capture.output() and assigned into tempo. See the examples.
-#' @seealso \code{\link{try}}
+#' @seealso \code{\link{try}} to catch errors and return an error object if there's an error, or the value of the expression if there's no error.
 #' @author Gael Millot <gael.millot@pasteur.fr>
 #' @author Yushi Han <yushi.han2000@gmail.com>
 #' @author Haiding Wang <haiding.wang@etu.u-paris.fr>
@@ -203,9 +203,7 @@ get_message <- function(
         }else{
             output <- tempo.error[1] #
         }
-    }else if(kind == "error" & base::
-    
-    is.null(tempo.error) & print.no == TRUE){
+    }else if(kind == "error" & base::is.null(tempo.error) & print.no == TRUE){
         output <- base::paste0("NO ERROR MESSAGE REPORTED", base::ifelse(base::is.null(text), "", " "), text)
     }else if(kind != "error" & ( ! base::is.null(tempo.error)) & print.no == TRUE){
         output <- base::paste0("NO ", base::ifelse(kind == "warning", "WARNING", "STANDARD (NON ERROR AND NON WARNING)"), " MESSAGE BECAUSE OF ERROR MESSAGE REPORTED", base::ifelse(base::is.null(text), "", " "), text)

@@ -12,6 +12,10 @@ test_that("the function prints the warning message", {
     result3 <- get_message(data = char2, print.no = TRUE, text = "IN A")
     expected3 <- "NO ERROR MESSAGE REPORTED IN A"
     expect_equal(result3,expected3)
+
+    result4 <- get_message(data = char2, kind = "error", print.no = TRUE, text = "IN A")
+    expected4 <- "NO ERROR MESSAGE REPORTED IN A"
+    expect_equal(result4,expected4)
     
     result5 <- get_message(
         data = char1, 
