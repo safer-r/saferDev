@@ -194,11 +194,9 @@ fun1(arg1 = vec4) # error message because arg1 requires a vector of integers
 
 ### Argument safer_check
 ```{r}
-arg_check(data = mat1, class = "matrix", safer_check = TRUE # safer_check = TRUE, checkings are performed before main code running
-)
+arg_check(data = mat1, class = "matrix", safer_check = TRUE) # safer_check = TRUE, checkings are performed before main code running
 
-arg_check(data = vec4, options = c("pearson", "spearman", "kendall"), safer_check = TRUE # safer_check = TRUE, checkings are performed before main code running
-)
+arg_check(data = vec4, options = c("pearson", "spearman", "kendall"), safer_check = TRUE) # safer_check = TRUE, checkings are performed before main code running
 ```
 <br>
 
