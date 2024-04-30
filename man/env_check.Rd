@@ -69,3 +69,13 @@ name = if(length(sys.calls()) >= test.pos)
 else{search()[ (1:length(search()))[test.pos - length(sys.calls())]]}) 
 # here is a way to have the name of the tested environment according to test.pos value
 }
+\seealso{
+\code{\link{exists}} to check if an object with a specific name already exists in an environment.
+}
+\author{
+Gael Millot <gael.millot@pasteur.fr>
+
+Yushi Han <yushi.han2000@gmail.com>
+
+Haiding Wang <haiding.wang@etu.u-paris.fr>
+}
