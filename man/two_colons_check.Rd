@@ -28,3 +28,10 @@ Verify that all the functions used inside a function are all referenced by their
 two_colons_check(mean)
 
 }
+\author{
+Gael Millot <gael.millot@pasteur.fr>
+
+Yushi Han <yushi.han2000@gmail.com>
+
+Haiding Wang <wanghaiding442@gmail.com>
+}
