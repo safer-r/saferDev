@@ -51,7 +51,7 @@
 #' @importFrom parallel stopCluster
 #' @author Gael Millot <gael.millot@pasteur.fr>
 #' @author Yushi Han <yushi.han2000@gmail.com>
-#' @author Haiding Wang <haiding.wang@etu.u-paris.fr>
+#' @author Haiding Wang <wanghaidingfr@126.com>
 #' @examples
 #' arg_test(fun = "unique", arg = c("x", "incomparables"), 
 #' val = list(x = list(1:10, c(1,1,2,8), NA), incomparable = c(TRUE, FALSE, NA)))
