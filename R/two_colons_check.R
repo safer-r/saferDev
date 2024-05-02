@@ -14,7 +14,9 @@
     # Dot at first position is removed (dur to stringr::str_extract_all() function ).
     # Function with dot at last position are not detected
 #' 
-#'  
+#' @author Gael Millot <gael.millot@pasteur.fr>
+#' @author Yushi Han <yushi.han2000@gmail.com>
+#' @author Haiding Wang <wanghaiding442@gmail.com>  
 #' @examples
 #' two_colons_check(mean)
 #' 
