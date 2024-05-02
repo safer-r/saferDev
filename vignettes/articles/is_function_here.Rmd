@@ -40,7 +40,7 @@ is_function_here(fun = f) # check if the package serpentine is in the computer
 is_function_here(
     fun = f,
     lib.path = "."
-    ) # check if the function is present in the package
+) # check if the function is present in the package
 ```
 <br>
 
@@ -56,7 +56,7 @@ is_function_here(
     fun = f,
     lib.path = path,
     safer_check = TRUE
-    ) # check if the function is present in the package, returns an error because the path doesn't exist
+) # check if the function is present in the package, returns an error because the path doesn't exist
 ```
 <br>
 

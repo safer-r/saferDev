@@ -18,10 +18,13 @@ library(saferDev)
 ### Datasets
 ```{r}
 f <- "unique"
+f2 <- "plot"
 argum <- c("x", "incomparables")
+argum2 <- c("x", "y")
 value <- list(x = list(1:10, c(1,1,2,8), NA), incomparable = c(TRUE, FALSE, NA))
-value2 <- list(x = list(1:10, c(1,1,2,8), NA),incomparable = c(TRUE, FALSE, NA))
+value2 <- list(x = list(1:10, 12:13, NA, (1:10)^2),y = list(1:10, NA, NA))
 error <- list(x = list(FALSE, FALSE, TRUE), incomparable = c(FALSE, FALSE, TRUE))
+error2 <- list(x = list(FALSE, TRUE, TRUE, FALSE), y = list(FALSE, TRUE, TRUE))
 ```
 <br>
 
@@ -44,15 +47,29 @@ arg_test(
 )
 
 arg_test(
+    fun = f2, 
+    arg = argum2, 
+    val = value2
+)
+
+arg_test(
     fun = f, 
     arg = argum, 
-    val = value2,
+    val = value,
     export = TRUE,
     res.path = getwd()
 )
+
+arg_test(
+    fun = f2, 
+    arg = argum2, 
+    val = value2,
+    expect.error = error2,
+    plot.fun = TRUE,
+    res.path = "."
+)
 ```
 <br>
-
 
 ### All the arguments
 ```{r}

@@ -58,25 +58,41 @@ report(data = vec2, overwrite = TRUE, path = ".") # if the file exists, the outp
 
 ### Argument rownames.kept
 ```{r, echo = TRUE, error = TRUE}
-report(data = mat1, rownames.kept = TRUE, path = ".") # keep the row names when print the matrix mat1 in the file
+report(
+  data = mat1, 
+  rownames.kept = TRUE, 
+  path = "."
+) # keep the row names when print the matrix mat1 in the file
 ```
 <br>
 
 ### Argument vector.cat
 ```{r, echo = TRUE, error = TRUE}
-report(data = mat2, vector.cat = TRUE, path = ".") # print a vector of length > 1 using cat() instead of capture.output()
+report(
+  data = mat2, 
+  vector.cat = TRUE, 
+  path = "."
+) # print a vector of length > 1 using cat() instead of capture.output()
 ```
 <br>
 
 ### Argument noquote
 ```{r, echo = TRUE, error = TRUE}
-report(data = mat2, noquote = FALSE, path = ".") # quote are present for the characters.
+report(
+  data = mat2, 
+  noquote = FALSE, 
+  path = "."
+) # quote are present for the characters.
 ```
 <br>
 
 ### Argument sep
 ```{r, echo = TRUE, error = TRUE}
-report(data = vec1, sep = 4, path = ".") # 4 lines after printed data
+report(
+  data = vec1, 
+  sep = 4, 
+  path = "."
+) # 4 lines after printed data
 ```
 <br>
 

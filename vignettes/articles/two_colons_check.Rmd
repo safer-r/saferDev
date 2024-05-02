@@ -53,7 +53,6 @@ two_colons_check(safer_check = TRUE) # safer_check = TRUE, checkings are perform
 
 ### All the arguments
 ```{r, echo = TRUE, error = TRUE}
-two_colons_check(
-    x = fun1,safer_check = TRUE) # check if all the R functions in the fun were preceded by the corresponding package
+two_colons_check(x = fun1, safer_check = TRUE) # check if all the R functions in the fun were preceded by the corresponding package
 ```
 <br>

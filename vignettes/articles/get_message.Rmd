@@ -62,13 +62,22 @@ get_message(data = char1, print.no = TRUE) # print a message saying that no mess
 
 ### Argument text
 ```{r}
-get_message(data = char2, print.no = TRUE, text = "IN A") # print a message even if the argument print.no is TRUE
+get_message(
+    data = char2, 
+    print.no = TRUE, 
+    text = "IN A"
+) # print a message even if the argument print.no is TRUE
 ```
 <br>
 
 ### Argument kind, header, print.no, text
 ```{r}
-get_message(data = char1, kind = "warning", header = FALSE, print.no = TRUE, text = "IN A") # print the warning message in text
+get_message(
+    data = char1, 
+    kind = "warning", 
+    header = FALSE, 
+    print.no = TRUE, 
+    text = "IN A") # print the warning message in text
 ```
 <br>
 
