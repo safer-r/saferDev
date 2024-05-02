@@ -17,4 +17,10 @@ test_that("test if the package is in the computer", {
         lib.path = NULL,
         safer_check = TRUE
     ))
+
+    expect_no_error(is_package_here(
+        req.package = "graphics",
+        lib.path = NULL,
+        safer_check = TRUE
+    ))
 })

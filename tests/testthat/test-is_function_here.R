@@ -2,6 +2,7 @@ test_that("test if the function is in the package", {
     f <- "ggplot2::geom_point"
     path <- "blablabla"
     f2 <- "base::sum"
+    f3 <- "graphics::par"
     
     expect_error(object = is_function_here(
     fun = "wrongFct",
