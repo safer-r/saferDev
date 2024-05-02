@@ -7,7 +7,7 @@
 #' @seealso \code{\link{exists}} to check if an object with a specific name already exists in an environment.
 #' @author Gael Millot <gael.millot@pasteur.fr>
 #' @author Yushi Han <yushi.han2000@gmail.com>
-#' @author Haiding Wang <haiding.wang@etu.u-paris.fr>
+#' @author Haiding Wang <wanghaiding442@gmail.com>
 #' @examples
 #' # Example in the working environment
 #' 

@@ -40,7 +40,7 @@
 #' @seealso \code{\link{match.arg}} to check if a given argument value is one of a predefined set of options.
 #' @author Gael Millot <gael.millot@pasteur.fr>
 #' @author Yushi Han <yushi.han2000@gmail.com>
-#' @author Haiding Wang <haiding.wang@etu.u-paris.fr>
+#' @author Haiding Wang <wanghaiding442@gmail.com>
 #' @examples
 #' test <- matrix(1:3)
 #' # arg_check(data = test, print = TRUE, class = "vector", mode = "numeric")  # commented because this example returns an error

@@ -22,7 +22,7 @@
 #' @seealso \code{\link{try}} to catch errors and return an error object if there's an error, or the value of the expression if there's no error.
 #' @author Gael Millot <gael.millot@pasteur.fr>
 #' @author Yushi Han <yushi.han2000@gmail.com>
-#' @author Haiding Wang <haiding.wang@etu.u-paris.fr>
+#' @author Haiding Wang <wanghaiding442@gmail.com>
 #' @examples
 #' get_message(data = "wilcox.test(c(1,1,3), c(1, 2, 4), paired = TRUE)", kind = "error", print.no = TRUE, text = "IN A")
 #' 
