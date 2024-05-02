@@ -46,3 +46,10 @@ Log file function: print a character string or a data object into a same output 
 report(data = 1:3, output = "results.txt", path = ".", overwrite = TRUE, 
 rownames.kept = FALSE, vector.cat = FALSE, noquote = FALSE, sep = 2)
 }
+\author{
+Gael Millot <gael.millot@pasteur.fr>
+
+Yushi Han <yushi.han2000@gmail.com>
+
+Haiding Wang <wanghaiding442@gmail.com>
+}

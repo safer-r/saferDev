@@ -23,3 +23,10 @@ Check if required functions are present in installed packages. This controls mod
 # is_function_here(fun = "ggplot2::notgood") # commented because this example returns an error
 is_function_here(fun = c("ggplot2::geom_point", "grid::gpar"))
 }
+\author{
+Gael Millot <gael.millot@pasteur.fr>
+
+Yushi Han <yushi.han2000@gmail.com>
+
+Haiding Wang <wanghaiding442@gmail.com>
+}

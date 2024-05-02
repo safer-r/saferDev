@@ -51,3 +51,10 @@ for python 3.7. Previous versions return an error "Error in sys$stdout$flush() :
 
 # is_python_package_here(req.package = "serpentine", python.lib.path = "blablabla")
 }
+\author{
+Gael Millot <gael.millot@pasteur.fr>
+
+Yushi Han <yushi.han2000@gmail.com>
+
+Haiding Wang <wanghaiding442@gmail.com>
+}
