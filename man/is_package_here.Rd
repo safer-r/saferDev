@@ -27,6 +27,9 @@ is_package_here(req.package = "ggplot2")
 #' # is_package_here(req.package = "ggplot2", lib.path = "C:/Users/yhan/AppData/Local/R/win-library/4.3") # commented because this example returns an error if the lib.path argument is not an existing directory
 
 }
+\seealso{
+\code{\link{require}} to check if a package is installed, \code{\link{require}} to find the paths to one or more packages.
+}
 \author{
 Gael Millot <gael.millot@pasteur.fr>
 
