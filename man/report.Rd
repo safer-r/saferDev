@@ -46,6 +46,9 @@ Log file function: print a character string or a data object into a same output 
 report(data = 1:3, output = "results.txt", path = ".", overwrite = TRUE, 
 rownames.kept = FALSE, vector.cat = FALSE, noquote = FALSE, sep = 2)
 }
+\seealso{
+\code{\link{sink}} to redirect the output of R expressions to a connection, typically a file..
+}
 \author{
 Gael Millot <gael.millot@pasteur.fr>
 
