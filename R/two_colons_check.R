@@ -221,7 +221,7 @@ two_colons_check <- function(
     # end analyse of :: before basic functions in x
     if(base::any(tempo.log) | base::any(tempo.log.b)){
         tempo.cat <- base::paste(output.cat, base::ifelse(base::is.null(output.cat) | base::is.null(output.cat.b), "", "\n\n"), output.cat.b)
-        base::cat(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in stop() to be able to add several messages between ==
+        base::cat(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"))
     }else{
         base::cat("\n\nEVERYTHING SEEMS CLEAN\n\n")
     }
