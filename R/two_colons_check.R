@@ -11,7 +11,7 @@
 #' - The regex used is: "\\b[a-zA-Z.]{1}[a-zA-Z0-9._]+\\b(?= *\\()"
 #'  
 #' - The following R operators using bracket are not considered: "function", "if", "for", "while" and "repeat"
-    # Dot at first position is removed (dur to stringr::str_extract_all() function ).
+    # Dot at first position is removed (due to stringr::str_extract_all() function ).
     # Function with dot at last position are not detected
 #' 
 #' @author Gael Millot <gael.millot@pasteur.fr>
@@ -27,7 +27,7 @@ two_colons_check <- function(
 ){
 
     # DEBUGGING
-    # x = saferDev::get_message ; safer_check = TRUE
+    # x = get_message ; safer_check = TRUE # Warning: x = saferDev::get_message does not return the same number of code lines
     # package name
     package.name <- "saferDev"
     # end package name
@@ -124,18 +124,55 @@ two_colons_check <- function(
         result <- base::sub("\\($", "", matched_strings)
         base::return(result)
     }
+
+    create_message <- function(list.fun, list.fun.uni, list.line.nb, text){
+        pattern2 <- base::paste(base::paste0(list.fun.uni, "\\s*\\("), collapse = "|") # to split string according to basic function name as splitter
+        basic_ini <- ini[list.line.nb]
+        res <- base::strsplit(x = basic_ini, split = pattern2)
+        res <- base::lapply(res, FUN = function(x){x[-base::length(x)]}) # the last split section is removed because nothing to test at the end (end of code)
+        res2 <- base::lapply(X = res, FUN = function(x){base::substr(x, base::nchar(x)-1, base::nchar(x))})
+        base::names(res2) <- NULL
+        tempo.log <- base::lapply(X = res2, FUN = function(x){ ! x %in% "::"})
+        if( ! base::all(base::sapply(X = res2, FUN = function(x){base::length(x)}) == base::sapply(X = tempo.log, FUN = function(x){base::length(x)}))){
+            tempo.cat <- base::paste0("INTERNAL ERROR 5 IN ", function.name, " OF THE ", package.name, " PACKAGE: LENGTHS SHOULD BE IDENTICAL\nres2: ", base::paste(base::sapply(X = res2, FUN = function(x){base::length(x)}), collapse = " "), "\ntempo.log: ", base::paste(base::sapply(X = tempo.log, FUN = function(x){base::length(x)}), collapse = " "))
+            base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in stop() to be able to add several messages between ==
+        }
+        if(base::any(base::unlist(tempo.log))){
+            col1 <- unlist(mapply(FUN = function(x, y){rep(y, sum(x))}, x = tempo.log, y = list.line.nb))
+            col2 <- unlist(mapply(FUN = function(x, y){y[x]}, x = tempo.log, y = list.fun))
+            col3 <- unlist(mapply(FUN = function(x, y){y[x]}, x = tempo.log, y = res))
+            if( ! (base::length(col1) == base::length(col2) & base::length(col1) == base::length(col3) & base::length(col2) == base::length(col3))){
+                tempo.cat <- base::paste0("INTERNAL ERROR 5 IN ", function.name, " OF THE ", package.name, " PACKAGE: LENGTHS OF col1 (", base::length(col1), "), col2 (", base::length(col2), "), AND col3 (", base::length(col3), "), SHOULD BE EQUAL\n")
+                base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in stop() to be able to add several messages between ==
+            }
+            tempo.pos <- base::paste0(col1, "\t", col2, "\t", col3)
+            output.cat <- base::paste0(
+                "INSIDE ", arg.user.setting$x, "(), SOME :: ARE MISSING AT ", text, " FUNCTION POSITIONS:\n\n",
+                text, 
+                "_FUN_NB\tFUN\tSTRING_BEFORE\n",
+                base::paste(tempo.pos, collapse = "\n")
+            )
+        }else{
+            output.cat <- NULL
+        }
+        return(list(output.cat = output.cat, tempo.log = unlist(tempo.log)))
+    }
+
     # recovering the basic functions of R
     s <- base::c("package:stats", "package:graphics",  "package:grDevices", "package:utils", "package:datasets", "package:methods", "Autoloads", "package:base") # basic search() scope
     if(base::any( ! s %in% base::search())){
-        tempo.cat <- base::paste0(
-            "INTERNAL ERROR IN ", function.name, " OF THE ", package.name, " PACKAGE: THE base::search() SCOPE OF R HAS CHANGED.\nTHE PROBLEM IS:\n",
+        tempo.cat <- base::paste0("INTERNAL ERROR 1 IN ", function.name, " OF THE ", package.name, " PACKAGE: THE base::search() SCOPE OF R HAS CHANGED.\nTHE PROBLEM IS:\n",
             base::paste(s[ ! s %in% base::search()], collapse = "\n"))
         base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in stop() to be able to add several messages between ==
     }
     fun <- base::unlist(base::sapply(X = s, FUN = function(x){base::ls(x, all.names = TRUE)})) # all the basic functions of R in all the scope
     # end recovering the basic functions of R
     # recovering the input function string
-    ini <- base::paste0(base::deparse(x), collapse = " \\n ") # recovering as single string separated by \\n (and not \n to avoid the eval(\n) when printing the error message)
+    ini <- utils::capture.output(x)
+    code_line_nb <- 1:base::length(ini)
+    comment_line.log <- base::grepl(ini, pattern = "^ *#.*") # removal of the lines starting by #
+    code_line_nb <- code_line_nb[ ! comment_line.log]
+    # ini <- base::paste0(ini, collapse = " \\n ") # recovering as single string separated by \\n (and not \n to avoid the eval(\n) when printing the error message)
     ini <- base::gsub(x = ini, pattern = " +", replacement = " ") # removal of multiple spaces
     # end recovering the input function string
     # all function names in x
@@ -145,44 +182,45 @@ two_colons_check <- function(
     # - `[a-zA-Z0-9._]*`: This part of the pattern matches any uppercase letter (`A-Z`), lowercase letter (`a-z`), number (`0-9`), period (`.`), or underscore (`_`), repeated one or more times (`+`). This represents the possible characters inside an R function name.
     # - `\\b`: Again, these are word boundaries, making sure the pattern captures the entire word and not just part of it.
     # -  not used: `(?= *\\()`: This is a lookahead assertion. It checks that the preceding pattern is followed by any spaces and a parenthesis (`\\(`), but doesn't include the sapces and parenthesis in the match. This is because, in R code, a function call is usually followed by a parenthesis, but the parenthesis is not part of the function name.
-    fun_name <- extract_all(ini, pattern) # recover all the strings in pattern present in ini
-    fun_name_wo_op <- fun_name[ ! fun_name %in% base::c("function", "if", "for", "while", "repeat")] # removal of special functions
-    fun_name_wo_op_uni <- base::unique(fun_name_wo_op)
+    fun_name <- base::lapply(ini, FUN = function(x){extract_all(x, pattern)}) # recover all the function names (followed by "(") present in ini
+    fun_name_wo_op <- base::lapply(fun_name, FUN = function(x){x[ ! x %in% base::c("function", "if", "for", "while", "repeat")]})[ ! comment_line.log] # removal of special functions
+    tempo.log <- base::sapply(fun_name_wo_op, FUN = function(x){base::length(x) == 0}) # detection of string with empty function names
+    if(base::length(fun_name_wo_op) != base::length(code_line_nb)){
+        tempo.cat <- base::paste0("INTERNAL ERROR 2 IN ", function.name, " OF THE ", package.name, " PACKAGE: LENGTHS SHOULD BE IDENTICAL\nfun_name_wo_op: ", base::length(fun_name_wo_op), "\ncode_line_nb: ", base::length(code_line_nb))
+        base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in stop() to be able to add several messages between ==
+    }
+    fun_name_wo_op <- fun_name_wo_op[ ! tempo.log] # removal of empty string
+    code_line_nb <- code_line_nb[ ! tempo.log]
+    fun_name_wo_op_uni <- base::unlist(base::unique(fun_name_wo_op))
     # end all function names in x
+
     # basic function names in x
-    in_basic_fun <- fun_name_wo_op[fun_name_wo_op %in% fun] #  names of all the basic functions used in x
-    in_basic_fun_uni <- fun_name_wo_op_uni[fun_name_wo_op_uni %in% fun] #  names of unique basic functions used in x
+    in_basic_fun <- base::lapply(fun_name_wo_op, FUN = function(x){x[x %in% fun]}) #  names of all the basic functions used in x
+    tempo.log <- base::sapply(in_basic_fun, FUN = function(x){base::length(x) == 0}) # detection of string with empty function names
+    if(base::length(in_basic_fun) != base::length(code_line_nb)){
+        tempo.cat <- base::paste0("INTERNAL ERROR 3 IN ", function.name, " OF THE ", package.name, " PACKAGE: LENGTHS SHOULD BE IDENTICAL\nin_basic_fun: ", base::length(in_basic_fun), "\ncode_line_nb: ", base::length(code_line_nb))
+        base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in stop() to be able to add several messages between ==
+    }
+    in_basic_fun <- in_basic_fun[ ! tempo.log] # removal of empty string
+    in_basic_code_line_nb <- code_line_nb[ ! tempo.log]
+    in_basic_fun_uni <- base::unlist(base::unique(in_basic_fun)) #  names of unique basic functions used in x
     # end basic function names in x
     # other function names in x
-    in_other_fun <- fun_name_wo_op[ ! fun_name_wo_op %in% base::c(fun, arg.user.setting$x)] #  names of all the other functions used in x, except the one tested (arg.user.setting$x), because can be in error messages
-    in_other_fun_uni <- fun_name_wo_op_uni[ ! fun_name_wo_op_uni %in% base::c(fun, arg.user.setting$x)] #  names of unique basic functions used in x, except the one tested (arg.user.setting$x), because can be in error messages
+    in_other_fun <- base::lapply(fun_name_wo_op, FUN = function(x){x[ ! x %in% base::c(fun, arg.user.setting$x)]}) #  names of all the other functions used in x, except the one tested (arg.user.setting$x), because can be in error messages
+    tempo.log <- base::sapply(in_other_fun, FUN = function(x){base::length(x) == 0}) # detection of string with empty function names
+    if(base::length(in_other_fun) != base::length(code_line_nb)){
+        tempo.cat <- base::paste0("INTERNAL ERROR 4 IN ", function.name, " OF THE ", package.name, " PACKAGE: LENGTHS SHOULD BE IDENTICAL\nin_other_fun: ", base::length(in_other_fun), "\ncode_line_nb: ", base::length(code_line_nb))
+        base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in stop() to be able to add several messages between ==
+    }
+    in_other_fun <- in_other_fun[ ! tempo.log] # removal of empty string
+    in_other_code_line_nb <- code_line_nb[ ! tempo.log]
+    in_other_fun_uni <- base::unlist(base::unique(in_other_fun)) #  names of unique basic functions used in x, except the one tested (arg.user.setting$x), because can be in error messages
     # end other function names in x
     # analyse of :: before basic functions in x
     if(base::length(in_basic_fun_uni) > 0){
-        pattern2 <- base::paste(base::paste0(in_basic_fun_uni, "\\s*\\("), collapse = "|") # split string according to basic function name as splitter
-        res <- base::unlist(base::strsplit(x = ini, split = pattern2))
-        res <- res[-base::length(res)] # the last split section is removed because nothing to test at the end (end of code)
-        res2 <- base::sapply(X = res, FUN = function(x){base::substr(x, base::nchar(x)-1, base::nchar(x))})
-        base::names(res2) <- NULL
-        tempo.log <- ! res2 %in% "::"
-        if(base::any(tempo.log)){
-            col1 <- base::which(tempo.log)
-            col2 <- in_basic_fun[tempo.log]
-            col3 <- res[tempo.log]
-            if( ! (base::length(col1) == base::length(col2) & base::length(col1) == base::length(col3) & base::length(col2) == base::length(col3))){
-                tempo.cat <- base::paste0(
-                    "INTERNAL ERROR IN ", function.name, " OF THE ", package.name, " PACKAGE: LENGTHS OF col1 (", base::length(col1), "), col2 (", base::length(col2), "), AND col3 (", base::length(col3), "), SHOULD BE EQUAL\n")
-                base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in stop() to be able to add several messages between ==
-            }
-            tempo.pos <- base::paste0(col1, "\t", col2, "\t", col3)
-            output.cat <- base::paste0(
-                "INSIDE ", arg.user.setting$x, "(), SOME :: ARE MISSING AT BASIC FUNCTION POSITIONS:\n\n",
-                "BASIC_FUN_NB\tFUN\tSTRING_BEFORE\n",
-                base::paste(tempo.pos, collapse = "\n")
-            )
-        }else{
-            output.cat <- NULL
-        }
+        tempo <- create_message(list.fun = in_basic_fun, list.fun.uni = in_basic_fun_uni, list.line.nb = in_basic_code_line_nb, text = "BASIC")
+        tempo.log <- tempo$tempo.log
+        output.cat <- tempo$output.cat
     }else{
         tempo.log <- FALSE
         output.cat <- NULL
@@ -190,30 +228,9 @@ two_colons_check <- function(
     # end analyse of :: before basic functions in x
     # analyse of :: before other functions in x
     if(base::length(in_other_fun_uni) > 0){
-        pattern2.b <- base::paste(base::paste0(in_other_fun_uni, "\\s*\\("), collapse = "|") # split string according to basic function name as splitter
-        res.b <- base::unlist(base::strsplit(x = ini, split = pattern2.b))
-        res.b <- res.b[-base::length(res.b)] # the last split section is removed because nothing to test at the end (end of code)
-        res2.b <- base::sapply(X = res.b, FUN = function(x){base::substr(x, base::nchar(x)-1, base::nchar(x))})
-        base::names(res2.b) <- NULL
-        tempo.log.b <- ! res2.b %in% "::"
-        if(base::any(tempo.log.b)){
-            col1.b <- base::which(tempo.log.b)
-            col2.b <- in_other_fun[tempo.log.b]
-            col3.b <- res.b[tempo.log.b]
-            if( ! (base::length(col1.b) == base::length(col2.b) & base::length(col1.b) == base::length(col3.b) & base::length(col2.b) == base::length(col3.b))){
-                tempo.cat <- base::paste0(
-                    "INTERNAL ERROR IN ", function.name, " OF THE ", package.name, " PACKAGE: LENGTHS OF col1.b (", base::length(col1.b), "), col2.b (", base::length(col2.b), "), AND col3.b (", base::length(col3.b), "), SHOULD BE EQUAL\n")
-                base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in stop() to be able to add several messages between ==
-            }
-            tempo.pos.b <- base::paste0(col1.b, "\t", col2.b, "\t", col3.b)
-            output.cat.b <- base::paste0(
-                "INSIDE ", arg.user.setting$x, "(), SOME :: ARE MISSING AT OTHER FUNCTION POSITIONS:\n\n",
-                "OTHER_FUN_NB\tFUN\tSTRING_BEFORE\n",
-                base::paste(tempo.pos.b, collapse = "\n")
-            )
-        }else{
-            output.cat.b <- NULL
-        }
+        tempo <- create_message(list.fun = in_other_fun, list.fun.uni = in_other_fun_uni, list.line.nb = in_other_code_line_nb, text = "OTHER")
+        tempo.log.b <- tempo$tempo.log
+        output.cat.b <- tempo$output.cat
     }else{
         tempo.log.b <- FALSE
         output.cat.b <- NULL
