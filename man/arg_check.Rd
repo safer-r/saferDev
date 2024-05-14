@@ -86,7 +86,7 @@ test <- matrix(1:3)
 # arg_check(data = test, print = TRUE, class = "vector", mode = "numeric")  # commented because this example returns an error
 }
 \seealso{
-\code{\link{match.arg}} to check if a given argument value is one of a predefined set of options.
+\code{\link{match.arg}} .
 }
 \author{
 Gael Millot <gael.millot@pasteur.fr>

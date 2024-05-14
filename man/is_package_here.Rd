@@ -28,7 +28,7 @@ is_package_here(req.package = "ggplot2")
 
 }
 \seealso{
-\code{\link{require}} to check if a package is installed, \code{\link{require}} to find the paths to one or more packages.
+\code{\link{require}}.
 }
 \author{
 Gael Millot <gael.millot@pasteur.fr>

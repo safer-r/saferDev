@@ -24,7 +24,7 @@ Check if required functions are present in installed packages. This controls mod
 is_function_here(fun = c("ggplot2::geom_point", "grid::gpar"))
 }
 \seealso{
-\code{\link{exists}} to check if a function exists in a package's namespace, \code{\link[methods]{findFunction}}
+\code{\link{exists}}, \code{\link[methods]{findFunction}}
 }
 \author{
 Gael Millot <gael.millot@pasteur.fr>

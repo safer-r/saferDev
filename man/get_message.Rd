@@ -75,7 +75,7 @@ kind = "message", print.no = TRUE, text = "IN FUNCTION 1")
 
 }
 \seealso{
-\code{\link{try}} to catch errors and return an error object if there's an error, or the value of the expression if there's no error.
+\code{\link{try}} .
 }
 \author{
 Gael Millot <gael.millot@pasteur.fr>
