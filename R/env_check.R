@@ -81,7 +81,8 @@ env_check <- function(
     if(safer_check == TRUE){
         .base_op_check(
             external.function.name = function.name,
-            external.package.name = package.name)
+            external.package.name = package.name
+        )
     }
     # end critical operator checking
     # package checking
@@ -121,9 +122,9 @@ env_check <- function(
     if( ! (base::all(base::class(arg.user.setting) %in% base::c("list", "NULL"), na.rm = TRUE) & base::length(arg.user.setting) == 0)){
         tempo.arg <- base::names(arg.user.setting) # values provided by the user
         tempo.log <- base::suppressWarnings(base::sapply(base::lapply(base::lapply(tempo.arg, FUN = base::get, env = base::sys.nframe(), inherit = FALSE), FUN = base::is.na), FUN = base::any)) & base::lapply(base::lapply(tempo.arg, FUN = base::get, env = base::sys.nframe(), inherit = FALSE), FUN = base::length) == 1L # no argument provided by the user can be just NA
-        if(base::any(tempo.log) == TRUE){ # normally no NA because is.na() used here
+        if(base::any(tempo.log) == TRUE){ # normally no NA because base::is.na() used here
             tempo.cat <- base::paste0("ERROR IN ", function.name, " OF THE ", package.name, " PACKAGE: \n", base::ifelse(base::sum(tempo.log, na.rm = TRUE) > 1, "THESE ARGUMENTS", "THIS ARGUMENT"), " CANNOT JUST BE NA:", base::paste0(tempo.arg[tempo.log], collapse = "\n"))
-            base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in stop() to be able to add several messages between ==
+            base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
         }
     }
     # end management of NA arguments
@@ -133,9 +134,9 @@ env_check <- function(
         "safer_check"
     )
     tempo.log <- base::sapply(base::lapply(tempo.arg, FUN = base::get, env = base::sys.nframe(), inherit = FALSE), FUN = base::is.null)
-    if(base::any(tempo.log) == TRUE){# normally no NA with is.null()
+    if(base::any(tempo.log) == TRUE){# normally no NA with base::is.null()
         tempo.cat <- base::paste0("ERROR IN ", function.name, " OF THE ", package.name, " PACKAGE:\n", base::ifelse(base::sum(tempo.log, na.rm = TRUE) > 1, "THESE ARGUMENTS\n", "THIS ARGUMENT\n"), base::paste0(tempo.arg[tempo.log], collapse = "\n"),"\nCANNOT BE NULL")
-        base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in stop() to be able to add several messages between ==
+        base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
     }
     # end management of NULL arguments
     # code that protects set.seed() in the global environment
@@ -147,22 +148,22 @@ env_check <- function(
     # end second round of checking and data preparation
 
     # main code
-    # match.list <- vector("list", length = (length(sys.calls()) - 1 + length(search()) + ifelse(length(sys.calls()) == 1L, -1, 0))) # match.list is a list of all the environment tested (local of functions and R envs), length(sys.calls()) - 1 to remove the level of the env_check() function, sys.calls() giving all the names of the imbricated functions, including env_check, ifelse(length(sys.calls()) == 1L, -1, 0) to remove Global env if this one is tested
+    # match.list <- base::vector("list", length = (base::length(base::sys.calls()) - 1 + base::length(base::search()) + base::ifelse(base::length(base::sys.calls()) == 1L, -1, 0))) # match.list is a list of all the environment tested (local of functions and R envs), base::length(base::sys.calls()) - 1 to remove the level of the ebase::nv_check() function, base::sys.calls() giving all the names of the imbricated functions, including env_check, base::ifelse(base::length(sys.calls()) == 1L, -1, 0) to remove Global env if this one is tested
     tempo.name <- base::rev(base::as.character(base::unlist(base::sys.calls()))) # get names of frames (i.e., enclosed env)
     tempo.frame <- base::rev(base::sys.frames())  # get frames (i.e., enclosed env)
     # dealing with source()
     # source() used in the Global env creates three frames above the Global env, which should be removed because not very interesting for variable duplications. Add a <<-(sys.frames()) in this code and source anova_contrasts code to see this. With ls(a[[4]]), we can see the content of each env, which are probably elements of source()
     if(base::any(base::sapply(tempo.frame, FUN = base::environmentName) %in% "R_GlobalEnv")){
         global.pos <- base::which(base::sapply(tempo.frame, FUN = base::environmentName) %in% "R_GlobalEnv")
-        # remove the global env (because already in search(), and all the oabove env
+        # remove the global env (because already in base::search(), and all the oabove env
         tempo.name <- tempo.name[-base::c(global.pos:base::length(tempo.frame))]
         tempo.frame <- tempo.frame[-base::c(global.pos:base::length(tempo.frame))]
     }
     # end dealing with source()
     # might have a problem if(length(tempo.name) == 0L){
-    match.list <- base::vector("list", length = base::length(tempo.name) + base::length(base::search())) # match.list is a list of all the environment tested (local of functions and R envs), length(sys.calls()) - 1 to remove the level of the env_check() function, sys.calls() giving all the names of the imbricated functions, including env_check, ifelse(length(sys.calls()) == 1L, -1, 0) to remove Global env if this one is tested
-    ls.names <- base::c(tempo.name, base::search()) # names of the functions + names of the search() environments
-    ls.input <- base::c(tempo.frame, base::as.list(base::search())) # environements of the functions + names of the search() environments
+    match.list <- base::vector("list", length = base::length(tempo.name) + base::length(base::search())) # match.list is a list of all the environment tested (local of functions and R envs), base::length(base::sys.calls()) - 1 to remove the level of the env_check() function, base::sys.calls() giving all the names of the imbricated functions, including env_check, base::ifelse(base::length(base::sys.calls()) == 1L, -1, 0) to remove Global env if this one is tested
+    ls.names <- base::c(tempo.name, base::search()) # names of the functions + names of the base::search() environments
+    ls.input <- base::c(tempo.frame, base::as.list(base::search())) # environements of the functions + names of the base::search() environments
     base::names(match.list) <- ls.names # 
     match.list <- match.list[-base::c(1:(pos + 1))] # because we check only above pos
     ls.tested <- ls.input[[pos + 1]]
