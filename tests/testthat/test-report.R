@@ -12,13 +12,11 @@ test_that("report function works correctly", {
 
 
   # Simple examples
-  test_that("handles simple examples", {
     expect_no_error(report(data = vec1, path = "."))
     expect_no_error(report(data = vec2, path = "."))
     expect_no_error(report(data = mat1, path = "."))
     expect_no_error(report(data = mat2, path = "."))
     expect_no_error(report(data = tab1, path = "."))
     expect_no_error(report(data = tab1, path = "."))
-  })
 })
 
