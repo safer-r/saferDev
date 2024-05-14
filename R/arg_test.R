@@ -113,7 +113,7 @@ arg_test <- function(
         safer_check = TRUE
 ){
     # DEBUGGING
-    # fun = "unique" ; arg = "x" ; val = list(x = list(1:3, mean)) ; expect.error = list(x = list(TRUE, TRUE)) ; parall = FALSE ; thread.nb = NULL ; plot.fun = FALSE ; export = FALSE ; res.path = "C:\\Users\\gmillot\\Desktop\\" ; lib.path = NULL ; print.count = 1; safer_check = TRUE # for function debugging
+    # fun = "unique" ; arg = "x" ; val = base::list(x = base::list(1:3, mean)) ; expect.error = base::list(x = base::list(TRUE, TRUE)) ; parall = FALSE ; thread.nb = NULL ; plot.fun = FALSE ; export = FALSE ; res.path = "C:\\Users\\gmillot\\Desktop\\" ; lib.path = NULL ; print.count = 1; safer_check = TRUE # for function debugging
     # package name
     package.name <- "saferDev"
     # end package name
@@ -138,16 +138,16 @@ arg_test <- function(
     if( ! base::is.null(lib.path)){
         if( ! base::all(base::typeof(lib.path) == "character")){ # no na.rm = TRUE with typeof
             tempo.cat <- base::paste0("ERROR IN ", function.name, " OF THE ", package.name, " PACKAGE: DIRECTORY PATH INDICATED IN THE lib.path ARGUMENT MUST BE A VECTOR OF CHARACTERS:\n", base::paste(lib.path, collapse = "\n"))
-            base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in stop() to be able to add several messages between ==
+            base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
         }else if( ! base::all(base::dir.exists(lib.path), na.rm = TRUE)){ # separation to avoid the problem of tempo$problem == FALSE and lib.path == NA
             tempo.cat <- base::paste0("ERROR IN ", function.name, " OF THE ", package.name, " PACKAGE: DIRECTORY PATH INDICATED IN THE lib.path ARGUMENT DOES NOT EXISTS:\n", base::paste(lib.path, collapse = "\n"))
-            base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in stop() to be able to add several messages between ==
+            base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
         }else{
-            base::.libPaths(new = base::sub(x = lib.path, pattern = "/$|\\\\$", replacement = "")) # .libPaths(new = ) add path to default path. BEWARE: .libPaths() does not support / at the end of a submitted path. Thus check and replace last / or \\ in path
+            base::.libPaths(new = base::sub(x = lib.path, pattern = "/$|\\\\$", replacement = "")) # base::.libPaths(new = ) add path to default path. BEWARE: base::.libPaths() does not support / at the end of a submitted path. Thus check and replace last / or \\ in path
             lib.path <- base::.libPaths()
         }
     }else{
-        lib.path <- base::.libPaths() # .libPaths(new = lib.path) # or .libPaths(new = c(.libPaths(), lib.path))
+        lib.path <- base::.libPaths() # base::.libPaths(new = lib.path) # or base::.libPaths(new = base::c(base::.libPaths(), lib.path))
     }
     # end check of lib.path
     # check of the required function from the required packages
@@ -178,9 +178,9 @@ arg_test <- function(
         "val"
     )
     tempo <- base::eval(base::parse(text = base::paste0("base::c(base::missing(", base::paste0(mandat.args, collapse = "),base::missing("), "))")))
-    if(base::any(tempo)){ # normally no NA for missing() output
+    if(base::any(tempo)){ # normally no NA for base::missing() output
         tempo.cat <- base::paste0("ERROR IN ", function.name, " OF THE ", package.name, " PACKAGE: \nFOLLOWING ARGUMENT", base::ifelse(base::sum(tempo, na.rm = TRUE) > 1, "S HAVE", " HAS"), " NO DEFAULT VALUE AND REQUIRE ONE:\n", base::paste0(mandat.args, collapse = "\n"))
-        base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in stop() to be able to add several messages between ==
+        base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
     }
     # end arg with no default values
     # argument checking with arg_check()
@@ -232,7 +232,7 @@ arg_test <- function(
         tempo.log <- base::suppressWarnings(base::sapply(base::lapply(base::lapply(tempo.arg, FUN = get, env = base::sys.nframe(), inherit = FALSE), FUN = is.na), FUN = any)) & base::lapply(base::lapply(tempo.arg, FUN = get, env = base::sys.nframe(), inherit = FALSE), FUN = length) == 1L # no argument provided by the user can be just NA
         if(base::any(tempo.log, na.rm = TRUE) == TRUE){
             tempo.cat <- base::paste0("ERROR IN ", function.name, " OF THE ", package.name, " PACKAGE: \n", base::ifelse(base::sum(tempo.log, na.rm = TRUE) > 1, "THESE ARGUMENTS", "THIS ARGUMENT"), " CANNOT JUST BE NA:", base::paste0(tempo.arg[tempo.log], collapse = "\n"))
-            base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in stop() to be able to add several messages between ==
+            base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
         }
     }
     # end management of NA arguments
@@ -252,9 +252,9 @@ arg_test <- function(
         "safer_check"
     )
     tempo.log <- base::sapply(base::lapply(tempo.arg, FUN = base::get, env = base::sys.nframe(), inherit = FALSE), FUN = base::is.null)
-    if(base::any(tempo.log) == TRUE){# normally no NA with is.null()
+    if(base::any(tempo.log) == TRUE){# normally no NA with base::is.null()
         tempo.cat <- base::paste0("ERROR IN ", function.name, " OF THE ", package.name, " PACKAGE:\n", base::ifelse(base::sum(tempo.log, na.rm = TRUE) > 1, "THESE ARGUMENTS\n", "THIS ARGUMENT\n"), base::paste0(tempo.arg[tempo.log], collapse = "\n"),"\nCANNOT BE NULL")
-        base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in stop() to be able to add several messages between ==
+        base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
     }
     # end management of NULL arguments
     # code that protects set.seed() in the global environment
@@ -272,7 +272,7 @@ arg_test <- function(
     if( ! base::exists(fun)){
         tempo.cat <- base::paste0("ERROR IN ", function.name, " OF THE ", package.name, " PACKAGE: CHARACTER STRING IN fun ARGUMENT DOES NOT EXIST IN THE R WORKING ENVIRONMENT: ", base::paste(fun, collapse = "\n"))
         base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n", base::ifelse(base::is.null(warn), "", base::paste0("IN ADDITION\nWARNING", base::ifelse(warn.count > 1, "S", ""), ":\n\n", warn))), call. = FALSE)
-    }else if( ! base::all(base::class(base::get(fun)) == "function")){ # here no env = sys.nframe(), inherit = FALSE for get() because fun is a function in the classical scope
+    }else if( ! base::all(base::class(base::get(fun)) == "function")){ # here no env = base::sys.nframe(), inherit = FALSE for base::get() because fun is a function in the classical scope
         tempo.cat <- base::paste0("ERROR IN ", function.name, " OF THE ", package.name, " PACKAGE: fun ARGUMENT IS NOT CLASS \"function\" BUT: ", base::paste(base::class(base::get(fun)), collapse = "\n"), "\nCHECK IF ANY CREATED OBJECT WOULD HAVE THE NAME OF THE TESTED FUNCTION")
         base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n", base::ifelse(base::is.null(warn), "", base::paste0("IN ADDITION\nWARNING", base::ifelse(warn.count > 1, "S", ""), ":\n\n", warn))), call. = FALSE)
     }
@@ -280,7 +280,7 @@ arg_test <- function(
         tempo.cat <- base::paste0("ERROR IN ", function.name, " OF THE ", package.name, " PACKAGE: arg ARGUMENT CANNOT BE LENGTH 0")
         base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n", base::ifelse(base::is.null(warn), "", base::paste0("IN ADDITION\nWARNING", base::ifelse(warn.count > 1, "S", ""), ":\n\n", warn))), call. = FALSE)
     }
-    for(i2 in 1:base::length(val)){ # length(val) must be aequal to nb of arguments
+    for(i2 in 1:base::length(val)){ # base::length(val) must be aequal to nb of arguments
         tempo1 <- arg_check(data = val[[i2]], class = "vector", na.contain = TRUE, fun.name = function.name, safer_check = FALSE)
         tempo2 <- arg_check(data = val[[i2]], class = "list", na.contain = TRUE, fun.name = function.name, safer_check = FALSE)
         if(tempo1$problem == TRUE & tempo2$problem == TRUE){
@@ -294,14 +294,14 @@ arg_test <- function(
         tempo.cat <- base::paste0("ERROR IN ", function.name, " OF THE ", package.name, " PACKAGE: LENGTH OF arg ARGUMENT MUST BE IDENTICAL TO LENGTH OF val ARGUMENT:\nHERE IT IS: ", base::length(arg), " VERSUS ", base::length(val))
         base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n", base::ifelse(base::is.null(warn), "", base::paste0("IN ADDITION\nWARNING", base::ifelse(warn.count > 1, "S", ""), ":\n\n", warn))), call. = FALSE)
     }
-    args <- base::names(base::formals(base::get(fun))) # here no env = sys.nframe(), inherit = FALSE for get() because fun is a function in the classical scope
+    args <- base::names(base::formals(base::get(fun))) # here no env = base::sys.nframe(), inherit = FALSE for base::get() because fun is a function in the classical scope
     if( ! base::all(arg %in% args)){
         tempo.cat <- base::paste0("ERROR IN ", function.name, " OF THE ", package.name, " PACKAGE: SOME OF THE STRINGS IN arg ARE NOT ARGUMENTS OF fun\nfun ARGUMENTS: ", base::paste(args, collapse = " "),"\nPROBLEMATIC STRINGS IN arg: ", base::paste(arg[ ! arg %in% args], collapse = " "))
         base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n", base::ifelse(base::is.null(warn), "", base::paste0("IN ADDITION\nWARNING", base::ifelse(warn.count > 1, "S", ""), ":\n\n", warn))), call. = FALSE)
     }
     if(base::sum(base::sapply(val, FUN = base::length) > 1) > 43){
         tempo.cat <- base::paste0("ERROR IN ", function.name, " OF THE ", package.name, " PACKAGE: CANNOT TEST MORE THAN 43 ARGUMENTS IF THEY ALL HAVE AT LEAST 2 VALUES EACH\nHERE THE NUMBER IS: ", base::sum(base::sapply(val, FUN = base::length) > 1))
-        base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n", base::ifelse(base::is.null(warn), "",base:: paste0("IN ADDITION\nWARNING", base::ifelse(warn.count > 1, "S", ""), ":\n\n", warn))), call. = FALSE)
+        base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n", base::ifelse(base::is.null(warn), "",base::paste0("IN ADDITION\nWARNING", base::ifelse(warn.count > 1, "S", ""), ":\n\n", warn))), call. = FALSE)
     }
     if( ! base::is.null(expect.error)){
         if(base::length(val) != base::length(expect.error)){
@@ -366,7 +366,7 @@ arg_test <- function(
     env.name <- base::paste0("env", base::as.numeric(base::Sys.time()))
     if(base::exists(env.name, where = -1)){ # verify if still ok when info() is inside a function
         tempo.cat <- base::paste0("ERROR IN ", function.name, " OF THE ", package.name, " PACKAGE: ENVIRONMENT env.name ALREADY EXISTS. PLEASE RERUN ONCE")
-        base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in stop() to be able to add several messages between ==
+        base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
     }else{
         base::assign(env.name, base::new.env())
         base::assign("data", data, envir = base::get(env.name, envir = base::sys.nframe(), inherits = FALSE)) # data assigned in a new envir for test
@@ -587,7 +587,7 @@ arg_test <- function(
         }
         # end list of i numbers that will be split
         tempo.cat <- base::paste0("PARALLELIZATION INITIATED AT: ", ini.date)
-       base:: cat(base::paste0("\n", tempo.cat, "\n"))
+        base::cat(base::paste0("\n", tempo.cat, "\n"))
         tempo.thread.nb = parallel::detectCores(all.tests = FALSE, logical = TRUE) # detect the number of threads
         if(tempo.thread.nb < thread.nb){
             thread.nb <- tempo.thread.nb
@@ -598,7 +598,7 @@ arg_test <- function(
         tempo.cat <- base::paste0("SPLIT OF TEST NUMBERS IN PARALLELISATION:")
         base::cat(base::paste0("\n    ", tempo.cat, "\n"))
         cluster.list <- parallel::clusterSplit(Clust, 1:total.comp.nb) # split according to the number of cluster
-        utils::str(cluster.list) # using print(str()) add a NULL below the result
+        utils::str(cluster.list) # using base::print(utils::str()) add a NULL below the result
         base::cat("\n")
         paral.output.list <- parallel::clusterApply( # paral.output.list is a list made of thread.nb compartments, each made of n / thread.nb (mat theo column number) compartment. Each compartment receive the corresponding results of permut(), i.e., data (permuted mat1.perm), warning message, cor (final correlation) and count (number of permutations)
             cl = Clust,
