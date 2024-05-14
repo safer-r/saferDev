@@ -110,9 +110,9 @@ get_message <- function(
         "data"
     )
     tempo <- base::eval(base::parse(text = base::paste0("base::missing(", base::paste0(mandat.args, collapse = ") | base::missing("), ")")))
-    if(base::any(tempo)){ # normally no NA for missing() output
+    if(base::any(tempo)){ # normally no NA for base::missing() output
         tempo.cat <- base::paste0("ERROR IN ", function.name, " OF THE ", package.name, " PACKAGE\nFOLLOWING ARGUMENT", base::ifelse(base::sum(tempo, na.rm = TRUE) > 1, "S HAVE", "HAS"), " NO DEFAULT VALUE AND REQUIRE ONE:\n", base::paste0(mandat.args, collapse = "\n"))
-        base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in stop() to be able to add several messages between ==
+        base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
     }
     # end arg with no default values
     # argument checking with arg_check()
@@ -148,9 +148,9 @@ get_message <- function(
     if( ! (base::all(base::class(arg.user.setting) %in% base::c("list", "NULL"), na.rm = TRUE) & base::length(arg.user.setting) == 0)){
         tempo.arg <- base::names(arg.user.setting) # values provided by the user
         tempo.log <- base::suppressWarnings(base::sapply(base::lapply(base::lapply(tempo.arg, FUN = base::get, envir = base::sys.nframe(), inherits = FALSE), FUN = base::is.na), FUN = base::any)) & base::lapply(base::lapply(tempo.arg, FUN = base::get, envir = base::sys.nframe(), inherits = FALSE), FUN = base::length) == 1L # no argument provided by the user can be just NA
-        if(base::any(tempo.log) == TRUE){ # normally no NA because is.na() used here
+        if(base::any(tempo.log) == TRUE){ # normally no NA because base::is.na() used here
             tempo.cat <- base::paste0("ERROR IN ", function.name, " OF THE ", package.name, " PACKAGE\n", base::ifelse(base::sum(tempo.log, na.rm = TRUE) > 1, "THESE ARGUMENTS", "THIS ARGUMENT"), " CANNOT JUST BE NA:", base::paste0(tempo.arg[tempo.log], collapse = "\n"))
-            base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in stop() to be able to add several messages between ==
+            base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
         }
     }
     # end management of NA arguments
@@ -164,10 +164,10 @@ get_message <- function(
         # "env",  # inactivated because can be null
         "safer_check"
     )
-    tempo.log <- base::sapply(base::lapply(tempo.arg, FUN = base::get, envir = base::sys.nframe(), inherits = FALSE), FUN = is.null)
-    if(base::any(tempo.log) == TRUE){# normally no NA with is.null()
+    tempo.log <- base::sapply(base::lapply(tempo.arg, FUN = base::get, envir = base::sys.nframe(), inherits = FALSE), FUN = base::is.null)
+    if(base::any(tempo.log) == TRUE){# normally no NA with base::is.null()
         tempo.cat <- base::paste0("ERROR IN ", function.name, " OF THE ", package.name, " PACKAGE:\n", base::ifelse(base::sum(tempo.log, na.rm = TRUE) > 1, "THESE ARGUMENTS\n", "THIS ARGUMENT\n"), base::paste0(tempo.arg[tempo.log], collapse = "\n"),"\nCANNOT BE NULL")
-        base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in stop() to be able to add several messages between ==
+        base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
     }
     # end management of NULL arguments
     # code that protects set.seed() in the global environment
@@ -190,7 +190,7 @@ get_message <- function(
         tempo.error <- base::try(base::suppressMessages(base::suppressWarnings(ggplot2::ggplot_build(tempo.error))), silent = TRUE)[1]
     }
     if(base::exists("tempo.error", inherits = FALSE) == TRUE){ # inherits = FALSE avoid the portee lexical and thus the declared word
-        if( ! base::all(base::class(tempo.error) == "try-error")){ # deal with NULL and S4 objects. Old code:  ! (all(class(tempo.error) == "try-error") & any(grepl(x = tempo.error, pattern = "^Error|^error|^ERROR"))) but problem with S4 objects. Old code : if((length(tempo.error) > 0 & ! any(grepl(x = tempo.error, pattern = "^Error|^error|^ERROR"))) | (length(tempo.error) == 0) ){ but problem when tempo.error is a list but added this did not work: | ! all(class(tempo.error) == "character") # no NA returned using class()
+        if( ! base::all(base::class(tempo.error) == "try-error")){ # deal with NULL and S4 objects. Old code:  ! (base::all(base::class(tempo.error) == "try-error") & base::any(base::grepl(x = tempo.error, pattern = "^Error|^error|^ERROR"))) but problem with S4 objects. Old code : if((base::length(tempo.error) > 0 & ! base::any(base::grepl(x = tempo.error, pattern = "^Error|^error|^ERROR"))) | (base::length(tempo.error) == 0) ){ but problem when tempo.error is a list but added this did not work: | ! base::all(base::class(tempo.error) == "character") # no NA returned using base::class()
             tempo.error <- NULL
         }
     }else{
@@ -235,9 +235,9 @@ get_message <- function(
             }
         }, type = "message") # recover messages not warnings and not errors
         if(kind == "warning" & ! base::is.null(tempo.warn)){
-            if(base::length(tempo.warn) > 0){ # to avoid character(0)
+            if(base::length(tempo.warn) > 0){ # to avoid base::character(0)
                 if( ! base::any(base::sapply(tempo.warn, FUN = "grepl", pattern = "() FUNCTION:$"), na.rm = TRUE)){
-                    tempo.warn <- base::paste(base::unique(tempo.warn), collapse = "\n") # if FALSE, means that the tested data is a special function. If TRUE, means that the data is a standard function. In that case, the output of utils::capture.output() is two strings per warning messages: if several warning messages -> identical first string, which is removed in next messages by unique()
+                    tempo.warn <- base::paste(base::unique(tempo.warn), collapse = "\n") # if FALSE, means that the tested data is a special function. If TRUE, means that the data is a standard function. In that case, the output of utils::capture.output() is two strings per warning messages: if several warning messages -> identical first string, which is removed in next messages by base::unique()
                 }else{
                     tempo.warn <- base::paste(tempo.warn, collapse = "\n")
                 }
@@ -280,6 +280,6 @@ get_message <- function(
     # output
     # warning output
     # end warning output
-    base::return(output) # do not use cat() because the idea is to reuse the message
+    base::return(output) # do not use base::cat() because the idea is to reuse the message
     # end output
 }
