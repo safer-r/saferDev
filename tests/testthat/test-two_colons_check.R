@@ -22,8 +22,6 @@ test_that("two_colons_check function works correctly", {
 
   # Test cases
   # Simple examples
-  test_that("handles simple examples", {
     expect_no_error(two_colons_check(x = fun1))
     expect_no_error(two_colons_check(x = fun2))
-  })
 })
