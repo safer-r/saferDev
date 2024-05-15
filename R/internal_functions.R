@@ -37,7 +37,7 @@
     tempo.log <- base::grepl(x = fun, pattern = "^.+::.+$")
     if( ! base::all(tempo.log)){
         tempo.cat <- base::paste0("ERROR IN THE CODE OF THE ", external.function.name, " OF THE ", external.package.name, " PACKAGE.\nTHE STRING IN fun ARGUMENT MUST CONTAIN \"::\":\n", base::paste(fun[ ! tempo.log], collapse = "\n"))
-        base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in stop() to be able to add several messages between ==
+        base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
     }
     pkg.fun.name.list <- base::strsplit(fun, "::") # package in 1 and function in 2
     pkg.name <- base::sapply(X = pkg.fun.name.list, FUN = function(x){x[1]})
@@ -54,7 +54,7 @@
             ":\n", 
             base::paste(lib.path, collapse = "\n")
         )
-        base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in stop() to be able to add several messages between ==
+        base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
     }
     fun.log <- base::sapply(X = pkg.fun.name.list, FUN = function(x){base::exists(x[2], envir = base::asNamespace(x[1]))})
     if( ! base::all(fun.log)){
@@ -67,7 +67,7 @@
             "MISSING IN THE INSTALLED PACKAGE", 
             base::ifelse(base::length(tempo) == 1L, base::paste0(":\n", tempo), base::paste0("S:\n", base::paste(tempo, collapse = "\n")))
         )
-        base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in stop() to be able to add several messages between ==
+        base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
     }
     # end main code
 }
@@ -159,7 +159,7 @@
             "CANNOT BE PRESENT SOMEWHERE ELSE IN THE R SCOPE THAN IN \"package::base\":\n", 
             base::paste(base::paste(tempo.name, tempo.pos, sep = "\t"), collapse = "\n")
         )
-        base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in stop() to be able to add several messages between ==
+        base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
     }
     # end main code
 }
