@@ -1,0 +1,59 @@
+---
+title: "two_colons_check"
+---
+<br>
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = ">"
+)
+```
+
+```{r setup}
+library(saferDev)
+```
+<br>
+
+### Datasets
+
+```{r}
+fun1 <- function(){
+    base::sum(1, 3)
+  }
+
+fun2 <- function(){
+    sum(1, 3)
+  }
+```
+<br>
+
+### Datasets info
+
+```{r}
+fun1
+fun2
+```
+<br>
+
+### Argument x
+```{r, echo = TRUE, error = TRUE}
+two_colons_check(x = fun1) # a function name, written without quotes and brackets
+two_colons_check(x = fun2) # a function name, written without quotes and brackets
+```
+<br>
+
+### Argument safer_chek 
+```{r, echo = TRUE, error = TRUE}
+two_colons_check(x = fun1, safer_check = FALSE) # Single logical value. Perform some "safer" checks (see https://github.com/safer-r) ?
+```
+<br>
+
+### All the arguments
+```{r, echo = TRUE, error = TRUE}
+two_colons_check(
+    x = fun1, # a function name, written without quotes and brackets
+    safer_check = TRUE # Single logical value. Perform some "safer" checks (see https://github.com/safer-r) ?
+)
+```
+<br>
