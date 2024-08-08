@@ -91,14 +91,14 @@ arg_check <- function(
     if( ! base::is.null(fun.name)){ # I have to use this way to deal with every kind of class for fun.name
         if(base::all(base::class(fun.name) == "character")){ # base::all() without na.rm -> ok because base::class(NA) is "logical"
             if(base::length(fun.name) != 1){
-                tempo.cat <- base::paste0("ERROR IN arg_check() OF THE ", package.name, " PACKAGE: THE fun.name ARGUMENT MUST BE A CHARACTER VECTOR OF LENGTH 1: ", base::paste(fun.name, collapse = " "))
+                tempo.cat <- base::paste0("ERROR IN arg_check() OF THE ", package.name, " PACKAGE\nTHE fun.name ARGUMENT MUST BE A CHARACTER VECTOR OF LENGTH 1: ", base::paste(fun.name, collapse = " "))
                 base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
             }else if(base::any(base::is.na(fun.name))){ # normally no NA with base::is.na()
-                tempo.cat <- base::paste0("ERROR IN arg_check() OF THE ", package.name, " PACKAGE: NO ARGUMENT EXCEPT data AND options CAN HAVE NA VALUES\nPROBLEMATIC ARGUMENT IS fun.name")
+                tempo.cat <- base::paste0("ERROR IN arg_check() OF THE ", package.name, " PACKAGE\nNO ARGUMENT EXCEPT data AND options CAN HAVE NA VALUES\nPROBLEMATIC ARGUMENT IS fun.name")
                 base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
             }
         }else{
-            tempo.cat <- base::paste0("ERROR IN arg_check() OF THE ", package.name, " PACKAGE: THE fun.name ARGUMENT MUST BE A CHARACTER VECTOR OF LENGTH 1") # base::paste(fun.name, collapse = " ") removed here because does not work with objects like function
+            tempo.cat <- base::paste0("ERROR IN arg_check() OF THE ", package.name, " PACKAGE\nTHE fun.name ARGUMENT MUST BE A CHARACTER VECTOR OF LENGTH 1") # base::paste(fun.name, collapse = " ") removed here because does not work with objects like function
             base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
         }
     }
@@ -109,7 +109,7 @@ arg_check <- function(
     )
     tempo <- base::eval(base::parse(text = base::paste0("base::c(base::missing(", base::paste0(mandat.args, collapse = "), base::missing("), "))")))
     if(base::any(tempo)){ # normally no NA for base::missing() output
-        tempo.cat <- base::paste0("ERROR IN arg_check() OF THE ", package.name, " PACKAGE", base::ifelse(base::is.null(fun.name), "", base::paste0(" INSIDE ", fun.name)), ": FOLLOWING ARGUMENT", base::ifelse(base::sum(tempo, na.rm = TRUE) > 1, "S HAVE", " HAS"), " NO DEFAULT VALUE AND REQUIRE ONE:\n", base::paste0(mandat.args[tempo], collapse = "\n"))
+        tempo.cat <- base::paste0("ERROR IN arg_check() OF THE ", package.name, " PACKAGE", base::ifelse(base::is.null(fun.name), "", base::paste0(" INSIDE ", fun.name)), "\nFOLLOWING ARGUMENT", base::ifelse(base::sum(tempo, na.rm = TRUE) > 1, "S HAVE", " HAS"), " NO DEFAULT VALUE AND REQUIRE ONE:\n", base::paste0(mandat.args[tempo], collapse = "\n"))
         base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
     }
     # end arg with no default values
@@ -182,14 +182,14 @@ arg_check <- function(
         tempo.cat1 <- tempo.arg.base[tempo]
         tempo.cat2 <- base::sapply(tempo.class[tempo], FUN = base::paste0, collapse = " ")
         tempo.sep <- base::sapply(base::mapply(" ", base::max(base::nchar(tempo.cat1)) - base::nchar(tempo.cat1) + 3, FUN = base::rep, SIMPLIFY = FALSE), FUN = base::paste0, collapse = "")
-        tempo.cat <- base::paste0("ERROR IN arg_check() OF THE ", package.name, " PACKAGE", base::ifelse(base::is.null(fun.name), "", base::paste0(" INSIDE ", fun.name)), ": ANY ARGUMENT EXCEPT data MUST HAVE A BASIC CLASS\nPROBLEMATIC ARGUMENT", base::ifelse(base::length(tempo.cat1) > 1, "S", ""), " AND ASSOCIATED CLASS", base::ifelse(base::length(tempo.cat1) > 1, "ES ARE", " IS"), ":\n", base::paste0(tempo.cat1, tempo.sep, tempo.cat2, collapse = "\n")) # normally no NA with base::is.na()
+        tempo.cat <- base::paste0("ERROR IN arg_check() OF THE ", package.name, " PACKAGE", base::ifelse(base::is.null(fun.name), "", base::paste0(" INSIDE ", fun.name)), "\nANY ARGUMENT EXCEPT data MUST HAVE A BASIC CLASS\nPROBLEMATIC ARGUMENT", base::ifelse(base::length(tempo.cat1) > 1, "S", ""), " AND ASSOCIATED CLASS", base::ifelse(base::length(tempo.cat1) > 1, "ES ARE", " IS"), ":\n", base::paste0(tempo.cat1, tempo.sep, tempo.cat2, collapse = "\n")) # normally no NA with base::is.na()
         base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
     }
     # end management of special classes
     # management of NA arguments
     if(base::any(base::is.na(data.name)) | base::any(base::is.na(class)) | base::any(base::is.na(typeof)) | base::any(base::is.na(mode)) | base::any(base::is.na(length)) | base::any(base::is.na(prop)) | base::any(base::is.na(double.as.integer.allowed)) | base::any(base::is.na(all.options.in.data)) | base::any(base::is.na(na.contain)) | base::any(base::is.na(neg.values)) | base::any(base::is.na(inf.values)) | base::any(base::is.na(print)) | base::any(base::is.na(fun.name))){ # normally no NA with base::is.na()
         tempo <- base::c("data.name", "class", "typeof", "mode", "length", "prop", "double.as.integer.allowed", "all.options.in.data", "na.contain", "neg.values", "inf.values", "print", "fun.name")[base::c(base::any(base::is.na(data.name)), base::any(base::is.na(class)), base::any(base::is.na(typeof)), base::any(base::is.na(mode)), base::any(base::is.na(length)), base::any(base::is.na(prop)), base::any(base::is.na(double.as.integer.allowed)), base::any(base::is.na(all.options.in.data)), base::any(base::is.na(na.contain)), base::any(base::is.na(neg.values)), base::any(base::is.na(inf.values)), base::any(base::is.na(print)), base::any(base::is.na(fun.name)))]
-        tempo.cat <- base::paste0("ERROR IN arg_check() OF THE ", package.name, " PACKAGE",base::ifelse(base::is.null(fun.name), "", base::paste0(" INSIDE ", fun.name)), ": NO ARGUMENT EXCEPT data AND options CAN HAVE NA VALUES\nPROBLEMATIC ARGUMENT", base::ifelse(base::length(tempo) > 1, "S ARE", " IS"), ":\n", base::paste(tempo, collapse = "\n")) # normally no NA with base::is.na()
+        tempo.cat <- base::paste0("ERROR IN arg_check() OF THE ", package.name, " PACKAGE", base::ifelse(base::is.null(fun.name), "", base::paste0(" INSIDE ", fun.name)), "\nNO ARGUMENT EXCEPT data AND options CAN HAVE NA VALUES\nPROBLEMATIC ARGUMENT", base::ifelse(base::length(tempo) > 1, "S ARE", " IS"), ":\n", base::paste(tempo, collapse = "\n")) # normally no NA with base::is.na()
         base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
     }
     # end management of NA arguments
@@ -206,7 +206,7 @@ arg_check <- function(
     )
     tempo.log <- base::sapply(base::lapply(tempo.arg, FUN = base::get, envir = base::sys.nframe(), inherits = FALSE), FUN = base::is.null)
     if(base::any(tempo.log) == TRUE){ # normally no NA with base::is.null()
-        tempo.cat <- base::paste0("ERROR IN arg_check() OF THE ", package.name, " PACKAGE: \n", base::ifelse(base::sum(tempo.log, na.rm = TRUE) > 1, "THESE ARGUMENTS", "THIS ARGUMENT"), " CANNOT BE NULL:\n", base::paste0(tempo.arg[tempo.log], collapse = "\n"))
+        tempo.cat <- base::paste0("ERROR IN arg_check() OF THE ", package.name, " PACKAGE", base::ifelse(base::is.null(fun.name), "", base::paste0(" INSIDE ", fun.name)), "\n", base::ifelse(base::sum(tempo.log, na.rm = TRUE) > 1, "THESE ARGUMENTS", "THIS ARGUMENT"), " CANNOT BE NULL:\n", base::paste0(tempo.arg[tempo.log], collapse = "\n"))
         base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
     }
     # end management of NULL arguments
@@ -220,119 +220,119 @@ arg_check <- function(
     # other checkings
     if( ! base::is.null(data.name)){
         if( ! (base::length(data.name) == 1L & base::all(base::class(data.name) == "character"))){ # base::all() without na.rm -> ok because base::class(NA) is "logical"
-            tempo.cat <- base::paste0("ERROR IN arg_check() OF THE ", package.name, " PACKAGE", base::ifelse(base::is.null(fun.name), "", base::paste0(" INSIDE ", fun.name)), ": data.name ARGUMENT MUST BE A SINGLE CHARACTER ELEMENT AND NOT ", base::paste(data.name, collapse = " "))
+            tempo.cat <- base::paste0("ERROR IN arg_check() OF THE ", package.name, " PACKAGE", base::ifelse(base::is.null(fun.name), "", base::paste0(" INSIDE ", fun.name)), "\ndata.name ARGUMENT MUST BE A SINGLE CHARACTER ELEMENT AND NOT ", base::paste(data.name, collapse = " "))
             base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
         }
     }
     if(base::is.null(options) & base::is.null(class) & base::is.null(typeof) & base::is.null(mode) &  prop == FALSE & base::is.null(length)){
-        tempo.cat <- base::paste0("ERROR IN arg_check() OF THE ", package.name, " PACKAGE", base::ifelse(base::is.null(fun.name), "", base::paste0(" INSIDE ", fun.name)), ": AT LEAST ONE OF THE options, class, typeof, mode, prop, OR length ARGUMENT MUST BE SPECIFIED (I.E, TRUE FOR prop)")
+        tempo.cat <- base::paste0("ERROR IN arg_check() OF THE ", package.name, " PACKAGE", base::ifelse(base::is.null(fun.name), "", base::paste0(" INSIDE ", fun.name)), "\nAT LEAST ONE OF THE options, class, typeof, mode, prop, OR length ARGUMENT MUST BE SPECIFIED (I.E, TRUE FOR prop)")
         base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
     }
     if( ! base::is.null(options) & ( ! base::is.null(class) | ! base::is.null(typeof) | ! base::is.null(mode) | prop == TRUE)){
-        tempo.cat <- base::paste0("ERROR IN arg_check() OF THE ", package.name, " PACKAGE", base::ifelse(base::is.null(fun.name), "", base::paste0(" INSIDE ", fun.name)), ": THE class, typeof, mode ARGUMENTS MUST BE NULL, AND prop FALSE, IF THE options ARGUMENT IS SPECIFIED\nTHE options ARGUMENT MUST BE NULL IF THE class AND/OR typeof AND/OR mode AND/OR prop ARGUMENT IS SPECIFIED")
+        tempo.cat <- base::paste0("ERROR IN arg_check() OF THE ", package.name, " PACKAGE", base::ifelse(base::is.null(fun.name), "", base::paste0(" INSIDE ", fun.name)), "\nTHE class, typeof, mode ARGUMENTS MUST BE NULL, AND prop FALSE, IF THE options ARGUMENT IS SPECIFIED\nTHE options ARGUMENT MUST BE NULL IF THE class AND/OR typeof AND/OR mode AND/OR prop ARGUMENT IS SPECIFIED")
         base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
     }
     if( ! (base::all(base::class(neg.values) == "logical") & base::length(neg.values) == 1L)){ # base::all() without na.rm -> ok because base::class(NA) is "logical" 
-        tempo.cat <- base::paste0("ERROR IN arg_check() OF THE ", package.name, " PACKAGE", base::ifelse(base::is.null(fun.name), "", base::paste0(" INSIDE ", fun.name)), ": THE neg.values ARGUMENT MUST BE TRUE OR FALSE ONLY")
+        tempo.cat <- base::paste0("ERROR IN arg_check() OF THE ", package.name, " PACKAGE", base::ifelse(base::is.null(fun.name), "", base::paste0(" INSIDE ", fun.name)), "\nTHE neg.values ARGUMENT MUST BE TRUE OR FALSE ONLY")
         base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
     }
     if(neg.values == FALSE & base::is.null(class) & base::is.null(typeof) & base::is.null(mode)){
-        tempo.cat <- base::paste0("ERROR IN arg_check() OF THE ", package.name, " PACKAGE", base::ifelse(base::is.null(fun.name), "", base::paste0(" INSIDE ", fun.name)), ": THE neg.values ARGUMENT CANNOT BE SWITCHED TO FALSE IF class, typeof AND mode ARGUMENTS ARE NULL")
+        tempo.cat <- base::paste0("ERROR IN arg_check() OF THE ", package.name, " PACKAGE", base::ifelse(base::is.null(fun.name), "", base::paste0(" INSIDE ", fun.name)), "\nTHE neg.values ARGUMENT CANNOT BE SWITCHED TO FALSE IF class, typeof AND mode ARGUMENTS ARE NULL")
         base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
     }
     if( ! (base::all(base::class(inf.values) == "logical") & base::length(inf.values) == 1L)){ # base::all() without na.rm -> ok because base::class(NA) is "logical" 
-        tempo.cat <- base::paste0("ERROR IN arg_check() OF THE ", package.name, " PACKAGE", base::ifelse(base::is.null(fun.name), "", base::paste0(" INSIDE ", fun.name)), ": THE inf.values ARGUMENT MUST BE TRUE OR FALSE ONLY")
+        tempo.cat <- base::paste0("ERROR IN arg_check() OF THE ", package.name, " PACKAGE", base::ifelse(base::is.null(fun.name), "", base::paste0(" INSIDE ", fun.name)), "\nTHE inf.values ARGUMENT MUST BE TRUE OR FALSE ONLY")
         base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
     }
     if(inf.values == FALSE & base::is.null(class) & base::is.null(typeof) & base::is.null(mode)){
-        tempo.cat <- base::paste0("ERROR IN arg_check() OF THE ", package.name, " PACKAGE", base::ifelse(base::is.null(fun.name), "", base::paste0(" INSIDE ", fun.name)), ": THE inf.values ARGUMENT CANNOT BE SWITCHED TO FALSE IF class, typeof AND mode ARGUMENTS ARE NULL")
+        tempo.cat <- base::paste0("ERROR IN arg_check() OF THE ", package.name, " PACKAGE", base::ifelse(base::is.null(fun.name), "", base::paste0(" INSIDE ", fun.name)), "\nTHE inf.values ARGUMENT CANNOT BE SWITCHED TO FALSE IF class, typeof AND mode ARGUMENTS ARE NULL")
         base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
     }
     if( ! base::is.null(class)){ # may add "formula" and "Date" as in https://renenyffenegger.ch/notes/development/languages/R/functions/class
         if( ! base::all(class %in% base::c("vector", "logical", "integer", "numeric", "complex", "character", "matrix", "array", "data.frame", "list", "factor", "table", "expression", "name", "symbol", "function", "uneval", "environment", "ggplot2", "ggplot_built", "call") & base::length(class) == 1L)){ # length == 1L here because of base::class(base::matrix()) since R4.0.0  # base::all() without na.rm -> ok because class cannot be NA (tested above)
-            tempo.cat <- base::paste0("ERROR IN arg_check() OF THE ", package.name, " PACKAGE", base::ifelse(base::is.null(fun.name), "", base::paste0(" INSIDE ", fun.name)), ": class ARGUMENT MUST BE ONE OF THESE VALUE:\n\"vector\", \"logical\", \"integer\", \"numeric\", \"complex\", \"character\", \"matrix\", \"array\", \"data.frame\", \"list\", \"factor\", \"table\", \"expression\", \"name\", \"symbol\", \"function\", \"environment\", \"ggplot2\", \"ggplot_built\", \"call\"")
+            tempo.cat <- base::paste0("ERROR IN arg_check() OF THE ", package.name, " PACKAGE", base::ifelse(base::is.null(fun.name), "", base::paste0(" INSIDE ", fun.name)), "\nclass ARGUMENT MUST BE ONE OF THESE VALUE:\n\"vector\", \"logical\", \"integer\", \"numeric\", \"complex\", \"character\", \"matrix\", \"array\", \"data.frame\", \"list\", \"factor\", \"table\", \"expression\", \"name\", \"symbol\", \"function\", \"environment\", \"ggplot2\", \"ggplot_built\", \"call\"")
             base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
         }
         if(neg.values == FALSE & ! base::any(class %in% base::c("vector", "numeric", "integer", "matrix", "array", "data.frame", "table"))){ # no need of na.rm = TRUE for base::any() because %in% does not output NA
-            tempo.cat <- base::paste0("ERROR IN arg_check() OF THE ", package.name, " PACKAGE", base::ifelse(base::is.null(fun.name), "", base::paste0(" INSIDE ", fun.name)), ": class ARGUMENT CANNOT BE OTHER THAN \"vector\", \"numeric\", \"integer\", \"matrix\", \"array\", \"data.frame\", \"table\" IF neg.values ARGUMENT IS SWITCHED TO FALSE")
+            tempo.cat <- base::paste0("ERROR IN arg_check() OF THE ", package.name, " PACKAGE", base::ifelse(base::is.null(fun.name), "", base::paste0(" INSIDE ", fun.name)), "\nclass ARGUMENT CANNOT BE OTHER THAN \"vector\", \"numeric\", \"integer\", \"matrix\", \"array\", \"data.frame\", \"table\" IF neg.values ARGUMENT IS SWITCHED TO FALSE")
             base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
         }
         if(inf.values == FALSE & ! base::any(class %in% base::c("vector", "numeric", "matrix", "array", "data.frame", "table"))){ # no need of na.rm = TRUE for base::any() because %in% does not output NA
-            tempo.cat <- base::paste0("ERROR IN arg_check() OF THE ", package.name, " PACKAGE", base::ifelse(base::is.null(fun.name), "", base::paste0(" INSIDE ", fun.name)), ": class ARGUMENT CANNOT BE OTHER THAN \"vector\", \"numeric\", \"matrix\", \"array\", \"data.frame\", \"table\" IF inf.values ARGUMENT IS SWITCHED TO FALSE. \"integer IS NOT ALLOWED BECAUSE IFINITE VALUES ARE NOT INTEGERS\"")
+            tempo.cat <- base::paste0("ERROR IN arg_check() OF THE ", package.name, " PACKAGE", base::ifelse(base::is.null(fun.name), "", base::paste0(" INSIDE ", fun.name)), "\nclass ARGUMENT CANNOT BE OTHER THAN \"vector\", \"numeric\", \"matrix\", \"array\", \"data.frame\", \"table\" IF inf.values ARGUMENT IS SWITCHED TO FALSE. \"integer IS NOT ALLOWED BECAUSE IFINITE VALUES ARE NOT INTEGERS\"")
             base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
         }
     }
     if( ! base::is.null(typeof)){ # all the types are here: https://renenyffenegger.ch/notes/development/languages/R/functions/typeof
         if( ! (base::all(typeof %in% base::c("logical", "integer", "double", "complex", "character", "list", "expression", "symbol", "closure", "special", "builtin", "environment", "S4", "language")) & base::length(typeof) == 1L)){ # "language" is the type of object of class "call" # base::all() without na.rm -> ok because typeof cannot be NA (tested above)
-            tempo.cat <- base::paste0("ERROR IN arg_check() OF THE ", package.name, " PACKAGE", base::ifelse(base::is.null(fun.name), "", base::paste0(" INSIDE ", fun.name)), ": typeof ARGUMENT MUST BE ONE OF THESE VALUE:\n\"logical\", \"integer\", \"double\", \"complex\", \"character\", \"list\", \"expression\", \"name\", \"symbol\", \"closure\", \"special\", \"builtin\", \"environment\", \"S4\", \"language\"")
+            tempo.cat <- base::paste0("ERROR IN arg_check() OF THE ", package.name, " PACKAGE", base::ifelse(base::is.null(fun.name), "", base::paste0(" INSIDE ", fun.name)), "\ntypeof ARGUMENT MUST BE ONE OF THESE VALUE:\n\"logical\", \"integer\", \"double\", \"complex\", \"character\", \"list\", \"expression\", \"name\", \"symbol\", \"closure\", \"special\", \"builtin\", \"environment\", \"S4\", \"language\"")
             base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
         }
         if(neg.values == FALSE & ! typeof %in% base::c("double", "integer")){
-            tempo.cat <- base::paste0("ERROR IN arg_check() OF THE ", package.name, " PACKAGE", base::ifelse(base::is.null(fun.name), "", base::paste0(" INSIDE ", fun.name)), ": typeof ARGUMENT CANNOT BE OTHER THAN \"double\" OR \"integer\" IF neg.values ARGUMENT IS SWITCHED TO FALSE")
+            tempo.cat <- base::paste0("ERROR IN arg_check() OF THE ", package.name, " PACKAGE", base::ifelse(base::is.null(fun.name), "", base::paste0(" INSIDE ", fun.name)), "\ntypeof ARGUMENT CANNOT BE OTHER THAN \"double\" OR \"integer\" IF neg.values ARGUMENT IS SWITCHED TO FALSE")
             base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
         }
         if(inf.values == FALSE & typeof != "double"){
-            tempo.cat <- base::paste0("ERROR IN arg_check() OF THE ", package.name, " PACKAGE", base::ifelse(base::is.null(fun.name), "", base::paste0(" INSIDE ", fun.name)), ": typeof ARGUMENT CANNOT BE OTHER THAN \"double\" IF inf.values ARGUMENT IS SWITCHED TO FALSE. \"integer IS NOT ALLOWED BECAUSE IFINITE VALUES ARE NOT INTEGERS\"")
+            tempo.cat <- base::paste0("ERROR IN arg_check() OF THE ", package.name, " PACKAGE", base::ifelse(base::is.null(fun.name), "", base::paste0(" INSIDE ", fun.name)), "\ntypeof ARGUMENT CANNOT BE OTHER THAN \"double\" IF inf.values ARGUMENT IS SWITCHED TO FALSE. \"integer IS NOT ALLOWED BECAUSE IFINITE VALUES ARE NOT INTEGERS\"")
             base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
         }
     }
     if( ! base::is.null(mode)){ # all the types are here: https://renenyffenegger.ch/notes/development/languages/R/functions/typeof
         if( ! (base::all(mode %in% base::c("logical", "numeric", "complex", "character", "list", "expression", "name", "symbol", "function", "environment", "S4", "call")) & base::length(mode) == 1L)){ # base::all() without na.rm -> ok because mode cannot be NA (tested above)
-            tempo.cat <- base::paste0("ERROR IN arg_check() OF THE ", package.name, " PACKAGE", base::ifelse(base::is.null(fun.name), "", base::paste0(" INSIDE ", fun.name)), ": mode ARGUMENT MUST BE ONE OF THESE VALUE:\n\"logical\", \"numeric\", \"complex\", \"character\", \"list\", \"expression\", \"name\", \"symbol\", \"function\", \"environment\", \"S4\", \"call\"")
+            tempo.cat <- base::paste0("ERROR IN arg_check() OF THE ", package.name, " PACKAGE", base::ifelse(base::is.null(fun.name), "", base::paste0(" INSIDE ", fun.name)), "\nmode ARGUMENT MUST BE ONE OF THESE VALUE:\n\"logical\", \"numeric\", \"complex\", \"character\", \"list\", \"expression\", \"name\", \"symbol\", \"function\", \"environment\", \"S4\", \"call\"")
             base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
         }
         if(neg.values == FALSE & mode != "numeric"){
-            tempo.cat <- base::paste0("ERROR IN arg_check() OF THE ", package.name, " PACKAGE", base::ifelse(base::is.null(fun.name), "", base::paste0(" INSIDE ", fun.name)), ": mode ARGUMENT CANNOT BE OTHER THAN \"numeric\" IF neg.values ARGUMENT IS SWITCHED TO FALSE")
+            tempo.cat <- base::paste0("ERROR IN arg_check() OF THE ", package.name, " PACKAGE", base::ifelse(base::is.null(fun.name), "", base::paste0(" INSIDE ", fun.name)), "\nmode ARGUMENT CANNOT BE OTHER THAN \"numeric\" IF neg.values ARGUMENT IS SWITCHED TO FALSE")
             base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
         }
         if(inf.values == FALSE & mode != "numeric"){
-            tempo.cat <- base::paste0("ERROR IN arg_check() OF THE ", package.name, " PACKAGE", base::ifelse(base::is.null(fun.name), "", base::paste0(" INSIDE ", fun.name)), ": mode ARGUMENT CANNOT BE OTHER THAN \"numeric\" IF inf.values ARGUMENT IS SWITCHED TO FALSE")
+            tempo.cat <- base::paste0("ERROR IN arg_check() OF THE ", package.name, " PACKAGE", base::ifelse(base::is.null(fun.name), "", base::paste0(" INSIDE ", fun.name)), "\nmode ARGUMENT CANNOT BE OTHER THAN \"numeric\" IF inf.values ARGUMENT IS SWITCHED TO FALSE")
             base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
         }
     }
     if( ! base::is.null(length)){
         if( ! (base::is.numeric(length) & base::length(length) == 1L & base::all( ! base::grepl(length, pattern = "\\.")))){ # base::is.na() already arg_checked for length
-            tempo.cat <- base::paste0("ERROR IN arg_check() OF THE ", package.name, " PACKAGE", base::ifelse(base::is.null(fun.name), "", base::paste0(" INSIDE ", fun.name)), ": length ARGUMENT MUST BE A SINGLE INTEGER VALUE")
+            tempo.cat <- base::paste0("ERROR IN arg_check() OF THE ", package.name, " PACKAGE", base::ifelse(base::is.null(fun.name), "", base::paste0(" INSIDE ", fun.name)), "\nlength ARGUMENT MUST BE A SINGLE INTEGER VALUE")
             base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
         }
     }
     if( ! (base::is.logical(prop) & base::length(prop) == 1L)){ # base::is.na() already checked for prop
-        tempo.cat <- base::paste0("ERROR IN arg_check() OF THE ", package.name, " PACKAGE", base::ifelse(base::is.null(fun.name), "", base::paste0(" INSIDE ", fun.name)), ": prop ARGUMENT MUST BE TRUE OR FALSE ONLY")
+        tempo.cat <- base::paste0("ERROR IN arg_check() OF THE ", package.name, " PACKAGE", base::ifelse(base::is.null(fun.name), "", base::paste0(" INSIDE ", fun.name)), "\nprop ARGUMENT MUST BE TRUE OR FALSE ONLY")
         base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
     }else if(prop == TRUE){
         if( ! base::is.null(class)){
             if( ! base::any(class %in% base::c("vector", "numeric", "matrix", "array", "data.frame", "table"))){ # no need of na.rm = TRUE for base::any() because %in% does not output NA
-                tempo.cat <- base::paste0("ERROR IN arg_check() OF THE ", package.name, " PACKAGE", base::ifelse(base::is.null(fun.name), "", base::paste0(" INSIDE ", fun.name)), ": class ARGUMENT CANNOT BE OTHER THAN NULL, \"vector\", \"numeric\", \"matrix\", \"array\", \"data.frame\", \"table\" IF prop ARGUMENT IS TRUE") # not integer because prop
+                tempo.cat <- base::paste0("ERROR IN arg_check() OF THE ", package.name, " PACKAGE", base::ifelse(base::is.null(fun.name), "", base::paste0(" INSIDE ", fun.name)), "\nclass ARGUMENT CANNOT BE OTHER THAN NULL, \"vector\", \"numeric\", \"matrix\", \"array\", \"data.frame\", \"table\" IF prop ARGUMENT IS TRUE") # not integer because prop
                 base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
             }
         }
         if( ! base::is.null(mode)){
             if(mode != "numeric"){
-                tempo.cat <- base::paste0("ERROR IN arg_check() OF THE ", package.name, " PACKAGE", base::ifelse(base::is.null(fun.name), "", base::paste0(" INSIDE ", fun.name)), ": mode ARGUMENT CANNOT BE OTHER THAN NULL OR \"numeric\" IF prop ARGUMENT IS TRUE")
+                tempo.cat <- base::paste0("ERROR IN arg_check() OF THE ", package.name, " PACKAGE", base::ifelse(base::is.null(fun.name), "", base::paste0(" INSIDE ", fun.name)), "\nmode ARGUMENT CANNOT BE OTHER THAN NULL OR \"numeric\" IF prop ARGUMENT IS TRUE")
                 base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
             }
         }
         if( ! base::is.null(typeof)){
             if(typeof != "double"){
-                tempo.cat <- base::paste0("ERROR IN arg_check() OF THE ", package.name, " PACKAGE", base::ifelse(base::is.null(fun.name), "", base::paste0(" INSIDE ", fun.name)), ": typeof ARGUMENT CANNOT BE OTHER THAN NULL OR \"double\" IF prop ARGUMENT IS TRUE")
+                tempo.cat <- base::paste0("ERROR IN arg_check() OF THE ", package.name, " PACKAGE", base::ifelse(base::is.null(fun.name), "", base::paste0(" INSIDE ", fun.name)), "\ntypeof ARGUMENT CANNOT BE OTHER THAN NULL OR \"double\" IF prop ARGUMENT IS TRUE")
                 base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
             }
         }
     }
     if( ! (base::all(base::class(double.as.integer.allowed) == "logical") & base::length(double.as.integer.allowed) == 1L)){ # base::all() without na.rm -> ok because base::class() never returns NA
-        tempo.cat <- base::paste0("ERROR IN arg_check() OF THE ", package.name, " PACKAGE", base::ifelse(base::is.null(fun.name), "", base::paste0(" INSIDE ", fun.name)), ": THE double.as.integer.allowed ARGUMENT MUST BE TRUE OR FALSE ONLY: ", base::paste(double.as.integer.allowed, collapse = " "))
+        tempo.cat <- base::paste0("ERROR IN arg_check() OF THE ", package.name, " PACKAGE", base::ifelse(base::is.null(fun.name), "", base::paste0(" INSIDE ", fun.name)), "\nTHE double.as.integer.allowed ARGUMENT MUST BE TRUE OR FALSE ONLY: ", base::paste(double.as.integer.allowed, collapse = " "))
         base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
     }
     if( ! (base::is.logical(all.options.in.data) & base::length(all.options.in.data) == 1L)){
-        tempo.cat <- base::paste0("ERROR IN arg_check() OF THE ", package.name, " PACKAGE", base::ifelse(base::is.null(fun.name), "", base::paste0(" INSIDE ", fun.name)), ": all.options.in.data ARGUMENT MUST BE A SINGLE LOGICAL VALUE (TRUE OR FALSE ONLY): ", base::paste(all.options.in.data, collapse = " "))
+        tempo.cat <- base::paste0("ERROR IN arg_check() OF THE ", package.name, " PACKAGE", base::ifelse(base::is.null(fun.name), "", base::paste0(" INSIDE ", fun.name)), "\nall.options.in.data ARGUMENT MUST BE A SINGLE LOGICAL VALUE (TRUE OR FALSE ONLY): ", base::paste(all.options.in.data, collapse = " "))
         base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
     }
     if( ! (base::all(base::class(na.contain) == "logical") & base::length(na.contain) == 1L)){ # base::all() without na.rm -> ok because base::class() never returns NA
-        tempo.cat <- base::paste0("ERROR IN arg_check() OF THE ", package.name, " PACKAGE", base::ifelse(base::is.null(fun.name), "", base::paste0(" INSIDE ", fun.name)), ": THE na.contain ARGUMENT MUST BE TRUE OR FALSE ONLY: ", base::paste(na.contain, collapse = " "))
+        tempo.cat <- base::paste0("ERROR IN arg_check() OF THE ", package.name, " PACKAGE", base::ifelse(base::is.null(fun.name), "", base::paste0(" INSIDE ", fun.name)), "\nTHE na.contain ARGUMENT MUST BE TRUE OR FALSE ONLY: ", base::paste(na.contain, collapse = " "))
         base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
     }
     if( ! (base::all(base::class(print) == "logical") & base::length(print) == 1L)){ # base::all() without na.rm -> ok because base::class() never returns NA
-        tempo.cat <- base::paste0("ERROR IN arg_check() OF THE ", package.name, " PACKAGE", base::ifelse(base::is.null(fun.name), "", base::paste0(" INSIDE ", fun.name)), ": THE print ARGUMENT MUST BE TRUE OR FALSE ONLY: ", base::paste(print, collapse = " "))
+        tempo.cat <- base::paste0("ERROR IN arg_check() OF THE ", package.name, " PACKAGE", base::ifelse(base::is.null(fun.name), "", base::paste0(" INSIDE ", fun.name)), "\nTHE print ARGUMENT MUST BE TRUE OR FALSE ONLY: ", base::paste(print, collapse = " "))
         base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
     }
     # data.name and fun.name tested at the beginning
@@ -344,13 +344,13 @@ arg_check <- function(
         data.name <- base::deparse(base::substitute(data))
     }
     problem <- FALSE
-    text <- base::paste0(base::ifelse(base::is.null(fun.name), "", base::paste0("IN ", fun.name, ": ")), "NO PROBLEM DETECTED FOR THE ", data.name, " OBJECT")
+    text <- base::paste0(base::ifelse(base::is.null(fun.name), "", base::paste0("IN ", fun.name, "\n")), "NO PROBLEM DETECTED FOR THE ", data.name, " OBJECT")
     if(( ! base::is.null(options)) & (base::all(base::typeof(data) == "character") | base::all(base::typeof(data) == "integer") | base::all(base::typeof(data) == "double"))){ # base::all() without na.rm -> ok because base::typeof() never returns NA
         test.log <- TRUE
         if(base::all(base::typeof(data) == "double")){
             if( ! base::all(data %% 1 == 0L, na.rm = TRUE)){
                 problem <- TRUE
-                text <- base::paste0(base::ifelse(base::is.null(fun.name), "ERROR", base::paste0("ERROR IN ", fun.name)), ": THE ", data.name, " OBJECT MUST BE SOME OF THESE OPTIONS: ", base::paste(options, collapse = " "), "\nBUT IS NOT EVEN TYPE CHARACTER OR INTEGER")
+                text <- base::paste0(base::ifelse(base::is.null(fun.name), "ERROR", base::paste0("ERROR IN ", fun.name)), "\nTHE ", data.name, " OBJECT MUST BE SOME OF THESE OPTIONS: ", base::paste(options, collapse = " "), "\nBUT IS NOT EVEN TYPE CHARACTER OR INTEGER")
                 test.log <- FALSE
             }
         }
@@ -358,27 +358,27 @@ arg_check <- function(
             text <- ""
             if( ! base::all(data %in% options)){ # no need of na.rm = TRUE for base::all() because %in% does not output NA
                 problem <- TRUE
-                text <- base::paste0(base::ifelse(base::is.null(fun.name), "ERROR", base::paste0("ERROR IN ", fun.name)), ": THE ", data.name, " OBJECT MUST BE SOME OF THESE OPTIONS: ", base::paste(options, collapse = " "), "\nTHE PROBLEMATIC ELEMENTS OF ", data.name, " ARE: ", base::paste(base::unique(data[ ! (data %in% options)]), collapse = " "))
+                text <- base::paste0(base::ifelse(base::is.null(fun.name), "ERROR", base::paste0("ERROR IN ", fun.name)), "\nTHE ", data.name, " OBJECT MUST BE SOME OF THESE OPTIONS: ", base::paste(options, collapse = " "), "\nTHE PROBLEMATIC ELEMENTS OF ", data.name, " ARE: ", base::paste(base::unique(data[ ! (data %in% options)]), collapse = " "))
             }
             if(all.options.in.data == TRUE){
                 if( ! base::all(options %in% data)){ # no need of na.rm = TRUE for base::all() because %in% does not output NA
                     problem <- TRUE
-                    text <- base::paste0(base::ifelse(text == "", "", base::paste0(text, "\n")), base::ifelse(base::is.null(fun.name), "ERROR", base::paste0("ERROR IN ", fun.name)), ": THE ", data.name, " OBJECT MUST BE MADE OF ALL THESE OPTIONS: ", base::paste(options, collapse = " "), "\nTHE MISSING ELEMENTS OF THE options ARGUMENT ARE: ",  base::paste(base::unique(options[ ! (options %in% data)]), collapse = " "))
+                    text <- base::paste0(base::ifelse(text == "", "", base::paste0(text, "\n")), base::ifelse(base::is.null(fun.name), "ERROR", base::paste0("ERROR IN ", fun.name)), "\nTHE ", data.name, " OBJECT MUST BE MADE OF ALL THESE OPTIONS: ", base::paste(options, collapse = " "), "\nTHE MISSING ELEMENTS OF THE options ARGUMENT ARE: ",  base::paste(base::unique(options[ ! (options %in% data)]), collapse = " "))
                 }
             }
             if( ! base::is.null(length)){
                 if(base::length(data) != length){
                     problem <- TRUE
-                    text <- base::paste0(base::ifelse(text == "", "", base::paste0(text, "\n")), base::ifelse(base::is.null(fun.name), "ERROR", base::paste0("ERROR IN ", fun.name)), ": THE LENGTH OF ", data.name, " MUST BE ", length, " AND NOT ", base::length(data))
+                    text <- base::paste0(base::ifelse(text == "", "", base::paste0(text, "\n")), base::ifelse(base::is.null(fun.name), "ERROR", base::paste0("ERROR IN ", fun.name)), "\nTHE LENGTH OF ", data.name, " MUST BE ", length, " AND NOT ", base::length(data))
                 }
             }
             if(text == ""){
-                text <- base::paste0(base::ifelse(base::is.null(fun.name), "", base::paste0("IN ", fun.name, ": ")), "NO PROBLEM DETECTED FOR THE ", data.name, " OBJECT")
+                text <- base::paste0(base::ifelse(base::is.null(fun.name), "", base::paste0("IN ", fun.name, "\n")), "NO PROBLEM DETECTED FOR THE ", data.name, " OBJECT")
             }
         }
     }else if( ! base::is.null(options)){
         problem <- TRUE
-        text <- base::paste0(base::ifelse(base::is.null(fun.name), "ERROR", base::paste0("ERROR IN ", fun.name)), ": THE ", data.name, " OBJECT MUST BE SOME OF THESE OPTIONS: ", base::paste(options, collapse = " "), "\nBUT IS NOT EVEN TYPE CHARACTER OR INTEGER")
+        text <- base::paste0(base::ifelse(base::is.null(fun.name), "ERROR", base::paste0("ERROR IN ", fun.name)), "\nTHE ", data.name, " OBJECT MUST BE SOME OF THESE OPTIONS: ", base::paste(options, collapse = " "), "\nBUT IS NOT EVEN TYPE CHARACTER OR INTEGER")
     }
     arg.names <- base::c("class", "typeof", "mode", "length")
     if( ! base::is.null(class)){
@@ -394,8 +394,8 @@ arg_check <- function(
                 # script to execute
                 tempo.script <- '
                     problem <- TRUE ;
-                    if(base::identical(text, base::paste0(base::ifelse(base::is.null(fun.name), "", base::paste0("IN ", fun.name, ": ")), "NO PROBLEM DETECTED FOR THE ", data.name, " OBJECT"))){
-                        text <- base::paste0(base::ifelse(base::is.null(fun.name), "ERROR", base::paste0("ERROR IN ", fun.name)), ": THE ", data.name, " OBJECT MUST BE ") ;
+                    if(base::identical(text, base::paste0(base::ifelse(base::is.null(fun.name), "", base::paste0("IN ", fun.name, "\n")), "NO PROBLEM DETECTED FOR THE ", data.name, " OBJECT"))){
+                        text <- base::paste0(base::ifelse(base::is.null(fun.name), "ERROR", base::paste0("ERROR IN ", fun.name)), "\nTHE ", data.name, " OBJECT MUST BE ") ;
                     }else{
                         text <- base::paste0(text, " AND ") ; 
                     }
@@ -419,8 +419,8 @@ arg_check <- function(
     if(prop == TRUE & base::all(base::typeof(data) == "double")){ # base::all() without na.rm -> ok because base::typeof(NA) is "logical"
         if(base::is.null(data) | base::any(data < 0 | data > 1, na.rm = TRUE)){ # works if data is NULL # Warning: na.rm = TRUE required here for base::any() # base::typeof(data) == "double" means no factor allowed
             problem <- TRUE
-            if(base::identical(text, base::paste0(base::ifelse(base::is.null(fun.name), "", base::paste0("IN ", fun.name, ": ")), "NO PROBLEM DETECTED FOR THE ", data.name, " OBJECT"))){
-                text <- base::paste0(base::ifelse(base::is.null(fun.name), "ERROR", base::paste0("ERROR IN ", fun.name)), ": ")
+            if(base::identical(text, base::paste0(base::ifelse(base::is.null(fun.name), "", base::paste0("IN ", fun.name, "\n")), "NO PROBLEM DETECTED FOR THE ", data.name, " OBJECT"))){
+                text <- base::paste0(base::ifelse(base::is.null(fun.name), "ERROR", base::paste0("ERROR IN ", fun.name)), "\n")
             }else{
                 text <- base::paste0(text, " AND ")
             }
@@ -428,8 +428,8 @@ arg_check <- function(
         }
     }else if(prop == TRUE){
         problem <- TRUE
-        if(base::identical(text, base::paste0(base::ifelse(base::is.null(fun.name), "", base::paste0("IN ", fun.name, ": ")), "NO PROBLEM DETECTED FOR THE ", data.name, " OBJECT"))){
-            text <- base::paste0(base::ifelse(base::is.null(fun.name), "ERROR", base::paste0("ERROR IN ", fun.name)), ": ")
+        if(base::identical(text, base::paste0(base::ifelse(base::is.null(fun.name), "", base::paste0("IN ", fun.name, "\n")), "NO PROBLEM DETECTED FOR THE ", data.name, " OBJECT"))){
+            text <- base::paste0(base::ifelse(base::is.null(fun.name), "ERROR", base::paste0("ERROR IN ", fun.name)), "\n")
         }else{
             text <- base::paste0(text, " AND ")
         }
@@ -441,8 +441,8 @@ arg_check <- function(
     if(na.contain == FALSE & (base::mode(data) %in% base::c("logical", "numeric", "complex", "character", "list"))){ # before it was ! (base::class(data) %in% base::c("function", "environment"))
         if(base::any(base::is.na(data)) == TRUE){ # not on the same line because when data is class envir or function , do not like that # normally no NA with base::is.na()
             problem <- TRUE
-            if(base::identical(text, base::paste0(base::ifelse(base::is.null(fun.name), "", base::paste0("IN ", fun.name, ": ")), "NO PROBLEM DETECTED FOR THE ", data.name, " OBJECT"))){
-                text <- base::paste0(base::ifelse(base::is.null(fun.name), "ERROR", base::paste0("ERROR IN ", fun.name)), ": ")
+            if(base::identical(text, base::paste0(base::ifelse(base::is.null(fun.name), "", base::paste0("IN ", fun.name, "\n")), "NO PROBLEM DETECTED FOR THE ", data.name, " OBJECT"))){
+                text <- base::paste0(base::ifelse(base::is.null(fun.name), "ERROR", base::paste0("ERROR IN ", fun.name)), "\n")
             }else{
                 text <- base::paste0(text, " AND ")
             }
@@ -452,8 +452,8 @@ arg_check <- function(
     if(neg.values == FALSE & base::all(base::mode(data) %in% "numeric") & ! base::any(base::class(data) %in% "factor")){ # no need of na.rm = TRUE for base::all() because %in% does not output NA
         if(base::any(data < 0, na.rm = TRUE)){ # Warning: na.rm = TRUE required here for base::any()
             problem <- TRUE
-            if(base::identical(text, base::paste0(base::ifelse(base::is.null(fun.name), "", base::paste0("IN ", fun.name, ": ")), "NO PROBLEM DETECTED FOR THE ", data.name, " OBJECT"))){
-                text <- base::paste0(base::ifelse(base::is.null(fun.name), "ERROR", base::paste0("ERROR IN ", fun.name)), ": ")
+            if(base::identical(text, base::paste0(base::ifelse(base::is.null(fun.name), "", base::paste0("IN ", fun.name, "\n")), "NO PROBLEM DETECTED FOR THE ", data.name, " OBJECT"))){
+                text <- base::paste0(base::ifelse(base::is.null(fun.name), "ERROR", base::paste0("ERROR IN ", fun.name)), "\n")
             }else{
                 text <- base::paste0(text, " AND ")
             }
@@ -461,8 +461,8 @@ arg_check <- function(
         }
     }else if(neg.values == FALSE){
         problem <- TRUE
-        if(base::identical(text, base::paste0(base::ifelse(base::is.null(fun.name), "", base::paste0("IN ", fun.name, ": ")), "NO PROBLEM DETECTED FOR THE ", data.name, " OBJECT"))){
-            text <- base::paste0(base::ifelse(base::is.null(fun.name), "ERROR", base::paste0("ERROR IN ", fun.name)), ": ")
+        if(base::identical(text, base::paste0(base::ifelse(base::is.null(fun.name), "", base::paste0("IN ", fun.name, "\n")), "NO PROBLEM DETECTED FOR THE ", data.name, " OBJECT"))){
+            text <- base::paste0(base::ifelse(base::is.null(fun.name), "ERROR", base::paste0("ERROR IN ", fun.name)), "\n")
         }else{
             text <- base::paste0(text, " AND ")
         }
@@ -471,8 +471,8 @@ arg_check <- function(
     if(inf.values == FALSE & base::all(base::typeof(data) %in% "double") & ! base::any(base::class(data) %in% "factor")){ # no need of na.rm = TRUE for base::all() because %in% does not output NA
         if(base::any(base::is.infinite(data), na.rm = TRUE)){ # Warning: na.rm = TRUE required here for base::any()
             problem <- TRUE
-            if(base::identical(text, base::paste0(base::ifelse(base::is.null(fun.name), "", base::paste0("IN ", fun.name, ": ")), "NO PROBLEM DETECTED FOR THE ", data.name, " OBJECT"))){
-                text <- base::paste0(base::ifelse(base::is.null(fun.name), "ERROR", base::paste0("ERROR IN ", fun.name)), ": ")
+            if(base::identical(text, base::paste0(base::ifelse(base::is.null(fun.name), "", base::paste0("IN ", fun.name, "\n")), "NO PROBLEM DETECTED FOR THE ", data.name, " OBJECT"))){
+                text <- base::paste0(base::ifelse(base::is.null(fun.name), "ERROR", base::paste0("ERROR IN ", fun.name)), "\n")
             }else{
                 text <- base::paste0(text, " AND ")
             }
@@ -480,8 +480,8 @@ arg_check <- function(
         }
     }else if(inf.values == FALSE){
         problem <- TRUE
-        if(base::identical(text, base::paste0(base::ifelse(base::is.null(fun.name), "", base::paste0("IN ", fun.name, ": ")), "NO PROBLEM DETECTED FOR THE ", data.name, " OBJECT"))){
-            text <- base::paste0(base::ifelse(base::is.null(fun.name), "ERROR", base::paste0("ERROR IN ", fun.name)), ": ")
+        if(base::identical(text, base::paste0(base::ifelse(base::is.null(fun.name), "", base::paste0("IN ", fun.name, "\n")), "NO PROBLEM DETECTED FOR THE ", data.name, " OBJECT"))){
+            text <- base::paste0(base::ifelse(base::is.null(fun.name), "ERROR", base::paste0("ERROR IN ", fun.name)), "\n")
         }else{
             text <- base::paste0(text, " AND ")
         }
