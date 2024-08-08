@@ -1,5 +1,5 @@
 ---
-title: "python_pkg_check"
+title: "is_python_package_here"
 ---
 <br>
 
@@ -11,7 +11,7 @@ knitr::opts_chunk$set(
 ```
 
 ```{r setup}
-library(cuteDev)
+library(saferDev)
 ```
 <br>
 
@@ -30,26 +30,36 @@ path # character vector specifying the absolute pathways of the directories, thi
 <br>
 
 ### Argument req.package
-```{r}
-python_pkg_check(req.package = req.pkg) # check if the package serpentine is in the computer
+```{r, echo = TRUE, error = TRUE}
+is_python_package_here(req.package = req.pkg) # check if the package serpentine is in the computer
 ```
 <br>
 
 ### Argument lib.path
-```{r}
-python_pkg_check(
+```{r, echo = TRUE, error = TRUE}
+is_python_package_here(
     req.package = req.pkg,
     lib.path = path
-    ) # check if the package is in the computer
+) # check if the package is in the computer
+```
+<br>
+
+### Argument safer_check
+```{r, echo = TRUE, error = TRUE}
+is_python_package_here(
+    req.package = req.pkg,
+    safer_check = TRUE
+) # check if the package is in the computer, safer_check = TRUE, checkings are performed before main code running 
 ```
 <br>
 
 ### All the arguments
 ```{r, echo = TRUE, error = TRUE}
-python_pkg_check(
+is_python_package_here(
     req.package = "serpentine", 
     python.exec.path = ".", 
     python.lib.path = ".",
-    lib.path = "."
+    lib.path = ".",
+    safer_check =TRUE
 ) # check if the python package serpentine is present in the computer, returns an error if the package is not in the computer
 ```

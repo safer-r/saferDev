@@ -11,7 +11,7 @@ knitr::opts_chunk$set(
 ```
 
 ```{r setup}
-library(cuteDev)
+library(saferDev)
 ```
 <br>
 
@@ -64,20 +64,23 @@ arg_check(data = NULL, class = "integer")
 
 ```{r, echo = TRUE, error = TRUE}
 # Example
-arg_check(data = vec1, 
+arg_check(
+    data = vec1, 
     class = "vector", 
     typeof = "integer", 
     mode = "numeric", 
     length = 5, 
 )
 # Warning: the function does not check for inconsistencies between arguments. It just checks if everything is ok between arguments values and data
-arg_check(data = vec1, 
+arg_check(
+    data = vec1, 
     typeof = "integer", 
     mode = "character", # the mode "character" exists but is inconsistant with typeof "integer". However, this aspect is not signaled by the function
 )
 
 # Error message due to wrong value in the class and length arguments
-arg_check(data = vec1, 
+arg_check(
+    data = vec1, 
     mode = "integer", # the mode "integer" does not exist in the mode() function of R
 )
 ```
@@ -85,7 +88,8 @@ arg_check(data = vec1,
 
 ### Argument prop
 ```{r}
-arg_check(data = mat2, 
+arg_check(
+    data = mat2, 
     prop = TRUE # Check for values between 0 and 1 only
 )
 ```
@@ -93,7 +97,9 @@ arg_check(data = mat2,
 
 ### Argument double.as.integer.allowed
 ```{r}
-arg_check(data = vec3, typeof = "integer",
+arg_check(
+    data = vec3, 
+    typeof = "integer",
     double.as.integer.allowed = TRUE # with TRUE, integers stored as double are accepted
 )
 ```
@@ -101,7 +107,8 @@ arg_check(data = vec3, typeof = "integer",
 
 ### Argument options
 ```{r}
-arg_check(data = vec4, 
+arg_check(
+    data = vec4, 
     options = c("pearson", "spearman", "kendall")
 )
 ```
@@ -110,17 +117,20 @@ arg_check(data = vec4,
 ### Argument all.options.in.data
 ```{r}
 # No error
-arg_check(data = vec5,
+arg_check(
+    data = vec5,
     options = c("a", "b"), 
     all.options.in.data = TRUE
 )
 # No error
-arg_check(data = vec5,
+arg_check(
+    data = vec5,
     options = c("a", "b", "c"), 
     all.options.in.data = FALSE
 )
 # Error
-arg_check(data = vec5,
+arg_check(
+    data = vec5,
     options = c("a", "b", "c"), 
     all.options.in.data = TRUE
 )
@@ -129,7 +139,10 @@ arg_check(data = vec5,
 
 ### Argument na.contain
 ```{r}
-arg_check(data = mat2, class = "matrix", prop = TRUE,
+arg_check(
+    data = mat2, 
+    class = "matrix", 
+    prop = TRUE,
     na.contain = FALSE # with TRUE, integers stored as double are accepted
 )
 ```
@@ -138,7 +151,9 @@ arg_check(data = mat2, class = "matrix", prop = TRUE,
 ### Argument neg.values
 ```{r}
 # Warning: only considered if set to FALSE, to check for non negative values when class is set to "vector", "numeric", "matrix", "array", "data.frame", "table", or typeof is set to "double", "integer", or mode is set to "numeric"
-arg_check(data = mat1, class = "matrix",
+arg_check(
+    data = mat1, 
+    class = "matrix",
     neg.values = FALSE # with TRUE, integers stored as double are accepted
 )
 ```
@@ -147,7 +162,9 @@ arg_check(data = mat1, class = "matrix",
 ### Argument inf.values
 ```{r}
 # Warning: only considered if set to FALSE, to check for non infinite values when class is set to "vector", "numeric", "matrix", "array", "data.frame", "table", or typeof is set to "double", "integer", or mode is set to "numeric"
-arg_check(data = mat1, class = "matrix",
+arg_check(
+    data = mat1, 
+    class = "matrix",
     inf.values = FALSE
 )
 ```
@@ -156,15 +173,21 @@ arg_check(data = mat1, class = "matrix",
 ### Argument print
 ```{r}
 # No error message printed because print is FALSE
-res <- arg_check(data = mat1, class = "data.frame",
+res <- arg_check(
+    data = mat1, 
+    class = "data.frame",
     print = FALSE
 )
 # Error message printed
-res <- arg_check(data = mat1, class = "data.frame",
+res <- arg_check(
+    data = mat1, 
+    class = "data.frame",
     print = TRUE
 )
 # Even if print is TRUE, no error message printed because no error
-res <- arg_check(data = mat1, class = "matrix",
+res <- arg_check(
+    data = mat1, 
+    class = "matrix",
     print = TRUE
 )
 ```
@@ -173,22 +196,42 @@ res <- arg_check(data = mat1, class = "matrix",
 ### Arguments data.name and fun.name
 ```{r}
 # Example
-tempo <- arg_check(data = vec1, class = "integer", 
+tempo <- arg_check(
+    data = vec1, 
+    class = "integer", 
     data.name = "OBSERVATION_1", 
     fun.name = "FUNCTION_1"
 )
 tempo$text
 # In fact, these two arguments are interesting when check() is used inside functions
 fun1 <- function(arg1){
-    tempo <- arg_check(data = arg1, class = "integer", 
-        data.name = NULL, # if NULL, the name displayed is arg1
-        fun.name = NULL # if NULL, no name displayed
+    tempo <- arg_check(
+                data = arg1, 
+                class = "integer", 
+                data.name = NULL, # if NULL, the name displayed is arg1
+                fun.name = NULL # if NULL, no name displayed
     )
     if(tempo$problem == TRUE){
         cat(paste0("\n\n================\n\n", tempo$text, "\n\n================\n\n"))
     }
 }
 fun1(arg1 = vec4) # error message because arg1 requires a vector of integers
+```
+<br>
+
+### Argument safer_check
+```{r}
+arg_check(
+    data = mat1, 
+    class = "matrix", 
+    safer_check = TRUE
+) # safer_check = TRUE, checkings are performed before main code running
+
+arg_check(
+    data = vec4, 
+    options = c("pearson", "spearman", "kendall"), 
+    safer_check = FALSE
+) # safer_check = TRUE, checkings are performed before main code running
 ```
 <br>
 
@@ -210,6 +253,7 @@ arg_check(
     inf.values = TRUE, 
     print = FALSE, 
     data.name = NULL, 
-    fun.name = NULL
+    fun.name = NULL,
+    safer_check = TRUE
 )
 ```

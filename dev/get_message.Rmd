@@ -11,11 +11,13 @@ knitr::opts_chunk$set(
 ```
 
 ```{r setup}
-library(cuteDev)
+library(saferDev)
 ```
 <br>
 
-#### get_message() #### return error/warning/other messages of an expression (that can be exported)
+#### get_message() 
+
+#### return error/warning/other messages of an expression (that can be exported)
 <br>
 
 ### Datasets
@@ -60,13 +62,28 @@ get_message(data = char1, print.no = TRUE) # print a message saying that no mess
 
 ### Argument text
 ```{r}
-get_message(data = char2, print.no = TRUE, text = "IN A") # print a message even if the argument print.no is TRUE
+get_message(
+    data = char2, 
+    print.no = TRUE, 
+    text = "IN A"
+) # print a message even if the argument print.no is TRUE
 ```
 <br>
 
 ### Argument kind, header, print.no, text
 ```{r}
-get_message(data = char1, kind = "warning", header = FALSE, print.no = TRUE, text = "IN A") # print the warning message in text
+get_message(
+    data = char1, 
+    kind = "warning", 
+    header = FALSE, 
+    print.no = TRUE, 
+    text = "IN A") # print the warning message in text
+```
+<br>
+
+### Argument safer_check
+```{r}
+get_message(data = char2, safer_check = TRUE) # with TRUE, checkings are performed before main code running
 ```
 <br>
 
@@ -78,11 +95,9 @@ get_message(
     header = FALSE,
     print.no = TRUE, 
     text = "IN A",
-    env = NULL
+    env = NULL,
+    safer_check = TRUE
 ) # print the warning message in text in the environment R_GlobalEnv
 ```
-
-
-
 
 

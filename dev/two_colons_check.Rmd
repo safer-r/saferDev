@@ -45,7 +45,10 @@ two_colons_check(x = fun2) # a function name, written without quotes and bracket
 
 ### Argument safer_chek 
 ```{r, echo = TRUE, error = TRUE}
-two_colons_check(x = fun1, safer_check = FALSE) # Single logical value. Perform some "safer" checks (see https://github.com/safer-r) ?
+two_colons_check(
+    x = fun1, 
+    afer_check = FALSE
+) # Single logical value. Perform some "safer" checks (see https://github.com/safer-r) ?
 ```
 <br>
 

@@ -11,7 +11,7 @@ knitr::opts_chunk$set(
 ```
 
 ```{r setup}
-library(cuteDev)
+library(saferDev)
 ```
 <br>
 
@@ -30,17 +30,23 @@ path # character vector specifying the absolute pathways of the directories, thi
 <br>
 
 ### Argument fun
-```{r}
+```{r, echo = TRUE, error = TRUE}
 is_function_here(fun = f) # check if the package serpentine is in the computer
 ```
 <br>
 
 ### Argument lib.path
-```{r}
+```{r, echo = TRUE, error = TRUE}
 is_function_here(
     fun = f,
     lib.path = "."
-    ) # check if the function is present in the package
+) # check if the function is present in the package
+```
+<br>
+
+### Argument safer_check
+```{r, echo = TRUE, error = TRUE}
+is_function_here(safer_check = TRUE) # with TRUE, checkings are performed before main code running
 ```
 <br>
 
@@ -48,7 +54,9 @@ is_function_here(
 ```{r, echo = TRUE, error = TRUE}
 is_function_here(
     fun = f,
-    lib.path = path
-    ) # check if the function is present in the package, returns an error because the path doesn't exist
+    lib.path = path,
+    safer_check = TRUE
+) # check if the function is present in the package, returns an error because the path doesn't exist
 ```
-```
+<br>
+

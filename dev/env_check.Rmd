@@ -11,7 +11,7 @@ knitr::opts_chunk$set(
 ```
 
 ```{r setup}
-library(cuteDev)
+library(saferDev)
 ```
 <br>
 
@@ -48,11 +48,18 @@ env_check(name = "mean") # check if the object "mean" is in the environment one 
 ```
 <br>
 
+### Argument safer_check
+```{r}
+env_check(safer_check = TRUE) # with TRUE, checkings are performed before main code running
+```
+<br>
+
 ### All the arguments
 ```{r}
 mean <- 2
 env_check(
     pos = 1,
-    name = "mean"
+    name = "mean",
+    safer_check = TRUE
 ) # check if the object "mean" is in the environment one step above the env_check() environment, and if yes, returns if the same name exists in above environments
 ```
