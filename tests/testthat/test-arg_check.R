@@ -8,17 +8,17 @@
 
     #Test cases
     result1 <- arg_check(data = vec1, class = "numeric")
-    expected1 <- list(problem = TRUE, text = "ERROR: THE vec1 OBJECT MUST BE CLASS numeric", object.name = "vec1")
+    expected1 <- list(problem = TRUE, text = "ERROR\nTHE vec1 OBJECT MUST BE CLASS numeric", object.name = "vec1")
     expect_equal(result1,expected1)
     
     
     result2 <- arg_check(data = vec1, class = "vector", typeof = "integer", length = 3, neg.values = FALSE, na.contain = FALSE)
-    expected2 <- list(problem = TRUE, text = "ERROR: THE vec1 OBJECT MUST BE LENGTH 3 AND THE vec1 OBJECT MUST BE MADE OF NON NEGATIVE NUMERIC VALUES", object.name = "vec1")
+    expected2 <- list(problem = TRUE, text = "ERROR\nTHE vec1 OBJECT MUST BE LENGTH 3 AND THE vec1 OBJECT MUST BE MADE OF NON NEGATIVE NUMERIC VALUES", object.name = "vec1")
     expect_equal(result2,expected2)
     
 
     result3 <- arg_check(data = NULL, class = "integer")
-    expected3 <- list(problem = TRUE, text = "ERROR: THE NULL OBJECT MUST BE CLASS integer", object.name = "NULL")
+    expected3 <- list(problem = TRUE, text = "ERROR\nTHE NULL OBJECT MUST BE CLASS integer", object.name = "NULL")
     expect_equal(result3,expected3)
     
 
@@ -26,7 +26,7 @@
     typeof = "integer", 
     mode = "character", # the mode "character" exists but is inconsistant with typeof "integer". However, this aspect is not signaled by the function
 )
-    expected4 <- list(problem = TRUE, text = "ERROR: THE vec1 OBJECT MUST BE MODE character", object.name = "vec1")
+    expected4 <- list(problem = TRUE, text = "ERROR\nTHE vec1 OBJECT MUST BE MODE character", object.name = "vec1")
     expect_equal(result4,expected4)
     
     
@@ -39,7 +39,7 @@
     result6 <- arg_check(data = mat2, 
     prop = TRUE # Check for values between 0 and 1 only
 )
-    expected6 <- list(problem = TRUE, text = "ERROR: THE mat2 OBJECT CONTAINS NA WHILE NOT AUTHORIZED", object.name = "mat2")
+    expected6 <- list(problem = TRUE, text = "ERROR\nTHE mat2 OBJECT CONTAINS NA WHILE NOT AUTHORIZED", object.name = "mat2")
     expect_equal(result6,expected6)
     
 
@@ -61,28 +61,28 @@
     options = c("a", "b", "c"), 
     all.options.in.data = TRUE
 )
-    expected9 <- list(problem = TRUE, text = "ERROR: THE vec5 OBJECT MUST BE MADE OF ALL THESE OPTIONS: a b c\nTHE MISSING ELEMENTS OF THE options ARGUMENT ARE: c", object.name = "vec5")
+    expected9 <- list(problem = TRUE, text = "ERROR\nTHE vec5 OBJECT MUST BE MADE OF ALL THESE OPTIONS: a b c\nTHE MISSING ELEMENTS OF THE options ARGUMENT ARE: c", object.name = "vec5")
     expect_equal(result9,expected9)
     
 
     result10 <- arg_check(data = mat2, class = "matrix", prop = TRUE,
     na.contain = FALSE # with TRUE, integers stored as double are accepted
 )
-    expected10 <- list(problem = TRUE, text = "ERROR: THE mat2 OBJECT CONTAINS NA WHILE NOT AUTHORIZED", object.name = "mat2")
+    expected10 <- list(problem = TRUE, text = "ERROR\nTHE mat2 OBJECT CONTAINS NA WHILE NOT AUTHORIZED", object.name = "mat2")
     expect_equal(result10,expected10)
     
 
     result11 <- arg_check(data = mat1, class = "matrix",
     neg.values = FALSE # with TRUE, integers stored as double are accepted
 )
-    expected11 <- list(problem = TRUE, text = "ERROR: THE mat1 OBJECT MUST BE MADE OF NON NEGATIVE NUMERIC VALUES", object.name = "mat1")
+    expected11 <- list(problem = TRUE, text = "ERROR\nTHE mat1 OBJECT MUST BE MADE OF NON NEGATIVE NUMERIC VALUES", object.name = "mat1")
     expect_equal(result11,expected11)
     
 
     result12 <- arg_check(data = mat1, class = "matrix",
     inf.values = FALSE
 )
-    expected12 <- list(problem = TRUE, text = "ERROR: THE mat1 OBJECT MUST BE MADE OF NON INFINITE VALUES BUT IS NOT EVEN TYPE DOUBLE", object.name = "mat1")
+    expected12 <- list(problem = TRUE, text = "ERROR\nTHE mat1 OBJECT MUST BE MADE OF NON INFINITE VALUES BUT IS NOT EVEN TYPE DOUBLE", object.name = "mat1")
     expect_equal(result12,expected12)
     
 
