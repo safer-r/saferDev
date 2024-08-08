@@ -131,7 +131,8 @@ arg_test <- function(
     if(safer_check == TRUE){
         .base_op_check(
             external.function.name = function.name,
-            external.package.name = package.name)
+            external.package.name = package.name
+        )
     }
     # end critical operator checking
     # package checking
@@ -605,6 +606,7 @@ arg_test <- function(
             cl = Clust,
             x = cluster.list,
             function.name = function.name, 
+            package.name = package.name, 
             ini = ini, 
             thread.nb = thread.nb, 
             print.count = print.count, 
@@ -628,6 +630,7 @@ arg_test <- function(
             fun = function(
         x, 
         function.name, 
+        package.name, 
         ini, 
         thread.nb, 
         print.count, 
@@ -657,7 +660,8 @@ arg_test <- function(
                         "lubridate::seconds_to_period"
                     ),
                     lib.path = lib.path,
-                    external.function.name = function.name
+                    external.function.name = function.name, 
+                    external.package.name = package.name
                 )
                 # end check again: very important because another R
                 # plot management

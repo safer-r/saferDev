@@ -76,7 +76,7 @@ arg_check <- function(
         .base_op_check(
             external.function.name = function.name,
             external.package.name = package.name
-)
+        )
     }
     # end critical operator checking
     # check of lib.path
