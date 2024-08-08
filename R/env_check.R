@@ -70,7 +70,7 @@ env_check <- function(
     package.name <- "saferDev"
     # end package name
     # function name
-    function.name <- base::paste0(base::as.list(base::match.call(expand.dots = FALSE))[[1]], "()") # function name with "()" paste, which split into a vector of three: c("::()", "package()", "function()") if "package::function()" is used.
+    function.name <- base::paste0(base::as.list(base::match.call(expand.dots = FALSE))[[1]], "()") # function name with "()" paste, which split into a vector of three: c("::()", "package ()", "function ()") if "package::function()" is used.
     if(function.name[1] == "::()"){
         function.name <- function.name[3]
     }
@@ -100,9 +100,9 @@ env_check <- function(
     text.check <- NULL #
     checked.arg.names <- NULL # for function debugging: used by r_debugging_tools
     ee <- base::expression(argum.check <- base::c(argum.check, tempo$problem) , text.check <- base::c(text.check, tempo$text) , checked.arg.names <- base::c(checked.arg.names, tempo$object.name))
-    tempo <- arg_check(data = pos, class = "vector", typeof = "integer", double.as.integer.allowed = TRUE, length = 1, fun.name = function.name, safer_check = FALSE) ; base::eval(ee)
+    tempo <- saferDev::arg_check(data = pos, class = "vector", typeof = "integer", double.as.integer.allowed = TRUE, length = 1, fun.name = function.name, safer_check = FALSE) ; base::eval(ee)
     if( ! base::is.null(name)){
-        tempo <- arg_check(data = name, class = "vector", typeof = "character", fun.name = function.name, safer_check = FALSE) ; base::eval(ee)
+        tempo <- saferDev::arg_check(data = name, class = "vector", typeof = "character", fun.name = function.name, safer_check = FALSE) ; base::eval(ee)
     }
     if( ! base::is.null(argum.check)){
         if(base::any(argum.check, na.rm = TRUE) == TRUE){
@@ -131,6 +131,7 @@ env_check <- function(
     # management of NULL arguments
     tempo.arg <- base::c(
         "pos",
+        # "name", # inactivated because can be NULL
         "safer_check"
     )
     tempo.log <- base::sapply(base::lapply(tempo.arg, FUN = base::get, env = base::sys.nframe(), inherit = FALSE), FUN = base::is.null)
