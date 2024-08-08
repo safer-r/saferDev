@@ -124,6 +124,9 @@ lib.path = NULL)
 # lib.path = "C:\\Program Files\\R\\R-4.3.1\\library\\") 
 # BEWARE: ggplot2::geom_histogram does not work
 }
+\seealso{
+\code{\link{arg_check}}.
+}
 \author{
 Gael Millot <gael.millot@pasteur.fr>
 

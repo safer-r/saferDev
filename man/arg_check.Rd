@@ -86,7 +86,7 @@ test <- matrix(1:3)
 # arg_check(data = test, print = TRUE, class = "vector", mode = "numeric")  # commented because this example returns an error
 }
 \seealso{
-\code{\link{match.arg}} .
+\code{\link{match.arg}} et \code{\link{arg_test}}.
 }
 \author{
 Gael Millot <gael.millot@pasteur.fr>

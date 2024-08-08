@@ -75,7 +75,7 @@ kind = "message", print.no = TRUE, text = "IN FUNCTION 1")
 
 }
 \seealso{
-\code{\link{try}} .
+\code{\link{try}}.
 }
 \author{
 Gael Millot <gael.millot@pasteur.fr>

@@ -70,7 +70,7 @@ else{search()[ (1:length(search()))[test.pos - length(sys.calls())]]})
 # here is a way to have the name of the tested environment according to test.pos value
 }
 \seealso{
-\code{\link{exists}} .
+\code{\link{exists}}.
 }
 \author{
 Gael Millot <gael.millot@pasteur.fr>
