@@ -49,6 +49,7 @@
 #' @importFrom parallel clusterSplit
 #' @importFrom parallel clusterApply
 #' @importFrom parallel stopCluster
+#' @seealso \code{\link{arg_check}}.
 #' @author Gael Millot <gael.millot@pasteur.fr>
 #' @author Yushi Han <yushi.han2000@gmail.com>
 #' @author Haiding Wang <wanghaiding442@gmail.com>
