@@ -69,7 +69,7 @@ report <- function(
     )
     tempo <- base::eval(base::parse(text = base::paste0("base::missing(", base::paste0(mandat.args, collapse = ") | base::missing("), ")")))
     if(base::any(tempo)){ # normally no NA for base::missing() output
-        tempo.cat <- base::paste0("ERROR IN ", function.name, " OF THE ", package.name, " PACKAGE: \nFOLLOWING ARGUMENT", base::ifelse(base::sum(tempo, na.rm = TRUE) > 1, "S HAVE", " HAS"), " NO DEFAULT VALUE AND REQUIRE ONE:\n", base::paste0(mandat.args[tempo], collapse = "\n"))
+        tempo.cat <- base::paste0("ERROR IN ", function.name, " OF THE ", package.name, " PACKAGE\nFOLLOWING ARGUMENT", base::ifelse(base::sum(tempo, na.rm = TRUE) > 1, "S HAVE", " HAS"), " NO DEFAULT VALUE AND REQUIRE ONE:\n", base::paste0(mandat.args[tempo], collapse = "\n"))
         base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
     }
     # end arg with no default values
@@ -80,14 +80,14 @@ report <- function(
     ee <- base::expression(argum.check <- base::c(argum.check, tempo$problem) , text.check <- base::c(text.check, tempo$text) , checked.arg.names <- base::c(checked.arg.names, tempo$object.name))
     tempo <- arg_check(data = output, class = "character", length = 1, fun.name = function.name, safer_check = FALSE) ; base::eval(ee)
     if(tempo$problem == FALSE & output == ""){
-        tempo.cat <- base::paste0("ERROR IN ", function.name, " OF THE ", package.name, " PACKAGE: output ARGUMENT AS \"\" DOES NOT CORRESPOND TO A VALID FILE NAME")
+        tempo.cat <- base::paste0("ERROR IN ", function.name, " OF THE ", package.name, " PACKAGE\noutput ARGUMENT AS \"\" DOES NOT CORRESPOND TO A VALID FILE NAME")
         text.check <- base::c(text.check, tempo.cat)
         argum.check <- base::c(argum.check, TRUE)
     }
     tempo <- arg_check(data = path, class = "vector", mode = "character", fun.name = function.name, safer_check = FALSE) ; base::eval(ee)
     if(tempo$problem == FALSE){
         if( ! base::all(base::dir.exists(path), na.rm = TRUE)){ # separation to avoid the problem of tempo$problem == FALSE and lib.path == NA
-            tempo.cat <- base::paste0("ERROR IN ", function.name, " OF THE ", package.name, " PACKAGE: path ARGUMENT DOES NOT CORRESPOND TO EXISTING DIRECTORY\n", base::paste(path, collapse = "\n"))
+            tempo.cat <- base::paste0("ERROR IN ", function.name, " OF THE ", package.name, " PACKAGE\npath ARGUMENT DOES NOT CORRESPOND TO EXISTING DIRECTORY\n", base::paste(path, collapse = "\n"))
             text.check <- base::c(text.check, tempo.cat)
             argum.check <- base::c(argum.check, TRUE)
         }
@@ -144,7 +144,7 @@ report <- function(
     )
     tempo.log <- base::sapply(base::lapply(tempo.arg, FUN = base::get, env = base::sys.nframe(), inherit = FALSE), FUN = base::is.null)
     if(base::any(tempo.log) == TRUE){# normally no NA with base::is.null()
-        tempo.cat <- base::paste0("ERROR IN ", function.name, " OF THE ", package.name, " PACKAGE:\n", base::ifelse(base::sum(tempo.log, na.rm = TRUE) > 1, "THESE ARGUMENTS\n", "THIS ARGUMENT\n"), base::paste0(tempo.arg[tempo.log], collapse = "\n"),"\nCANNOT BE NULL")
+        tempo.cat <- base::paste0("ERROR IN ", function.name, " OF THE ", package.name, " PACKAGE\n", base::ifelse(base::sum(tempo.log, na.rm = TRUE) > 1, "THESE ARGUMENTS\n", "THIS ARGUMENT\n"), base::paste0(tempo.arg[tempo.log], collapse = "\n"),"\nCANNOT BE NULL")
         base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
     }
     # end management of NULL arguments

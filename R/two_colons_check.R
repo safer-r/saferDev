@@ -58,7 +58,7 @@ two_colons_check <- function(
     )
     tempo <- base::eval(base::parse(text = base::paste0("base::missing(", base::paste0(mandat.args, collapse = ") | base::missing("), ")")))
     if(base::any(tempo)){ # normally no NA for base::missing() output
-        tempo.cat <- base::paste0("ERROR IN ", function.name, " OF THE ", package.name, " PACKAGE: \nFOLLOWING ARGUMENT", base::ifelse(base::sum(tempo, na.rm = TRUE) > 1, "S HAVE", " HAS"), " NO DEFAULT VALUE AND REQUIRE ONE:\n", base::paste0(mandat.args[tempo], collapse = "\n"))
+        tempo.cat <- base::paste0("ERROR IN ", function.name, " OF THE ", package.name, " PACKAGE\nFOLLOWING ARGUMENT", base::ifelse(base::sum(tempo, na.rm = TRUE) > 1, "S HAVE", " HAS"), " NO DEFAULT VALUE AND REQUIRE ONE:\n", base::paste0(mandat.args[tempo], collapse = "\n"))
         base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
     }
     # end arg with no default values
@@ -86,7 +86,7 @@ two_colons_check <- function(
         tempo.arg <- base::names(arg.user.setting) # values provided by the user
         tempo.log <- base::suppressWarnings(base::sapply(base::lapply(base::lapply(tempo.arg, FUN = base::get, env = base::sys.nframe(), inherit = FALSE), FUN = base::is.na), FUN = base::any)) & base::lapply(base::lapply(tempo.arg, FUN = base::get, env = base::sys.nframe(), inherit = FALSE), FUN = base::length) == 1L # no argument provided by the user can be just NA
         if(base::any(tempo.log) == TRUE){ # normally no NA because base::is.na() used here
-            tempo.cat <- base::paste0("ERROR IN ", function.name, " OF THE ", package.name, " PACKAGE: \n", base::ifelse(base::sum(tempo.log, na.rm = TRUE) > 1, "THESE ARGUMENTS", "THIS ARGUMENT"), " CANNOT JUST BE NA:", base::paste0(tempo.arg[tempo.log], collapse = "\n"))
+            tempo.cat <- base::paste0("ERROR IN ", function.name, " OF THE ", package.name, " PACKAGE\n", base::ifelse(base::sum(tempo.log, na.rm = TRUE) > 1, "THESE ARGUMENTS", "THIS ARGUMENT"), " CANNOT JUST BE NA:", base::paste0(tempo.arg[tempo.log], collapse = "\n"))
             base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
         }
     }
@@ -98,7 +98,7 @@ two_colons_check <- function(
     )
     tempo.log <- base::sapply(base::lapply(tempo.arg, FUN = base::get, env = base::sys.nframe(), inherit = FALSE), FUN = base::is.null)
     if(base::any(tempo.log) == TRUE){# normally no NA with base::is.null()
-        tempo.cat <- base::paste0("ERROR IN ", function.name, " OF THE ", package.name, " PACKAGE:\n", base::ifelse(base::sum(tempo.log, na.rm = TRUE) > 1, "THESE ARGUMENTS\n", "THIS ARGUMENT\n"), base::paste0(tempo.arg[tempo.log], collapse = "\n"),"\nCANNOT BE NULL")
+        tempo.cat <- base::paste0("ERROR IN ", function.name, " OF THE ", package.name, " PACKAGE\n", base::ifelse(base::sum(tempo.log, na.rm = TRUE) > 1, "THESE ARGUMENTS\n", "THIS ARGUMENT\n"), base::paste0(tempo.arg[tempo.log], collapse = "\n"),"\nCANNOT BE NULL")
         base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
     }
     # end management of NULL arguments
@@ -134,7 +134,7 @@ two_colons_check <- function(
         base::names(res2) <- NULL
         tempo.log <- base::lapply(X = res2, FUN = function(x){ ! x %in% "::"})
         if( ! base::all(base::sapply(X = res2, FUN = function(x){base::length(x)}) == base::sapply(X = tempo.log, FUN = function(x){base::length(x)}))){
-            tempo.cat <- base::paste0("INTERNAL ERROR 5 IN ", function.name, " OF THE ", package.name, " PACKAGE: LENGTHS SHOULD BE IDENTICAL\nres2: ", base::paste(base::sapply(X = res2, FUN = function(x){base::length(x)}), collapse = " "), "\ntempo.log: ", base::paste(base::sapply(X = tempo.log, FUN = function(x){base::length(x)}), collapse = " "))
+            tempo.cat <- base::paste0("INTERNAL ERROR 5 IN ", function.name, " OF THE ", package.name, " PACKAGE\nLENGTHS SHOULD BE IDENTICAL\nres2: ", base::paste(base::sapply(X = res2, FUN = function(x){base::length(x)}), collapse = " "), "\ntempo.log: ", base::paste(base::sapply(X = tempo.log, FUN = function(x){base::length(x)}), collapse = " "))
             base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
         }
         if(base::any(base::unlist(tempo.log))){
@@ -142,7 +142,7 @@ two_colons_check <- function(
             col2 <- base::unlist(base::mapply(FUN = function(x, y){y[x]}, x = tempo.log, y = list.fun))
             col3 <- base::unlist(base::mapply(FUN = function(x, y){y[x]}, x = tempo.log, y = res))
             if( ! (base::length(col1) == base::length(col2) & base::length(col1) == base::length(col3) & base::length(col2) == base::length(col3))){
-                tempo.cat <- base::paste0("INTERNAL ERROR 5 IN ", function.name, " OF THE ", package.name, " PACKAGE: LENGTHS OF col1 (", base::length(col1), "), col2 (", base::length(col2), "), AND col3 (", base::length(col3), "), SHOULD BE EQUAL\n")
+                tempo.cat <- base::paste0("INTERNAL ERROR 5 IN ", function.name, " OF THE ", package.name, " PACKAGE\nLENGTHS OF col1 (", base::length(col1), "), col2 (", base::length(col2), "), AND col3 (", base::length(col3), "), SHOULD BE EQUAL\n")
                 base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
             }
             tempo.pos <- base::paste0(col1, "\t", col2, "\t", col3)
@@ -161,7 +161,7 @@ two_colons_check <- function(
     # recovering the basic functions of R
     s <- base::c("package:stats", "package:graphics",  "package:grDevices", "package:utils", "package:datasets", "package:methods", "Autoloads", "package:base") # basic base::search() scope
     if(base::any( ! s %in% base::search())){
-        tempo.cat <- base::paste0("INTERNAL ERROR 1 IN ", function.name, " OF THE ", package.name, " PACKAGE: THE base::search() SCOPE OF R HAS CHANGED.\nTHE PROBLEM IS:\n",
+        tempo.cat <- base::paste0("INTERNAL ERROR 1 IN ", function.name, " OF THE ", package.name, " PACKAGE\nTHE base::search() SCOPE OF R HAS CHANGED.\nTHE PROBLEM IS:\n",
             base::paste(s[ ! s %in% base::search()], collapse = "\n"))
         base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
     }
@@ -186,7 +186,7 @@ two_colons_check <- function(
     fun_name_wo_op <- base::lapply(fun_name, FUN = function(x){x[ ! x %in% base::c("function", "if", "for", "while", "repeat")]})[ ! comment_line.log] # removal of special functions
     tempo.log <- base::sapply(fun_name_wo_op, FUN = function(x){base::length(x) == 0}) # detection of string with empty function names
     if(base::length(fun_name_wo_op) != base::length(code_line_nb)){
-        tempo.cat <- base::paste0("INTERNAL ERROR 2 IN ", function.name, " OF THE ", package.name, " PACKAGE: LENGTHS SHOULD BE IDENTICAL\nfun_name_wo_op: ", base::length(fun_name_wo_op), "\ncode_line_nb: ", base::length(code_line_nb))
+        tempo.cat <- base::paste0("INTERNAL ERROR 2 IN ", function.name, " OF THE ", package.name, " PACKAGE\nLENGTHS SHOULD BE IDENTICAL\nfun_name_wo_op: ", base::length(fun_name_wo_op), "\ncode_line_nb: ", base::length(code_line_nb))
         base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
     }
     fun_name_wo_op <- fun_name_wo_op[ ! tempo.log] # removal of empty string
@@ -198,7 +198,7 @@ two_colons_check <- function(
     in_basic_fun <- base::lapply(fun_name_wo_op, FUN = function(x){x[x %in% fun]}) #  names of all the basic functions used in x
     tempo.log <- base::sapply(in_basic_fun, FUN = function(x){base::length(x) == 0}) # detection of string with empty function names
     if(base::length(in_basic_fun) != base::length(code_line_nb)){
-        tempo.cat <- base::paste0("INTERNAL ERROR 3 IN ", function.name, " OF THE ", package.name, " PACKAGE: LENGTHS SHOULD BE IDENTICAL\nin_basic_fun: ", base::length(in_basic_fun), "\ncode_line_nb: ", base::length(code_line_nb))
+        tempo.cat <- base::paste0("INTERNAL ERROR 3 IN ", function.name, " OF THE ", package.name, " PACKAGE\nLENGTHS SHOULD BE IDENTICAL\nin_basic_fun: ", base::length(in_basic_fun), "\ncode_line_nb: ", base::length(code_line_nb))
         base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
     }
     in_basic_fun <- in_basic_fun[ ! tempo.log] # removal of empty string
@@ -209,7 +209,7 @@ two_colons_check <- function(
     in_other_fun <- base::lapply(fun_name_wo_op, FUN = function(x){x[ ! x %in% base::c(fun, arg.user.setting$x)]}) #  names of all the other functions used in x, except the one tested (arg.user.setting$x), because can be in error messages
     tempo.log <- base::sapply(in_other_fun, FUN = function(x){base::length(x) == 0}) # detection of string with empty function names
     if(base::length(in_other_fun) != base::length(code_line_nb)){
-        tempo.cat <- base::paste0("INTERNAL ERROR 4 IN ", function.name, " OF THE ", package.name, " PACKAGE: LENGTHS SHOULD BE IDENTICAL\nin_other_fun: ", base::length(in_other_fun), "\ncode_line_nb: ", base::length(code_line_nb))
+        tempo.cat <- base::paste0("INTERNAL ERROR 4 IN ", function.name, " OF THE ", package.name, " PACKAGE\nLENGTHS SHOULD BE IDENTICAL\nin_other_fun: ", base::length(in_other_fun), "\ncode_line_nb: ", base::length(code_line_nb))
         base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
     }
     in_other_fun <- in_other_fun[ ! tempo.log] # removal of empty string
