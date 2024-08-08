@@ -120,7 +120,7 @@ arg_test <- function(
     # end package name
     # function name
     ini <- base::match.call(expand.dots = FALSE) # initial parameters (specific of arg_test())
-    function.name <- base::paste0(base::as.list(base::match.call(expand.dots = FALSE))[[1]], "()") # function name with "()" paste, which split into a vector of three: c("::()", "package()", "function()") if "package::function()" is used.
+    function.name <- base::paste0(base::as.list(base::match.call(expand.dots = FALSE))[[1]], "()") # function name with "()" paste, which split into a vector of three: c("::()", "package ()", "function ()") if "package::function()" is used.
     if(function.name[1] == "::()"){
         function.name <- function.name[3]
     }
@@ -366,7 +366,7 @@ arg_test <- function(
     # end declaration of special plot functions
     # new environment
     env.name <- base::paste0("env", base::as.numeric(base::Sys.time()))
-    if(base::exists(env.name, where = -1)){ # verify if still ok when info() is inside a function
+    if(base::exists(env.name, where = -1)){ # verify if still ok when this function is inside a function
         tempo.cat <- base::paste0("ERROR IN ", function.name, " OF THE ", package.name, " PACKAGE\nENVIRONMENT env.name ALREADY EXISTS. PLEASE RERUN ONCE")
         base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
     }else{
@@ -602,7 +602,7 @@ arg_test <- function(
         cluster.list <- parallel::clusterSplit(Clust, 1:total.comp.nb) # split according to the number of cluster
         utils::str(cluster.list) # using base::print(utils::str()) add a NULL below the result
         base::cat("\n")
-        paral.output.list <- parallel::clusterApply( # paral.output.list is a list made of thread.nb compartments, each made of n / thread.nb (mat theo column number) compartment. Each compartment receive the corresponding results of permut(), i.e., data (permuted mat1.perm), warning message, cor (final correlation) and count (number of permutations)
+        paral.output.list <- parallel::clusterApply( # paral.output.list is a list made of thread.nb compartments, each made of n / thread.nb (mat theo column number) compartment. Each compartment receive the corresponding results of this function
             cl = Clust,
             x = cluster.list,
             function.name = function.name, 
@@ -730,7 +730,7 @@ arg_test <- function(
                     final.pdf <- tempo.pdf
                     # new env for RData combining
                     env.name <- base::paste0("env", ini.time)
-                    if(base::exists(env.name, where = -1)){ # verify if still ok when arg_arg_test() is inside a function
+                    if(base::exists(env.name, where = -1)){ # verify if still ok when this function is inside a function
                         tempo.cat <- base::paste0("ERROR IN ", function.name, " OF THE ", package.name, " PACKAGE\nENVIRONMENT env.name ALREADY EXISTS. PLEASE RERUN ONCE")
                         base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n", base::ifelse(base::is.null(warn), "", base::paste0("IN ADDITION\nWARNING", base::ifelse(warn.count > 1, "S", ""), ":\n\n", warn))), call. = FALSE)
                         # end new env for RData combining
