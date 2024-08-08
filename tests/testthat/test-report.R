@@ -18,5 +18,16 @@ test_that("report function works correctly", {
     expect_no_error(report(data = mat2, path = "."))
     expect_no_error(report(data = tab1, path = "."))
     expect_no_error(report(data = tab1, path = "."))
+    expect_no_error(report(
+      data = mat2, 
+      output = "test.txt", 
+      path = ".", 
+      overwrite = TRUE, 
+      rownames.kept = TRUE, 
+      vector.cat = TRUE, 
+      noquote = FALSE, 
+      sep = 4,
+      safer_check = TRUE
+  ))
 })
 
