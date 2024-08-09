@@ -12,7 +12,7 @@
 #'  
 #' - The following R operators using bracket are not considered: "function", "if", "for", "while" and "repeat"
     # Dot at first position is removed (due to stringr::str_extract_all() function ).
-    # Function with dot at last position are not detected
+    # Functions with dot at first position are not detected
 #' 
 #' @author Gael Millot <gael.millot@pasteur.fr>
 #' @author Yushi Han <yushi.han2000@gmail.com>
@@ -27,7 +27,7 @@ two_colons_check <- function(
 ){
 
     # DEBUGGING
-    # x = get_message ; safer_check = TRUE # Warning: x = saferDev::get_message does not return the same number of code lines
+    # x = saferDev::env_check ; safer_check = TRUE # Warning: x = saferDev::get_message does not return the same number of code lines
     # package name
     package.name <- "saferDev"
     # end package name
@@ -118,7 +118,10 @@ two_colons_check <- function(
     # end second round of checking and data preparation
 
     # main code
-    extract_all <- function(text, pattern) {
+    extract_all <- function(
+        text, 
+        pattern
+    ) {
         # Find all matches, including trailing '('
         matches <- base::gregexpr(base::paste0(pattern, "\\("), text)
         matched_strings <- base::regmatches(text, matches)[[1]]
@@ -128,7 +131,15 @@ two_colons_check <- function(
         base::return(result)
     }
 
-    create_message <- function(list.fun, list.fun.uni, list.line.nb, text){
+    create_message <- function(
+        list.fun, 
+        list.fun.uni, 
+        list.line.nb, 
+        ini,
+        function.name, 
+        package.name, 
+        text
+    ){
         pattern2 <- base::paste(base::paste0(list.fun.uni, "\\s*\\("), collapse = "|") # to split string according to basic function name as splitter
         basic_ini <- ini[list.line.nb]
         res <- base::strsplit(x = basic_ini, split = pattern2)
@@ -150,7 +161,7 @@ two_colons_check <- function(
             }
             tempo.pos <- base::paste0(col1, "\t", col2, "\t", col3)
             output.cat <- base::paste0(
-                "INSIDE ", arg.user.setting$x, "(), SOME :: ARE MISSING AT ", text, " FUNCTION POSITIONS:\n\n",
+                "INSIDE ", function.name, ", SOME :: ARE MISSING AT ", text, " FUNCTION POSITIONS:\n\n",
                 text, 
                 "_FUN_NB\tFUN\tSTRING_BEFORE\n",
                 base::paste(tempo.pos, collapse = "\n")
@@ -221,7 +232,15 @@ two_colons_check <- function(
     # end other function names in x
     # analyse of :: before basic functions in x
     if(base::length(in_basic_fun_uni) > 0){
-        tempo <- create_message(list.fun = in_basic_fun, list.fun.uni = in_basic_fun_uni, list.line.nb = in_basic_code_line_nb, text = "BASIC")
+        tempo <- create_message(
+            list.fun = in_basic_fun, 
+            list.fun.uni = in_basic_fun_uni, 
+            list.line.nb = in_basic_code_line_nb, 
+            ini = ini,
+            function.name = function.name, 
+            package.name = package.name, 
+            text = "BASIC"
+        )
         tempo.log <- tempo$tempo.log
         output.cat <- tempo$output.cat
     }else{
@@ -231,7 +250,15 @@ two_colons_check <- function(
     # end analyse of :: before basic functions in x
     # analyse of :: before other functions in x
     if(base::length(in_other_fun_uni) > 0){
-        tempo <- create_message(list.fun = in_other_fun, list.fun.uni = in_other_fun_uni, list.line.nb = in_other_code_line_nb, text = "OTHER")
+        tempo <- create_message(
+            list.fun = in_other_fun, 
+            list.fun.uni = in_other_fun_uni, 
+            list.line.nb = in_other_code_line_nb, 
+            ini = ini,
+            function.name = function.name, 
+            package.name = package.name, 
+            text = "OTHER"
+        )
         tempo.log.b <- tempo$tempo.log
         output.cat.b <- tempo$output.cat
     }else{
