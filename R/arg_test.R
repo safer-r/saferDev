@@ -593,7 +593,7 @@ arg_test <- function(
         tempo.thread.nb = parallel::detectCores(all.tests = FALSE, logical = TRUE) # detect the number of threads
         if(is.null(thread.nb)){
             thread.nb <- tempo.thread.nb
-        else if(tempo.thread.nb < thread.nb){
+        }else if(tempo.thread.nb < thread.nb){
             thread.nb <- tempo.thread.nb
         }
         tempo.cat <- base::paste0("NUMBER OF THREADS USED: ", thread.nb)
