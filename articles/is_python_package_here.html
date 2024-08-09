@@ -113,7 +113,8 @@
 <h3 id="argument-req-package">Argument req.package<a class="anchor" aria-label="anchor" href="#argument-req-package"></a>
 </h3>
 <div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a><span class="fu">is_python_package_here</span>(<span class="at">req.package =</span> req.pkg) <span class="co"># check if the package serpentine is in the computer</span></span>
-<span id="cb4-2"><a href="#cb4-2" tabindex="-1"></a><span class="sc">&gt;</span> Error <span class="cf">in</span> required <span class="sc">&amp;&amp;</span> <span class="sc">!</span><span class="fu">file_test</span>(<span class="st">"-f"</span>, python)<span class="sc">:</span> <span class="st">'length = 14'</span> <span class="cf">in</span> coercion to <span class="st">'logical(1)'</span></span></code></pre></div>
+<span id="cb4-2"><a href="#cb4-2" tabindex="-1"></a><span class="sc">&gt;</span> [<span class="dv">1</span>] <span class="st">".pack_and_function_check()"</span></span>
+<span id="cb4-3"><a href="#cb4-3" tabindex="-1"></a><span class="sc">&gt;</span> Error <span class="cf">in</span> required <span class="sc">&amp;&amp;</span> <span class="sc">!</span><span class="fu">file_test</span>(<span class="st">"-f"</span>, python)<span class="sc">:</span> <span class="st">'length = 14'</span> <span class="cf">in</span> coercion to <span class="st">'logical(1)'</span></span></code></pre></div>
 <p><br></p>
 </div>
 <div class="section level3">
@@ -141,7 +142,8 @@
 <span id="cb6-2"><a href="#cb6-2" tabindex="-1"></a>    <span class="at">req.package =</span> req.pkg,</span>
 <span id="cb6-3"><a href="#cb6-3" tabindex="-1"></a>    <span class="at">safer_check =</span> <span class="cn">TRUE</span></span>
 <span id="cb6-4"><a href="#cb6-4" tabindex="-1"></a>) <span class="co"># check if the package is in the computer, safer_check = TRUE, checkings are performed before main code running </span></span>
-<span id="cb6-5"><a href="#cb6-5" tabindex="-1"></a><span class="sc">&gt;</span> Error <span class="cf">in</span> required <span class="sc">&amp;&amp;</span> <span class="sc">!</span><span class="fu">file_test</span>(<span class="st">"-f"</span>, python)<span class="sc">:</span> <span class="st">'length = 14'</span> <span class="cf">in</span> coercion to <span class="st">'logical(1)'</span></span></code></pre></div>
+<span id="cb6-5"><a href="#cb6-5" tabindex="-1"></a><span class="sc">&gt;</span> [<span class="dv">1</span>] <span class="st">".pack_and_function_check()"</span></span>
+<span id="cb6-6"><a href="#cb6-6" tabindex="-1"></a><span class="sc">&gt;</span> Error <span class="cf">in</span> required <span class="sc">&amp;&amp;</span> <span class="sc">!</span><span class="fu">file_test</span>(<span class="st">"-f"</span>, python)<span class="sc">:</span> <span class="st">'length = 14'</span> <span class="cf">in</span> coercion to <span class="st">'logical(1)'</span></span></code></pre></div>
 <p><br></p>
 </div>
 <div class="section level3">
@@ -154,21 +156,22 @@
 <span id="cb7-5"><a href="#cb7-5" tabindex="-1"></a>    <span class="at">lib.path =</span> <span class="st">"."</span>,</span>
 <span id="cb7-6"><a href="#cb7-6" tabindex="-1"></a>    <span class="at">safer_check =</span><span class="cn">TRUE</span></span>
 <span id="cb7-7"><a href="#cb7-7" tabindex="-1"></a>) <span class="co"># check if the python package serpentine is present in the computer, returns an error if the package is not in the computer</span></span>
-<span id="cb7-8"><a href="#cb7-8" tabindex="-1"></a><span class="sc">&gt;</span> Error<span class="sc">:</span> </span>
-<span id="cb7-9"><a href="#cb7-9" tabindex="-1"></a><span class="er">&gt;</span> </span>
-<span id="cb7-10"><a href="#cb7-10" tabindex="-1"></a><span class="er">&gt;</span> <span class="er">================</span></span>
-<span id="cb7-11"><a href="#cb7-11" tabindex="-1"></a><span class="er">&gt;</span> </span>
-<span id="cb7-12"><a href="#cb7-12" tabindex="-1"></a><span class="er">&gt;</span> ERROR IN <span class="fu">is_python_package_here</span>() OF THE saferDev PACKAGE</span>
-<span id="cb7-13"><a href="#cb7-13" tabindex="-1"></a><span class="sc">&gt;</span> REQUIRED PACKAGES<span class="sc">:</span></span>
-<span id="cb7-14"><a href="#cb7-14" tabindex="-1"></a><span class="er">&gt;</span> reticulate</span>
-<span id="cb7-15"><a href="#cb7-15" tabindex="-1"></a><span class="sc">&gt;</span> reticulate</span>
+<span id="cb7-8"><a href="#cb7-8" tabindex="-1"></a><span class="sc">&gt;</span> [<span class="dv">1</span>] <span class="st">".pack_and_function_check()"</span></span>
+<span id="cb7-9"><a href="#cb7-9" tabindex="-1"></a><span class="sc">&gt;</span> Error<span class="sc">:</span> </span>
+<span id="cb7-10"><a href="#cb7-10" tabindex="-1"></a><span class="er">&gt;</span> </span>
+<span id="cb7-11"><a href="#cb7-11" tabindex="-1"></a><span class="er">&gt;</span> <span class="er">================</span></span>
+<span id="cb7-12"><a href="#cb7-12" tabindex="-1"></a><span class="er">&gt;</span> </span>
+<span id="cb7-13"><a href="#cb7-13" tabindex="-1"></a><span class="er">&gt;</span> ERROR IN <span class="fu">is_python_package_here</span>() OF THE saferDev PACKAGE</span>
+<span id="cb7-14"><a href="#cb7-14" tabindex="-1"></a><span class="sc">&gt;</span> REQUIRED PACKAGES<span class="sc">:</span></span>
+<span id="cb7-15"><a href="#cb7-15" tabindex="-1"></a><span class="er">&gt;</span> reticulate</span>
 <span id="cb7-16"><a href="#cb7-16" tabindex="-1"></a><span class="sc">&gt;</span> reticulate</span>
-<span id="cb7-17"><a href="#cb7-17" tabindex="-1"></a><span class="sc">&gt;</span> MUST BE INSTALLED IN ONE OF THESE FOLDERS<span class="sc">:</span></span>
-<span id="cb7-18"><a href="#cb7-18" tabindex="-1"></a><span class="er">&gt;</span> <span class="er">/</span>__w<span class="sc">/</span>saferDev<span class="sc">/</span>saferDev<span class="sc">/</span>vignettes<span class="sc">/</span>articles</span>
-<span id="cb7-19"><a href="#cb7-19" tabindex="-1"></a><span class="sc">&gt;</span> <span class="er">/</span>usr<span class="sc">/</span>local<span class="sc">/</span>lib<span class="sc">/</span>R<span class="sc">/</span>site<span class="sc">-</span>library</span>
-<span id="cb7-20"><a href="#cb7-20" tabindex="-1"></a><span class="sc">&gt;</span> <span class="er">/</span>usr<span class="sc">/</span>local<span class="sc">/</span>lib<span class="sc">/</span>R<span class="sc">/</span>library</span>
-<span id="cb7-21"><a href="#cb7-21" tabindex="-1"></a><span class="sc">&gt;</span> </span>
-<span id="cb7-22"><a href="#cb7-22" tabindex="-1"></a><span class="er">&gt;</span> <span class="er">================</span></span></code></pre></div>
+<span id="cb7-17"><a href="#cb7-17" tabindex="-1"></a><span class="sc">&gt;</span> reticulate</span>
+<span id="cb7-18"><a href="#cb7-18" tabindex="-1"></a><span class="sc">&gt;</span> MUST BE INSTALLED IN ONE OF THESE FOLDERS<span class="sc">:</span></span>
+<span id="cb7-19"><a href="#cb7-19" tabindex="-1"></a><span class="er">&gt;</span> <span class="er">/</span>__w<span class="sc">/</span>saferDev<span class="sc">/</span>saferDev<span class="sc">/</span>vignettes<span class="sc">/</span>articles</span>
+<span id="cb7-20"><a href="#cb7-20" tabindex="-1"></a><span class="sc">&gt;</span> <span class="er">/</span>usr<span class="sc">/</span>local<span class="sc">/</span>lib<span class="sc">/</span>R<span class="sc">/</span>site<span class="sc">-</span>library</span>
+<span id="cb7-21"><a href="#cb7-21" tabindex="-1"></a><span class="sc">&gt;</span> <span class="er">/</span>usr<span class="sc">/</span>local<span class="sc">/</span>lib<span class="sc">/</span>R<span class="sc">/</span>library</span>
+<span id="cb7-22"><a href="#cb7-22" tabindex="-1"></a><span class="sc">&gt;</span> </span>
+<span id="cb7-23"><a href="#cb7-23" tabindex="-1"></a><span class="er">&gt;</span> <span class="er">================</span></span></code></pre></div>
 </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
     </nav></aside>
