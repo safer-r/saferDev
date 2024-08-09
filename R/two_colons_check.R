@@ -33,11 +33,15 @@ two_colons_check <- function(
     # end package name
     # function name
     function.name <- base::paste0(base::as.list(base::match.call(expand.dots = FALSE))[[1]], "()") # function name with "()" paste, which split into a vector of three: c("::()", "package ()", "function ()") if "package::function()" is used.
-    if(function.name[1] == "::()"){
+    print(function.name)
+    if(function.name[1] == "::()" | function.name[1] == ":::"){
         function.name <- function.name[3]
     }
     arg.names <- base::names(base::formals(fun = base::sys.function(base::sys.parent(n = 2)))) # names of all the arguments
     arg.user.setting <- base::as.list(base::match.call(expand.dots = FALSE))[-1] # list of the argument settings (excluding default values not provided by the user)
+    if(as.character(arg.user.setting$x)[1] == "::" | as.character(arg.user.setting$x)[1] == ":::"){
+        arg.user.setting$x <- paste0(as.character(arg.user.setting$x)[3], "()")
+    }
     # end function name
     # critical operator checking
     if(safer_check == TRUE){
@@ -135,7 +139,8 @@ two_colons_check <- function(
         list.fun, 
         list.fun.uni, 
         list.line.nb, 
-        ini,
+        ini, 
+        arg.user.setting, 
         function.name, 
         package.name, 
         text
@@ -161,7 +166,7 @@ two_colons_check <- function(
             }
             tempo.pos <- base::paste0(col1, "\t", col2, "\t", col3)
             output.cat <- base::paste0(
-                "INSIDE ", function.name, ", SOME :: ARE MISSING AT ", text, " FUNCTION POSITIONS:\n\n",
+                "INSIDE ", arg.user.setting$x, ", SOME :: ARE MISSING AT ", text, " FUNCTION POSITIONS:\n\n",
                 text, 
                 "_FUN_NB\tFUN\tSTRING_BEFORE\n",
                 base::paste(tempo.pos, collapse = "\n")
@@ -236,7 +241,8 @@ two_colons_check <- function(
             list.fun = in_basic_fun, 
             list.fun.uni = in_basic_fun_uni, 
             list.line.nb = in_basic_code_line_nb, 
-            ini = ini,
+            ini = ini, 
+            arg.user.setting = arg.user.setting, 
             function.name = function.name, 
             package.name = package.name, 
             text = "BASIC"
@@ -254,7 +260,8 @@ two_colons_check <- function(
             list.fun = in_other_fun, 
             list.fun.uni = in_other_fun_uni, 
             list.line.nb = in_other_code_line_nb, 
-            ini = ini,
+            ini = ini, 
+            arg.user.setting = arg.user.setting, 
             function.name = function.name, 
             package.name = package.name, 
             text = "OTHER"
