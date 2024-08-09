@@ -82,7 +82,7 @@ arg_test(
     thread.nb = NULL, 
     print.count = 10, 
     plot.fun = FALSE, 
-    export = TRUE, 
+    export = FALSE, 
     res.path = ".", 
     lib.path = NULL,
     safer_check = TRUE
