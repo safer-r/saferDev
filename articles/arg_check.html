@@ -465,25 +465,33 @@ corresponding R function, except class which<a class="anchor" aria-label="anchor
 <div class="section level3">
 <h3 id="argument-safer_check">Argument safer_check<a class="anchor" aria-label="anchor" href="#argument-safer_check"></a>
 </h3>
-<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" tabindex="-1"></a><span class="fu">arg_check</span>(<span class="at">data =</span> mat1, <span class="at">class =</span> <span class="st">"matrix"</span>, <span class="at">safer_check =</span> <span class="cn">TRUE</span>) <span class="co"># safer_check = TRUE, checkings are performed before main code running</span></span>
-<span id="cb15-2"><a href="#cb15-2" tabindex="-1"></a><span class="sc">&gt;</span> <span class="er">$</span>problem</span>
-<span id="cb15-3"><a href="#cb15-3" tabindex="-1"></a><span class="sc">&gt;</span> [<span class="dv">1</span>] <span class="cn">FALSE</span></span>
-<span id="cb15-4"><a href="#cb15-4" tabindex="-1"></a><span class="sc">&gt;</span> </span>
-<span id="cb15-5"><a href="#cb15-5" tabindex="-1"></a><span class="er">&gt;</span> <span class="er">$</span>text</span>
-<span id="cb15-6"><a href="#cb15-6" tabindex="-1"></a><span class="sc">&gt;</span> [<span class="dv">1</span>] <span class="st">"NO PROBLEM DETECTED FOR THE mat1 OBJECT"</span></span>
-<span id="cb15-7"><a href="#cb15-7" tabindex="-1"></a><span class="sc">&gt;</span> </span>
-<span id="cb15-8"><a href="#cb15-8" tabindex="-1"></a><span class="er">&gt;</span> <span class="er">$</span>object.name</span>
-<span id="cb15-9"><a href="#cb15-9" tabindex="-1"></a><span class="sc">&gt;</span> [<span class="dv">1</span>] <span class="st">"mat1"</span></span>
-<span id="cb15-10"><a href="#cb15-10" tabindex="-1"></a></span>
-<span id="cb15-11"><a href="#cb15-11" tabindex="-1"></a><span class="fu">arg_check</span>(<span class="at">data =</span> vec4, <span class="at">options =</span> <span class="fu">c</span>(<span class="st">"pearson"</span>, <span class="st">"spearman"</span>, <span class="st">"kendall"</span>), <span class="at">safer_check =</span> <span class="cn">TRUE</span>) <span class="co"># safer_check = TRUE, checkings are performed before main code running</span></span>
-<span id="cb15-12"><a href="#cb15-12" tabindex="-1"></a><span class="sc">&gt;</span> <span class="er">$</span>problem</span>
-<span id="cb15-13"><a href="#cb15-13" tabindex="-1"></a><span class="sc">&gt;</span> [<span class="dv">1</span>] <span class="cn">FALSE</span></span>
-<span id="cb15-14"><a href="#cb15-14" tabindex="-1"></a><span class="sc">&gt;</span> </span>
-<span id="cb15-15"><a href="#cb15-15" tabindex="-1"></a><span class="er">&gt;</span> <span class="er">$</span>text</span>
-<span id="cb15-16"><a href="#cb15-16" tabindex="-1"></a><span class="sc">&gt;</span> [<span class="dv">1</span>] <span class="st">"NO PROBLEM DETECTED FOR THE vec4 OBJECT"</span></span>
-<span id="cb15-17"><a href="#cb15-17" tabindex="-1"></a><span class="sc">&gt;</span> </span>
-<span id="cb15-18"><a href="#cb15-18" tabindex="-1"></a><span class="er">&gt;</span> <span class="er">$</span>object.name</span>
-<span id="cb15-19"><a href="#cb15-19" tabindex="-1"></a><span class="sc">&gt;</span> [<span class="dv">1</span>] <span class="st">"vec4"</span></span></code></pre></div>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" tabindex="-1"></a><span class="fu">arg_check</span>(</span>
+<span id="cb15-2"><a href="#cb15-2" tabindex="-1"></a>    <span class="at">data =</span> mat1, </span>
+<span id="cb15-3"><a href="#cb15-3" tabindex="-1"></a>    <span class="at">class =</span> <span class="st">"matrix"</span>, </span>
+<span id="cb15-4"><a href="#cb15-4" tabindex="-1"></a>    <span class="at">safer_check =</span> <span class="cn">TRUE</span></span>
+<span id="cb15-5"><a href="#cb15-5" tabindex="-1"></a>) <span class="co"># safer_check = TRUE, checkings are performed before main code running</span></span>
+<span id="cb15-6"><a href="#cb15-6" tabindex="-1"></a><span class="sc">&gt;</span> <span class="er">$</span>problem</span>
+<span id="cb15-7"><a href="#cb15-7" tabindex="-1"></a><span class="sc">&gt;</span> [<span class="dv">1</span>] <span class="cn">FALSE</span></span>
+<span id="cb15-8"><a href="#cb15-8" tabindex="-1"></a><span class="sc">&gt;</span> </span>
+<span id="cb15-9"><a href="#cb15-9" tabindex="-1"></a><span class="er">&gt;</span> <span class="er">$</span>text</span>
+<span id="cb15-10"><a href="#cb15-10" tabindex="-1"></a><span class="sc">&gt;</span> [<span class="dv">1</span>] <span class="st">"NO PROBLEM DETECTED FOR THE mat1 OBJECT"</span></span>
+<span id="cb15-11"><a href="#cb15-11" tabindex="-1"></a><span class="sc">&gt;</span> </span>
+<span id="cb15-12"><a href="#cb15-12" tabindex="-1"></a><span class="er">&gt;</span> <span class="er">$</span>object.name</span>
+<span id="cb15-13"><a href="#cb15-13" tabindex="-1"></a><span class="sc">&gt;</span> [<span class="dv">1</span>] <span class="st">"mat1"</span></span>
+<span id="cb15-14"><a href="#cb15-14" tabindex="-1"></a></span>
+<span id="cb15-15"><a href="#cb15-15" tabindex="-1"></a><span class="fu">arg_check</span>(</span>
+<span id="cb15-16"><a href="#cb15-16" tabindex="-1"></a>    <span class="at">data =</span> vec4, </span>
+<span id="cb15-17"><a href="#cb15-17" tabindex="-1"></a>    <span class="at">options =</span> <span class="fu">c</span>(<span class="st">"pearson"</span>, <span class="st">"spearman"</span>, <span class="st">"kendall"</span>), </span>
+<span id="cb15-18"><a href="#cb15-18" tabindex="-1"></a>    <span class="at">safer_check =</span> <span class="cn">FALSE</span></span>
+<span id="cb15-19"><a href="#cb15-19" tabindex="-1"></a>) <span class="co"># safer_check = TRUE, checkings are performed before main code running</span></span>
+<span id="cb15-20"><a href="#cb15-20" tabindex="-1"></a><span class="sc">&gt;</span> <span class="er">$</span>problem</span>
+<span id="cb15-21"><a href="#cb15-21" tabindex="-1"></a><span class="sc">&gt;</span> [<span class="dv">1</span>] <span class="cn">FALSE</span></span>
+<span id="cb15-22"><a href="#cb15-22" tabindex="-1"></a><span class="sc">&gt;</span> </span>
+<span id="cb15-23"><a href="#cb15-23" tabindex="-1"></a><span class="er">&gt;</span> <span class="er">$</span>text</span>
+<span id="cb15-24"><a href="#cb15-24" tabindex="-1"></a><span class="sc">&gt;</span> [<span class="dv">1</span>] <span class="st">"NO PROBLEM DETECTED FOR THE vec4 OBJECT"</span></span>
+<span id="cb15-25"><a href="#cb15-25" tabindex="-1"></a><span class="sc">&gt;</span> </span>
+<span id="cb15-26"><a href="#cb15-26" tabindex="-1"></a><span class="er">&gt;</span> <span class="er">$</span>object.name</span>
+<span id="cb15-27"><a href="#cb15-27" tabindex="-1"></a><span class="sc">&gt;</span> [<span class="dv">1</span>] <span class="st">"vec4"</span></span></code></pre></div>
 <p><br></p>
 </div>
 <div class="section level3">
