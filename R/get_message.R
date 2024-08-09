@@ -121,15 +121,15 @@ get_message <- function(
     text.check <- NULL #
     checked.arg.names <- NULL # for function debbuging: used by r_debugging_tools
     ee <- base::expression(argum.check <- base::c(argum.check, tempo$problem) , text.check <- base::c(text.check, tempo$text) , checked.arg.names <- base::c(checked.arg.names, tempo$object.name))
-    tempo <- arg_check(data = data, class = "vector", typeof = "character", length = 1, fun.name = function.name, safer_check = FALSE) ; base::eval(ee)
-    tempo <- arg_check(data = kind, options = base::c("error", "warning", "message"), length = 1, fun.name = function.name, safer_check = FALSE) ; base::eval(ee)
-    tempo <- arg_check(data = header, class = "vector", typeof = "logical", length = 1, fun.name = function.name, safer_check = FALSE) ; base::eval(ee)
-    tempo <- arg_check(data = print.no, class = "vector", typeof = "logical", length = 1, fun.name = function.name, safer_check = FALSE) ; base::eval(ee)
+    tempo <- saferDev::arg_check(data = data, class = "vector", typeof = "character", length = 1, fun.name = function.name, safer_check = FALSE) ; base::eval(ee)
+    tempo <- saferDev::arg_check(data = kind, options = base::c("error", "warning", "message"), length = 1, fun.name = function.name, safer_check = FALSE) ; base::eval(ee)
+    tempo <- saferDev::arg_check(data = header, class = "vector", typeof = "logical", length = 1, fun.name = function.name, safer_check = FALSE) ; base::eval(ee)
+    tempo <- saferDev::arg_check(data = print.no, class = "vector", typeof = "logical", length = 1, fun.name = function.name, safer_check = FALSE) ; base::eval(ee)
     if( ! base::is.null(text)){
-        tempo <- arg_check(data = text, class = "character", length = 1, fun.name = function.name, safer_check = FALSE) ; base::eval(ee)
+        tempo <- saferDev::arg_check(data = text, class = "character", length = 1, fun.name = function.name, safer_check = FALSE) ; base::eval(ee)
     }
     if( ! base::is.null(env)){
-        tempo <- arg_check(data = env, class = "environment", fun.name = function.name, safer_check = FALSE) ; base::eval(ee) #
+        tempo <- saferDev::arg_check(data = env, class = "environment", fun.name = function.name, safer_check = FALSE) ; base::eval(ee) #
     }
     if( ! base::is.null(argum.check)){
         if(base::any(argum.check, na.rm = TRUE) == TRUE){

@@ -38,8 +38,8 @@ two_colons_check <- function(
     }
     arg.names <- base::names(base::formals(fun = base::sys.function(base::sys.parent(n = 2)))) # names of all the arguments
     arg.user.setting <- base::as.list(base::match.call(expand.dots = FALSE))[-1] # list of the argument settings (excluding default values not provided by the user)
-    if(as.character(arg.user.setting$x)[1] == "::" | as.character(arg.user.setting$x)[1] == ":::"){
-        arg.user.setting$x <- paste0(as.character(arg.user.setting$x)[3], "()")
+    if(base::as.character(arg.user.setting$x)[1] == "::" | base::as.character(arg.user.setting$x)[1] == ":::"){
+        arg.user.setting$x <- base::paste0(base::as.character(arg.user.setting$x)[3], "()")
     }
     # end function name
     # critical operator checking
