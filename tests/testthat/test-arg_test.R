@@ -13,22 +13,56 @@ test_that("test the function unique and compare the results", {
         thread.nb = NULL, 
         print.count = 10, 
         plot.fun = FALSE, 
-        export = TRUE, 
-        res.path = ".", 
+        export = FALSE, 
+        res.path = NULL, 
         lib.path = NULL,
         safer_check = TRUE
     )
-    ini.date <- Sys.time()
-    ini.time <- as.numeric(ini.date)
-    end.date <- Sys.time()
-    end.time <- as.numeric(end.date)
-    total.lapse <- round(lubridate::seconds_to_period(end.time - ini.time))
-     
-    p1 <- paste0("\ntest JOB IGNITION\n")
-    p2 <- paste0("\nTOTAL NUMBER OF TESTS: 9\n")
-    p3 <- paste0("\nLOOP PROCESS ENDED | ","\nPROCESS ",9," ENDED | ","LOOP ",format(0, big.mark = ",")," / ",format(9), big.mark = ",", " | TIME SPENT: ",0, "\n\n")
-    p4 <- paste0("DISCREPANCIES BETWEEN EXPECTED AND OBSERVED ERRORS (SEE THE discrepancy_table_from_arg_test_1-",9, ".tsv FILE)\n\n")
-    p5 <- paste0("test JOB END\n\nTIME: ", end.date, "\n\nTOTAL TIME LAPSE: ", total.lapse, "\n\n\n")
-    expected2 <- cat(paste0(p1,p2,p3,p4,p5))
-    expect_equal(result2, expected2)
+    # WARNING: trick to get the same result2$ini
+    arg_test <- function(
+        fun = f, 
+        arg = argum, 
+        val = value, 
+        expect.error = error, 
+        parall = FALSE, 
+        thread.nb = NULL, 
+        print.count = 10, 
+        plot.fun = FALSE, 
+        export = FALSE, 
+        res.path = NULL, 
+        lib.path = NULL,
+        safer_check = TRUE
+    ){
+        return(base::match.call(expand.dots = FALSE))
+    }
+    tempo <- arg_test(
+            fun = f, 
+            arg = argum, 
+            val = value, 
+            expect.error = error, 
+            parall = FALSE, 
+            thread.nb = NULL, 
+            print.count = 10, 
+            plot.fun = FALSE, 
+            export = FALSE, 
+            res.path = NULL, 
+            lib.path = NULL,
+            safer_check = TRUE
+        )
+    rm(arg_test)
+    # end WARNING: trick to get the same result2$ini
+    expected2 <- list(
+        fun = "unique",
+        ini = tempo,
+        data = data.frame(
+            x = c("1 2 3 4 5 6 7 8 9 10", "1 2 3 4 5 6 7 8 9 10", "1 2 3 4 5 6 7 8 9 10", "1 1 2 8", "1 1 2 8", "1 1 2 8", "NA", "NA", "NA"),
+            incomparables = c("TRUE", "FALSE", "NA", "TRUE", "FALSE", "NA", "TRUE", "FALSE", "NA"), 
+            kind = "OK", 
+            problem = FALSE, 
+            expected.error = c(FALSE, FALSE,  TRUE, FALSE, FALSE,  TRUE,  TRUE,  TRUE,  TRUE), 
+            message = c("", "", "", "", "", "", "", "", ""),
+            row.names = c("arg_test_1", "arg_test_2", "arg_test_3", "arg_test_4", "arg_test_5", "arg_test_6", "arg_test_7", "arg_test_8", "arg_test_9")
+        )
+    )
+    expect_equal(result2[1:3], expected2) # [1:3] to do not compare system parameters
 })
