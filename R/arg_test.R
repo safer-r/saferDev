@@ -129,7 +129,7 @@ arg_test <- function(
     # end function name
     # critical operator checking
     if(safer_check == TRUE){
-        .base_op_check(
+        saferDev:::.base_op_check(
             external.function.name = function.name,
             external.package.name = package.name
         )
@@ -154,7 +154,7 @@ arg_test <- function(
     # end check of lib.path
     # check of the required function from the required packages
     if(safer_check == TRUE){
-        .pack_and_function_check(
+        saferDev:::.pack_and_function_check(
         fun = base::c(
             "lubridate::seconds_to_period", 
             "pdftools::pdf_combine",
@@ -657,7 +657,7 @@ arg_test <- function(
                 # check again: very important because another R
                 process.id <- base::Sys.getpid()
                 base::cat(base::paste0("\nPROCESS ID ", process.id, " -> TESTS ", x[1], " TO ", x[base::length(x)], "\n"))
-                .pack_and_function_check(
+                saferDev:::.pack_and_function_check(
                     fun = base::c(
                         "lubridate::seconds_to_period"
                     ),

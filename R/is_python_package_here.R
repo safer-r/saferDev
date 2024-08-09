@@ -59,7 +59,7 @@ is_python_package_here <- function(
     # end function name
     # critical operator checking
     if(safer_check == TRUE){
-        .base_op_check(
+        saferDev:::.base_op_check(
             external.function.name = function.name,
             external.package.name = package.name
         )
@@ -84,7 +84,7 @@ is_python_package_here <- function(
     # end check of lib.path
     # check of the required function from the required packages
     if(safer_check == TRUE){
-        .pack_and_function_check(
+        saferDev:::.pack_and_function_check(
         fun = base::c(
             "reticulate::py_run_string", 
             "reticulate::use_python",
