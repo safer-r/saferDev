@@ -1,18 +1,16 @@
 #' @title two_colons_check
 #' @description
-#' Verify that all the functions used inside a function are all referenced by their package attribution. For instance: base::mean()
+#' Verify that all the functions used inside a function are all referenced by their package attribution. For instance: base::mean(), or saferDev:::.base_op_check()
 #' @param x a function name, written without quotes and brackets.
 #' @param safer_check Single logical value. Perform some "safer" checks (see https://github.com/safer-r) ? If TRUE, two_colons_check() checks before running that 1) the R scope for R operators (like "<-") is not overwritten by another package and 2) functions and related packages used are present in R lybraries. Set to FALSE if two_colons_check() is used inside another "safer" function to avoid pointless multiple checking.
 #' @returns 
-#' A message indicating the missing :: or a message saying that everything seems fine.
+#' A message indicating the missing :: or :::, or a message saying that everything seems fine.
 #' @details
-#' - More precisely, two_colons_check() verifies that all the strings before an opening bracket "(" are preceeded by "::"
+#' - More precisely, two_colons_check() verifies that all the strings before an opening bracket "(" are preceeded by "::". Of note, ":::" are also detected but considered as "::"
 #' 
-#' - The regex used is: "\\b[a-zA-Z.]{1}[a-zA-Z0-9._]+\\b(?= *\\()"
+#' - The regex used to detect a function name is: "[a-zA-Z._]{1}[a-zA-Z0-9._]+\\("
 #'  
 #' - The following R operators using bracket are not considered: "function", "if", "for", "while" and "repeat"
-    # Dot at first position is removed (due to stringr::str_extract_all() function ).
-    # Functions with dot at first position are not detected
 #' 
 #' @author Gael Millot <gael.millot@pasteur.fr>
 #' @author Yushi Han <yushi.han2000@gmail.com>
@@ -27,19 +25,19 @@ two_colons_check <- function(
 ){
 
     # DEBUGGING
-    # x = saferDev::env_check ; safer_check = TRUE # Warning: x = saferDev::get_message does not return the same number of code lines
+    # x = two_colons_check ; safer_check = TRUE # Warning: x = saferDev::get_message does not return the same number of code lines
     # package name
     package.name <- "saferDev"
     # end package name
     # function name
-    function.name <- base::paste0(base::as.list(base::match.call(expand.dots = FALSE))[[1]], "()") # function name with "()" paste, which split into a vector of three: c("::()", "package ()", "function ()") if "package::function()" is used.
+    function.name <- base::paste0(base::as.list(x = base::match.call(expand.dots = FALSE))[[1]], "()") # function name with "()" paste, which split into a vector of three: c("::()", "package ()", "function ()") if "package::function()" is used.
     if(function.name[1] == "::()" | function.name[1] == ":::()"){
         function.name <- function.name[3]
     }
     arg.names <- base::names(base::formals(fun = base::sys.function(base::sys.parent(n = 2)))) # names of all the arguments
-    arg.user.setting <- base::as.list(base::match.call(expand.dots = FALSE))[-1] # list of the argument settings (excluding default values not provided by the user)
-    if(base::as.character(arg.user.setting$x)[1] == "::" | base::as.character(arg.user.setting$x)[1] == ":::"){
-        arg.user.setting$x <- base::paste0(base::as.character(arg.user.setting$x)[3], "()")
+    arg.user.setting <- base::as.list(x = base::match.call(expand.dots = FALSE))[-1] # list of the argument settings (excluding default values not provided by the user)
+    if(base::as.character(x = arg.user.setting$x)[1] == "::" | base::as.character(x = arg.user.setting$x)[1] == ":::"){
+        arg.user.setting$x <- base::paste0(base::as.character(x = arg.user.setting$x)[3], "()")
     }
     # end function name
     # critical operator checking
@@ -126,8 +124,8 @@ two_colons_check <- function(
         pattern
     ) {
         # Find all matches, including trailing '('
-        matches <- base::gregexpr(base::paste0(pattern, "\\("), text)
-        matched_strings <- base::regmatches(text, matches)[[1]]
+        matches <- base::gregexpr(pattern = base::paste0(pattern, "\\("), text = text)
+        matched_strings <- base::regmatches(x = text, m = matches)[[1]]
         
         # Remove trailing '(' from each match
         result <- base::sub("\\($", "", matched_strings)
@@ -144,13 +142,15 @@ two_colons_check <- function(
         package.name, 
         text
     ){
-        pattern2 <- base::paste(base::paste0(list.fun.uni, "\\s*\\("), collapse = "|") # to split string according to basic function name as splitter
+        # DEBUGGING
+        # list.fun = in_basic_fun ; list.fun.uni = in_basic_fun_uni ; list.line.nb = in_basic_code_line_nb ; ini = ini ; arg.user.setting = arg.user.setting ; function.name = function.name ; package.name = package.name ; text = "BASIC"
+        pattern2 <- base::paste(base::paste0("(?<![A-Za-z0-9._])", list.fun.uni, "\\s*\\("), collapse = "|") # to split string according to basic function name as splitter
         basic_ini <- ini[list.line.nb]
-        res <- base::strsplit(x = basic_ini, split = pattern2)
-        res <- base::lapply(res, FUN = function(x){x[-base::length(x)]}) # the last split section is removed because nothing to test at the end (end of code)
-        res2 <- base::lapply(X = res, FUN = function(x){base::substr(x, base::nchar(x)-1, base::nchar(x))})
+        res <- base::strsplit(x = basic_ini, split = pattern2, perl = TRUE) # in res, all the strings should finish by ::
+        res <- base::lapply(X = res, FUN = function(x){x[-base::length(x)]}) # the last split section is removed because nothing to test at the end (end of code)
+        res2 <- base::lapply(X = res, FUN = function(x){base::substr(x, base::nchar(x)-1, base::nchar(x))}) # nchar(x)-1 takes only :: if the strings ends by :::
         base::names(res2) <- NULL
-        tempo.log <- base::lapply(X = res2, FUN = function(x){ ! x %in% "::"})
+        tempo.log <- base::lapply(X = res2, FUN = function(x){ ! x %in% "::"}) # no need to check for ":::" because nchar(x)-1 takes only :: if the strings ends by :::
         if( ! base::all(base::sapply(X = res2, FUN = function(x){base::length(x)}) == base::sapply(X = tempo.log, FUN = function(x){base::length(x)}))){
             tempo.cat <- base::paste0("INTERNAL ERROR 5 IN ", function.name, " OF THE ", package.name, " PACKAGE\nLENGTHS SHOULD BE IDENTICAL\nres2: ", base::paste(base::sapply(X = res2, FUN = function(x){base::length(x)}), collapse = " "), "\ntempo.log: ", base::paste(base::sapply(X = tempo.log, FUN = function(x){base::length(x)}), collapse = " "))
             base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
@@ -165,7 +165,7 @@ two_colons_check <- function(
             }
             tempo.pos <- base::paste0(col1, "\t", col2, "\t", col3)
             output.cat <- base::paste0(
-                "INSIDE ", arg.user.setting$x, ", SOME :: ARE MISSING AT ", text, " FUNCTION POSITIONS:\n\n",
+                "INSIDE ", arg.user.setting$x, ", SOME :: OR ::: ARE MISSING AT ", text, " FUNCTION POSITIONS:\n\n",
                 text, 
                 "_FUN_NB\tFUN\tSTRING_BEFORE\n",
                 base::paste(tempo.pos, collapse = "\n")
@@ -199,7 +199,7 @@ two_colons_check <- function(
     # - `[a-zA-Z._]{1}`: This portion of the pattern matches any uppercase letter (`A-Z`), lowercase letter (`a-z`), or a period (`.`) a single time ({1}).
     # - `[a-zA-Z0-9._]*`: This part of the pattern matches any uppercase letter (`A-Z`), lowercase letter (`a-z`), number (`0-9`), period (`.`), or underscore (`_`), repeated one or more times (`+`). This represents the possible characters inside an R function name.
     # - `\\b`: Again, these are word boundaries, making sure the pattern captures the entire word and not just part of it.
-    # -  not used: `(?= *\\()`: This is a lookahead assertion. It checks that the preceding pattern is followed by any spaces and a parenthesis (`\\(`), but doesn't include the sapces and parenthesis in the match. This is because, in R code, a function call is usually followed by a parenthesis, but the parenthesis is not part of the function name.
+    # -  not used: `(?= *\\()`: This is a lookahead assertion. It checks that the preceding pattern is followed by any spaces and a parenthesis (`\\(`), but doesn't include the spaces and parenthesis in the match. This is because, in R code, a function call is usually followed by a parenthesis, but the parenthesis is not part of the function name.
     fun_name <- base::lapply(ini, FUN = function(x){extract_all(x, pattern)}) # recover all the function names (followed by "(") present in ini
     fun_name_wo_op <- base::lapply(fun_name, FUN = function(x){x[ ! x %in% base::c("function", "if", "for", "while", "repeat")]})[ ! comment_line.log] # removal of special functions
     tempo.log <- base::sapply(fun_name_wo_op, FUN = function(x){base::length(x) == 0}) # detection of string with empty function names
