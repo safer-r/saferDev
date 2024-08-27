@@ -121,7 +121,7 @@ arg_test <- function(
     # function name
     ini <- base::match.call(expand.dots = FALSE) # initial parameters (specific of arg_test())
     function.name <- base::paste0(base::as.list(base::match.call(expand.dots = FALSE))[[1]], "()") # function name with "()" paste, which split into a vector of three: c("::()", "package ()", "function ()") if "package::function()" is used.
-    if(function.name[1] == "::()"){
+    if(function.name[1] == "::()" | function.name[1] == ":::()"){
         function.name <- function.name[3]
     }
     arg.names <- base::names(base::formals(fun = base::sys.function(base::sys.parent(n = 2)))) # names of all the arguments
