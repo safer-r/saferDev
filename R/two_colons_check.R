@@ -123,6 +123,8 @@ two_colons_check <- function(
         text, 
         pattern
     ) {
+        # DEBUGGING
+        # text = ini[1] ; pattern = pattern
         # Find all matches, including trailing '('
         matches <- base::gregexpr(pattern = base::paste0(pattern, "\\("), text = text)
         matched_strings <- base::regmatches(x = text, m = matches)[[1]]
@@ -143,16 +145,22 @@ two_colons_check <- function(
         text
     ){
         # DEBUGGING
-        # list.fun = in_basic_fun ; list.fun.uni = in_basic_fun_uni ; list.line.nb = in_basic_code_line_nb ; ini = ini ; arg.user.setting = arg.user.setting ; function.name = function.name ; package.name = package.name ; text = "BASIC"
-        pattern2 <- base::paste(base::paste0("(?<![A-Za-z0-9._])", list.fun.uni, "\\s*\\("), collapse = "|") # to split string according to basic function name as splitter
+        # list.fun = in_other_fun ; list.fun.uni = in_other_fun_uni ; list.line.nb = in_other_code_line_nb ; ini = ini ; arg.user.setting = arg.user.setting ; function.name = function.name ; package.name = package.name ; text = "BASIC"
+        pattern2 <- base::paste(base::paste0("(?<![A-Za-z0-9._])", list.fun.uni, "\\s*\\("), collapse = "|") # to split string according to basic function name as splitter. In this new pattern
+        pattern3 <- base::paste(base::paste0("(?<![A-Za-z0-9._])", list.fun.uni, "\\s*\\($"), collapse = "|") # same as pattern2 but used to know if the seeked function is at the end of the string
         basic_ini <- ini[list.line.nb]
         res <- base::strsplit(x = basic_ini, split = pattern2, perl = TRUE) # in res, all the strings should finish by ::
-        res <- base::lapply(X = res, FUN = function(x){x[-base::length(x)]}) # the last split section is removed because nothing to test at the end (end of code)
-        res2 <- base::lapply(X = res, FUN = function(x){base::substr(x, base::nchar(x)-1, base::nchar(x))}) # nchar(x)-1 takes only :: if the strings ends by :::
+        tempo.log <- ! base::grepl(x = basic_ini, pattern = pattern3, perl = TRUE) # strings of basic_ini that does not finish by the function name
+        # in each compartment of res, the last split section is removed because nothing to test at the end (end of code)
+        if(base::sum(tempo.log, na.rm = TRUE) > 0){
+            res[tempo.log] <- base::lapply(X = res[tempo.log], FUN = function(x){x[-base::length(x)]})
+        }
+        # end in each compartment of res, the last split section is removed because nothing to test at the end (end of code)
+        res2 <- base::lapply(X = res, FUN = function(x){base::substr(x, base::nchar(x)-1, base::nchar(x))}) # base::nchar(x)-1 takes only :: if the strings ends by :::
         base::names(res2) <- NULL
-        tempo.log <- base::lapply(X = res2, FUN = function(x){ ! x %in% "::"}) # no need to check for ":::" because nchar(x)-1 takes only :: if the strings ends by :::
+        tempo.log <- base::lapply(X = res2, FUN = function(x){ ! x %in% "::"}) # no need to check for ":::" because base::nchar(x)-1 takes only :: if the strings ends by :::
         if( ! base::all(base::sapply(X = res2, FUN = function(x){base::length(x)}) == base::sapply(X = tempo.log, FUN = function(x){base::length(x)}))){
-            tempo.cat <- base::paste0("INTERNAL ERROR 5 IN ", function.name, " OF THE ", package.name, " PACKAGE\nLENGTHS SHOULD BE IDENTICAL\nres2: ", base::paste(base::sapply(X = res2, FUN = function(x){base::length(x)}), collapse = " "), "\ntempo.log: ", base::paste(base::sapply(X = tempo.log, FUN = function(x){base::length(x)}), collapse = " "))
+            tempo.cat <- base::paste0("INTERNAL ERROR 1 IN ", function.name, " OF THE ", package.name, " PACKAGE\nLENGTHS SHOULD BE IDENTICAL\nres2: ", base::paste(base::sapply(X = res2, FUN = function(x){base::length(x)}), collapse = " "), "\ntempo.log: ", base::paste(base::sapply(X = tempo.log, FUN = function(x){base::length(x)}), collapse = " "))
             base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
         }
         if(base::any(base::unlist(tempo.log))){
@@ -160,7 +168,7 @@ two_colons_check <- function(
             col2 <- base::unlist(base::mapply(FUN = function(x, y){y[x]}, x = tempo.log, y = list.fun))
             col3 <- base::unlist(base::mapply(FUN = function(x, y){y[x]}, x = tempo.log, y = res))
             if( ! (base::length(col1) == base::length(col2) & base::length(col1) == base::length(col3) & base::length(col2) == base::length(col3))){
-                tempo.cat <- base::paste0("INTERNAL ERROR 5 IN ", function.name, " OF THE ", package.name, " PACKAGE\nLENGTHS OF col1 (", base::length(col1), "), col2 (", base::length(col2), "), AND col3 (", base::length(col3), "), SHOULD BE EQUAL\n")
+                tempo.cat <- base::paste0("INTERNAL ERROR 2 IN ", function.name, " OF THE ", package.name, " PACKAGE\nLENGTHS OF col1 (", base::length(col1), "), col2 (", base::length(col2), "), AND col3 (", base::length(col3), "), SHOULD BE EQUAL\n")
                 base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
             }
             tempo.pos <- base::paste0(col1, "\t", col2, "\t", col3)
@@ -179,7 +187,7 @@ two_colons_check <- function(
     # recovering the basic functions of R
     s <- base::c("package:stats", "package:graphics",  "package:grDevices", "package:utils", "package:datasets", "package:methods", "Autoloads", "package:base") # basic base::search() scope
     if(base::any( ! s %in% base::search())){
-        tempo.cat <- base::paste0("INTERNAL ERROR 1 IN ", function.name, " OF THE ", package.name, " PACKAGE\nTHE base::search() SCOPE OF R HAS CHANGED.\nTHE PROBLEM IS:\n",
+        tempo.cat <- base::paste0("INTERNAL ERROR 3 IN ", function.name, " OF THE ", package.name, " PACKAGE\nTHE base::search() SCOPE OF R HAS CHANGED.\nTHE PROBLEM IS:\n",
             base::paste(s[ ! s %in% base::search()], collapse = "\n"))
         base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
     }
@@ -188,23 +196,43 @@ two_colons_check <- function(
     # recovering the input function string
     ini <- utils::capture.output(x)
     code_line_nb <- 1:base::length(ini)
-    comment_line.log <- base::grepl(ini, pattern = "^ *#.*") # removal of the lines starting by #
+    comment_line.log <- base::grepl(ini, pattern = "^\\s*#") # removal of the lines starting by #
     code_line_nb <- code_line_nb[ ! comment_line.log]
+    ini <- ini[ ! comment_line.log]
+    if(base::length(ini) == 0){
+        tempo.cat <- base::paste0("ERROR IN ", function.name, " OF THE ", package.name, " PACKAGE\nTHE TESTED FUNCTION ", arg.user.setting$x, " IS EMPTY OR ONLY MADE OF COMMENTS")
+        base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
+    }
     # ini <- base::paste0(ini, collapse = " \\n ") # recovering as single string separated by \\n (and not \n to avoid the eval(\n) when printing the error message)
     ini <- base::gsub(x = ini, pattern = " +", replacement = " ") # removal of multiple spaces
     # end recovering the input function string
+    # trick to deal with end of lines between the name of the function and "("
+    if(base::length(ini) > 1){
+        for (i2 in 2:base::length(ini)) {
+            # Check if the current string starts with spaces followed by a '('
+            if (base::grepl("^\\s*\\(", ini[i2])) {
+                # Check if the previous string ends with the specified pattern
+                if (base::grepl("[a-zA-Z._]{1}[a-zA-Z0-9._]+\\s*$", ini[i2 - 1])) {
+                # Append a '(' to the previous string
+                ini[i2 - 1] <- base::paste0(ini[i2 - 1], "(")
+                }
+            }
+        }
+    }
+    # end trick to deal with end of lines between the name of the function and "("
     # all function names in x
-    pattern <- "[a-zA-Z._]{1}[a-zA-Z0-9._]+" # pattern to detect a function name, i.e., name that is followed by "("
+    pattern <- "[a-zA-Z._]{1}[a-zA-Z0-9._]+" # pattern to detect a function name
+    # I could have used [\\s\\r\\n]* meaning any space or end of line or carriage return between the name and "(" but finally, another strategy used
     # - `this does not work well, as it does not take dots: "\\b[a-zA-Z\\.\\_]{1}[a-zA-Z0-9\\.\\_]+\\b", because of `\\b`: These are word boundaries. It ensures that the pattern matches only a complete word and not a part of a word.
     # - `[a-zA-Z._]{1}`: This portion of the pattern matches any uppercase letter (`A-Z`), lowercase letter (`a-z`), or a period (`.`) a single time ({1}).
     # - `[a-zA-Z0-9._]*`: This part of the pattern matches any uppercase letter (`A-Z`), lowercase letter (`a-z`), number (`0-9`), period (`.`), or underscore (`_`), repeated one or more times (`+`). This represents the possible characters inside an R function name.
     # - `\\b`: Again, these are word boundaries, making sure the pattern captures the entire word and not just part of it.
     # -  not used: `(?= *\\()`: This is a lookahead assertion. It checks that the preceding pattern is followed by any spaces and a parenthesis (`\\(`), but doesn't include the spaces and parenthesis in the match. This is because, in R code, a function call is usually followed by a parenthesis, but the parenthesis is not part of the function name.
-    fun_name <- base::lapply(ini, FUN = function(x){extract_all(x, pattern)}) # recover all the function names (followed by "(") present in ini
+    fun_name <- base::lapply(ini, FUN = function(x){extract_all(text = x, pattern = pattern)}) # recover all the function names, followed by "(", present in ini
     fun_name_wo_op <- base::lapply(fun_name, FUN = function(x){x[ ! x %in% base::c("function", "if", "for", "while", "repeat")]})[ ! comment_line.log] # removal of special functions
     tempo.log <- base::sapply(fun_name_wo_op, FUN = function(x){base::length(x) == 0}) # detection of string with empty function names
     if(base::length(fun_name_wo_op) != base::length(code_line_nb)){
-        tempo.cat <- base::paste0("INTERNAL ERROR 2 IN ", function.name, " OF THE ", package.name, " PACKAGE\nLENGTHS SHOULD BE IDENTICAL\nfun_name_wo_op: ", base::length(fun_name_wo_op), "\ncode_line_nb: ", base::length(code_line_nb))
+        tempo.cat <- base::paste0("INTERNAL ERROR 5 IN ", function.name, " OF THE ", package.name, " PACKAGE\nLENGTHS SHOULD BE IDENTICAL\nfun_name_wo_op: ", base::length(fun_name_wo_op), "\ncode_line_nb: ", base::length(code_line_nb))
         base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
     }
     fun_name_wo_op <- fun_name_wo_op[ ! tempo.log] # removal of empty string
@@ -216,7 +244,7 @@ two_colons_check <- function(
     in_basic_fun <- base::lapply(fun_name_wo_op, FUN = function(x){x[x %in% fun]}) #  names of all the basic functions used in x
     tempo.log <- base::sapply(in_basic_fun, FUN = function(x){base::length(x) == 0}) # detection of string with empty function names
     if(base::length(in_basic_fun) != base::length(code_line_nb)){
-        tempo.cat <- base::paste0("INTERNAL ERROR 3 IN ", function.name, " OF THE ", package.name, " PACKAGE\nLENGTHS SHOULD BE IDENTICAL\nin_basic_fun: ", base::length(in_basic_fun), "\ncode_line_nb: ", base::length(code_line_nb))
+        tempo.cat <- base::paste0("INTERNAL ERROR 6 IN ", function.name, " OF THE ", package.name, " PACKAGE\nLENGTHS SHOULD BE IDENTICAL\nin_basic_fun: ", base::length(in_basic_fun), "\ncode_line_nb: ", base::length(code_line_nb))
         base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
     }
     in_basic_fun <- in_basic_fun[ ! tempo.log] # removal of empty string
@@ -232,7 +260,7 @@ two_colons_check <- function(
     }
     in_other_fun <- in_other_fun[ ! tempo.log] # removal of empty string
     in_other_code_line_nb <- code_line_nb[ ! tempo.log]
-    in_other_fun_uni <- base::unlist(base::unique(in_other_fun)) #  names of unique basic functions used in x, except the one tested (arg.user.setting$x), because can be in error messages
+    in_other_fun_uni <- base::unlist(base::unique(in_other_fun)) # names of unique basic functions used in x, except the one tested (arg.user.setting$x), because can be in error messages
     # end other function names in x
     # analyse of :: before basic functions in x
     if(base::length(in_basic_fun_uni) > 0){
