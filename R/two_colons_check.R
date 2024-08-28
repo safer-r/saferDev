@@ -207,11 +207,10 @@ two_colons_check <- function(
     fun <- base::unlist(base::sapply(X = s, FUN = function(x){base::ls(x, all.names = TRUE)})) # all the basic functions of R in all the scope
     # end recovering the basic functions of R
     # recovering the input function string
-    ini <- utils::capture.output(x)
+    ini <- utils::capture.output(x) # no lines must be removed because it is to catch the lines of the full code
     code_line_nb <- 1:base::length(ini)
     comment_line.log <- base::grepl(ini, pattern = "^\\s*#") # removal of the lines starting by #
     code_line_nb <- code_line_nb[ ! comment_line.log]
-    ini <- ini[ ! comment_line.log]
     if(base::length(ini) == 0){
         tempo.cat <- base::paste0("ERROR IN ", function.name, " OF THE ", package.name, " PACKAGE\nTHE TESTED FUNCTION ", arg.user.setting$x, " IS EMPTY OR ONLY MADE OF COMMENTS")
         base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
@@ -252,35 +251,35 @@ two_colons_check <- function(
     fun_name <- base::lapply(ini, FUN = function(x){extract_all(text = x, pattern = pattern)}) # recover all the function names, followed by "(", present in ini
     fun_name_wo_op <- base::lapply(fun_name, FUN = function(x){x[ ! x %in% base::c("function", "if", "for", "while", "repeat")]})[ ! comment_line.log] # removal of special functions
     tempo.log <- base::sapply(fun_name_wo_op, FUN = function(x){base::length(x) == 0}) # detection of string with empty function names
-    if(base::length(fun_name_wo_op) != base::length(code_line_nb)){
-        tempo.cat <- base::paste0("INTERNAL ERROR 5 IN ", function.name, " OF THE ", package.name, " PACKAGE\nLENGTHS SHOULD BE IDENTICAL\nfun_name_wo_op: ", base::length(fun_name_wo_op), "\ncode_line_nb: ", base::length(code_line_nb))
+    fun_name_wo_op <- fun_name_wo_op[ ! tempo.log] # removal of empty string
+    code_line_nb_wo_op <- code_line_nb[ ! tempo.log]
+    if(base::length(fun_name_wo_op) != base::length(code_line_nb_wo_op)){
+        tempo.cat <- base::paste0("INTERNAL ERROR 5 IN ", function.name, " OF THE ", package.name, " PACKAGE\nLENGTHS SHOULD BE IDENTICAL\nfun_name_wo_op: ", base::length(fun_name_wo_op), "\ncode_line_nb: ", base::length(code_line_nb_wo_op))
         base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
     }
-    fun_name_wo_op <- fun_name_wo_op[ ! tempo.log] # removal of empty string
-    code_line_nb <- code_line_nb[ ! tempo.log]
     fun_name_wo_op_uni <- base::unlist(base::unique(fun_name_wo_op))
     # end all function names in x
 
     # basic function names in x
     in_basic_fun <- base::lapply(fun_name_wo_op, FUN = function(x){x[x %in% fun]}) #  names of all the basic functions used in x
     tempo.log <- base::sapply(in_basic_fun, FUN = function(x){base::length(x) == 0}) # detection of string with empty function names
-    if(base::length(in_basic_fun) != base::length(code_line_nb)){
-        tempo.cat <- base::paste0("INTERNAL ERROR 6 IN ", function.name, " OF THE ", package.name, " PACKAGE\nLENGTHS SHOULD BE IDENTICAL\nin_basic_fun: ", base::length(in_basic_fun), "\ncode_line_nb: ", base::length(code_line_nb))
+    in_basic_fun <- in_basic_fun[ ! tempo.log] # removal of empty string
+    in_basic_code_line_nb <- code_line_nb_wo_op[ ! tempo.log]
+    if(base::length(in_basic_fun) != base::length(in_basic_code_line_nb)){
+        tempo.cat <- base::paste0("INTERNAL ERROR 6 IN ", function.name, " OF THE ", package.name, " PACKAGE\nLENGTHS SHOULD BE IDENTICAL\nin_basic_fun: ", base::length(in_basic_fun), "\ncode_line_nb: ", base::length(in_basic_code_line_nb))
         base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
     }
-    in_basic_fun <- in_basic_fun[ ! tempo.log] # removal of empty string
-    in_basic_code_line_nb <- code_line_nb[ ! tempo.log]
     in_basic_fun_uni <- base::unlist(base::unique(in_basic_fun)) #  names of unique basic functions used in x
     # end basic function names in x
     # other function names in x
     in_other_fun <- base::lapply(fun_name_wo_op, FUN = function(x){x[ ! x %in% base::c(fun, arg.user.setting$x)]}) #  names of all the other functions used in x, except the one tested (arg.user.setting$x), because can be in error messages
     tempo.log <- base::sapply(in_other_fun, FUN = function(x){base::length(x) == 0}) # detection of string with empty function names
-    if(base::length(in_other_fun) != base::length(code_line_nb)){
-        tempo.cat <- base::paste0("INTERNAL ERROR 7 IN ", function.name, " OF THE ", package.name, " PACKAGE\nLENGTHS SHOULD BE IDENTICAL\nin_other_fun: ", base::length(in_other_fun), "\ncode_line_nb: ", base::length(code_line_nb))
+    in_other_fun <- in_other_fun[ ! tempo.log] # removal of empty string
+    in_other_code_line_nb <- code_line_nb_wo_op[ ! tempo.log]
+    if(base::length(in_other_fun) != base::length(in_other_code_line_nb)){
+        tempo.cat <- base::paste0("INTERNAL ERROR 7 IN ", function.name, " OF THE ", package.name, " PACKAGE\nLENGTHS SHOULD BE IDENTICAL\nin_other_fun: ", base::length(in_other_fun), "\ncode_line_nb: ", base::length(in_other_code_line_nb))
         base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
     }
-    in_other_fun <- in_other_fun[ ! tempo.log] # removal of empty string
-    in_other_code_line_nb <- code_line_nb[ ! tempo.log]
     in_other_fun_uni <- base::unlist(base::unique(in_other_fun)) # names of unique basic functions used in x, except the one tested (arg.user.setting$x), because can be in error messages
     # end other function names in x
     # analyse of :: before basic functions in x
