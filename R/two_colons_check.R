@@ -8,7 +8,7 @@
 #' @details
 #' - More precisely, two_colons_check() verifies that all the strings before an opening bracket "(" are preceeded by "::". Of note, ":::" are also detected but considered as "::"
 #' 
-#' - The regex used to detect a function name is: "[a-zA-Z._]{1}[a-zA-Z0-9._]+\\("
+#' - The regex used to detect a function name is: "[a-zA-Z.]{1}[a-zA-Z0-9._]+\\("
 #'  
 #' - The following R operators using bracket are not considered: "function", "if", "for", "while" and "repeat"
 #' 
@@ -221,7 +221,7 @@ two_colons_check <- function(
     # end recovering the input function string
     # catch the internal function name created inside the tested function
     internal_fun_names <- base::unlist(base::lapply(X = ini, FUN = function(x){
-        output <- base::sub(pattern = "^\\s*([a-zA-Z._]{1}[a-zA-Z0-9._]+)\\s*<-[\\s\\r\\n]*function[\\s\\r\\n]*\\(.*", replacement = "\\1", x = x, perl = TRUE)
+        output <- base::sub(pattern = "^\\s*([a-zA-Z.]{1}[a-zA-Z0-9._]+)\\s*<-[\\s\\r\\n]*function[\\s\\r\\n]*\\(.*", replacement = "\\1", x = x, perl = TRUE)
         if( ! output == x){
             base::return(output)
         }
@@ -233,7 +233,7 @@ two_colons_check <- function(
             # Check if the current string starts with spaces followed by a '('
             if (base::grepl("^\\s*\\(", ini[i2])) {
                 # Check if the previous string ends with the specified pattern
-                if (base::grepl("[a-zA-Z._]{1}[a-zA-Z0-9._]+\\s*$", ini[i2 - 1])) {
+                if (base::grepl("[a-zA-Z.]{1}[a-zA-Z0-9._]+\\s*$", ini[i2 - 1])) {
                 # Append a '(' to the previous string
                 ini[i2 - 1] <- base::paste0(ini[i2 - 1], "(")
                 }
@@ -242,10 +242,10 @@ two_colons_check <- function(
     }
     # end trick to deal with end of lines between the name of the function and "("
     # all function names in x
-    pattern <- "[a-zA-Z._]{1}[a-zA-Z0-9._]+" # pattern to detect a function name
+    pattern <- "[a-zA-Z.]{1}[a-zA-Z0-9._]+" # pattern to detect a function name
     # I could have used [\\s\\r\\n]* meaning any space or end of line or carriage return between the name and "(" but finally, another strategy used
     # - `this does not work well, as it does not take dots: "\\b[a-zA-Z\\.\\_]{1}[a-zA-Z0-9\\.\\_]+\\b", because of `\\b`: These are word boundaries. It ensures that the pattern matches only a complete word and not a part of a word.
-    # - `[a-zA-Z._]{1}`: This portion of the pattern matches any uppercase letter (`A-Z`), lowercase letter (`a-z`), or a period (`.`) a single time ({1}).
+    # - `[a-zA-Z.]{1}`: This portion of the pattern matches any uppercase letter (`A-Z`), lowercase letter (`a-z`), or a period (`.`) a single time ({1}).
     # - `[a-zA-Z0-9._]*`: This part of the pattern matches any uppercase letter (`A-Z`), lowercase letter (`a-z`), number (`0-9`), period (`.`), or underscore (`_`), repeated one or more times (`+`). This represents the possible characters inside an R function name.
     # - `\\b`: Again, these are word boundaries, making sure the pattern captures the entire word and not just part of it.
     # -  not used: `(?= *\\()`: This is a lookahead assertion. It checks that the preceding pattern is followed by any spaces and a parenthesis (`\\(`), but doesn't include the spaces and parenthesis in the match. This is because, in R code, a function call is usually followed by a parenthesis, but the parenthesis is not part of the function name.
