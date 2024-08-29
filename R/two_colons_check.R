@@ -25,7 +25,7 @@ two_colons_check <- function(
 ){
 
     # DEBUGGING
-    # x = two_colons_check ; safer_check = TRUE # Warning: x = saferDev::get_message does not return the same number of code lines
+    # x = paste0 ; safer_check = TRUE # Warning: x = saferDev::get_message does not return the same number of code lines
     # package name
     package.name <- "saferDev"
     # end package name
@@ -177,10 +177,10 @@ two_colons_check <- function(
                 tempo.cat <- base::paste0("INTERNAL ERROR 3 IN ", function.name, " OF THE ", package.name, " PACKAGE\nLENGTHS OF col1 (", base::length(col1), "), col2 (", base::length(col2), "), AND col3 (", base::length(col3), "), SHOULD BE EQUAL\n")
                 base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
             }
-            tempo.pos <- base::paste0(col1, "\t", col2, "\t", col3)
+            tempo.pos <- base::paste0(col1, "\t", col2, "\t\t", col3)
             output.cat <- base::paste0(
                 "INSIDE ", arg.user.setting$x, ", SOME :: OR ::: ARE MISSING AT ", text, " FUNCTION POSITIONS:\n\n", 
-                "LINE\tFUN\tSTRING_BEFORE\n",
+                "LINE\tFUN\t\tSTRING_BEFORE\n",
                 base::paste(tempo.pos, collapse = "\n")
             )
         }else{
@@ -217,6 +217,7 @@ two_colons_check <- function(
     }
     # ini <- base::paste0(ini, collapse = " \\n ") # recovering as single string separated by \\n (and not \n to avoid the eval(\n) when printing the error message)
     ini <- base::gsub(x = ini, pattern = " +", replacement = " ") # removal of multiple spaces
+    ini <- base::sub(x = ini, pattern = "^ +", replacement = "") # removal of multiple spaces in the beginning od strings
     # end recovering the input function string
     # catch the internal function name created inside the tested function
     internal_fun_names <- base::unlist(base::lapply(X = ini, FUN = function(x){
@@ -322,11 +323,11 @@ two_colons_check <- function(
         output.cat.b <- NULL
     }
     # end analyse of :: before basic functions in x
-    if(base::any(tempo.log) | base::any(tempo.log.b)){
-        tempo.cat <- base::paste0(output.cat, base::ifelse(base::is.null(output.cat) | base::is.null(output.cat.b), base::paste0("INSIDE ", arg.user.setting$x, ", EVERYTHING SEEMS CLEAN FOR R BASIC FUNCTIONS\n\n"), "\n\n"), output.cat.b)
-        base::cat(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"))
-    }else{
+    if( ( ! base::any(tempo.log)) & ! base::any(tempo.log.b)){
         base::cat("\n\nEVERYTHING SEEMS CLEAN\n\n")
+    }else{
+        tempo.cat <- base::paste0(base::ifelse(base::is.null(output.cat), base::paste0("INSIDE ", arg.user.setting$x, ", EVERYTHING SEEMS CLEAN FOR R BASIC FUNCTIONS\n\n"), base::paste0(output.cat, base::ifelse(base::is.null(output.cat.b), "", "\n\n"))), output.cat.b)
+        base::cat(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"))
     }
     # end main code
     # output
