@@ -1,12 +1,12 @@
-#' @title two_colons_check
+#' @title colons_check
 #' @description
 #' Verify that all the functions used inside a function are all referenced by their package attribution. For instance: base::mean(), or saferDev:::.base_op_check()
 #' @param x a function name, written without quotes and brackets.
-#' @param safer_check Single logical value. Perform some "safer" checks (see https://github.com/safer-r) ? If TRUE, two_colons_check() checks before running that 1) the R scope for R operators (like "<-") is not overwritten by another package and 2) functions and related packages used are present in R lybraries. Set to FALSE if two_colons_check() is used inside another "safer" function to avoid pointless multiple checking.
+#' @param safer_check Single logical value. Perform some "safer" checks (see https://github.com/safer-r)? If TRUE, checkings are performed before main code running: 1) R classical operators (like "<-") not overwritten by another package because of the R scope and 2) required functions and related packages effectively present in local R lybraries. Must be set to FALSE if this fonction is used inside another "safer" function to avoid pointless multiple checkings.
 #' @returns 
 #' A message indicating the missing :: or :::, or a message saying that everything seems fine.
 #' @details
-#' - More precisely, two_colons_check() verifies that all the strings before an opening bracket "(" are preceeded by "::". Of note, ":::" are also detected but considered as "::"
+#' - More precisely, colons_check() verifies that all the strings before an opening bracket "(" are preceeded by "::". Of note, ":::" are also detected but considered as "::"
 #' 
 #' - The regex used to detect a function name is: "[a-zA-Z.]{1}[a-zA-Z0-9._]*\\("
 #'  
@@ -16,10 +16,10 @@
 #' @author Yushi Han <yushi.han2000@gmail.com>
 #' @author Haiding Wang <wanghaiding442@gmail.com>  
 #' @examples
-#' two_colons_check(mean)
+#' colons_check(mean)
 #' 
 #' @export
-two_colons_check <- function(
+colons_check <- function(
     x, 
     safer_check = TRUE
 ){

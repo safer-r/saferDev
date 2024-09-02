@@ -1,4 +1,4 @@
-test_that("two_colons_check function works correctly", {
+test_that("colons_check function works correctly", {
   # Example datasets
   vec1 <- 3 
   vec2 <- 4
@@ -22,7 +22,7 @@ test_that("two_colons_check function works correctly", {
 
   # Test cases
   # Simple examples
-    expect_no_error(two_colons_check(x = fun1))
-    expect_no_error(two_colons_check(x = fun2))
-    expect_no_error(two_colons_check(x = fun2, safer_check = TRUE))
+    expect_no_error(colons_check(x = fun1))
+    expect_no_error(colons_check(x = fun2))
+    expect_no_error(colons_check(x = fun2, safer_check = TRUE))
 })
