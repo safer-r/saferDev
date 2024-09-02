@@ -29,13 +29,13 @@
   <div class="dropdown-menu" aria-labelledby="dropdown-articles">
     <a class="dropdown-item" href="../articles/arg_check.html">arg_check</a>
     <a class="dropdown-item" href="../articles/arg_test.html">arg_test</a>
+    <a class="dropdown-item" href="../articles/colons_check.html">colons_check</a>
     <a class="dropdown-item" href="../articles/env_check.html">env_check</a>
     <a class="dropdown-item" href="../articles/get_message.html">get_message</a>
     <a class="dropdown-item" href="../articles/is_function_here.html">is_function_here</a>
     <a class="dropdown-item" href="../articles/is_package_here.html">is_package_here</a>
     <a class="dropdown-item" href="../articles/is_python_package_here.html">is_python_package_here</a>
     <a class="dropdown-item" href="../articles/report.html">report</a>
-    <a class="dropdown-item" href="../articles/two_colons_check.html">two_colons_check</a>
   </div>
 </li>
       </ul><form class="form-inline my-2 my-lg-0" role="search">
@@ -87,7 +87,7 @@
 
 
 <dt>safer_check</dt>
-<dd><p>Single logical value. Perform some "safer" checks (see https://github.com/safer-r)? If TRUE, checkings are performed before main code running: 1) R classical operators (like "&lt;-") not overwritten by another package because of the R scope and 2) required functions and related packages effectively present in local R lybraries. Set to FALSE if this fonction is used inside another "safer" function to avoid pointless multiple checkings.</p></dd>
+<dd><p>Single logical value. Perform some "safer" checks (see https://github.com/safer-r)? If TRUE, checkings are performed before main code running: 1) R classical operators (like "&lt;-") not overwritten by another package because of the R scope and 2) required functions and related packages effectively present in local R lybraries. Must be set to FALSE if this fonction is used inside another "safer" function to avoid pointless multiple checkings.</p></dd>
 
 </dl></div>
     <div class="section level2">
@@ -133,7 +133,7 @@
 
 
     <footer><div class="pkgdown-footer-left">
-  <p>Developed by Haiding Wang, <a href="https://github.com/yushiHn" class="external-link">Yushi Han</a>, Gael Millot.</p>
+  <p>Developed by Haiding Wang, Gael Millot.</p>
 </div>
 
 <div class="pkgdown-footer-right">

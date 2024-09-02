@@ -4,6 +4,7 @@ pkgdown_sha: ~
 articles:
   arg_check: arg_check.html
   arg_test: arg_test.html
+  colons_check: colons_check.html
   env_check: env_check.html
   get_message: get_message.html
   is_function_here: is_function_here.html
@@ -11,6 +12,5 @@ articles:
   is_python_package_here: is_python_package_here.html
   report: report.html
   saferDev: saferDev.html
-  two_colons_check: two_colons_check.html
-last_built: 2024-08-29T14:01Z
+last_built: 2024-09-02T16:13Z
 

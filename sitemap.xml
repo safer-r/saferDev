@@ -10,6 +10,9 @@
     <loc>/articles/arg_test.html</loc>
   </url>
   <url>
+    <loc>/articles/colons_check.html</loc>
+  </url>
+  <url>
     <loc>/articles/env_check.html</loc>
   </url>
   <url>
@@ -34,9 +37,6 @@
     <loc>/articles/saferDev.html</loc>
   </url>
   <url>
-    <loc>/articles/two_colons_check.html</loc>
-  </url>
-  <url>
     <loc>/authors.html</loc>
   </url>
   <url>
@@ -47,6 +47,9 @@
   </url>
   <url>
     <loc>/reference/arg_test.html</loc>
+  </url>
+  <url>
+    <loc>/reference/colons_check.html</loc>
   </url>
   <url>
     <loc>/reference/env_check.html</loc>
@@ -71,8 +74,5 @@
   </url>
   <url>
     <loc>/reference/report.html</loc>
-  </url>
-  <url>
-    <loc>/reference/two_colons_check.html</loc>
   </url>
 </urlset>
