@@ -1,5 +1,5 @@
 ---
-title: "two_colons_check"
+title: "colons_check"
 ---
 <br>
 
@@ -38,14 +38,14 @@ fun2
 
 ### Argument x
 ```{r, echo = TRUE, error = TRUE}
-two_colons_check(x = fun1) # a function name, written without quotes and brackets
-two_colons_check(x = fun2) # a function name, written without quotes and brackets
+colons_check(x = fun1) # a function name, written without quotes and brackets
+colons_check(x = fun2) # a function name, written without quotes and brackets
 ```
 <br>
 
 ### Argument safer_chek 
 ```{r, echo = TRUE, error = TRUE}
-two_colons_check(
+colons_check(
     x = fun1, 
     afer_check = FALSE
 ) # Single logical value. Perform some "safer" checks (see https://github.com/safer-r) ?
@@ -54,7 +54,7 @@ two_colons_check(
 
 ### All the arguments
 ```{r, echo = TRUE, error = TRUE}
-two_colons_check(
+colons_check(
     x = fun1, # a function name, written without quotes and brackets
     safer_check = TRUE # Single logical value. Perform some "safer" checks (see https://github.com/safer-r) ?
 )
