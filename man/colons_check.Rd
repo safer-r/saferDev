@@ -9,23 +9,24 @@ colons_check(x, safer_check = TRUE)
 \arguments{
 \item{x}{a function name, written without quotes and brackets.}
 
-\item{safer_check}{Single logical value. Perform some "safer" checks (see https://github.com/safer-r) ? If TRUE, colons_check() checks before running that 1) the R scope for R operators (like "<-") is not overwritten by another package and 2) functions and related packages used are present in R lybraries. Set to FALSE if colons_check() is used inside another "safer" function to avoid pointless multiple checking.}
+\item{safer_check}{Single logical value. Perform some "safer" checks (see https://github.com/safer-r)? If TRUE, checkings are performed before main code running: 1) R classical operators (like "<-") not overwritten by another package because of the R scope and 2) required functions and related packages effectively present in local R lybraries. Must be set to FALSE if this fonction is used inside another "safer" function to avoid pointless multiple checkings.}
 }
 \value{
-A message indicating the missing :: or a message saying that everything seems fine.
+A message indicating the missing :: or :::, or a message saying that everything seems fine.
 }
 \description{
-Verify that all the functions used inside a function are all referenced by their package attribution. For instance: base::mean()
+Verify that all the functions used inside a function are all referenced by their package attribution. For instance: base::mean() and not mean(), or saferDev:::.base_op_check() and not .base_op_check().
 }
 \details{
-- More precisely, colons_check() verifies that all the strings before an opening bracket "(" are preceeded by "::"
+- More precisely, colons_check() verifies that all the strings before an opening bracket "(" are preceeded by "::". Of note, ":::" are also detected but considered as "::".
 
-- The regex used is: "\\b[a-zA-Z.]{1}[a-zA-Z0-9._]+\\b(?= *\\()"
+- The regex used to detect a function name is: "[a-zA-Z.]{1}[a-zA-Z0-9._]*\\(".
  
-- The following R operators using bracket are not considered: "function", "if", "for", "while" and "repeat"
+- The following R operators using bracket are not considered: "function", "if", "for", "while" and "repeat".
 }
 \examples{
 colons_check(mean)
+colons_check(colons_check)
 
 }
 \author{

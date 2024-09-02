@@ -6,17 +6,18 @@
 #' @returns 
 #' A message indicating the missing :: or :::, or a message saying that everything seems fine.
 #' @details
-#' - More precisely, colons_check() verifies that all the strings before an opening bracket "(" are preceeded by "::". Of note, ":::" are also detected but considered as "::"
+#' - More precisely, colons_check() verifies that all the strings before an opening bracket "(" are preceeded by "::". Of note, ":::" are also detected but considered as "::".
 #' 
-#' - The regex used to detect a function name is: "[a-zA-Z.]{1}[a-zA-Z0-9._]*\\("
+#' - The regex used to detect a function name is: "[a-zA-Z.]{1}[a-zA-Z0-9._]*\\(".
 #'  
-#' - The following R operators using bracket are not considered: "function", "if", "for", "while" and "repeat"
+#' - The following R operators using bracket are not considered: "function", "if", "for", "while" and "repeat".
 #' 
 #' @author Gael Millot <gael.millot@pasteur.fr>
 #' @author Yushi Han <yushi.han2000@gmail.com>
 #' @author Haiding Wang <wanghaiding442@gmail.com>  
 #' @examples
 #' colons_check(mean)
+#' colons_check(colons_check)
 #' 
 #' @export
 colons_check <- function(
@@ -51,7 +52,6 @@ colons_check <- function(
     # check of lib.path
     # end check of lib.path
     # check of the required function from the required packages
-
     # end check of the required function from the required packages
     # end package checking
 
@@ -85,6 +85,8 @@ colons_check <- function(
     # end argument primary checking
 
     # second round of checking and data preparation
+    # reserved words (to avoid bugs)
+    # end reserved words (to avoid bugs)
     # management of NA arguments
     if( ! (base::all(base::class(arg.user.setting) %in% base::c("list", "NULL"), na.rm = TRUE) & base::length(arg.user.setting) == 0)){
         tempo.arg <- base::names(arg.user.setting) # values provided by the user
@@ -114,8 +116,6 @@ colons_check <- function(
     # end warning initiation
     # other checkings
     # end other checkings
-    # reserved words (to avoid bugs)
-    # end reserved words (to avoid bugs)
     # end second round of checking and data preparation
 
     # main code

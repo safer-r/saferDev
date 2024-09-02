@@ -1,29 +1,15 @@
 Package: saferDev
 Type: Package
-Title: Function and pipeline development
+Title: R function and pipeline development.
 Version: 1.0
-Date: 2023-11-09
+Date: 2024-09-02
 Authors@R: c(
     person(given = "Haiding", family = "Wang", email = "wanghaiding442@gmail.com", role = c("aut", "ctb"), comment = c(ORCID = "0009-0008-4831-2022")),
-    person(given = "Yushi", family = "Han",  email = "yushi.han2000@gmail.com", role = c("aut", "ctb"), comment = c(ORCID = "0009-0009-9908-1958")),
     person(given = "Gael", family = "Millot",  email = "gael.millot@pasteur.fr", role = c("cre", "aut", "ctb"), comment = c(ORCID = "0000-0002-0591-3509"))
   )
 Author: Haiding Wang [aut, ctb], Yushi Han [aut, ctb], Gael Millot [cre, aut, ctb]
 Encoding: UTF-8
 Maintainer: Gael Millot <gael.millot@pasteur.fr>
-Description: Functions for object analysis, importing, exporting results
-    and for printing.
+Description: R function and pipeline development.
 License: GPL-3
-Imports: 
-    ggplot2,
-    lubridate,
-    parallel,
-    pdftools,
-    reticulate
-RoxygenNote: 7.3.1
-Suggests: 
-    knitr,
-    rmarkdown,
-    testthat (>= 3.0.0)
-VignetteBuilder: knitr
-Config/testthat/edition: 3
+RoxygenNote: 7.2.3
