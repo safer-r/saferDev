@@ -70,23 +70,6 @@ arg_check <- function(
     # end package name
     # function name
     # no used in this function for the error message, to avoid env colliding
-    # end function name
-    # critical operator checking
-    if(safer_check == TRUE){
-        saferDev:::.base_op_check(
-            external.function.name = function.name,
-            external.package.name = package.name
-        )
-    }
-    # end critical operator checking
-    # check of lib.path
-    # end check of lib.path
-    # saferdev required function checking
-    # end saferdev required function checking
-    # check of the required function from the required packages
-    # end check of the required function from the required packages
-
-    # argument primary checking
     # fun.name checked first because required next
     if( ! base::is.null(fun.name)){ # I have to use this way to deal with every kind of class for fun.name
         if(base::all(base::class(fun.name) == "character")){ # base::all() without na.rm -> ok because base::class(NA) is "logical"
@@ -103,6 +86,23 @@ arg_check <- function(
         }
     }
     # end fun.name checked first because required next
+    # end function name
+    # critical operator checking
+    if(safer_check == TRUE){
+        saferDev:::.base_op_check(
+            external.function.name = fun.name,
+            external.package.name = package.name
+        )
+    }
+    # end critical operator checking
+    # check of lib.path
+    # end check of lib.path
+    # saferdev required function checking
+    # end saferdev required function checking
+    # check of the required function from the required packages
+    # end check of the required function from the required packages
+
+    # argument primary checking
     # arg with no default values
     mandat.args <- base::c(
         "data"
