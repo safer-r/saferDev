@@ -226,7 +226,7 @@ colons_check <- function(
         }
         colon_bad <- base::lapply(X = res2, FUN = function(x){ ! x %in% "::"}) # no need to check for ":::" because base::nchar(x)-1 takes only :: if the strings ends by :::
         if( ! base::all(base::sapply(X = res2, FUN = function(x){base::length(x)}) == base::sapply(X = colon_bad, FUN = function(x){base::length(x)}))){
-            tempo.cat <- base::paste0("INTERNAL ERROR 2 IN ", function.name, " OF THE ", package.name, " PACKAGE\nLENGTHS SHOULD BE IDENTICAL\nres2: ", base::paste(base::sapply(X = res2, FUN = function(x){base::length(x)}), collapse = " "), "\ncolon_bad: ", base::paste(base::sapply(X = colon_bad, FUN = function(x){base::length(x)}), collapse = " "))
+            tempo.cat <- base::paste0("INTERNAL ERROR 3 IN ", function.name, " OF THE ", package.name, " PACKAGE\nLENGTHS SHOULD BE IDENTICAL\nres2: ", base::paste(base::sapply(X = res2, FUN = function(x){base::length(x)}), collapse = " "), "\ncolon_bad: ", base::paste(base::sapply(X = colon_bad, FUN = function(x){base::length(x)}), collapse = " "))
             base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
         }
         # detection of comments
@@ -257,7 +257,7 @@ colons_check <- function(
             col2 <- base::unlist(base::mapply(FUN = function(x, y){y[x]}, x = colon_bad, y = list.fun))
             col3 <- base::unlist(base::mapply(FUN = function(x, y){y[x]}, x = colon_bad, y = res))
             if( ! (base::length(col1) == base::length(col2) & base::length(col1) == base::length(col3) & base::length(col2) == base::length(col3))){
-                tempo.cat <- base::paste0("INTERNAL ERROR 3 IN ", function.name, " OF THE ", package.name, " PACKAGE\nLENGTHS OF col1 (", base::length(col1), "), col2 (", base::length(col2), "), AND col3 (", base::length(col3), "), SHOULD BE EQUAL\n")
+                tempo.cat <- base::paste0("INTERNAL ERROR 4 IN ", function.name, " OF THE ", package.name, " PACKAGE\nLENGTHS OF col1 (", base::length(col1), "), col2 (", base::length(col2), "), AND col3 (", base::length(col3), "), SHOULD BE EQUAL\n")
                 base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
             }
             tempo.pos <- base::paste0(col1, "\t", col2, "\t\t", col3)
@@ -283,7 +283,7 @@ colons_check <- function(
     # recovering the basic functions of R
     s <- base::c("package:stats", "package:graphics",  "package:grDevices", "package:utils", "package:datasets", "package:methods", "Autoloads", "package:base") # basic base::search() scope
     if(base::any( ! s %in% base::search())){
-        tempo.cat <- base::paste0("INTERNAL ERROR 4 IN ", function.name, " OF THE ", package.name, " PACKAGE\nTHE base::search() SCOPE OF R HAS CHANGED.\nTHE PROBLEM IS:\n",
+        tempo.cat <- base::paste0("INTERNAL ERROR 5 IN ", function.name, " OF THE ", package.name, " PACKAGE\nTHE base::search() SCOPE OF R HAS CHANGED.\nTHE PROBLEM IS:\n",
             base::paste(s[ ! s %in% base::search()], collapse = "\n"))
         base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
     }
@@ -339,7 +339,7 @@ colons_check <- function(
     fun_name_wo_op <- fun_name_wo_op[ ! tempo.log] # removal of empty string
     code_line_nb_wo_op <- code_line_nb[ ! tempo.log]
     if(base::length(fun_name_wo_op) != base::length(code_line_nb_wo_op)){
-        tempo.cat <- base::paste0("INTERNAL ERROR 5 IN ", function.name, " OF THE ", package.name, " PACKAGE\nLENGTHS SHOULD BE IDENTICAL\nfun_name_wo_op: ", base::length(fun_name_wo_op), "\ncode_line_nb: ", base::length(code_line_nb_wo_op))
+        tempo.cat <- base::paste0("INTERNAL ERROR 6 IN ", function.name, " OF THE ", package.name, " PACKAGE\nLENGTHS SHOULD BE IDENTICAL\nfun_name_wo_op: ", base::length(fun_name_wo_op), "\ncode_line_nb: ", base::length(code_line_nb_wo_op))
         base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
     }
     fun_name_wo_op_uni <- base::unlist(base::unique(fun_name_wo_op))
@@ -351,7 +351,7 @@ colons_check <- function(
     in_basic_fun <- in_basic_fun[ ! tempo.log] # removal of empty string
     in_basic_code_line_nb <- code_line_nb_wo_op[ ! tempo.log]
     if(base::length(in_basic_fun) != base::length(in_basic_code_line_nb)){
-        tempo.cat <- base::paste0("INTERNAL ERROR 6 IN ", function.name, " OF THE ", package.name, " PACKAGE\nLENGTHS SHOULD BE IDENTICAL\nin_basic_fun: ", base::length(in_basic_fun), "\ncode_line_nb: ", base::length(in_basic_code_line_nb))
+        tempo.cat <- base::paste0("INTERNAL ERROR 7 IN ", function.name, " OF THE ", package.name, " PACKAGE\nLENGTHS SHOULD BE IDENTICAL\nin_basic_fun: ", base::length(in_basic_fun), "\ncode_line_nb: ", base::length(in_basic_code_line_nb))
         base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
     }
     in_basic_fun_uni <- base::unlist(base::unique(in_basic_fun)) #  names of unique basic functions used in x
@@ -362,7 +362,7 @@ colons_check <- function(
     in_other_fun <- in_other_fun[ ! tempo.log] # removal of empty string
     in_other_code_line_nb <- code_line_nb_wo_op[ ! tempo.log]
     if(base::length(in_other_fun) != base::length(in_other_code_line_nb)){
-        tempo.cat <- base::paste0("INTERNAL ERROR 7 IN ", function.name, " OF THE ", package.name, " PACKAGE\nLENGTHS SHOULD BE IDENTICAL\nin_other_fun: ", base::length(in_other_fun), "\ncode_line_nb: ", base::length(in_other_code_line_nb))
+        tempo.cat <- base::paste0("INTERNAL ERROR 8 IN ", function.name, " OF THE ", package.name, " PACKAGE\nLENGTHS SHOULD BE IDENTICAL\nin_other_fun: ", base::length(in_other_fun), "\ncode_line_nb: ", base::length(in_other_code_line_nb))
         base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
     }
     in_other_fun_uni <- base::unlist(base::unique(in_other_fun)) # names of unique basic functions used in x, except the one tested (arg.user.setting$x), because can be in error messages
