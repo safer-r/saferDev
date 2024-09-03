@@ -27,6 +27,7 @@ colons_check <- function(
 
     # DEBUGGING
     # x = .expand_R_libs_env_var ; safer_check = TRUE # Warning: x = saferDev::get_message does not return the same number of code lines
+    # x = close2 ; safer_check = TRUE # Warning: x = saferDev::get_message does not return the same number of code lines
     # package name
     package.name <- "saferDev"
     # end package name
@@ -123,6 +124,13 @@ colons_check <- function(
         text, 
         pattern
     ) {
+        # AIM
+        # extract all function names
+        # ARGUMENTS
+        # text: vector of strings
+        # pattern: regex to extract function names
+        # RETURN
+        # A list containing the functions names, each compartment being one of the string of the input vector
         # DEBUGGING
         # text = ini[1] ; pattern = pattern
         # Find all matches, including trailing '('
@@ -145,6 +153,22 @@ colons_check <- function(
         text,
         internal_fun_names
     ){
+        # AIM
+        # create the message for the clons_check() function
+        # ARGUMENTS
+        # list.fun: list of names of all the basic functions
+        # list.fun.uni: vector of all the unique function names
+        # list.line.nb: vector of corresponding line number
+        # ini: vector of string of the initial function code analyzed
+        # arg.user.setting: list of arg user settings
+        # function.name: function name
+        # package.name: package name
+        # text: either "BASIC" or "OTHER"
+        # internal_fun_names: vector of string of names of internal functions in the function code analyzed
+        # RETURN
+        # A list 
+        # $output.cat: the message (string)
+        # tempo.log: logical vector indicating if list.fun contain function names without :: or :::
         # DEBUGGING
         # list.fun = in_other_fun ; list.fun.uni = in_other_fun_uni ; list.line.nb = in_other_code_line_nb ; ini = ini ; arg.user.setting = arg.user.setting ; function.name = function.name ; package.name = package.name ; text = "OTHER" ; internal_fun_names = internal_fun_names
         if(base::length(text) != 1 & base::any( ! text %in% base::c("BASIC", "OTHER"))){
