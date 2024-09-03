@@ -234,7 +234,7 @@ colons_check <- function(
         if(base::any(comment.log, na.rm = TRUE)){
             comment.line.to.rm <- base::which(comment.log) # elements among res that have #
             lines <- res[comment.log]
-            begin_line <- base::sapply(X = lines, FUN = function(x){base::strsplit(x, split = "#")[[1]][1]}) #take the line before the #
+            begin_line <- base::sapply(X = lines, FUN = function(x){base::strsplit(x, split = "#")[[1]][1]}) # takes the line before the first #
             base::names(begin_line) <- NULL
             double.quote.test <- base::sapply(X = begin_line, FUN = function(x){has_odd_number_of_quotes(input_string = x, pattern = '"')}) # here FALSE means even number of quotes, thus that # is not between quotes, thus has to be removed. TRUE means that # is between quotes, thus has to be kept
             simple.quote.test <- base::sapply(X = begin_line, FUN = function(x){has_odd_number_of_quotes(input_string = x, pattern = "'")}) # idem
