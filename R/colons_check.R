@@ -139,16 +139,16 @@ colons_check <- function(
         # input_string = 'This is a "test" string with "even" quotes' ; pattern = '"'
         # input_string = "This is a 'test' string with 'even' quotes" ; pattern = "'"
         # Count the number of quote characters
-        quote_count <- gregexpr(pattern, input_string)[[1]]
+        quote_count <- base::gregexpr(pattern, input_string)[[1]]
         if (quote_count[1] == -1) {
             quote_count <- 0
         } else {
             # Length of the vector gives the count of quotes
-            quote_count <- length(quote_count)
+            quote_count <- base::length(quote_count)
         }
         # Check if the count of quotes is odd
         output <- quote_count %% 2 == 1
-        return(output)
+        base::return(output)
     }
 
     extract_all <- function(
@@ -230,20 +230,20 @@ colons_check <- function(
             base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
         }
         # detection of comments
-        comment.log <- grepl(x = res, pattern = "#")
-        if(any(comment.log, na.rm = TRUE)){
-            comment.line.to.rm <- which(comment.log) # elements among res that have #
+        comment.log <- base::grepl(x = res, pattern = "#")
+        if(base::any(comment.log, na.rm = TRUE)){
+            comment.line.to.rm <- base::which(comment.log) # elements among res that have #
             lines <- res[comment.log]
-            begin_line <- sapply(X = lines, FUN = function(x){strsplit(x, split = "#")[[1]][1]}) #take the line before the #
-            names(begin_line) <- NULL
-            double.quote.test <- sapply(X = begin_line, FUN = function(x){has_odd_number_of_quotes(input_string = x, pattern = '"')}) # here FALSE means even number of quotes, thus that # is not between quotes, thus has to be removed. TRUE means that # is between quotes, thus has to be kept
-            simple.quote.test <- sapply(X = begin_line, FUN = function(x){has_odd_number_of_quotes(input_string = x, pattern = "'")}) # idem
+            begin_line <- base::sapply(X = lines, FUN = function(x){base::strsplit(x, split = "#")[[1]][1]}) #take the line before the #
+            base::names(begin_line) <- NULL
+            double.quote.test <- base::sapply(X = begin_line, FUN = function(x){has_odd_number_of_quotes(input_string = x, pattern = '"')}) # here FALSE means even number of quotes, thus that # is not between quotes, thus has to be removed. TRUE means that # is between quotes, thus has to be kept
+            simple.quote.test <- base::sapply(X = begin_line, FUN = function(x){has_odd_number_of_quotes(input_string = x, pattern = "'")}) # idem
             comment.in.grep <- double.quote.test |  simple.quote.test # lines to keep among commented lines
-            if(any(comment.in.grep, na.rm = TRUE)){
+            if(base::any(comment.in.grep, na.rm = TRUE)){
                 comment.line.to.rm <- comment.line.to.rm[ ! comment.in.grep]
             }
             # removal of functions names that have # before
-            if(length(comment.line.to.rm) > 0){
+            if(base::length(comment.line.to.rm) > 0){
                 res <- res[ - comment.line.to.rm]
                 colon_bad <- colon_bad[ - comment.line.to.rm]
                 list.line.nb <- list.line.nb[ - comment.line.to.rm]
