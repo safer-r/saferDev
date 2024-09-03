@@ -12,6 +12,8 @@
 #'  
 #' - The following R operators using bracket are not considered: "function", "if", "for", "while" and "repeat".
 #' 
+#' - Warning: compiled functions (e.g., saferDev::arg_test) do not have comments anymore, compared to the same source function sourced into the working environment. Most of the time, colons_check() does not consider comments, but some writting could dupe colons_check().
+#' 
 #' @author Gael Millot <gael.millot@pasteur.fr>
 #' @author Yushi Han <yushi.han2000@gmail.com>
 #' @author Haiding Wang <wanghaiding442@gmail.com>  
@@ -120,10 +122,37 @@ colons_check <- function(
     # end second round of checking and data preparation
 
     # main code
+    has_odd_number_of_quotes <- function(
+        input_string, 
+        pattern = '"'
+    ){
+        # AIM
+        # determine if a string has a odd number of quotes
+        # ARGUMENTS
+        # input_string: single strings
+        # pattern: either '"' or "'"
+        # RETURN
+        # TRUE or FALSE
+        # DEBUGGING
+        # input_string = 'This is a "test" string with "even" quotes' ; pattern = '"'
+        # input_string = "This is a 'test' string with 'even' quotes" ; pattern = "'"
+        # Count the number of quote characters
+        quote_count <- gregexpr(pattern, input_string)[[1]]
+        if (quote_count[1] == -1) {
+            quote_count <- 0
+        } else {
+            # Length of the vector gives the count of quotes
+            quote_count <- length(quote_count)
+        }
+        # Check if the count of quotes is odd
+        output <- quote_count %% 2 == 1
+        return(output)
+    }
+
     extract_all <- function(
         text, 
         pattern
-    ) {
+    ){
         # AIM
         # extract all function names
         # ARGUMENTS
@@ -168,8 +197,9 @@ colons_check <- function(
         # RETURN
         # A list 
         # $output.cat: the message (string)
-        # tempo.log: logical vector indicating if list.fun contain function names without :: or :::
+        # colon_bad: logical vector. Does list.fun contain function names without :: or ::: ?
         # DEBUGGING
+        # list.fun = in_basic_fun ; list.fun.uni = in_basic_fun_uni ; list.line.nb = in_basic_code_line_nb ; ini = ini ; arg.user.setting = arg.user.setting ; function.name = function.name ; package.name = package.name ; text = "BASIC" ; internal_fun_names = internal_fun_names
         # list.fun = in_other_fun ; list.fun.uni = in_other_fun_uni ; list.line.nb = in_other_code_line_nb ; ini = ini ; arg.user.setting = arg.user.setting ; function.name = function.name ; package.name = package.name ; text = "OTHER" ; internal_fun_names = internal_fun_names
         if(base::length(text) != 1 & base::any( ! text %in% base::c("BASIC", "OTHER"))){
             tempo.cat <- base::paste0("INTERNAL ERROR 1 IN ", function.name, " OF THE ", package.name, " PACKAGE\nTHE text ARGUMENT OF create_message MUST BE \"BASIC\" OR \"OTHER\".\nTHE PROBLEM IS:\n",
@@ -188,15 +218,42 @@ colons_check <- function(
         # end in each compartment of res, the last split section is removed because nothing to test at the end (end of code)
         res2 <- base::lapply(X = res, FUN = function(x){base::substr(x, base::nchar(x)-1, base::nchar(x))}) # base::nchar(x)-1 takes only :: if the strings ends by :::
         base::names(res2) <- NULL
-        tempo.log <- base::lapply(X = res2, FUN = function(x){ ! x %in% "::"}) # no need to check for ":::" because base::nchar(x)-1 takes only :: if the strings ends by :::
-        if( ! base::all(base::sapply(X = res2, FUN = function(x){base::length(x)}) == base::sapply(X = tempo.log, FUN = function(x){base::length(x)}))){
-            tempo.cat <- base::paste0("INTERNAL ERROR 2 IN ", function.name, " OF THE ", package.name, " PACKAGE\nLENGTHS SHOULD BE IDENTICAL\nres2: ", base::paste(base::sapply(X = res2, FUN = function(x){base::length(x)}), collapse = " "), "\ntempo.log: ", base::paste(base::sapply(X = tempo.log, FUN = function(x){base::length(x)}), collapse = " "))
+        if( ! base::all(base::sapply(X = res2, FUN = function(x){base::length(x)}) == base::sapply(X = res, FUN = function(x){base::length(x)}))){
+            tempo.cat <- base::paste0("INTERNAL ERROR 2 IN ", function.name, " OF THE ", package.name, " PACKAGE\nLENGTHS SHOULD BE IDENTICAL\nres2: ", base::paste(base::sapply(X = res2, FUN = function(x){base::length(x)}), collapse = " "), "\nres: ", base::paste(base::sapply(X = res, FUN = function(x){base::length(x)}), collapse = " "))
             base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
         }
-        if(base::any(base::unlist(tempo.log))){
-            col1 <- base::unlist(base::mapply(FUN = function(x, y){base::rep(y, base::sum(x))}, x = tempo.log, y = list.line.nb))
-            col2 <- base::unlist(base::mapply(FUN = function(x, y){y[x]}, x = tempo.log, y = list.fun))
-            col3 <- base::unlist(base::mapply(FUN = function(x, y){y[x]}, x = tempo.log, y = res))
+        colon_bad <- base::lapply(X = res2, FUN = function(x){ ! x %in% "::"}) # no need to check for ":::" because base::nchar(x)-1 takes only :: if the strings ends by :::
+        if( ! base::all(base::sapply(X = res2, FUN = function(x){base::length(x)}) == base::sapply(X = colon_bad, FUN = function(x){base::length(x)}))){
+            tempo.cat <- base::paste0("INTERNAL ERROR 2 IN ", function.name, " OF THE ", package.name, " PACKAGE\nLENGTHS SHOULD BE IDENTICAL\nres2: ", base::paste(base::sapply(X = res2, FUN = function(x){base::length(x)}), collapse = " "), "\ncolon_bad: ", base::paste(base::sapply(X = colon_bad, FUN = function(x){base::length(x)}), collapse = " "))
+            base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
+        }
+        # detection of comments
+        comment.log <- grepl(x = res, pattern = "#")
+        if(any(comment.log, na.rm = TRUE)){
+            comment.line.to.rm <- which(comment.log) # elements among res that have #
+            lines <- res[comment.log]
+            begin_line <- sapply(X = lines, FUN = function(x){strsplit(x, split = "#")[[1]][1]}) #take the line before the #
+            names(begin_line) <- NULL
+            double.quote.test <- sapply(X = begin_line, FUN = function(x){has_odd_number_of_quotes(input_string = x, pattern = '"')}) # here FALSE means even number of quotes, thus that # is not between quotes, thus has to be removed. TRUE means that # is between quotes, thus has to be kept
+            simple.quote.test <- sapply(X = begin_line, FUN = function(x){has_odd_number_of_quotes(input_string = x, pattern = "'")}) # idem
+            comment.in.grep <- double.quote.test |  simple.quote.test # lines to keep among commented lines
+            if(any(comment.in.grep, na.rm = TRUE)){
+                comment.line.to.rm <- comment.line.to.rm[ ! comment.in.grep]
+            }
+            # removal of functions names that have # before
+            if(length(comment.line.to.rm) > 0){
+                res <- res[ - comment.line.to.rm]
+                colon_bad <- colon_bad[ - comment.line.to.rm]
+                list.line.nb <- list.line.nb[ - comment.line.to.rm]
+                list.fun <- list.fun[ - comment.line.to.rm]
+            }
+            # end removal of functions names that have # before
+        }
+        # end detection of comments
+        if(base::any(base::unlist(colon_bad))){
+            col1 <- base::unlist(base::mapply(FUN = function(x, y){base::rep(y, base::sum(x))}, x = colon_bad, y = list.line.nb))
+            col2 <- base::unlist(base::mapply(FUN = function(x, y){y[x]}, x = colon_bad, y = list.fun))
+            col3 <- base::unlist(base::mapply(FUN = function(x, y){y[x]}, x = colon_bad, y = res))
             if( ! (base::length(col1) == base::length(col2) & base::length(col1) == base::length(col3) & base::length(col2) == base::length(col3))){
                 tempo.cat <- base::paste0("INTERNAL ERROR 3 IN ", function.name, " OF THE ", package.name, " PACKAGE\nLENGTHS OF col1 (", base::length(col1), "), col2 (", base::length(col2), "), AND col3 (", base::length(col3), "), SHOULD BE EQUAL\n")
                 base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
@@ -218,7 +275,7 @@ colons_check <- function(
                 output.cat
             )
         }
-        base::return(base::list(output.cat = output.cat, tempo.log = base::unlist(tempo.log)))
+        base::return(base::list(output.cat = output.cat, colon_bad = base::unlist(colon_bad)))
     }
 
     # recovering the basic functions of R
@@ -234,6 +291,7 @@ colons_check <- function(
     ini <- utils::capture.output(x) # no lines must be removed because it is to catch the lines of the full code
     code_line_nb <- 1:base::length(ini)
     comment_line.log <- base::grepl(ini, pattern = "^\\s*#") # removal of the lines starting by #
+
     code_line_nb <- code_line_nb[ ! comment_line.log]
     if(base::length(ini) == 0){
         tempo.cat <- base::paste0("ERROR IN ", function.name, " OF THE ", package.name, " PACKAGE\nTHE TESTED FUNCTION ", arg.user.setting$x, " IS EMPTY OR ONLY MADE OF COMMENTS")
@@ -320,7 +378,7 @@ colons_check <- function(
             text = "BASIC",
             internal_fun_names = internal_fun_names
         )
-        tempo.log <- tempo$tempo.log
+        tempo.log <- tempo$colon_bad
         output.cat <- tempo$output.cat
     }else{
         tempo.log <- FALSE
@@ -340,7 +398,7 @@ colons_check <- function(
             text = "OTHER",
             internal_fun_names = internal_fun_names
         )
-        tempo.log.b <- tempo$tempo.log
+        tempo.log.b <- tempo$colon_bad
         output.cat.b <- tempo$output.cat
     }else{
         tempo.log.b <- FALSE
