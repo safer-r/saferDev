@@ -12,6 +12,8 @@
 #'  
 #' - The following R operators using bracket are not considered: "function", "if", "for", "while" and "repeat".
 #' 
+#' - Most of the time, the functions behind a comment symbol are not considered
+#' 
 #' - Warning: compiled functions (e.g., saferDev::arg_test) do not have comments anymore, compared to the same source function sourced into the working environment. Most of the time, colons_check() does not consider comments, but some writting could dupe colons_check().
 #' 
 #' @author Gael Millot <gael.millot@pasteur.fr>
