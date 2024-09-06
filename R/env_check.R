@@ -4,60 +4,67 @@
 #' @param pos Single non nul positive integer indicating the position of the environment checked (argument n of the parent.frame() function). Value 1 means one step above the env_check() local environment (by default). This means that when env_check(pos = 1) is used inside a function A, it checks if the name of any object in the local environment of this function A is also present in above environments, following R Scope, starting by the just above environment. When env_check(pos = 1) is used in the working (Global) environment (named .GlobalEnv), it checks the object names of this .GlobalEnv environment, in the above environments. See the examples below.
 #' @param name Single character string indicating a string that will be added in the output string, for instance the name of a function inside which env_check() is used.
 #' @param safer_check Single logical value. Perform some "safer" checks (see https://github.com/safer-r)? If TRUE, checkings are performed before main code running: 1) R classical operators (like "<-") not overwritten by another package because of the R scope and 2) required functions and related packages effectively present in local R lybraries. Must be set to FALSE if this fonction is used inside another "safer" function to avoid pointless multiple checkings.
+#' @returns
+#' A character string indicating the object names of the tested environment that match object names in the above environments, following the R scope, or NULL if no match.
 #' @seealso \code{\link{exists}}.
 #' @author Gael Millot <gael.millot@pasteur.fr>
 #' @author Yushi Han <yushi.han2000@gmail.com>
 #' @author Haiding Wang <wanghaiding442@gmail.com>
 #' @examples
-#' # Example in the working environment
-#' 
-#' mean <- 1 
+#' # Examples in the working environment
 #' # creation of the object mean with value 1 in the .GlobalEnv environment, 
-#' # knowing that the mean() function also exists in the environment base, above .GlobalEnv.
-#' t.test <- 1 
+#' # knowing that the mean() function also exists in the environment base, above .GlobalEnv:
+#' mean <- 1 
 #' # creation of the object t.test with value 1 in the .GlobalEnv environment, 
-#' # knowing that the t.test() function also exists in the environment stats, above .GlobalEnv.
-#' search() 
-#' # current R scope (order of the successive R environments).
-#' utils::find("mean") 
-#' # where the objects with the name "mean" are present.
-#' utils::find("t.test") 
-#' # where the objects with the name "mean" are present.
-#' a <- env_check(pos = 1) 
-#' # test if any object name of the global environment are above environments 
-#' # (or env_check(), as pos = 1 is the default value).
-#' a # the output string of sec().
-#' cat(a) # the evaluated output.
-#' env_check(pos = 2) 
+#' # knowing that the t.test() function also exists in the environment stats, above .GlobalEnv:
+#' t.test <- 1 
+#' search() # current R scope (order of the successive R environments).
+#' utils::find("mean") # where the objects with the name "mean" are present.
+#' utils::find("t.test") # where the objects with the name "mean" are present.
+#' a <- env_check(pos = 1) # test if any object name of the global environment are above environments 
+#' a # output string.
+#' cat(a)
 #' # test if any object of the stats environment (one step above .GlobalEnv) 
-#' # are above environments. Returns NULL since no object names of stats are in above environments
+#' # are in upper environments of stats. Returns NULL since no object names of stats are in upper environments:
+#' env_check(pos = 2) 
+#' rm(mean) ; rm (t.test)
 #' 
-#' 
-#' # Example inside a function
-#' 
+#' # Examples inside a function
+#' # env_check() checks if the object names inside the fun1 function 
+#' # exist in the .GlobalEnv environment and above:
 #' fun1 <- function(){t.test <- 0 ; mean <- 5 ; env_check(pos = 1)} 
-#' # env_check() will check if the object names inside the fun1 function 
-#' # exist in the .GlobalEnv environment and above.
 #' fun1()
-#' fun2 <- function(){t.test <- 0 ; mean <- 5 ; env_check(pos = 2)} 
-#' # env_check() will check if the object names inside the fun2 function 
-#' # exist in the stats environment and above.
+#' cat(fun1())
+#' # env_check() checks if the object names inside the environment one step above fun2(), 
+#' # here .GlobalEnv, exist in the upper environments of .GlobalEnv:
+#' fun2 <- function(){sum <- 0 ; env_check(pos = 2)} 
 #' fun2()
-#' fun3 <- function(){t.test <- 0 ; mean <- 5 ; env_check(pos = 2, name = "fun3")} 
-#' # idem fun2() but with the name of the function fun2 indicated. 
-#' # Instead of writting name = "fun3", 
-#' # we can also use name = as.character(sys.calls()[[length(sys.calls())]]), 
-#' # as sys.calls() gives the function name at top stack of the imbricated functions, 
-#' # sys.calls()[[length(sys.calls())]] the name of the just above function. 
-#' # This can also been used for the above function: as.character(sys.call(1))
+#' # Warning: cat(fun2()) does not return NULL, because the environement tested is not anymore .GlobalEnv but inside cat().
+#' # With the name of the function fun3 indicated in the message:
+#' fun3 <- function(){t.test <- 0 ; mean <- 5 ; env_check(pos = 1, name = "fun3")}
 #' fun3()
-#' test.pos <- 1
-#' env_check(pos = test.pos, 
-#' name = if(length(sys.calls()) >= test.pos)
-#' {as.character(sys.calls()[[length(sys.calls()) + 1 - test.pos]])}
-#' else{search()[ (1:length(search()))[test.pos - length(sys.calls())]]}) 
-#' # here is a way to have the name of the tested environment according to test.pos value
-#' @returns A character string indicating the object names of the tested environment that match object names in the above environments, following the R scope, or NULL if no match.
+#' # Alternative way:
+#' fun4 <- function(){t.test <- 0 ; mean <- 5 ; env_check(pos = 1, name = as.character(sys.calls()[[length(sys.calls())]]))}
+#' fun4()
+#' # sys.calls() gives the name of the imbricated functions, 
+#' # sys.calls()[[length(sys.calls())]] the name of the function one step above.
+#' fun5 <- function(){fun6 <- function(){print(sys.calls())} ; fun6()}
+#' fun5()
+#' # A way to have the name of the tested environment according to test.pos value:
+#' fun7 <- function(){
+#'     min <- "a"
+#'     fun8 <- function(){
+#'         test.pos <- 1 # value 1 tests the fun8 env, 2 tests the fun7 env.
+#'         range <- "a"
+#'         env_check(pos = test.pos, name = if(length(sys.calls()) >= test.pos){
+#'             as.character(sys.calls()[[length(sys.calls()) + 1 - test.pos]])
+#'         }else{
+#'             search()[(1:length(search()))[test.pos - length(sys.calls())]]
+#'         }) 
+#'     }
+#'     fun8()
+#' }
+#' fun7()
 #' @export
 env_check <- function(
         pos = 1, 

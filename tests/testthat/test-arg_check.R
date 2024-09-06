@@ -1,4 +1,4 @@
-    test_that("output of arg_check is a list contains 'problem', 'text', and 'object.name'", {
+    test_that("arg_check()", {
     vec1 <- -1:3 # vector of integers
     vec3 <- c(1, 2, 3)
     vec4 <- "pearson"

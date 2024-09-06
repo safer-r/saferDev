@@ -1,4 +1,4 @@
-test_that("test if the function is in the package", {
+test_that("is_function_here()", {
     f <- "ggplot2::geom_point"
     path <- "blablabla"
     f2 <- "base::sum"

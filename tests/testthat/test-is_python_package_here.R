@@ -1,4 +1,4 @@
-test_that("test if the python package is in the computer", {
+test_that("is_python_package_here()", {
     lib.path <- "."
     path <- "blablabla"
     req.pkg <- "serpentine"

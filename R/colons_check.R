@@ -4,25 +4,33 @@
 #' @param x a function name, written without quotes and brackets.
 #' @param safer_check Single logical value. Perform some "safer" checks (see https://github.com/safer-r)? If TRUE, checkings are performed before main code running: 1) R classical operators (like "<-") not overwritten by another package because of the R scope and 2) required functions and related packages effectively present in local R lybraries. Must be set to FALSE if this fonction is used inside another "safer" function to avoid pointless multiple checkings.
 #' @returns 
-#' A message indicating the missing :: or :::, or a message saying that everything seems fine.
+#' A table-like message indicating the missing :: or ::: or a message saying that everything seems fine.
+#' Table-like: column 1, the line number in the function code (starting at the "<- function" line, i.e., without counting the #' header lines); column 2,  the function name; column 3, the code preceeding the function name
+#' With missing :: or :::, the meassage also indicates if internal functions are created inside the checked function code, since these functions cannot have :: or :::.
 #' @details
-#' - More precisely, colons_check() verifies that all the strings before an opening bracket "(" are preceeded by "::". Of note, ":::" are also detected but considered as "::".
+#' - More precisely, colons_check() verifies that all the strings before an opening bracket "(" are preceeded by "::". Of note, ":::" are also detected but considered as "::". Thus, it cannot check function names written without brackets, like in the FUN argument of some functions, e.g., sapply(1:3, FUN = as.character).
 #' 
 #' - The regex used to detect a function name is: "[a-zA-Z.]{1}[a-zA-Z0-9._]*\\(".
 #'  
-#' - The following R operators using bracket are not considered: "function", "if", "for", "while" and "repeat".
+#' - The following R functions using bracket are not considered: "function", "if", "for", "while" and "repeat".
 #' 
-#' - Most of the time, the functions behind a comment symbol are not considered
+#' - Most of the time, the functions after a comment symbol are not considered
 #' 
-#' - Warning: compiled functions (e.g., saferDev::arg_test) do not have comments anymore, compared to the same source function sourced into the working environment. Most of the time, colons_check() does not consider comments, but some writting could dupe colons_check().
+#' - Warning: compiled functions (e.g., saferDev::arg_test) do not have comments anymore, compared to the same source function sourced into the working environment.
 #' 
+#' - Most of the time, colons_check() does not check inside comments, but some writting could dupe colons_check(). The returned line numbers is indicative, because 
+#' 
+#' - During package creation, the devtools::check() command tells which functions where wrongly attributed to package. Example: 
+#'     checking dependencies in R code ... WARNING
+#'       '::' or ':::' import not declared from: 'sbase'
+#'       Missing or unexported objects:
+#'         'base::dev.off' 'base::graphics.off' 'base::hcl' 'base::par' 'base::read.table' 'saferGG::report'
 #' @author Gael Millot <gael.millot@pasteur.fr>
 #' @author Yushi Han <yushi.han2000@gmail.com>
 #' @author Haiding Wang <wanghaiding442@gmail.com>  
 #' @examples
 #' colons_check(mean)
 #' colons_check(colons_check)
-#' 
 #' @export
 colons_check <- function(
     x, 

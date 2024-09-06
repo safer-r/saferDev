@@ -1,4 +1,4 @@
-test_that("report function works correctly", {
+test_that("report()", {
   # Example datasets
   vec1 <- 1:6
   vec2 <- c("(", "a", ")", "(", "b", ")", "(", "c", ")")

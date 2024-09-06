@@ -1,4 +1,4 @@
-test_that("test the function unique and compare the results", {
+test_that("arg_test()", {
     f <- "unique"
     argum <- c("x", "incomparables")
     value <- list(x = list(1:10, c(1,1,2,8), NA), incomparable = c(TRUE, FALSE, NA))

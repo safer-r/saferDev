@@ -1,4 +1,4 @@
-test_that("test if the package is in the computer", {
+test_that("is_package_here()", {
     req.pkg <- "ggplot2"
     path <- "blablabla"
     

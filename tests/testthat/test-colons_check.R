@@ -1,4 +1,4 @@
-test_that("colons_check function works correctly", {
+test_that("colons_check()", {
   # Example datasets
   vec1 <- 3 
   vec2 <- 4

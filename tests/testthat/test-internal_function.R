@@ -1,4 +1,4 @@
-test_that(".pack_and_function_check throws an error when fun argument doesn't contain ::", {
+test_that(".pack_and_function_check() and .base_function_check()", {
     # .pack_and_function_check throws an error when fun argument doesn't contain ::
     expect_error(.pack_and_function_check(fun = "geom_point", lib.path = "/path/to/lib", external.function.name = "test_function", external.package.name = "testthat"))
     

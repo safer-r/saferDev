@@ -1,4 +1,4 @@
-test_that("the function prints the warning message", {
+test_that("get_message()", {
     char1 <- "wilcox.test(c(1,1,3), c(1, 2, 4), paired = TRUE)" # single character string
     char2 <- "message('ahah')"
     
