@@ -96,40 +96,77 @@
 <h3 id="datasets">Datasets<a class="anchor" aria-label="anchor" href="#datasets"></a>
 </h3>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">vec1</span> <span class="op">&lt;-</span> <span class="fl">1</span><span class="op">:</span><span class="fl">6</span> <span class="co"># vector of integers</span></span>
-<span><span class="va">vec2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"("</span>,<span class="st">"a"</span>,<span class="st">")"</span>,<span class="st">"("</span>,<span class="st">"b"</span>,<span class="st">")"</span>,<span class="st">"("</span>,<span class="st">"c"</span>,<span class="st">")"</span><span class="op">)</span> <span class="co"># vector of characters</span></span>
+<code class="sourceCode R"><span><span class="va">string1</span> <span class="op">&lt;-</span> <span class="st">"THIS IS A LOG"</span></span>
+<span><span class="va">vec1</span> <span class="op">&lt;-</span> <span class="fl">1</span><span class="op">:</span><span class="fl">6</span> <span class="co"># vector of integers</span></span>
+<span><span class="va">vec2</span> <span class="op">&lt;-</span> <span class="va">letters</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">9</span><span class="op">]</span> <span class="co"># vector of characters</span></span>
 <span><span class="va">mat1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="va">vec1</span>, nrow <span class="op">=</span> <span class="fl">2</span>, ncol <span class="op">=</span> <span class="fl">3</span>, byrow <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="co"># matrix of integer having 2 rows and 3 columns</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">mat1</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Row 1"</span>,<span class="st">"Row 2"</span><span class="op">)</span></span>
-<span><span class="va">mat2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="va">vec2</span>, nrow <span class="op">=</span> <span class="fl">3</span>, ncol <span class="op">=</span> <span class="fl">3</span>, byrow <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="co"># matrix of integer having 3 rows and 3 columns</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">mat2</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"R1"</span>,<span class="st">"R2"</span>,<span class="st">"R3"</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu"><a href="https://rdrr.io/r/base/dimnames.html" class="external-link">dimnames</a></span><span class="op">(</span><span class="va">mat1</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Row 1"</span>,<span class="st">"Row 2"</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"C1"</span>, <span class="st">"C2"</span>, <span class="st">"C3"</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">mat2</span> <span class="op">&lt;-</span> <span class="va">mat1</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/mode.html" class="external-link">mode</a></span><span class="op">(</span><span class="va">mat2</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="st">"character"</span></span>
+<span><span class="va">t1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/table.html" class="external-link">table</a></span><span class="op">(</span><span class="va">mat1</span><span class="op">)</span> <span class="co"># 1D table</span></span>
+<span><span class="va">vec3</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/vector.html" class="external-link">as.vector</a></span><span class="op">(</span><span class="va">t1</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">vec3</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">letters</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">6</span><span class="op">]</span> <span class="co"># vector with names</span></span>
+<span><span class="va">t2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/table.html" class="external-link">table</a></span><span class="op">(</span><span class="va">vec2</span>, <span class="va">vec2</span><span class="op">)</span> <span class="co"># 2D table</span></span>
+<span><span class="va">l1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">vec1</span>, <span class="va">vec2</span><span class="op">)</span> <span class="co"># list</span></span></code></pre></div>
 <p><br></p>
 </div>
 <div class="section level3">
 <h3 id="datasets-info">Datasets info<a class="anchor" aria-label="anchor" href="#datasets-info"></a>
 </h3>
-<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a>vec1 <span class="co"># vector of integers</span></span>
-<span id="cb3-2"><a href="#cb3-2" tabindex="-1"></a><span class="sc">&gt;</span> [<span class="dv">1</span>] <span class="dv">1</span> <span class="dv">2</span> <span class="dv">3</span> <span class="dv">4</span> <span class="dv">5</span> <span class="dv">6</span></span>
-<span id="cb3-3"><a href="#cb3-3" tabindex="-1"></a>vec2 <span class="co"># vector of characters</span></span>
-<span id="cb3-4"><a href="#cb3-4" tabindex="-1"></a><span class="sc">&gt;</span> [<span class="dv">1</span>] <span class="st">"("</span> <span class="st">"a"</span> <span class="st">")"</span> <span class="st">"("</span> <span class="st">"b"</span> <span class="st">")"</span> <span class="st">"("</span> <span class="st">"c"</span> <span class="st">")"</span></span>
-<span id="cb3-5"><a href="#cb3-5" tabindex="-1"></a>mat1 <span class="co"># matrix of integers with the row names</span></span>
-<span id="cb3-6"><a href="#cb3-6" tabindex="-1"></a><span class="sc">&gt;</span>       [,<span class="dv">1</span>] [,<span class="dv">2</span>] [,<span class="dv">3</span>]</span>
-<span id="cb3-7"><a href="#cb3-7" tabindex="-1"></a><span class="sc">&gt;</span> Row <span class="dv">1</span>    <span class="dv">1</span>    <span class="dv">2</span>    <span class="dv">3</span></span>
-<span id="cb3-8"><a href="#cb3-8" tabindex="-1"></a><span class="sc">&gt;</span> Row <span class="dv">2</span>    <span class="dv">4</span>    <span class="dv">5</span>    <span class="dv">6</span></span>
-<span id="cb3-9"><a href="#cb3-9" tabindex="-1"></a>mat2 <span class="co"># matrix of characters with the row names</span></span>
-<span id="cb3-10"><a href="#cb3-10" tabindex="-1"></a><span class="sc">&gt;</span>    [,<span class="dv">1</span>] [,<span class="dv">2</span>] [,<span class="dv">3</span>]</span>
-<span id="cb3-11"><a href="#cb3-11" tabindex="-1"></a><span class="sc">&gt;</span> R1 <span class="st">"("</span>  <span class="st">"a"</span>  <span class="st">")"</span> </span>
-<span id="cb3-12"><a href="#cb3-12" tabindex="-1"></a><span class="sc">&gt;</span> R2 <span class="st">"("</span>  <span class="st">"b"</span>  <span class="st">")"</span> </span>
-<span id="cb3-13"><a href="#cb3-13" tabindex="-1"></a><span class="sc">&gt;</span> R3 <span class="st">"("</span>  <span class="st">"c"</span>  <span class="st">")"</span></span></code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a>string1 <span class="co"># string</span></span>
+<span id="cb3-2"><a href="#cb3-2" tabindex="-1"></a><span class="sc">&gt;</span> [<span class="dv">1</span>] <span class="st">"THIS IS A LOG"</span></span>
+<span id="cb3-3"><a href="#cb3-3" tabindex="-1"></a>vec1 <span class="co"># vector of integers</span></span>
+<span id="cb3-4"><a href="#cb3-4" tabindex="-1"></a><span class="sc">&gt;</span> [<span class="dv">1</span>] <span class="dv">1</span> <span class="dv">2</span> <span class="dv">3</span> <span class="dv">4</span> <span class="dv">5</span> <span class="dv">6</span></span>
+<span id="cb3-5"><a href="#cb3-5" tabindex="-1"></a>vec2 <span class="co"># vector of characters</span></span>
+<span id="cb3-6"><a href="#cb3-6" tabindex="-1"></a><span class="sc">&gt;</span> [<span class="dv">1</span>] <span class="st">"a"</span> <span class="st">"b"</span> <span class="st">"c"</span> <span class="st">"d"</span> <span class="st">"e"</span> <span class="st">"f"</span> <span class="st">"g"</span> <span class="st">"h"</span> <span class="st">"i"</span></span>
+<span id="cb3-7"><a href="#cb3-7" tabindex="-1"></a>vec3 <span class="co"># vector of integers with names. No more [1] in front of values</span></span>
+<span id="cb3-8"><a href="#cb3-8" tabindex="-1"></a><span class="sc">&gt;</span> a b c d e f </span>
+<span id="cb3-9"><a href="#cb3-9" tabindex="-1"></a><span class="sc">&gt;</span> <span class="dv">1</span> <span class="dv">1</span> <span class="dv">1</span> <span class="dv">1</span> <span class="dv">1</span> <span class="dv">1</span></span>
+<span id="cb3-10"><a href="#cb3-10" tabindex="-1"></a>mat1 <span class="co"># matrix of integers with the row names</span></span>
+<span id="cb3-11"><a href="#cb3-11" tabindex="-1"></a><span class="sc">&gt;</span>       C1 C2 C3</span>
+<span id="cb3-12"><a href="#cb3-12" tabindex="-1"></a><span class="sc">&gt;</span> Row <span class="dv">1</span>  <span class="dv">1</span>  <span class="dv">2</span>  <span class="dv">3</span></span>
+<span id="cb3-13"><a href="#cb3-13" tabindex="-1"></a><span class="sc">&gt;</span> Row <span class="dv">2</span>  <span class="dv">4</span>  <span class="dv">5</span>  <span class="dv">6</span></span>
+<span id="cb3-14"><a href="#cb3-14" tabindex="-1"></a>mat2 <span class="co"># matrix of characters with the row names</span></span>
+<span id="cb3-15"><a href="#cb3-15" tabindex="-1"></a><span class="sc">&gt;</span>       C1  C2  C3 </span>
+<span id="cb3-16"><a href="#cb3-16" tabindex="-1"></a><span class="sc">&gt;</span> Row <span class="dv">1</span> <span class="st">"1"</span> <span class="st">"2"</span> <span class="st">"3"</span></span>
+<span id="cb3-17"><a href="#cb3-17" tabindex="-1"></a><span class="sc">&gt;</span> Row <span class="dv">2</span> <span class="st">"4"</span> <span class="st">"5"</span> <span class="st">"6"</span></span>
+<span id="cb3-18"><a href="#cb3-18" tabindex="-1"></a>t1 <span class="co"># 1D table</span></span>
+<span id="cb3-19"><a href="#cb3-19" tabindex="-1"></a><span class="sc">&gt;</span> mat1</span>
+<span id="cb3-20"><a href="#cb3-20" tabindex="-1"></a><span class="sc">&gt;</span> <span class="dv">1</span> <span class="dv">2</span> <span class="dv">3</span> <span class="dv">4</span> <span class="dv">5</span> <span class="dv">6</span> </span>
+<span id="cb3-21"><a href="#cb3-21" tabindex="-1"></a><span class="sc">&gt;</span> <span class="dv">1</span> <span class="dv">1</span> <span class="dv">1</span> <span class="dv">1</span> <span class="dv">1</span> <span class="dv">1</span></span>
+<span id="cb3-22"><a href="#cb3-22" tabindex="-1"></a>t2 <span class="co"># 2D table</span></span>
+<span id="cb3-23"><a href="#cb3-23" tabindex="-1"></a><span class="sc">&gt;</span>     vec2</span>
+<span id="cb3-24"><a href="#cb3-24" tabindex="-1"></a><span class="sc">&gt;</span> vec2 a b c d e f g h i</span>
+<span id="cb3-25"><a href="#cb3-25" tabindex="-1"></a><span class="sc">&gt;</span>    a <span class="dv">1</span> <span class="dv">0</span> <span class="dv">0</span> <span class="dv">0</span> <span class="dv">0</span> <span class="dv">0</span> <span class="dv">0</span> <span class="dv">0</span> <span class="dv">0</span></span>
+<span id="cb3-26"><a href="#cb3-26" tabindex="-1"></a><span class="sc">&gt;</span>    b <span class="dv">0</span> <span class="dv">1</span> <span class="dv">0</span> <span class="dv">0</span> <span class="dv">0</span> <span class="dv">0</span> <span class="dv">0</span> <span class="dv">0</span> <span class="dv">0</span></span>
+<span id="cb3-27"><a href="#cb3-27" tabindex="-1"></a><span class="sc">&gt;</span>    c <span class="dv">0</span> <span class="dv">0</span> <span class="dv">1</span> <span class="dv">0</span> <span class="dv">0</span> <span class="dv">0</span> <span class="dv">0</span> <span class="dv">0</span> <span class="dv">0</span></span>
+<span id="cb3-28"><a href="#cb3-28" tabindex="-1"></a><span class="sc">&gt;</span>    d <span class="dv">0</span> <span class="dv">0</span> <span class="dv">0</span> <span class="dv">1</span> <span class="dv">0</span> <span class="dv">0</span> <span class="dv">0</span> <span class="dv">0</span> <span class="dv">0</span></span>
+<span id="cb3-29"><a href="#cb3-29" tabindex="-1"></a><span class="sc">&gt;</span>    e <span class="dv">0</span> <span class="dv">0</span> <span class="dv">0</span> <span class="dv">0</span> <span class="dv">1</span> <span class="dv">0</span> <span class="dv">0</span> <span class="dv">0</span> <span class="dv">0</span></span>
+<span id="cb3-30"><a href="#cb3-30" tabindex="-1"></a><span class="sc">&gt;</span>    f <span class="dv">0</span> <span class="dv">0</span> <span class="dv">0</span> <span class="dv">0</span> <span class="dv">0</span> <span class="dv">1</span> <span class="dv">0</span> <span class="dv">0</span> <span class="dv">0</span></span>
+<span id="cb3-31"><a href="#cb3-31" tabindex="-1"></a><span class="sc">&gt;</span>    g <span class="dv">0</span> <span class="dv">0</span> <span class="dv">0</span> <span class="dv">0</span> <span class="dv">0</span> <span class="dv">0</span> <span class="dv">1</span> <span class="dv">0</span> <span class="dv">0</span></span>
+<span id="cb3-32"><a href="#cb3-32" tabindex="-1"></a><span class="sc">&gt;</span>    h <span class="dv">0</span> <span class="dv">0</span> <span class="dv">0</span> <span class="dv">0</span> <span class="dv">0</span> <span class="dv">0</span> <span class="dv">0</span> <span class="dv">1</span> <span class="dv">0</span></span>
+<span id="cb3-33"><a href="#cb3-33" tabindex="-1"></a><span class="sc">&gt;</span>    i <span class="dv">0</span> <span class="dv">0</span> <span class="dv">0</span> <span class="dv">0</span> <span class="dv">0</span> <span class="dv">0</span> <span class="dv">0</span> <span class="dv">0</span> <span class="dv">1</span></span>
+<span id="cb3-34"><a href="#cb3-34" tabindex="-1"></a>l1 <span class="co"># list</span></span>
+<span id="cb3-35"><a href="#cb3-35" tabindex="-1"></a><span class="sc">&gt;</span> [[<span class="dv">1</span>]]</span>
+<span id="cb3-36"><a href="#cb3-36" tabindex="-1"></a><span class="sc">&gt;</span> [<span class="dv">1</span>] <span class="dv">1</span> <span class="dv">2</span> <span class="dv">3</span> <span class="dv">4</span> <span class="dv">5</span> <span class="dv">6</span></span>
+<span id="cb3-37"><a href="#cb3-37" tabindex="-1"></a><span class="sc">&gt;</span> </span>
+<span id="cb3-38"><a href="#cb3-38" tabindex="-1"></a><span class="er">&gt;</span> [[<span class="dv">2</span>]]</span>
+<span id="cb3-39"><a href="#cb3-39" tabindex="-1"></a><span class="sc">&gt;</span> [<span class="dv">1</span>] <span class="st">"a"</span> <span class="st">"b"</span> <span class="st">"c"</span> <span class="st">"d"</span> <span class="st">"e"</span> <span class="st">"f"</span> <span class="st">"g"</span> <span class="st">"h"</span> <span class="st">"i"</span></span></code></pre></div>
 <p><br></p>
 </div>
 <div class="section level3">
 <h3 id="simple-examples">Simple examples<a class="anchor" aria-label="anchor" href="#simple-examples"></a>
 </h3>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/report.html">report</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">vec1</span>, path <span class="op">=</span> <span class="st">"."</span><span class="op">)</span> <span class="co"># print the vector vec1 into the output file in the path</span></span>
-<span><span class="fu"><a href="../reference/report.html">report</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">vec2</span>, path <span class="op">=</span> <span class="st">"."</span><span class="op">)</span> <span class="co"># print the vector vec2 into the output file in the path</span></span>
-<span><span class="fu"><a href="../reference/report.html">report</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">mat1</span>, path <span class="op">=</span> <span class="st">"."</span><span class="op">)</span> <span class="co"># print the matrix mat1 into the output file in the path</span></span>
-<span><span class="fu"><a href="../reference/report.html">report</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">mat2</span>, path <span class="op">=</span> <span class="st">"."</span><span class="op">)</span> <span class="co"># print the matrix mat2 into the output file in the path</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/report.html">report</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">string1</span>, path <span class="op">=</span> <span class="st">"."</span><span class="op">)</span> <span class="co"># print the input into the output file in the path</span></span>
+<span><span class="fu"><a href="../reference/report.html">report</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">vec1</span>, path <span class="op">=</span> <span class="st">"."</span><span class="op">)</span> <span class="co"># idem</span></span>
+<span><span class="fu"><a href="../reference/report.html">report</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">vec2</span>, path <span class="op">=</span> <span class="st">"."</span><span class="op">)</span> <span class="co"># idem</span></span>
+<span><span class="fu"><a href="../reference/report.html">report</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">vec3</span>, path <span class="op">=</span> <span class="st">"."</span><span class="op">)</span> <span class="co"># idem</span></span>
+<span><span class="fu"><a href="../reference/report.html">report</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">mat1</span>, path <span class="op">=</span> <span class="st">"."</span><span class="op">)</span> <span class="co"># idem</span></span>
+<span><span class="fu"><a href="../reference/report.html">report</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">mat2</span>, path <span class="op">=</span> <span class="st">"."</span><span class="op">)</span> <span class="co"># idem. We cannot see that it is mode character (see noquote below)</span></span>
+<span><span class="fu"><a href="../reference/report.html">report</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">t1</span>, path <span class="op">=</span> <span class="st">"."</span><span class="op">)</span> <span class="co"># idem</span></span>
+<span><span class="fu"><a href="../reference/report.html">report</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">t2</span>, path <span class="op">=</span> <span class="st">"."</span><span class="op">)</span> <span class="co"># idem</span></span>
+<span><span class="fu"><a href="../reference/report.html">report</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">l1</span>, path <span class="op">=</span> <span class="st">"."</span><span class="op">)</span> <span class="co"># idem</span></span></code></pre></div>
 <p><br></p>
 </div>
 <div class="section level3">
@@ -143,7 +180,7 @@
 <h3 id="argument-overwrite">Argument overwrite<a class="anchor" aria-label="anchor" href="#argument-overwrite"></a>
 </h3>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/report.html">report</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">vec2</span>, overwrite <span class="op">=</span> <span class="cn">TRUE</span>, path <span class="op">=</span> <span class="st">"."</span><span class="op">)</span> <span class="co"># if the file exists, the output file content will be erased before printing</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/report.html">report</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">vec2</span>, overwrite <span class="op">=</span> <span class="cn">TRUE</span>, output <span class="op">=</span> <span class="st">"test.txt"</span>, path <span class="op">=</span> <span class="st">"."</span><span class="op">)</span> <span class="co"># if the file exists, the output file content will be erased before printing</span></span></code></pre></div>
 <p><br></p>
 </div>
 <div class="section level3">
@@ -154,7 +191,37 @@
 <span>  data <span class="op">=</span> <span class="va">mat1</span>, </span>
 <span>  rownames.kept <span class="op">=</span> <span class="cn">TRUE</span>, </span>
 <span>  path <span class="op">=</span> <span class="st">"."</span></span>
-<span><span class="op">)</span> <span class="co"># keep the row names when print the matrix mat1 in the file</span></span></code></pre></div>
+<span><span class="op">)</span> <span class="co"># keep the row names when print the matrix mat1 in the file</span></span>
+<span></span>
+<span><span class="fu"><a href="../reference/report.html">report</a></span><span class="op">(</span></span>
+<span>  data <span class="op">=</span> <span class="va">mat1</span>, </span>
+<span>  rownames.kept <span class="op">=</span> <span class="cn">FALSE</span>, </span>
+<span>  path <span class="op">=</span> <span class="st">"."</span></span>
+<span><span class="op">)</span> <span class="co"># remove the row names</span></span>
+<span></span>
+<span><span class="fu"><a href="../reference/report.html">report</a></span><span class="op">(</span></span>
+<span>  data <span class="op">=</span> <span class="va">t1</span>, </span>
+<span>  rownames.kept <span class="op">=</span> <span class="cn">TRUE</span>, </span>
+<span>  path <span class="op">=</span> <span class="st">"."</span></span>
+<span><span class="op">)</span> <span class="co"># keep the row names when print the table t1 in the file</span></span>
+<span></span>
+<span><span class="fu"><a href="../reference/report.html">report</a></span><span class="op">(</span></span>
+<span>  data <span class="op">=</span> <span class="va">t1</span>, </span>
+<span>  rownames.kept <span class="op">=</span> <span class="cn">FALSE</span>, </span>
+<span>  path <span class="op">=</span> <span class="st">"."</span></span>
+<span><span class="op">)</span> <span class="co"># remove the row names</span></span>
+<span></span>
+<span><span class="fu"><a href="../reference/report.html">report</a></span><span class="op">(</span></span>
+<span>  data <span class="op">=</span> <span class="va">t2</span>, </span>
+<span>  rownames.kept <span class="op">=</span> <span class="cn">TRUE</span>, </span>
+<span>  path <span class="op">=</span> <span class="st">"."</span></span>
+<span><span class="op">)</span> <span class="co"># keep the row names when print the table t2 in the file</span></span>
+<span></span>
+<span><span class="fu"><a href="../reference/report.html">report</a></span><span class="op">(</span></span>
+<span>  data <span class="op">=</span> <span class="va">t2</span>, </span>
+<span>  rownames.kept <span class="op">=</span> <span class="cn">FALSE</span>, </span>
+<span>  path <span class="op">=</span> <span class="st">"."</span></span>
+<span><span class="op">)</span> <span class="co"># remove the row names</span></span></code></pre></div>
 <p><br></p>
 </div>
 <div class="section level3">
@@ -162,10 +229,10 @@
 </h3>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/report.html">report</a></span><span class="op">(</span></span>
-<span>  data <span class="op">=</span> <span class="va">mat2</span>, </span>
+<span>  data <span class="op">=</span> <span class="va">vec3</span>, </span>
 <span>  vector.cat <span class="op">=</span> <span class="cn">TRUE</span>, </span>
 <span>  path <span class="op">=</span> <span class="st">"."</span></span>
-<span><span class="op">)</span> <span class="co"># print a vector of length &gt; 1 using cat() instead of capture.output()</span></span></code></pre></div>
+<span><span class="op">)</span> <span class="co"># print a vector of length &gt; 1 using cat() instead of capture.output() : names are lost.</span></span></code></pre></div>
 <p><br></p>
 </div>
 <div class="section level3">
@@ -176,7 +243,7 @@
 <span>  data <span class="op">=</span> <span class="va">mat2</span>, </span>
 <span>  noquote <span class="op">=</span> <span class="cn">FALSE</span>, </span>
 <span>  path <span class="op">=</span> <span class="st">"."</span></span>
-<span><span class="op">)</span> <span class="co"># quote are present for the characters.</span></span></code></pre></div>
+<span><span class="op">)</span> <span class="co"># quote are kept for the characters.</span></span></code></pre></div>
 <p><br></p>
 </div>
 <div class="section level3">
@@ -196,7 +263,7 @@
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/report.html">report</a></span><span class="op">(</span></span>
 <span>    data <span class="op">=</span> <span class="va">mat2</span>, </span>
-<span>    output <span class="op">=</span> <span class="st">"test.txt"</span>, </span>
+<span>    output <span class="op">=</span> <span class="st">"test2.txt"</span>, </span>
 <span>    path <span class="op">=</span> <span class="st">"."</span>, </span>
 <span>    overwrite <span class="op">=</span> <span class="cn">TRUE</span>, </span>
 <span>    rownames.kept <span class="op">=</span> <span class="cn">TRUE</span>, </span>
@@ -205,7 +272,7 @@
 <span>    sep <span class="op">=</span> <span class="fl">4</span>,</span>
 <span>    safer_check <span class="op">=</span> <span class="cn">TRUE</span></span>
 <span><span class="op">)</span></span>
-<span><span class="co"># matrix mat2 will be print in the file "text.txt" in the path, with quote and row names being kept, and 4 lines after printing data</span></span></code></pre></div>
+<span><span class="co"># matrix mat1 will be print in the file "text2.txt" in the path, with quote and row names being kept, and 4 lines after printing data</span></span></code></pre></div>
 </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
     </nav></aside>
