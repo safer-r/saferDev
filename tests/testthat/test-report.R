@@ -4,6 +4,8 @@ test_that("report()", {
     vec2 <- letters[1:6]
     mat1 <- matrix(vec1, nrow = 2, ncol = 3, byrow = TRUE)
     rownames(mat1) <- c("Row 1", "Row 2")
+    mat2 <- matrix(letters[1:9], nrow = 3, ncol = 3, byrow = TRUE)
+    rownames(mat2) <- c("R1", "R2", "R3")
     t1 <- table(mat2) # 
     vec3 <- as.vector(vec2)
     names(vec3) <- letters[1:6]

@@ -62,6 +62,7 @@ colons_check <- function(
         )
     }
     # end critical operator checking
+    # package checking
     # check of lib.path
     # end check of lib.path
     # check of the required function from the required packages
@@ -84,7 +85,7 @@ colons_check <- function(
     text.check <- NULL #
     checked.arg.names <- NULL # for function debbuging: used by r_debugging_tools
     ee <- base::expression(argum.check <- base::c(argum.check, tempo$problem) , text.check <- base::c(text.check, tempo$text) , checked.arg.names <- base::c(checked.arg.names, tempo$object.name))
-    tempo <- saferDev::arg_check(data = x, mode = "function", length = 1,  fun.name = function.name) ; base::eval(ee)
+    tempo <- saferDev::arg_check(data = x, mode = "function", length = 1,  fun.name = function.name, safer_check = FALSE) ; base::eval(ee)
     # lib.path already checked above
     if( ! base::is.null(argum.check)){
         if(base::any(argum.check, na.rm = TRUE) == TRUE){
@@ -93,7 +94,7 @@ colons_check <- function(
     }
     # end argument checking with arg_check()
     # check with r_debugging_tools
-    # source("C:/Users/yhan/Documents/Git_projects/debugging_tools_for_r_dev/r_debugging_tools.R") ; eval(parse(text = str_basic_arg_check_dev)) ; eval(parse(text = str_arg_check_with_fun_check_dev)) # activate this line and use the function (with no arguments left as NULL) to check arguments status and if they have been checked using arg_check()
+    # source("C:/Users/gmillot/Documents/Git_projects/debugging_tools_for_r_dev/r_debugging_tools.R") ; eval(parse(text = str_basic_arg_check_dev)) ; eval(parse(text = str_arg_check_with_fun_check_dev)) # activate this line and use the function (with no arguments left as NULL) to check arguments status and if they have been checked using arg_check()
     # end check with r_debugging_tools
     # end argument primary checking
 

@@ -14,7 +14,7 @@
 #' @details 
 #' WARNINGS
 #' 
-#' Only the first message is returned.
+#' Only the first standard/error/warning message is returned.
 #' 
 #' Always use the env argument when get_message() is used inside functions.
 #' 
@@ -32,6 +32,8 @@
 #' get_message(data = "wilcox.test(c(1,1,3), c(1, 2, 4), paired = TRUE)", kind = "message", 
 #' print.no = TRUE, text = "IN A")
 #' 
+#' get_message(data = "wilcox.test()", kind = "message", print.no = TRUE, text = "IN A")
+
 #' get_message(data = "wilcox.test()", kind = "error", print.no = TRUE, text = "IN A")
 #' 
 #' get_message(data = "sum(1)", kind = "error", print.no = TRUE, text = "IN A")
@@ -40,15 +42,15 @@
 #' 
 #' get_message(data = "message('ahah')", kind = "message", print.no = TRUE, text = "IN A")
 #' 
-#' get_message(data = "ggplot(data = data.frame(X = 1:10, stringsAsFactors = TRUE), 
-#' mapping = aes(x = X)) + geom_histogram()", kind = "message", print.no = TRUE, 
-#' text = "IN FUNCTION 1")
+#' get_message(data = "ggplot2::ggplot(data = data.frame(X = 1:10, stringsAsFactors = TRUE), 
+#' mapping = ggplot2::aes(x = X)) + ggplot2::geom_histogram()", kind = "message", print.no = TRUE, 
+#' text = "IN INSTRUCTION 1")
 #' 
 #' set.seed(1) ; 
 #' obs1 <- data.frame(Time = c(rnorm(10), rnorm(10) + 2), 
 #' Group1 = rep(c("G", "H"), each = 10), stringsAsFactors = TRUE) ; 
 #' get_message(data = 'gg_boxplot(data = obs1, y = "Time", categ = "Group1")', 
-#' kind = "message", print.no = TRUE, text = "IN FUNCTION 1")
+#' kind = "message", print.no = TRUE, text = "IN INSTRUCTION 1")
 #' 
 #' @importFrom ggplot2 ggplot_build
 #' @export
@@ -131,20 +133,16 @@ get_message <- function(
     if( ! base::is.null(env)){
         tempo <- saferDev::arg_check(data = env, class = "environment", fun.name = function.name, safer_check = FALSE) ; base::eval(ee) #
     }
+    tempo <- saferDev::arg_check(data = safer_check, class = "vector", typeof = "logical", length = 1, fun.name = function.name, safer_check = FALSE) ; base::eval(ee) # even if already used above
     if( ! base::is.null(argum.check)){
         if(base::any(argum.check, na.rm = TRUE) == TRUE){
             base::stop(base::paste0("\n\n================\n\n", base::paste(text.check[argum.check], collapse = "\n"), "\n\n================\n\n"), call. = FALSE) #
         }
     }
-    # end argument checking with arg_check()
     # check with r_debugging_tools
-    # source("C:/Users/yhan/Documents/Git_projects/debugging_tools_for_r_dev/r_debugging_tools.R") ; eval(parse(text = str_basic_arg_check_dev)) ; eval(parse(text = str_arg_check_with_fun_check_dev)) # activate this line and use the function (with no arguments left as NULL) to check arguments status and if they have been checked using arg_check()
+    # source("https://gitlab.pasteur.fr/gmillot/debugging_tools_for_r_dev/-/raw/v1.8/r_debugging_tools.R") ; eval(parse(text = str_basic_arg_check_dev)) ; eval(parse(text = str_arg_check_with_fun_check_dev)) # activate this line and use the function (with no arguments left as NULL) to check arguments status and if they have been checked using saferDev::arg_check()
     # end check with r_debugging_tools
-    # end argument primary checking
-    
-    # second round of checking and data preparation
-    # reserved words (to avoid bugs)
-    # end reserved words (to avoid bugs)
+    # end argument checking with arg_check()
     # management of NA arguments
     if( ! (base::all(base::class(arg.user.setting) %in% base::c("list", "NULL"), na.rm = TRUE) & base::length(arg.user.setting) == 0)){
         tempo.arg <- base::names(arg.user.setting) # values provided by the user
@@ -171,6 +169,11 @@ get_message <- function(
         base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
     }
     # end management of NULL arguments
+    # end argument primary checking
+    
+    # second round of checking and data preparation
+    # reserved words (to avoid bugs)
+    # end reserved words (to avoid bugs)
     # code that protects set.seed() in the global environment
     # end code that protects set.seed() in the global environment
     # warning initiation
@@ -207,7 +210,7 @@ get_message <- function(
     }else if(kind == "error" & base::is.null(tempo.error) & print.no == TRUE){
         output <- base::paste0("NO ERROR MESSAGE REPORTED", base::ifelse(base::is.null(text), "", " "), text)
     }else if(kind != "error" & ( ! base::is.null(tempo.error)) & print.no == TRUE){
-        output <- base::paste0("NO ", base::ifelse(kind == "warning", "WARNING", "STANDARD (NON ERROR AND NON WARNING)"), " MESSAGE BECAUSE OF ERROR MESSAGE REPORTED", base::ifelse(base::is.null(text), "", " "), text)
+        output <- base::paste0("NO POTENTIAL ", base::ifelse(kind == "warning", "WARNING", "STANDARD (NON ERROR AND NON WARNING)"), " MESSAGE BECAUSE OF ERROR MESSAGE REPORTED", base::ifelse(base::is.null(text), "", " "), text)
     }else if(base::is.null(tempo.error)){
         fun.warning.capture <- function(expr){
             # from demo(error.catching) typed in the R console, coming from ?tryCatch
