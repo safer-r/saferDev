@@ -6,9 +6,9 @@
 #' @param path Location of the output file.
 #' @param overwrite Single logical value. If output file already exists, defines if the printing is appended (default FALSE) or if the output file content is erased before printing (TRUE).
 #' @param rownames.kept Single logical value. Defines whether row names have to be removed or in 2D objects. Warning: in 1D tables, names over the values are taken as row names, and are thus removed if rownames.kept is FALSE.
-#' @param vector.cat Single logical value. If TRUE print a vector of length > 1 using cat() instead of capture.output(). Otherwise (default FALSE) the opposite.
+#' @param vector.cat Single logical value. If TRUE print a vector of length > 1 using cat() instead of capture.output(). Otherwise (default FALSE) the opposite. Names of values are not printed when TRUE
 #' @param noquote Single logical value. If TRUE no quote are present for the characters.
-#' @param sep Single positive integer representing the number of empty lines after printed data.
+#' @param sep Single non null and positive integer representing the number of empty lines after printed data.
 #' @param safer_check Single logical value. Perform some "safer" checks (see https://github.com/safer-r)? If TRUE, checkings are performed before main code running: 1) R classical operators (like "<-") not overwritten by another package because of the R scope and 2) required functions and related packages effectively present in local R lybraries. Must be set to FALSE if this fonction is used inside another "safer" function to avoid pointless multiple checkings.
 #' @returns Nothing.
 #' @seealso \code{\link{capture.output}}.
@@ -32,7 +32,7 @@ report <- function(
         safer_check = TRUE
 ){
     # DEBUGGING
-    # data = 1:3 ; output = "results.txt" ; path = "C:/Users/yhan/Desktop" ; overwrite = TRUE ; rownames.kept = FALSE ; vector.cat = FALSE ; noquote = FALSE ; sep = 2 ; safer_check = TRUE # for function debugging
+    # vec1 = letters[1:9] ;  data = table(vec1, vec1) ; output = "results.txt" ; path = "C:/Users/gmillot/Desktop" ; overwrite = TRUE ; rownames.kept = TRUE ; vector.cat = FALSE ; noquote = FALSE ; sep = 2 ; safer_check = TRUE # for function debugging
     
     # package name
     package.name <- "saferDev"
@@ -79,24 +79,12 @@ report <- function(
     checked.arg.names <- NULL # for function debbuging: used by r_debugging_tools
     ee <- base::expression(argum.check <- base::c(argum.check, tempo$problem) , text.check <- base::c(text.check, tempo$text) , checked.arg.names <- base::c(checked.arg.names, tempo$object.name))
     tempo <- saferDev::arg_check(data = output, class = "character", length = 1, fun.name = function.name, safer_check = FALSE) ; base::eval(ee)
-    if(tempo$problem == FALSE & output == ""){
-        tempo.cat <- base::paste0("ERROR IN ", function.name, " OF THE ", package.name, " PACKAGE\noutput ARGUMENT AS \"\" DOES NOT CORRESPOND TO A VALID FILE NAME")
-        text.check <- base::c(text.check, tempo.cat)
-        argum.check <- base::c(argum.check, TRUE)
-    }
     tempo <- saferDev::arg_check(data = path, class = "vector", mode = "character", fun.name = function.name, safer_check = FALSE) ; base::eval(ee)
-    if(tempo$problem == FALSE){
-        if( ! base::all(base::dir.exists(path), na.rm = TRUE)){ # separation to avoid the problem of tempo$problem == FALSE and lib.path == NA
-            tempo.cat <- base::paste0("ERROR IN ", function.name, " OF THE ", package.name, " PACKAGE\npath ARGUMENT DOES NOT CORRESPOND TO EXISTING DIRECTORY\n", base::paste(path, collapse = "\n"))
-            text.check <- base::c(text.check, tempo.cat)
-            argum.check <- base::c(argum.check, TRUE)
-        }
-    }
     tempo <- saferDev::arg_check(data = overwrite, class = "logical", length = 1, fun.name = function.name, safer_check = FALSE) ; base::eval(ee)
     tempo <- saferDev::arg_check(data = rownames.kept, class = "logical", length = 1, fun.name = function.name, safer_check = FALSE) ; base::eval(ee)
     tempo <- saferDev::arg_check(data = vector.cat, class = "logical", length = 1, fun.name = function.name, safer_check = FALSE) ; base::eval(ee)
     tempo <- saferDev::arg_check(data = noquote, class = "logical", length = 1, fun.name = function.name, safer_check = FALSE) ; base::eval(ee)
-    tempo <- saferDev::arg_check(data = sep, class = "vector", typeof = "integer", length = 1, double.as.integer.allowed = TRUE, neg.values = FALSE, inf.values = FALSE, fun.name = function.name, safer_check = FALSE) ; base::eval(ee)
+    tempo <- saferDev::arg_check(data = sep, class = "vector", typeof = "integer", length = 1, double.as.integer.allowed = TRUE, neg.values = FALSE, fun.name = function.name, safer_check = FALSE) ; base::eval(ee)
     if( ! base::is.null(argum.check)){
         if(base::any(argum.check, na.rm = TRUE) == TRUE){
             base::stop(base::paste0("\n\n================\n\n", base::paste(text.check[argum.check], collapse = "\n"), "\n\n================\n\n"), call. = FALSE) #
@@ -153,11 +141,22 @@ report <- function(
     # warning initiation
     # end warning initiation
     # other checkings
+    if( ! base::all(base::dir.exists(path), na.rm = TRUE)){
+        tempo.cat <- base::paste0("ERROR IN ", function.name, " OF THE ", package.name, " PACKAGE\npath ARGUMENT DOES NOT CORRESPOND TO EXISTING DIRECTORY\n", base::paste(path, collapse = "\n"))
+        base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
+    }
+    if(sep == 0){
+        tempo.cat <- base::paste0("ERROR IN ", function.name, " OF THE ", package.name, " PACKAGE\nsep ARGUMENT CANNOT BE EQUAL TO ZERO")
+        base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
+    }
     # end other checkings
     # end second round of checking and data preparation
 
     # main code
     if( ! base::is.null(data)){
+        if(base::all(base::class(data) == "expression")){
+            data <- as.character(data)
+        }
         if(base::all(base::class(data) == "data.frame") | base::all(base::class(data) == "table") | base::all(base::class(data) %in% base::c("matrix", "array"))){ # before R4.0.0, it was  base::all(base::class(data) %in% c("matrix", "data.frame", "table")) # base::class() never returns NA
             if(rownames.kept == FALSE & base::all(base::class(data) == "data.frame") & base::nrow(data) != 0 & base::nrow(data) <= 4){ # for data frames with nrows <= 4
                 rownames.output.tables <- ""
@@ -188,6 +187,20 @@ report <- function(
             }
         }else{ # other object (S4 for instance, which do not like base::noquote()
             utils::capture.output(data, file=base::paste0(path, "/", output), append = ! overwrite)
+        }
+        # deal with sep
+        if( ! (
+            base::length(data) == 1 & (
+                base::all(base::class(data) == "logical") | 
+                base::all(base::class(data) == "integer") | 
+                base::all(base::class(data) == "numeric") | 
+                base::all(base::class(data) == "character")
+            )
+        )){
+            sep <- sep - 1 # because in these cases (matrix, data frame, list, etc.), R add an additionnal space
+        }
+        if(base::all(base::class(data) == "list")){
+            sep <- sep - 1 # because with lists, R add another additionnal space
         }
         sep.final <- base::paste0(base::rep("\n", sep), collapse = "")
         base::write(sep.final, file= base::paste0(path, "/", output), append = TRUE) # add a sep

@@ -17,30 +17,46 @@ library(saferDev)
 
 ### Datasets
 ```{r}
+string1 <- "THIS IS A LOG"
 vec1 <- 1:6 # vector of integers
 vec2 <- letters[1:9] # vector of characters
 mat1 <- matrix(vec1, nrow = 2, ncol = 3, byrow = TRUE) # matrix of integer having 2 rows and 3 columns
 dimnames(mat1) <- list(c("Row 1","Row 2"), c("C1", "C2", "C3"))
-mat2 <- matrix(vec2, nrow = 3, ncol = 3, byrow = TRUE) # matrix of integer having 3 rows and 3 columns
-dimnames(mat2) <- list(c("R1","R2","R3"), c("C1", "C2", "C3"))
+mat2 <- mat1
+mode(mat2) <- "character"
+t1 <- table(mat1) # 1D table
+vec3 <- as.vector(t1)
+names(vec3) <- letters[1:6] # vector with names
+t2 <- table(vec2, vec2) # 2D table
+l1 <- list(vec1, vec2) # list
 ```
 <br>
 
 ### Datasets info
 ```{r}
+string1 # string
 vec1 # vector of integers
 vec2 # vector of characters
+vec3 # vector of integers with names. No more [1] in front of values
 mat1 # matrix of integers with the row names
 mat2 # matrix of characters with the row names
+t1 # 1D table
+t2 # 2D table
+l1 # list
 ```
 <br>
 
 ### Simple examples
 ```{r}
-report(data = vec1, path = ".") # print the vector vec1 into the output file in the path
-report(data = vec2, path = ".") # print the vector vec2 into the output file in the path
-report(data = mat1, path = ".") # print the matrix mat1 into the output file in the path
-report(data = mat2, path = ".") # print the matrix mat2 into the output file in the path
+report(data = string1, path = ".") # print the input into the output file in the path
+report(data = vec1, path = ".") # idem
+report(data = vec2, path = ".") # idem
+report(data = vec3, path = ".") # idem
+report(data = mat1, path = ".") # idem
+report(data = mat2, path = ".") # idem. We cannot see that it is mode character (see noquote below)
+report(data = t1, path = ".") # idem
+report(data = t2, path = ".") # idem
+report(data = l1, path = ".") # idem
 ```
 <br>
 
@@ -52,7 +68,7 @@ report(data = vec1, output = "test.txt", path = ".") # print the vector vec1 int
 
 ### Argument overwrite
 ```{r, echo = TRUE, error = TRUE}
-report(data = vec2, overwrite = TRUE, path = ".") # if the file exists, the output file content will be erased before printing
+report(data = vec2, overwrite = TRUE, output = "test.txt", path = ".") # if the file exists, the output file content will be erased before printing
 ```
 <br>
 
@@ -63,16 +79,47 @@ report(
   rownames.kept = TRUE, 
   path = "."
 ) # keep the row names when print the matrix mat1 in the file
+
+report(
+  data = mat1, 
+  rownames.kept = FALSE, 
+  path = "."
+) # remove the row names
+
+report(
+  data = t1, 
+  rownames.kept = TRUE, 
+  path = "."
+) # keep the row names when print the table t1 in the file
+
+report(
+  data = t1, 
+  rownames.kept = FALSE, 
+  path = "."
+) # remove the row names
+
+report(
+  data = t2, 
+  rownames.kept = TRUE, 
+  path = "."
+) # keep the row names when print the table t2 in the file
+
+report(
+  data = t2, 
+  rownames.kept = FALSE, 
+  path = "."
+) # remove the row names
+
 ```
 <br>
 
 ### Argument vector.cat
 ```{r, echo = TRUE, error = TRUE}
 report(
-  data = mat2, 
+  data = vec3, 
   vector.cat = TRUE, 
   path = "."
-) # print a vector of length > 1 using cat() instead of capture.output()
+) # print a vector of length > 1 using cat() instead of capture.output() : names are lost.
 ```
 <br>
 
@@ -82,7 +129,7 @@ report(
   data = mat2, 
   noquote = FALSE, 
   path = "."
-) # quote are present for the characters.
+) # quote are kept for the characters.
 ```
 <br>
 
@@ -100,7 +147,7 @@ report(
 ```{r, echo = TRUE, error = TRUE}
 report(
     data = mat2, 
-    output = "test.txt", 
+    output = "test2.txt", 
     path = ".", 
     overwrite = TRUE, 
     rownames.kept = TRUE, 
@@ -109,6 +156,6 @@ report(
     sep = 4,
     safer_check = TRUE
 )
-# matrix mat2 will be print in the file "text.txt" in the path, with quote and row names being kept, and 4 lines after printing data
+# matrix mat1 will be print in the file "text2.txt" in the path, with quote and row names being kept, and 4 lines after printing data
 ```
 
