@@ -6,7 +6,7 @@ test_that("report()", {
     rownames(mat1) <- c("Row 1", "Row 2")
     t1 <- table(mat2) # 
     vec3 <- as.vector(vec2)
-    names(vec3) <- letters[1:9]
+    names(vec3) <- letters[1:6]
     t2 <- table(vec2, vec2)
     l1 <- list(vec1, vec2)
 
