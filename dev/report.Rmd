@@ -18,11 +18,13 @@ library(saferDev)
 ### Datasets
 ```{r}
 vec1 <- 1:6 # vector of integers
-vec2 <- c("(","a",")","(","b",")","(","c",")") # vector of characters
+vec2 <- letters[1:9] # vector of characters
 mat1 <- matrix(vec1, nrow = 2, ncol = 3, byrow = TRUE) # matrix of integer having 2 rows and 3 columns
-rownames(mat1) <- c("Row 1","Row 2")
-mat2 <- matrix(vec2, nrow = 3, ncol = 3, byrow = TRUE) # matrix of integer having 3 rows and 3 columns
-rownames(mat2) <- c("R1","R2","R3")
+dimnames(mat1) <- list(c("Row 1","Row 2"), c("C1", "C2", "C3"))
+t1 <- table(mat1) # 
+vec3 <- as.vector(t1)
+names(vec3) <- letters[1:9]
+t2 <- table(vec2, vec2)
 ```
 <br>
 
@@ -30,17 +32,23 @@ rownames(mat2) <- c("R1","R2","R3")
 ```{r}
 vec1 # vector of integers
 vec2 # vector of characters
-mat1 # matrix of integers with the row names
-mat2 # matrix of characters with the row names
+vec3 # vector of integers with names
+mat1 # matrix of integers with spaces in row names
+t1 # 1D table with row names (above the values)
+t2 # 2D table with row names
+
 ```
 <br>
 
 ### Simple examples
 ```{r}
-report(data = vec1, path = ".") # print the vector vec1 into the output file in the path
-report(data = vec2, path = ".") # print the vector vec2 into the output file in the path
-report(data = mat1, path = ".") # print the matrix mat1 into the output file in the path
-report(data = mat2, path = ".") # print the matrix mat2 into the output file in the path
+# print the object into the output file in the path (without row names by default)
+report(data = vec1, path = ".")
+report(data = vec2, path = ".")
+report(data = vec3, path = ".")
+report(data = mat1, path = ".")
+report(data = t1, path = ".")
+report(data = t2, path = ".")
 ```
 <br>
 
@@ -58,11 +66,32 @@ report(data = vec2, overwrite = TRUE, path = ".") # if the file exists, the outp
 
 ### Argument rownames.kept
 ```{r, echo = TRUE, error = TRUE}
+# keep the row names when printing the object in the file
 report(
   data = mat1, 
   rownames.kept = TRUE, 
   path = "."
-) # keep the row names when print the matrix mat1 in the file
+) 
+
+report(
+  data = t1, 
+  rownames.kept = TRUE, 
+  path = "."
+) 
+
+report(
+  data = t2, 
+  rownames.kept = TRUE, 
+  path = "."
+) 
+
+# Names in vectors are not row names, as in 1D table (names not removed with rownames.kept = FALSE)
+report(
+  data = vec3, 
+  rownames.kept = FALSE, 
+  path = "."
+)
+
 ```
 <br>
 

@@ -18,11 +18,11 @@ library(saferDev)
 ### Datasets
 ```{r}
 vec1 <- 1:6 # vector of integers
-vec2 <- c("(","a",")","(","b",")","(","c",")") # vector of characters
+vec2 <- letters[1:9] # vector of characters
 mat1 <- matrix(vec1, nrow = 2, ncol = 3, byrow = TRUE) # matrix of integer having 2 rows and 3 columns
-rownames(mat1) <- c("Row 1","Row 2")
+dimnames(mat1) <- list(c("Row 1","Row 2"), c("C1", "C2", "C3"))
 mat2 <- matrix(vec2, nrow = 3, ncol = 3, byrow = TRUE) # matrix of integer having 3 rows and 3 columns
-rownames(mat2) <- c("R1","R2","R3")
+dimnames(mat2) <- list(c("R1","R2","R3"), c("C1", "C2", "C3"))
 ```
 <br>
 

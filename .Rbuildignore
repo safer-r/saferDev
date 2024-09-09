@@ -1,6 +1,7 @@
 ^dev$
 ^vignettes/articles$
 ^_pkgdown\.yml$
+^Licence\.txt$
 ^docs$
 ^pkgdown$
 ^\.github$

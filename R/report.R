@@ -5,10 +5,10 @@
 #' @param output Single character string. Name of the output file.
 #' @param path Location of the output file.
 #' @param overwrite Single logical value. If output file already exists, defines if the printing is appended (default FALSE) or if the output file content is erased before printing (TRUE).
-#' @param rownames.kept Single logical value. Defines whether row names have to be removed or not in small tables (less than length.rows rows).
+#' @param rownames.kept Single logical value. Defines whether row names have to be removed or in 2D objects. Warning: in 1D tables, names over the values are taken as row names, and are thus removed if rownames.kept is FALSE.
 #' @param vector.cat Single logical value. If TRUE print a vector of length > 1 using cat() instead of capture.output(). Otherwise (default FALSE) the opposite.
 #' @param noquote Single logical value. If TRUE no quote are present for the characters.
-#' @param sep Single integer representing the number of empty lines after printed data.
+#' @param sep Single positive integer representing the number of empty lines after printed data.
 #' @param safer_check Single logical value. Perform some "safer" checks (see https://github.com/safer-r)? If TRUE, checkings are performed before main code running: 1) R classical operators (like "<-") not overwritten by another package because of the R scope and 2) required functions and related packages effectively present in local R lybraries. Must be set to FALSE if this fonction is used inside another "safer" function to avoid pointless multiple checkings.
 #' @returns Nothing.
 #' @seealso \code{\link{capture.output}}.
@@ -96,7 +96,7 @@ report <- function(
     tempo <- saferDev::arg_check(data = rownames.kept, class = "logical", length = 1, fun.name = function.name, safer_check = FALSE) ; base::eval(ee)
     tempo <- saferDev::arg_check(data = vector.cat, class = "logical", length = 1, fun.name = function.name, safer_check = FALSE) ; base::eval(ee)
     tempo <- saferDev::arg_check(data = noquote, class = "logical", length = 1, fun.name = function.name, safer_check = FALSE) ; base::eval(ee)
-    tempo <- saferDev::arg_check(data = sep, class = "vector", typeof = "integer", length = 1, double.as.integer.allowed = TRUE, fun.name = function.name, safer_check = FALSE) ; base::eval(ee)
+    tempo <- saferDev::arg_check(data = sep, class = "vector", typeof = "integer", length = 1, double.as.integer.allowed = TRUE, neg.values = FALSE, inf.values = FALSE, fun.name = function.name, safer_check = FALSE) ; base::eval(ee)
     if( ! base::is.null(argum.check)){
         if(base::any(argum.check, na.rm = TRUE) == TRUE){
             base::stop(base::paste0("\n\n================\n\n", base::paste(text.check[argum.check], collapse = "\n"), "\n\n================\n\n"), call. = FALSE) #
@@ -132,7 +132,7 @@ report <- function(
     # end management of NA arguments
     # management of NULL arguments
     tempo.arg <-base::c(
-        "data", 
+        # "data", # inactivate because can be NULL 
         "output", 
         "path",
         "overwrite", 
