@@ -238,7 +238,7 @@ arg_check <- function(
         base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
     }
     if(neg.values == FALSE & base::is.null(class) & base::is.null(typeof) & base::is.null(mode)){
-        tempo.cat <- base::paste0("ERROR IN ", function.name, "() OF THE ", package.name, " PACKAGE", base::ifelse(base::is.null(fun.name), "", base::paste0(" INSIDE ", fun.name)), "\nTHE neg.values ARGUMENT CANNOT BE SWITCHED TO FALSE IF class, typeof AND mode ARGUMENTS ARE NULL")
+        tempo.cat <- base::paste0("ERROR IN ", function.name, "() OF THE ", package.name, " PACKAGE", base::ifelse(base::is.null(fun.name), "", base::paste0(" INSIDE ", fun.name)), "\nTHE neg.values ARGUMENT CANNOT BE SWITCHED FROM TRUE (DEFAULT VALUE) TO FALSE IF class, typeof AND mode ARGUMENTS ARE NULL")
         base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
     }
     if( ! (base::all(base::class(inf.values) == "logical") & base::length(inf.values) == 1L)){ # base::all() without na.rm -> ok because base::class(NA) is "logical" 
@@ -246,7 +246,7 @@ arg_check <- function(
         base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
     }
     if(inf.values == FALSE & base::is.null(class) & base::is.null(typeof) & base::is.null(mode)){
-        tempo.cat <- base::paste0("ERROR IN ", function.name, "() OF THE ", package.name, " PACKAGE", base::ifelse(base::is.null(fun.name), "", base::paste0(" INSIDE ", fun.name)), "\nTHE inf.values ARGUMENT CANNOT BE SWITCHED TO FALSE IF class, typeof AND mode ARGUMENTS ARE NULL")
+        tempo.cat <- base::paste0("ERROR IN ", function.name, "() OF THE ", package.name, " PACKAGE", base::ifelse(base::is.null(fun.name), "", base::paste0(" INSIDE ", fun.name)), "\nTHE inf.values ARGUMENT CANNOT BE SWITCHED FROM TRUE (DEFAULT VALUE) TO FALSE IF class, typeof AND mode ARGUMENTS ARE NULL")
         base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
     }
     if( ! base::is.null(class)){ # may add "formula" and "Date" as in https://renenyffenegger.ch/notes/development/languages/R/functions/class
@@ -255,11 +255,11 @@ arg_check <- function(
             base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
         }
         if(neg.values == FALSE & ! base::any(class %in% base::c("vector", "numeric", "integer", "matrix", "array", "data.frame", "table"))){ # no need of na.rm = TRUE for base::any() because %in% does not output NA
-            tempo.cat <- base::paste0("ERROR IN ", function.name, "() OF THE ", package.name, " PACKAGE", base::ifelse(base::is.null(fun.name), "", base::paste0(" INSIDE ", fun.name)), "\nclass ARGUMENT CANNOT BE OTHER THAN \"vector\", \"numeric\", \"integer\", \"matrix\", \"array\", \"data.frame\", \"table\" IF neg.values ARGUMENT IS SWITCHED TO FALSE")
+            tempo.cat <- base::paste0("ERROR IN ", function.name, "() OF THE ", package.name, " PACKAGE", base::ifelse(base::is.null(fun.name), "", base::paste0(" INSIDE ", fun.name)), "\nclass ARGUMENT CANNOT BE OTHER THAN \"vector\", \"numeric\", \"integer\", \"matrix\", \"array\", \"data.frame\", \"table\" IF ABSENCE OF NEGATIVE VALUES IS CONTROLED BY SWITCHING THE neg.values ARGUMENT FROM TRUE (DEFAULT VALUE) TO FALSE")
             base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
         }
         if(inf.values == FALSE & ! base::any(class %in% base::c("vector", "numeric", "matrix", "array", "data.frame", "table"))){ # no need of na.rm = TRUE for base::any() because %in% does not output NA
-            tempo.cat <- base::paste0("ERROR IN ", function.name, "() OF THE ", package.name, " PACKAGE", base::ifelse(base::is.null(fun.name), "", base::paste0(" INSIDE ", fun.name)), "\nclass ARGUMENT CANNOT BE OTHER THAN \"vector\", \"numeric\", \"matrix\", \"array\", \"data.frame\", \"table\" IF inf.values ARGUMENT IS SWITCHED TO FALSE. \"integer IS NOT ALLOWED BECAUSE IFINITE VALUES ARE NOT INTEGERS\"")
+            tempo.cat <- base::paste0("ERROR IN ", function.name, "() OF THE ", package.name, " PACKAGE", base::ifelse(base::is.null(fun.name), "", base::paste0(" INSIDE ", fun.name)), "\nclass ARGUMENT CANNOT BE OTHER THAN \"vector\", \"numeric\", \"matrix\", \"array\", \"data.frame\", \"table\" IF ABSENCE OF INFINITE VALUE IS CONTROLED BY SWITCHING THE inf.values ARGUMENT FROM TRUE (DEFAULT VALUE) TO FALSE\n\"integer\" IS NOT ALLOWED BECAUSE OBJECTS WITH INFINITE VALUES ARE NOT INTEGERS")
             base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
         }
     }
@@ -269,11 +269,11 @@ arg_check <- function(
             base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
         }
         if(neg.values == FALSE & ! typeof %in% base::c("double", "integer")){
-            tempo.cat <- base::paste0("ERROR IN ", function.name, "() OF THE ", package.name, " PACKAGE", base::ifelse(base::is.null(fun.name), "", base::paste0(" INSIDE ", fun.name)), "\ntypeof ARGUMENT CANNOT BE OTHER THAN \"double\" OR \"integer\" IF neg.values ARGUMENT IS SWITCHED TO FALSE")
+            tempo.cat <- base::paste0("ERROR IN ", function.name, "() OF THE ", package.name, " PACKAGE", base::ifelse(base::is.null(fun.name), "", base::paste0(" INSIDE ", fun.name)), "\ntypeof ARGUMENT CANNOT BE OTHER THAN \"double\" OR \"integer\" IF ABSENCE OF NEGATIVE VALUES IS CONTROLED BY SWITCHING THE neg.values ARGUMENT FROM TRUE (DEFAULT VALUE) TO FALSE")
             base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
         }
         if(inf.values == FALSE & typeof != "double"){
-            tempo.cat <- base::paste0("ERROR IN ", function.name, "() OF THE ", package.name, " PACKAGE", base::ifelse(base::is.null(fun.name), "", base::paste0(" INSIDE ", fun.name)), "\ntypeof ARGUMENT CANNOT BE OTHER THAN \"double\" IF inf.values ARGUMENT IS SWITCHED TO FALSE. \"integer IS NOT ALLOWED BECAUSE IFINITE VALUES ARE NOT INTEGERS\"")
+            tempo.cat <- base::paste0("ERROR IN ", function.name, "() OF THE ", package.name, " PACKAGE", base::ifelse(base::is.null(fun.name), "", base::paste0(" INSIDE ", fun.name)), "\ntypeof ARGUMENT CANNOT BE OTHER THAN \"double\" IF ABSENCE OF INFINITE VALUE ARE CONTROLED BY SWITCHING THE inf.values ARGUMENT FROM TRUE (DEFAULT VALUE) TO FALSE\n\"integer\" IS NOT ALLOWED BECAUSE OBJECTS WITH INFINITE VALUES ARE NOT INTEGERS")
             base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
         }
     }
@@ -283,11 +283,11 @@ arg_check <- function(
             base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
         }
         if(neg.values == FALSE & mode != "numeric"){
-            tempo.cat <- base::paste0("ERROR IN ", function.name, "() OF THE ", package.name, " PACKAGE", base::ifelse(base::is.null(fun.name), "", base::paste0(" INSIDE ", fun.name)), "\nmode ARGUMENT CANNOT BE OTHER THAN \"numeric\" IF neg.values ARGUMENT IS SWITCHED TO FALSE")
+            tempo.cat <- base::paste0("ERROR IN ", function.name, "() OF THE ", package.name, " PACKAGE", base::ifelse(base::is.null(fun.name), "", base::paste0(" INSIDE ", fun.name)), "\nmode ARGUMENT CANNOT BE OTHER THAN \"numeric\" IF ABSENCE OF NEGATIVE VALUES IS CONTROLED BY SWITCHING THE neg.values ARGUMENT FROM TRUE (DEFAULT VALUE) TO FALSE")
             base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
         }
         if(inf.values == FALSE & mode != "numeric"){
-            tempo.cat <- base::paste0("ERROR IN ", function.name, "() OF THE ", package.name, " PACKAGE", base::ifelse(base::is.null(fun.name), "", base::paste0(" INSIDE ", fun.name)), "\nmode ARGUMENT CANNOT BE OTHER THAN \"numeric\" IF inf.values ARGUMENT IS SWITCHED TO FALSE")
+            tempo.cat <- base::paste0("ERROR IN ", function.name, "() OF THE ", package.name, " PACKAGE", base::ifelse(base::is.null(fun.name), "", base::paste0(" INSIDE ", fun.name)), "\nmode ARGUMENT CANNOT BE OTHER THAN \"numeric\" IF ABSENCE OF INFINITE VALUE ARE CONTROLED BY SWITCHING THE inf.values ARGUMENT FROM TRUE (DEFAULT VALUE) TO FALSE\nOTHER VALUES NOT ALLOWED BECAUSE OBJECTS WITH INFINITE VALUES ARE ONLY \"numeric\"")
             base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
         }
     }
