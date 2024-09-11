@@ -8,19 +8,17 @@
 #' Table-like: column 1, the line number in the function code (starting at the "<- function" line, i.e., without counting the #' header lines); column 2,  the function name; column 3, the code preceeding the function name
 #' With missing :: or :::, the meassage also indicates if internal functions are created inside the checked function code, since these functions cannot have :: or :::.
 #' @details
-#' - More precisely, colons_check() verifies that all the strings before an opening bracket "(" are preceeded by "::". Of note, ":::" are also detected but considered as "::". Thus, it cannot check function names written without brackets, like in the FUN argument of some functions, e.g., sapply(1:3, FUN = as.character).
+#' - More precisely, colons_check() verifies that all the strings before an opening bracket "(" are preceeded by "::" (":::" are also checked since the "::" pattern detects ":::"). Thus, it cannot check function names written without brackets, like in the FUN argument of some functions, e.g., sapply(1:3, FUN = as.character).
 #' 
 #' - The regex used to detect a function name is: "[a-zA-Z.]{1}[a-zA-Z0-9._]*\\(".
 #'  
 #' - The following R functions using bracket are not considered: "function", "if", "for", "while" and "repeat".
 #' 
-#' - Most of the time, the functions after a comment symbol are not considered
+#' - Most of the time, colons_check() does not check inside comments, but some writting could dupe colons_check().
 #' 
-#' - Warning: compiled functions (e.g., saferDev::arg_test) do not have comments anymore, compared to the same source function sourced into the working environment.
+#' - The returned line numbers is indicative, depending on which source is checked. For instance, saferDev::report (compiled) has not the same line numbers as its source file (https://github.com/safer-r/saferDev/blob/main/R/report.R). Notably, compiled functions do not have comments anymore, compared to the same source function sourced into the working environment. In addition, the counting starts at the "<- function" line, i.e., without counting the #' header lines potentially present in source files.
 #' 
-#' - Most of the time, colons_check() does not check inside comments, but some writting could dupe colons_check(). The returned line numbers is indicative, because 
-#' 
-#' - During package creation, the devtools::check() command tells which functions where wrongly attributed to package. Example: 
+#' - Of note, during package creation, the devtools::check() command tells which functions where wrongly attributed to package. Example: 
 #'     checking dependencies in R code ... WARNING
 #'       '::' or ':::' import not declared from: 'sbase'
 #'       Missing or unexported objects:
