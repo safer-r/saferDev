@@ -40,7 +40,7 @@ test_that("colons_check()", {
         "LINE\tFUN\t\tSTRING_BEFORE", 
         "15\tgregexpr\t\tmatches <- "  , 
         "17\tregmatches\t\tmatched_strings <- ", 
-        "20\tsum\t\tx = text, m = matches)[[1, 
+        "20\tsum\t\tx = text, m = matches)[[1]] ; ", 
         "23\tsub\t\tresult <- "     , 
         "23\trange\t\t\"\\\\($##\", \"\", matched_strings) ; ", 
         "25\treturn\t\t"  , 
