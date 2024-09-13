@@ -1,14 +1,13 @@
-#' @title colons_check
+#' @title all_args_here
 #' @description
-#' Verify that all the functions used inside a function are all referenced by their package attribution. For instance: base::mean() and not mean(), or saferDev:::.base_op_check() and not .base_op_check().
+#' Verify that all the functions used inside a function are written with all their arguments. For instance: base::paste0(letters[1:2], collapse = NULL, recycle0 = FALSE) and not paste0(letters[1:2]).
 #' @param x a function name, written without quotes and brackets.
 #' @param safer_check Single logical value. Perform some "safer" checks (see https://github.com/safer-r)? If TRUE, checkings are performed before main code running: 1) R classical operators (like "<-") not overwritten by another package because of the R scope and 2) required functions and related packages effectively present in local R lybraries. Must be set to FALSE if this fonction is used inside another "safer" function to avoid pointless multiple checkings.
 #' @returns 
-#' A table-like message indicating the missing :: or ::: or a message saying that everything seems fine.
-#' Table-like: column 1, the line number in the function code (starting at the "<- function" line, i.e., without counting the #' header lines); column 2,  the function name; column 3, the code preceeding the function name
-#' With missing :: or :::, the message also indicates if internal functions are created inside the checked function code, since these functions cannot have :: or :::.
+#' A table-like message indicating the missing arguments or a message saying that everything seems fine.
+#' Table-like: column 1, the line number in the function code (starting at the "<- function" line, i.e., without counting the #' header lines); column 2,  the function name; column 3, the code preceeding the function name; column 4, the missing arguments with default values
 #' @details
-#' - More precisely, colons_check() verifies that all the strings before an opening bracket "(" are preceeded by "::" (":::" are also checked since the "::" pattern detects ":::"). Thus, it cannot check function names written without brackets, like in the FUN argument of some functions, e.g., sapply(1:3, FUN = as.character).
+#' - More precisely, all_args_here() verifies that all the strings before an opening bracket "(" are preceeded by "::" (":::" are also checked since the "::" pattern detects ":::"). Thus, it cannot check function names written without brackets, like in the FUN argument of some functions, e.g., sapply(1:3, FUN = as.character).
 #' 
 #' - The perl regex used to detect a function name is: "[a-zA-Z.][a-zA-Z0-9._]*\\s*\\(".
 #' 
@@ -16,7 +15,7 @@
 #'  
 #' - The following R functions using bracket are not considered: "function", "if", "for", "while" and "repeat".
 #' 
-#' - Most of the time, colons_check() does not check inside comments, but some unexpected writting could dupe colons_check().
+#' - Most of the time, all_args_here() does not check inside comments, but some unexpected writting could dupe all_args_here().
 #' 
 #' - The returned line numbers is indicative, depending on which source is checked. For instance, saferDev::report (compiled) has not the same line numbers as its source file (https://github.com/safer-r/saferDev/blob/main/R/report.R). Notably, compiled functions do not have comments anymore, compared to the same source function sourced into the working environment. In addition, the counting starts at the "<- function" line, i.e., without counting the #' header lines potentially present in source files.
 #' 
@@ -29,11 +28,11 @@
 #' @author Yushi Han <yushi.han2000@gmail.com>
 #' @author Haiding Wang <wanghaiding442@gmail.com>  
 #' @examples
-#' colons_check(mean)
-#' colons_check(colons_check)
-#' source("C:\\Users\\gmillot\\Documents\\Git_projects\\safer-r\\saferDev\\R\\colons_check.R") ; colons_check(test)
+#' all_args_here(mean)
+#' all_args_here(all_args_here)
+#' source("C:\\Users\\gmillot\\Documents\\Git_projects\\safer-r\\saferDev\\R\\all_args_here.R") ; all_args_here(test)
 #' @export
-colons_check <- function(
+all_args_here <- function(
     x, 
     safer_check = TRUE
 ){
@@ -43,7 +42,7 @@ colons_check <- function(
     # library(saferGraph) ; x = close2 ; safer_check = TRUE 
     # source("C:\\Users\\gmillot\\Documents\\Git_projects\\safer-r\\saferDev\\R\\get_message.R") ; x = get_message ; safer_check = TRUE # Warning: x = saferDev::get_message does not return the same number of code lines
     # library(saferDev) ; x = get_message ; safer_check = TRUE # Warning: does not return the same number of code lines than the previsou example
-    # source("C:\\Users\\gmillot\\Documents\\Git_projects\\safer-r\\saferDev\\R\\colons_check.R") ; x = colons_check ; safer_check = TRUE # Warning: x = saferDev::get_message does not return the same number of code lines
+    # source("C:\\Users\\gmillot\\Documents\\Git_projects\\safer-r\\saferDev\\R\\all_args_here.R") ; x = all_args_here ; safer_check = TRUE # Warning: x = saferDev::get_message does not return the same number of code lines
     # source("C:\\Users\\gmillot\\Documents\\Git_projects\\safer-r\\saferDev\\dev\\other\\test.R") ; x = test ; safer_check = TRUE # Warning: x = saferDev::get_message does not return the same number of code lines
     # package name
     package.name <- "saferDev"

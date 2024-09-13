@@ -29,6 +29,7 @@ test_that("colons_check()", {
 
   # sophisticated example
     source("https://raw.githubusercontent.com/safer-r/saferDev/main/dev/other/test.R")
+    print(test)
     result1 <- capture.output(colons_check(x = test))
     expected1 <- c(
         "", 
