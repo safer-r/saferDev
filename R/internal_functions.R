@@ -260,7 +260,7 @@
 #' @title .create_message
 #' @description
 #' Create the message for the colons_check() function.
-#' @param list.fun list of names of all the basic functions.
+#' @param list.fun list of names of all the functions.
 #' @param list.fun.uni vector of all the unique function names.
 #' @param list.line.nb vector of corresponding line number.
 #' @param ini vector of string of the initial function code analyzed.
@@ -412,3 +412,248 @@
     base::return(base::list(output.cat = output.cat, colon_not_here = base::unlist(colon_not_here)))
 }
 
+
+
+
+#' @title .functions_detect
+#' @description
+#' Detect all the functions used inside a function.
+#' @param x a function name, written without quotes and brackets.
+#' @param safer_check Single logical value. Perform some "safer" checks (see https://github.com/safer-r)?
+#' @param arg.user.setting Argument user settings list.
+#' @param function.name function name.
+#' @param package.name package name.
+#' #' @returns 
+#'  A list:
+#' $ini: vector of strings of the initial function code tested.
+#' $fun: list of names of all the basic R functions.
+#' $fun_name_wo_op: list of names of all the functions without operators.
+#' $code_line_nb_wo_op: vector of integers of the corresponding code line numbers.
+#' $internal_fun_names: vector of string of names of internal functions in the function code analyzed.
+#' $arg.user.setting: list of arg user settings.
+#' $ini.warning.length: initial R warning.length from options()$warning.length.
+#' @author Gael Millot <gael.millot@pasteur.fr>
+#' @keywords internal
+#' @importFrom saferDev arg_check
+#' @rdname internal_function
+.functions_detect <- function(
+    x, 
+    safer_check,
+    arg.user.setting, 
+    function.name, 
+    package.name
+){
+    # AIM
+    # Detect all the functions used inside a function.
+    # ARGUMENTS
+    # x a function name, written without quotes and brackets.
+    # safer_check Single logical value. Perform some "safer" checks (see https://github.com/safer-r)?
+    # arg.user.setting Argument user settings list.
+    # function.name function name.
+    # package.name package name.
+    # RETURN
+    # A list:
+    # $ini: vector of strings of the initial function code tested.
+    # $fun: list of names of all the basic R functions.
+    # $fun_name_wo_op: list of names of all the functions without operators.
+    # $code_line_nb_wo_op: vector of integers of the corresponding code line numbers.
+    # $internal_fun_names: vector of string of names of internal functions in the function code analyzed.
+    # $arg.user.setting: list of arg user settings.
+    # $ini.warning.length: initial R warning.length from options()$warning.length.
+    # DEBUGGING
+    # x = x ; safer_check = safer_check ; arg.user.setting = arg.user.setting ; function.name = function.name ; package.name = package.name
+    # critical operator checking
+    if(safer_check == TRUE){
+        saferDev:::.base_op_check(
+            external.function.name = function.name,
+            external.package.name = package.name
+        )
+    }
+    # end critical operator checking
+    # package checking
+    # check of lib.path
+    # end check of lib.path
+    # check of the required function from the required packages
+    # end check of the required function from the required packages
+    # end package checking
+
+    # argument primary checking
+    # arg with no default values
+    mandat.args <- base::c(
+        "x"
+    )
+    tempo <- base::eval(base::parse(text = base::paste0("base::missing(", base::paste0(mandat.args, collapse = ") | base::missing("), ")")))
+    if(base::any(tempo)){ # normally no NA for base::missing() output
+        tempo.cat <- base::paste0("ERROR IN ", function.name, " OF THE ", package.name, " PACKAGE\nFOLLOWING ARGUMENT", base::ifelse(base::sum(tempo, na.rm = TRUE) > 1, "S HAVE", " HAS"), " NO DEFAULT VALUE AND REQUIRE ONE:\n", base::paste0(mandat.args[tempo], collapse = "\n"))
+        base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
+    }
+    # end arg with no default values
+    # argument checking with arg_check()
+    argum.check <- NULL #
+    text.check <- NULL #
+    checked.arg.names <- NULL # for function debbuging: used by r_debugging_tools
+    ee <- base::expression(argum.check <- base::c(argum.check, tempo$problem) , text.check <- base::c(text.check, tempo$text) , checked.arg.names <- base::c(checked.arg.names, tempo$object.name))
+    tempo <- saferDev::arg_check(data = x, mode = "function", length = 1,  fun.name = function.name, safer_check = FALSE) ; base::eval(ee)
+    tempo <- saferDev::arg_check(data = safer_check, class = "vector", typeof = "logical", length = 1, fun.name = function.name, safer_check = FALSE) ; base::eval(ee) # even if already used above
+    # lib.path already checked above
+    if( ! base::is.null(argum.check)){
+        if(base::any(argum.check, na.rm = TRUE) == TRUE){
+            base::stop(base::paste0("\n\n================\n\n", base::paste(text.check[argum.check], collapse = "\n"), "\n\n================\n\n"), call. = FALSE) #
+        }
+    }
+    # end argument checking with arg_check()
+    # check with r_debugging_tools
+    # source("C:/Users/gmillot/Documents/Git_projects/debugging_tools_for_r_dev/r_debugging_tools.R") ; eval(parse(text = str_basic_arg_check_dev)) ; eval(parse(text = str_arg_check_with_fun_check_dev)) # activate this line and use the function (with no arguments left as NULL) to check arguments status and if they have been checked using arg_check()
+    # end check with r_debugging_tools
+    # end argument primary checking
+
+    # second round of checking and data preparation
+    # reserved words (to avoid bugs)
+    # end reserved words (to avoid bugs)
+    # management of NA arguments
+    if( ! (base::all(base::class(arg.user.setting) %in% base::c("list", "NULL"), na.rm = TRUE) & base::length(arg.user.setting) == 0)){
+        tempo.arg <- base::names(arg.user.setting) # values provided by the user
+        tempo.log <- base::suppressWarnings(base::sapply(base::lapply(base::lapply(tempo.arg, FUN = get, env = base::sys.nframe(), inherit = FALSE), FUN = is.na), FUN = any)) & base::lapply(base::lapply(tempo.arg, FUN = get, env = base::sys.nframe(), inherit = FALSE), FUN = length) == 1L # no argument provided by the user can be just NA
+        if(base::any(tempo.log, na.rm = TRUE) == TRUE){
+            tempo.cat <- base::paste0("ERROR IN ", function.name, " OF THE ", package.name, " PACKAGE\n", base::ifelse(base::sum(tempo.log, na.rm = TRUE) > 1, "THESE ARGUMENTS", "THIS ARGUMENT"), " CANNOT JUST BE NA:", base::paste0(tempo.arg[tempo.log], collapse = "\n"))
+            base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
+        }
+    }
+    # end management of NA arguments
+    # management of NULL arguments
+    tempo.arg <-base::c(
+        "x",
+        "safer_check"
+    )
+    tempo.log <- base::sapply(base::lapply(tempo.arg, FUN = base::get, env = base::sys.nframe(), inherit = FALSE), FUN = base::is.null)
+    if(base::any(tempo.log) == TRUE){# normally no NA with base::is.null()
+        tempo.cat <- base::paste0("ERROR IN ", function.name, " OF THE ", package.name, " PACKAGE\n", base::ifelse(base::sum(tempo.log, na.rm = TRUE) > 1, "THESE ARGUMENTS\n", "THIS ARGUMENT\n"), base::paste0(tempo.arg[tempo.log], collapse = "\n"),"\nCANNOT BE NULL")
+        base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
+    }
+    # end management of NULL arguments
+    # code that protects set.seed() in the global environment
+    # end code that protects set.seed() in the global environment
+    # warning initiation
+    ini.warning.length <- base::options()$warning.length # required to have the max characters of output messages
+    base::options(warning.length = 8170)
+    # end warning initiation
+    # other checkings
+    # end other checkings
+    # end second round of checking and data preparation
+
+    # main code
+    # modification of arg.user.setting$x for clean messages
+    if(base::as.character(x = arg.user.setting$x)[1] == "::" | base::as.character(x = arg.user.setting$x)[1] == ":::"){
+        arg.user.setting$x <- base::paste0(base::as.character(x = arg.user.setting$x)[3], "()")
+    }
+    # end modification of arg.user.setting$x for clean messages
+    # recovering the basic functions of R
+    s <- base::c("package:stats", "package:graphics",  "package:grDevices", "package:utils", "package:datasets", "package:methods", "Autoloads", "package:base") # basic base::search() scope
+    if(base::any( ! s %in% base::search())){
+        tempo.cat <- base::paste0("INTERNAL ERROR 5 IN ", function.name, " OF THE ", package.name, " PACKAGE\nTHE base::search() SCOPE OF R HAS CHANGED.\nTHE PROBLEM IS:\n",
+            base::paste(s[ ! s %in% base::search()], collapse = "\n"))
+        base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
+    }
+    fun <- base::unlist(base::sapply(X = s, FUN = function(x){base::ls(x, all.names = TRUE)})) # all the basic functions of R in all the scope
+    # end recovering the basic functions of R
+    # recovering the input function string
+    ini <- utils::capture.output(x) # no lines must be removed because it is to catch the lines of the full code
+    code_line_nb <- 1:base::length(ini)
+    # ini <- base::paste0(ini, collapse = " \\n ") # recovering as single string separated by \\n (and not \n to avoid the eval(\n) when printing the error message)
+    ini <- base::gsub(x = ini, pattern = " +", replacement = " ") # removal of multiple spaces
+    ini <- base::sub(x = ini, pattern = "^ +", replacement = "") # removal of multiple spaces in the beginning od strings
+    # end recovering the input function string
+
+    # removal of empty lines
+    empty_line.log <- base::grepl(ini, pattern = "^\\s*$")
+    # end removal of empty lines
+
+    # removal of comments
+    comment_line.log <- base::grepl(ini, pattern = "^\\s*#") # removal of the lines starting by #
+    if(base::length(ini) == 0){
+        tempo.cat <- base::paste0("ERROR IN ", function.name, " OF THE ", package.name, " PACKAGE\nTHE TESTED FUNCTION ", arg.user.setting$x, " IS EMPTY OR ONLY MADE OF COMMENTS")
+        base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
+    }
+    comment.log <- base::grepl(x = ini, pattern = "#")
+    if(base::any(comment.log, na.rm = TRUE)){
+        comment.line.to.rm <- base::which(comment.log) # elements among ini that have #
+        lines <- ini[comment.log]
+        for(i2 in 1:base::length(lines)){
+            lines.split <- base::strsplit(lines[i2], split = "#")[[1]]
+            # detection of the first left # that is not between quotes
+            count <- 1
+            tempo.line <- lines.split[1]
+            while.loop <- TRUE
+            while(while.loop == TRUE & count < base::length(lines.split)){
+                # if odds number of quotes, it means that # has broken the string in the middle of a quoted part
+                double.quote.test <- .has_odd_number_of_quotes(input_string = tempo.line, pattern = '"') # here FALSE means even number of quotes, thus that # is not between quotes, thus has to be removed. TRUE means that # is between quotes, thus has to be kept
+                simple.quote.test <- .has_odd_number_of_quotes(input_string = tempo.line, pattern = "'") # idem
+                odds.quotes.log <- double.quote.test |  simple.quote.test # lines to keep among commented lines
+                if(odds.quotes.log == TRUE){
+                    count <- count + 1
+                    tempo.line <- base::paste0(tempo.line, "#", lines.split[count])
+                }else{
+                     while.loop <- FALSE
+                }
+            }
+            # end detection of the first left # that is not between quotes
+            lines[i2] <- tempo.line
+        }
+        ini[comment.line.to.rm] <- lines
+    }
+    # end removal of comments
+    # catch the internal function name created inside the tested function
+    internal_fun_names <- base::unlist(base::lapply(X = ini, FUN = function(x){
+        output <- base::sub(pattern = "^\\s*([a-zA-Z.]{1}[a-zA-Z0-9._]*)\\s*<-[\\s\\r\\n]*function[\\s\\r\\n]*\\(.*", replacement = "\\1", x = x, perl = TRUE)
+        if( ! output == x){
+            base::return(output)
+        }
+    })) # To achieve the extraction of the function names, you need to wrap the part of the pattern that matches the function name in parentheses () to create a capturing group
+    # end catch the internal function name created inside the tested function
+    # trick to deal with end of lines between the name of the function and "("
+    if(base::length(ini) > 1){
+        for (i2 in 2:base::length(ini)) {
+            # Check if the current string starts with spaces followed by a '('
+            if (base::grepl("^\\s*\\(", ini[i2])) {
+                # Check if the previous string ends with the specified pattern
+                if (base::grepl("[a-zA-Z.]{1}[a-zA-Z0-9._]*\\s*$", ini[i2 - 1])) {
+                # Append a '(' to the previous string
+                ini[i2 - 1] <- base::paste0(ini[i2 - 1], "(")
+                }
+            }
+        }
+    }
+    # end trick to deal with end of lines between the name of the function and "("
+    # all function names in x
+    pattern1 <- "[a-zA-Z.][a-zA-Z0-9._]*\\s*\\(" # pattern to detect a function name, a$fun( is removed in .extract_all()
+    # I could have used [\\s\\r\\n]* meaning any space or end of line or carriage return between the name and "(" but finally, another strategy used
+    # - `this does not work well, as it does not take dots: "\\b[a-zA-Z\\.\\_]{1}[a-zA-Z0-9\\.\\_]+\\b", because of `\\b`: These are word boundaries. It ensures that the pattern matches only a complete word and not a part of a word.
+    # - `[a-zA-Z.]{1}`: This portion of the pattern matches any uppercase letter (`A-Z`), lowercase letter (`a-z`), or a period (`.`) a single time ({1}).
+    # - `[a-zA-Z0-9._]*`: This part of the pattern matches any uppercase letter (`A-Z`), lowercase letter (`a-z`), number (`0-9`), period (`.`), or underscore (`_`), repeated one or more times (`+`). This represents the possible characters inside an R function name.
+    # - `\\b`: Again, these are word boundaries, making sure the pattern captures the entire word and not just part of it.
+    # -  not used: `(?= *\\()`: This is a lookahead assertion. It checks that the preceding pattern is followed by any spaces and a parenthesis (`\\(`), but doesn't include the spaces and parenthesis in the match. This is because, in R code, a function call is usually followed by a parenthesis, but the parenthesis is not part of the function name.
+    fun_name <- base::lapply(ini, FUN = function(x){.extract_all(text = x, pattern = pattern1)}) # recover all the function names, followed by "(", present in ini
+    fun_name_wo_op <- base::lapply(fun_name, FUN = function(x){x[ ! x %in% base::c("function", "if", "for", "while", "repeat")]}) # removal of special functions
+    tempo.log <- base::sapply(fun_name_wo_op, FUN = function(x){base::length(x) == 0}) # detection of string with empty function names
+    fun_name_wo_op <- fun_name_wo_op[ ! tempo.log] # removal of empty string
+    code_line_nb_wo_op <- code_line_nb[( ! tempo.log) & ( ! comment_line.log) & ( ! empty_line.log)]
+    if(base::length(fun_name_wo_op) != base::length(code_line_nb_wo_op)){
+        tempo.cat <- base::paste0("INTERNAL ERROR 6 IN ", function.name, " OF THE ", package.name, " PACKAGE\nLENGTHS SHOULD BE IDENTICAL\nfun_name_wo_op: ", base::length(fun_name_wo_op), "\ncode_line_nb: ", base::length(code_line_nb_wo_op))
+        base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
+    }
+    # fun_name_wo_op_uni <- base::unlist(base::unique(fun_name_wo_op)) # in case
+    # end all function names in x
+    #### output
+    output <- list(
+        ini = ini, 
+        fun = fun, 
+        fun_name_wo_op = fun_name_wo_op, 
+        code_line_nb_wo_op = code_line_nb_wo_op, 
+        internal_fun_names = internal_fun_names,
+        arg.user.setting = arg.user.setting,
+        ini.warning.length = ini.warning.length
+    )
+    base::return(output)
+    #### end output
+
+}
