@@ -28,8 +28,7 @@ test_that("colons_check()", {
 
 
   # sophisticated example
-    source("https://raw.githubusercontent.com/safer-r/saferDev/main/dev/other/test.R")
-    print(test)
+    source("https://raw.githubusercontent.com/safer-r/saferDev/main/dev/other/test.R") # Warning: comments are removed by the CI
     result1 <- capture.output(colons_check(x = test))
     expected1 <- c(
         "", 
@@ -39,18 +38,18 @@ test_that("colons_check()", {
         "INSIDE test, SOME :: OR ::: ARE MISSING AT BASIC FUNCTION POSITIONS:", 
         "", 
         "LINE\tFUN\t\tSTRING_BEFORE", 
-        "15\tgregexpr\t\tmatches <- "  , 
-        "17\tregmatches\t\tmatched_strings <- ", 
-        "20\tsum\t\tx = text, m = matches)[[1]] ; ", 
-        "23\tsub\t\tresult <- "     , 
-        "23\trange\t\t\"\\\\($##\", \"\", matched_strings) ; ", 
-        "25\treturn\t\t"  , 
+        "3\tgregexpr\t\tmatches <- ", 
+        "6\tregmatches\t\tmatched_strings <- ", 
+        "8\tsum\t\t"      , 
+        "15\tsub\t\tresult <- "    , 
+        "16\trange\t\t"   , 
+        "20\treturn\t\t"  , 
         "", 
         "INSIDE test, SOME :: OR ::: ARE MISSING AT OTHER FUNCTION POSITIONS:", 
         "", 
         "LINE\tFUN\t\tSTRING_BEFORE", 
-        "22\tcol1\t\t\", base::length(", 
-        "24\tcol1\t\ttempo.cat <- base::paste0(\"IAGE\\nLENGTHS OF ", 
+        "13\tcol1\t\tbase::length(", 
+        "17\tcol1\t\ttempo.cat <- base::paste0(\"IAGE\\nLENGTHS OF ", 
         "", 
         "================", 
         ""
