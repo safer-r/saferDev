@@ -459,7 +459,19 @@ corresponding R function, except class which<a class="anchor" aria-label="anchor
 <span id="cb14-27"><a href="#cb14-27" tabindex="-1"></a><span class="er">&gt;</span> ERROR</span>
 <span id="cb14-28"><a href="#cb14-28" tabindex="-1"></a><span class="sc">&gt;</span> THE arg1 OBJECT MUST BE CLASS integer</span>
 <span id="cb14-29"><a href="#cb14-29" tabindex="-1"></a><span class="sc">&gt;</span> </span>
-<span id="cb14-30"><a href="#cb14-30" tabindex="-1"></a><span class="er">&gt;</span> <span class="er">================</span></span></code></pre></div>
+<span id="cb14-30"><a href="#cb14-30" tabindex="-1"></a><span class="er">&gt;</span> <span class="er">================</span></span>
+<span id="cb14-31"><a href="#cb14-31" tabindex="-1"></a>fun2 <span class="ot">&lt;-</span> <span class="cf">function</span>(arg1){</span>
+<span id="cb14-32"><a href="#cb14-32" tabindex="-1"></a>    tempo <span class="ot">&lt;-</span> <span class="fu">arg_check</span>(</span>
+<span id="cb14-33"><a href="#cb14-33" tabindex="-1"></a>                <span class="at">data =</span> arg1, </span>
+<span id="cb14-34"><a href="#cb14-34" tabindex="-1"></a>                <span class="at">class =</span> <span class="st">"integer"</span>, </span>
+<span id="cb14-35"><a href="#cb14-35" tabindex="-1"></a>                <span class="at">data.name =</span> <span class="cn">NULL</span>, <span class="co"># if NULL, the name displayed is arg1</span></span>
+<span id="cb14-36"><a href="#cb14-36" tabindex="-1"></a>                <span class="at">fun.name =</span> <span class="st">"FUNCTION_2"</span> <span class="co"># if NULL, no name displayed</span></span>
+<span id="cb14-37"><a href="#cb14-37" tabindex="-1"></a>    )</span>
+<span id="cb14-38"><a href="#cb14-38" tabindex="-1"></a>    <span class="cf">if</span>(tempo<span class="sc">$</span>problem <span class="sc">==</span> <span class="cn">TRUE</span>){</span>
+<span id="cb14-39"><a href="#cb14-39" tabindex="-1"></a>        <span class="fu">cat</span>(<span class="fu">paste0</span>(<span class="st">"</span><span class="sc">\n\n</span><span class="st">================</span><span class="sc">\n\n</span><span class="st">"</span>, tempo<span class="sc">$</span>text, <span class="st">"</span><span class="sc">\n\n</span><span class="st">================</span><span class="sc">\n\n</span><span class="st">"</span>))</span>
+<span id="cb14-40"><a href="#cb14-40" tabindex="-1"></a>    }</span>
+<span id="cb14-41"><a href="#cb14-41" tabindex="-1"></a>}</span>
+<span id="cb14-42"><a href="#cb14-42" tabindex="-1"></a><span class="fu">fun2</span>(<span class="at">arg1 =</span> vec1) <span class="co"># error message with the name of the function, because arg1 requires a vector of integers</span></span></code></pre></div>
 <p><br></p>
 </div>
 <div class="section level3">
