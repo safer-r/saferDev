@@ -178,7 +178,7 @@ get_message <- function(
     )
     tempo.log <- ! base::sapply(base::lapply(tempo.arg, FUN = get, env = base::sys.nframe(), inherit = FALSE), FUN = function(x){
         if(base::is.null(x)){
-            return(TRUE) # for character argument that can also be NULL, if NULL -> considered as character
+            base::return(TRUE) # for character argument that can also be NULL, if NULL -> considered as character
         }else{
             base::all(base::mode(x) == "character", na.rm = TRUE)
         }

@@ -60,3 +60,13 @@ colons_check(
 )
 ```
 <br>
+
+### Sophisticated example
+```{r, echo = TRUE, error = TRUE}
+source("https://raw.githubusercontent.com/safer-r/saferDev/main/dev/other/test.R")
+colons_check(
+    x = test, # a function name, written without quotes and brackets
+    safer_check = TRUE # Single logical value. Perform some "safer" checks (see https://github.com/safer-r) ?
+)
+```
+<br>

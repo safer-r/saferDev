@@ -216,6 +216,20 @@ fun1 <- function(arg1){
     }
 }
 fun1(arg1 = vec4) # error message because arg1 requires a vector of integers
+fun2 <- function(arg1){
+    tempo <- arg_check(
+                data = arg1, 
+                class = "integer", 
+                data.name = NULL, # if NULL, the name displayed is arg1
+                fun.name = "FUNCTION_2" # if NULL, no name displayed
+    )
+    if(tempo$problem == TRUE){
+        cat(paste0("\n\n================\n\n", tempo$text, "\n\n================\n\n"))
+    }
+}
+fun2(arg1 = vec1) # error message with the name of the function, because arg1 requires a vector of integers
+
+
 ```
 <br>
 
