@@ -138,190 +138,6 @@ colons_check <- function(
     # end second round of checking and data preparation
 
     # main code
-    has_odd_number_of_quotes <- function(
-        input_string, 
-        pattern = '"'
-    ){
-        # AIM
-        # determine if a string has a odd number of quotes
-        # ARGUMENTS
-        # input_string: single strings
-        # pattern: either '"' or "'"
-        # RETURN
-        # TRUE or FALSE
-        # DEBUGGING
-        # input_string = 'This is a "test" string with "even" quotes' ; pattern = '"'
-        # input_string = "This is a 'test' string with 'even' quotes" ; pattern = "'"
-        # Count the number of quote characters
-        quote_count <- base::gregexpr(pattern, input_string)[[1]]
-        if (quote_count[1] == -1) {
-            quote_count <- 0
-        } else {
-            # Length of the vector gives the count of quotes
-            quote_count <- base::length(quote_count)
-        }
-        # Check if the count of quotes is odd
-        output <- quote_count %% 2 == 1
-        base::return(output)
-    }
-
-    extract_all <- function(
-        text, 
-        pattern
-    ){
-        # AIM
-        # extract all function names
-        # ARGUMENTS
-        # text: vector of strings
-        # pattern: regex to extract function names
-        # RETURN
-        # A list containing the functions names, each compartment being one of the string of the input vector
-        # DEBUGGING
-        # text = ini[19] ; pattern = pattern1
-        # Find all matches, including trailing '('
-        matches <- base::gregexpr(pattern = pattern, text = text, perl = TRUE)
-        matched_strings <- base::regmatches(x = text, m = matches)[[1]]
-        # Remove trailing '(' from each match
-        result <- base::sub(pattern = "\\s*\\($", replacement = "", x = matched_strings, perl = TRUE)
-        base::return(result)
-    }
-
-    create_message <- function(
-        list.fun, 
-        list.fun.uni, 
-        list.line.nb, 
-        ini, 
-        arg.user.setting, 
-        function.name, 
-        package.name, 
-        text,
-        internal_fun_names
-    ){
-        # AIM
-        # create the message for the clons_check() function
-        # ARGUMENTS
-        # list.fun: list of names of all the basic functions
-        # list.fun.uni: vector of all the unique function names
-        # list.line.nb: vector of corresponding line number
-        # ini: vector of string of the initial function code analyzed
-        # arg.user.setting: list of arg user settings
-        # function.name: function name
-        # package.name: package name
-        # text: either "BASIC" or "OTHER"
-        # internal_fun_names: vector of string of names of internal functions in the function code analyzed
-        # RETURN
-        # A list 
-        # $output.cat: the message (string)
-        # colon_not_here: logical vector. Does list.fun contain function names without :: or ::: ?
-        # DEBUGGING
-        # list.fun = in_basic_fun ; list.fun.uni = in_basic_fun_uni ; list.line.nb = in_basic_code_line_nb ; ini = ini ; arg.user.setting = arg.user.setting ; function.name = function.name ; package.name = package.name ; text = "BASIC" ; internal_fun_names = internal_fun_names
-        # list.fun = in_other_fun ; list.fun.uni = in_other_fun_uni ; list.line.nb = in_other_code_line_nb ; ini = ini ; arg.user.setting = arg.user.setting ; function.name = function.name ; package.name = package.name ; text = "OTHER" ; internal_fun_names = internal_fun_names
-        if(base::length(text) != 1 & base::any( ! text %in% base::c("BASIC", "OTHER"))){
-            tempo.cat <- base::paste0("INTERNAL ERROR 1 IN ", function.name, " OF THE ", package.name, " PACKAGE\nTHE text ARGUMENT OF create_message MUST BE \"BASIC\" OR \"OTHER\".\nTHE PROBLEM IS:\n",
-                base::paste(text, collapse = "\n"))
-            base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
-        }
-        pattern2 <- base::paste(base::paste0("(?<![A-Za-z0-9._])", list.fun.uni, "\\s*\\("), collapse = "|") # to split string according to basic function name as splitter. Pattern (?<![A-Za-z0-9._]) means "must not be preceeded by any alphanum or .or _
-        pattern3 <- base::paste(base::paste0("(?<![A-Za-z0-9._])", list.fun.uni, "\\s*\\($"), collapse = "|") # same as pattern2 but used to know if the seeked function is at the end of the string
-        basic_ini <- ini[list.line.nb]
-        res <- base::strsplit(x = basic_ini, split = pattern2, perl = TRUE) # in res, all the strings should finish by ::
-        tempo.log <- ! base::grepl(x = basic_ini, pattern = pattern3, perl = TRUE) # strings of basic_ini that does not finish by the function name
-        # in each compartment of res, the last split section is removed because nothing to test at the end (end of code)
-        if(base::sum(tempo.log, na.rm = TRUE) > 0){
-            res[tempo.log] <- base::lapply(X = res[tempo.log], FUN = function(x){x[-base::length(x)]})
-        }
-        # end in each compartment of res, the last split section is removed because nothing to test at the end (end of code)
-        res2 <- base::lapply(X = res, FUN = function(x){base::substr(x, base::nchar(x)-1, base::nchar(x))}) # base::nchar(x)-1 takes only :: if the strings ends by :::
-        base::names(res2) <- NULL
-        if( ! base::all(base::sapply(X = res2, FUN = function(x){base::length(x)}) == base::sapply(X = res, FUN = function(x){base::length(x)}))){
-            tempo.cat <- base::paste0("INTERNAL ERROR 2 IN ", function.name, " OF THE ", package.name, " PACKAGE\nLENGTHS SHOULD BE IDENTICAL\nres2: ", base::paste(base::sapply(X = res2, FUN = function(x){base::length(x)}), collapse = " "), "\nres: ", base::paste(base::sapply(X = res, FUN = function(x){base::length(x)}), collapse = " "))
-            base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
-        }
-        colon_not_here <- base::lapply(X = res2, FUN = function(x){ ! x %in% "::"}) # no need to check for ":::" because base::nchar(x)-1 takes only :: if the strings ends by :::
-        if( ! base::all(base::sapply(X = res2, FUN = function(x){base::length(x)}) == base::sapply(X = colon_not_here, FUN = function(x){base::length(x)}))){
-            tempo.cat <- base::paste0("INTERNAL ERROR 3 IN ", function.name, " OF THE ", package.name, " PACKAGE\nLENGTHS SHOULD BE IDENTICAL\nres2: ", base::paste(base::sapply(X = res2, FUN = function(x){base::length(x)}), collapse = " "), "\ncolon_not_here: ", base::paste(base::sapply(X = colon_not_here, FUN = function(x){base::length(x)}), collapse = " "))
-            base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
-        }
-        if(base::any(base::unlist(colon_not_here))){
-            col1 <- as.vector(base::unlist(base::mapply(FUN = function(x, y){base::rep(y, base::sum(x))}, x = colon_not_here, y = list.line.nb)))
-            col2 <- as.vector(base::unlist(base::mapply(FUN = function(x, y){y[x]}, x = colon_not_here, y = list.fun)))
-            col3 <- as.vector(base::unlist(base::mapply(FUN = function(x, y){y[x]}, x = colon_not_here, y = res)))
-            if( ! (base::length(col1) == base::length(col2) & base::length(col1) == base::length(col3) & base::length(col2) == base::length(col3))){
-                tempo.cat <- base::paste0("INTERNAL ERROR 4 IN ", function.name, " OF THE ", package.name, " PACKAGE\nLENGTHS OF col1 (", base::length(col1), "), col2 (", base::length(col2), "), AND col3 (", base::length(col3), "), SHOULD BE EQUAL\n")
-                base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
-            }
-            # removal of a$fun() pattern
-            if(base::length(col1) > 0){
-                tempo.log <- base::grepl(x = col3, pattern = "[a-zA-Z.][a-zA-Z0-9._]* *\\$ *") 
-                if(base::any(tempo.log, na.rm = TRUE)){
-                    col1 <- col1[ ! tempo.log]
-                    col2 <- col2[ ! tempo.log]
-                    col3 <- col3[ ! tempo.log]
-                }
-            }else{
-                colon_not_here <- FALSE
-                output.cat <- NULL
-            }
-            # end removal of a$fun() pattern
-            # removal of functions between quotes
-            if(base::length(col1) > 0){
-                tempo.ini.order <- 1:base::length(col1) # to recover the initial order at the end
-                tempo.order <- base::order(col2) # order according to function name
-                tempo.ini.order <- tempo.ini.order[tempo.order]
-                tempo.col1 <- col1[tempo.order] # reorder to work only once with duplicated functions
-                tempo.col2 <- col2[tempo.order] # reorder to work only once with duplicated functions
-                tempo.col3 <- col3[tempo.order] # reorder to work only once with duplicated functions
-                tempo.ini <- ini
-                pos.rm <- NULL # positions to remove (functions between quotes)
-                for(i3 in 1:base::length(tempo.col1)){
-                    lines.split <- base::strsplit(tempo.ini[tempo.col1[i3]], split = tempo.col2[i3])[[1]][1]
-                    # if odds number of quotes, it means that # has broken the string in the middle of a quoted part
-                    double.quote.test <- has_odd_number_of_quotes(input_string = lines.split, pattern = '"') # here FALSE means even number of quotes, thus that the function is not between quotes, thus has to be kept. TRUE means that the function is between quotes, thus has to be removed
-                    simple.quote.test <- has_odd_number_of_quotes(input_string = lines.split, pattern = "'") # idem
-                    odds.quotes.log <- double.quote.test |  simple.quote.test
-                    if(odds.quotes.log == TRUE){
-                        pos.rm <- base::c(pos.rm, i3)
-                    }else{
-                        pos.rm <- base::c(pos.rm, NA) #becomes double if integer added, otherwise remains logical. Thus, do not use any()
-                    }
-                    tempo.ini[tempo.col1[i3]] <- base::sub(pattern = tempo.col2[i3], replacement = "", x = tempo.ini[tempo.col1[i3]], ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE) # remove the first fonction in the line, in case of identical function names in a code line. Like, that, the next round for the next same function can be easily tested for "between quotes" 
-                }
-                # initial order
-                pos.rm.fin <- pos.rm[order(tempo.ini.order)]
-                pos.rm.fin2 <- pos.rm.fin[ ! is.na(pos.rm.fin)]
-                # end initial order
-                if(base::length(pos.rm.fin2) > 0){
-                    col1 <- col1[-pos.rm.fin2]
-                    col2 <- col2[-pos.rm.fin2]
-                    col3 <- col3[-pos.rm.fin2]
-                }
-            }
-            # end removal of functions between quotes
-            if(base::length(col1) > 0){
-                tempo.pos <- base::paste0(col1, "\t", col2, "\t\t", col3)
-                output.cat <- base::paste0(
-                    "INSIDE ", arg.user.setting$x, ", SOME :: OR ::: ARE MISSING AT ", text, " FUNCTION POSITIONS:\n\n", 
-                    "LINE\tFUN\t\tSTRING_BEFORE\n",
-                    base::paste(tempo.pos, collapse = "\n")
-                )
-            }else{
-                output.cat <- NULL
-                colon_not_here <- FALSE
-            }
-        }else{
-            output.cat <- NULL
-        }
-        if(text == "OTHER" & base::length(internal_fun_names) > 0){
-            output.cat <- base::paste0(
-                "INSIDE ", arg.user.setting$x, ", INTERNAL FUNCTION", base::ifelse(base::length(internal_fun_names) == 1, "", "S"), " DETECTED:\n", 
-                base::paste(internal_fun_names, collapse = "\n"), 
-                "\n\n", 
-                output.cat
-            )
-        }
-        base::return(base::list(output.cat = output.cat, colon_not_here = base::unlist(colon_not_here)))
-    }
-
     # recovering the basic functions of R
     s <- base::c("package:stats", "package:graphics",  "package:grDevices", "package:utils", "package:datasets", "package:methods", "Autoloads", "package:base") # basic base::search() scope
     if(base::any( ! s %in% base::search())){
@@ -361,8 +177,8 @@ colons_check <- function(
             while.loop <- TRUE
             while(while.loop == TRUE & count < base::length(lines.split)){
                 # if odds number of quotes, it means that # has broken the string in the middle of a quoted part
-                double.quote.test <- has_odd_number_of_quotes(input_string = tempo.line, pattern = '"') # here FALSE means even number of quotes, thus that # is not between quotes, thus has to be removed. TRUE means that # is between quotes, thus has to be kept
-                simple.quote.test <- has_odd_number_of_quotes(input_string = tempo.line, pattern = "'") # idem
+                double.quote.test <- .has_odd_number_of_quotes(input_string = tempo.line, pattern = '"') # here FALSE means even number of quotes, thus that # is not between quotes, thus has to be removed. TRUE means that # is between quotes, thus has to be kept
+                simple.quote.test <- .has_odd_number_of_quotes(input_string = tempo.line, pattern = "'") # idem
                 odds.quotes.log <- double.quote.test |  simple.quote.test # lines to keep among commented lines
                 if(odds.quotes.log == TRUE){
                     count <- count + 1
@@ -401,14 +217,14 @@ colons_check <- function(
     }
     # end trick to deal with end of lines between the name of the function and "("
     # all function names in x
-    pattern1 <- "[a-zA-Z.][a-zA-Z0-9._]*\\s*\\(" # pattern to detect a function name, a$fun( is removed in extract_all()
+    pattern1 <- "[a-zA-Z.][a-zA-Z0-9._]*\\s*\\(" # pattern to detect a function name, a$fun( is removed in .extract_all()
     # I could have used [\\s\\r\\n]* meaning any space or end of line or carriage return between the name and "(" but finally, another strategy used
     # - `this does not work well, as it does not take dots: "\\b[a-zA-Z\\.\\_]{1}[a-zA-Z0-9\\.\\_]+\\b", because of `\\b`: These are word boundaries. It ensures that the pattern matches only a complete word and not a part of a word.
     # - `[a-zA-Z.]{1}`: This portion of the pattern matches any uppercase letter (`A-Z`), lowercase letter (`a-z`), or a period (`.`) a single time ({1}).
     # - `[a-zA-Z0-9._]*`: This part of the pattern matches any uppercase letter (`A-Z`), lowercase letter (`a-z`), number (`0-9`), period (`.`), or underscore (`_`), repeated one or more times (`+`). This represents the possible characters inside an R function name.
     # - `\\b`: Again, these are word boundaries, making sure the pattern captures the entire word and not just part of it.
     # -  not used: `(?= *\\()`: This is a lookahead assertion. It checks that the preceding pattern is followed by any spaces and a parenthesis (`\\(`), but doesn't include the spaces and parenthesis in the match. This is because, in R code, a function call is usually followed by a parenthesis, but the parenthesis is not part of the function name.
-    fun_name <- base::lapply(ini, FUN = function(x){extract_all(text = x, pattern = pattern1)}) # recover all the function names, followed by "(", present in ini
+    fun_name <- base::lapply(ini, FUN = function(x){.extract_all(text = x, pattern = pattern1)}) # recover all the function names, followed by "(", present in ini
     fun_name_wo_op <- base::lapply(fun_name, FUN = function(x){x[ ! x %in% base::c("function", "if", "for", "while", "repeat")]}) # removal of special functions
     tempo.log <- base::sapply(fun_name_wo_op, FUN = function(x){base::length(x) == 0}) # detection of string with empty function names
     fun_name_wo_op <- fun_name_wo_op[ ! tempo.log] # removal of empty string
@@ -444,7 +260,7 @@ colons_check <- function(
     # end other function names in x
     # analyse of :: before basic functions in x
     if(base::length(in_basic_fun_uni) > 0){
-        tempo <- create_message(
+        tempo <- .create_message(
             list.fun = in_basic_fun, 
             list.fun.uni = in_basic_fun_uni, 
             list.line.nb = in_basic_code_line_nb, 
@@ -464,7 +280,7 @@ colons_check <- function(
     # end analyse of :: before basic functions in x
     # analyse of :: before other functions in x
     if(base::length(in_other_fun_uni) > 0){
-        tempo <- create_message(
+        tempo <- .create_message(
             list.fun = in_other_fun, 
             list.fun.uni = in_other_fun_uni, 
             list.line.nb = in_other_code_line_nb, 
@@ -485,7 +301,7 @@ colons_check <- function(
     if( ( ! base::any(tempo.log)) & ! base::any(tempo.log.b)){
         base::cat("\n\nEVERYTHING SEEMS CLEAN\n\n")
     }else{
-        tempo.cat <- base::paste0(base::ifelse(base::is.null(output.cat), base::paste0("INSIDE ", arg.user.setting$x, ", EVERYTHING SEEMS CLEAN FOR R BASIC FUNCTIONS\n\n"), base::paste0(output.cat, base::ifelse(base::is.null(output.cat.b), "", "\n\n"))), output.cat.b)
+        tempo.cat <- base::paste0(base::ifelse(base::is.null(output.cat), base::paste0("INSIDE ", arg.user.setting$x, "(), EVERYTHING SEEMS CLEAN FOR R BASIC FUNCTIONS\n\n"), base::paste0(output.cat, base::ifelse(base::is.null(output.cat.b), "", "\n\n"))), output.cat.b)
         base::cat(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"))
     }
     # end main code
