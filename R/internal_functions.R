@@ -335,7 +335,7 @@
     base::return(base::list(col1 = col1, col2 = col2, col3 = col3))
 }
 
-#' @title .create_message
+#' @title .colons_check_message
 #' @description
 #' Create the message for the colons_check() function.
 #' @param list.fun list of names of all the functions.
@@ -354,7 +354,7 @@
 #' @author Gael Millot <gael.millot@pasteur.fr>
 #' @keywords internal
 #' @rdname internal_function
-.create_message <- function(
+.colons_check_message <- function(
     list.fun, 
     list.fun.uni, 
     list.line.nb, 

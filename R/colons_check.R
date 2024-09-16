@@ -88,7 +88,7 @@ colons_check <- function(
     # end other function names in x
     # analyse of :: before basic functions in x
     if(base::length(in_basic_fun_uni) > 0){
-        tempo <- saferDev:::.create_message(
+        tempo <- saferDev:::.colons_check_message(
             list.fun = in_basic_fun, 
             list.fun.uni = in_basic_fun_uni, 
             list.line.nb = in_basic_code_line_nb, 
@@ -108,7 +108,7 @@ colons_check <- function(
     # end analyse of :: before basic functions in x
     # analyse of :: before other functions in x
     if(base::length(in_other_fun_uni) > 0){
-        tempo <- saferDev:::.create_message(
+        tempo <- saferDev:::.colons_check_message(
             list.fun = in_other_fun, 
             list.fun.uni = in_other_fun_uni, 
             list.line.nb = in_other_code_line_nb, 

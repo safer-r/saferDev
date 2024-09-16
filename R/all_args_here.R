@@ -48,23 +48,23 @@ all_args_here <- function(
     arg.user.setting <- base::as.list(x = base::match.call(expand.dots = FALSE))[-1] # list of the argument settings (excluding default values not provided by the user)
     # end function name
     # main code
-    out <- saferDev:::.functions_detect(
+    out <<- saferDev:::.functions_detect(
         x = x, 
         safer_check = safer_check,
         arg.user.setting = arg.user.setting, 
         function.name = function.name, 
         package.name = package.name
     )
-    list.line.nb <- out$code_line_nb_wo_op # vector of line numbers in ini
-    fun <-  out$fun_name_wo_op # list of function names for each line of ini
+    code_line_nb_wo_op <- out$code_line_nb_wo_op # vector of line numbers in ini
+    fun_name_wo_op <-  out$fun_name_wo_op # list of function names for each line of ini
     ini <- out$ini # vector of strings of the tested function code
     if(length(list.line.nb) > 0){
-        if(base::length(fun) != base::length(list.line.nb)){
-            tempo.cat <- base::paste0("INTERNAL ERROR 2 IN ", function.name, " OF THE ", package.name, " PACKAGE\nLENGTHS SHOULD BE IDENTICAL\nfun: ", base::length(fun), "\nlist.line.nb: ", base::length(list.line.nb))
+        if(base::length(fun_name_wo_op) != base::length(code_line_nb_wo_op)){
+            tempo.cat <- base::paste0("INTERNAL ERROR 2 IN ", function.name, " OF THE ", package.name, " PACKAGE\nLENGTHS SHOULD BE IDENTICAL\nfun_name_wo_op: ", base::length(fun_name_wo_op), "\ncode_line_nb_wo_op: ", base::length(code_line_nb_wo_op))
             base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
         }
-        col1 <- base::as.vector(base::unlist(base::mapply(FUN = function(x, y){base::rep(y, base::length(x[[]]))}, x = fun, y = list.line.nb)))
-        col2 <- base::as.vector(base::unlist(fun))
+        col1 <- base::as.vector(base::unlist(base::mapply(FUN = function(x, y){base::rep(y, base::length(x[[]]))}, x = fun_name_wo_op, y = code_line_nb_wo_op)))
+        col2 <- base::as.vector(base::unlist(fun_name_wo_op))
         col3 <- base::as.vector(base::unlist(base::mapply(FUN = function(x, y){y[x]}, x = colon_not_here, y = res)))
     }
 
