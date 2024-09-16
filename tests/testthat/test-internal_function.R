@@ -1,25 +1,41 @@
-test_that(".pack_and_function_check() and .base_function_check()", {
-    # .pack_and_function_check throws an error when fun argument doesn't contain ::
-    expect_error(.pack_and_function_check(fun = "geom_point", lib.path = "/path/to/lib", external.function.name = "test_function", external.package.name = "testthat"))
-    
-    
-    # .pack_and_function_check throws an error when package specified in fun is not installed
-    expect_error(.pack_and_function_check(fun = "nonexistent_package::some_function", lib.path = "/path/to/lib", external.function.name = "test_function", external.package.name = "testthat"))
-    
-    
-    # .pack_and_function_check throws an error when function specified in fun is not available in the specified package"
-    
-    # .pack_and_function_check throws an error when package specified in fun is installed
-    expect_error(.pack_and_function_check(fun = "ggplot2::geom_point", lib.path = "/path/to/lib", external.function.name = "test_function", external.package.name = "testthat"))
-    
-    # Tests for .base_function_check function
-    # .base_function_check throws an error when reserved objects are present outside base package"
-    expect_error(.base_function_check(external.function.name = "test_function", external.package.name = "testthat"))
+test_that("test .internal_function.R", {
 
-    # .base_function_check throws an error when reserved objects are present outside base package"
-    expect_error(.base_function_check(external.function.name = "geom_point", external.package.name = "ggplot2"))
+    # .pack_and_function_check()
+    fun_wrong1 <- "geom_point"  # incorrect input
+    fun_wrong2 <- "ggplot2::non_existent_function"  # incorrect function name
+    fun_good <- "ggplot2::geom_point" # correct input
+    path_wrong <- "path/to/library"  # incorrect input
+    path_good <- NULL  # incorrect input
 
-    # .base_function_check throws an error when reserved objects are present outside base package"
-    expect_error(.base_function_check(external.function.name = "clusterApply", external.package.name = "parallel"))
+    expect_no_error(.pack_and_function_check(
+        fun = fun_good, 
+        lib.path = path_good,
+        external.function.name = "FUN1",
+        external.package.name = "P1"
+    ))
+    expect_error(.pack_and_function_check(
+        fun = fun_wrong1, 
+        lib.path = path_good,
+        external.function.name = "FUN1",
+        external.package.name = "P1"
+    ))
+    expect_error(.pack_and_function_check(
+        fun = fun_wrong2, 
+        lib.path = path_good,
+        external.function.name = "FUN1",
+        external.package.name = "P1"
+    ))
+    expect_error(.pack_and_function_check(
+        fun = fun_good, 
+        lib.path = path_wrong,
+        external.function.name = "FUN1",
+        external.package.name = "P1"
+    ))
+
+    # .base_op_check()
+    expect_no_error(.base_op_check(
+        external.function.name = "FUN1",
+        external.package.name = "P1"
+    ))
     
 })
