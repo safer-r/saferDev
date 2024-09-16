@@ -221,7 +221,7 @@
 }
 
 
-#' @title .extract_all
+#' @title .extract_all_fun_names
 #' @description
 #' Extract all function names.
 #' @param text A vector of strings.
@@ -230,11 +230,11 @@
 #' @author Gael Millot <gael.millot@pasteur.fr>
 #' @examples
 #' \dontrun{ # Example that shouldn't be run because this is an internal function
-#' .extract_all(text = 'This is a test string with sum()', pattern = "[a-zA-Z.][a-zA-Z0-9._]*\\s*\\(")
+#' .extract_all_fun_names(text = 'This is a test string with sum()', pattern = "[a-zA-Z.][a-zA-Z0-9._]*\\s*\\(")
 #' }
 #' @keywords internal
 #' @rdname internal_function
-.extract_all <- function(
+.extract_all_fun_names <- function(
     text, 
     pattern
 ){
@@ -659,14 +659,14 @@
     }
     # end trick to deal with end of lines between the name of the function and "("
     # all function names in x
-    pattern1 <- "[a-zA-Z.][a-zA-Z0-9._]*\\s*\\(" # pattern to detect a function name, a$fun( is removed in .extract_all()
+    pattern1 <- "[a-zA-Z.][a-zA-Z0-9._]*\\s*\\(" # pattern to detect a function name, a$fun( is removed in .extract_all_fun_names()
     # I could have used [\\s\\r\\n]* meaning any space or end of line or carriage return between the name and "(" but finally, another strategy used
     # - `this does not work well, as it does not take dots: "\\b[a-zA-Z\\.\\_]{1}[a-zA-Z0-9\\.\\_]+\\b", because of `\\b`: These are word boundaries. It ensures that the pattern matches only a complete word and not a part of a word.
     # - `[a-zA-Z.]{1}`: This portion of the pattern matches any uppercase letter (`A-Z`), lowercase letter (`a-z`), or a period (`.`) a single time ({1}).
     # - `[a-zA-Z0-9._]*`: This part of the pattern matches any uppercase letter (`A-Z`), lowercase letter (`a-z`), number (`0-9`), period (`.`), or underscore (`_`), repeated one or more times (`+`). This represents the possible characters inside an R function name.
     # - `\\b`: Again, these are word boundaries, making sure the pattern captures the entire word and not just part of it.
     # -  not used: `(?= *\\()`: This is a lookahead assertion. It checks that the preceding pattern is followed by any spaces and a parenthesis (`\\(`), but doesn't include the spaces and parenthesis in the match. This is because, in R code, a function call is usually followed by a parenthesis, but the parenthesis is not part of the function name.
-    fun_name <- base::lapply(ini, FUN = function(x){.extract_all(text = x, pattern = pattern1)}) # recover all the function names, followed by "(", present in ini
+    fun_name <- base::lapply(ini, FUN = function(x){saferDev:::.extract_all_fun_names(text = x, pattern = pattern1)}) # recover all the function names, followed by "(", present in ini
     fun_name_wo_op <- base::lapply(fun_name, FUN = function(x){x[ ! x %in% base::c("function", "if", "for", "while", "repeat")]}) # removal of special functions
     tempo.log <- base::sapply(fun_name_wo_op, FUN = function(x){base::length(x) == 0}) # detection of string with empty function names
     fun_name_wo_op <- fun_name_wo_op[ ! tempo.log] # removal of empty string
