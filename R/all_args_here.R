@@ -46,7 +46,6 @@ all_args_here <- function(
     }
     arg.names <- base::names(base::formals(fun = base::sys.function(base::sys.parent(n = 2)))) # names of all the arguments
     arg.user.setting <- base::as.list(x = base::match.call(expand.dots = FALSE))[-1] # list of the argument settings (excluding default values not provided by the user)
-    # arg.user.setting <<- arg.user.setting
     # end function name
     # main code
     out <- saferDev:::.functions_detect(

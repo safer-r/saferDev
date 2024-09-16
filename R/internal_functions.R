@@ -323,8 +323,8 @@
             tempo.ini[tempo.col1[i3]] <- base::sub(pattern = tempo.col2[i3], replacement = "", x = tempo.ini[tempo.col1[i3]], ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE) # remove the first fonction in the line, in case of identical function names in a code line. Like, that, the next round for the next same function can be easily tested for "between quotes" 
         }
         # initial order
-        pos.rm.fin <- pos.rm[order(tempo.ini.order)]
-        pos.rm.fin2 <- pos.rm.fin[ ! is.na(pos.rm.fin)]
+        pos.rm.fin <- pos.rm[base::order(tempo.ini.order)]
+        pos.rm.fin2 <- pos.rm.fin[ ! base::is.na(pos.rm.fin)]
         # end initial order
         if(base::length(pos.rm.fin2) > 0){
             col1 <- col1[-pos.rm.fin2]
@@ -332,7 +332,7 @@
             col3 <- col3[-pos.rm.fin2]
         }
     }
-    base::return(list(col1 = col1, col2 = col2, col3 = col3))
+    base::return(base::list(col1 = col1, col2 = col2, col3 = col3))
 }
 
 #' @title .create_message
@@ -419,7 +419,7 @@
             base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
         }
         # removal of functions between quotes and after $
-        col_res <<- saferDev:::.clean_functions(col1 = col1, col2 = col2, col3 = col3, ini = ini)
+        col_res <- saferDev:::.clean_functions(col1 = col1, col2 = col2, col3 = col3, ini = ini)
         # end removal of functions between quotes and after $
         if(base::length(col_res$col1) > 0){
             tempo.pos <- base::paste0(col_res$col1, "\t", col_res$col2, "\t\t", col_res$col3)
@@ -678,7 +678,7 @@
     # fun_name_wo_op_uni <- base::unlist(base::unique(fun_name_wo_op)) # in case
     # end all function names in x
     #### output
-    output <- list(
+    output <- base::list(
         ini = ini, 
         fun = fun, 
         fun_name_wo_op = fun_name_wo_op, 
