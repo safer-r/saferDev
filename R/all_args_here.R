@@ -58,41 +58,138 @@ all_args_here <- function(
     code_line_nb_wo_op <- out$code_line_nb_wo_op # vector of line numbers in ini
     fun_name_wo_op <-  out$fun_name_wo_op # list of function names for each line of ini
     ini <- out$ini # vector of strings of the tested function code
-    if(length(list.line.nb) > 0){
-        if(base::length(fun_name_wo_op) != base::length(code_line_nb_wo_op)){
-            tempo.cat <- base::paste0("INTERNAL ERROR 2 IN ", function.name, " OF THE ", package.name, " PACKAGE\nLENGTHS SHOULD BE IDENTICAL\nfun_name_wo_op: ", base::length(fun_name_wo_op), "\ncode_line_nb_wo_op: ", base::length(code_line_nb_wo_op))
-            base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
+    fun_1_line <- base::paste(out$ini, collapse = ";") # assemble the code of the function tested (without comments) in a single line
+    # removal of all the ) between quotes
+    fun_1_line_split <- base::strsplit(fun_1_line, split = "\\)")[[1]]
+    tempo_output_1_line <- fun_1_line_split[1]
+    for(i1 in 2:base::length(fun_1_line_split)){
+        # if odds number of quotes, it means that # has broken the string in the middle of a quoted part
+        double.quote.test <- saferDev:::.has_odd_number_of_quotes(input_string = tempo_output_1_line, pattern = '"') # here FALSE means even number of quotes, thus that ")" is not between quotes, thus has to be kept. TRUE means that ")" is between quotes, thus has to be removed
+        simple.quote.test <- saferDev:::.has_odd_number_of_quotes(input_string = tempo_output_1_line, pattern = "'") # idem
+        odds.quotes.log <- double.quote.test |  simple.quote.test # remove ")" ?
+        if(odds.quotes.log == TRUE){
+            tempo_output_1_line <- paste0(tempo_output_1_line, fun_1_line_split[i1])
+        }else{
+            tempo_output_1_line <- paste0(tempo_output_1_line, ")", fun_1_line_split[i1])
         }
-        col1 <- base::as.vector(base::unlist(base::mapply(FUN = function(x, y){base::rep(y, base::length(x[[]]))}, x = fun_name_wo_op, y = code_line_nb_wo_op)))
-        col2 <- base::as.vector(base::unlist(fun_name_wo_op))
-        col3 <- base::as.vector(base::unlist(base::mapply(FUN = function(x, y){y[x]}, x = colon_not_here, y = res)))
     }
-
-
-
-    pattern2 <- base::paste(base::paste0("(?<![A-Za-z0-9._])", list.fun.uni, "\\s*\\("), collapse = "|") # to split string according to function name as splitter. Pattern (?<![A-Za-z0-9._]) means "must not be preceeded by any alphanum or .or _
-    pattern3 <- base::paste(base::paste0("(?<![A-Za-z0-9._])", list.fun.uni, "\\s*\\($"), collapse = "|") # same as pattern2 but used to know if the seeked function is at the end of the string
-    basic_ini <- ini[list.line.nb]
-    res <- base::strsplit(x = basic_ini, split = pattern2, perl = TRUE) # in res, all the strings should finish by ::
-    tempo.log <- ! base::grepl(x = basic_ini, pattern = pattern3, perl = TRUE) # strings of basic_ini that does not finish by the function name
-    # in each compartment of res, the last split section is removed because nothing to test at the end (end of code)
-    if(base::sum(tempo.log, na.rm = TRUE) > 0){
-        res[tempo.log] <- base::lapply(X = res[tempo.log], FUN = function(x){x[-base::length(x)]})
+    # end removal of all the ) between quotes
+    # removal of all the ( between quotes
+    fun_1_line_split2 <- base::strsplit(tempo_output_1_line, split = "\\(")[[1]]
+    output_1_line <- fun_1_line_split2[1]
+    for(i1 in 2:base::length(fun_1_line_split2)){
+        # if odds number of quotes, it means that # has broken the string in the middle of a quoted part
+        double.quote.test <- saferDev:::.has_odd_number_of_quotes(input_string = output_1_line, pattern = '"') # here FALSE means even number of quotes, thus that ")" is not between quotes, thus has to be kept. TRUE means that "(" is between quotes, thus has to be removed
+        simple.quote.test <- saferDev:::.has_odd_number_of_quotes(input_string = output_1_line, pattern = "'") # idem
+        odds.quotes.log <- double.quote.test |  simple.quote.test # remove "(" ?
+        if(odds.quotes.log == TRUE){
+            output_1_line <- paste0(output_1_line, fun_1_line_split2[i1])
+        }else{
+            output_1_line <- paste0(output_1_line, "(", fun_1_line_split2[i1])
+        }
     }
-    # end in each compartment of res, the last split section is removed because nothing to test at the end (end of code)
-    res2 <- base::lapply(X = res, FUN = function(x){base::substr(x, base::nchar(x)-1, base::nchar(x))}) # base::nchar(x)-1 takes only :: if the strings ends by :::
-    base::names(res2) <- NULL
-    if( ! base::all(base::sapply(X = res2, FUN = function(x){base::length(x)}) == base::sapply(X = res, FUN = function(x){base::length(x)}))){
-        tempo.cat <- base::paste0("INTERNAL ERROR 2 IN ", function.name, " OF THE ", package.name, " PACKAGE\nLENGTHS SHOULD BE IDENTICAL\nres2: ", base::paste(base::sapply(X = res2, FUN = function(x){base::length(x)}), collapse = " "), "\nres: ", base::paste(base::sapply(X = res, FUN = function(x){base::length(x)}), collapse = " "))
+    # end removal of all the ( between quotes
+    # recovery of the functions with written arguments inside ()
+    arg_string <- fun_name_wo_op # like fun_name_wo_op but for all what is between ()
+    open_paren_pos <- base::as.vector(base::gregexpr(pattern = "\\(", text = output_1_line)[[1]])
+    close_paren_pos <- base::as.vector(base::gregexpr(pattern = "\\)",  text = output_1_line)[[1]])
+    for(i1 in 1:base::length(fun_name_wo_op)){
+        for(i2 in 1:base::length(fun_name_wo_op[[i1]])){
+            pattern1 <- paste0(fun_name_wo_op[[i1]][i2], "[\\s\\r\\n]*\\(")
+            if(grepl(x = output_1_line, pattern = pattern1)){
+                fun_pos <- base::as.vector(base::gregexpr(pattern = pattern1,  text = output_1_line, perl = TRUE)[[1]][1]) # position of the 1st character of fun_name_wo_op[[i1]][i2] in output_1_line
+                fun_open_paren_pos <- open_paren_pos[open_paren_pos > fun_pos][1] # ( of the fonction
+                if(base::length(fun_open_paren_pos) != 1 | any(is.na(fun_open_paren_pos), na.rm = TRUE) | is.null(fun_open_paren_pos)){
+                    tempo.cat <- base::paste0("INTERNAL ERROR 2 IN ", function.name, " OF THE ", package.name, " PACKAGE\nfun_open_paren_pos SHOULD BE A SINGLE VALUE\nfun_open_paren_pos: ", base::paste(fun_open_paren_pos, collapse = " "))
+                    base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
+                }
+                # detection of the closing ) of the function
+                tempo_close_pos <- close_paren_pos[close_paren_pos > fun_open_paren_pos][1]
+                tempo_log <- open_paren_pos > fun_open_paren_pos & open_paren_pos < tempo_close_pos
+                if(any(tempo_log, na.rm = TRUE)){
+                    shift_pos <- sum(tempo_log, na.rm = TRUE) # number of () inside the function argument part
+                    fun_close_paren_pos <- close_paren_pos[which(close_paren_pos == tempo_close_pos) + shift_pos]
+                }else{
+                    fun_close_paren_pos <- tempo_close_pos
+                }
+                # end detection of the closing ) of the function
+                arg_string[[i1]][i2] <- substr(x = output_1_line, start = fun_pos, stop = fun_close_paren_pos) # add the "function(args)" string into arg_string
+            }else{
+                arg_string[[i1]][i2] <- NA
+            }
+            # substr(x = output_1_line, start = fun_pos, stop = fun_close_paren_pos) <- paste(rep(" ", nchar( arg_string[[i1]][i2])), collapse = "") # remove the first fonction in the line, in case of identical function names in a code line. Like, that, the next round for the next same function can be easily tested for "between quotes" 
+        }
+    }
+    # end recovery of the functions with written arguments inside ()
+    # preparation of columns
+    col1 <- base::as.vector(base::unlist(base::mapply(FUN = function(x, y){base::rep(y, base::length(x))}, x = fun_name_wo_op, y = code_line_nb_wo_op)))
+    col2 <- base::as.vector(base::unlist(fun_name_wo_op))
+    col3 <- base::as.vector(base::unlist(arg_string))
+    if( ! (base::length(col1) == base::length(col2) & base::length(col1) == base::length(col3) & base::length(col2) == base::length(col3))){
+        tempo.cat <- base::paste0("INTERNAL ERROR 4 IN ", function.name, " OF THE ", package.name, " PACKAGE\nLENGTHS OF col1 (", base::length(col1), "), col2 (", base::length(col2), "), AND col3 (", base::length(col3), "), SHOULD BE EQUAL\n")
         base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
     }
+    col_res <- saferDev:::.clean_functions(col1 = col1, col2 = col2, col3 = col3, ini = ini)
+    col1 <- col_res$col1 # line number
+    col2 <- col_res$col2 # function
+    col3 <- col_res$col3 # code inside ()
+    if( ! (base::length(col1) == base::length(col2) & base::length(col1) == base::length(col3) & base::length(col2) == base::length(col3))){
+        tempo.cat <- base::paste0("INTERNAL ERROR 4 IN ", function.name, " OF THE ", package.name, " PACKAGE\nLENGTHS OF col1 (", base::length(col1), "), col2 (", base::length(col2), "), AND col3 (", base::length(col3), "), SHOULD BE EQUAL\n")
+        base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
+    }
+    tempo.log <- base::as.vector(base::unlist(base::mapply(
+        FUN = function(x, y){
+            if( ! base::is.na(y)){
+                if(grepl(x = y, pattern = base::paste0("^", x, "[\\s\\r\\n]*\\(.*\\)$", perl = TRUE))){
+                    base::return(FALSE)
+                }else{
+                    base::return(TRUE)
+                }
+            }
+        }, 
+        x = col2, 
+        y = col3
+    )))
+    if(base::any(tempo.log, na.rm = TRUE)){
+        tempo.cat <- base::paste0("INTERNAL ERROR 4 IN ", function.name, " OF THE ", package.name, " PACKAGE\ncol3 MUST BE MADE OF STRINGS STARTING BY \"<FUNCTION_NAME>[\\s\\r\\n]*\\(\" AND FINISHING BY \")\":\n", , base::paste(col3, collapse = "\n"))
+        base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
+    }
+    # end preparation of columns
+    # two new columns for arg proposal
+    if( (base::length(col1) == 0)){
+        base::cat("\n\nEVERYTHING SEEMS CLEAN\n\n")
+    }else{
+        col4 <- NULL # all arguments of the function with default value
+        col5 <- NULL # 
+        col6 <- NULL # potential missing args with values
+        for(i2 in 1:base::length(col1)){
+            arg_full <- base::formals(fun = col2[i2])
+            if(base::is.null(arg_full)){
+                col4 <- base::c(col4, "")
+                col5 <- base::c(col5, "")
+            }else{
+                arg_full_names <- names(arg_full)
+                tempo.str <- base::sub(pattern =  base::paste0("^", col2[i2], "[\\s\\r\\n]*\\("), replacement = "", x = col3[i2], perl = TRUE) # removal of function anme and (
+                tempo.str <- base::sub(pattern =  "\\($", replacement = "", x = tempo.str, perl = FALSE) # removal of trailing )
+                tempo.split <- base::strsplit(x = tempo.str, split = ",")[[1]] # separation of args
 
+                for(i4 in 1:base::length(arg_full_names))
+                    pattern2 <- base::paste0("^[\\s\\r\\n]*", arg_full_names[i4], "[\\s\\r\\n]*=")
+                    tempo.log <- grepl(x = tempo.split, pattern = pattern2, perl = TRUE)
+                    if(base::any(tempo.log, na.rm = TRUE)){
 
-    a <- base::formals(fun = base::sys.function(base::sys.parent(n = 2)))
+                        caca <- TRUE
+                        # col3 = "gregexpr(pattern = base::paste0(pattern, \"\\\\#\"), text = text)" 
+                        # remplacer each inside function like paste0(pattern, \"\\\\#\") par ___1___ (checker existe pas), etc. 2, 3, in the string col3
+                        # I have no choice because of same imbricated functions (same aerguments) : paste0(paste0(, collapse = )) 
+                        # then split using "," or look if pattern2 present in the full string
 
+                    }
+            }
+        }
+    }
 
-
-
+    # end two new columns for arg proposal
     # end main code
     # output
     # warning output
