@@ -113,7 +113,7 @@
     # RETURN
     # An error message or nothing 
     # DEBUGGING
-    # external.function.name = "test" ; external.package.name = "p1"
+    # external.function.name = "f1" ; external.package.name = "p1"
     # main code
     reserved.objects <- base::c(
         "-", 
@@ -257,6 +257,84 @@
 
 
 
+#' @title .clean_functions
+#' @description
+#' Remove function names inside quotes or after $
+#' @param col1 vector of strings.
+#' @param col2 vector of strings of the code before the function name.
+#' @param col3 vector of strings of the function names.
+#' @param ini vector of string of the initial function code analyzed.
+#' @returns A list containing $col1, $col2 and $col3 cleaned from function names inside quotes or after $.
+#' @author Gael Millot <gael.millot@pasteur.fr>
+#' @examples
+#' \dontrun{ # Example that shouldn't be run because this is an internal function
+#' .clean_functions(col1, col2, col3)
+#' }
+#' @keywords internal
+#' @rdname internal_function
+.clean_functions <- function(
+    col1, 
+    col2,
+    col3,
+    ini
+){
+    # AIM
+    # remove function names inside quotes or after $
+    # ARGUMENTS
+    # col1: vector of integers of code line number
+    # col2: vector of strings of the code before the function name
+    # col3: vector of strings of the function names
+    # ini: vector of string of the initial function code analyzed.
+    # RETURN
+    # A list containing col1, col2 and col3 cleaned from function names inside quotes or after $
+    # DEBUGGING
+    # source("https://raw.githubusercontent.com/safer-r/saferDev/main/dev/other/test.R") ; col1 = c(15, 17) ; col2 = c("gregexpr", "regmatches") ; col3 = c("matches <- ",  "matched_strings <- " ) ; ini = utils::capture.output(test)
+    # removal of a$fun() pattern
+    if(base::length(col1) > 0){
+        tempo.log <- base::grepl(x = col3, pattern = "[a-zA-Z.][a-zA-Z0-9._]* *\\$ *") 
+        if(base::any(tempo.log, na.rm = TRUE)){
+            col1 <- col1[ ! tempo.log]
+            col2 <- col2[ ! tempo.log]
+            col3 <- col3[ ! tempo.log]
+        }
+    }
+    # end removal of a$fun() pattern
+    # removal of functions between quotes
+    if(base::length(col1) > 0){
+        tempo.ini.order <- 1:base::length(col1) # to recover the initial order at the end
+        tempo.order <- base::order(col2) # order according to function name
+        tempo.ini.order <- tempo.ini.order[tempo.order]
+        tempo.col1 <- col1[tempo.order] # reorder to work only once with duplicated functions
+        tempo.col2 <- col2[tempo.order] # reorder to work only once with duplicated functions
+        tempo.col3 <- col3[tempo.order] # reorder to work only once with duplicated functions
+        tempo.ini <- ini
+        pos.rm <- NULL # positions to remove (functions between quotes)
+        for(i3 in 1:base::length(tempo.col1)){
+            lines.split <- base::strsplit(tempo.ini[tempo.col1[i3]], split = tempo.col2[i3])[[1]][1]
+            # if odds number of quotes, it means that # has broken the string in the middle of a quoted part
+            double.quote.test <- saferDev:::.has_odd_number_of_quotes(input_string = lines.split, pattern = '"') # here FALSE means even number of quotes, thus that the function is not between quotes, thus has to be kept. TRUE means that the function is between quotes, thus has to be removed
+            simple.quote.test <- saferDev:::.has_odd_number_of_quotes(input_string = lines.split, pattern = "'") # idem
+            odds.quotes.log <- double.quote.test |  simple.quote.test
+            if(odds.quotes.log == TRUE){
+                pos.rm <- base::c(pos.rm, i3)
+            }else{
+                pos.rm <- base::c(pos.rm, NA) #becomes double if integer added, otherwise remains logical. Thus, do not use any()
+            }
+            tempo.ini[tempo.col1[i3]] <- base::sub(pattern = tempo.col2[i3], replacement = "", x = tempo.ini[tempo.col1[i3]], ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE) # remove the first fonction in the line, in case of identical function names in a code line. Like, that, the next round for the next same function can be easily tested for "between quotes" 
+        }
+        # initial order
+        pos.rm.fin <- pos.rm[order(tempo.ini.order)]
+        pos.rm.fin2 <- pos.rm.fin[ ! is.na(pos.rm.fin)]
+        # end initial order
+        if(base::length(pos.rm.fin2) > 0){
+            col1 <- col1[-pos.rm.fin2]
+            col2 <- col2[-pos.rm.fin2]
+            col3 <- col3[-pos.rm.fin2]
+        }
+    }
+    base::return(list(col1 = col1, col2 = col2, col3 = col3))
+}
+
 #' @title .create_message
 #' @description
 #' Create the message for the colons_check() function.
@@ -311,7 +389,7 @@
             base::paste(text, collapse = "\n"))
         base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
     }
-    pattern2 <- base::paste(base::paste0("(?<![A-Za-z0-9._])", list.fun.uni, "\\s*\\("), collapse = "|") # to split string according to basic function name as splitter. Pattern (?<![A-Za-z0-9._]) means "must not be preceeded by any alphanum or .or _
+    pattern2 <- base::paste(base::paste0("(?<![A-Za-z0-9._])", list.fun.uni, "\\s*\\("), collapse = "|") # to split string according to function name as splitter. Pattern (?<![A-Za-z0-9._]) means "must not be preceeded by any alphanum or .or _
     pattern3 <- base::paste(base::paste0("(?<![A-Za-z0-9._])", list.fun.uni, "\\s*\\($"), collapse = "|") # same as pattern2 but used to know if the seeked function is at the end of the string
     basic_ini <- ini[list.line.nb]
     res <- base::strsplit(x = basic_ini, split = pattern2, perl = TRUE) # in res, all the strings should finish by ::
@@ -333,62 +411,18 @@
         base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
     }
     if(base::any(base::unlist(colon_not_here))){
-        col1 <- as.vector(base::unlist(base::mapply(FUN = function(x, y){base::rep(y, base::sum(x))}, x = colon_not_here, y = list.line.nb)))
-        col2 <- as.vector(base::unlist(base::mapply(FUN = function(x, y){y[x]}, x = colon_not_here, y = list.fun)))
-        col3 <- as.vector(base::unlist(base::mapply(FUN = function(x, y){y[x]}, x = colon_not_here, y = res)))
+        col1 <- base::as.vector(base::unlist(base::mapply(FUN = function(x, y){base::rep(y, base::sum(x))}, x = colon_not_here, y = list.line.nb)))
+        col2 <- base::as.vector(base::unlist(base::mapply(FUN = function(x, y){y[x]}, x = colon_not_here, y = list.fun)))
+        col3 <- base::as.vector(base::unlist(base::mapply(FUN = function(x, y){y[x]}, x = colon_not_here, y = res)))
         if( ! (base::length(col1) == base::length(col2) & base::length(col1) == base::length(col3) & base::length(col2) == base::length(col3))){
             tempo.cat <- base::paste0("INTERNAL ERROR 4 IN ", function.name, " OF THE ", package.name, " PACKAGE\nLENGTHS OF col1 (", base::length(col1), "), col2 (", base::length(col2), "), AND col3 (", base::length(col3), "), SHOULD BE EQUAL\n")
             base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
         }
-        # removal of a$fun() pattern
-        if(base::length(col1) > 0){
-            tempo.log <- base::grepl(x = col3, pattern = "[a-zA-Z.][a-zA-Z0-9._]* *\\$ *") 
-            if(base::any(tempo.log, na.rm = TRUE)){
-                col1 <- col1[ ! tempo.log]
-                col2 <- col2[ ! tempo.log]
-                col3 <- col3[ ! tempo.log]
-            }
-        }else{
-            colon_not_here <- FALSE
-            output.cat <- NULL
-        }
-        # end removal of a$fun() pattern
-        # removal of functions between quotes
-        if(base::length(col1) > 0){
-            tempo.ini.order <- 1:base::length(col1) # to recover the initial order at the end
-            tempo.order <- base::order(col2) # order according to function name
-            tempo.ini.order <- tempo.ini.order[tempo.order]
-            tempo.col1 <- col1[tempo.order] # reorder to work only once with duplicated functions
-            tempo.col2 <- col2[tempo.order] # reorder to work only once with duplicated functions
-            tempo.col3 <- col3[tempo.order] # reorder to work only once with duplicated functions
-            tempo.ini <- ini
-            pos.rm <- NULL # positions to remove (functions between quotes)
-            for(i3 in 1:base::length(tempo.col1)){
-                lines.split <- base::strsplit(tempo.ini[tempo.col1[i3]], split = tempo.col2[i3])[[1]][1]
-                # if odds number of quotes, it means that # has broken the string in the middle of a quoted part
-                double.quote.test <- .has_odd_number_of_quotes(input_string = lines.split, pattern = '"') # here FALSE means even number of quotes, thus that the function is not between quotes, thus has to be kept. TRUE means that the function is between quotes, thus has to be removed
-                simple.quote.test <- .has_odd_number_of_quotes(input_string = lines.split, pattern = "'") # idem
-                odds.quotes.log <- double.quote.test |  simple.quote.test
-                if(odds.quotes.log == TRUE){
-                    pos.rm <- base::c(pos.rm, i3)
-                }else{
-                    pos.rm <- base::c(pos.rm, NA) #becomes double if integer added, otherwise remains logical. Thus, do not use any()
-                }
-                tempo.ini[tempo.col1[i3]] <- base::sub(pattern = tempo.col2[i3], replacement = "", x = tempo.ini[tempo.col1[i3]], ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE) # remove the first fonction in the line, in case of identical function names in a code line. Like, that, the next round for the next same function can be easily tested for "between quotes" 
-            }
-            # initial order
-            pos.rm.fin <- pos.rm[order(tempo.ini.order)]
-            pos.rm.fin2 <- pos.rm.fin[ ! is.na(pos.rm.fin)]
-            # end initial order
-            if(base::length(pos.rm.fin2) > 0){
-                col1 <- col1[-pos.rm.fin2]
-                col2 <- col2[-pos.rm.fin2]
-                col3 <- col3[-pos.rm.fin2]
-            }
-        }
-        # end removal of functions between quotes
-        if(base::length(col1) > 0){
-            tempo.pos <- base::paste0(col1, "\t", col2, "\t\t", col3)
+        # removal of functions between quotes and after $
+        col_res <<- saferDev:::.clean_functions(col1 = col1, col2 = col2, col3 = col3, ini = ini)
+        # end removal of functions between quotes and after $
+        if(base::length(col_res$col1) > 0){
+            tempo.pos <- base::paste0(col_res$col1, "\t", col_res$col2, "\t\t", col_res$col3)
             output.cat <- base::paste0(
                 "INSIDE ", arg.user.setting$x, "(), SOME :: OR ::: ARE MISSING AT ", text, " FUNCTION POSITIONS:\n\n", 
                 "LINE\tFUN\t\tSTRING_BEFORE\n",

@@ -56,6 +56,42 @@ all_args_here <- function(
         function.name = function.name, 
         package.name = package.name
     )
+    list.line.nb <- out$code_line_nb_wo_op # vector of line numbers in ini
+    fun <-  out$fun_name_wo_op # list of function names for each line of ini
+    ini <- out$ini # vector of strings of the tested function code
+    if(length(list.line.nb) > 0){
+        if(base::length(fun) != base::length(list.line.nb)){
+            tempo.cat <- base::paste0("INTERNAL ERROR 2 IN ", function.name, " OF THE ", package.name, " PACKAGE\nLENGTHS SHOULD BE IDENTICAL\nfun: ", base::length(fun), "\nlist.line.nb: ", base::length(list.line.nb))
+            base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
+        }
+        col1 <- base::as.vector(base::unlist(base::mapply(FUN = function(x, y){base::rep(y, base::length(x[[]]))}, x = fun, y = list.line.nb)))
+        col2 <- base::as.vector(base::unlist(fun))
+        col3 <- base::as.vector(base::unlist(base::mapply(FUN = function(x, y){y[x]}, x = colon_not_here, y = res)))
+    }
+
+
+
+    pattern2 <- base::paste(base::paste0("(?<![A-Za-z0-9._])", list.fun.uni, "\\s*\\("), collapse = "|") # to split string according to function name as splitter. Pattern (?<![A-Za-z0-9._]) means "must not be preceeded by any alphanum or .or _
+    pattern3 <- base::paste(base::paste0("(?<![A-Za-z0-9._])", list.fun.uni, "\\s*\\($"), collapse = "|") # same as pattern2 but used to know if the seeked function is at the end of the string
+    basic_ini <- ini[list.line.nb]
+    res <- base::strsplit(x = basic_ini, split = pattern2, perl = TRUE) # in res, all the strings should finish by ::
+    tempo.log <- ! base::grepl(x = basic_ini, pattern = pattern3, perl = TRUE) # strings of basic_ini that does not finish by the function name
+    # in each compartment of res, the last split section is removed because nothing to test at the end (end of code)
+    if(base::sum(tempo.log, na.rm = TRUE) > 0){
+        res[tempo.log] <- base::lapply(X = res[tempo.log], FUN = function(x){x[-base::length(x)]})
+    }
+    # end in each compartment of res, the last split section is removed because nothing to test at the end (end of code)
+    res2 <- base::lapply(X = res, FUN = function(x){base::substr(x, base::nchar(x)-1, base::nchar(x))}) # base::nchar(x)-1 takes only :: if the strings ends by :::
+    base::names(res2) <- NULL
+    if( ! base::all(base::sapply(X = res2, FUN = function(x){base::length(x)}) == base::sapply(X = res, FUN = function(x){base::length(x)}))){
+        tempo.cat <- base::paste0("INTERNAL ERROR 2 IN ", function.name, " OF THE ", package.name, " PACKAGE\nLENGTHS SHOULD BE IDENTICAL\nres2: ", base::paste(base::sapply(X = res2, FUN = function(x){base::length(x)}), collapse = " "), "\nres: ", base::paste(base::sapply(X = res, FUN = function(x){base::length(x)}), collapse = " "))
+        base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
+    }
+
+
+    a <- base::formals(fun = base::sys.function(base::sys.parent(n = 2)))
+
+
 
 
     # end main code
