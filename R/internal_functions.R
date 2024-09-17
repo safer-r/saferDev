@@ -257,6 +257,65 @@
 
 
 
+
+
+#' @title .in_quotes_replacement
+#' @description
+#' Replace any pattern inside simple ou double quotes by another replacement pattern
+#' @param string Single string.
+#' @param pattern Single string indicating the pattern to detect. Warning : must be very simple pattern, like "\\(".
+#' @param no_regex_pattern Single string of the pattern to detect but without escape characters or list, etc.
+#' @param replacement Single string for pattern replacement. Is not regex.
+#' @param perl Single logical value. Use Perl regex in pattern ?
+#' @param function.name function name.
+#' @param package.name package name.
+#' @returns The input string with all pattern replaced by the replacement pattern.
+#' @details
+#' Warning : must be very simple pattern, like "\\(".
+#' 
+#' 
+#' @author Gael Millot <gael.millot@pasteur.fr>
+#' @examples
+#' \dontrun{ # Example that shouldn't be run because this is an internal function
+#' source("https://raw.githubusercontent.com/safer-r/saferDev/main/dev/other/test.R") ; .in_quotes_replacement(string = paste(deparse(test), collapse = ""), pattern = "\\)", no_regex_pattern = ")", replacement = " ", perl = TRUE, function.name = "F1", package.name = "P1")
+#' .in_quotes_replacement(string = 'paste0("IAGE((", paste0(1:3, collapse = " "), "A)B()")', pattern = "\\)", no_regex_pattern = ")", replacement = " ", perl = TRUE, function.name = "F1", package.name = "P1")
+#' }
+#' @keywords internal
+#' @rdname internal_function
+.in_quotes_replacement <- function(
+    string, 
+    pattern, 
+    no_regex_pattern, 
+    replacement, 
+    perl,
+    function.name,
+    package.name
+){
+    # DEBUGGING
+    # source("https://raw.githubusercontent.com/safer-r/saferDev/main/dev/other/test.R") ; string = paste(deparse(test), collapse = "") ; pattern = "\\)" ; no_regex_pattern = ")" ; replacement = " " ; perl = FALSE ; function.name = "F1" ; package.name = "P1"
+    # string = 'paste0("IAGE((", paste0(1:3, collapse = " "), "A)B()")' ; pattern = "\\)" ; no_regex_pattern = ")" ; replacement = " " ; perl = FALSE ; function.name = "F1" ; package.name = "P1"
+    if(base::nchar(no_regex_pattern) != base::nchar(replacement)){
+        tempo.cat <- base::paste0("ERROR IN ", function.name, " OF THE ", package.name, " PACKAGE\nARGUMENTS no_regex_pattern AND replacement IN THE .in_quotes_replacement() MUST HAVE THE SAME NUMBER OF CHARACTERS\nno_regex_pattern (", base::nchar(no_regex_pattern), " characters):\n", base::paste(no_regex_pattern, collapse = "\n"), "\nreplacement (", base::nchar(replacement), " characters):\n", base::paste(replacement, collapse = "\n"))
+        base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
+    }
+    string_split <- base::strsplit(string, split = pattern, perl = perl)[[1]]
+    output <- string_split[1]
+    for(i1 in 2:base::length(string_split)){
+        # if odds number of quotes, it means that # has broken the string in the middle of a quoted part
+        double.quote.test <- .has_odd_number_of_quotes(input_string = output, pattern = '"') # here FALSE means even number of quotes, thus that ")" is not between quotes, thus has to be kept. TRUE means that ")" is between quotes, thus has to be removed
+        simple.quote.test <- .has_odd_number_of_quotes(input_string = output, pattern = "'") # idem
+        odds.quotes.log <- double.quote.test |  simple.quote.test # remove ")" ?
+        if(odds.quotes.log == TRUE){
+            output <- paste0(output, replacement, string_split[i1]) # to keep the same length of the tested function on a single string output_1_line
+        }else{
+            output <- paste0(output, no_regex_pattern, string_split[i1])
+        }
+    }
+    return(output)
+}
+
+
+
 #' @title .clean_functions
 #' @description
 #' Remove function names inside quotes or after $
@@ -336,6 +395,132 @@
 }
 
 
+
+
+
+
+
+
+#' @title .fun_args_pos
+#' @description
+#' Return the positions of 1st letter of the function name and closing ")" after the arguments of the functions.
+#' @param text A string.
+#' @param pattern: A perl regex to extract function name and (), using generally paste0(<FUNCTION_NAME>, "[\\s\\r\\n]*\\(").
+#' @param function.name function name.
+#' @param package.name package name.
+#' @returns A list containing two positions:
+#' $begin_fun: position of 1st letter of the function name.
+#' $begin: position of the "(" of the function.
+#' $end: position of the closing ")" of the function.
+#' $middle_bracket_pos: list of positions of the couple of brackets in the middle of the begin and end positions. In each compartment, the first number is the position of ( and the second the position of ). NULL if no inside brackets.
+#' @details
+#' Warning: the string must be cleaned form brackets between quotes.
+#' WArning: quotes in strings are excaped, so that position of ( in \"a( is 3, not 4.
+#' @author Gael Millot <gael.millot@pasteur.fr>
+#' @examples
+#' \dontrun{ # Example that shouldn't be run because this is an internal function
+#' # Warning : examples only with strings that must be cleaned form brackets between quotes
+#' .fun_args_pos(text = "a$regmatches(x = text, m = matches)[[1]]", pattern = paste0("regmatches", "[\\s\\r\\n]*\\("), function.name = "F1", package.name = "P1")
+#' .fun_args_pos(text = ' "a" ; paste0("I", paste0(sum(1:3), collapse = " "), min(1) ) ; range(2)', pattern = paste0("paste0", "[\\s\\r\\n]*\\("), function.name = "F1", package.name = "P1") 
+#' @keywords internal
+#' @rdname internal_function
+.fun_args_pos <- function(
+    text, 
+    pattern,
+    function.name, 
+    package.name
+){
+    # DEBUGGING
+    # source("https://raw.githubusercontent.com/safer-r/saferDev/main/dev/other/test.R")
+    # text = ' "a" ; paste0("I", paste0(sum(1:3), collapse = " "), min(1) ) ; range(2)' ; pattern = paste0("paste0", "[\\s\\r\\n]*\\(") ; function.name = "F1" ; package.name = "P1"
+    check_pos <- function(x){
+        if(base::length(x) != 1 | base::any(base::is.na(x), na.rm = TRUE) | base::is.null(x) | base::any(x < 0 , na.rm = TRUE)){
+            tempo.cat <- base::paste0("ERROR IN ", function.name, " OF THE ", package.name, " PACKAGE\nTHE .fun_args_pos() INTERNAL FUNCTION DID NOT PROPERLY DETECT THE POSITION OF ", base::match.call(expand.dots = FALSE)$x, "\ntext: ", base::paste(text, collapse = "\n"), "\npattern: ", base::paste(pattern, collapse = "\n"), "\nfun_pos: ", base::paste(fun_pos, collapse = "\n"))
+            base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
+        }
+    }
+    open_paren_pos <- base::as.vector(base::gregexpr(pattern = "\\(", text = text)[[1]])
+    close_paren_pos <- base::as.vector(base::gregexpr(pattern = "\\)",  text = text)[[1]])
+    # left position
+    fun_pos <- base::as.vector(base::gregexpr(pattern = pattern,  text = text, perl = TRUE)[[1]][1]) # position of the 1st character of fun in text
+    check_pos(x = fun_pos)
+    # end left position
+    fun_open_paren_pos <- open_paren_pos[open_paren_pos > fun_pos][1] # position of ( of the fonction
+    check_pos(x = fun_open_paren_pos)
+    # detection of the closing ) of the function
+    all_pos <- base::sort(c(open_paren_pos, close_paren_pos))
+    count <- 1 # 1 because ( of the function is already opened. When count == 0, we will have the closing )
+    final_pos <- base::which(all_pos == fun_open_paren_pos) #start by the first ( but will be incremented
+    loop.nb <- 1 
+    while(count != 0 & loop.nb < base::length(all_pos)){
+        final_pos <- final_pos + 1
+        if(all_pos[final_pos] %in% open_paren_pos){
+            count <- count + 1
+        }
+        if(all_pos[final_pos] %in% close_paren_pos){
+            count <- count - 1
+        }
+        loop.nb <- loop.nb + 1
+    }
+    if(count != 0){
+        tempo.cat <- base::paste0("ERROR IN ", function.name, " OF THE ", package.name, " PACKAGE\nTHE .fun_args_pos() INTERNAL FUNCTION DID NOT PROPERLY DETECT THE POSITION OF THE CLOSING BRACKET IN ", base::match.call(expand.dots = FALSE)$x, "\ntext: ", base::paste(text, collapse = "\n"), "\npattern: ", base::paste(pattern, collapse = "\n"), "\ncount: ", base::paste(count, collapse = "\n"))
+        base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
+    }
+    fun_close_paren_pos <- all_pos[final_pos]
+    # end detection of the closing ) of the function
+    # middle brackets
+    tempo_log <- all_pos > fun_open_paren_pos & all_pos < fun_close_paren_pos
+    if(base::any(tempo_log, na.rm = TRUE)){
+        all_pos_inside <- all_pos[tempo_log] # all positions of the brackets inside fun(    )
+        open_paren_pos_inside <- all_pos_inside[all_pos_inside %in% open_paren_pos]
+        count_open_paren_pos_inside <- base::length(open_paren_pos_inside)
+        close_paren_pos_inside <- all_pos_inside[all_pos_inside %in% close_paren_pos]
+        count_close_paren_pos_inside <- base::length(open_paren_pos_inside)
+        if(count_open_paren_pos_inside != count_close_paren_pos_inside | count_open_paren_pos_inside == 0){ #count_open_paren_pos_inside == 0 because tempo_log above has some TRUE
+            tempo.cat <- base::paste0("ERROR IN ", function.name, " OF THE ", package.name, " PACKAGE\nTHE .fun_args_pos() INTERNAL FUNCTION DID NOT PROPERLY DETECT THE POSITION ALL THE BRACKETS INSIDE THE FUN(    ) BRACKETS IN ", base::match.call(expand.dots = FALSE)$x, "\ntext: ", base::paste(text, collapse = "\n"), "\npattern: ", base::paste(pattern, collapse = "\n"), "\nCOUNT OF OPENED BRACKETS: ", count_open_paren_pos_inside, "\nCOUNT OF CLOSING BRACKETS: ", count_close_paren_pos_inside, "\nCHECK THAT THE STRING HAS ALL THE BRACKETS BETWEEN QUOTES REMOVED")
+            base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
+        }
+        middle_bracket_pos <- vector(mode = "list", length = count_open_paren_pos_inside)
+        for(i3 in 1:count_open_paren_pos_inside){
+            final_pos2 <- base::which(all_pos_inside == open_paren_pos_inside[i3]) # start by the first ( but will be incremented
+            count2 <- 1 # 1 because ( of the function is already opened. When count == 0, we will have the closing )
+            loop.nb2 <- 1 
+            while(count2 != 0 & loop.nb2 < base::length(all_pos_inside)){
+                final_pos2 <- final_pos2 + 1
+                if(all_pos_inside[final_pos2] %in% open_paren_pos_inside){
+                    count2 <- count2 + 1
+                }
+                if(all_pos_inside[final_pos2] %in% close_paren_pos_inside){
+                    count2 <- count2 - 1
+                }
+                loop.nb2 <- loop.nb2 + 1
+            }
+            if(count2 != 0){
+                tempo.cat <- base::paste0("ERROR IN ", function.name, " OF THE ", package.name, " PACKAGE\nTHE .fun_args_pos() INTERNAL FUNCTION DID NOT PROPERLY DETECT THE POSITION OF THE CLOSING BRACKET IN ", base::match.call(expand.dots = FALSE)$x, "\ntext: ", base::paste(text, collapse = "\n"), "\npattern: ", base::paste(pattern, collapse = "\n"), "\ncount: ", base::paste(count2, collapse = "\n"))
+                base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
+            }
+            middle_bracket_pos[[i3]] <- base::c(open_paren_pos_inside[i3], all_pos_inside[final_pos2])
+        }
+    }else{
+        middle_bracket_pos <- NULL
+    }
+    # end middle brackets
+    output <- base::list(
+        begin_fun = fun_pos, 
+        begin = fun_open_paren_pos,
+        end = fun_close_paren_pos,
+        middle_bracket_pos = middle_bracket_pos
+    )
+    return(output)
+}
+
+
+
+
+
+
+
+
 #' @title .functions_detect
 #' @description
 #' Detect all the functions used inside a function.
@@ -353,6 +538,10 @@
 #' $internal_fun_names: vector of string of names of internal functions in the function code analyzed.
 #' $arg.user.setting: list of arg user settings.
 #' $ini.warning.length: initial R warning.length from options()$warning.length.
+#' @examples
+#' \dontrun{ # Example that shouldn't be run because this is an internal function
+#' .functions_detect(x = test, safer_check = TRUE, arg.user.setting = base::list(x =  as.name(x = "test"), safer_check = TRUE), function.name = "F1", package.name = "P1")
+#' }
 #' @author Gael Millot <gael.millot@pasteur.fr>
 #' @keywords internal
 #' @importFrom saferDev arg_check
@@ -383,6 +572,7 @@
     # $ini.warning.length: initial R warning.length from options()$warning.length.
     # DEBUGGING
     # x = x ; safer_check = safer_check ; arg.user.setting = arg.user.setting ; function.name = function.name ; package.name = package.name
+    # source("C:\\Users\\gmillot\\Documents\\Git_projects\\safer-r\\saferDev\\dev\\other\\test.R") ; x = test ; safer_check = TRUE ; arg.user.setting = base::list(x = as.name(x = "test"), safer_check = TRUE) ; function.name = "F1" ; package.name = "P1"
     # critical operator checking
     if(safer_check == TRUE){
         saferDev:::.base_op_check(
@@ -422,6 +612,7 @@
             base::stop(base::paste0("\n\n================\n\n", base::paste(text.check[argum.check], collapse = "\n"), "\n\n================\n\n"), call. = FALSE) #
         }
     }
+
     # end argument checking with arg_check()
     # check with r_debugging_tools
     # source("C:/Users/gmillot/Documents/Git_projects/debugging_tools_for_r_dev/r_debugging_tools.R") ; eval(parse(text = str_basic_arg_check_dev)) ; eval(parse(text = str_arg_check_with_fun_check_dev)) # activate this line and use the function (with no arguments left as NULL) to check arguments status and if they have been checked using arg_check()
