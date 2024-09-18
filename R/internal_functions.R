@@ -45,7 +45,7 @@
     # main code
     tempo.log <- base::grepl(x = fun, pattern = "^.+::.+$")
     if( ! base::all(tempo.log)){
-        tempo.cat <- base::paste0("ERROR IN THE CODE OF THE ", external.function.name, " OF THE ", external.package.name, " PACKAGE\nTHE STRING IN fun ARGUMENT MUST CONTAIN \"::\":\n", base::paste(fun[ ! tempo.log], collapse = "\n"))
+        tempo.cat <- base::paste0("INTERNAL ERROR IN THE CODE OF THE ", external.function.name, " OF THE ", external.package.name, " PACKAGE\nTHE STRING IN fun ARGUMENT MUST CONTAIN \"::\":\n", base::paste(fun[ ! tempo.log], collapse = "\n"))
         base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
     }
     pkg.fun.name.list <- base::strsplit(fun, "::") # package in 1 and function in 2
@@ -295,7 +295,7 @@
     # source("https://raw.githubusercontent.com/safer-r/saferDev/main/dev/other/test.R") ; string = paste(deparse(test), collapse = "") ; pattern = "\\)" ; no_regex_pattern = ")" ; replacement = " " ; perl = FALSE ; function.name = "F1" ; package.name = "P1"
     # string = 'paste0("IAGE((", paste0(1:3, collapse = " "), "A)B()")' ; pattern = "\\)" ; no_regex_pattern = ")" ; replacement = " " ; perl = FALSE ; function.name = "F1" ; package.name = "P1"
     if(base::nchar(no_regex_pattern) != base::nchar(replacement)){
-        tempo.cat <- base::paste0("ERROR IN ", function.name, " OF THE ", package.name, " PACKAGE\nARGUMENTS no_regex_pattern AND replacement IN THE .in_quotes_replacement() MUST HAVE THE SAME NUMBER OF CHARACTERS\nno_regex_pattern (", base::nchar(no_regex_pattern), " characters):\n", base::paste(no_regex_pattern, collapse = "\n"), "\nreplacement (", base::nchar(replacement), " characters):\n", base::paste(replacement, collapse = "\n"))
+        tempo.cat <- base::paste0("INTERNAL ERROR IN ", function.name, " OF THE ", package.name, " PACKAGE\nARGUMENTS no_regex_pattern AND replacement IN THE .in_quotes_replacement() MUST HAVE THE SAME NUMBER OF CHARACTERS\nno_regex_pattern (", base::nchar(no_regex_pattern), " characters):\n", base::paste(no_regex_pattern, collapse = "\n"), "\nreplacement (", base::nchar(replacement), " characters):\n", base::paste(replacement, collapse = "\n"))
         base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
     }
     string_split <- base::strsplit(string, split = pattern, perl = perl)[[1]]
@@ -435,10 +435,42 @@
     # text = ' "a" ; paste0("I", paste0(sum(1:3), collapse = " "), min(1) ) ; range(2)' ; pattern = paste0("paste0", "[\\s\\r\\n]*\\(") ; function.name = "F1" ; package.name = "P1"
     check_pos <- function(x){
         if(base::length(x) != 1 | base::any(base::is.na(x), na.rm = TRUE) | base::is.null(x) | base::any(x < 0 , na.rm = TRUE)){
-            tempo.cat <- base::paste0("ERROR IN ", function.name, " OF THE ", package.name, " PACKAGE\nTHE .fun_args_pos() INTERNAL FUNCTION DID NOT PROPERLY DETECT THE POSITION OF ", base::match.call(expand.dots = FALSE)$x, "\ntext: ", base::paste(text, collapse = "\n"), "\npattern: ", base::paste(pattern, collapse = "\n"), "\nfun_pos: ", base::paste(fun_pos, collapse = "\n"))
+            tempo.cat <- base::paste0("INTERNAL ERROR IN ", function.name, " OF THE ", package.name, " PACKAGE\nTHE .fun_args_pos() INTERNAL FUNCTION DID NOT PROPERLY DETECT THE POSITION OF ", base::match.call(expand.dots = FALSE)$x, "\ntext: ", base::paste(text, collapse = "\n"), "\npattern: ", base::paste(pattern, collapse = "\n"), "\nfun_pos: ", base::paste(fun_pos, collapse = "\n"))
             base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
         }
     }
+
+    while_loop <- function(
+        start,
+        all_pos, 
+        open_pos,
+        close_pos,
+        function.name,
+        package.name,
+        text,
+        pattern
+    ){
+        count <- 1 # 1 because ( of the function is already opened. When count == 0, we will have the closing )
+        final_pos <- base::which(all_pos == start) #start by the first ( but will be incremented
+        loop.nb <- 1 
+        while(count != 0 & loop.nb < base::length(all_pos)){
+            final_pos <- final_pos + 1
+            if(all_pos[final_pos] %in% open_pos){
+                count <- count + 1
+            }
+            if(all_pos[final_pos] %in% close_pos){
+                count <- count - 1
+            }
+            loop.nb <- loop.nb + 1
+        }
+        if(count != 0){
+            tempo.cat <- base::paste0("INTERNAL ERROR IN ", function.name, " OF THE ", package.name, " PACKAGE\nTHE .fun_args_pos() INTERNAL FUNCTION DID NOT PROPERLY DETECT THE POSITION OF THE CLOSING BRACKET IN ", base::match.call(expand.dots = FALSE)$x, "\ntext: ", base::paste(text, collapse = "\n"), "\npattern: ", base::paste(pattern, collapse = "\n"), "\ncount: ", base::paste(count, collapse = "\n"))
+            base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
+        }else{
+            return(final_pos)
+        }
+    }
+
     open_paren_pos <- base::as.vector(base::gregexpr(pattern = "\\(", text = text)[[1]])
     close_paren_pos <- base::as.vector(base::gregexpr(pattern = "\\)",  text = text)[[1]])
     # left position
@@ -449,23 +481,16 @@
     check_pos(x = fun_open_paren_pos)
     # detection of the closing ) of the function
     all_pos <- base::sort(c(open_paren_pos, close_paren_pos))
-    count <- 1 # 1 because ( of the function is already opened. When count == 0, we will have the closing )
-    final_pos <- base::which(all_pos == fun_open_paren_pos) #start by the first ( but will be incremented
-    loop.nb <- 1 
-    while(count != 0 & loop.nb < base::length(all_pos)){
-        final_pos <- final_pos + 1
-        if(all_pos[final_pos] %in% open_paren_pos){
-            count <- count + 1
-        }
-        if(all_pos[final_pos] %in% close_paren_pos){
-            count <- count - 1
-        }
-        loop.nb <- loop.nb + 1
-    }
-    if(count != 0){
-        tempo.cat <- base::paste0("ERROR IN ", function.name, " OF THE ", package.name, " PACKAGE\nTHE .fun_args_pos() INTERNAL FUNCTION DID NOT PROPERLY DETECT THE POSITION OF THE CLOSING BRACKET IN ", base::match.call(expand.dots = FALSE)$x, "\ntext: ", base::paste(text, collapse = "\n"), "\npattern: ", base::paste(pattern, collapse = "\n"), "\ncount: ", base::paste(count, collapse = "\n"))
-        base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
-    }
+    final_pos <- while_loop(
+        start = fun_open_paren_pos,
+        all_pos = all_pos, 
+        open_pos = open_paren_pos, 
+        close_pos = close_paren_pos, 
+        function.name = function.name,
+        package.name = package.name,
+        text = text,
+        pattern = pattern
+    )
     fun_close_paren_pos <- all_pos[final_pos]
     # end detection of the closing ) of the function
     # middle brackets
@@ -477,28 +502,21 @@
         close_paren_pos_inside <- all_pos_inside[all_pos_inside %in% close_paren_pos]
         count_close_paren_pos_inside <- base::length(open_paren_pos_inside)
         if(count_open_paren_pos_inside != count_close_paren_pos_inside | count_open_paren_pos_inside == 0){ #count_open_paren_pos_inside == 0 because tempo_log above has some TRUE
-            tempo.cat <- base::paste0("ERROR IN ", function.name, " OF THE ", package.name, " PACKAGE\nTHE .fun_args_pos() INTERNAL FUNCTION DID NOT PROPERLY DETECT THE POSITION ALL THE BRACKETS INSIDE THE FUN(    ) BRACKETS IN ", base::match.call(expand.dots = FALSE)$x, "\ntext: ", base::paste(text, collapse = "\n"), "\npattern: ", base::paste(pattern, collapse = "\n"), "\nCOUNT OF OPENED BRACKETS: ", count_open_paren_pos_inside, "\nCOUNT OF CLOSING BRACKETS: ", count_close_paren_pos_inside, "\nCHECK THAT THE STRING HAS ALL THE BRACKETS BETWEEN QUOTES REMOVED")
+            tempo.cat <- base::paste0("INTERNAL ERROR IN ", function.name, " OF THE ", package.name, " PACKAGE\nTHE .fun_args_pos() INTERNAL FUNCTION DID NOT PROPERLY DETECT THE POSITION ALL THE BRACKETS INSIDE THE FUN(    ) BRACKETS IN ", base::match.call(expand.dots = FALSE)$x, "\ntext: ", base::paste(text, collapse = "\n"), "\npattern: ", base::paste(pattern, collapse = "\n"), "\nCOUNT OF OPENED BRACKETS: ", count_open_paren_pos_inside, "\nCOUNT OF CLOSING BRACKETS: ", count_close_paren_pos_inside, "\nCHECK THAT THE STRING HAS ALL THE BRACKETS BETWEEN QUOTES REMOVED")
             base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
         }
         middle_bracket_pos <- vector(mode = "list", length = count_open_paren_pos_inside)
         for(i3 in 1:count_open_paren_pos_inside){
-            final_pos2 <- base::which(all_pos_inside == open_paren_pos_inside[i3]) # start by the first ( but will be incremented
-            count2 <- 1 # 1 because ( of the function is already opened. When count == 0, we will have the closing )
-            loop.nb2 <- 1 
-            while(count2 != 0 & loop.nb2 < base::length(all_pos_inside)){
-                final_pos2 <- final_pos2 + 1
-                if(all_pos_inside[final_pos2] %in% open_paren_pos_inside){
-                    count2 <- count2 + 1
-                }
-                if(all_pos_inside[final_pos2] %in% close_paren_pos_inside){
-                    count2 <- count2 - 1
-                }
-                loop.nb2 <- loop.nb2 + 1
-            }
-            if(count2 != 0){
-                tempo.cat <- base::paste0("ERROR IN ", function.name, " OF THE ", package.name, " PACKAGE\nTHE .fun_args_pos() INTERNAL FUNCTION DID NOT PROPERLY DETECT THE POSITION OF THE CLOSING BRACKET IN ", base::match.call(expand.dots = FALSE)$x, "\ntext: ", base::paste(text, collapse = "\n"), "\npattern: ", base::paste(pattern, collapse = "\n"), "\ncount: ", base::paste(count2, collapse = "\n"))
-                base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
-            }
+            final_pos2 <- while_loop(
+                start = open_paren_pos_inside[i3],
+                all_pos = all_pos_inside, 
+                open_pos = open_paren_pos_inside, 
+                close_pos = close_paren_pos_inside, 
+                function.name = function.name,
+                package.name = package.name,
+                text = text,
+                pattern = pattern
+            )
             middle_bracket_pos[[i3]] <- base::c(open_paren_pos_inside[i3], all_pos_inside[final_pos2])
         }
     }else{
@@ -513,8 +531,6 @@
     )
     return(output)
 }
-
-
 
 
 

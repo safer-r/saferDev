@@ -145,8 +145,8 @@ all_args_here <- function(
                     pattern2 <- base::paste0("^[\\s\\r\\n]*", arg_full_names[i4], "[\\s\\r\\n]*=")
                     tempo.log <- grepl(x = tempo.split, pattern = pattern2, perl = TRUE)
                     if(base::any(tempo.log, na.rm = TRUE)){
-                        # remove the ( and ) positions inside brackets in .fun_args_pos() and give couple of brackets
-                        #done bit factorise while loop in .fun_args_pos()
+                        # remove the ( and ) positions inside brackets in .fun_args_pos() and give couple of brackets # done
+                        #done bit factorise while loop in .fun_args_pos() # done
                         # then, detect any comma inside couple of brackets
                         # replace commas inside ()
                         # split using ","
