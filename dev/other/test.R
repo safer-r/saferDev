@@ -19,9 +19,9 @@ test <- function(
         # Remove trailing '(' from each match #
         tempo4 <- a$regmatches(x = text, m = matches)[[1]] ; sum(1:3) ; a$regmatches(x = 1)
         tempo5 <- a$count
-        tempo.cat <- base::paste0("INTERNAL ERROR 4 IN ", function.name, " OF THE ", package.name, " PACKAGE\nLENGTHS OF col1 (", base::length(col1()), "), col2 (", base::length(col2), "), AND col1 (", base::length(col3), "), SHOULD BE EQUAL\n")
+        tempo.cat <- base::paste0("INTERNAL ERROR 4 IN ", function.name, " OF THE ", package.name, " PACKAGE\nLENGTHS OF col1 (", base::length(roc1()), "), col2 (", base::length(col2), "), AND col1 (", base::length(col3), "), SHOULD BE EQUAL\n")
         result <- sub("\\($##", "", matched_strings) ; range(1:3) # sub("\\($##", "", matched_strings)
-        tempo.cat <- base::paste0("IAGE\nLENGTHS OF col1 (", base::ks.test(col1()), "), and col2 (", base::length(col2), ") col1 (", base::length(col3), "), SHOULL\n")
+        tempo.cat <- base::paste0("IAGE\nLENGTHS OF col1 (", base::ks.test(roc2()), "), and col2 (", base::length(col2), ") col1 (", base::length(col3), "), SHOULL\n")
         return(result) # base::sub("\\($##", "", matched_strings)
         base::return(result) # a$sub("\\($##", "", matched_strings)
     }
