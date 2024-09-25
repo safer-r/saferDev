@@ -47,7 +47,7 @@
     tempo.log <- base::grepl(x = fun, pattern = "^[a-zA-Z][a-zA-Z0-9.]*(:{2}[a-zA-Z]|:{3}\\.[a-zA-Z._])[a-zA-Z0-9._]*$")
     # [a-zA-Z][a-zA-Z0-9.]+ means any single alphabet character (package name cannot start by dot or underscore or num), then any alphanum and dots
     # (:{2}[a-zA-Z]|:{3}\\.[a-zA-Z._]) means either double colon and any single alphabet character or triple colon followed by a dot and any single alphabet character or dot (because .. is ok for function name) or underscore (because ._ is ok for function name). Starting "dot and num" or underscore is not authorized for function name
-    # [a-zA-Z0-9.]* any several of these characters or nothing
+    # [a-zA-Z0-9._]* means any several of these characters or nothing
     if( ! base::all(tempo.log)){
         tempo.cat <- base::paste0("INTERNAL ERROR IN THE CODE OF THE ", external.function.name, " OF THE ", external.package.name, " PACKAGE\nTHE STRING IN fun ARGUMENT MUST CONTAIN \"::\" OR \":::.\":\n", base::paste(fun[ ! tempo.log], collapse = "\n"))
         base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
@@ -381,7 +381,9 @@
     if(base::length(col1) > 0){
         # detection of a$fun() pattern
         tempo.log <- base::grepl(x = col3, pattern = "([a-zA-Z]|\\.[a-zA-Z._])[a-zA-Z0-9._]* *\\$ *$")
-
+        # ([a-zA-Z]|\\.[a-zA-Z._]) is for the begining of R function name: either any single alphabet character or a dot and any single alphabet character or dot (because .. is ok for function name) or underscore (because ._ is ok for function name). Starting "dot and num" or underscore is not authorized for function name
+        # [a-zA-Z0-9._]* is The rest of the function name: any several of these characters or nothing
+        #  *\\$ *$ means end of the string is any space or not, a $ symbol and any space or not
         if(base::any(tempo.log, na.rm = TRUE)){
             output <- tempo.log
         }else{
@@ -565,7 +567,7 @@
 
 #' @title .functions_detect
 #' @description
-#' Detect all the functions used inside a function.
+#' Detect all the functions names used inside a function.
 #' @param x a function name, written without quotes and brackets.
 #' @param safer_check Single logical value. Perform some "safer" checks (see https://github.com/safer-r)?
 #' @param arg.user.setting Argument user settings list.
@@ -580,6 +582,10 @@
 #' $internal_fun_names: vector of string of names of internal functions in the function code analyzed.
 #' $arg.user.setting: list of arg user settings.
 #' $ini.warning.length: initial R warning.length from options()$warning.length.
+#' @details
+#' - Does not check if the function exists.
+#' - Use the regex pattern 
+#' 
 #' @examples
 #' \dontrun{ # Example that shouldn't be run because this is an internal function
 #' .functions_detect(x = test, safer_check = TRUE, arg.user.setting = base::list(x =  as.name(x = "test"), safer_check = TRUE), function.name = "F1", package.name = "P1")
@@ -758,7 +764,11 @@
     # end removal of comments
     # catch the internal function name created inside the tested function
     internal_fun_names <- base::unlist(base::lapply(X = ini, FUN = function(x){
-        output <- base::sub(pattern = "^\\s*([a-zA-Z.]{1}[a-zA-Z0-9._]*)\\s*<-[\\s\\r\\n]*function[\\s\\r\\n]*\\(.*", replacement = "\\1", x = x, perl = TRUE)
+        output <- base::sub(pattern = "^\\s*([a-zA-Z]|\\.[a-zA-Z._])[a-zA-Z0-9._]*\\s*<-[\\s\\r\\n]*function[\\s\\r\\n]*\\(.*", replacement = "\\1", x = x, perl = TRUE)
+        # ^\\s* means in perl: 0 or any spaces at the begining of the string
+        # ([a-zA-Z]|\\.[a-zA-Z._]) is for the begining of R function name: either any single alphabet character or a dot and any single alphabet character or dot (because .. is ok for function name) or underscore (because ._ is ok for function name). Starting "dot and num" or underscore is not authorized for function name
+        # [a-zA-Z0-9._]* is The rest of the function name: any several of these characters or nothing
+        #  \\s*<-[\\s\\r\\n]*function[\\s\\r\\n]*\\(.* 0 or any space, assignation symbol, 0 or any (space, carriage return, end of line), an opening parenthesis, and any character
         if( ! output == x){
             base::return(output)
         }
@@ -770,7 +780,7 @@
             # Check if the current string starts with spaces followed by a '('
             if (base::grepl("^\\s*\\(", ini[i2])) {
                 # Check if the previous string ends with the specified pattern
-                if (base::grepl("[a-zA-Z.]{1}[a-zA-Z0-9._]*\\s*$", ini[i2 - 1])) {
+                if (base::grepl("([a-zA-Z]|\\.[a-zA-Z._])[a-zA-Z0-9._]*\\s*$", ini[i2 - 1])) {
                 # Append a '(' to the previous string
                 ini[i2 - 1] <- base::paste0(ini[i2 - 1], "(")
                 }
@@ -779,15 +789,17 @@
     }
     # end trick to deal with end of lines between the name of the function and "("
     # all function names in x
-    pattern1 <- "([a-zA-Z][a-zA-Z0-9.]+:{2,3})*[a-zA-Z.]{1}[a-zA-Z0-9._]*\\s*\\(" # pattern to detect a function name, a$fun( is removed in .noclean_functions()
-    # pattern1 <- "[a-zA-Z.][a-zA-Z0-9._]*\\s*\\(" # pattern to detect a function name, a$fun( is removed in .noclean_functions()
+    pattern1 <- "([a-zA-Z]|\\.[a-zA-Z._])[a-zA-Z0-9._]*\\s*\\(" # pattern to detect a function name, a$fun( is removed in .noclean_functions()
+    # ([a-zA-Z]|\\.[a-zA-Z._]) is for the begining of R function name: either any single alphabet character or a dot and any single alphabet character or dot (because .. is ok for function name) or underscore (because ._ is ok for function name). Starting "dot and num" or underscore is not authorized for function name
+    # [a-zA-Z0-9._]* is The rest of the function name: any several of these characters or nothing
+    # \\s*\\( means 0 or any space in perl, and an opening parenthesis
     # I could have used [\\s\\r\\n]* meaning any space or end of line or carriage return between the name and "(" but finally, another strategy used
-    # - `this does not work well, as it does not take dots: "\\b[a-zA-Z\\.\\_]{1}[a-zA-Z0-9\\.\\_]+\\b", because of `\\b`: These are word boundaries. It ensures that the pattern matches only a complete word and not a part of a word.
-    # - `[a-zA-Z.]{1}`: This portion of the pattern matches any uppercase letter (`A-Z`), lowercase letter (`a-z`), or a period (`.`) a single time ({1}).
-    # - `[a-zA-Z0-9._]*`: This part of the pattern matches any uppercase letter (`A-Z`), lowercase letter (`a-z`), number (`0-9`), period (`.`), or underscore (`_`), repeated zero or more times (`*`). This represents the possible characters inside an R function name.
-    # - `\\b`: Again, these are word boundaries, making sure the pattern captures the entire word and not just part of it.
-    # -  not used: `(?= *\\()`: This is a lookahead assertion. It checks that the preceding pattern is followed by any spaces and a parenthesis (`\\(`), but doesn't include the spaces and parenthesis in the match. This is because, in R code, a function call is usually followed by a parenthesis, but the parenthesis is not part of the function name.
-    fun_name <- base::lapply(ini, FUN = function(x){saferDev:::.extract_all_fun_names(text = x, pattern = pattern1)}) # recover all the function names, followed by "(", present in ini
+        # - `this does not work well, as it does not take dots: "\\b[a-zA-Z\\.\\_]{1}[a-zA-Z0-9\\.\\_]+\\b", because of `\\b`: These are word boundaries. It ensures that the pattern matches only a complete word and not a part of a word.
+        # - `[a-zA-Z.]{1}`: This portion of the pattern matches any uppercase letter (`A-Z`), lowercase letter (`a-z`), or a period (`.`) a single time ({1}).
+        # - `[a-zA-Z0-9._]*`: This part of the pattern matches any uppercase letter (`A-Z`), lowercase letter (`a-z`), number (`0-9`), period (`.`), or underscore (`_`), repeated zero or more times (`*`). This represents the possible characters inside an R function name.
+        # - `\\b`: Again, these are word boundaries, making sure the pattern captures the entire word and not just part of it.
+        # -  not used: `(?= *\\()`: This is a lookahead assertion. It checks that the preceding pattern is followed by any spaces and a parenthesis (`\\(`), but doesn't include the spaces and parenthesis in the match. This is because, in R code, a function call is usually followed by a parenthesis, but the parenthesis is not part of the function name.
+    fun_name <- base::lapply(ini, FUN = function(x){saferDev:::.extract_all_fun_names(text = x, pattern = pattern1)}) # recover all the function names, followed by "(", present in ini, using a perl pattern
     fun_name_wo_op <- base::lapply(fun_name, FUN = function(x){x[ ! x %in% base::c("function", "if", "for", "while", "repeat")]}) # removal of special functions
     tempo.log <- base::sapply(fun_name_wo_op, FUN = function(x){base::length(x) == 0}) # detection of string with empty function names
     fun_name_wo_op <- fun_name_wo_op[ ! tempo.log] # removal of empty string
