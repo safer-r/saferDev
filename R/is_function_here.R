@@ -21,7 +21,8 @@ is_function_here <- function(
         safer_check = TRUE
 ){
     # DEBUGGING
-    # fun = "ggplot2::geom_point" ; lib.path = "C:/Program Files/R/R-4.3.1/library" ; external.function.name = "fun1" ; safer_check = TRUE
+    # fun = "ggplot2::geom_point" ; lib.path = "C:/Program Files/R/R-4.3.1/library" ; safer_check = TRUE
+    # fun = "saferDev:::.colons_check_message" ; lib.path = "C:/Program Files/R/R-4.3.1/library" ; safer_check = TRUE
     # package name
     package.name <- "saferDev"
     # end package name
@@ -134,7 +135,7 @@ is_function_here <- function(
         tempo.cat <- base::paste0("ERROR IN ", function.name, " OF THE ", package.name, " PACKAGE\nTHE STRING IN fun ARGUMENT MUST NOT FINISH BY \"()\":\n", base::paste(fun[tempo.log], collapse = "\n"))
         base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
     }
-    pkg.fun.name.list <- base::strsplit(fun, "::") # package in 1 and function in 2
+    pkg.fun.name.list <- base::strsplit(x = fun, split = ":{2,3}") # package in 1 and function in 2
     pkg.name <- base::sapply(X = pkg.fun.name.list, FUN = function(x){x[1]})
     pkg.log <- pkg.name %in% base::rownames(utils::installed.packages(lib.loc = lib.path))
     if( ! base::all(pkg.log)){
