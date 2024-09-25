@@ -44,7 +44,7 @@
     }
     # end check of lib.path
     # main code
-    tempo.log <- base::grepl(x = fun, pattern = "^[a-zA-Z][a-zA-Z0-9.]*(:{2}[a-zA-Z]|:{3}\\.[a-zA-Z._])[a-zA-Z0-9.]*$")
+    tempo.log <- base::grepl(x = fun, pattern = "^[a-zA-Z][a-zA-Z0-9.]*(:{2}[a-zA-Z]|:{3}\\.[a-zA-Z._])[a-zA-Z0-9._]*$")
     # [a-zA-Z][a-zA-Z0-9.]+ means any single alphabet character (package name cannot start by dot or underscore or num), then any alphanum and dots
     # (:{2}[a-zA-Z]|:{3}\\.[a-zA-Z._]) means either double colon and any single alphabet character or triple colon followed by a dot and any single alphabet character or dot (because .. is ok for function name) or underscore (because ._ is ok for function name). Starting "dot and num" or underscore is not authorized for function name
     # [a-zA-Z0-9.]* any several of these characters or nothing
@@ -380,7 +380,8 @@
     output <- base::vector(mode = "logical", length = 0) # here sum(output) = 0
     if(base::length(col1) > 0){
         # detection of a$fun() pattern
-        tempo.log <- base::grepl(x = col3, pattern = "[a-zA-Z.]{1}[a-zA-Z0-9._]* *\\$ *$") 
+        tempo.log <- base::grepl(x = col3, pattern = "([a-zA-Z]|\\.[a-zA-Z._])[a-zA-Z0-9._]* *\\$ *$")
+
         if(base::any(tempo.log, na.rm = TRUE)){
             output <- tempo.log
         }else{
