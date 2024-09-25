@@ -10,9 +10,9 @@
 #' @details
 #' - More precisely, colons_check() verifies that all the strings before an opening bracket "(" are preceeded by "::" (":::" are also checked since the "::" pattern detects ":::"). Thus, it cannot check function names written without brackets, like in the FUN argument of some functions, e.g., sapply(1:3, FUN = as.character).
 #' 
-#' - The perl regex used to detect a function name is: "[a-zA-Z.][a-zA-Z0-9._]*\\s*\\(".
+#' - The perl regex used to detect a function name is: "[a-zA-Z.]{1}[a-zA-Z0-9._]*\\s*\\(".
 #' 
-#' - Function names preceeded by $ and any space are not considered (pattern "\\$ *[a-zA-Z.][a-zA-Z0-9._]* *\\(")
+#' - Function names preceeded by $ and any space are not considered (pattern "\\$ *[a-zA-Z.]{1}[a-zA-Z0-9._]* *\\(")
 #'  
 #' - The following R functions using bracket are not considered: "function", "if", "for", "while" and "repeat".
 #' 

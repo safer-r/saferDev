@@ -124,9 +124,9 @@ is_function_here <- function(
     # end second round of checking and data preparation
 
     # main code
-    tempo.log <- base::grepl(x = fun, pattern = "^.+::.+$")
+    tempo.log <- base::grepl(x = fun, pattern = "^[a-zA-Z][a-zA-Z0-9.]+(:{2}[a-zA-Z]|:{3}\\.[a-zA-Z._]).*$")
     if( ! base::all(tempo.log)){
-        tempo.cat <- base::paste0("ERROR IN ", function.name, " OF THE ", package.name, " PACKAGE\nTHE STRING IN fun ARGUMENT MUST CONTAIN \"::\":\n", base::paste(fun[ ! tempo.log], collapse = "\n"))
+        tempo.cat <- base::paste0("ERROR IN ", function.name, " OF THE ", package.name, " PACKAGE\nTHE STRING IN fun ARGUMENT MUST CONTAIN \"::\" OR \":::.\":\n", base::paste(fun[ ! tempo.log], collapse = "\n"))
         base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
     }
     tempo.log <- base::grepl(x = fun, pattern = "^.+\\(\\)$")
@@ -166,7 +166,11 @@ is_function_here <- function(
             "\nREQUIRED FUNCTION",
             base::ifelse(base::length(tempo) == 1L, " IS ", "S ARE "), 
             "MISSING IN THE INSTALLED PACKAGE", 
-            base::ifelse(base::length(tempo) == 1L, base::paste0(":\n", tempo), base::paste0("S:\n", base::paste(tempo, collapse = "\n")))
+            base::ifelse(base::length(tempo) == 1L, base::paste0(":\n", tempo), base::paste0("S:\n", base::paste(tempo, collapse = "\n"))),
+            "\n\nIN", 
+            base::ifelse(base::length(lib.path) == 1L, "", " ONE OF THESE FOLDERS"), 
+            ":\n", 
+            base::paste(lib.path, collapse = "\n")
         )
         base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
     }

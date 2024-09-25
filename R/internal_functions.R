@@ -12,8 +12,8 @@
 #' @author Haiding Wang <wanghaiding442@gmail.com>
 #' @examples
 #' \dontrun{ # Example that shouldn't be run because this is an internal function
-#' .pack_and_function_check(fun = "ggplot2::notgood", lib.path = base::.libPaths(), external.function.name = "fun1") # this example returns an error
-#' .pack_and_function_check(fun = c("ggplot2::geom_point", "grid::gpar"), lib.path = base::.libPaths(), external.function.name = "fun1")
+#' .pack_and_function_check(fun = "ggplot2::notgood", lib.path = base::.libPaths(), external.function.name = "F1", external.package.name = "P1") # this example returns an error
+#' .pack_and_function_check(fun = c("ggplot2::geom_point", "grid::gpar"), lib.path = base::.libPaths(), external.function.name = "F1", external.package.name = "P1")
 #' }
 #' @keywords internal
 #' @rdname internal_function
@@ -224,9 +224,9 @@
 #' @title .extract_all_fun_names
 #' @description
 #' Extract all function names.
-#' @param text A vector of strings.
+#' @param text A  single strings.
 #' @param pattern: A perl regex to extract function names.
-#' @returns A list containing the functions names, each compartment being one of the string of the input vector.
+#' @returns A list containing the function name, each compartment being one of the string of the input vector.
 #' @author Gael Millot <gael.millot@pasteur.fr>
 #' @examples
 #' \dontrun{ # Example that shouldn't be run because this is an internal function
@@ -246,7 +246,7 @@
     # RETURN
     # A list containing the functions names, each compartment being one of the string of the input vector
     # DEBUGGING
-    # text = ini[19] ; pattern = pattern1
+    # text = ini[20] ; pattern = pattern1
     # Find all matches, including trailing '('
     matches <- base::gregexpr(pattern = pattern, text = text, perl = TRUE)
     matched_strings <- base::regmatches(x = text, m = matches)[[1]]
@@ -269,11 +269,11 @@
 #' @param perl Single logical value. Use Perl regex in pattern ?
 #' @param function.name function name.
 #' @param package.name package name.
-#' @returns The input string with all pattern replaced by the replacement pattern.
+#' @returns A list containing:
+#' $string: The input string with all pattern replaced by the replacement pattern.
+#' $pos: the positions of the 1rst character of the replaced pattern. NULL if no replaced pattern. In that case, $string is identical to the input string
 #' @details
 #' Warning : must be very simple pattern, like "\\(".
-#' 
-#' 
 #' @author Gael Millot <gael.millot@pasteur.fr>
 #' @examples
 #' \dontrun{ # Example that shouldn't be run because this is an internal function
@@ -294,24 +294,42 @@
     # DEBUGGING
     # source("https://raw.githubusercontent.com/safer-r/saferDev/main/dev/other/test.R") ; string = paste(deparse(test), collapse = "") ; pattern = "\\)" ; no_regex_pattern = ")" ; replacement = " " ; perl = FALSE ; function.name = "F1" ; package.name = "P1"
     # string = 'paste0("IAGE((", paste0(1:3, collapse = " "), "A)B()")' ; pattern = "\\)" ; no_regex_pattern = ")" ; replacement = " " ; perl = FALSE ; function.name = "F1" ; package.name = "P1"
+    # string = '\"INTERNAL ERROR 4 IN \", function.name, \" OF THE \", package.name, \" PACKAGE\\nLENGTHS OF col1 (\", base::length(roc1()), \"), col2 (\", base::length(roc2), \"), AND col3 (\", base::length(roc3), \"), SHOULD BE EQUAL\\n\"' ; pattern = "," ; no_regex_pattern = "," ; replacement = " " ; perl = FALSE ; function.name = "F1" ; package.name = "P1"
     if(base::nchar(no_regex_pattern) != base::nchar(replacement)){
-        tempo.cat <- base::paste0("INTERNAL ERROR IN ", function.name, " OF THE ", package.name, " PACKAGE\nARGUMENTS no_regex_pattern AND replacement IN THE .in_quotes_replacement() MUST HAVE THE SAME NUMBER OF CHARACTERS\nno_regex_pattern (", base::nchar(no_regex_pattern), " characters):\n", base::paste(no_regex_pattern, collapse = "\n"), "\nreplacement (", base::nchar(replacement), " characters):\n", base::paste(replacement, collapse = "\n"))
+        tempo.cat <- base::paste0("INTERNAL ERROR 1 IN ", function.name, " OF THE ", package.name, " PACKAGE\nARGUMENTS no_regex_pattern AND replacement IN THE .in_quotes_replacement() MUST HAVE THE SAME NUMBER OF CHARACTERS\nno_regex_pattern (", base::nchar(no_regex_pattern), " characters):\n", base::paste(no_regex_pattern, collapse = "\n"), "\nreplacement (", base::nchar(replacement), " characters):\n", base::paste(replacement, collapse = "\n"))
         base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
     }
     string_split <- base::strsplit(string, split = pattern, perl = perl)[[1]]
-    output <- string_split[1]
-    for(i1 in 2:base::length(string_split)){
+    output1 <- string_split[1]
+    pos <- NULL
+    count <- 1
+    while(count < base::length(string_split)){
+        count <- count + 1
         # if odds number of quotes, it means that # has broken the string in the middle of a quoted part
-        double.quote.test <- .has_odd_number_of_quotes(input_string = output, pattern = '"') # here FALSE means even number of quotes, thus that ")" is not between quotes, thus has to be kept. TRUE means that ")" is between quotes, thus has to be removed
-        simple.quote.test <- .has_odd_number_of_quotes(input_string = output, pattern = "'") # idem
+        double.quote.test <- .has_odd_number_of_quotes(input_string = output1, pattern = '"') # here FALSE means even number of quotes, thus that ")" is not between quotes, thus has to be kept. TRUE means that ")" is between quotes, thus has to be removed
+        simple.quote.test <- .has_odd_number_of_quotes(input_string = output1, pattern = "'") # idem
         odds.quotes.log <- double.quote.test |  simple.quote.test # remove ")" ?
         if(odds.quotes.log == TRUE){
-            output <- paste0(output, replacement, string_split[i1]) # to keep the same length of the tested function on a single string output_1_line
+            pos <- base::c(pos, base::nchar(output1) + 1)
+            output1 <- base::paste0(output1, replacement, string_split[count]) # to keep the same length of the tested function on a single string output_1_line
         }else{
-            output <- paste0(output, no_regex_pattern, string_split[i1])
+            output1 <- base::paste0(output1, no_regex_pattern, string_split[count])
+            pos <- base::c(pos, NA)
         }
     }
-    return(output)
+    if(base::all(base::is.na(pos), na.rm = TRUE)){
+        pos <- NULL
+    }else if(base::any(base::is.na(pos), na.rm = TRUE)){
+        pos <- pos[ ! base::is.na(pos)]
+    }
+    if( ! base::is.null(pos)){
+        tempo <- base::substring(string, pos, pos)
+        if( ! base::all(base::unique(tempo) == no_regex_pattern, na.rm = TRUE)){
+            tempo.cat <- base::paste0("INTERNAL ERROR 2 IN ", function.name, " OF THE ", package.name, " PACKAGE\nIN .in_quotes_replacement(), ARGUMENT no_regex_pattern NOT CORRECTLY DETECTED\nno_regex_pattern: \"", no_regex_pattern, "\"\nREPLACED CHARACTERS IN string ARGUMENT:\n", base::paste(tempo, collapse = "\n"))
+            base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
+        }
+    }
+    return(base::list(string = output1, pos = pos))
 }
 
 
@@ -351,14 +369,14 @@
     # DEBUGGING
     # source("https://raw.githubusercontent.com/safer-r/saferDev/main/dev/other/test.R") ; col1 = c(15, 17) ; col2 = c("gregexpr", "regmatches") ; col3 = c("matches <- ",  "matched_strings <- " ) ; ini = utils::capture.output(test)
     # source("https://raw.githubusercontent.com/safer-r/saferDev/main/dev/other/test.R") ; col1 = c(15, 22, 22) ; col2 = c("gregexpr", "col1", "roc1") ; col3 = c("matches <- ",  "matched_strings <- " ) ; ini = utils::capture.output(test)
-    output <- vector(mode = "logical", length = 0) # here sum(output) = 0
+    output <- base::vector(mode = "logical", length = 0) # here sum(output) = 0
     if(base::length(col1) > 0){
         # detection of a$fun() pattern
-        tempo.log <- base::grepl(x = col3, pattern = "[a-zA-Z.][a-zA-Z0-9._]* *\\$ *$") 
+        tempo.log <- base::grepl(x = col3, pattern = "[a-zA-Z.]{1}[a-zA-Z0-9._]* *\\$ *$") 
         if(base::any(tempo.log, na.rm = TRUE)){
             output <- tempo.log
         }else{
-            output <- rep(FALSE, length(col1))
+            output <- base::rep(FALSE, base::length(col1))
         }
         # end detection of a$fun() pattern
         # detection of functions between quotes
@@ -752,11 +770,12 @@
     }
     # end trick to deal with end of lines between the name of the function and "("
     # all function names in x
-    pattern1 <- "[a-zA-Z.][a-zA-Z0-9._]*\\s*\\(" # pattern to detect a function name, a$fun( is removed in .noclean_functions()
+    pattern1 <- "([a-zA-Z][a-zA-Z0-9.]+:{2,3})*[a-zA-Z.]{1}[a-zA-Z0-9._]*\\s*\\(" # pattern to detect a function name, a$fun( is removed in .noclean_functions()
+    # pattern1 <- "[a-zA-Z.][a-zA-Z0-9._]*\\s*\\(" # pattern to detect a function name, a$fun( is removed in .noclean_functions()
     # I could have used [\\s\\r\\n]* meaning any space or end of line or carriage return between the name and "(" but finally, another strategy used
     # - `this does not work well, as it does not take dots: "\\b[a-zA-Z\\.\\_]{1}[a-zA-Z0-9\\.\\_]+\\b", because of `\\b`: These are word boundaries. It ensures that the pattern matches only a complete word and not a part of a word.
     # - `[a-zA-Z.]{1}`: This portion of the pattern matches any uppercase letter (`A-Z`), lowercase letter (`a-z`), or a period (`.`) a single time ({1}).
-    # - `[a-zA-Z0-9._]*`: This part of the pattern matches any uppercase letter (`A-Z`), lowercase letter (`a-z`), number (`0-9`), period (`.`), or underscore (`_`), repeated one or more times (`+`). This represents the possible characters inside an R function name.
+    # - `[a-zA-Z0-9._]*`: This part of the pattern matches any uppercase letter (`A-Z`), lowercase letter (`a-z`), number (`0-9`), period (`.`), or underscore (`_`), repeated zero or more times (`*`). This represents the possible characters inside an R function name.
     # - `\\b`: Again, these are word boundaries, making sure the pattern captures the entire word and not just part of it.
     # -  not used: `(?= *\\()`: This is a lookahead assertion. It checks that the preceding pattern is followed by any spaces and a parenthesis (`\\(`), but doesn't include the spaces and parenthesis in the match. This is because, in R code, a function call is usually followed by a parenthesis, but the parenthesis is not part of the function name.
     fun_name <- base::lapply(ini, FUN = function(x){saferDev:::.extract_all_fun_names(text = x, pattern = pattern1)}) # recover all the function names, followed by "(", present in ini
