@@ -85,6 +85,8 @@ all_args_here <- function(
     )
     code_line_nb_wo_op <- out$code_line_nb_wo_op # vector of line numbers in ini
     fun_name_wo_op <-  out$fun_name_wo_op # list of function names for each line of ini
+    fun_name_wo_op_pos <-  out$fun_name_pos_wo_op # list of pos (1st character) of function names for each line of ini
+
     ini <- out$ini # vector of strings of the tested function code
     fun_1_line <- base::paste(out$ini, collapse = ";") # assemble the code of the tested  function (without comments) in a single line
     if(grepl(x = fun_1_line, pattern = reserved_word)){
@@ -104,7 +106,7 @@ all_args_here <- function(
     # end replacement of all the ( between quotes
     # recovery of the functions, in the tested function, with written arguments inside ()
     arg_string_for_col3 <- fun_name_wo_op # like fun_name_wo_op but added with all what is between ()
-    arg_string_for_col4 <- fun_name_wo_op # will be used to get the arguments
+    arg_string_for_col5 <- fun_name_wo_op # will be used to get the arguments
     middle_bracket_pos_col3 <- base::lapply(X = fun_name_wo_op, FUN = function(x){base::lapply(X = x, FUN = function(y){base::list()})}) # list of lists, will be used to get inside ( and ) positions
 
     for(i1 in 1:base::length(fun_name_wo_op)){
@@ -118,17 +120,17 @@ all_args_here <- function(
                 if(tempo_log){ # remove functions preceeded by $, like a$fun()
                     arg_string_for_col3[[i1]][i2] <- ""
                     fun_name_wo_op[[i1]][i2] <- ""
-                    arg_string_for_col4[[i1]][i2] <- ""
+                    arg_string_for_col5[[i1]][i2] <- ""
                     substr(x = fun_1_line_replace, start = 1, stop = tempo_pos$begin - 1) <- paste(rep(" ", tempo_pos$begin - 1), collapse = "")
                 }else{
                     arg_string_for_col3[[i1]][i2] <- substr(x = fun_1_line, start = tempo_pos$begin_fun, stop = tempo_pos$end) # add the "function(args)" string into arg_string_for_col3. I use fun_1_line because I want unaltered values of args here (fun_1_line_replace have quoted () replaced by spaces)
-                    arg_string_for_col4[[i1]][i2] <- substr(x = fun_1_line, start = tempo_pos$begin + 1, stop = tempo_pos$end - 1) # idem arg_string_for_col3 but inside () of the function (just the arguments written)
+                    arg_string_for_col5[[i1]][i2] <- substr(x = fun_1_line, start = tempo_pos$begin + 1, stop = tempo_pos$end - 1) # idem arg_string_for_col3 but inside () of the function (just the arguments written)
                     middle_bracket_pos_col3[[i1]][[i2]] <- tempo_pos$middle_bracket_pos # positions of the () inside a function in 
                     substr(x = fun_1_line_replace, start = 1, stop = tempo_pos$begin - 1) <- paste(rep(" ", tempo_pos$begin - 1), collapse = "") # trick that replaces characters between start = tempo_pos$begin_fun and stop = tempo_pos$end by the same number of spaces. This, to avoid to take always the first paste0 for instance in the fun_1_line_replace string when several are present in fun_name_wo_op
                 }
             }else{
                 arg_string_for_col3[[i1]][i2] <- reserved_word
-                arg_string_for_col4[[i1]][i2] <- ""
+                arg_string_for_col5[[i1]][i2] <- ""
             }
             # substr(x = fun_1_line, start = fun_pos, stop = fun_close_paren_pos) <- paste(rep(" ", nchar( arg_string_for_col3[[i1]][i2])), collapse = "") # remove the first fonction in the line, in case of identical function names in a code line. Like, that, the next round for the next same function can be easily tested for "between quotes" 
         }
@@ -139,7 +141,7 @@ all_args_here <- function(
     col2 <- base::as.vector(base::unlist(fun_name_wo_op)) # all the function names inside the tested functions (functions between quotes are already removed thanks to fun_1_line_replace)
     col3 <- base::as.vector(base::unlist(arg_string_for_col3)) # as col2 but with its arguments between ()
     if( ! (base::length(col1) == base::length(col2) & base::length(col1) == base::length(col3))){
-        tempo.cat <- base::paste0("INTERNAL ERROR 3 IN ", function.name, " OF THE ", package.name, " PACKAGE\nLENGTHS OF col1 (", base::length(col1), "), col2 (", base::length(col2), "), col3 (", base::length(col3), "), AND col4 (", base::length(col4), "), SHOULD BE EQUAL\n")
+        tempo.cat <- base::paste0("INTERNAL ERROR 3 IN ", function.name, " OF THE ", package.name, " PACKAGE\nLENGTHS OF col1 (", base::length(col1), "), col2 (", base::length(col2), "), col3 (", base::length(col3), "), AND col5 (", base::length(col5), "), SHOULD BE EQUAL\n")
         base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n", base::ifelse(base::is.null(warn), "", base::paste0("IN ADDITION\nWARNING", base::ifelse(warn.count > 1, "S", ""), ":\n\n", warn))), call. = FALSE)
     }
     if( ! (base::length(col1) == base::length(col2) & base::length(col1) == base::length(col3) & base::length(col2) == base::length(col3))){
@@ -165,7 +167,7 @@ all_args_here <- function(
         tempo.cat <- base::paste0("INTERNAL ERROR 5 IN ", function.name, " OF THE ", package.name, " PACKAGE\ncol3 MUST BE MADE OF STRINGS STARTING BY\n\"<FUNCTION_NAME>[\\s\\r\\n]*\\(\"\nAND FINISHING BY\")\"\nHERE IT IS:\n\n", base::paste(col3, collapse = "\n"))
         base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n", base::ifelse(base::is.null(warn), "", base::paste0("IN ADDITION\nWARNING", base::ifelse(warn.count > 1, "S", ""), ":\n\n", warn))), call. = FALSE)
     }
-    # data.frame(POS_IN_CODE = col1, FUN = col2, FUN_OBS_ARGS = col3, base::as.vector(base::unlist(arg_string_for_col4)))
+    # data.frame(POS_IN_CODE = col1, FUN = col2, FUN_OBS_ARGS = col3, base::as.vector(base::unlist(arg_string_for_col5)))
     # removal of detected function preceeded by $, which are "" in col2
     tempo_log <- col2 == "" 
     if(base::any(tempo_log, na.rm = TRUE)){
@@ -179,23 +181,24 @@ all_args_here <- function(
     if( (base::length(col1) == 0)){
         base::cat("\n\nEVERYTHING SEEMS CLEAN\n\n")
     }else{
-        col4 <- NULL # all arguments of the function with default value
-        col5 <- NULL # missing arg names
-        col6 <- NULL # potential missing args with values
+        col5 <- NULL # all arguments of the function with default value
+        col6 <- NULL # missing arg names
+        col7 <- NULL # potential missing args with values
+        col8 <- NULL # reconstructed function with all arg
         for(i2 in 1:base::length(col1)){
             if(col3[i2] != reserved_word){
                 arg_full <- base::formals(fun = col2[i2]) # all the argument of the function in col2[i2] with default values
                 arg_full <- arg_full[names(arg_full) != "..."] # removal of the "..." argument
                 if(base::is.null(arg_full)){
-                    col4 <- base::c(col4, "")
                     col5 <- base::c(col5, "")
                     col6 <- base::c(col6, "")
+                    col7 <- base::c(col7, "")
                 }else{
-                    # all arguments of the function with default value in col4
+                    # all arguments of the function with default value in col5
                     tempo <- base::sapply(X = arg_full, FUN = function(x){ base::paste0(ifelse(base::all(x == "", na.rm =TRUE), "", " = "), x)})
                     tempo <- base::paste( base::paste0( base::names(tempo), tempo), collapse = ", ")
-                    col4 <- base::c(col4, tempo)
-                    # end all arguments of the function with default value in col4
+                    col5 <- base::c(col5, tempo)
+                    # end all arguments of the function with default value in col5
                     # recovering obs arg
                     tempo_str <- base::sub(pattern =  base::paste0("^", col2[i2], "[\\s\\r\\n]*\\("), replacement = "", x = col3[i2], perl = TRUE) # removal of function name and (
                     tempo_str <- base::sub(pattern =  "\\)$", replacement = "", x = tempo_str, perl = FALSE) # removal of trailing )
@@ -252,13 +255,13 @@ all_args_here <- function(
                     }
                     # end working on each observed arg
                 }
-                # col4 done above
-                col5 <- base::c(col5, base::paste(missing_args_names, collapse = ", "))
-                col6 <- base::c(col5, base::paste(good_args, collapse = ", "))
+                # col5 done above
+                col6 <- base::c(col6, base::paste(missing_args_names, collapse = ", "))
+                col7 <- base::c(col6, base::paste(good_args, collapse = ", "))
             }else{
-                col4 <- base::c(col4, "")
                 col5 <- base::c(col5, "")
                 col6 <- base::c(col6, "")
+                col7 <- base::c(col7, "")
             }
         }
     }

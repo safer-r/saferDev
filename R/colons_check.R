@@ -74,11 +74,6 @@ colons_check <- function(
     tempo.log <- base::lapply(out$fun_name_wo_op, FUN = function(x){x %in% out$fun}) #  are names basic functions used in x?
     in_basic_fun <- mapply(FUN = function(x, y){x[y]}, x = out$fun_name_wo_op, y = tempo.log)
     in_basic_fun_name_pos_wo_op <-  mapply(FUN = function(x, y){x[y]}, x = out$fun_name_pos_wo_op, y = tempo.log)
-    test.log <- mapply(FUN = function(x, y){length(x) != length(y)}, x = in_basic_fun, y = in_basic_fun_name_pos_wo_op)
-    if(base::any(test.log, na.rm = TRUE)){
-        tempo.cat <- base::paste0("INTERNAL ERROR 7 IN ", function.name, " OF THE ", package.name, " PACKAGE\nLENGTHS SHOULD BE IDENTICAL IN COMPARTMENTS ", paste(which(test.log), collapse = ", "), " OF in_basic_fun AND in_basic_fun_name_pos_wo_op")
-        base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
-    }
     # end selection of basic functions
     # removal of string with empty function names
     tempo.log <- base::sapply(in_basic_fun, FUN = function(x){base::length(x) == 0}) # detection of string with empty function names
@@ -97,11 +92,6 @@ colons_check <- function(
     tempo.log <- base::lapply(out$fun_name_wo_op, FUN = function(x){ ! x %in% base::c(out$fun, out$arg.user.setting$x)}) #  names of all the other functions used in x, except the one tested (arg.user.setting$x), because can be in error messages
     in_other_fun <- mapply(FUN = function(x, y){x[y]}, x = out$fun_name_wo_op, y = tempo.log)
     in_other_fun_name_pos_wo_op <-  mapply(FUN = function(x, y){x[y]}, x = out$fun_name_pos_wo_op, y = tempo.log)
-    test.log <- mapply(FUN = function(x, y){length(x) != length(y)}, x = in_other_fun, y = in_other_fun_name_pos_wo_op)
-    if(base::any(test.log, na.rm = TRUE)){
-        tempo.cat <- base::paste0("INTERNAL ERROR 7 IN ", function.name, " OF THE ", package.name, " PACKAGE\nLENGTHS SHOULD BE IDENTICAL IN COMPARTMENTS ", paste(which(test.log), collapse = ", "), " OF in_other_fun AND in_other_fun_name_pos_wo_op")
-        base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
-    }
     # end selection of other functions
     # removal of string with empty function names
     tempo.log <- base::sapply(in_other_fun, FUN = function(x){base::length(x) == 0}) # detection of string with empty function names
