@@ -85,7 +85,7 @@ all_args_here <- function(
     )
     code_line_nb_wo_op <- out$code_line_nb_wo_op # vector of line numbers in ini
     fun_name_wo_op <-  out$fun_name_wo_op # list of function names for each line of ini
-    fun_name_wo_op_pos <-  out$fun_name_pos_wo_op # list of pos (1st character) of function names for each line of ini
+    fun_name_pos_wo_op <-  out$fun_name_pos_wo_op # list of pos (1st character) of function names for each line of ini
 
     ini <- out$ini # vector of strings of the tested function code
     fun_1_line <- base::paste(out$ini, collapse = ";") # assemble the code of the tested  function (without comments) in a single line
@@ -140,12 +140,9 @@ all_args_here <- function(
     col1 <- base::as.vector(base::unlist(base::mapply(FUN = function(x, y){base::rep(y, base::length(x))}, x = fun_name_wo_op, y = code_line_nb_wo_op))) # code line number
     col2 <- base::as.vector(base::unlist(fun_name_wo_op)) # all the function names inside the tested functions (functions between quotes are already removed thanks to fun_1_line_replace)
     col3 <- base::as.vector(base::unlist(arg_string_for_col3)) # as col2 but with its arguments between ()
+    col4 <- base::as.vector(base::unlist(fun_name_pos_wo_op)) # as col2 but position in the code string of 1st character of function name
     if( ! (base::length(col1) == base::length(col2) & base::length(col1) == base::length(col3))){
         tempo.cat <- base::paste0("INTERNAL ERROR 3 IN ", function.name, " OF THE ", package.name, " PACKAGE\nLENGTHS OF col1 (", base::length(col1), "), col2 (", base::length(col2), "), col3 (", base::length(col3), "), AND col5 (", base::length(col5), "), SHOULD BE EQUAL\n")
-        base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n", base::ifelse(base::is.null(warn), "", base::paste0("IN ADDITION\nWARNING", base::ifelse(warn.count > 1, "S", ""), ":\n\n", warn))), call. = FALSE)
-    }
-    if( ! (base::length(col1) == base::length(col2) & base::length(col1) == base::length(col3) & base::length(col2) == base::length(col3))){
-        tempo.cat <- base::paste0("INTERNAL ERROR 4 IN ", function.name, " OF THE ", package.name, " PACKAGE\nLENGTHS OF col1 (", base::length(col1), "), col2 (", base::length(col2), "), AND col3 (", base::length(col3), "), SHOULD BE EQUAL\n")
         base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n", base::ifelse(base::is.null(warn), "", base::paste0("IN ADDITION\nWARNING", base::ifelse(warn.count > 1, "S", ""), ":\n\n", warn))), call. = FALSE)
     }
     tempo.log <- base::as.vector(base::unlist(base::mapply(

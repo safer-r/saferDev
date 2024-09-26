@@ -28,7 +28,7 @@ test_that("colons_check()", {
 
 
   # sophisticated example
-    source("https://raw.githubusercontent.com/safer-r/saferDev/main/dev/other/test.R") # Warning: comments are removed by the CI
+    source("https://raw.githubusercontent.com/safer-r/saferDev/main/dev/other/test.R") # Warning: comments are removed by the CI and lines are changed
     result1 <- capture.output(colons_check(x = test))
     expected1 <- c(
         "", 
@@ -38,19 +38,18 @@ test_that("colons_check()", {
         "INSIDE test(), SOME :: OR ::: ARE MISSING AT BASIC FUNCTION POSITIONS:", 
         "", 
         "LINE\tFUN\t\tSTRING_BEFORE", 
-        "15\tgregexpr\t\tmatches <- " , 
-        "17\tregmatches\t\tmatched_strings <- " , 
-        "20\tsum\t\ttempo4 <- a$regmatches(x = text, m = matches)[[1]] ; ", 
-        "23\tsub\t\tresult <- " , 
-        "23\trange\t\tresult <- sub(\"\\\\($##\", \"\", matched_strings) ; ", 
-        "25\treturn\t\t", 
+        "3\tgregexpr\t\tmatches <- " , 
+        "6\tregmatches\t\tmatched_strings <- " , 
+        "8\tsum\t\t", 
+        "15\tsub\t\tresult <- " , 
+        "16\trange\t\t", 
+        "19\treturn\t\t", 
         "", 
         "INSIDE test(), SOME :: OR ::: ARE MISSING AT OTHER FUNCTION POSITIONS:", 
         "", 
         "LINE\tFUN\t\tSTRING_BEFORE", 
-        "22\troc1\t\ttempo.cat <- base::paste0(\"INTERNAL ERROR 4 IN \", function.name, \" OF THE \", package.name, \" PACKAGE\\nLENGTHS OF col1 (\", base::length(", 
-        "24\troc00\t\ttempo.cat <- base::paste0(\"IAGE\\nLENGTHS OF " , 
-        "24\troc4\t\ttempo.cat <- base::paste0(\"IAGE\\nLENGTHS OF roc00() (\", base::ks.test(" , 
+        "13\troc1\t\tbase::length(", 
+        "17\troc4\t\ttempo.cat <- base::paste0(\"IAGE\\nLENGTHS OF roc00() (\", base::ks.test(" , 
         "", 
         "================", 
         ""
