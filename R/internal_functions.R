@@ -232,9 +232,11 @@
 #' @title .extract_all_fun_names
 #' @description
 #' Extract all function names.
-#' @param text A  single strings.
+#' @param text A single strings.
 #' @param pattern: A perl regex to extract function names.
-#' @returns A list containing the function name, each compartment being one of the string of the input vector.
+#' @returns A list containing:
+#' $string: the function names without parenthesis.
+#' $pos: position of the first character of the function names in the input string
 #' @author Gael Millot <gael.millot@pasteur.fr>
 #' @examples
 #' \dontrun{ # Example that shouldn't be run because this is an internal function
@@ -257,10 +259,13 @@
     # text = ini[20] ; pattern = pattern1
     # Find all matches, including trailing '('
     matches <- base::gregexpr(pattern = pattern, text = text, perl = TRUE)
+    att <- base::attributes(matches[[1]]) # attributes
+    pos <- base::as.vector(att$capture.start)
     matched_strings <- base::regmatches(x = text, m = matches)[[1]]
     # Remove trailing '(' from each match
-    result <- base::sub(pattern = "\\s*\\($", replacement = "", x = matched_strings, perl = TRUE)
-    base::return(result)
+    string <- base::sub(pattern = "\\s*\\($", replacement = "", x = matched_strings, perl = TRUE)
+    # end Remove trailing '(' from each match
+    base::return(base::list(string = string, pos = pos))
 }
 
 
@@ -573,11 +578,12 @@
 #' @param arg.user.setting Argument user settings list.
 #' @param function.name function name.
 #' @param package.name package name.
-#' #' @returns 
+#' @returns 
 #'  A list:
 #' $ini: vector of strings of the initial function code tested.
 #' $fun: list of names of all the basic R functions.
 #' $fun_name_wo_op: list of names of all the functions without operators.
+#' $fun_name_pos_wo_op: list of position of the first character of each names of all the functions without operators, in $in.
 #' $code_line_nb_wo_op: vector of integers of the corresponding code line numbers.
 #' $internal_fun_names: vector of string of names of internal functions in the function code analyzed.
 #' $arg.user.setting: list of arg user settings.
@@ -588,7 +594,7 @@
 #' 
 #' @examples
 #' \dontrun{ # Example that shouldn't be run because this is an internal function
-#' .functions_detect(x = test, safer_check = TRUE, arg.user.setting = base::list(x =  as.name(x = "test"), safer_check = TRUE), function.name = "F1", package.name = "P1")
+#' source("C:\\Users\\gmillot\\Documents\\Git_projects\\safer-r\\saferDev\\dev\\other\\test.R") ; .functions_detect(x = test, safer_check = TRUE, arg.user.setting = base::list(x =  as.name(x = "test"), safer_check = TRUE), function.name = "F1", package.name = "P1")
 #' }
 #' @author Gael Millot <gael.millot@pasteur.fr>
 #' @keywords internal
@@ -601,23 +607,6 @@
     function.name, 
     package.name
 ){
-    # AIM
-    # Detect all the functions used inside a function.
-    # ARGUMENTS
-    # x a function name, written without quotes and brackets.
-    # safer_check Single logical value. Perform some "safer" checks (see https://github.com/safer-r)?
-    # arg.user.setting Argument user settings list.
-    # function.name function name.
-    # package.name package name.
-    # RETURN
-    # A list:
-    # $ini: vector of strings of the initial function code tested.
-    # $fun: list of names of all the basic R functions.
-    # $fun_name_wo_op: list of names of all the functions without operators.
-    # $code_line_nb_wo_op: vector of integers of the corresponding code line numbers.
-    # $internal_fun_names: vector of string of names of internal functions in the function code analyzed.
-    # $arg.user.setting: list of arg user settings.
-    # $ini.warning.length: initial R warning.length from options()$warning.length.
     # DEBUGGING
     # x = x ; safer_check = safer_check ; arg.user.setting = arg.user.setting ; function.name = function.name ; package.name = package.name
     # source("C:\\Users\\gmillot\\Documents\\Git_projects\\safer-r\\saferDev\\dev\\other\\test.R") ; x = test ; safer_check = TRUE ; arg.user.setting = base::list(x = as.name(x = "test"), safer_check = TRUE) ; function.name = "F1" ; package.name = "P1"
@@ -799,13 +788,28 @@
         # - `[a-zA-Z0-9._]*`: This part of the pattern matches any uppercase letter (`A-Z`), lowercase letter (`a-z`), number (`0-9`), period (`.`), or underscore (`_`), repeated zero or more times (`*`). This represents the possible characters inside an R function name.
         # - `\\b`: Again, these are word boundaries, making sure the pattern captures the entire word and not just part of it.
         # -  not used: `(?= *\\()`: This is a lookahead assertion. It checks that the preceding pattern is followed by any spaces and a parenthesis (`\\(`), but doesn't include the spaces and parenthesis in the match. This is because, in R code, a function call is usually followed by a parenthesis, but the parenthesis is not part of the function name.
-    fun_name <- base::lapply(ini, FUN = function(x){saferDev:::.extract_all_fun_names(text = x, pattern = pattern1)}) # recover all the function names, followed by "(", present in ini, using a perl pattern
-    fun_name_wo_op <- base::lapply(fun_name, FUN = function(x){x[ ! x %in% base::c("function", "if", "for", "while", "repeat")]}) # removal of special functions
+
+    fun_name <- list()
+    fun_name_pos <- list()
+    for(i1 in 1:base::length(ini)){
+        tempo <- .extract_all_fun_names(text = ini[i1], pattern = pattern1) # recover all the function names, followed by "(", present in ini, using a perl pattern
+        fun_name <- c(fun_name, list(tempo$string))
+        fun_name_pos <- c(fun_name_pos, list(tempo$pos))
+    }
+    # tempo <- base::lapply(ini, FUN = function(x){saferDev:::.extract_all_fun_names(text = x, pattern = pattern1)})
+    # removal of special functions
+    tempo_log <- base::lapply(fun_name, FUN = function(x){ ! x %in% base::c("function", "if", "for", "while", "repeat")})
+    fun_name_wo_op <- base::mapply(FUN = function(x, y){x[y]}, x = fun_name, y = tempo_log)
+    fun_name_pos_wo_op <- base::mapply(FUN = function(x, y){x[y]}, x = fun_name_pos, y = tempo_log)
+    # end removal of special functions
+    # removal of empty string
     tempo.log <- base::sapply(fun_name_wo_op, FUN = function(x){base::length(x) == 0}) # detection of string with empty function names
-    fun_name_wo_op <- fun_name_wo_op[ ! tempo.log] # removal of empty string
+    fun_name_wo_op <- fun_name_wo_op[ ! tempo.log]
+    fun_name_pos_wo_op <- fun_name_pos_wo_op[ ! tempo.log]
     code_line_nb_wo_op <- code_line_nb[( ! tempo.log) & ( ! comment_line.log) & ( ! empty_line.log)]
-    if(base::length(fun_name_wo_op) != base::length(code_line_nb_wo_op)){
-        tempo.cat <- base::paste0("INTERNAL ERROR 6 IN ", function.name, " OF THE ", package.name, " PACKAGE\nLENGTHS SHOULD BE IDENTICAL\nfun_name_wo_op: ", base::length(fun_name_wo_op), "\ncode_line_nb: ", base::length(code_line_nb_wo_op))
+    # end removal of empty string
+    if( ! (base::length(fun_name_wo_op) == base::length(fun_name_pos_wo_op) & base::length(fun_name_wo_op) == base::length(code_line_nb_wo_op))){
+        tempo.cat <- base::paste0("INTERNAL ERROR 6 IN ", function.name, " OF THE ", package.name, " PACKAGE\nLENGTHS SHOULD BE IDENTICAL\nfun_name_wo_op: ", base::length(fun_name_wo_op), "\nfun_name_pos_wo_op: ", base::length(fun_name_pos_wo_op), "\ncode_line_nb_wo_op: ", base::length(code_line_nb_wo_op))
         base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
     }
     # fun_name_wo_op_uni <- base::unlist(base::unique(fun_name_wo_op)) # in case
@@ -815,6 +819,7 @@
         ini = ini, 
         fun = fun, 
         fun_name_wo_op = fun_name_wo_op, 
+        fun_name_pos_wo_op = fun_name_pos_wo_op, 
         code_line_nb_wo_op = code_line_nb_wo_op, 
         internal_fun_names = internal_fun_names,
         arg.user.setting = arg.user.setting,
@@ -830,8 +835,9 @@
 #' @description
 #' Create the message for the colons_check() function.
 #' @param list.fun list of names of all the functions.
-#' @param list.fun.uni vector of all the unique function names.
-#' @param list.line.nb vector of corresponding line number.
+#' @param fun.uni vector of all the unique function names.
+#' @param list.fun.pos list of position of first character of names of all the functions in ini.
+#' @param line.nb vector of corresponding line number.
 #' @param ini vector of string of the initial function code analyzed.
 #' @param arg.user.setting list of arg user settings.
 #' @param function.name function name.
@@ -847,8 +853,9 @@
 #' @rdname internal_function
 .colons_check_message <- function(
     list.fun, 
-    list.fun.uni, 
-    list.line.nb, 
+    fun.uni, 
+    list.fun.pos, 
+    line.nb, 
     ini, 
     arg.user.setting, 
     function.name, 
@@ -856,39 +863,31 @@
     text,
     internal_fun_names
 ){
-    # AIM
-    # create the message for the colons_check() function
-    # ARGUMENTS
-    # list.fun: list of names of all the basic functions
-    # list.fun.uni: vector of all the unique function names
-    # list.line.nb: vector of corresponding line number
-    # ini: vector of string of the initial function code analyzed
-    # arg.user.setting: list of arg user settings
-    # function.name: function name
-    # package.name: package name
-    # text: either "BASIC" or "OTHER"
-    # internal_fun_names: vector of string of names of internal functions in the function code analyzed
-    # RETURN
-    # A list 
-    # $output.cat: the message (string)
-    # $colon_not_here: logical vector. Does list.fun contain function names without :: or ::: ?
     # DEBUGGING
-    # list.fun = in_basic_fun ; list.fun.uni = in_basic_fun_uni ; list.line.nb = in_basic_code_line_nb ; ini = ini ; arg.user.setting = arg.user.setting ; function.name = function.name ; package.name = package.name ; text = "BASIC" ; internal_fun_names = internal_fun_names
-    # list.fun = in_other_fun ; list.fun.uni = in_other_fun_uni ; list.line.nb = in_other_code_line_nb ; ini = ini ; arg.user.setting = arg.user.setting ; function.name = function.name ; package.name = package.name ; text = "OTHER" ; internal_fun_names = internal_fun_names
+    # list.fun = in_basic_fun ; fun.uni = in_basic_fun_uni ; list.fun.pos = in_basic_fun_name_pos_wo_op ; line.nb = in_basic_code_line_nb ; ini = ini ; arg.user.setting = arg.user.setting ; function.name = function.name ; package.name = package.name ; text = "BASIC" ; internal_fun_names = internal_fun_names
+    # list.fun = in_other_fun ; fun.uni = in_other_fun_uni ; list.fun.pos = in_other_fun_name_pos_wo_op ; line.nb = in_other_code_line_nb ; ini = ini ; arg.user.setting = arg.user.setting ; function.name = function.name ; package.name = package.name ; text = "OTHER" ; internal_fun_names = internal_fun_names
     if(base::length(text) != 1 & base::any( ! text %in% base::c("BASIC", "OTHER"))){
-        tempo.cat <- base::paste0("INTERNAL ERROR 1 IN ", function.name, " OF THE ", package.name, " PACKAGE\nTHE text ARGUMENT OF create_message MUST BE \"BASIC\" OR \"OTHER\".\nTHE PROBLEM IS:\n",
+        tempo.cat <- base::paste0("INTERNAL ERROR 1 IN ", function.name, " OF THE ", package.name, " PACKAGE\nTHE text ARGUMENT OF .colons_check_message() MUST BE \"BASIC\" OR \"OTHER\".\nTHE PROBLEM IS:\n",
             base::paste(text, collapse = "\n"))
         base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
     }
-    pattern2 <- base::paste(base::paste0("(?<![A-Za-z0-9._])", list.fun.uni, "\\s*\\("), collapse = "|") # to split string according to function name as splitter. Pattern (?<![A-Za-z0-9._]) means "must not be preceeded by any alphanum or .or _
-    pattern3 <- base::paste(base::paste0("(?<![A-Za-z0-9._])", list.fun.uni, "\\s*\\($"), collapse = "|") # same as pattern2 but used to know if the seeked function is at the end of the string
-    basic_ini <- ini[list.line.nb]
-    res <- base::strsplit(x = basic_ini, split = pattern2, perl = TRUE) # in res, all the strings should finish by ::
-    tempo.log <- ! base::grepl(x = basic_ini, pattern = pattern3, perl = TRUE) # strings of basic_ini that does not finish by the function name
-    # in each compartment of res, the last split section is removed because nothing to test at the end (end of code)
-    if(base::sum(tempo.log, na.rm = TRUE) > 0){
-        res[tempo.log] <- base::lapply(X = res[tempo.log], FUN = function(x){x[-base::length(x)]})
+    # pattern2 <- base::paste(base::paste0("(?<![A-Za-z0-9._])", fun.uni, "\\s*\\("), collapse = "|") # to split string according to function name as splitter. Pattern (?<![A-Za-z0-9._]) means "must not be preceeded by any alphanum or .or _
+    # pattern3 <- base::paste(base::paste0("(?<![A-Za-z0-9._])", fun.uni, "\\s*\\($"), collapse = "|") # same as pattern2 but used to know if the seeked function is at the end of the string
+    basic_ini <- ini[line.nb]
+    if( ! (base::length(list.fun) == base::length(list.fun.pos) & base::length(list.fun) == base::length(line.nb) & base::length(list.fun) == base::length(basic_ini))){
+        tempo.cat <- base::paste0("INTERNAL ERROR 1 IN ", function.name, " OF THE ", package.name, " PACKAGE\nIN .colons_check_message(), LENGTHS SHOULD BE IDENTICAL\nlist.fun: ", base::length(list.fun), "\nlist.fun.pos: ", base::length(list.fun.pos), "\nline.nb: ", base::length(line.nb), "\nbasic_ini: ", base::length(basic_ini))
+        base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
     }
+    res <- list.fun.pos
+    for(i1 in 1:base::length(basic_ini)){
+        res[[i1]] <- mapply(FUN = function(x , y){z <- substr(x = x, start = 1, stop = y - 1)}, x = basic_ini[i1], y = list.fun.pos[[i1]], USE.NAMES = FALSE)
+    }
+    # res <- base::strsplit(x = basic_ini, split = pattern2, perl = TRUE) # in res, all the strings should finish by ::
+    # tempo.log <- ! base::grepl(x = basic_ini, pattern = pattern3, perl = TRUE) # strings of basic_ini that does not finish by the function name
+    # in each compartment of res, the last split section is removed because nothing to test at the end (end of code)
+    # if(base::sum(tempo.log, na.rm = TRUE) > 0){
+    #     res[tempo.log] <- base::lapply(X = res[tempo.log], FUN = function(x){x[-base::length(x)]})
+    # }
     # end in each compartment of res, the last split section is removed because nothing to test at the end (end of code)
     res2 <- base::lapply(X = res, FUN = function(x){base::substr(x, base::nchar(x)-1, base::nchar(x))}) # base::nchar(x)-1 takes only :: if the strings ends by :::
     base::names(res2) <- NULL
@@ -902,7 +901,7 @@
         base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
     }
     if(base::any(base::unlist(colon_not_here))){
-        col1 <- base::as.vector(base::unlist(base::mapply(FUN = function(x, y){base::rep(y, base::sum(x))}, x = colon_not_here, y = list.line.nb)))
+        col1 <- base::as.vector(base::unlist(base::mapply(FUN = function(x, y){base::rep(y, base::sum(x))}, x = colon_not_here, y = line.nb)))
         col2 <- base::as.vector(base::unlist(base::mapply(FUN = function(x, y){y[x]}, x = colon_not_here, y = list.fun)))
         col3 <- base::as.vector(base::unlist(base::mapply(FUN = function(x, y){y[x]}, x = colon_not_here, y = res)))
         if( ! (base::length(col1) == base::length(col2) & base::length(col1) == base::length(col3) & base::length(col2) == base::length(col3))){

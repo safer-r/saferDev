@@ -8,7 +8,11 @@
 #' Table-like: column 1, the line number in the function code (starting at the "<- function" line, i.e., without counting the #' header lines); column 2,  the function name; column 3, the code preceeding the function name
 #' With missing :: or :::, the message also indicates if internal functions are created inside the checked function code, since these functions cannot have :: or :::.
 #' @details
-#' - More precisely, colons_check() verifies that all the strings before an opening bracket "(" are preceeded by "::" (":::" are also checked since the "::" pattern detects ":::"). Thus, it cannot check function names written without brackets, like in the FUN argument of some functions, e.g., sapply(1:3, FUN = as.character).
+#' - More precisely, colons_check() verifies that all the strings before an opening bracket "(" are preceeded by "::" 
+#' 
+#' - ":::" are not checked per se, because incorrect writting, like saferDev::.colons_check_message() returns an error, and because base:::sum() is as ok as base::sum(). In the same manner, more than three colons are not checked because it returns an error.
+#' 
+#' - Warning: the function cannot check function names written without brackets, like in the FUN argument of some functions, e.g., sapply(1:3, FUN = as.character).
 #' 
 #' - The perl regex used to detect a function name is: "[a-zA-Z.]{1}[a-zA-Z0-9._]*\\s*\\(".
 #' 
@@ -44,6 +48,7 @@ colons_check <- function(
     # library(saferDev) ; x = get_message ; safer_check = TRUE # Warning: does not return the same number of code lines than the previsou example
     # source("C:\\Users\\gmillot\\Documents\\Git_projects\\safer-r\\saferDev\\R\\colons_check.R") ; x = colons_check ; safer_check = TRUE # Warning: x = saferDev::get_message does not return the same number of code lines
     # source("https://raw.githubusercontent.com/safer-r/saferDev/main/dev/other/test.R") ; x = test ; safer_check = TRUE # Warning: x = saferDev::get_message does not return the same number of code lines
+    # arg.user.setting = base::list(x = as.name(x = "test"), safer_check = TRUE)
     # package name
     package.name <- "saferDev"
     # end package name
@@ -56,7 +61,7 @@ colons_check <- function(
     arg.user.setting <- base::as.list(x = base::match.call(expand.dots = FALSE))[-1] # list of the argument settings (excluding default values not provided by the user)
     # end function name
     # main code
-    out <- saferDev:::.functions_detect(
+    out <- .functions_detect(
         x = x, 
         safer_check = safer_check,
         arg.user.setting = arg.user.setting, 
@@ -65,33 +70,58 @@ colons_check <- function(
     )
 
     # basic function names in x
-    in_basic_fun <- base::lapply(out$fun_name_wo_op, FUN = function(x){x[x %in% out$fun]}) #  names of all the basic functions used in x
+    # selection of basic functions
+    tempo.log <- base::lapply(out$fun_name_wo_op, FUN = function(x){x %in% out$fun}) #  are names basic functions used in x?
+    in_basic_fun <- mapply(FUN = function(x, y){x[y]}, x = out$fun_name_wo_op, y = tempo.log)
+    in_basic_fun_name_pos_wo_op <-  mapply(FUN = function(x, y){x[y]}, x = out$fun_name_pos_wo_op, y = tempo.log)
+    test.log <- mapply(FUN = function(x, y){length(x) != length(y)}, x = in_basic_fun, y = in_basic_fun_name_pos_wo_op)
+    if(base::any(test.log, na.rm = TRUE)){
+        tempo.cat <- base::paste0("INTERNAL ERROR 7 IN ", function.name, " OF THE ", package.name, " PACKAGE\nLENGTHS SHOULD BE IDENTICAL IN COMPARTMENTS ", paste(which(test.log), collapse = ", "), " OF in_basic_fun AND in_basic_fun_name_pos_wo_op")
+        base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
+    }
+    # end selection of basic functions
+    # removal of string with empty function names
     tempo.log <- base::sapply(in_basic_fun, FUN = function(x){base::length(x) == 0}) # detection of string with empty function names
     in_basic_fun <- in_basic_fun[ ! tempo.log] # removal of empty string
+    in_basic_fun_name_pos_wo_op <- in_basic_fun_name_pos_wo_op[ ! tempo.log]
     in_basic_code_line_nb <- out$code_line_nb_wo_op[ ! tempo.log]
-    if(base::length(in_basic_fun) != base::length(in_basic_code_line_nb)){
-        tempo.cat <- base::paste0("INTERNAL ERROR 7 IN ", function.name, " OF THE ", package.name, " PACKAGE\nLENGTHS SHOULD BE IDENTICAL\nin_basic_fun: ", base::length(in_basic_fun), "\ncode_line_nb: ", base::length(in_basic_code_line_nb))
+    if( ! (base::length(in_basic_fun) == base::length(in_basic_fun_name_pos_wo_op) & base::length(in_basic_fun) == base::length(in_basic_code_line_nb))){
+        tempo.cat <- base::paste0("INTERNAL ERROR 7 IN ", function.name, " OF THE ", package.name, " PACKAGE\nLENGTHS SHOULD BE IDENTICAL\nin_basic_fun: ", base::length(in_basic_fun), "\nin_basic_fun_name_pos_wo_op: ", base::length(in_basic_fun_name_pos_wo_op), "\nin_basic_code_line_nb: ", base::length(in_basic_code_line_nb))
         base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
     }
+    # end removal of string with empty function names
     in_basic_fun_uni <- base::unlist(base::unique(in_basic_fun)) #  names of unique basic functions used in x
     # end basic function names in x
-    # other function names in x
-    in_other_fun <- base::lapply(out$fun_name_wo_op, FUN = function(x){x[ ! x %in% base::c(out$fun, out$arg.user.setting$x)]}) #  names of all the other functions used in x, except the one tested (arg.user.setting$x), because can be in error messages
-    tempo.log <- base::sapply(in_other_fun, FUN = function(x){base::length(x) == 0}) # detection of string with empty function names
-    in_other_fun <- in_other_fun[ ! tempo.log] # removal of empty string
-    in_other_code_line_nb <- out$code_line_nb_wo_op[ ! tempo.log]
-    if(base::length(in_other_fun) != base::length(in_other_code_line_nb)){
-        tempo.cat <- base::paste0("INTERNAL ERROR 8 IN ", function.name, " OF THE ", package.name, " PACKAGE\nLENGTHS SHOULD BE IDENTICAL\nin_other_fun: ", base::length(in_other_fun), "\ncode_line_nb: ", base::length(in_other_code_line_nb))
+     # other function names in x
+    # selection of other functions
+    tempo.log <- base::lapply(out$fun_name_wo_op, FUN = function(x){ ! x %in% base::c(out$fun, out$arg.user.setting$x)}) #  names of all the other functions used in x, except the one tested (arg.user.setting$x), because can be in error messages
+    in_other_fun <- mapply(FUN = function(x, y){x[y]}, x = out$fun_name_wo_op, y = tempo.log)
+    in_other_fun_name_pos_wo_op <-  mapply(FUN = function(x, y){x[y]}, x = out$fun_name_pos_wo_op, y = tempo.log)
+    test.log <- mapply(FUN = function(x, y){length(x) != length(y)}, x = in_other_fun, y = in_other_fun_name_pos_wo_op)
+    if(base::any(test.log, na.rm = TRUE)){
+        tempo.cat <- base::paste0("INTERNAL ERROR 7 IN ", function.name, " OF THE ", package.name, " PACKAGE\nLENGTHS SHOULD BE IDENTICAL IN COMPARTMENTS ", paste(which(test.log), collapse = ", "), " OF in_other_fun AND in_other_fun_name_pos_wo_op")
         base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
     }
-    in_other_fun_uni <- base::unlist(base::unique(in_other_fun)) # names of unique basic functions used in x, except the one tested (arg.user.setting$x), because can be in error messages
+    # end selection of other functions
+    # removal of string with empty function names
+    tempo.log <- base::sapply(in_other_fun, FUN = function(x){base::length(x) == 0}) # detection of string with empty function names
+    in_other_fun <- in_other_fun[ ! tempo.log] # removal of empty string
+    in_other_fun_name_pos_wo_op <- in_other_fun_name_pos_wo_op[ ! tempo.log]
+    in_other_code_line_nb <- out$code_line_nb_wo_op[ ! tempo.log]
+    if( ! (base::length(in_other_fun) == base::length(in_other_fun_name_pos_wo_op) & base::length(in_other_fun) == base::length(in_other_code_line_nb))){
+        tempo.cat <- base::paste0("INTERNAL ERROR 7 IN ", function.name, " OF THE ", package.name, " PACKAGE\nLENGTHS SHOULD BE IDENTICAL\nin_other_fun: ", base::length(in_other_fun), "\nin_other_fun_name_pos_wo_op: ", base::length(in_other_fun_name_pos_wo_op), "\nin_other_code_line_nb: ", base::length(in_other_code_line_nb))
+        base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
+    }
+    # end removal of string with empty function names
+    in_other_fun_uni <- base::unlist(base::unique(in_other_fun)) #  names of unique other functions used in x
     # end other function names in x
     # analyse of :: before basic functions in x
     if(base::length(in_basic_fun_uni) > 0){
-        tempo <- saferDev:::.colons_check_message(
+        tempo <- .colons_check_message(
             list.fun = in_basic_fun, 
-            list.fun.uni = in_basic_fun_uni, 
-            list.line.nb = in_basic_code_line_nb, 
+            fun.uni = in_basic_fun_uni, 
+            list.fun.pos = in_basic_fun_name_pos_wo_op, 
+            line.nb = in_basic_code_line_nb, 
             ini = out$ini, 
             arg.user.setting = out$arg.user.setting, 
             function.name = function.name, 
@@ -108,10 +138,11 @@ colons_check <- function(
     # end analyse of :: before basic functions in x
     # analyse of :: before other functions in x
     if(base::length(in_other_fun_uni) > 0){
-        tempo <- saferDev:::.colons_check_message(
+        tempo <- .colons_check_message(
             list.fun = in_other_fun, 
-            list.fun.uni = in_other_fun_uni, 
-            list.line.nb = in_other_code_line_nb, 
+            fun.uni = in_other_fun_uni, 
+            list.fun.pos = in_other_fun_name_pos_wo_op, 
+            line.nb = in_other_code_line_nb, 
             ini = out$ini, 
             arg.user.setting = out$arg.user.setting, 
             function.name = function.name, 
