@@ -356,7 +356,7 @@
 #' @param col2 vector of strings of the function names.
 #' @param col3 vector of strings of the code before the function name.
 #' @param ini vector of string of the initial function code analyzed.
-#' @returns A logical vector indicating if function names of col2 are inside quotes or after $ in ini. Can be length 0
+#' @returns A logical vector indicating if function names of col2 are inside quotes or after $ (TRUE) in ini or not (FALSE). Can be length 0
 #' @author Gael Millot <gael.millot@pasteur.fr>
 #' @examples
 #' \dontrun{ # Example that shouldn't be run because this is an internal function
@@ -404,7 +404,8 @@
         tempo.ini <- ini
         pos.rm <- NULL # positions to remove (functions between quotes)
         for(i2 in 1:base::length(tempo.col1)){
-            lines.split <- base::strsplit(tempo.ini[tempo.col1[i2]], split = tempo.col2[i2])[[1]][1]
+            pattern1 <- paste0(tempo.col2[i2], " *\\(")
+            lines.split <- base::strsplit(tempo.ini[tempo.col1[i2]], split = pattern1)[[1]][1]
             # if odds number of quotes, it means that # has broken the string in the middle of a quoted part
             double.quote.test <- saferDev:::.has_odd_number_of_quotes(input_string = lines.split, pattern = '"') # here FALSE means even number of quotes, thus that the function is not between quotes, thus has to be kept. TRUE means that the function is between quotes, thus has to be removed
             simple.quote.test <- saferDev:::.has_odd_number_of_quotes(input_string = lines.split, pattern = "'") # idem
@@ -412,9 +413,9 @@
             if(odds.quotes.log == FALSE){
                 pos.rm <- base::c(pos.rm, i2)
             }else{
-                pos.rm <- base::c(pos.rm, NA) # becomes double if integer added, otherwise remains logical. Thus, do not use any()
+                pos.rm <- base::c(pos.rm, NA) # NA means betwwen quotes. pos.rm will becomes double if integer added, otherwise remains logical. Thus, do not use any()
             }
-            tempo.ini[tempo.col1[i2]] <- base::sub(pattern = tempo.col2[i2], replacement = "", x = tempo.ini[tempo.col1[i2]], ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE) # remove the first fonction in the line, in case of identical function names in a code line. Like, that, the next round for the next same function can be easily tested for "between quotes" 
+            tempo.ini[tempo.col1[i2]] <- base::sub(pattern = pattern1, replacement = "", x = tempo.ini[tempo.col1[i2]], ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE) # remove the first fonction in the line, in case of identical function names in a code line. Like, that, the next round for the next same function can be easily tested for "between quotes" 
         }
         # initial order
         pos.rm.fin <- pos.rm[base::order(tempo.ini.order)]
@@ -869,8 +870,8 @@
     internal_fun_names
 ){
     # DEBUGGING
-    # list.fun = in_basic_fun ; fun.uni = in_basic_fun_uni ; list.fun.pos = in_basic_fun_name_pos_wo_op ; line.nb = in_basic_code_line_nb ; ini = ini ; arg.user.setting = arg.user.setting ; function.name = function.name ; package.name = package.name ; text = "BASIC" ; internal_fun_names = internal_fun_names
-    # list.fun = in_other_fun ; fun.uni = in_other_fun_uni ; list.fun.pos = in_other_fun_name_pos_wo_op ; line.nb = in_other_code_line_nb ; ini = ini ; arg.user.setting = arg.user.setting ; function.name = function.name ; package.name = package.name ; text = "OTHER" ; internal_fun_names = internal_fun_names
+    # list.fun = in_basic_fun ; fun.uni = in_basic_fun_uni ; list.fun.pos = in_basic_fun_name_pos_wo_op ; line.nb = in_basic_code_line_nb ; ini = out$ini ; arg.user.setting = out$arg.user.setting ; function.name = function.name ; package.name = package.name ; text = "OTHER" ; internal_fun_names = out$internal_fun_names
+    # list.fun = in_other_fun ; fun.uni = in_other_fun_uni ; list.fun.pos = in_other_fun_name_pos_wo_op ; line.nb = in_other_code_line_nb ; ini = out$ini ; arg.user.setting = out$arg.user.setting ; function.name = function.name ; package.name = package.name ; text = "OTHER" ; internal_fun_names = out$internal_fun_names
     if(base::length(text) != 1 & base::any( ! text %in% base::c("BASIC", "OTHER"))){
         tempo.cat <- base::paste0("INTERNAL ERROR 1 IN ", function.name, " OF THE ", package.name, " PACKAGE\nTHE text ARGUMENT OF .colons_check_message() MUST BE \"BASIC\" OR \"OTHER\".\nTHE PROBLEM IS:\n",
             base::paste(text, collapse = "\n"))
