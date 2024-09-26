@@ -107,26 +107,28 @@ all_args_here <- function(
     # recovery of the functions, in the tested function, with written arguments inside ()
     arg_string_for_col3 <- fun_name_wo_op # like fun_name_wo_op but added with all what is between ()
     arg_string_for_col5 <- fun_name_wo_op # will be used to get the arguments
-    middle_bracket_pos_col3 <- base::lapply(X = fun_name_wo_op, FUN = function(x){base::lapply(X = x, FUN = function(y){base::list()})}) # list of lists, will be used to get inside ( and ) positions
+    middle_bracket_pos_col3 <- base::lapply(X = fun_name_wo_op, FUN = function(x){base::lapply(X = x, FUN = function(y){NULL})}) # list of lists, will be used to get inside ( and ) positions
 
     for(i1 in 1:base::length(fun_name_wo_op)){
         for(i2 in 1:base::length(fun_name_wo_op[[i1]])){
             pattern1 <- base::paste0(fun_name_wo_op[[i1]][i2], "[\\s\\r\\n]*\\(") # function detection in 
             # pattern2 <- paste0("[a-zA-Z.][a-zA-Z0-9._]* *\\$ *", fun_name_wo_op[[i1]][i2], "[\\s\\r\\n]*\\(") # function like a$fun()
             if(base::grepl(x = fun_1_line_replace, pattern = pattern1)){ 
-                tempo_pos <- .fun_args_pos(text = fun_1_line_replace, pattern = pattern1) # positions of 1st letter of the function name and opening and closing brackets # Warning: fun_1_line_replace used because the input string must be cleaned form brackets between quotes
-                tempo_str_before <- substr(x = fun_1_line, start = 1, stop = tempo_pos$begin_fun - 1)
-                tempo_log <- grepl(x = tempo_str_before, pattern = "\\$ *$")
+                tempo_pos <- .fun_args_pos(text = fun_1_line_replace, pattern = pattern1,     function.name = function.name, package.name = package.name) # positions of 1st letter of the function name and opening and closing brackets # Warning: fun_1_line_replace used because the input string must be cleaned form brackets between quotes
+                tempo_str_before <- base::substr(x = fun_1_line, start = 1, stop = tempo_pos$begin_fun - 1)
+                tempo_log <- base::grepl(x = tempo_str_before, pattern = "\\$ *$")
                 if(tempo_log){ # remove functions preceeded by $, like a$fun()
                     arg_string_for_col3[[i1]][i2] <- ""
                     fun_name_wo_op[[i1]][i2] <- ""
                     arg_string_for_col5[[i1]][i2] <- ""
-                    substr(x = fun_1_line_replace, start = 1, stop = tempo_pos$begin - 1) <- paste(rep(" ", tempo_pos$begin - 1), collapse = "")
+                    base::substr(x = fun_1_line_replace, start = 1, stop = tempo_pos$begin - 1) <- base::paste(base::rep(" ", tempo_pos$begin - 1), collapse = "")
                 }else{
-                    arg_string_for_col3[[i1]][i2] <- substr(x = fun_1_line, start = tempo_pos$begin_fun, stop = tempo_pos$end) # add the "function(args)" string into arg_string_for_col3. I use fun_1_line because I want unaltered values of args here (fun_1_line_replace have quoted () replaced by spaces)
-                    arg_string_for_col5[[i1]][i2] <- substr(x = fun_1_line, start = tempo_pos$begin + 1, stop = tempo_pos$end - 1) # idem arg_string_for_col3 but inside () of the function (just the arguments written)
-                    middle_bracket_pos_col3[[i1]][[i2]] <- tempo_pos$middle_bracket_pos # positions of the () inside a function in 
-                    substr(x = fun_1_line_replace, start = 1, stop = tempo_pos$begin - 1) <- paste(rep(" ", tempo_pos$begin - 1), collapse = "") # trick that replaces characters between start = tempo_pos$begin_fun and stop = tempo_pos$end by the same number of spaces. This, to avoid to take always the first paste0 for instance in the fun_1_line_replace string when several are present in fun_name_wo_op
+                    arg_string_for_col3[[i1]][i2] <- base::substr(x = fun_1_line, start = tempo_pos$begin_fun, stop = tempo_pos$end) # add the "function(args)" string into arg_string_for_col3. I use fun_1_line because I want unaltered values of args here (fun_1_line_replace have quoted () replaced by spaces)
+                    arg_string_for_col5[[i1]][i2] <- base::substr(x = fun_1_line, start = tempo_pos$begin + 1, stop = tempo_pos$end - 1) # idem arg_string_for_col3 but inside () of the function (just the arguments written)
+                    if( ! base::is.null(tempo_pos$middle_bracket_pos)){ # I have to use if(){}, otherwise middle_bracket_pos_col3[[i1]][[i2]] disappears
+                        middle_bracket_pos_col3[[i1]][[i2]] <- base::unlist(tempo_pos$middle_bracket_pos) # positions of the () inside a function
+                    }
+                    base::substr(x = fun_1_line_replace, start = 1, stop = tempo_pos$begin - 1) <- base::paste(base::rep(" ", tempo_pos$begin - 1), collapse = "") # trick that replaces characters between start = tempo_pos$begin_fun and stop = tempo_pos$end by the same number of spaces. This, to avoid to take always the first paste0 for instance in the fun_1_line_replace string when several are present in fun_name_wo_op
                 }
             }else{
                 arg_string_for_col3[[i1]][i2] <- reserved_word
@@ -221,8 +223,20 @@ all_args_here <- function(
                     # replacement of all the commas between quotes
                     tempo <- .in_quotes_replacement(string = tempo_str, pattern = ",", no_regex_pattern = ",", replacement = " ", perl = TRUE, function.name = function.name, package.name = package.name)
                     tempo_str <- tempo$string
-                    pos_rep2 <- tempo$pos # replaced positions in fun_1_line
+                    pos_rep2 <- tempo$pos # replaced positions in tempo_str
                     # end replacement of all the commas between quotes
+                    # replacement of all the commas inside function
+
+
+
+
+                    # I have to deal with commas inside function, like "pattern = base::paste0(pattern, \"\\\\(#\"), text = text". I have the middle_bracket_pos_col3 for that.
+                    # I detect comma inside function, I replace the commas but add the pos in pos_rep2 <- c(pos_rep2, pos). Like, that, I can use the pos_rep2 to put back the commas in the arg value before write it in col7 and col8
+
+
+
+
+                    # end replacement of all the commas inside function
                     # working on each observed arg
                     tempo_split <- base::strsplit(x = tempo_str, split = ",")[[1]] # separation of args
                     arg_full_names <-  base::names(arg_full)
