@@ -35,8 +35,8 @@ all_args_here <- function(
     # source("C:\\Users\\gmillot\\Documents\\Git_projects\\safer-r\\saferDev\\R\\get_message.R") ; x = get_message ; safer_check = TRUE
     # library(saferDev) ; x = get_message ; safer_check = TRUE
     # source("C:\\Users\\gmillot\\Documents\\Git_projects\\safer-r\\saferDev\\R\\all_args_here.R") ; x = all_args_here ; safer_check = TRUE
-    # source("C:\\Users\\gmillot\\Documents\\Git_projects\\safer-r\\saferDev\\dev\\other\\test.R") ; x = test ; safer_check = TRUE # use the folling line before out <- 
-    # arg.user.setting = base::list(x = as.name(x = "test"), safer_check = TRUE)
+    # source("C:\\Users\\gmillot\\Documents\\Git_projects\\safer-r\\saferDev\\dev\\other\\test2.R") ; x = test2 ; safer_check = TRUE # use the folling line before out <- 
+    # arg.user.setting = base::list(x = as.name(x = "test2"), safer_check = TRUE)
     # package name
     package.name <- "saferDev"
     # end package name
@@ -137,12 +137,14 @@ all_args_here <- function(
     }
     # end recovery of the functions, in the tested function, with written arguments inside ()
     # preparation of columns
+    ini_for_col <- ini[code_line_nb_wo_op]
+    ini_for_col <- base::as.vector(base::unlist(base::mapply(FUN = function(x, y){base::rep(y, base::length(x))}, x = fun_name_wo_op, y = ini_for_col)))
     col1 <- base::as.vector(base::unlist(base::mapply(FUN = function(x, y){base::rep(y, base::length(x))}, x = fun_name_wo_op, y = code_line_nb_wo_op))) # code line number
     col2 <- base::as.vector(base::unlist(fun_name_wo_op)) # all the function names inside the tested functions (functions between quotes are already removed thanks to fun_1_line_replace)
     col3 <- base::as.vector(base::unlist(arg_string_for_col3)) # as col2 but with its arguments between ()
     col4 <- base::as.vector(base::unlist(fun_name_pos_wo_op)) # as col2 but position in the code string of 1st character of function name
-    if( ! (base::length(col1) == base::length(col2) & base::length(col1) == base::length(col3))){
-        tempo.cat <- base::paste0("INTERNAL ERROR 3 IN ", function.name, " OF THE ", package.name, " PACKAGE\nLENGTHS OF col1 (", base::length(col1), "), col2 (", base::length(col2), "), col3 (", base::length(col3), "), AND col5 (", base::length(col5), "), SHOULD BE EQUAL\n")
+    if( ! (base::length(col1) == base::length(col2) & base::length(col1) == base::length(col3) & base::length(col1) == base::length(col4) & base::length(col1) == base::length(ini_for_col))){
+        tempo.cat <- base::paste0("INTERNAL ERROR 3 IN ", function.name, " OF THE ", package.name, " PACKAGE\nLENGTHS OF col1 (", base::length(col1), "), col2 (", base::length(col2), "), col3 (", base::length(col3), "), AND col4 (", base::length(col4), "), AND ini_for_col (", base::length(ini_for_col), "), SHOULD BE EQUAL\n")
         base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n", base::ifelse(base::is.null(warn), "", base::paste0("IN ADDITION\nWARNING", base::ifelse(warn.count > 1, "S", ""), ":\n\n", warn))), call. = FALSE)
     }
     tempo.log <- base::as.vector(base::unlist(base::mapply(
@@ -168,9 +170,11 @@ all_args_here <- function(
     # removal of detected function preceeded by $, which are "" in col2
     tempo_log <- col2 == "" 
     if(base::any(tempo_log, na.rm = TRUE)){
+        ini_for_col <- ini_for_col[ ! tempo_log]
         col1 <- col1[ ! tempo_log]
         col2 <- col2[ ! tempo_log]
         col3 <- col3[ ! tempo_log]
+        col4 <- col4[ ! tempo_log]
     }
     # end removal of detected function preceeded by $, which are "" in col2
     # end preparation of columns
@@ -184,8 +188,22 @@ all_args_here <- function(
         col8 <- NULL # reconstructed function with all arg
         for(i2 in 1:base::length(col1)){
             if(col3[i2] != reserved_word){
+                # check if the function exists
+                if(col4[i2] <= 3){
+                    tempo.cat <- base::paste0("ERROR IN ", function.name, " OF THE ", package.name, " PACKAGE\nCANNOT GET THE ARGUMENTS OF A FUNCTION THAT IS NOT ASSOCIATED TO ITS PACKAGE IN LINE ", col1[i2], ":\n\n", base::paste(paste0(substr(x = ini_for_col[i2], start = 1, stop = col4[i2] - 1), col3[i2]), collapse = "\n"), "\n\nPLEASE, RUN saferDev::colons_check(", arg.user.setting$x, ") FIRST,\nADD THE MISSING <PACKAGE>::<FUNCTION> (OR <PACKAGE>:::<FUNCTION> FOR FUNCTION STARTING BY A DOT)\nAND RERUN saferDev::all_args_here(", arg.user.setting$x, ")")
+                    base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n", base::ifelse(base::is.null(warn), "", base::paste0("IN ADDITION\nWARNING", base::ifelse(warn.count > 1, "S", ""), ":\n\n", warn))), call. = FALSE)
+                }
+                tempo_string <- base::substr(x = ini_for_col[i2], start = col4[i2] - 2, stop = col4[i2] - 1)
+                if(tempo_string != "::"){
+                    tempo.cat <- base::paste0("ERROR IN ", function.name, " OF THE ", package.name, " PACKAGE\nCANNOT GET THE ARGUMENTS OF A FUNCTION THAT IS NOT ASSOCIATED TO ITS PACKAGE IN LINE ", col1[i2], ":\n\n", base::paste(paste0(substr(x = ini_for_col[i2], start = 1, stop = col4[i2] - 1), col3[i2]), collapse = "\n"), "\n\nPLEASE, RUN saferDev::colons_check(", arg.user.setting$x, ") FIRST,\nADD THE MISSING <PACKAGE>::<FUNCTION> (OR <PACKAGE>:::<FUNCTION> FOR FUNCTION STARTING BY A DOT)\nAND RERUN saferDev::all_args_here(", arg.user.setting$x, ")")
+                    base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n", base::ifelse(base::is.null(warn), "", base::paste0("IN ADDITION\nWARNING", base::ifelse(warn.count > 1, "S", ""), ":\n\n", warn))), call. = FALSE)
+                }
+                tempo_string <- base::substr(x = ini_for_col[i2], start = 1, stop = col4[i2] - 1)
+                tempo_string2 <- saferDev:::.extract_all_fun_names(text = tempo_string, pattern = "[a-zA-Z][a-zA-Z0-9.]*:{2,3}$")$string # before 
+                saferDev::is_function_here(fun = paste0(tempo_string2, col2[i2]), lib.path = NULL, safer_check = FALSE) # check that exists
+                # end check if the function exists
                 arg_full <- base::formals(fun = col2[i2]) # all the argument of the function in col2[i2] with default values
-                arg_full <- arg_full[names(arg_full) != "..."] # removal of the "..." argument
+                arg_full <- arg_full[base::names(arg_full) != "..."] # removal of the "..." argument
                 if(base::is.null(arg_full)){
                     col5 <- base::c(col5, "")
                     col6 <- base::c(col6, "")

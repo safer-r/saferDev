@@ -8,6 +8,8 @@
 #' Table-like: column 1, the line number in the function code (starting at the "<- function" line, i.e., without counting the #' header lines); column 2,  the function name; column 3, the code preceeding the function name
 #' With missing :: or :::, the message also indicates if internal functions are created inside the checked function code, since these functions cannot have :: or :::.
 #' @details
+#' - Use the result to modify the code of the function like this: <PACKAGE>::<FUNCTION> (OR <PACKAGE>:::<FUNCTION> for function names starting by a dot)
+#' 
 #' - More precisely, colons_check() verifies that all the strings before an opening bracket "(" are preceeded by "::" 
 #' 
 #' - ":::" are not checked per se, because incorrect writting, like saferDev::.colons_check_message() returns an error, and because base:::sum() is as ok as base::sum(). In the same manner, more than three colons are not checked because it returns an error.
