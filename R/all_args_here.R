@@ -17,7 +17,7 @@
 #' 
 #' - Most of the time, all_args_here() does not check inside comments, but some unexpected writting could dupe all_args_here().
 #' 
-#' - The returned line numbers is indicative, depending on which source is checked. For instance, saferDev::report (compiled) has not the same line numbers as its source file (https://github.com/safer-r/saferDev/blob/main/R/report.R). Notably, compiled functions do not have comments anymore, compared to the same source function sourced into the working environment. In addition, the counting starts at the "<- function" line, i.e., without counting the #' header lines potentially present in source files.
+#' - The returned line numbers are indicative, depending on which source is checked. For instance, saferDev::report (compiled) has not the same line numbers as its source file (https://github.com/safer-r/saferDev/blob/main/R/report.R). Notably, compiled functions do not have comments anymore, compared to the same source function sourced into the working environment. In addition, the counting starts at the "<- function" line, i.e., without counting the #' header lines potentially present in source files.
 #' 
 #' @author Gael Millot <gael.millot@pasteur.fr>
 #' @examples
@@ -145,8 +145,9 @@ all_args_here <- function(
     col2 <- base::as.vector(base::unlist(fun_name_wo_op)) # all the function names inside the tested functions (functions between quotes are already removed thanks to fun_1_line_replace)
     col3 <- base::as.vector(base::unlist(arg_string_for_col3)) # as col2 but with its arguments between ()
     col4 <- base::as.vector(base::unlist(fun_name_pos_wo_op)) # as col2 but position in the code string of 1st character of function name
-    if( ! (base::length(col1) == base::length(col2) & base::length(col1) == base::length(col3) & base::length(col1) == base::length(col4) & base::length(col1) == base::length(ini_for_col))){
-        tempo.cat <- base::paste0("INTERNAL ERROR 3 IN ", function.name, " OF THE ", package.name, " PACKAGE\nLENGTHS OF col1 (", base::length(col1), "), col2 (", base::length(col2), "), col3 (", base::length(col3), "), AND col4 (", base::length(col4), "), AND ini_for_col (", base::length(ini_for_col), "), SHOULD BE EQUAL\n")
+    middle_bracket <- base::do.call(base::c,  middle_bracket_pos_col3) #  concatenate the sublists into a single list -> flatten the outer list while keeping the result as a list
+    if( ! (base::length(col1) == base::length(col2) & base::length(col1) == base::length(col3) & base::length(col1) == base::length(col4) & base::length(col1) == base::length(ini_for_col) & base::length(col1) == base::length(middle_bracket))){
+        tempo.cat <- base::paste0("INTERNAL ERROR 3 IN ", function.name, " OF THE ", package.name, " PACKAGE\nLENGTHS OF col1 (", base::length(col1), "), col2 (", base::length(col2), "), col3 (", base::length(col3), "), col4 (", base::length(col4), "), ini_for_col (", base::length(ini_for_col), "), AND middle_bracket (", base::length(middle_bracket), "), SHOULD BE EQUAL\n")
         base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n", base::ifelse(base::is.null(warn), "", base::paste0("IN ADDITION\nWARNING", base::ifelse(warn.count > 1, "S", ""), ":\n\n", warn))), call. = FALSE)
     }
     tempo.log <- base::as.vector(base::unlist(base::mapply(
@@ -177,6 +178,7 @@ all_args_here <- function(
         col2 <- col2[ ! tempo_log]
         col3 <- col3[ ! tempo_log]
         col4 <- col4[ ! tempo_log]
+        middle_bracket <- middle_bracket[ ! tempo_log]
     }
     # end removal of detected function preceeded by $, which are "" in col2
     # end preparation of columns
@@ -217,16 +219,16 @@ all_args_here <- function(
                     col5 <- base::c(col5, tempo)
                     # end all arguments of the function with default value in col5
                     # recovering obs arg
-                    tempo_str <- base::sub(pattern =  base::paste0("^", col2[i2], "[\\s\\r\\n]*\\("), replacement = "", x = col3[i2], perl = TRUE) # removal of function name and (
-                    tempo_str <- base::sub(pattern =  "\\)$", replacement = "", x = tempo_str, perl = FALSE) # removal of trailing )
+                    obs_args <- base::sub(pattern =  base::paste0("^", col2[i2], "[\\s\\r\\n]*\\("), replacement = "", x = col3[i2], perl = TRUE) # removal of function name and (
+                    obs_args <- base::sub(pattern =  "\\)$", replacement = "", x = obs_args, perl = FALSE) # removal of trailing )
                     # end recovering obs arg
                     # replacement of all the commas between quotes
-                    tempo <- .in_quotes_replacement(string = tempo_str, pattern = ",", no_regex_pattern = ",", replacement = " ", perl = TRUE, function.name = function.name, package.name = package.name)
-                    tempo_str <- tempo$string
-                    pos_rep2 <- tempo$pos # replaced positions in tempo_str
+                    tempo <- .in_quotes_replacement(string = obs_args, pattern = ",", no_regex_pattern = ",", replacement = " ", perl = TRUE, function.name = function.name, package.name = package.name)
+                    obs_args <- tempo$string
+                    pos_rep2 <- tempo$pos # replaced positions in obs_args
                     # end replacement of all the commas between quotes
                     # replacement of all the commas inside function
-
+                    
 
 
 
@@ -238,7 +240,7 @@ all_args_here <- function(
 
                     # end replacement of all the commas inside function
                     # working on each observed arg
-                    tempo_split <- base::strsplit(x = tempo_str, split = ",")[[1]] # separation of args
+                    tempo_split <- base::strsplit(x = obs_args, split = ",")[[1]] # separation of args
                     arg_full_names <-  base::names(arg_full)
                     good_args <- NULL
                     missing_args <- NULL

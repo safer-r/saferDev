@@ -274,7 +274,7 @@
 
 #' @title .in_quotes_replacement
 #' @description
-#' Replace any pattern inside simple ou double quotes by another replacement pattern
+#' Replace any pattern inside simple ou double quotes by another replacement pattern and get the position of replacements
 #' @param string Single string.
 #' @param pattern Single string indicating the pattern to detect. Warning : must be very simple pattern, like "\\(".
 #' @param no_regex_pattern Single string of the pattern to detect but without escape characters or list, etc.
@@ -284,7 +284,7 @@
 #' @param package.name package name.
 #' @returns A list containing:
 #' $string: The input string with all pattern replaced by the replacement pattern.
-#' $pos: the positions of the 1rst character of the replaced pattern. NULL if no replaced pattern. In that case, $string is identical to the input string
+#' $pos: the positions of the 1rst character of the replaced pattern. NULL if no replaced pattern. In that case, $string is identical to the input string.
 #' @details
 #' Warning : must be very simple pattern, like "\\(".
 #' @author Gael Millot <gael.millot@pasteur.fr>
@@ -313,22 +313,27 @@
         base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
     }
     string_split <- base::strsplit(string, split = pattern, perl = perl)[[1]]
-    output1 <- string_split[1]
+    string_out <- string_split[1]
     pos <- NULL
-    count <- 1
-    while(count < base::length(string_split)){
-        count <- count + 1
-        # if odds number of quotes, it means that # has broken the string in the middle of a quoted part
-        double.quote.test <- .has_odd_number_of_quotes(input_string = output1, pattern = '"') # here FALSE means even number of quotes, thus that ")" is not between quotes, thus has to be kept. TRUE means that ")" is between quotes, thus has to be removed
-        simple.quote.test <- .has_odd_number_of_quotes(input_string = output1, pattern = "'") # idem
-        odds.quotes.log <- double.quote.test |  simple.quote.test # remove ")" ?
-        if(odds.quotes.log == TRUE){
-            pos <- base::c(pos, base::nchar(output1) + 1)
-            output1 <- base::paste0(output1, replacement, string_split[count]) # to keep the same length of the tested function on a single string output_1_line
-        }else{
-            output1 <- base::paste0(output1, no_regex_pattern, string_split[count])
-            pos <- base::c(pos, NA)
+    if(base::length(string_split) > 1){
+
+        count <- 1
+        while(count < base::length(string_split)){
+            count <- count + 1
+            # if odds number of quotes, it means that # has broken the string in the middle of a quoted part
+            double.quote.test <- .has_odd_number_of_quotes(input_string = string_out, pattern = '"') # here FALSE means even number of quotes, thus that ")" is not between quotes, thus has to be kept. TRUE means that ")" is between quotes, thus has to be removed
+            simple.quote.test <- .has_odd_number_of_quotes(input_string = string_out, pattern = "'") # idem
+            odds.quotes.log <- double.quote.test |  simple.quote.test # remove ")" ?
+            if(odds.quotes.log == TRUE){
+                pos <- base::c(pos, base::nchar(string_out) + 1)
+                string_out <- base::paste0(string_out, replacement, string_split[count]) # to keep the same length of the tested function on a single string output_1_line
+            }else{
+                string_out <- base::paste0(string_out, no_regex_pattern, string_split[count])
+                pos <- base::c(pos, NA)
+            }
         }
+    }else if(){
+
     }
     if(base::all(base::is.na(pos), na.rm = TRUE)){
         pos <- NULL
@@ -342,9 +347,86 @@
             base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
         }
     }
-    return(base::list(string = output1, pos = pos))
+    return(base::list(string = string_out, pos = pos))
 }
 
+
+
+
+
+
+#' @title .between_parenthesis_replacement
+#' @description
+#' Replace any pattern inside () by another replacement pattern
+#' @param string Single string.
+#' @param pattern Single string indicating the pattern to detect. Warning : must be very simple pattern, like ",".
+#' @param no_regex_pattern Single string of the pattern to detect but without escape characters or list, etc.
+#' @param replacement Single string for pattern replacement. Is not regex.
+#' @param perl Single logical value. Use Perl regex in pattern ?
+#' @param open_pos single integer indicating the position of the opening parenthesis.
+#' @param close_pos single integer indicating the position of the closing parenthesis.
+#' @param function.name function name.
+#' @param package.name package name.
+#' @returns A list containing:
+#' $string: The input string with all pattern replaced by the replacement pattern.
+#' $pos: the positions of the 1rst character of the replaced pattern. NULL if no replaced pattern. In that case, $string is identical to the input string
+#' @details
+#' Warning : must be very simple pattern, like "\\(".
+#' @author Gael Millot <gael.millot@pasteur.fr>
+#' @examples
+#' \dontrun{ # Example that shouldn't be run because this is an internal function
+#' .between_parenthesis_replacement(string = "pattern = base::paste0(pattern, \"\\\\(#\"), text = text", pattern = ",", no_regex_pattern = ",", replacement = " ", perl = TRUE, open_pos = 22, close_pos = 39, function.name = "F1", package.name = "P1")
+#' }
+#' @keywords internal
+#' @rdname internal_function
+.between_parenthesis_replacement <- function(
+    string, 
+    pattern, 
+    no_regex_pattern, 
+    replacement, 
+    perl,
+    open_pos,
+    close_pos,
+    function.name,
+    package.name
+){
+    # DEBUGGING
+    # string = "pattern = base::paste0(pattern, \"\\\\(#\"), text = text" ; pattern = "," ; no_regex_pattern = "," ; replacement = " " ; perl = TRUE ; open_pos = 23 ; close_pos = 39 ; function.name = "F1" ; package.name = "P1"
+    if(base::substr(string, open_pos, open_pos) != "("){
+        tempo.cat <- base::paste0("INTERNAL ERROR 1 IN ", function.name, " OF THE ", package.name, " PACKAGE\nARGUMENT open_pos IN THE .between_parenthesis_replacement() DOES NOT REFER TO A POSITION OF OPENING PARENTHESIS\nopen_pos:\n", base::paste(open_pos, collapse = "\n"), "\nstring:\n", base::paste(string, collapse = "\n"), "\nsubstr(string, open_pos, open_pos):\n", base::paste(base::substr(string, open_pos, open_pos), collapse = "\n"))
+        base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
+    }
+    if(base::substr(string, close_pos, close_pos) != ")"){
+        tempo.cat <- base::paste0("INTERNAL ERROR 2 IN ", function.name, " OF THE ", package.name, " PACKAGE\nARGUMENT close_pos IN THE .between_parenthesis_replacement() DOES NOT REFER TO A POSITION OF CLOSING PARENTHESIS\nclose_pos:\n", base::paste(close_pos, collapse = "\n"), "\nstring:\n", base::paste(string, collapse = "\n"), "\nsubstr(string, close_pos, close_pos):\n", base::paste(base::substr(string, close_pos, close_pos), collapse = "\n"))
+        base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
+    }
+    string_split <- base::strsplit(string, split = pattern, perl = perl)[[1]]
+    string_out <- string_split[1]
+    pos <- NULL
+    count <- 1
+    while(count < base::length(string_split)){
+        count <- count + 1
+        nb <- nchar(string_split)
+        # Extract the substring between the given open and close parentheses
+        substring_in_parentheses <- substr(string, open_pos, close_pos)
+        # Find the position of comma within that substring
+        comma_position_in_substring <- gregexpr(pattern, substring_in_parentheses)[[1]]
+        # Initialize a vector to store global positions of the replaced commas
+        comma_global_positions <- c()
+        if (comma_position_in_substring[1] != -1) {
+            for (relative_comma_position in comma_position_in_substring) {
+                # Calculate the global position of the comma in the original string
+                global_comma_position <- open_pos + relative_comma_position - 1
+                # Replace that comma using substring or substr
+                substring(string, global_comma_position, global_comma_position) <- replacement
+                # Store the global position
+                comma_global_positions <- c(comma_global_positions, global_comma_position)
+            }
+        }
+    }
+    # Return both the modified string and positions of replaced commas
+    list(modified_string = string, comma_positions = comma_global_positions)
+}
 
 
 
