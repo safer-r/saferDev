@@ -362,7 +362,7 @@
 
 
 
-#' @title .between_parenthesis_replacement
+#' @title .in_parenthesis_replacement
 #' @description
 #' Replace any pattern inside () by another replacement pattern
 #' @param string Single string.
@@ -382,11 +382,11 @@
 #' @author Gael Millot <gael.millot@pasteur.fr>
 #' @examples
 #' \dontrun{ # Example that shouldn't be run because this is an internal function
-#' .between_parenthesis_replacement(string = "pattern = base::paste0(pattern, \"\\\\(#\"), text = text", pattern = ",", no_regex_pattern = ",", replacement = " ", perl = TRUE, open_pos = 22, close_pos = 39, function.name = "F1", package.name = "P1")
+#' .in_parenthesis_replacement(string = "pattern = base::paste0(pattern, \"\\\\(#\"), text = text", pattern = ",", no_regex_pattern = ",", replacement = " ", perl = TRUE, open_pos = 23, close_pos = 39, function.name = "F1", package.name = "P1")
 #' }
 #' @keywords internal
 #' @rdname internal_function
-.between_parenthesis_replacement <- function(
+.in_parenthesis_replacement <- function(
     string, 
     pattern, 
     no_regex_pattern, 
@@ -400,11 +400,11 @@
     # DEBUGGING
     # string = "pattern = base::paste0(pattern, \"\\\\(#\"), text = text" ; pattern = "," ; no_regex_pattern = "," ; replacement = " " ; perl = TRUE ; open_pos = 23 ; close_pos = 39 ; function.name = "F1" ; package.name = "P1"
     if(base::substr(string, open_pos, open_pos) != "("){
-        tempo.cat <- base::paste0("INTERNAL ERROR 1 IN ", function.name, " OF THE ", package.name, " PACKAGE\nARGUMENT open_pos IN THE .between_parenthesis_replacement() DOES NOT REFER TO A POSITION OF OPENING PARENTHESIS\nopen_pos:\n", base::paste(open_pos, collapse = "\n"), "\nstring:\n", base::paste(string, collapse = "\n"), "\nsubstr(string, open_pos, open_pos):\n", base::paste(base::substr(string, open_pos, open_pos), collapse = "\n"))
+        tempo.cat <- base::paste0("INTERNAL ERROR 1 IN ", function.name, " OF THE ", package.name, " PACKAGE\nARGUMENT open_pos IN THE .in_parenthesis_replacement() DOES NOT REFER TO A POSITION OF OPENING PARENTHESIS\nopen_pos:\n", base::paste(open_pos, collapse = "\n"), "\nstring:\n", base::paste(string, collapse = "\n"), "\nsubstr(string, open_pos, open_pos):\n", base::paste(base::substr(string, open_pos, open_pos), collapse = "\n"))
         base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
     }
     if(base::substr(string, close_pos, close_pos) != ")"){
-        tempo.cat <- base::paste0("INTERNAL ERROR 2 IN ", function.name, " OF THE ", package.name, " PACKAGE\nARGUMENT close_pos IN THE .between_parenthesis_replacement() DOES NOT REFER TO A POSITION OF CLOSING PARENTHESIS\nclose_pos:\n", base::paste(close_pos, collapse = "\n"), "\nstring:\n", base::paste(string, collapse = "\n"), "\nsubstr(string, close_pos, close_pos):\n", base::paste(base::substr(string, close_pos, close_pos), collapse = "\n"))
+        tempo.cat <- base::paste0("INTERNAL ERROR 2 IN ", function.name, " OF THE ", package.name, " PACKAGE\nARGUMENT close_pos IN THE .in_parenthesis_replacement() DOES NOT REFER TO A POSITION OF CLOSING PARENTHESIS\nclose_pos:\n", base::paste(close_pos, collapse = "\n"), "\nstring:\n", base::paste(string, collapse = "\n"), "\nsubstr(string, close_pos, close_pos):\n", base::paste(base::substr(string, close_pos, close_pos), collapse = "\n"))
         base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
     }
     string_out <- string
@@ -427,7 +427,7 @@
     if( ! base::is.null(pos)){
         tempo <- base::substring(string, pos, pos)
         if( ! base::all(base::unique(tempo) == no_regex_pattern, na.rm = TRUE)){
-            tempo.cat <- base::paste0("INTERNAL ERROR 2 IN ", function.name, " OF THE ", package.name, " PACKAGE\nIN .between_parenthesis_replacement(), ARGUMENT no_regex_pattern NOT CORRECTLY DETECTED\nno_regex_pattern: \"", no_regex_pattern, "\"\nREPLACED CHARACTERS IN string ARGUMENT:\n", base::paste(tempo, collapse = "\n"))
+            tempo.cat <- base::paste0("INTERNAL ERROR 2 IN ", function.name, " OF THE ", package.name, " PACKAGE\nIN .in_parenthesis_replacement(), ARGUMENT no_regex_pattern NOT CORRECTLY DETECTED\nno_regex_pattern: \"", no_regex_pattern, "\"\nREPLACED CHARACTERS IN string ARGUMENT:\n", base::paste(tempo, collapse = "\n"))
             base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
         }
     }
@@ -526,7 +526,7 @@
 
 #' @title .fun_args_pos
 #' @description
-#' Return the positions of 1st letter of the function name and opening and closing brackets.
+#' Return the positions of 1st letter of the function name and opening and closing parenthesis, as well as positions of the internal parenthesis.
 #' @param text A string.
 #' @param pattern: A perl regex to extract function name and (), using generally paste0(<FUNCTION_NAME>, "[\\s\\r\\n]*\\(").
 #' @param function.name function name.

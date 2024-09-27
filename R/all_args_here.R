@@ -5,20 +5,22 @@
 #' @param safer_check Single logical value. Perform some "safer" checks (see https://github.com/safer-r)? If TRUE, checkings are performed before main code running: 1) R classical operators (like "<-") not overwritten by another package because of the R scope and 2) required functions and related packages effectively present in local R lybraries. Must be set to FALSE if this fonction is used inside another "safer" function to avoid pointless multiple checkings.
 #' @returns 
 #' A table-like message indicating the missing arguments or a message saying that everything seems fine.
+#' 
 #' Table-like: column 1, the line number in the function code (starting at the "<- function" line, i.e., without counting the #' header lines); column 2,  the function name; column 3, the code preceeding the function name; column 4, the missing arguments with default values
 #' @details
-#' - More precisely, all_args_here() verifies that all the strings before an opening bracket "(" are written with all their arguments. Thus, it cannot check function names written without brackets, like in the FUN argument of some functions, e.g., sapply(1:3, FUN = as.character).
+#' More precisely, all_args_here() verifies that all the strings before an opening bracket "(" are written with all their arguments. Thus, it cannot check function names written without brackets, like in the FUN argument of some functions, e.g., sapply(1:3, FUN = as.character).
 #' 
-#' - The perl regex used to detect a function name is: "[a-zA-Z.]{1}[a-zA-Z0-9._]*\\s*\\(".
+#' The perl regex used to detect a function name is: "[a-zA-Z.]{1}[a-zA-Z0-9._]*\\s*\\(".
 #' 
-#' - Function names preceeded by $ and any space are not considered (pattern "\\$ *[a-zA-Z.]{1}[a-zA-Z0-9._]* *\\(")
+#' Function names preceeded by $ and any space are not considered (pattern "\\$ *[a-zA-Z.]{1}[a-zA-Z0-9._]* *\\(")
 #'  
-#' - The following R functions using bracket are not considered: "function", "if", "for", "while" and "repeat".
+#' The following R functions using bracket are not considered: "function", "if", "for", "while" and "repeat".
 #' 
-#' - Most of the time, all_args_here() does not check inside comments, but some unexpected writting could dupe all_args_here().
+#' Most of the time, all_args_here() does not check inside comments, but some unexpected writting could dupe all_args_here().
 #' 
-#' - The returned line numbers are indicative, depending on which source is checked. For instance, saferDev::report (compiled) has not the same line numbers as its source file (https://github.com/safer-r/saferDev/blob/main/R/report.R). Notably, compiled functions do not have comments anymore, compared to the same source function sourced into the working environment. In addition, the counting starts at the "<- function" line, i.e., without counting the #' header lines potentially present in source files.
+#' The returned line numbers are indicative, depending on which source is checked. For instance, saferDev::report (compiled) has not the same line numbers as its source file (https://github.com/safer-r/saferDev/blob/main/R/report.R). Notably, compiled functions do not have comments anymore, compared to the same source function sourced into the working environment. In addition, the counting starts at the "<- function" line, i.e., without counting the #' header lines potentially present in source files.
 #' 
+#' Warning: the function will not work if any comma would be present in default argument values. Please, report here https://github.com/safer-r/saferDev/issues if it is the case.
 #' @author Gael Millot <gael.millot@pasteur.fr>
 #' @examples
 #' all_args_here(mean)
@@ -144,8 +146,10 @@ all_args_here <- function(
     col1 <- base::as.vector(base::unlist(base::mapply(FUN = function(x, y){base::rep(y, base::length(x))}, x = fun_name_wo_op, y = code_line_nb_wo_op))) # code line number
     col2 <- base::as.vector(base::unlist(fun_name_wo_op)) # all the function names inside the tested functions (functions between quotes are already removed thanks to fun_1_line_replace)
     col3 <- base::as.vector(base::unlist(arg_string_for_col3)) # as col2 but with its arguments between ()
-    col4 <- base::as.vector(base::unlist(fun_name_pos_wo_op)) # as col2 but position in the code string of 1st character of function name
+    col4 <- base::as.vector(base::unlist(fun_name_pos_wo_op)) # as col2 but position in the code string of 1st character of function name. From col4, we can have pos of opening ( with col4 + nchar(col2) and pos of closing ) with col4 + nchar(col3)
     middle_bracket <- base::do.call(base::c,  middle_bracket_pos_col3) #  concatenate the sublists into a single list -> flatten the outer list while keeping the result as a list
+    middle_bracket_open <- base::lapply(X = middle_bracket, FUN = function(x){if( ! is.null(x)){x[seq(1, length(x), by = 2)]}else{NULL}})
+    middle_bracket_close <- base::lapply(X = middle_bracket, FUN = function(x){if( ! is.null(x)){x[seq(2, length(x), by = 2)]}else{NULL}})
     if( ! (base::length(col1) == base::length(col2) & base::length(col1) == base::length(col3) & base::length(col1) == base::length(col4) & base::length(col1) == base::length(ini_for_col) & base::length(col1) == base::length(middle_bracket))){
         tempo.cat <- base::paste0("INTERNAL ERROR 3 IN ", function.name, " OF THE ", package.name, " PACKAGE\nLENGTHS OF col1 (", base::length(col1), "), col2 (", base::length(col2), "), col3 (", base::length(col3), "), col4 (", base::length(col4), "), ini_for_col (", base::length(ini_for_col), "), AND middle_bracket (", base::length(middle_bracket), "), SHOULD BE EQUAL\n")
         base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n", base::ifelse(base::is.null(warn), "", base::paste0("IN ADDITION\nWARNING", base::ifelse(warn.count > 1, "S", ""), ":\n\n", warn))), call. = FALSE)
@@ -179,6 +183,8 @@ all_args_here <- function(
         col3 <- col3[ ! tempo_log]
         col4 <- col4[ ! tempo_log]
         middle_bracket <- middle_bracket[ ! tempo_log]
+        middle_bracket_open <- middle_bracket_open[ ! tempo_log]
+        middle_bracket_close <- middle_bracket_close[ ! tempo_log]
     }
     # end removal of detected function preceeded by $, which are "" in col2
     # end preparation of columns
@@ -206,8 +212,10 @@ all_args_here <- function(
                 tempo_string2 <- saferDev:::.extract_all_fun_names(text = tempo_string, pattern = "[a-zA-Z][a-zA-Z0-9.]*:{2,3}$")$string # before 
                 saferDev::is_function_here(fun = paste0(tempo_string2, col2[i2]), lib.path = NULL, safer_check = FALSE) # check that exists
                 # end check if the function exists
+                # recovering default args of the function
                 arg_full <- base::formals(fun = col2[i2]) # all the argument of the function in col2[i2] with default values
                 arg_full <- arg_full[base::names(arg_full) != "..."] # removal of the "..." argument
+                # end recovering default args of the function
                 if(base::is.null(arg_full)){
                     col5 <- base::c(col5, "")
                     col6 <- base::c(col6, "")
@@ -228,13 +236,20 @@ all_args_here <- function(
                     pos_rep2 <- tempo$pos # replaced positions in obs_args
                     # end replacement of all the commas between quotes
                     # replacement of all the commas inside function
-                    
-
-
+                    if(length(middle_bracket[[i2]]) > 0){
+                        if(length(middle_bracket_open[[i2]]) != length(middle_bracket_close[[i2]])){
+                            tempo.cat <- base::paste0("INTERNAL ERROR 6 IN ", function.name, " OF THE ", package.name, " PACKAGE\nmiddle_bracket_open AND middle_bracket_close MUST HAVE THE SAME LENGTH IN LOOP ", i2, "\n\nnmiddle_bracket_open (", length(nmiddle_bracket_open), "):\n", base::paste(nmiddle_bracket_open, collapse = " "), "\n\nmiddle_bracket_close (", length(middle_bracket_close), "):\n", base::paste(middle_bracket_close, collapse = " "))
+                            base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n", base::ifelse(base::is.null(warn), "", base::paste0("IN ADDITION\nWARNING", base::ifelse(warn.count > 1, "S", ""), ":\n\n", warn))), call. = FALSE)
+                        }
+                        for(i6 in 1:length(middle_bracket_open[[i2]])){
+                            tempo <- .in_parenthesis_replacement(string = obs_args, pattern = ",", no_regex_pattern = ",", replacement = " ", perl = TRUE, open_pos = middle_bracket_open[[i2]][i6], close_pos = middle_bracket_close[[i2]][i6], function.name = function.name, package.name = package.name)
+                            obs_args <- tempo$string
+                            pos_rep2 <- c(pos_rep2, tempo$pos) # replaced positions in obs_args
+                        }
 
                     # I have to deal with commas inside function, like "pattern = base::paste0(pattern, \"\\\\(#\"), text = text". I have the middle_bracket_pos_col3 for that.
                     # I detect comma inside function, I replace the commas but add the pos in pos_rep2 <- c(pos_rep2, pos). Like, that, I can use the pos_rep2 to put back the commas in the arg value before write it in col7 and col8
-
+                    }
 
 
 
