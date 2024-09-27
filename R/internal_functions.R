@@ -307,6 +307,7 @@
     # DEBUGGING
     # source("https://raw.githubusercontent.com/safer-r/saferDev/main/dev/other/test.R") ; string = paste(deparse(test), collapse = "") ; pattern = "\\)" ; no_regex_pattern = ")" ; replacement = " " ; perl = FALSE ; function.name = "F1" ; package.name = "P1"
     # string = 'paste0("IAGE((", paste0(1:3, collapse = " "), "A)B()")' ; pattern = "\\)" ; no_regex_pattern = ")" ; replacement = " " ; perl = FALSE ; function.name = "F1" ; package.name = "P1"
+    # string = 'paste0("IAGE((", paste0(1:3, collapse = " "), "A)B()' ; pattern = "\\)" ; no_regex_pattern = ")" ; replacement = " " ; perl = FALSE ; function.name = "F1" ; package.name = "P1" # last is ) between strings because odds number in front of
     # string = '\"INTERNAL ERROR 4 IN \", function.name, \" OF THE \", package.name, \" PACKAGE\\nLENGTHS OF col1 (\", base::length(roc1()), \"), col2 (\", base::length(roc2), \"), AND col3 (\", base::length(roc3), \"), SHOULD BE EQUAL\\n\"' ; pattern = "," ; no_regex_pattern = "," ; replacement = " " ; perl = FALSE ; function.name = "F1" ; package.name = "P1"
     if(base::nchar(no_regex_pattern) != base::nchar(replacement)){
         tempo.cat <- base::paste0("INTERNAL ERROR 1 IN ", function.name, " OF THE ", package.name, " PACKAGE\nARGUMENTS no_regex_pattern AND replacement IN THE .in_quotes_replacement() MUST HAVE THE SAME NUMBER OF CHARACTERS\nno_regex_pattern (", base::nchar(no_regex_pattern), " characters):\n", base::paste(no_regex_pattern, collapse = "\n"), "\nreplacement (", base::nchar(replacement), " characters):\n", base::paste(replacement, collapse = "\n"))
@@ -316,7 +317,6 @@
     string_out <- string_split[1]
     pos <- NULL
     if(base::length(string_split) > 1){
-
         count <- 1
         while(count < base::length(string_split)){
             count <- count + 1
@@ -332,9 +332,19 @@
                 pos <- base::c(pos, NA)
             }
         }
-    }else if(){
-
     }
+    if(nchar(string) == nchar(string_out) + 1){ # this is when the pattern is the last character of string. strsplit("a)", split = "\\)") gives "a". Should also deal when while loop has run, i.e., when several pattern in string including the last one: "a)vb)"
+        double.quote.test <- .has_odd_number_of_quotes(input_string = string_out, pattern = '"') # here FALSE means even number of quotes, thus that ")" is not between quotes, thus has to be kept. TRUE means that ")" is between quotes, thus has to be removed
+        simple.quote.test <- .has_odd_number_of_quotes(input_string = string_out, pattern = "'") # idem
+        odds.quotes.log <- double.quote.test |  simple.quote.test # remove ")" ?
+        if(odds.quotes.log == TRUE){
+            pos <- base::c(pos, base::nchar(string_out) + 1)
+            string_out <- base::paste0(string_out, replacement) # to keep the same length of the tested function on a single string output_1_line
+        }else{
+            string_out <- base::paste0(string_out, no_regex_pattern)
+            pos <- base::c(pos, NA)
+        }
+    } # no need of else: string_out == string_split == string and pos is NULL
     if(base::all(base::is.na(pos), na.rm = TRUE)){
         pos <- NULL
     }else if(base::any(base::is.na(pos), na.rm = TRUE)){
@@ -349,9 +359,6 @@
     }
     return(base::list(string = string_out, pos = pos))
 }
-
-
-
 
 
 
@@ -400,32 +407,32 @@
         tempo.cat <- base::paste0("INTERNAL ERROR 2 IN ", function.name, " OF THE ", package.name, " PACKAGE\nARGUMENT close_pos IN THE .between_parenthesis_replacement() DOES NOT REFER TO A POSITION OF CLOSING PARENTHESIS\nclose_pos:\n", base::paste(close_pos, collapse = "\n"), "\nstring:\n", base::paste(string, collapse = "\n"), "\nsubstr(string, close_pos, close_pos):\n", base::paste(base::substr(string, close_pos, close_pos), collapse = "\n"))
         base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
     }
-    string_split <- base::strsplit(string, split = pattern, perl = perl)[[1]]
-    string_out <- string_split[1]
+    string_out <- string
+    # Extract the substring between the given open and close parentheses
+    substring_in_parentheses <- substr(string_out, open_pos, close_pos)
+    # Find the position of comma within that substring
+    comma_position_in_substring <- gregexpr(pattern, substring_in_parentheses)[[1]]
+    # Initialize a vector to store global positions of the replaced commas
     pos <- NULL
-    count <- 1
-    while(count < base::length(string_split)){
-        count <- count + 1
-        nb <- nchar(string_split)
-        # Extract the substring between the given open and close parentheses
-        substring_in_parentheses <- substr(string, open_pos, close_pos)
-        # Find the position of comma within that substring
-        comma_position_in_substring <- gregexpr(pattern, substring_in_parentheses)[[1]]
-        # Initialize a vector to store global positions of the replaced commas
-        comma_global_positions <- c()
-        if (comma_position_in_substring[1] != -1) {
-            for (relative_comma_position in comma_position_in_substring) {
-                # Calculate the global position of the comma in the original string
-                global_comma_position <- open_pos + relative_comma_position - 1
-                # Replace that comma using substring or substr
-                substring(string, global_comma_position, global_comma_position) <- replacement
-                # Store the global position
-                comma_global_positions <- c(comma_global_positions, global_comma_position)
-            }
+    if (comma_position_in_substring[1] != -1) {
+        for (relative_comma_position in comma_position_in_substring) {
+            # Calculate the global position of the comma in the original string
+            global_comma_position <- open_pos + relative_comma_position - 1
+            # Replace that comma using substring or substr
+            substring(string_out, global_comma_position, global_comma_position) <- replacement
+            # Store the global position
+            pos <- c(pos, global_comma_position)
+        }
+    }
+    if( ! base::is.null(pos)){
+        tempo <- base::substring(string, pos, pos)
+        if( ! base::all(base::unique(tempo) == no_regex_pattern, na.rm = TRUE)){
+            tempo.cat <- base::paste0("INTERNAL ERROR 2 IN ", function.name, " OF THE ", package.name, " PACKAGE\nIN .between_parenthesis_replacement(), ARGUMENT no_regex_pattern NOT CORRECTLY DETECTED\nno_regex_pattern: \"", no_regex_pattern, "\"\nREPLACED CHARACTERS IN string ARGUMENT:\n", base::paste(tempo, collapse = "\n"))
+            base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
         }
     }
     # Return both the modified string and positions of replaced commas
-    list(modified_string = string, comma_positions = comma_global_positions)
+    return(base::list(string = string_out, pos = pos))
 }
 
 
