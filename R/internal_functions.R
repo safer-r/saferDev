@@ -666,7 +666,6 @@
 #' @description
 #' Detect all the functions names used inside a function.
 #' @param x a function name, written without quotes and brackets.
-#' @param safer_check Single logical value. Perform some "safer" checks (see https://github.com/safer-r)?
 #' @param arg.user.setting Argument user settings list.
 #' @param function.name function name.
 #' @param package.name package name.
@@ -686,7 +685,7 @@
 #' 
 #' @examples
 #' \dontrun{ # Example that shouldn't be run because this is an internal function
-#' source("C:\\Users\\gmillot\\Documents\\Git_projects\\safer-r\\saferDev\\dev\\other\\test.R") ; .functions_detect(x = test, safer_check = TRUE, arg.user.setting = base::list(x =  as.name(x = "test"), safer_check = TRUE), function.name = "F1", package.name = "P1")
+#' source("C:\\Users\\gmillot\\Documents\\Git_projects\\safer-r\\saferDev\\dev\\other\\test.R") ; .functions_detect(x = test, arg.user.setting = base::list(x =  as.name(x = "test")), function.name = "F1", package.name = "P1")
 #' }
 #' @author Gael Millot <gael.millot@pasteur.fr>
 #' @keywords internal
@@ -694,21 +693,14 @@
 #' @rdname internal_function
 .functions_detect <- function(
     x, 
-    safer_check,
     arg.user.setting, 
     function.name, 
     package.name
 ){
     # DEBUGGING
-    # x = x ; safer_check = safer_check ; arg.user.setting = arg.user.setting ; function.name = function.name ; package.name = package.name
-    # source("C:\\Users\\gmillot\\Documents\\Git_projects\\safer-r\\saferDev\\dev\\other\\test.R") ; x = test ; safer_check = TRUE ; arg.user.setting = base::list(x = as.name(x = "test"), safer_check = TRUE) ; function.name = "F1" ; package.name = "P1"
+    # x = x ; arg.user.setting = arg.user.setting ; function.name = function.name ; package.name = package.name
+    # source("C:\\Users\\gmillot\\Documents\\Git_projects\\safer-r\\saferDev\\dev\\other\\test2.R") ; x = test2 ; arg.user.setting = base::list(x = as.name(x = "test2"), export = TRUE) ; function.name = "F1" ; package.name = "P1"
     # critical operator checking
-    if(safer_check == TRUE){
-        saferDev:::.base_op_check(
-            external.function.name = function.name,
-            external.package.name = package.name
-        )
-    }
     # end critical operator checking
     # package checking
     # check of lib.path
@@ -734,7 +726,6 @@
     checked.arg.names <- NULL # for function debbuging: used by r_debugging_tools
     ee <- base::expression(argum.check <- base::c(argum.check, tempo$problem) , text.check <- base::c(text.check, tempo$text) , checked.arg.names <- base::c(checked.arg.names, tempo$object.name))
     tempo <- saferDev::arg_check(data = x, mode = "function", length = 1,  fun.name = function.name, safer_check = FALSE) ; base::eval(ee)
-    tempo <- saferDev::arg_check(data = safer_check, class = "vector", typeof = "logical", length = 1, fun.name = function.name, safer_check = FALSE) ; base::eval(ee) # even if already used above
     # lib.path already checked above
     if( ! base::is.null(argum.check)){
         if(base::any(argum.check, na.rm = TRUE) == TRUE){
@@ -763,8 +754,7 @@
     # end management of NA arguments
     # management of NULL arguments
     tempo.arg <-base::c(
-        "x",
-        "safer_check"
+        "x"
     )
     tempo.log <- base::sapply(base::lapply(tempo.arg, FUN = base::get, env = base::sys.nframe(), inherit = FALSE), FUN = base::is.null)
     if(base::any(tempo.log) == TRUE){# normally no NA with base::is.null()

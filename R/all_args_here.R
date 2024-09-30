@@ -3,10 +3,19 @@
 #' Verify that all the functions used inside a function are written with all their arguments. For instance: base::paste0(letters[1:2], collapse = NULL, recycle0 = FALSE) and not paste0(letters[1:2]).
 #' @param x a function name, written without quotes and brackets.
 #' @param safer_check Single logical value. Perform some "safer" checks (see https://github.com/safer-r)? If TRUE, checkings are performed before main code running: 1) R classical operators (like "<-") not overwritten by another package because of the R scope and 2) required functions and related packages effectively present in local R lybraries. Must be set to FALSE if this fonction is used inside another "safer" function to avoid pointless multiple checkings.
+#' @param export Single logical value. Export the data frame in a .tsv file?
 #' @returns 
-#' A table-like message indicating the missing arguments or a message saying that everything seems fine.
+#' A data frame indicating the missing arguments or a message saying that everything seems fine.
 #' 
-#' Table-like: column 1, the line number in the function code (starting at the "<- function" line, i.e., without counting the #' header lines); column 2,  the function name; column 3, the code preceeding the function name; column 4, the missing arguments with default values
+#' Data frame: 
+#' $LINE_NB: the line number in the function code (starting at the "<- function" line, i.e., without counting the #' header lines)
+#' $FUN_NAME: the function name.
+#' $FUN_ARGS: the written arguments of $FUN_NAME.
+#' $FUN_POS: the position of the first character of the function name in the $LINE_NB line of the code.
+#' $DEF_ARGS: the defaults arguments of $FUN_NAME.
+#' $MISSING_ARG_NAMES: the missing argument names in $FUN_ARGS.
+#' $MISSING_ARGS: the missing arguments with their values in $FUN_ARGS.
+#' $NEW: the new proposed argument writting for $FUN_NAME.
 #' @details
 #' More precisely, all_args_here() verifies that all the strings before an opening bracket "(" are written with all their arguments. Thus, it cannot check function names written without brackets, like in the FUN argument of some functions, e.g., sapply(1:3, FUN = as.character).
 #' 
@@ -29,7 +38,8 @@
 #' @export
 all_args_here <- function(
     x, 
-    safer_check = TRUE
+    safer_check = TRUE,
+    export = FALSE
 ){
     # DEBUGGING
     # x = .expand_R_libs_env_var ; safer_check = TRUE
@@ -37,7 +47,7 @@ all_args_here <- function(
     # source("C:\\Users\\gmillot\\Documents\\Git_projects\\safer-r\\saferDev\\R\\get_message.R") ; x = get_message ; safer_check = TRUE
     # library(saferDev) ; x = get_message ; safer_check = TRUE
     # source("C:\\Users\\gmillot\\Documents\\Git_projects\\safer-r\\saferDev\\R\\all_args_here.R") ; x = all_args_here ; safer_check = TRUE
-    # source("C:\\Users\\gmillot\\Documents\\Git_projects\\safer-r\\saferDev\\dev\\other\\test2.R") ; x = test2 ; safer_check = TRUE # use the folling line before out <- 
+    # source("C:\\Users\\gmillot\\Documents\\Git_projects\\safer-r\\saferDev\\dev\\other\\test2.R") ; x = test2 ; safer_check = TRUE ; export = TRUE # use the folling line before out <- 
     # arg.user.setting = base::list(x = as.name(x = "test2"), safer_check = TRUE)
     # package name
     package.name <- "saferDev"
@@ -74,13 +84,9 @@ all_args_here <- function(
 
 
 
-
-
-
     # main code
     out <- .functions_detect(
         x = x, 
-        safer_check = safer_check,
         arg.user.setting = arg.user.setting, 
         function.name = function.name, 
         package.name = package.name
@@ -238,6 +244,7 @@ all_args_here <- function(
                     col5 <- base::c(col5, "")
                     col6 <- base::c(col6, "")
                     col7 <- base::c(col7, "")
+                    col8 <- base::c(col8, "")
                 }else{
                     # all arguments of the function with default value in col5
                     tempo <- base::sapply(X = arg_full, FUN = function(x){ base::paste0(ifelse(base::all(x == "", na.rm =TRUE), "", " = "), x)})
@@ -329,10 +336,17 @@ all_args_here <- function(
                 col5 <- base::c(col5, "")
                 col6 <- base::c(col6, "")
                 col7 <- base::c(col7, "")
+                col8 <- base::c(col8, "")
             }
         }
+        output <- base::data.frame(LINE_NB = col1, FUN_NAME = col2, FUN_ARGS = col3, FUN_POS = col4, DEF_ARGS = col5, MISSING_ARG_NAMES = col6, MISSING_ARGS = col7, NEW = col8)
+        if(TRUE == TRUE){
+            utils::write.table(output, file = "./res.tsv", row.names = FALSE, col.names = TRUE, append = FALSE, quote = FALSE, sep = "\t", eol = "\n", na = "")
+        }else{
+            base::return(output)
+        }
     }
-    print(data.frame(col1 = col1, col2 = col2, col3 = col3, col4 = col4, col5 = col5, col6 = col6, col7 = col7, col8 = col8))
+
     # end two new columns for arg proposal
     # end main code
     # output
