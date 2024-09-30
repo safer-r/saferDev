@@ -25,7 +25,7 @@
 #' @examples
 #' all_args_here(mean)
 #' all_args_here(all_args_here)
-#' source("https://raw.githubusercontent.com/safer-r/saferDev/main/dev/other/test.R") ; all_args_here(test)
+#' source("https://raw.githubusercontent.com/safer-r/saferDev/main/dev/other/test2.R") ; all_args_here(test2)
 #' @export
 all_args_here <- function(
     x, 
@@ -147,7 +147,10 @@ all_args_here <- function(
             pattern2 <- base::paste0(fun_name_wo_op[[i1]][i2], "[\\s\\r\\n]*\\(") # function detection in 
             # pattern2 <- paste0("[a-zA-Z.][a-zA-Z0-9._]* *\\$ *", fun_name_wo_op[[i1]][i2], "[\\s\\r\\n]*\\(") # function like a$fun()
             if(base::grepl(x = arg_string_for_col3[[i1]][i2], pattern = pattern2)){ # because of "NOT_CONSIDERED" in some cases
-                tempo_pos <- .fun_args_pos(text = arg_string_for_col3[[i1]][i2], pattern = pattern2,     function.name = function.name, package.name = package.name) # positions of 1st letter of the function name and opening and closing brackets # Warning: fun_1_line_replace used because the input string must be cleaned form brackets between quotes
+                # detection of inside () between quotes
+                tempo1 <- .in_quotes_replacement(string = arg_string_for_col3[[i1]][i2], pattern = "\\(", no_regex_pattern = "(", replacement = " ", perl = TRUE, function.name = function.name, package.name = package.name)
+                tempo2 <- .in_quotes_replacement(string =tempo1$string, pattern = "\\)", no_regex_pattern = ")", replacement = " ", perl = TRUE, function.name = function.name, package.name = package.name)
+                tempo_pos <- .fun_args_pos(text = tempo2$string, pattern = pattern2,     function.name = function.name, package.name = package.name) # positions of 1st letter of the function name and opening and closing brackets # Warning: fun_1_line_replace used because the input string must be cleaned form brackets between quotes
                 if( ! base::is.null(tempo_pos$middle_bracket_pos)){ # I have to use if(){}, otherwise mid_bracket_pos_in_fun_1_line[[i1]][[i2]] disappears
                     mid_bracket_pos_in_col3[[i1]][[i2]] <- base::unlist(tempo_pos$middle_bracket_pos) # positions of the () inside a function
                 }
@@ -163,8 +166,8 @@ all_args_here <- function(
     col3 <- base::as.vector(base::unlist(arg_string_for_col3)) # as col2 but with its arguments between ()
     col4 <- base::as.vector(base::unlist(fun_name_pos_wo_op)) # as col2 but position in the code string of 1st character of function name. From col4, we can have pos of opening ( with col4 + nchar(col2) and pos of closing ) with col4 + nchar(col3)
     middle_bracket <- base::do.call(base::c,  mid_bracket_pos_in_col3) #  concatenate the sublists into a single list -> flatten the outer list while keeping the result as a list
-    middle_bracket_open <- base::lapply(X = middle_bracket, FUN = function(x){if( ! is.null(x)){x[seq(1, length(x), by = 2)]}else{NULL}})
-    middle_bracket_close <- base::lapply(X = middle_bracket, FUN = function(x){if( ! is.null(x)){x[seq(2, length(x), by = 2)]}else{NULL}})
+    middle_bracket_open_in_col3 <- base::lapply(X = middle_bracket, FUN = function(x){if( ! is.null(x)){x[seq(1, length(x), by = 2)]}else{NULL}})
+    middle_bracket_close_in_col3 <- base::lapply(X = middle_bracket, FUN = function(x){if( ! is.null(x)){x[seq(2, length(x), by = 2)]}else{NULL}})
     if( ! (base::length(col1) == base::length(col2) & base::length(col1) == base::length(col3) & base::length(col1) == base::length(col4) & base::length(col1) == base::length(ini_for_col) & base::length(col1) == base::length(middle_bracket))){
         tempo.cat <- base::paste0("INTERNAL ERROR 3 IN ", function.name, " OF THE ", package.name, " PACKAGE\nLENGTHS OF col1 (", base::length(col1), "), col2 (", base::length(col2), "), col3 (", base::length(col3), "), col4 (", base::length(col4), "), ini_for_col (", base::length(ini_for_col), "), AND middle_bracket (", base::length(middle_bracket), "), SHOULD BE EQUAL\n")
         base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n", base::ifelse(base::is.null(warn), "", base::paste0("IN ADDITION\nWARNING", base::ifelse(warn.count > 1, "S", ""), ":\n\n", warn))), call. = FALSE)
@@ -198,8 +201,8 @@ all_args_here <- function(
         col3 <- col3[ ! tempo_log]
         col4 <- col4[ ! tempo_log]
         middle_bracket <- middle_bracket[ ! tempo_log]
-        middle_bracket_open <- middle_bracket_open[ ! tempo_log]
-        middle_bracket_close <- middle_bracket_close[ ! tempo_log]
+        middle_bracket_open_in_col3 <- middle_bracket_open_in_col3[ ! tempo_log]
+        middle_bracket_close_in_col3 <- middle_bracket_close_in_col3[ ! tempo_log]
     }
     # end removal of detected function preceeded by $, which are "" in col2
     # end preparation of columns
@@ -241,71 +244,69 @@ all_args_here <- function(
                     tempo <- base::paste( base::paste0( base::names(tempo), tempo), collapse = ", ")
                     col5 <- base::c(col5, tempo)
                     # end all arguments of the function with default value in col5
-                    # recovering obs arg
-                    obs_args <- base::sub(pattern =  base::paste0("^", col2[i2], "[\\s\\r\\n]*\\("), replacement = "", x = col3[i2], perl = TRUE) # removal of function name and (
-                    obs_args <- base::sub(pattern =  "\\)$", replacement = "", x = obs_args, perl = FALSE) # removal of trailing )
-                    # end recovering obs arg
-                    # replacement of all the commas between quotes
-                    tempo <- .in_quotes_replacement(string = obs_args, pattern = ",", no_regex_pattern = ",", replacement = " ", perl = TRUE, function.name = function.name, package.name = package.name)
-                    obs_args <- tempo$string
+                    # arguments: replacement of all the commas between quotes
+                    tempo_col3 <- col3[i2]
+                    tempo <- .in_quotes_replacement(string = tempo_col3, pattern = ",", no_regex_pattern = ",", replacement = " ", perl = TRUE, function.name = function.name, package.name = package.name)
+                    tempo_col3 <- tempo$string
                     pos_rep2 <- tempo$pos # replaced positions in obs_args
-                    # end replacement of all the commas between quotes
-                    # replacement of all the commas inside function
-                    tempo_pos <- .fun_args_pos(text = fun_1_line_replace, pattern = pattern1,     function.name = function.name, package.name = package.name) # positions of 1st letter of the function name and opening and closing brackets # Warning: fun_1_line_replace used because the input string must be cleaned form brackets between quotes
-
-
-
-                    if(length(middle_bracket[[i2]]) > 0){
-                        if(length(middle_bracket_open[[i2]]) != length(middle_bracket_close[[i2]])){
-                            tempo.cat <- base::paste0("INTERNAL ERROR 6 IN ", function.name, " OF THE ", package.name, " PACKAGE\nmiddle_bracket_open AND middle_bracket_close MUST HAVE THE SAME LENGTH IN LOOP ", i2, "\n\nnmiddle_bracket_open (", length(nmiddle_bracket_open), "):\n", base::paste(nmiddle_bracket_open, collapse = " "), "\n\nmiddle_bracket_close (", length(middle_bracket_close), "):\n", base::paste(middle_bracket_close, collapse = " "))
+                    # end arguments: replacement of all the commas between quotes
+                    # arguments: replacement of all the commas inside () of subfunctions
+                    if(length(middle_bracket_open_in_col3[[i2]]) > 0){
+                        if(length(middle_bracket_open_in_col3[[i2]]) != length(middle_bracket_close_in_col3[[i2]])){
+                            tempo.cat <- base::paste0("INTERNAL ERROR 6 IN ", function.name, " OF THE ", package.name, " PACKAGE\nmiddle_bracket_open_in_col3 AND middle_bracket_close_in_col3 MUST HAVE THE SAME LENGTH IN LOOP ", i2, "\n\nmiddle_bracket_open_in_col3 (", length(middle_bracket_open_in_col3), "):\n", base::paste(middle_bracket_open_in_col3, collapse = " "), "\n\nmiddle_bracket_close_in_col3 (", length(middle_bracket_close_in_col3), "):\n", base::paste(middle_bracket_close_in_col3, collapse = " "))
                             base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n", base::ifelse(base::is.null(warn), "", base::paste0("IN ADDITION\nWARNING", base::ifelse(warn.count > 1, "S", ""), ":\n\n", warn))), call. = FALSE)
                         }
-                        for(i6 in 1:length(middle_bracket_open[[i2]])){
-                            tempo <- .in_parenthesis_replacement(string = obs_args, pattern = ",", no_regex_pattern = ",", replacement = " ", perl = TRUE, open_pos = middle_bracket_open[[i2]][i6], close_pos = middle_bracket_close[[i2]][i6], function.name = function.name, package.name = package.name)
-                            obs_args <- tempo$string
+                        for(i6 in 1:length(middle_bracket_open_in_col3[[i2]])){
+                            tempo <- .in_parenthesis_replacement(string = tempo_col3, pattern = ",", no_regex_pattern = ",", replacement = " ", perl = TRUE, open_pos = middle_bracket_open_in_col3[[i2]][i6], close_pos = middle_bracket_close_in_col3[[i2]][i6], function.name = function.name, package.name = package.name)
+                            tempo_col3 <- tempo$string
                             pos_rep2 <- c(pos_rep2, tempo$pos) # replaced positions in obs_args
                         }
-
-                    # I have to deal with commas inside function, like "pattern = base::paste0(pattern, \"\\\\(#\"), text = text". I have the mid_bracket_pos_in_fun_1_line for that.
-                    # I detect comma inside function, I replace the commas but add the pos in pos_rep2 <- c(pos_rep2, pos). Like, that, I can use the pos_rep2 to put back the commas in the arg value before write it in col7 and col8
                     }
-
-
-
-                    # end replacement of all the commas inside function
-                    # working on each observed arg
+                    # end arguments: replacement of all the commas inside () of subfunctions
+                    # recovering obs arguments
+                    obs_args <- base::sub(pattern =  base::paste0("^", col2[i2], "[\\s\\r\\n]*\\("), replacement = "", x = tempo_col3, perl = TRUE) # removal of function name and (
+                    obs_args <- base::sub(pattern =  "\\)$", replacement = "", x = obs_args, perl = FALSE) # removal of trailing )
+                    # end recovering obs arguments
+                    # splitting the arguments using commas
                     tempo_split <- base::strsplit(x = obs_args, split = ",")[[1]] # separation of args
+                    # end splitting the arguments using commas
+                    # rewriting the commas inside args
+                    if( ! base::is.null(pos_rep2)){
+                        # resseting the pos of the removed commas to fit obs_args
+                        pos_rep2 <- pos_rep2 - base::nchar(col2[i2]) - 1 # -1 for the opening (
+                        if(base::any(pos_rep2 <= 0, na.rm = TRUE)){
+                            tempo.cat <- base::paste0("INTERNAL ERROR 6 IN ", function.name, " OF THE ", package.name, " PACKAGE\nPOSITIONS OF REMOVED COMMAS CANOT  OR LESS\n\npos_rep2 (", length(pos_rep2), "):\n", base::paste(pos_rep2, collapse = " "), "\n\nARGUMENT STRING obs_args:\n", base::paste(obs_args, collapse = " "))
+                            base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n", base::ifelse(base::is.null(warn), "", base::paste0("IN ADDITION\nWARNING", base::ifelse(warn.count > 1, "S", ""), ":\n\n", warn))), call. = FALSE)
+                        }
+                        # end resseting the pos of the removed commas to fit obs_args
+                        for(i6 in 1:base::length(tempo_split)){
+                            tempo_log <- pos_rep2 >= 1 & pos_rep2 <= nchar(tempo_split[i6])
+                            if(base::any(tempo_log, na.rm = TRUE)){
+                                substring(text = tempo_split[i6], first = pos_rep2[tempo_log], last = pos_rep2[tempo_log]) <- ","
+                            }
+                            pos_rep2 - nchar(tempo_split[i6]) - 1 # -1 because of the comma that separates each tempo_split
+                        }
+                    }
+                    # end rewriting the commas inside args
+                    # working on each observed arg
                     arg_full_names <-  base::names(arg_full)
                     good_args <- NULL
                     missing_args <- NULL
                     missing_args_names <- NULL
-                    count <- 1 # count of the tempo_split args without arg name before
+                    obs_arg_nb <- 1:base::length(tempo_split) # will help for counting the tempo_split args without arg name before
                     for(i5 in 1:base::length(arg_full_names)){
-                        pattern3 <- base::paste0("^[\\s\\r\\n]*", arg_full_names[i5], "[\\s\\r\\n]*=") # looking for the arg name
+                        pattern3 <- base::paste0("^[\\s\\r\\n]*", arg_full_names[i5], "[\\s]*=") # looking for the arg name
                         tempo.log <- grepl(x = tempo_split, pattern = pattern3, perl = TRUE)
                         missing_args_log <- FALSE
-                        if(base::sum(tempo.log, na.rm = TRUE) == 1){
-                            good_args <- base::c(good_args, tempo_split[tempo.log]) # good args reordered in case
-                            # remove the ( and ) positions inside brackets in .fun_args_pos() and give couple of brackets # done
-                            # done bit factorise while loop in .fun_args_pos() # done
-                            # then, detect any comma inside couple of brackets
-                            # replace commas inside ()
-                            # split using ","
-                            # the begining of each split string should start by pattern3 <- base::paste0("^[\\s\\r\\n]*", arg_full_names[i4], "[\\s\\r\\n]*=")
-                            # go back to unmodified string to extract the arguments to export
-                        }else if(base::sum(tempo.log, na.rm = TRUE) == 0){
+                        if(base::sum(tempo.log, na.rm = TRUE) == 1){ # arg i5 has its names written 
+                            good_args <- base::c(good_args, tempo_split[tempo.log])
+                            obs_arg_nb <- obs_arg_nb[ ! tempo.log] # remove the position of the taken arg
+                        }else if(base::sum(tempo.log, na.rm = TRUE) == 0){ # arg i5 has not its names written
                             missing_args_log <- TRUE
                             missing_args_names <- base::c(missing_args_names, arg_full_names[i5])
-                            if(base::length(arg_full[[i5]]) == 0){
-                                tempo_missing_args <- base::paste0(arg_full_names[i5], " = ", arg_full[[i5]])
-                            }else if(arg_full[[i5]] == ""){
-                                if(count <= base::length(tempo_split)){
-                                    tempo_missing_args <- base::paste0(arg_full_names[i5], " = ", tempo_split[count])
-                                    count <- count + 1
-                                }else{
-                                    tempo.cat <- base::paste0("INTERNAL ERROR 6 IN ", function.name, " OF THE ", package.name, " PACKAGE\nPROBLEM IN count THAT CANNOT BE MORE THAN THE NUMBER OF STRINGS IN ntempo_split\n\ncount:\n", base::paste(count, collapse = "\n"), "\n\ntempo_split:\n", base::paste(tempo_split[tempo.log], collapse = "\n"))
-                                    base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n", base::ifelse(base::is.null(warn), "", base::paste0("IN ADDITION\nWARNING", base::ifelse(warn.count > 1, "S", ""), ":\n\n", warn))), call. = FALSE)
-                                }
+                            if(base::length(obs_arg_nb) > 0){ # this means that remains obs arg with no arg names written
+                                tempo_missing_args <- base::paste0(arg_full_names[i5], " = ", tempo_split[obs_arg_nb[1]]) # take the first pos always of the args with no arg names
+                                obs_arg_nb <- obs_arg_nb[-1]
                             }else{
                                 tempo_missing_args <- base::paste0(arg_full_names[i5], " = ", arg_full[[i5]])
                             }
@@ -319,10 +320,11 @@ all_args_here <- function(
                         }
                     }
                     # end working on each observed arg
+                    # col5 done above
+                    col6 <- base::c(col6, base::paste(missing_args_names, collapse = ", "))
+                    col7 <- base::c(col7, base::paste(missing_args, collapse = ", "))
+                    col8 <- base::c(col8, base::paste0(col2[i2], "(", base::paste(good_args, collapse = ", "), ")"))
                 }
-                # col5 done above
-                col6 <- base::c(col6, base::paste(missing_args_names, collapse = ", "))
-                col7 <- base::c(col6, base::paste(good_args, collapse = ", "))
             }else{
                 col5 <- base::c(col5, "")
                 col6 <- base::c(col6, "")
@@ -330,7 +332,7 @@ all_args_here <- function(
             }
         }
     }
-
+    print(data.frame(col1 = col1, col2 = col2, col3 = col3, col4 = col4, col5 = col5, col6 = col6, col7 = col7, col8 = col8))
     # end two new columns for arg proposal
     # end main code
     # output
