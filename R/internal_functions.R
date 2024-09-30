@@ -537,7 +537,7 @@
 #' $end: position of the closing ")" of the function.
 #' $middle_bracket_pos: list of positions of the couple of brackets in the middle of the begin and end positions. In each compartment, the first number is the position of ( and the second the position of ). NULL if no inside brackets.
 #' @details
-#' Warning: the string must be cleaned form brackets between quotes.
+#' Warning: the string must be cleaned form brackets between quotes. Use .in_quotes_replacement() for that.
 #' Warning: quotes in strings are escaped, so that position of ( in \"a( is 3, not 4.
 #' @author Gael Millot <gael.millot@pasteur.fr>
 #' @examples
@@ -587,12 +587,12 @@
             }
             loop.nb <- loop.nb + 1
         }
-        # inactivated below because some parenthesis can be pattern inside quotes. So the count can be different from 0 at the end
-        # if(count != 0){
-            # tempo.cat <- base::paste0("INTERNAL ERROR IN ", function.name, " OF THE ", package.name, " PACKAGE\nTHE .fun_args_pos() INTERNAL FUNCTION DID NOT PROPERLY DETECT THE POSITION OF THE CLOSING BRACKET IN ", base::match.call(expand.dots = FALSE)$x, "\ntext: ", base::paste(text, collapse = "\n"), "\npattern: ", base::paste(pattern, collapse = "\n"), "\ncount: ", base::paste(count, collapse = "\n"))
-            # base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
-        # }
-        return(final_pos)
+        if(count != 0){
+            tempo.cat <- base::paste0("INTERNAL ERROR IN ", function.name, " OF THE ", package.name, " PACKAGE\nTHE .fun_args_pos() INTERNAL FUNCTION DID NOT PROPERLY DETECT THE POSITION OF THE CLOSING BRACKET IN ", base::match.call(expand.dots = FALSE)$x, "\ntext: ", base::paste(text, collapse = "\n"), "\npattern: ", base::paste(pattern, collapse = "\n"), "\ncount: ", base::paste(count, collapse = "\n"))
+            base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
+        }else{
+            return(final_pos)
+        }
     }
 
     open_paren_pos <- base::as.vector(base::gregexpr(pattern = "\\(", text = text)[[1]])
