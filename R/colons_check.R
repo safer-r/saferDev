@@ -65,7 +65,6 @@ colons_check <- function(
     # main code
     out <- .functions_detect(
         x = x, 
-        safer_check = safer_check,
         arg.user.setting = arg.user.setting, 
         function.name = function.name, 
         package.name = package.name
