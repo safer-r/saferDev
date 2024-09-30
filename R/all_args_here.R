@@ -108,8 +108,8 @@ all_args_here <- function(
     # end replacement of all the ( between quotes
     # recovery of the functions, in the tested function, with written arguments inside ()
     arg_string_for_col3 <- fun_name_wo_op # like fun_name_wo_op but added with all what is between ()
-    arg_string_for_col5 <- fun_name_wo_op # will be used to get the arguments
-    middle_bracket_pos_col3 <- base::lapply(X = fun_name_wo_op, FUN = function(x){base::lapply(X = x, FUN = function(y){NULL})}) # list of lists, will be used to get inside ( and ) positions
+    arg_string <- fun_name_wo_op # like arg_string_for_col3 but with only the arguments
+    mid_bracket_pos_in_fun_1_line <- base::lapply(X = fun_name_wo_op, FUN = function(x){base::lapply(X = x, FUN = function(y){NULL})}) # list of lists, will be used to get inside ( and ) positions, from fun_1_line
 
     for(i1 in 1:base::length(fun_name_wo_op)){
         for(i2 in 1:base::length(fun_name_wo_op[[i1]])){
@@ -122,24 +122,39 @@ all_args_here <- function(
                 if(tempo_log){ # remove functions preceeded by $, like a$fun()
                     arg_string_for_col3[[i1]][i2] <- ""
                     fun_name_wo_op[[i1]][i2] <- ""
-                    arg_string_for_col5[[i1]][i2] <- ""
+                    arg_string[[i1]][i2] <- ""
                     base::substr(x = fun_1_line_replace, start = 1, stop = tempo_pos$begin - 1) <- base::paste(base::rep(" ", tempo_pos$begin - 1), collapse = "")
                 }else{
                     arg_string_for_col3[[i1]][i2] <- base::substr(x = fun_1_line, start = tempo_pos$begin_fun, stop = tempo_pos$end) # add the "function(args)" string into arg_string_for_col3. I use fun_1_line because I want unaltered values of args here (fun_1_line_replace have quoted () replaced by spaces)
-                    arg_string_for_col5[[i1]][i2] <- base::substr(x = fun_1_line, start = tempo_pos$begin + 1, stop = tempo_pos$end - 1) # idem arg_string_for_col3 but inside () of the function (just the arguments written)
-                    if( ! base::is.null(tempo_pos$middle_bracket_pos)){ # I have to use if(){}, otherwise middle_bracket_pos_col3[[i1]][[i2]] disappears
-                        middle_bracket_pos_col3[[i1]][[i2]] <- base::unlist(tempo_pos$middle_bracket_pos) # positions of the () inside a function
+                    arg_string[[i1]][i2] <- base::substr(x = fun_1_line, start = tempo_pos$begin + 1, stop = tempo_pos$end - 1) # idem arg_string_for_col3 but inside () of the function (just the arguments written)
+                    if( ! base::is.null(tempo_pos$middle_bracket_pos)){ # I have to use if(){}, otherwise mid_bracket_pos_in_fun_1_line[[i1]][[i2]] disappears
+                        mid_bracket_pos_in_fun_1_line[[i1]][[i2]] <- base::unlist(tempo_pos$middle_bracket_pos) # positions of the () inside a function
                     }
                     base::substr(x = fun_1_line_replace, start = 1, stop = tempo_pos$begin - 1) <- base::paste(base::rep(" ", tempo_pos$begin - 1), collapse = "") # trick that replaces characters between start = tempo_pos$begin_fun and stop = tempo_pos$end by the same number of spaces. This, to avoid to take always the first paste0 for instance in the fun_1_line_replace string when several are present in fun_name_wo_op
                 }
             }else{
                 arg_string_for_col3[[i1]][i2] <- reserved_word
-                arg_string_for_col5[[i1]][i2] <- ""
+                arg_string[[i1]][i2] <- ""
             }
             # substr(x = fun_1_line, start = fun_pos, stop = fun_close_paren_pos) <- paste(rep(" ", nchar( arg_string_for_col3[[i1]][i2])), collapse = "") # remove the first fonction in the line, in case of identical function names in a code line. Like, that, the next round for the next same function can be easily tested for "between quotes" 
         }
     }
     # end recovery of the functions, in the tested function, with written arguments inside ()
+    # recovery of the positions of inside () in col3
+    mid_bracket_pos_in_col3 <- base::lapply(X = fun_name_wo_op, FUN = function(x){base::lapply(X = x, FUN = function(y){NULL})}) # list of lists, will be used to get inside ( and ) positions, from col3
+    for(i1 in 1:base::length(fun_name_wo_op)){
+        for(i2 in 1:base::length(fun_name_wo_op[[i1]])){
+            pattern2 <- base::paste0(fun_name_wo_op[[i1]][i2], "[\\s\\r\\n]*\\(") # function detection in 
+            # pattern2 <- paste0("[a-zA-Z.][a-zA-Z0-9._]* *\\$ *", fun_name_wo_op[[i1]][i2], "[\\s\\r\\n]*\\(") # function like a$fun()
+            if(base::grepl(x = arg_string_for_col3[[i1]][i2], pattern = pattern2)){ # because of "NOT_CONSIDERED" in some cases
+                tempo_pos <- .fun_args_pos(text = arg_string_for_col3[[i1]][i2], pattern = pattern2,     function.name = function.name, package.name = package.name) # positions of 1st letter of the function name and opening and closing brackets # Warning: fun_1_line_replace used because the input string must be cleaned form brackets between quotes
+                if( ! base::is.null(tempo_pos$middle_bracket_pos)){ # I have to use if(){}, otherwise mid_bracket_pos_in_fun_1_line[[i1]][[i2]] disappears
+                    mid_bracket_pos_in_col3[[i1]][[i2]] <- base::unlist(tempo_pos$middle_bracket_pos) # positions of the () inside a function
+                }
+            }
+        }
+    }
+    # end recovery of the positions of inside () in col3
     # preparation of columns
     ini_for_col <- ini[code_line_nb_wo_op]
     ini_for_col <- base::as.vector(base::unlist(base::mapply(FUN = function(x, y){base::rep(y, base::length(x))}, x = fun_name_wo_op, y = ini_for_col)))
@@ -147,7 +162,7 @@ all_args_here <- function(
     col2 <- base::as.vector(base::unlist(fun_name_wo_op)) # all the function names inside the tested functions (functions between quotes are already removed thanks to fun_1_line_replace)
     col3 <- base::as.vector(base::unlist(arg_string_for_col3)) # as col2 but with its arguments between ()
     col4 <- base::as.vector(base::unlist(fun_name_pos_wo_op)) # as col2 but position in the code string of 1st character of function name. From col4, we can have pos of opening ( with col4 + nchar(col2) and pos of closing ) with col4 + nchar(col3)
-    middle_bracket <- base::do.call(base::c,  middle_bracket_pos_col3) #  concatenate the sublists into a single list -> flatten the outer list while keeping the result as a list
+    middle_bracket <- base::do.call(base::c,  mid_bracket_pos_in_col3) #  concatenate the sublists into a single list -> flatten the outer list while keeping the result as a list
     middle_bracket_open <- base::lapply(X = middle_bracket, FUN = function(x){if( ! is.null(x)){x[seq(1, length(x), by = 2)]}else{NULL}})
     middle_bracket_close <- base::lapply(X = middle_bracket, FUN = function(x){if( ! is.null(x)){x[seq(2, length(x), by = 2)]}else{NULL}})
     if( ! (base::length(col1) == base::length(col2) & base::length(col1) == base::length(col3) & base::length(col1) == base::length(col4) & base::length(col1) == base::length(ini_for_col) & base::length(col1) == base::length(middle_bracket))){
@@ -236,6 +251,10 @@ all_args_here <- function(
                     pos_rep2 <- tempo$pos # replaced positions in obs_args
                     # end replacement of all the commas between quotes
                     # replacement of all the commas inside function
+                    tempo_pos <- .fun_args_pos(text = fun_1_line_replace, pattern = pattern1,     function.name = function.name, package.name = package.name) # positions of 1st letter of the function name and opening and closing brackets # Warning: fun_1_line_replace used because the input string must be cleaned form brackets between quotes
+
+
+
                     if(length(middle_bracket[[i2]]) > 0){
                         if(length(middle_bracket_open[[i2]]) != length(middle_bracket_close[[i2]])){
                             tempo.cat <- base::paste0("INTERNAL ERROR 6 IN ", function.name, " OF THE ", package.name, " PACKAGE\nmiddle_bracket_open AND middle_bracket_close MUST HAVE THE SAME LENGTH IN LOOP ", i2, "\n\nnmiddle_bracket_open (", length(nmiddle_bracket_open), "):\n", base::paste(nmiddle_bracket_open, collapse = " "), "\n\nmiddle_bracket_close (", length(middle_bracket_close), "):\n", base::paste(middle_bracket_close, collapse = " "))
@@ -247,7 +266,7 @@ all_args_here <- function(
                             pos_rep2 <- c(pos_rep2, tempo$pos) # replaced positions in obs_args
                         }
 
-                    # I have to deal with commas inside function, like "pattern = base::paste0(pattern, \"\\\\(#\"), text = text". I have the middle_bracket_pos_col3 for that.
+                    # I have to deal with commas inside function, like "pattern = base::paste0(pattern, \"\\\\(#\"), text = text". I have the mid_bracket_pos_in_fun_1_line for that.
                     # I detect comma inside function, I replace the commas but add the pos in pos_rep2 <- c(pos_rep2, pos). Like, that, I can use the pos_rep2 to put back the commas in the arg value before write it in col7 and col8
                     }
 

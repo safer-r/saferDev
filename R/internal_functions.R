@@ -556,6 +556,7 @@
     # DEBUGGING
     # source("https://raw.githubusercontent.com/safer-r/saferDev/main/dev/other/test.R")
     # text = ' "a" ; paste0("I", paste0(sum(1:3), collapse = " "), min(1) ) ; range(2)' ; pattern = paste0("paste0", "[\\s\\r\\n]*\\(") ; function.name = "F1" ; package.name = "P1"
+    # text = 'gregexpr(pattern = base::paste0(pattern, "\\(#"), text = text)' ; pattern = 'gregexpr[\\s\\r\\n]*\\(' ; function.name = "F1" ; package.name = "P1"
     check_pos <- function(x){
         if(base::length(x) != 1 | base::any(base::is.na(x), na.rm = TRUE) | base::is.null(x) | base::any(x < 0 , na.rm = TRUE)){
             tempo.cat <- base::paste0("INTERNAL ERROR IN ", function.name, " OF THE ", package.name, " PACKAGE\nTHE .fun_args_pos() INTERNAL FUNCTION DID NOT PROPERLY DETECT THE POSITION OF ", base::match.call(expand.dots = FALSE)$x, "\ntext: ", base::paste(text, collapse = "\n"), "\npattern: ", base::paste(pattern, collapse = "\n"), "\nfun_pos: ", base::paste(fun_pos, collapse = "\n"))
@@ -586,12 +587,12 @@
             }
             loop.nb <- loop.nb + 1
         }
-        if(count != 0){
-            tempo.cat <- base::paste0("INTERNAL ERROR IN ", function.name, " OF THE ", package.name, " PACKAGE\nTHE .fun_args_pos() INTERNAL FUNCTION DID NOT PROPERLY DETECT THE POSITION OF THE CLOSING BRACKET IN ", base::match.call(expand.dots = FALSE)$x, "\ntext: ", base::paste(text, collapse = "\n"), "\npattern: ", base::paste(pattern, collapse = "\n"), "\ncount: ", base::paste(count, collapse = "\n"))
-            base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
-        }else{
-            return(final_pos)
-        }
+        # inactivated below because some parenthesis can be pattern inside quotes. So the count can be different from 0 at the end
+        # if(count != 0){
+            # tempo.cat <- base::paste0("INTERNAL ERROR IN ", function.name, " OF THE ", package.name, " PACKAGE\nTHE .fun_args_pos() INTERNAL FUNCTION DID NOT PROPERLY DETECT THE POSITION OF THE CLOSING BRACKET IN ", base::match.call(expand.dots = FALSE)$x, "\ntext: ", base::paste(text, collapse = "\n"), "\npattern: ", base::paste(pattern, collapse = "\n"), "\ncount: ", base::paste(count, collapse = "\n"))
+            # base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
+        # }
+        return(final_pos)
     }
 
     open_paren_pos <- base::as.vector(base::gregexpr(pattern = "\\(", text = text)[[1]])
@@ -604,6 +605,7 @@
     check_pos(x = fun_open_paren_pos)
     # detection of the closing ) of the function
     all_pos <- base::sort(c(open_paren_pos, close_paren_pos))
+    
     final_pos <- while_loop(
         start = fun_open_paren_pos,
         all_pos = all_pos, 
