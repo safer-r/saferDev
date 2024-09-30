@@ -82,7 +82,7 @@ colons_check <- function(
     in_basic_fun_name_pos_wo_op <- in_basic_fun_name_pos_wo_op[ ! tempo.log]
     in_basic_code_line_nb <- out$code_line_nb_wo_op[ ! tempo.log]
     if( ! (base::length(in_basic_fun) == base::length(in_basic_fun_name_pos_wo_op) & base::length(in_basic_fun) == base::length(in_basic_code_line_nb))){
-        tempo.cat <- base::paste0("INTERNAL ERROR 7 IN ", function.name, " OF THE ", package.name, " PACKAGE\nLENGTHS SHOULD BE IDENTICAL\nin_basic_fun: ", base::length(in_basic_fun), "\nin_basic_fun_name_pos_wo_op: ", base::length(in_basic_fun_name_pos_wo_op), "\nin_basic_code_line_nb: ", base::length(in_basic_code_line_nb))
+        tempo.cat <- base::paste0("INTERNAL ERROR 1 IN ", function.name, " OF THE ", package.name, " PACKAGE\nLENGTHS SHOULD BE IDENTICAL\nin_basic_fun: ", base::length(in_basic_fun), "\nin_basic_fun_name_pos_wo_op: ", base::length(in_basic_fun_name_pos_wo_op), "\nin_basic_code_line_nb: ", base::length(in_basic_code_line_nb))
         base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
     }
     # end removal of string with empty function names
@@ -100,7 +100,7 @@ colons_check <- function(
     in_other_fun_name_pos_wo_op <- in_other_fun_name_pos_wo_op[ ! tempo.log]
     in_other_code_line_nb <- out$code_line_nb_wo_op[ ! tempo.log]
     if( ! (base::length(in_other_fun) == base::length(in_other_fun_name_pos_wo_op) & base::length(in_other_fun) == base::length(in_other_code_line_nb))){
-        tempo.cat <- base::paste0("INTERNAL ERROR 7 IN ", function.name, " OF THE ", package.name, " PACKAGE\nLENGTHS SHOULD BE IDENTICAL\nin_other_fun: ", base::length(in_other_fun), "\nin_other_fun_name_pos_wo_op: ", base::length(in_other_fun_name_pos_wo_op), "\nin_other_code_line_nb: ", base::length(in_other_code_line_nb))
+        tempo.cat <- base::paste0("INTERNAL ERROR 2 IN ", function.name, " OF THE ", package.name, " PACKAGE\nLENGTHS SHOULD BE IDENTICAL\nin_other_fun: ", base::length(in_other_fun), "\nin_other_fun_name_pos_wo_op: ", base::length(in_other_fun_name_pos_wo_op), "\nin_other_code_line_nb: ", base::length(in_other_code_line_nb))
         base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
     }
     # end removal of string with empty function names
@@ -157,7 +157,6 @@ colons_check <- function(
     # end main code
     # output
     # warning output
-    base::options(warning.length = out$ini.warning.length)
     # end warning output
     # end output
 }
