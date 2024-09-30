@@ -689,7 +689,6 @@
 #' }
 #' @author Gael Millot <gael.millot@pasteur.fr>
 #' @keywords internal
-#' @importFrom saferDev arg_check
 #' @rdname internal_function
 .functions_detect <- function(
     x, 
@@ -700,78 +699,6 @@
     # DEBUGGING
     # x = x ; arg.user.setting = arg.user.setting ; function.name = function.name ; package.name = package.name
     # source("C:\\Users\\gmillot\\Documents\\Git_projects\\safer-r\\saferDev\\dev\\other\\test2.R") ; x = test2 ; arg.user.setting = base::list(x = as.name(x = "test2"), export = TRUE) ; function.name = "F1" ; package.name = "P1"
-    # critical operator checking
-    # end critical operator checking
-    # package checking
-    # check of lib.path
-    # end check of lib.path
-    # check of the required function from the required packages
-    # end check of the required function from the required packages
-    # end package checking
-
-    # argument primary checking
-    # arg with no default values
-    mandat.args <- base::c(
-        "x"
-    )
-    tempo <- base::eval(base::parse(text = base::paste0("base::missing(", base::paste0(mandat.args, collapse = ") | base::missing("), ")")))
-    if(base::any(tempo)){ # normally no NA for base::missing() output
-        tempo.cat <- base::paste0("ERROR IN ", function.name, " OF THE ", package.name, " PACKAGE\nFOLLOWING ARGUMENT", base::ifelse(base::sum(tempo, na.rm = TRUE) > 1, "S HAVE", " HAS"), " NO DEFAULT VALUE AND REQUIRE ONE:\n", base::paste0(mandat.args[tempo], collapse = "\n"))
-        base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
-    }
-    # end arg with no default values
-    # argument checking with arg_check()
-    argum.check <- NULL #
-    text.check <- NULL #
-    checked.arg.names <- NULL # for function debbuging: used by r_debugging_tools
-    ee <- base::expression(argum.check <- base::c(argum.check, tempo$problem) , text.check <- base::c(text.check, tempo$text) , checked.arg.names <- base::c(checked.arg.names, tempo$object.name))
-    tempo <- saferDev::arg_check(data = x, mode = "function", length = 1,  fun.name = function.name, safer_check = FALSE) ; base::eval(ee)
-    # lib.path already checked above
-    if( ! base::is.null(argum.check)){
-        if(base::any(argum.check, na.rm = TRUE) == TRUE){
-            base::stop(base::paste0("\n\n================\n\n", base::paste(text.check[argum.check], collapse = "\n"), "\n\n================\n\n"), call. = FALSE) #
-        }
-    }
-
-    # end argument checking with arg_check()
-    # check with r_debugging_tools
-    # source("C:/Users/gmillot/Documents/Git_projects/debugging_tools_for_r_dev/r_debugging_tools.R") ; eval(parse(text = str_basic_arg_check_dev)) ; eval(parse(text = str_arg_check_with_fun_check_dev)) # activate this line and use the function (with no arguments left as NULL) to check arguments status and if they have been checked using arg_check()
-    # end check with r_debugging_tools
-    # end argument primary checking
-
-    # second round of checking and data preparation
-    # reserved words (to avoid bugs)
-    # end reserved words (to avoid bugs)
-    # management of NA arguments
-    if( ! (base::all(base::class(arg.user.setting) %in% base::c("list", "NULL"), na.rm = TRUE) & base::length(arg.user.setting) == 0)){
-        tempo.arg <- base::names(arg.user.setting) # values provided by the user
-        tempo.log <- base::suppressWarnings(base::sapply(base::lapply(base::lapply(tempo.arg, FUN = get, env = base::sys.nframe(), inherit = FALSE), FUN = is.na), FUN = any)) & base::lapply(base::lapply(tempo.arg, FUN = get, env = base::sys.nframe(), inherit = FALSE), FUN = length) == 1L # no argument provided by the user can be just NA
-        if(base::any(tempo.log, na.rm = TRUE) == TRUE){
-            tempo.cat <- base::paste0("ERROR IN ", function.name, " OF THE ", package.name, " PACKAGE\n", base::ifelse(base::sum(tempo.log, na.rm = TRUE) > 1, "THESE ARGUMENTS", "THIS ARGUMENT"), " CANNOT JUST BE NA:", base::paste0(tempo.arg[tempo.log], collapse = "\n"))
-            base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
-        }
-    }
-    # end management of NA arguments
-    # management of NULL arguments
-    tempo.arg <-base::c(
-        "x"
-    )
-    tempo.log <- base::sapply(base::lapply(tempo.arg, FUN = base::get, env = base::sys.nframe(), inherit = FALSE), FUN = base::is.null)
-    if(base::any(tempo.log) == TRUE){# normally no NA with base::is.null()
-        tempo.cat <- base::paste0("ERROR IN ", function.name, " OF THE ", package.name, " PACKAGE\n", base::ifelse(base::sum(tempo.log, na.rm = TRUE) > 1, "THESE ARGUMENTS\n", "THIS ARGUMENT\n"), base::paste0(tempo.arg[tempo.log], collapse = "\n"),"\nCANNOT BE NULL")
-        base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
-    }
-    # end management of NULL arguments
-    # code that protects set.seed() in the global environment
-    # end code that protects set.seed() in the global environment
-    # warning initiation
-    ini.warning.length <- base::options()$warning.length # required to have the max characters of output messages
-    base::options(warning.length = 8170)
-    # end warning initiation
-    # other checkings
-    # end other checkings
-    # end second round of checking and data preparation
-
     # main code
     # modification of arg.user.setting$x for clean messages
     if(base::as.character(x = arg.user.setting$x)[1] == "::" | base::as.character(x = arg.user.setting$x)[1] == ":::"){
@@ -909,8 +836,7 @@
         fun_name_pos_wo_op = fun_name_pos_wo_op, 
         code_line_nb_wo_op = code_line_nb_wo_op, 
         internal_fun_names = internal_fun_names,
-        arg.user.setting = arg.user.setting,
-        ini.warning.length = ini.warning.length
+        arg.user.setting = arg.user.setting
     )
     base::return(output)
     #### end output

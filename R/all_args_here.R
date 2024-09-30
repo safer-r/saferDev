@@ -340,7 +340,7 @@ all_args_here <- function(
             }
         }
         output <- base::data.frame(LINE_NB = col1, FUN_NAME = col2, FUN_ARGS = col3, FUN_POS = col4, DEF_ARGS = col5, MISSING_ARG_NAMES = col6, MISSING_ARGS = col7, NEW = col8)
-        if(TRUE == TRUE){
+        if(export == TRUE){
             utils::write.table(output, file = "./res.tsv", row.names = FALSE, col.names = TRUE, append = FALSE, quote = FALSE, sep = "\t", eol = "\n", na = "")
         }else{
             base::return(output)
