@@ -4,6 +4,7 @@
 #' @param x a function name, written without quotes and brackets.
 #' @param safer_check Single logical value. Perform some "safer" checks (see https://github.com/safer-r)? If TRUE, checkings are performed before main code running: 1) R classical operators (like "<-") not overwritten by another package because of the R scope and 2) required functions and related packages effectively present in local R lybraries. Must be set to FALSE if this fonction is used inside another "safer" function to avoid pointless multiple checkings.
 #' @param export Single logical value. Export the data frame in a .tsv file?
+#' @param path_out Single string indicating the folder where to export the data frame.
 #' @returns 
 #' A data frame indicating the missing arguments or a message saying that everything seems fine.
 #' If export argument is TRUE, then the data frame is exported as res.tsv instead of being returned.
@@ -40,7 +41,8 @@
 all_args_here <- function(
     x, 
     safer_check = TRUE,
-    export = FALSE
+    export = FALSE,
+    path_out = "."
 ){
     # DEBUGGING
     # x = .expand_R_libs_env_var ; safer_check = TRUE
@@ -49,7 +51,8 @@ all_args_here <- function(
     # library(saferDev) ; x = get_message ; safer_check = TRUE
     # source("C:\\Users\\gmillot\\Documents\\Git_projects\\safer-r\\saferDev\\R\\all_args_here.R") ; x = all_args_here ; safer_check = TRUE
     # source("C:\\Users\\gmillot\\Documents\\Git_projects\\safer-r\\saferDev\\dev\\other\\test2.R") ; x = test2 ; safer_check = TRUE ; export = TRUE # use the folling line before out <- 
-    # arg.user.setting = base::list(x = as.name(x = "test2"), safer_check = TRUE)
+    # arg.user.setting = base::list(x = as.name(x = "test2"), safer_check = TRUE, export = TRUE)
+    # arg.user.setting = base::list(x = as.name(x = "a"), safer_check = TRUE, export = TRUE)
     # package name
     package.name <- "saferDev"
     # end package name
@@ -393,7 +396,12 @@ all_args_here <- function(
         }
         output <- base::data.frame(LINE_NB = col1, FUN_NAME = col2, FUN_ARGS = col3, FUN_POS = col4, DEF_ARGS = col5, MISSING_ARG_NAMES = col6, MISSING_ARGS = col7, NEW = col8)
         if(export == TRUE){
-            utils::write.table(output, file = "./res.tsv", row.names = FALSE, col.names = TRUE, append = FALSE, quote = FALSE, sep = "\t", eol = "\n", na = "")
+            if(grepl(x = path_out, pattern = "/$")){
+                path_out <- base::sub(pattern = "/$", replacement = "", x = path_out, ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE)
+            }else if(grepl(x = path_out, pattern = "\\\\$")){
+                path_out <- base::sub(pattern = "\\\\$", replacement = "", x = path_out, ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE)
+            }
+            utils::write.table(output, file = base::paste0(path_out, "/res.tsv"), row.names = FALSE, col.names = TRUE, append = FALSE, quote = FALSE, sep = "\t", eol = "\n", na = "")
         }else{
             base::return(output)
         }
