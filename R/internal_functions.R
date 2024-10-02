@@ -953,3 +953,63 @@
     }
     base::return(base::list(output.cat = output.cat, colon_not_here = base::unlist(colon_not_here)))
 }
+
+
+#' @title .all_args_here_fill
+#' @description
+#' Create the message for the colons_check() function.
+#' @param list.fun list of names of all the functions.
+#' @param fun.uni vector of all the unique function names.
+#' @param list.fun.pos list of position of first character of names of all the functions in ini.
+#' @param line.nb vector of corresponding line number.
+#' @param ini vector of string of the initial function code analyzed.
+#' @param arg.user.setting list of arg user settings.
+#' @param function.name function name.
+#' @param package.name package name.
+#' @param text either "BASIC" or "OTHER".
+#' @param internal_fun_names vector of string of names of internal functions in the function code analyzed.
+#' @returns
+#'  A list:
+#'  $output.cat: the message (string).
+#'  $colon_not_here: logical vector. Does list.fun contain function names without :: or ::: ?
+#' @author Gael Millot <gael.millot@pasteur.fr>
+#' @keywords internal
+#' @rdname internal_function
+.all_args_here_fill <- function(
+    arg_full_names, 
+    good_args, 
+    missing_args, 
+    missing_args_names, 
+    obs_arg_log, 
+    tempo_split, 
+    function.name, 
+    package.name
+){
+    # DEBUGGING
+    for(i1 in 1:base::length(arg_full_names)){
+        pattern3 <- base::paste0("^[\\s\\r\\n]*", arg_full_names[i1], "[\\s]*=") # looking for the arg name
+        tempo.log <- grepl(x = tempo_split, pattern = pattern3, perl = TRUE)
+        missing_args_log <- FALSE
+        if(base::sum(tempo.log, na.rm = TRUE) == 1){ # arg i1 has its names written in the args between ()
+            good_args <- base::c(good_args, tempo_split[tempo.log])
+            obs_arg_log <- obs_arg_log & ! tempo.log # remove the position of the taken arg in tempo_split
+        }else if(base::sum(tempo.log, na.rm = TRUE) == 0){ # arg i1 has not its names written in the args between ()
+            missing_args_log <- TRUE
+            missing_args_names <- base::c(missing_args_names, arg_full_names[i1])
+            if(base::sum(obs_arg_log) > 0){ # this means that remains obs arg with no arg names written
+                tempo_missing_args <- base::paste0(arg_full_names[i1], " = ", tempo_split[base::which(obs_arg_log == TRUE)[1]]) # take the first pos always of the args with no arg names
+                obs_arg_log[base::which(obs_arg_log == TRUE)[1]] <- FALSE
+            }else{
+                tempo_missing_args <- base::paste0(arg_full_names[i1], " = ", if(base::is.null(arg_full[[i1]])){"NULL"}else{arg_full[[i1]]})
+            }
+        }else{
+            tempo.cat <- base::paste0("INTERNAL ERROR 7 IN ", function.name, " OF THE ", package.name, " PACKAGE\npattern3 DETECTED SEVERAL TIMES IN ARGUMENTS:\n\npattern3:\n", base::paste(pattern3, collapse = "\n"), "\n\ntempo_split:\n", base::paste(tempo_split[tempo.log], collapse = "\n"))
+            base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n", base::ifelse(base::is.null(warn), "", base::paste0("IN ADDITION\nWARNING", base::ifelse(warn.count > 1, "S", ""), ":\n\n", warn))), call. = FALSE)
+        }
+        if(missing_args_log == TRUE){
+            missing_args <- base::c(missing_args, tempo_missing_args)
+            good_args <- base::c(good_args, tempo_missing_args)
+        }
+    }
+    return(base::list(good_args = good_args, missing_args = missing_args, missing_args_names = missing_args_names))
+}

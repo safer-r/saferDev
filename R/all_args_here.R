@@ -329,62 +329,37 @@ all_args_here <- function(
                             col7 <- base::c(col7, "")
                             col8 <- base::c(col8, "")
                         }else{
-                            for(i5 in 1:base::length(arg_full_names)){
-                                pattern3 <- base::paste0("^[\\s\\r\\n]*", arg_full_names[i5], "[\\s]*=") # looking for the arg name
-                                tempo.log <- grepl(x = tempo_split, pattern = pattern3, perl = TRUE)
-                                missing_args_log <- FALSE
-                                if(base::sum(tempo.log, na.rm = TRUE) == 1){ # arg i5 has its names written in the args between ()
-                                    good_args <- base::c(good_args, tempo_split[tempo.log])
-                                    obs_arg_log <- obs_arg_log & ! tempo.log # remove the position of the taken arg in tempo_split
-                                }else if(base::sum(tempo.log, na.rm = TRUE) == 0){ # arg i5 has not its names written in the args between ()
-                                    missing_args_log <- TRUE
-                                    missing_args_names <- base::c(missing_args_names, arg_full_names[i5])
-                                    tempo_missing_args <- base::paste0(arg_full_names[i5], " = ", if(base::is.null(arg_full[[i5]])){"NULL"}else{arg_full[[i5]]})
-                                }else{
-                                    tempo.cat <- base::paste0("INTERNAL ERROR 7 IN ", function.name, " OF THE ", package.name, " PACKAGE\npattern3 DETECTED SEVERAL TIMES IN ARGUMENTS:\n\npattern3:\n", base::paste(pattern3, collapse = "\n"), "\n\ntempo_split:\n", base::paste(tempo_split[tempo.log], collapse = "\n"))
-                                    base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n", base::ifelse(base::is.null(warn), "", base::paste0("IN ADDITION\nWARNING", base::ifelse(warn.count > 1, "S", ""), ":\n\n", warn))), call. = FALSE)
-                                }
-                                if(missing_args_log == TRUE){
-                                    missing_args <- base::c(missing_args, tempo_missing_args)
-                                    good_args <- base::c(good_args, tempo_missing_args)
-                                }
-                            }
-                            good_args <- base::c(tempo_split[obs_arg_log], good_args) # add the values of ... before the args with names
+                            tempo_out <- .all_args_here_fill(
+                                arg_full_names = arg_full_names, 
+                                good_args = good_args, 
+                                missing_args = missing_args, 
+                                missing_args_names = missing_args_names, 
+                                obs_arg_log = obs_arg_log, 
+                                tempo_split = tempo_split, 
+                                function.name = function.name, 
+                                package.name = package.name 
+                            )
+                            good_args <- base::c(tempo_split[tempo_out$obs_arg_log], tempo_out$good_args) # add the values of ... before the args with names
                             # col5 done above
-                            col6 <- base::c(col6, base::paste(missing_args_names, collapse = ", ")) # if NULL return ""
-                            col7 <- base::c(col7, base::paste(missing_args, collapse = ", "))  # if NULL return ""
+                            col6 <- base::c(col6, base::paste(tempo_out$missing_args_names, collapse = ", ")) # if NULL return ""
+                            col7 <- base::c(col7, base::paste(tempo_out$missing_args, collapse = ", "))  # if NULL return ""
                             col8 <- base::c(col8, base::paste0(col2[i2], "(", base::paste(good_args, collapse = ", "), ")"))
                         }
                     }else{
-                        for(i5 in 1:base::length(arg_full_names)){
-                            pattern3 <- base::paste0("^[\\s\\r\\n]*", arg_full_names[i5], "[\\s]*=") # looking for the arg name
-                            tempo.log <- grepl(x = tempo_split, pattern = pattern3, perl = TRUE)
-                            missing_args_log <- FALSE
-                            if(base::sum(tempo.log, na.rm = TRUE) == 1){ # arg i5 has its names written in the args between ()
-                                good_args <- base::c(good_args, tempo_split[tempo.log])
-                                obs_arg_log <- obs_arg_log & ! tempo.log # remove the position of the taken arg in tempo_split
-                            }else if(base::sum(tempo.log, na.rm = TRUE) == 0){ # arg i5 has not its names written
-                                missing_args_log <- TRUE
-                                missing_args_names <- base::c(missing_args_names, arg_full_names[i5])
-                                if(base::sum(obs_arg_log) > 0){ # this means that remains obs arg with no arg names written
-                                    tempo_missing_args <- base::paste0(arg_full_names[i5], " = ", tempo_split[base::which(obs_arg_log == TRUE)[1]]) # take the first pos always of the args with no arg names
-                                    obs_arg_log[base::which(obs_arg_log == TRUE)[1]] <- FALSE
-                                }else{
-                                    tempo_missing_args <- base::paste0(arg_full_names[i5], " = ", if(base::is.null(arg_full[[i5]])){"NULL"}else{arg_full[[i5]]})
-                                }
-                            }else{
-                                tempo.cat <- base::paste0("INTERNAL ERROR 7 IN ", function.name, " OF THE ", package.name, " PACKAGE\npattern3 DETECTED SEVERAL TIMES IN ARGUMENTS:\n\npattern3:\n", base::paste(pattern3, collapse = "\n"), "\n\ntempo_split:\n", base::paste(tempo_split[tempo.log], collapse = "\n"))
-                                base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n", base::ifelse(base::is.null(warn), "", base::paste0("IN ADDITION\nWARNING", base::ifelse(warn.count > 1, "S", ""), ":\n\n", warn))), call. = FALSE)
-                            }
-                            if(missing_args_log == TRUE){
-                                missing_args <- base::c(missing_args, tempo_missing_args)
-                                good_args <- base::c(good_args, tempo_missing_args)
-                            }
-                        }
+                        tempo_out <- .all_args_here_fill(
+                            arg_full_names = arg_full_names, 
+                            good_args = good_args, 
+                            missing_args = missing_args, 
+                            missing_args_names = missing_args_names, 
+                            obs_arg_log = obs_arg_log, 
+                            tempo_split = tempo_split, 
+                            function.name = function.name, 
+                            package.name = package.name 
+                        )
                         # col5 done above
-                        col6 <- base::c(col6, base::paste(missing_args_names, collapse = ", ")) # if NULL return ""
-                        col7 <- base::c(col7, base::paste(missing_args, collapse = ", "))  # if NULL return ""
-                        col8 <- base::c(col8, base::paste0(col2[i2], "(", base::paste(good_args, collapse = ", "), ")"))
+                        col6 <- base::c(col6, base::paste(tempo_out$missing_args_names, collapse = ", ")) # if NULL return ""
+                        col7 <- base::c(col7, base::paste(tempo_out$missing_args, collapse = ", "))  # if NULL return ""
+                        col8 <- base::c(col8, base::paste0(col2[i2], "(", base::paste(tempo_out$good_args, collapse = ", "), ")"))
                         # end working on each observed arg
                     }
                 }
