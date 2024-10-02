@@ -50,8 +50,8 @@ all_args_here <- function(
     # source("C:\\Users\\gmillot\\Documents\\Git_projects\\safer-r\\saferDev\\R\\get_message.R") ; x = get_message ; safer_check = TRUE
     # library(saferDev) ; x = get_message ; safer_check = TRUE
     # source("C:\\Users\\gmillot\\Documents\\Git_projects\\safer-r\\saferDev\\R\\all_args_here.R") ; x = all_args_here ; safer_check = TRUE
-    # source("C:\\Users\\gmillot\\Documents\\Git_projects\\safer-r\\saferDev\\dev\\other\\test2.R") ; x = test2 ; safer_check = TRUE ; export = TRUE # use the folling line before out <- 
     # arg.user.setting = base::list(x = as.name(x = "test2"), safer_check = TRUE, export = TRUE)
+    # source("C:\\Users\\gmillot\\Documents\\Git_projects\\safer-r\\.github\\profile\\backbone.R") ; x = a ; safer_check = TRUE ; export = TRUE # use the folling line before out <- 
     # arg.user.setting = base::list(x = as.name(x = "a"), safer_check = TRUE, export = TRUE)
     # package name
     package.name <- "saferDev"
@@ -238,7 +238,7 @@ all_args_here <- function(
                 }
                 tempo_string <- base::substr(x = ini_for_col[i2], start = 1, stop = col4[i2] - 1)
                 tempo_string2 <- saferDev:::.extract_all_fun_names(text = tempo_string, pattern = "[a-zA-Z][a-zA-Z0-9.]*:{2,3}$")$string # before 
-                saferDev::is_function_here(fun = paste0(tempo_string2, col2[i2]), lib.path = NULL, safer_check = FALSE) # check that exists
+                is_function_here(fun = paste0(tempo_string2, col2[i2]), lib.path = NULL, safer_check = FALSE) # check that exists
                 # end check if the function exists
                 # recovering default args of the function
                 if(base::is.primitive(base::get(col2[i2]))){
@@ -338,7 +338,7 @@ all_args_here <- function(
                                 }else if(base::sum(tempo.log, na.rm = TRUE) == 0){ # arg i5 has not its names written in the args between ()
                                     missing_args_log <- TRUE
                                     missing_args_names <- base::c(missing_args_names, arg_full_names[i5])
-                                    tempo_missing_args <- base::paste0(arg_full_names[i5], " = ", base::ifelse(base::is.null(arg_full[[i5]]), "NULL", arg_full[[i5]]))
+                                    tempo_missing_args <- base::paste0(arg_full_names[i5], " = ", if(base::is.null(arg_full[[i5]])){"NULL"}else{arg_full[[i5]]})
                                 }else{
                                     tempo.cat <- base::paste0("INTERNAL ERROR 7 IN ", function.name, " OF THE ", package.name, " PACKAGE\npattern3 DETECTED SEVERAL TIMES IN ARGUMENTS:\n\npattern3:\n", base::paste(pattern3, collapse = "\n"), "\n\ntempo_split:\n", base::paste(tempo_split[tempo.log], collapse = "\n"))
                                     base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n", base::ifelse(base::is.null(warn), "", base::paste0("IN ADDITION\nWARNING", base::ifelse(warn.count > 1, "S", ""), ":\n\n", warn))), call. = FALSE)
@@ -369,7 +369,7 @@ all_args_here <- function(
                                     tempo_missing_args <- base::paste0(arg_full_names[i5], " = ", tempo_split[base::which(obs_arg_log == TRUE)[1]]) # take the first pos always of the args with no arg names
                                     obs_arg_log[base::which(obs_arg_log == TRUE)[1]] <- FALSE
                                 }else{
-                                    tempo_missing_args <- base::paste0(arg_full_names[i5], " = ", base::ifelse(base::is.null(arg_full[[i5]]), "NULL", arg_full[[i5]]))
+                                    tempo_missing_args <- base::paste0(arg_full_names[i5], " = ", if(base::is.null(arg_full[[i5]])){"NULL"}else{arg_full[[i5]]})
                                 }
                             }else{
                                 tempo.cat <- base::paste0("INTERNAL ERROR 7 IN ", function.name, " OF THE ", package.name, " PACKAGE\npattern3 DETECTED SEVERAL TIMES IN ARGUMENTS:\n\npattern3:\n", base::paste(pattern3, collapse = "\n"), "\n\ntempo_split:\n", base::paste(tempo_split[tempo.log], collapse = "\n"))
