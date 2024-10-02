@@ -37,6 +37,7 @@
 #' all_args_here(mean)
 #' all_args_here(all_args_here)
 #' source("https://raw.githubusercontent.com/safer-r/saferDev/main/dev/other/test2.R") ; all_args_here(test2)
+#' source("C:\\Users\\gmillot\\Documents\\Git_projects\\safer-r\\.github\\profile\\backbone.R") ; all_args_here(a, export = TRUE)
 #' @export
 all_args_here <- function(
     x, 
