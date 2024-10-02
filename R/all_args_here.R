@@ -36,7 +36,7 @@
 #' @examples
 #' all_args_here(mean)
 #' all_args_here(all_args_here)
-#' source("https://raw.githubusercontent.com/safer-r/saferDev/main/dev/other/test2.R") ; all_args_here(test2)
+#' source("https://raw.githubusercontent.com/safer-r/saferDev/main/dev/other/test2.R") ; all_args_here(test2, export = TRUE)
 #' source("C:\\Users\\gmillot\\Documents\\Git_projects\\safer-r\\.github\\profile\\backbone.R") ; all_args_here(a, export = TRUE)
 #' @export
 all_args_here <- function(
@@ -309,59 +309,27 @@ all_args_here <- function(
                     # end rewriting the commas inside args
                     # working on each observed arg
                     arg_full_names <-  base::names(arg_full)
-                    good_args <- NULL
-                    missing_args <- NULL
-                    missing_args_names <- NULL
-                    obs_arg_log <- base::rep(TRUE, base::length(tempo_split)) # will help for counting the tempo_split args without arg name before
                     three_dots_log <- arg_full_names == "..."
                     # checking 
                     if(base::length(tempo_split) > base::length(arg_full_names) & ! base::any(three_dots_log, na.rm = TRUE)){
                         tempo.cat <- base::paste0("INTERNAL ERROR 6 IN ", function.name, " OF THE ", package.name, " PACKAGE\nLENGTH OF tempo_split MUST LOWER OR EQUAL TO LENGTH OF arg_full_names IF ... IS NOT AN ARGUMENT OF THE FUNCTION\n\nFUNCTION: ", col2[i2], "\n\ntempo_split (", length(tempo_split), "):\n", base::paste(tempo_split, collapse = " "), "\n\narg_full_names (", length(arg_full_names), "):\n", base::paste(arg_full_names, collapse = " "))
                         base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n", base::ifelse(base::is.null(warn), "", base::paste0("IN ADDITION\nWARNING", base::ifelse(warn.count > 1, "S", ""), ":\n\n", warn))), call. = FALSE)
                     }
-                    # end checking 
-                    if(base::any(three_dots_log, na.rm = TRUE)){
-                        arg_full_names <- arg_full_names[ ! three_dots_log]
-                        arg_full <- arg_full[ ! three_dots_log]
-                        if(base::length(arg_full) == 0){
-                            # col5 <- base::c(col5, "...") #inactivated because already filled above
-                            col6 <- base::c(col6, "") 
-                            col7 <- base::c(col7, "")
-                            col8 <- base::c(col8, "")
-                        }else{
-                            tempo_out <- .all_args_here_fill(
-                                arg_full_names = arg_full_names, 
-                                good_args = good_args, 
-                                missing_args = missing_args, 
-                                missing_args_names = missing_args_names, 
-                                obs_arg_log = obs_arg_log, 
-                                tempo_split = tempo_split, 
-                                function.name = function.name, 
-                                package.name = package.name 
-                            )
-                            good_args <- base::c(tempo_split[tempo_out$obs_arg_log], tempo_out$good_args) # add the values of ... before the args with names
-                            # col5 done above
-                            col6 <- base::c(col6, base::paste(tempo_out$missing_args_names, collapse = ", ")) # if NULL return ""
-                            col7 <- base::c(col7, base::paste(tempo_out$missing_args, collapse = ", "))  # if NULL return ""
-                            col8 <- base::c(col8, base::paste0(col2[i2], "(", base::paste(good_args, collapse = ", "), ")"))
-                        }
-                    }else{
-                        tempo_out <- .all_args_here_fill(
-                            arg_full_names = arg_full_names, 
-                            good_args = good_args, 
-                            missing_args = missing_args, 
-                            missing_args_names = missing_args_names, 
-                            obs_arg_log = obs_arg_log, 
-                            tempo_split = tempo_split, 
-                            function.name = function.name, 
-                            package.name = package.name 
-                        )
-                        # col5 done above
-                        col6 <- base::c(col6, base::paste(tempo_out$missing_args_names, collapse = ", ")) # if NULL return ""
-                        col7 <- base::c(col7, base::paste(tempo_out$missing_args, collapse = ", "))  # if NULL return ""
-                        col8 <- base::c(col8, base::paste0(col2[i2], "(", base::paste(tempo_out$good_args, collapse = ", "), ")"))
-                        # end working on each observed arg
-                    }
+                    # end checking
+                    tempo_out <- .all_args_here_fill(
+                        arg_full = arg_full, 
+                        arg_full_names = arg_full_names, 
+                        tempo_split = tempo_split, 
+                        three_dots_log = three_dots_log, 
+                        col2_i2 = col2[i2],
+                        col3_i2 = col3[i2],
+                        function.name = function.name, 
+                        package.name = package.name 
+                    )
+                    col6 <- base::c(col6, tempo_out$col6)
+                    col7 <- base::c(col7, tempo_out$col7)
+                    col8 <- base::c(col8, tempo_out$col8)
+                    # end working on each observed arg
                 }
             }else{
                 col5 <- base::c(col5, "")
