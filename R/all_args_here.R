@@ -10,9 +10,9 @@
 #' Data frame: 
 #' $LINE_NB: the line number in the function code (starting at the "<- function" line, i.e., without counting the #' header lines)
 #' $FUN_NAME: the function name.
-#' $FUN_ARGS: the written arguments of $FUN_NAME.
+#' $FUN_ARGS: the written arguments of $FUN_NAME. "NOT_CONSIDERED" means that the function is between quotes or after $
 #' $FUN_POS: the position of the first character of the function name in the $LINE_NB line of the code.
-#' $DEF_ARGS: the defaults arguments of $FUN_NAME.
+#' $DEF_ARGS: the defaults arguments of $FUN_NAME. "NO_ARGS" means that the function has no arguments
 #' $MISSING_ARG_NAMES: the missing argument names in $FUN_ARGS.
 #' $MISSING_ARGS: the missing arguments with their values in $FUN_ARGS.
 #' $NEW: the new proposed argument writting for $FUN_NAME.
@@ -238,7 +238,15 @@ all_args_here <- function(
                 saferDev::is_function_here(fun = paste0(tempo_string2, col2[i2]), lib.path = NULL, safer_check = FALSE) # check that exists
                 # end check if the function exists
                 # recovering default args of the function
-                arg_full <- base::formals(fun = col2[i2]) # all the argument of the function in col2[i2] with default values
+                if(base::is.primitive(base::get(col2[i2]))){
+                    if(base::all(base::typeof(base::get(col2[i2])) == "special", na.rm = TRUE)){
+                        arg_full <- NULL
+                    }else{
+                        arg_full <- base::formals(base::args(name = col2[i2]))
+                    }
+                }else{
+                    arg_full <- base::formals(fun = col2[i2]) # all the argument of the function in col2[i2] with default values
+                }
                 # end recovering default args of the function
                 if(base::is.null(arg_full)){
                     col5 <- base::c(col5, "NO_ARGS")
@@ -312,7 +320,8 @@ all_args_here <- function(
                         arg_full_names <- arg_full_names[ ! three_dots_log]
                         arg_full <- arg_full[ ! three_dots_log]
                         if(base::length(arg_full) == 0){
-                            col6 <- base::c(col6, "")
+                            # col5 <- base::c(col5, "...") #inactivated because already filled above
+                            col6 <- base::c(col6, "") 
                             col7 <- base::c(col7, "")
                             col8 <- base::c(col8, "")
                         }else{
@@ -337,6 +346,10 @@ all_args_here <- function(
                                 }
                             }
                             good_args <- base::c(tempo_split[obs_arg_log], good_args) # add the values of ... before the args with names
+                            # col5 done above
+                            col6 <- base::c(col6, base::paste(missing_args_names, collapse = ", ")) # if NULL return ""
+                            col7 <- base::c(col7, base::paste(missing_args, collapse = ", "))  # if NULL return ""
+                            col8 <- base::c(col8, base::paste0(col2[i2], "(", base::paste(good_args, collapse = ", "), ")"))
                         }
                     }else{
                         for(i5 in 1:base::length(arg_full_names)){
@@ -364,12 +377,12 @@ all_args_here <- function(
                                 good_args <- base::c(good_args, tempo_missing_args)
                             }
                         }
+                        # col5 done above
+                        col6 <- base::c(col6, base::paste(missing_args_names, collapse = ", ")) # if NULL return ""
+                        col7 <- base::c(col7, base::paste(missing_args, collapse = ", "))  # if NULL return ""
+                        col8 <- base::c(col8, base::paste0(col2[i2], "(", base::paste(good_args, collapse = ", "), ")"))
                         # end working on each observed arg
                     }
-                    # col5 done above
-                    col6 <- base::c(col6, base::paste(missing_args_names, collapse = ", "))
-                    col7 <- base::c(col7, base::paste(missing_args, collapse = ", "))
-                    col8 <- base::c(col8, base::paste0(col2[i2], "(", base::paste(good_args, collapse = ", "), ")"))
                 }
             }else{
                 col5 <- base::c(col5, "")
