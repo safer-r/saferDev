@@ -16,7 +16,7 @@
 #' $DEF_ARGS: the defaults arguments of $FUN_NAME. "NO_ARGS" means that the function has no arguments
 #' $MISSING_ARG_NAMES: the missing argument names in $FUN_ARGS.
 #' $MISSING_ARGS: the missing arguments with their values in $FUN_ARGS.
-#' $NEW: the new proposed argument writting for $FUN_NAME. "INACTIVATED" means that no proposal is returned for this function, for the reason explained in the "details" section.
+#' $NEW: the new proposed argument writting for $FUN_NAME. "INACTIVATED" means that no proposal is returned for this function, for the reason explained in the "details" section. "GOOD" means that all the arguments are already written.
 #' @details
 #' More precisely, all_args_here() verifies that all the strings before an opening bracket "(" are written with all their arguments. Thus, it cannot check function names written without brackets, like in the FUN argument of some functions, e.g., sapply(1:3, FUN = as.character).
 #' 
@@ -31,7 +31,7 @@
 #' The returned line numbers are indicative, depending on which source is checked. For instance, saferDev::report (compiled) has not the same line numbers as its source file (https://github.com/safer-r/saferDev/blob/main/R/report.R). Notably, compiled functions do not have comments anymore, compared to the same source function sourced into the working environment. In addition, the counting starts at the "<- function" line, i.e., without counting the #' header lines potentially present in source files.
 #' 
 #' Warnings: 
-#' 1) The function will not work properly if any comma would be present in default argument values. Please, report here https://github.com/safer-r/saferDev/issues if it is the case.
+#' 1) The function could not properly work if any comma is present in default argument values. Please, report here https://github.com/safer-r/saferDev/issues if it is the case.
 #' 
 #' 2) Results are only suggestions, as it is difficult to anticipate all the exceptions with argument writting.
 #' 
@@ -112,7 +112,7 @@ all_args_here <- function(
     fun_name_pos_wo_op <-  out$fun_name_pos_wo_op # list of pos (1st character) of function names for each line of ini
 
     ini <- out$ini # vector of strings of the tested function code
-    fun_1_line <- base::paste(out$ini, collapse = ";") # assemble the code of the tested  function (without comments) in a single line
+    fun_1_line <- base::paste(out$ini, collapse = " ") # assemble the code of the tested  function (without comments) in a single line
     if(grepl(x = fun_1_line, pattern = reserved_word)){
         warn.count <- warn.count + 1
         tempo.warn <- base::paste0("(", warn.count,") THE RESERVED WORD \"", base::paste(reserved_word, collapse = " "), "\" HAS BEEN DETECTED IN THE CODE OF THE INPUT FUNCTION\nWHICH COULD HAMPER THE ACCURACY OF THE OUTPUT TABLE")
@@ -138,7 +138,7 @@ all_args_here <- function(
             pattern1 <- base::paste0(fun_name_wo_op[[i1]][i2], "[\\s\\r\\n]*\\(") # function detection in 
             # pattern2 <- paste0("[a-zA-Z.][a-zA-Z0-9._]* *\\$ *", fun_name_wo_op[[i1]][i2], "[\\s\\r\\n]*\\(") # function like a$fun()
             if(base::grepl(x = fun_1_line_replace, pattern = pattern1)){ 
-                tempo_pos <- .fun_args_pos(text = fun_1_line_replace, pattern = pattern1,     function.name = function.name, package.name = package.name) # positions of 1st letter of the function name and opening and closing brackets # Warning: fun_1_line_replace used because the input string must be cleaned form brackets between quotes
+                tempo_pos <- .fun_args_pos(text = fun_1_line_replace, pattern = pattern1, function.name = function.name, package.name = package.name) # positions of 1st letter of the function name and opening and closing brackets # Warning: fun_1_line_replace used because the input string must be cleaned form brackets between quotes
                 tempo_str_before <- base::substr(x = fun_1_line, start = 1, stop = tempo_pos$begin_fun - 1)
                 tempo_log <- base::grepl(x = tempo_str_before, pattern = "\\$ *$")
                 if(tempo_log){ # remove functions preceeded by $, like a$fun()
@@ -257,10 +257,10 @@ all_args_here <- function(
                     if(base::all(base::typeof(base::get(col2[i2])) == "special", na.rm = TRUE)){
                         arg_full <- NULL
                     }else{
-                        arg_full <- base::formals(base::args(name = col2[i2]))
+                        arg_full <- base::as.list(base::formals(base::args(name = col2[i2]))) # convert pairlist into list
                     }
                 }else{
-                    arg_full <- base::formals(fun = col2[i2]) # all the argument of the function in col2[i2] with default values
+                    arg_full <- base::as.list(base::formals(fun = col2[i2])) # all the argument of the function in col2[i2] with default values # convert pairlist into list
                 }
                 # end recovering default args of the function
                 if(base::is.null(arg_full)){
@@ -270,8 +270,8 @@ all_args_here <- function(
                     col8 <- base::c(col8, "")
                 }else{
                     # all arguments of the function with default value in col5
-                    tempo <- base::sapply(X = arg_full, FUN = function(x){ base::paste0(ifelse(base::all(x == "", na.rm =TRUE), "", " = "), x)})
-                    tempo <- base::paste( base::paste0( base::names(tempo), tempo), collapse = ", ")
+                    tempo <- base::sapply(X = arg_full, FUN = function(x){base::paste0(ifelse(base::all(base::typeof(x) == "symbol", na.rm =TRUE), "", " = "), base::deparse(x))})
+                    tempo <- base::paste(base::paste0(base::names(tempo), tempo), collapse = ", ")
                     col5 <- base::c(col5, tempo)
                     # end all arguments of the function with default value in col5
                     # arguments: replacement of all the commas between quotes
@@ -298,7 +298,9 @@ all_args_here <- function(
                     obs_args <- base::sub(pattern =  "\\)$", replacement = "", x = obs_args, perl = FALSE) # removal of trailing )
                     # end recovering obs arguments
                     # splitting the arguments using commas
-                    tempo_split <- base::strsplit(x = obs_args, split = ",")[[1]] # separation of args
+                    tempo_split <- base::strsplit(x = obs_args, split = " *, *", fixed = FALSE, perl = FALSE, useBytes = FALSE)[[1]] # separation of args
+                    # tempo_split <- gsub(pattern = "^[\\s;]+", replacement = "", x = tempo_split) # removing leading ; and space, ; because of line: fun_1_line <- base::paste(out$ini, collapse = ";")
+                    # tempo_split <- gsub(pattern = "[\\s;]+$", replacement = "", x = tempo_split) # removing trailing ; and space, ; because of line: fun_1_line <- base::paste(out$ini, collapse = ";")
                     # end splitting the arguments using commas
                     # rewriting the commas inside args
                     if( ! base::is.null(pos_rep2)){
@@ -333,17 +335,17 @@ all_args_here <- function(
                         tempo_split = tempo_split, 
                         three_dots_log = three_dots_log, 
                         col2_i2 = col2[i2],
-                        col3_i2 = col3[i2],
                         function.name = function.name, 
                         package.name = package.name 
                     )
                     col6 <- base::c(col6, tempo_out$col6)
                     col7 <- base::c(col7, tempo_out$col7)
-                    col8 <- base::c(col8, tempo_out$col8)
-                    # end working on each observed arg
                     if(base::any(inactivated %in% col2[i2], na.rm = TRUE)){
                         col8 <- base::c(col8, "INACTIVATED")
+                    }else{
+                        col8 <- base::c(col8, tempo_out$col8)
                     }
+                    # end working on each observed arg
                 }
             }else{
                 col5 <- base::c(col5, "")
@@ -351,6 +353,7 @@ all_args_here <- function(
                 col7 <- base::c(col7, "")
                 col8 <- base::c(col8, "")
             }
+            # if(i2 != length(col8)){stop(paste0("caca ", i2))}
         }
         output <- base::data.frame(LINE_NB = col1, FUN_NAME = col2, FUN_ARGS = col3, FUN_POS = col4, DEF_ARGS = col5, MISSING_ARG_NAMES = col6, MISSING_ARGS = col7, NEW = col8)
         if(export == TRUE){

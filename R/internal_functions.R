@@ -957,21 +957,14 @@
 
 #' @title .all_args_here_fill
 #' @description
-#' Create the message for the colons_check() function.
-#' @param list.fun list of names of all the functions.
-#' @param fun.uni vector of all the unique function names.
-#' @param list.fun.pos list of position of first character of names of all the functions in ini.
-#' @param line.nb vector of corresponding line number.
-#' @param ini vector of string of the initial function code analyzed.
-#' @param arg.user.setting list of arg user settings.
+#' Get the $MISSING_ARG_NAMES, $MISSING_ARGS and $NEW of all_args_here()
 #' @param function.name function name.
 #' @param package.name package name.
-#' @param text either "BASIC" or "OTHER".
-#' @param internal_fun_names vector of string of names of internal functions in the function code analyzed.
 #' @returns
 #'  A list:
-#'  $output.cat: the message (string).
-#'  $colon_not_here: logical vector. Does list.fun contain function names without :: or ::: ?
+#'  $col6: the $MISSING_ARG_NAMES.
+#'  $col7: the $MISSING_ARGS.
+#'  $col8: the $NEW.
 #' @author Gael Millot <gael.millot@pasteur.fr>
 #' @keywords internal
 #' @rdname internal_function
@@ -981,17 +974,14 @@
     tempo_split, 
     three_dots_log, 
     col2_i2,
-    col3_i2,
     function.name, 
     package.name
 ){
     # DEBUGGING
-    #  arg_full = list(definition = sys.function(sys.parent()), call = sys.call(sys.parent()), expand.dots = TRUE, envir = parent.frame(2L)) ; arg_full_names = c("definition", "call", "expand.dots", "envir") ; tempo_split = "expand.dots = FALSE" ;  three_dots_log = c(FALSE, FALSE, FALSE, FALSE) ; col2_i2 = "match.call" ; col3_i2 = "match.call(expand.dots = FALSE)" ; function.name = "F1" ; package.name = "P1"
+    #  arg_full = list(definition = "sys.function(sys.parent())", call = "sys.call(sys.parent())", expand.dots = TRUE, envir = "parent.frame(2L)") ; arg_full_names = c("definition", "call", "expand.dots", "envir") ; tempo_split = "expand.dots = FALSE" ;  three_dots_log = c(FALSE, FALSE, FALSE, FALSE) ; col2_i2 = "match.call" ; col3_i2 = "match.call(expand.dots = FALSE)" ; function.name = "F1" ; package.name = "P1"
     #  arg_full = list(definition = sys.function(sys.parent()), call = sys.call(sys.parent()), expand.dots = TRUE, envir = parent.frame(2L)) ; arg_full_names = c("definition", "call", "expand.dots", "envir") ; tempo_split = c("sys.function(sys.parent())", "expand.dots = FALSE", "sys.call(sys.parent())") ;  three_dots_log = c(FALSE, FALSE, FALSE, FALSE) ; col2_i2 = "match.call" ; col3_i2 = "match.call(sys.function(sys.parent()), expand.dots = FALSE, sys.call(sys.parent()))" ; function.name = "F1" ; package.name = "P1"
     #  arg_full = list(... = "", collapse = " ", recycle0 = FALSE) ; arg_full_names = c("...", "collapse", "recycle0") ; tempo_split = c("AA", "collapse = \" \"", "BB", "recycle0 = FALSE") ; three_dots_log = c(TRUE, FALSE, FALSE) ; col2_i2 = "paste0" ; col3_i2 = 'paste0("AA", collapse = " ", "BB", recycle0 = FALSE)' ; function.name = "F1" ; package.name = "P1"
     #  arg_full = list(... = "", collapse = " ", recycle0 = FALSE) ; arg_full_names = c("...", "collapse", "recycle0") ; tempo_split = c("AA", "collapse = \" \"", "BB") ; three_dots_log = c(TRUE, FALSE, FALSE) ; col2_i2 = "paste0" ; col3_i2 = 'paste0("AA", collapse = " ", "BB")' ; function.name = "F1" ; package.name = "P1"
-
-
     good_args <- NULL
     missing_args <- NULL
     missing_args_names <- NULL
@@ -1007,12 +997,14 @@
         col8 <- ""
     }else{
         # scan for args names present in tempo_split
+        good_count <- 0 # to define if all the args are written (not considering ...)
         for(i2 in 1:base::length(arg_full_names)){
             pattern3 <- base::paste0("^[\\s\\r\\n]*", arg_full_names[i2], "[\\s]*=") # looking for the arg name
             tempo.log <- grepl(x = tempo_split, pattern = pattern3, perl = TRUE)
             if(base::sum(tempo.log, na.rm = TRUE) == 1){ # arg i2 has its names written in the args between ()
                 good_args <- base::c(good_args, tempo_split[tempo.log])
                 obs_arg_log <- obs_arg_log & ! tempo.log # remove the position of the taken arg in tempo_split
+                good_count <- good_count + 1
             }else if(base::sum(tempo.log, na.rm = TRUE) == 0){ # arg i2 has not its names written in the args between ()
                 missing_args_names <- base::c(missing_args_names, arg_full_names[i2])
             }else{
@@ -1042,7 +1034,7 @@
                         tempo <- base::paste0(arg_full_names[i3], " = ", tempo_split[base::which(obs_arg_log == TRUE)[1]])
                         obs_arg_log[base::which(obs_arg_log == TRUE)[1]] <- FALSE
                     }else{
-                        tempo <- base::paste0(arg_full_names[i3], " = ", if(base::is.null(arg_full[[i3]])){"NULL"}else{arg_full[[i3]]})
+                        tempo <- base::paste0(arg_full_names[i3], " = ", if(base::is.null(base::deparse(arg_full[[i3]]))){"NULL"}else{base::deparse(arg_full[[i3]])})
                     }
                     missing_args <- base::c(missing_args, tempo)
                     final <- c(final, tempo) # take the first pos always of the args with no arg names
@@ -1058,11 +1050,13 @@
         col6 <- base::paste(missing_args_names, collapse = ", ") # if NULL return ""
         col7 <- base::paste(missing_args, collapse = ", ")  # if NULL return ""
         tempo <- base::paste0(col2_i2, "(", base::paste(good_args, collapse = ", "), ")")
-        if(tempo == col3_i2){
-            col8 <- ""
+        if(length(arg_full_names) == good_count){
+            col8 <- "GOOD"
         }else{
             col8 <- tempo
         }
     }
     return(base::list(col6 = col6, col7 = col7, col8 = col8))
 }
+
+
