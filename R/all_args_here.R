@@ -4,7 +4,7 @@
 #' @param x a function name, written without quotes and brackets.
 #' @param safer_check Single logical value. Perform some "safer" checks (see https://github.com/safer-r)? If TRUE, checkings are performed before main code running: 1) R classical operators (like "<-") not overwritten by another package because of the R scope and 2) required functions and related packages effectively present in local R lybraries. Must be set to FALSE if this fonction is used inside another "safer" function to avoid pointless multiple checkings.
 #' @param export Single logical value. Export the data frame in a .tsv file?
-#' @param path_out Single string indicating the folder where to export the data frame.
+#' @param path_out Single string indicating the name of the file and path where to export the data frame. Ignored if export is FALSE
 #' @returns 
 #' A data frame indicating the missing arguments or a message saying that everything seems fine.
 #' If export argument is TRUE, then the data frame is exported as res.tsv instead of being returned.
@@ -16,7 +16,7 @@
 #' $DEF_ARGS: the defaults arguments of $FUN_NAME. "NO_ARGS" means that the function has no arguments
 #' $MISSING_ARG_NAMES: the missing argument names in $FUN_ARGS.
 #' $MISSING_ARGS: the missing arguments with their values in $FUN_ARGS.
-#' $NEW: the new proposed argument writting for $FUN_NAME.
+#' $NEW: the new proposed argument writting for $FUN_NAME. "INACTIVATED" means that no proposal is returned for this function, for the reason explained in the "details" section.
 #' @details
 #' More precisely, all_args_here() verifies that all the strings before an opening bracket "(" are written with all their arguments. Thus, it cannot check function names written without brackets, like in the FUN argument of some functions, e.g., sapply(1:3, FUN = as.character).
 #' 
@@ -30,7 +30,13 @@
 #' 
 #' The returned line numbers are indicative, depending on which source is checked. For instance, saferDev::report (compiled) has not the same line numbers as its source file (https://github.com/safer-r/saferDev/blob/main/R/report.R). Notably, compiled functions do not have comments anymore, compared to the same source function sourced into the working environment. In addition, the counting starts at the "<- function" line, i.e., without counting the #' header lines potentially present in source files.
 #' 
-#' Warning: the function will not work properly if any comma would be present in default argument values. Please, report here https://github.com/safer-r/saferDev/issues if it is the case.
+#' Warnings: 
+#' 1) The function will not work properly if any comma would be present in default argument values. Please, report here https://github.com/safer-r/saferDev/issues if it is the case.
+#' 
+#' 2) Results are only suggestions, as it is difficult to anticipate all the exceptions with argument writting.
+#' 
+#' 3) The following functions are not treated:
+#'     as.list: because x arg and ..., with x without default value but not mandatory (?!), and because different args depending on input.
 #' 
 #' @author Gael Millot <gael.millot@pasteur.fr>
 #' @examples
@@ -90,6 +96,11 @@ all_args_here <- function(
 
 
     # main code
+    # inactivated functions
+    inactivated <- c(
+        "as.list" # because x arg and ..., with x without default value but not mandatory (?!), and because different args depending on input 
+    )
+    # end inactivated functions
     out <- .functions_detect(
         x = x, 
         arg.user.setting = arg.user.setting, 
@@ -330,6 +341,9 @@ all_args_here <- function(
                     col7 <- base::c(col7, tempo_out$col7)
                     col8 <- base::c(col8, tempo_out$col8)
                     # end working on each observed arg
+                    if(base::any(inactivated %in% col2[i2], na.rm = TRUE)){
+                        col8 <- base::c(col8, "INACTIVATED")
+                    }
                 }
             }else{
                 col5 <- base::c(col5, "")
