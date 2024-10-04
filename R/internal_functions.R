@@ -671,17 +671,17 @@
 #' @param package.name package name.
 #' @returns 
 #'  A list:
-#' $code: vector of strings of the ode of the tested function.
-#' $fun: vector or strings of names of all the basic R functions.
-#' $fun_name_wo_op: list of names of all the functions without operators.
-#' $fun_name_pos_wo_op: list of position of the first character of each names of all the functions without operators, in $in.
-#' $code_line_nb_wo_op: vector of integers of the corresponding code line numbers.
-#' $internal_fun_names: vector of string of names of internal functions in the function code analyzed.
+#' $code: vector of strings of the code of the tested function.
+#' $all_basic_funs: vector or strings of names of all the basic R functions.
+#' $fun_names: list of names of all the functions, not considering base::c("function", "if", "for", "while", "repeat"). Compartment names indicate the code line number of the functions in $code.
+#' $fun_names_pos: list of position of the first character of each $fun_names. Compartment names indicate the code line number of the functions in $code.
+#' $code_line_nb: vector of integers of the code line numbers of code for each non empty compartment of $fun_names and $fun_names_pos.
+#' $internal_fun_names: vector of string of names of internal functions in the code of the tested function.
 #' $arg.user.setting: list of arg user settings of the tested function.
-#' $ini.warning.length: initial R warning.length from options()$warning.length.
 #' @details
 #' - Does not check if the functions inside the code exist.
-#' - Use the regex pattern 
+#' - Use the regex pattern "([a-zA-Z]|\\.[a-zA-Z._])[a-zA-Z0-9._]*\\s*\\(" to detect a function in the code.
+#' - $all_basic_funs are all the functions in base::c("package:stats", "package:graphics",  "package:grDevices", "package:utils", "package:datasets", "package:methods", "Autoloads", "package:base")
 #' 
 #' @examples
 #' \dontrun{ # Example that shouldn't be run because this is an internal function
@@ -699,6 +699,7 @@
     # DEBUGGING
     # x = x ; arg.user.setting = arg.user.setting ; function.name = function.name ; package.name = package.name
     # source("C:\\Users\\gmillot\\Documents\\Git_projects\\safer-r\\saferDev\\dev\\other\\test2.R") ; x = test2 ; arg.user.setting = base::list(x = as.name(x = "test2"), export = TRUE) ; function.name = "F1" ; package.name = "P1"
+    # source("C:\\Users\\gmillot\\Documents\\Git_projects\\safer-r\\saferDev\\.github\\profile\\backbone.R") ; x = a ; arg.user.setting = base::list(x = as.name(x = "a"), export = TRUE) ; function.name = "F1" ; package.name = "P1"
     # main code
     # modification of arg.user.setting$x for clean messages
     if(base::as.character(x = arg.user.setting$x)[1] == "::" | base::as.character(x = arg.user.setting$x)[1] == ":::"){
@@ -815,12 +816,16 @@
     tempo.log <- base::sapply(fun_name_wo_op, FUN = function(x){base::length(x) == 0}) # detection of string with empty function names
     fun_name_wo_op <- fun_name_wo_op[ ! tempo.log]
     fun_name_pos_wo_op <- fun_name_pos_wo_op[ ! tempo.log]
-    code_line_nb_wo_op <- code_line_nb[( ! tempo.log) & ( ! comment_line.log) & ( ! empty_line.log)]
-    # end removal of empty string
-    if( ! (base::length(fun_name_wo_op) == base::length(fun_name_pos_wo_op) & base::length(fun_name_wo_op) == base::length(code_line_nb_wo_op))){
-        tempo.cat <- base::paste0("INTERNAL ERROR 2 IN .functions_detect() INSIDE ", function.name, " OF THE ", package.name, " PACKAGE\nLENGTHS SHOULD BE IDENTICAL\nfun_name_wo_op: ", base::length(fun_name_wo_op), "\nfun_name_pos_wo_op: ", base::length(fun_name_pos_wo_op), "\ncode_line_nb_wo_op: ", base::length(code_line_nb_wo_op))
+    code_line_nb <- code_line_nb[( ! tempo.log) & ( ! comment_line.log) & ( ! empty_line.log)]
+    if( ! (base::length(fun_name_wo_op) == base::length(fun_name_pos_wo_op) & base::length(fun_name_wo_op) == base::length(code_line_nb))){
+        tempo.cat <- base::paste0("INTERNAL ERROR 2 IN .functions_detect() INSIDE ", function.name, " OF THE ", package.name, " PACKAGE\nLENGTHS SHOULD BE IDENTICAL\nfun_name_wo_op: ", base::length(fun_name_wo_op), "\nfun_name_pos_wo_op: ", base::length(fun_name_pos_wo_op), "\ncode_line_nb: ", base::length(code_line_nb))
         base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
+    }else{
+        # with that, now the code line of code is indicated in as compartment names
+        names(fun_name_wo_op) <- paste0(".", code_line_nb)
+        names(fun_name_pos_wo_op) <- paste0(".", code_line_nb)
     }
+    # end removal of empty string
     test.log <- mapply(FUN = function(x, y){length(x) != length(y)}, x = fun_name_wo_op, y = fun_name_pos_wo_op)
     if(base::any(test.log, na.rm = TRUE)){
         tempo.cat <- base::paste0("INTERNAL ERROR 3 IN .functions_detect() INSIDE ", function.name, " OF THE ", package.name, " PACKAGE\nLENGTHS SHOULD BE IDENTICAL IN COMPARTMENTS ", paste(which(test.log), collapse = ", "), " OF fun_name_wo_op AND fun_name_pos_wo_op")
@@ -831,10 +836,10 @@
     #### output
     output <- base::list(
         code = code, 
-        fun = fun, 
-        fun_name_wo_op = fun_name_wo_op, 
-        fun_name_pos_wo_op = fun_name_pos_wo_op, 
-        code_line_nb_wo_op = code_line_nb_wo_op, 
+        all_basic_funs = fun, 
+        fun_names = fun_name_wo_op, 
+        fun_names_pos = fun_name_pos_wo_op, 
+        code_line_nb = code_line_nb, 
         internal_fun_names = internal_fun_names,
         arg.user.setting = arg.user.setting
     )
