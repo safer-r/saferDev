@@ -111,8 +111,8 @@ all_args_here <- function(
     fun_name_wo_op <-  out$fun_name_wo_op # list of function names for each line of ini
     fun_name_pos_wo_op <-  out$fun_name_pos_wo_op # list of pos (1st character) of function names for each line of ini
 
-    ini <- out$ini # vector of strings of the tested function code
-    fun_1_line <- base::paste(out$ini, collapse = " ") # assemble the code of the tested  function (without comments) in a single line
+    ini <- out$code # vector of strings of the tested function code
+    fun_1_line <- base::paste(out$code, collapse = " ") # assemble the code of the tested  function (without comments) in a single line
     if(grepl(x = fun_1_line, pattern = reserved_word)){
         warn.count <- warn.count + 1
         tempo.warn <- base::paste0("(", warn.count,") THE RESERVED WORD \"", base::paste(reserved_word, collapse = " "), "\" HAS BEEN DETECTED IN THE CODE OF THE INPUT FUNCTION\nWHICH COULD HAMPER THE ACCURACY OF THE OUTPUT TABLE")
@@ -133,8 +133,10 @@ all_args_here <- function(
     arg_string <- fun_name_wo_op # like arg_string_for_col3 but with only the arguments
     mid_bracket_pos_in_fun_1_line <- base::lapply(X = fun_name_wo_op, FUN = function(x){base::lapply(X = x, FUN = function(y){NULL})}) # list of lists, will be used to get inside ( and ) positions, from fun_1_line
 
+caca <- NULL ###########################
     for(i1 in 1:base::length(fun_name_wo_op)){
         for(i2 in 1:base::length(fun_name_wo_op[[i1]])){
+            if(i1 == 18 & i2 == 4){stop()} ############ caca
             pattern1 <- base::paste0(fun_name_wo_op[[i1]][i2], "[\\s\\r\\n]*\\(") # function detection in 
             # pattern2 <- paste0("[a-zA-Z.][a-zA-Z0-9._]* *\\$ *", fun_name_wo_op[[i1]][i2], "[\\s\\r\\n]*\\(") # function like a$fun()
             if(base::grepl(x = fun_1_line_replace, pattern = pattern1)){ 
@@ -152,8 +154,9 @@ all_args_here <- function(
                     if( ! base::is.null(tempo_pos$middle_bracket_pos)){ # I have to use if(){}, otherwise mid_bracket_pos_in_fun_1_line[[i1]][[i2]] disappears
                         mid_bracket_pos_in_fun_1_line[[i1]][[i2]] <- base::unlist(tempo_pos$middle_bracket_pos) # positions of the () inside a function
                     }
-                    base::substr(x = fun_1_line_replace, start = 1, stop = tempo_pos$begin - 1) <- base::paste(base::rep(" ", tempo_pos$begin - 1), collapse = "") # trick that replaces characters between start = tempo_pos$begin_fun and stop = tempo_pos$end by the same number of spaces. This, to avoid to take always the first paste0 for instance in the fun_1_line_replace string when several are present in fun_name_wo_op
+                    base::substr(x = fun_1_line_replace, start = 1, stop = tempo_pos$begin - 1) <- base::paste(base::rep(" ", tempo_pos$begin - 1), collapse = "") # trick that replaces function name by the same number of spaces. This, to avoid to take always the first paste0 for instance in the fun_1_line_replace string when several are present in fun_name_wo_op
                 }
+                caca <- c(caca, fun_1_line_replace) ##################
             }else{
                 arg_string_for_col3[[i1]][i2] <- reserved_word
                 arg_string[[i1]][i2] <- ""
@@ -161,6 +164,7 @@ all_args_here <- function(
             # substr(x = fun_1_line, start = fun_pos, stop = fun_close_paren_pos) <- paste(rep(" ", nchar( arg_string_for_col3[[i1]][i2])), collapse = "") # remove the first fonction in the line, in case of identical function names in a code line. Like, that, the next round for the next same function can be easily tested for "between quotes" 
         }
     }
+    utils::write.table(caca, file = base::paste0(path_out, "/resi.tsv"), row.names = FALSE, col.names = TRUE, append = FALSE, quote = FALSE, sep = "\t", eol = "\n", na = "") ########################
     # end recovery of the functions, in the tested function, with written arguments inside ()
     # recovery of the positions of inside () in col3
     mid_bracket_pos_in_col3 <- base::lapply(X = fun_name_wo_op, FUN = function(x){base::lapply(X = x, FUN = function(y){NULL})}) # list of lists, will be used to get inside ( and ) positions, from col3
@@ -299,8 +303,8 @@ all_args_here <- function(
                     # end recovering obs arguments
                     # splitting the arguments using commas
                     tempo_split <- base::strsplit(x = obs_args, split = " *, *", fixed = FALSE, perl = FALSE, useBytes = FALSE)[[1]] # separation of args
-                    # tempo_split <- gsub(pattern = "^[\\s;]+", replacement = "", x = tempo_split) # removing leading ; and space, ; because of line: fun_1_line <- base::paste(out$ini, collapse = ";")
-                    # tempo_split <- gsub(pattern = "[\\s;]+$", replacement = "", x = tempo_split) # removing trailing ; and space, ; because of line: fun_1_line <- base::paste(out$ini, collapse = ";")
+                    # tempo_split <- gsub(pattern = "^[\\s;]+", replacement = "", x = tempo_split) # removing leading ; and space, ; because of line: fun_1_line <- base::paste(out$code, collapse = ";")
+                    # tempo_split <- gsub(pattern = "[\\s;]+$", replacement = "", x = tempo_split) # removing trailing ; and space, ; because of line: fun_1_line <- base::paste(out$code, collapse = ";")
                     # end splitting the arguments using commas
                     # rewriting the commas inside args
                     if( ! base::is.null(pos_rep2)){

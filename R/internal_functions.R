@@ -671,16 +671,16 @@
 #' @param package.name package name.
 #' @returns 
 #'  A list:
-#' $ini: vector of strings of the initial function code tested.
-#' $fun: list of names of all the basic R functions.
+#' $code: vector of strings of the ode of the tested function.
+#' $fun: vector or strings of names of all the basic R functions.
 #' $fun_name_wo_op: list of names of all the functions without operators.
 #' $fun_name_pos_wo_op: list of position of the first character of each names of all the functions without operators, in $in.
 #' $code_line_nb_wo_op: vector of integers of the corresponding code line numbers.
 #' $internal_fun_names: vector of string of names of internal functions in the function code analyzed.
-#' $arg.user.setting: list of arg user settings.
+#' $arg.user.setting: list of arg user settings of the tested function.
 #' $ini.warning.length: initial R warning.length from options()$warning.length.
 #' @details
-#' - Does not check if the function exists.
+#' - Does not check if the functions inside the code exist.
 #' - Use the regex pattern 
 #' 
 #' @examples
@@ -715,27 +715,27 @@
     fun <- base::unlist(base::sapply(X = s, FUN = function(x){base::ls(x, all.names = TRUE)})) # all the basic functions of R in all the scope
     # end recovering the basic functions of R
     # recovering the input function string
-    ini <- utils::capture.output(x) # no lines must be removed because it is to catch the lines of the full code
-    code_line_nb <- 1:base::length(ini)
-    # ini <- base::paste0(ini, collapse = " \\n ") # recovering as single string separated by \\n (and not \n to avoid the eval(\n) when printing the error message)
-    ini <- base::gsub(x = ini, pattern = " +", replacement = " ") # removal of multiple spaces
-    ini <- base::sub(x = ini, pattern = "^ +", replacement = "") # removal of multiple spaces in the beginning od strings
+    code <- utils::capture.output(x) # no lines must be removed because it is to catch the lines of the full code
+    code_line_nb <- 1:base::length(code)
+    # code <- base::paste0(code, collapse = " \\n ") # recovering as single string separated by \\n (and not \n to avoid the eval(\n) when printing the error message)
+    code <- base::gsub(x = code, pattern = " +", replacement = " ") # removal of multiple spaces
+    code <- base::sub(x = code, pattern = "^ +", replacement = "") # removal of multiple spaces in the beginning od strings
     # end recovering the input function string
 
     # removal of empty lines
-    empty_line.log <- base::grepl(ini, pattern = "^\\s*$")
+    empty_line.log <- base::grepl(code, pattern = "^\\s*$")
     # end removal of empty lines
 
     # removal of comments
-    comment_line.log <- base::grepl(ini, pattern = "^\\s*#") # removal of the lines starting by #
-    if(base::length(ini) == 0){
+    comment_line.log <- base::grepl(code, pattern = "^\\s*#") # removal of the lines starting by #
+    if(base::length(code) == 0){
         tempo.cat <- base::paste0("ERROR IN ", function.name, " OF THE ", package.name, " PACKAGE\nTHE TESTED FUNCTION ", arg.user.setting$x, " IS EMPTY OR ONLY MADE OF COMMENTS")
         base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
     }
-    comment.log <- base::grepl(x = ini, pattern = "#")
+    comment.log <- base::grepl(x = code, pattern = "#")
     if(base::any(comment.log, na.rm = TRUE)){
-        comment.line.to.rm <- base::which(comment.log) # elements among ini that have #
-        lines <- ini[comment.log]
+        comment.line.to.rm <- base::which(comment.log) # elements among code that have #
+        lines <- code[comment.log]
         for(i2 in 1:base::length(lines)){
             lines.split <- base::strsplit(lines[i2], split = "#")[[1]]
             # detection of the first left # that is not between quotes
@@ -757,11 +757,11 @@
             # end detection of the first left # that is not between quotes
             lines[i2] <- tempo.line
         }
-        ini[comment.line.to.rm] <- lines
+        code[comment.line.to.rm] <- lines
     }
     # end removal of comments
     # catch the internal function name created inside the tested function
-    internal_fun_names <- base::unlist(base::lapply(X = ini, FUN = function(x){
+    internal_fun_names <- base::unlist(base::lapply(X = code, FUN = function(x){
         output <- base::sub(pattern = "^\\s*([a-zA-Z]|\\.[a-zA-Z._])[a-zA-Z0-9._]*\\s*<-[\\s\\r\\n]*function[\\s\\r\\n]*\\(.*", replacement = "\\1", x = x, perl = TRUE)
         # ^\\s* means in perl: 0 or any spaces at the begining of the string
         # ([a-zA-Z]|\\.[a-zA-Z._]) is for the begining of R function name: either any single alphabet character or a dot and any single alphabet character or dot (because .. is ok for function name) or underscore (because ._ is ok for function name). Starting "dot and num" or underscore is not authorized for function name
@@ -773,14 +773,14 @@
     })) # To achieve the extraction of the function names, you need to wrap the part of the pattern that matches the function name in parentheses () to create a capturing group
     # end catch the internal function name created inside the tested function
     # trick to deal with end of lines between the name of the function and "("
-    if(base::length(ini) > 1){
-        for (i2 in 2:base::length(ini)) {
+    if(base::length(code) > 1){
+        for (i2 in 2:base::length(code)) {
             # Check if the current string starts with spaces followed by a '('
-            if (base::grepl("^\\s*\\(", ini[i2])) {
+            if (base::grepl("^\\s*\\(", code[i2])) {
                 # Check if the previous string ends with the specified pattern
-                if (base::grepl("([a-zA-Z]|\\.[a-zA-Z._])[a-zA-Z0-9._]*\\s*$", ini[i2 - 1])) {
+                if (base::grepl("([a-zA-Z]|\\.[a-zA-Z._])[a-zA-Z0-9._]*\\s*$", code[i2 - 1])) {
                 # Append a '(' to the previous string
-                ini[i2 - 1] <- base::paste0(ini[i2 - 1], "(")
+                code[i2 - 1] <- base::paste0(code[i2 - 1], "(")
                 }
             }
         }
@@ -800,12 +800,12 @@
 
     fun_name <- list()
     fun_name_pos <- list()
-    for(i1 in 1:base::length(ini)){
-        tempo <- .extract_all_fun_names(text = ini[i1], pattern = pattern1) # recover all the function names, followed by "(", present in ini, using a perl pattern
+    for(i1 in 1:base::length(code)){
+        tempo <- .extract_all_fun_names(text = code[i1], pattern = pattern1) # recover all the function names, followed by "(", present in code, using a perl pattern
         fun_name <- c(fun_name, list(tempo$string))
         fun_name_pos <- c(fun_name_pos, list(tempo$pos))
     }
-    # tempo <- base::lapply(ini, FUN = function(x){saferDev:::.extract_all_fun_names(text = x, pattern = pattern1)})
+    # tempo <- base::lapply(code, FUN = function(x){saferDev:::.extract_all_fun_names(text = x, pattern = pattern1)})
     # removal of special functions
     tempo_log <- base::lapply(fun_name, FUN = function(x){ ! x %in% base::c("function", "if", "for", "while", "repeat")})
     fun_name_wo_op <- base::mapply(FUN = function(x, y){x[y]}, x = fun_name, y = tempo_log)
@@ -830,7 +830,7 @@
     # end all function names in x
     #### output
     output <- base::list(
-        ini = ini, 
+        code = code, 
         fun = fun, 
         fun_name_wo_op = fun_name_wo_op, 
         fun_name_pos_wo_op = fun_name_pos_wo_op, 
