@@ -822,8 +822,8 @@
         base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
     }else{
         # with that, now the code line of code is indicated in as compartment names
-        names(fun_name_wo_op) <- paste0(".", code_line_nb)
-        names(fun_name_pos_wo_op) <- paste0(".", code_line_nb)
+        names(fun_name_wo_op) <- paste0("c", code_line_nb)
+        names(fun_name_pos_wo_op) <- paste0("c", code_line_nb)
     }
     # end removal of empty string
     test.log <- mapply(FUN = function(x, y){length(x) != length(y)}, x = fun_name_wo_op, y = fun_name_pos_wo_op)

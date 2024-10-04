@@ -107,7 +107,7 @@ all_args_here <- function(
         function.name = function.name, 
         package.name = package.name
     )
-    code_line_nb <- out$code_line_nb # vector of line numbers in code
+    code_line_nb <- out$code_line_nb # vector of line numbers in code where functions are
     fun_names <-  out$fun_names # list of function names for each line of code
     fun_names_pos <-  out$fun_names_pos # list of pos (1st character) of function names for each line of code
 
@@ -118,18 +118,11 @@ all_args_here <- function(
         tempo.warn <- base::paste0("(", warn.count,") THE RESERVED WORD \"", base::paste(reserved_word, collapse = " "), "\" HAS BEEN DETECTED IN THE CODE OF THE INPUT FUNCTION\nWHICH COULD HAMPER THE ACCURACY OF THE OUTPUT TABLE")
         warn <- base::paste0(base::ifelse(base::is.null(warn), tempo.warn, base::paste0(warn, "\n\n", tempo.warn)))
     }
-    # recovering of all the fun positions in the fun_1_line (1st character of each function)
-    cum_nchar_code_line <- base::cumsum(base::nchar(out$code) + 1) # +1 because of the 1 space added between lines of codes fused, will serve to know the postion of first character of fun_names in fun_1_line
-    fun_1_line_pos <- 
-        # for
-        # pattern1 <- base::paste0(fun_names[[i1]][i2], "[\\s\\r\\n]*\\(") # function detection in 
-        # if(base::grepl(x = fun_1_line_replace, pattern = pattern1)){ 
-        #that does not work properly
-    # end recovering of all the fun positions in the fun_1_line (1st character of each function)
-
-
-
-
+    # cumulative nchar of each non empty lines of code 
+    cum_nchar_code_line <- base::cumsum(base::nchar(out$code) + 1) # +1 because of the 1 space added between lines of codes fused # will serve to know the position of first character of fun_names in fun_1_line
+    cum_nchar_code_line <- base::c(0, cum_nchar_code_line[-base::length(cum_nchar_code_line)]) # because pos in fun_names_pos will be added to this
+    cum_nchar_code_line <- cum_nchar_code_line[code_line_nb]
+    # end cumulative nchar of each non empty lines of code 
     # replacement of all the ) between quotes
     tempo <- .in_quotes_replacement(string = fun_1_line, pattern = "\\)", no_regex_pattern = ")", replacement = " ", perl = TRUE, function.name = function.name, package.name = package.name)
     fun_1_line_replace <- tempo$string # code of the tested function that will serve to better detect functions in it
@@ -149,6 +142,15 @@ caca <- NULL ###########################
     for(i1 in 1:base::length(fun_names)){
         for(i2 in 1:base::length(fun_names[[i1]])){
             if(i1 == 18 & i2 == 4){stop()} ############ caca
+            # line of code 
+            tempo_pos_in_code <- base::as.integer(base::sub(pattern = "^c", replacement = "", x = base::names(fun_names)[i1], ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE)
+            tempo_which <- base::which(tempo_pos_in_code %in% code_line_nb)
+            fun_pos_start <- fun_names_pos[[i1]][i2] + cum_nchar_code_line[tempo_which]
+            fun_pos_stop <- fun_pos_start + base::nchar(fun_names[[i1]][i2])
+
+
+
+
             pattern1 <- base::paste0(fun_names[[i1]][i2], "[\\s\\r\\n]*\\(") # function detection in 
             # pattern2 <- paste0("[a-zA-Z.][a-zA-Z0-9._]* *\\$ *", fun_names[[i1]][i2], "[\\s\\r\\n]*\\(") # function like a$fun()
             if(base::grepl(x = fun_1_line_replace, pattern = pattern1)){ 
