@@ -1,0 +1,6 @@
+	x	incomparables	kind	problem	expected.error	message
+arg_test_3	1 2 3 4 5 6 7 8 9 10	NA	OK	FALSE	TRUE	
+arg_test_6	1 1 2 8	NA	OK	FALSE	TRUE	
+arg_test_7	NA	TRUE	OK	FALSE	TRUE	
+arg_test_8	NA	FALSE	OK	FALSE	TRUE	
+arg_test_9	NA	NA	OK	FALSE	TRUE	
