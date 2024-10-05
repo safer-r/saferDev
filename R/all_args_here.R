@@ -138,30 +138,30 @@ all_args_here <- function(
     arg_string <- fun_names # like arg_string_for_col3 but with only the arguments
     mid_bracket_pos_in_fun_1_line <- base::lapply(X = fun_names, FUN = function(x){base::lapply(X = x, FUN = function(y){NULL})}) # list of lists, will be used to get inside ( and ) positions, from fun_1_line
 
-caca <- NULL ###########################
+# caca <- NULL ###########################
     for(i1 in 1:base::length(fun_names)){
+        tempo_pos_in_code <- base::as.integer(base::sub(pattern = "^c", replacement = "", x = base::names(fun_names)[i1], ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE))
+        tempo_which <- base::which(code_line_nb %in% tempo_pos_in_code)
         for(i2 in 1:base::length(fun_names[[i1]])){
-            if(i1 == 18 & i2 == 4){stop()} ############ caca
+            # if(i1 == 18 & i2 == 4){stop()} ############ caca
             # line of code 
-            tempo_pos_in_code <- base::as.integer(base::sub(pattern = "^c", replacement = "", x = base::names(fun_names)[i1], ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE)
-            tempo_which <- base::which(tempo_pos_in_code %in% code_line_nb)
             fun_pos_start <- fun_names_pos[[i1]][i2] + cum_nchar_code_line[tempo_which]
-            fun_pos_stop <- fun_pos_start + base::nchar(fun_names[[i1]][i2])
-
-
-
-
-            pattern1 <- base::paste0(fun_names[[i1]][i2], "[\\s\\r\\n]*\\(") # function detection in 
-            # pattern2 <- paste0("[a-zA-Z.][a-zA-Z0-9._]* *\\$ *", fun_names[[i1]][i2], "[\\s\\r\\n]*\\(") # function like a$fun()
-            if(base::grepl(x = fun_1_line_replace, pattern = pattern1)){ 
-                tempo_pos <- .fun_args_pos(text = fun_1_line_replace, pattern = pattern1, function.name = function.name, package.name = package.name) # positions of 1st letter of the function name and opening and closing brackets # Warning: fun_1_line_replace used because the input string must be cleaned form brackets between quotes
-                tempo_str_before <- base::substr(x = fun_1_line, start = 1, stop = tempo_pos$begin_fun - 1)
+            fun_pos_stop <- fun_pos_start + base::nchar(fun_names[[i1]][i2]) - 1
+            tempo_fun <- substr(fun_1_line_replace, fun_pos_start, fun_pos_stop)
+            if(tempo_fun != fun_names[[i1]][i2]){
+                tempo.cat <- base::paste0("INTERNAL ERROR 3 IN ", function.name, " OF THE ", package.name, " PACKAGE\ntempo_fun MUST BE IDENTICAL TO fun_names[[i1]][i2]\n\ntempo_fun: ", tempo_fun, "\n\nfun_names[[i1]][i2]: ", fun_names[[i1]][i2], "\n\ni1: ", i1, "\n\ni2: ", i2)
+                base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n", base::ifelse(base::is.null(warn), "", base::paste0("IN ADDITION\nWARNING", base::ifelse(warn.count > 1, "S", ""), ":\n\n", warn))), call. = FALSE)
+            }
+            tempo_str_after <- base::substr(x = fun_1_line_replace, start = fun_pos_stop + 1, stop = base::nchar(fun_1_line_replace))
+            if(base::grepl(x = tempo_str_after, pattern = "^[\\s\\r\\n]*\\(", perl = TRUE)){ # detection that it is a function of interest because ( after function name not removed
+                tempo_pos <- .fun_args_pos(text = fun_1_line_replace, pattern = paste0(fun_names[[i1]][i2], "[\\s\\r\\n]*\\("), function.name = function.name, package.name = package.name) # positions of 1st letter of the function name and opening and closing brackets # Warning: fun_1_line_replace used because the input string must be cleaned form brackets between quotes
+                tempo_str_before <- base::substr(x = fun_1_line_replace, start = 1, stop = fun_pos_start - 1)
                 tempo_log <- base::grepl(x = tempo_str_before, pattern = "\\$ *$")
                 if(tempo_log){ # remove functions preceeded by $, like a$fun()
                     arg_string_for_col3[[i1]][i2] <- ""
                     fun_names[[i1]][i2] <- ""
                     arg_string[[i1]][i2] <- ""
-                    base::substr(x = fun_1_line_replace, start = 1, stop = tempo_pos$begin - 1) <- base::paste(base::rep(" ", tempo_pos$begin - 1), collapse = "")
+                    base::substr(x = fun_1_line_replace, start = 1, stop = fun_pos_start - 1) <- base::paste(base::rep(" ", fun_pos_start - 1), collapse = "")
                 }else{
                     arg_string_for_col3[[i1]][i2] <- base::substr(x = fun_1_line, start = tempo_pos$begin_fun, stop = tempo_pos$end) # add the "function(args)" string into arg_string_for_col3. I use fun_1_line because I want unaltered values of args here (fun_1_line_replace have quoted () replaced by spaces)
                     arg_string[[i1]][i2] <- base::substr(x = fun_1_line, start = tempo_pos$begin + 1, stop = tempo_pos$end - 1) # idem arg_string_for_col3 but inside () of the function (just the arguments written)
@@ -170,15 +170,14 @@ caca <- NULL ###########################
                     }
                     base::substr(x = fun_1_line_replace, start = 1, stop = tempo_pos$begin - 1) <- base::paste(base::rep(" ", tempo_pos$begin - 1), collapse = "") # trick that replaces function name by the same number of spaces. This, to avoid to take always the first paste0 for instance in the fun_1_line_replace string when several are present in fun_names
                 }
-                caca <- c(caca, fun_1_line_replace) ##################
+                # caca <- c(caca, fun_1_line_replace) ##################
             }else{
                 arg_string_for_col3[[i1]][i2] <- reserved_word
                 arg_string[[i1]][i2] <- ""
             }
-            # substr(x = fun_1_line, start = fun_pos, stop = fun_close_paren_pos) <- paste(rep(" ", nchar( arg_string_for_col3[[i1]][i2])), collapse = "") # remove the first fonction in the line, in case of identical function names in a code line. Like, that, the next round for the next same function can be easily tested for "between quotes" 
         }
     }
-    utils::write.table(caca, file = base::paste0(path_out, "/resi.tsv"), row.names = FALSE, col.names = TRUE, append = FALSE, quote = FALSE, sep = "\t", eol = "\n", na = "") ########################
+    # utils::write.table(caca, file = base::paste0(path_out, "/resi.tsv"), row.names = FALSE, col.names = TRUE, append = FALSE, quote = FALSE, sep = "\t", eol = "\n", na = "") ########################
     # end recovery of the functions, in the tested function, with written arguments inside ()
     # recovery of the positions of inside () in col3
     mid_bracket_pos_in_col3 <- base::lapply(X = fun_names, FUN = function(x){base::lapply(X = x, FUN = function(y){NULL})}) # list of lists, will be used to get inside ( and ) positions, from col3
