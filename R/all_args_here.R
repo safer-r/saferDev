@@ -138,13 +138,10 @@ all_args_here <- function(
     arg_string <- fun_names # like arg_string_for_col3 but with only the arguments
     mid_bracket_pos_in_fun_1_line <- base::lapply(X = fun_names, FUN = function(x){base::lapply(X = x, FUN = function(y){NULL})}) # list of lists, will be used to get inside ( and ) positions, from fun_1_line
 
-# caca <- NULL ###########################
     for(i1 in 1:base::length(fun_names)){
         tempo_pos_in_code <- base::as.integer(base::sub(pattern = "^c", replacement = "", x = base::names(fun_names)[i1], ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE))
         tempo_which <- base::which(code_line_nb %in% tempo_pos_in_code)
         for(i2 in 1:base::length(fun_names[[i1]])){
-            # if(i1 == 18 & i2 == 4){stop()} ############ caca
-            # line of code 
             fun_pos_start <- fun_names_pos[[i1]][i2] + cum_nchar_code_line[tempo_which]
             fun_pos_stop <- fun_pos_start + base::nchar(fun_names[[i1]][i2]) - 1
             tempo_fun <- substr(fun_1_line_replace, fun_pos_start, fun_pos_stop)
@@ -170,14 +167,12 @@ all_args_here <- function(
                     }
                     base::substr(x = fun_1_line_replace, start = 1, stop = tempo_pos$begin - 1) <- base::paste(base::rep(" ", tempo_pos$begin - 1), collapse = "") # trick that replaces function name by the same number of spaces. This, to avoid to take always the first paste0 for instance in the fun_1_line_replace string when several are present in fun_names
                 }
-                # caca <- c(caca, fun_1_line_replace) ##################
             }else{
                 arg_string_for_col3[[i1]][i2] <- reserved_word
                 arg_string[[i1]][i2] <- ""
             }
         }
     }
-    # utils::write.table(caca, file = base::paste0(path_out, "/resi.tsv"), row.names = FALSE, col.names = TRUE, append = FALSE, quote = FALSE, sep = "\t", eol = "\n", na = "") ########################
     # end recovery of the functions, in the tested function, with written arguments inside ()
     # recovery of the positions of inside () in col3
     mid_bracket_pos_in_col3 <- base::lapply(X = fun_names, FUN = function(x){base::lapply(X = x, FUN = function(y){NULL})}) # list of lists, will be used to get inside ( and ) positions, from col3
@@ -271,7 +266,7 @@ all_args_here <- function(
                 # end check if the function exists
                 # recovering default args of the function
                 if(base::is.primitive(base::get(col2[i2]))){
-                    if(base::all(base::typeof(base::get(col2[i2])) == "special", na.rm = TRUE)){
+                    if(base::all(base::typeof(base::get(col2[i2])) == "special", na.rm = TRUE) & base::length(base::as.list(base::formals(base::args(name = col2[i2])))) == 0){
                         arg_full <- NULL
                     }else{
                         arg_full <- base::as.list(base::formals(base::args(name = col2[i2]))) # convert pairlist into list
