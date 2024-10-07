@@ -16,7 +16,7 @@
 #' $DEF_ARGS: the defaults arguments of $FUN_NAME. "NO_ARGS" means that the function has no arguments
 #' $MISSING_ARG_NAMES: the missing argument names in $FUN_ARGS.
 #' $MISSING_ARGS: the missing arguments with their values in $FUN_ARGS.
-#' $NEW: the new proposed argument writting for $FUN_NAME. "INACTIVATED" means that no proposal is returned for this function, for the reason explained in the "details" section. "GOOD" means that all the arguments are already written.
+#' $STATUS: either "GOOD", meaning that all the arguments are already written, or a new proposal of arguments writting, or nothing.
 #' @details
 #' More precisely, all_args_here() verifies that all the strings before an opening bracket "(" are written with all their arguments. Thus, it cannot check function names written without brackets, like in the FUN argument of some functions, e.g., sapply(1:3, FUN = as.character).
 #' 
@@ -35,15 +35,12 @@
 #' 
 #' 2) Results are only suggestions, as it is difficult to anticipate all the exceptions with argument writting.
 #' 
-#' 3) The following functions are not treated:
-#'     as.list: because x arg and ..., with x without default value but not mandatory (?!), and because different args depending on input.
-#' 
 #' @author Gael Millot <gael.millot@pasteur.fr>
 #' @examples
 #' all_args_here(mean)
 #' all_args_here(all_args_here)
 #' source("https://raw.githubusercontent.com/safer-r/saferDev/main/dev/other/test2.R") ; all_args_here(test2, export = TRUE)
-#' source("C:\\Users\\gmillot\\Documents\\Git_projects\\safer-r\\.github\\profile\\backbone.R") ; all_args_here(a, export = TRUE)
+#' source("C:\\Users\\gmillot\\Documents\\Git_projects\\safer-r\\.github\\profile\\backbone.R") ; all_args_here(BACKBONE, export = TRUE)
 #' @export
 all_args_here <- function(
     x, 
@@ -58,8 +55,8 @@ all_args_here <- function(
     # library(saferDev) ; x = get_message ; safer_check = TRUE
     # source("C:\\Users\\gmillot\\Documents\\Git_projects\\safer-r\\saferDev\\R\\all_args_here.R") ; x = all_args_here ; safer_check = TRUE
     # arg.user.setting = base::list(x = as.name(x = "test2"), safer_check = TRUE, export = TRUE)
-    # source("C:\\Users\\gmillot\\Documents\\Git_projects\\safer-r\\.github\\profile\\backbone.R") ; x = a ; safer_check = TRUE ; export = TRUE # use the folling line before out <- 
-    # arg.user.setting = base::list(x = as.name(x = "a"), safer_check = TRUE, export = TRUE)
+    # source("C:\\Users\\gmillot\\Documents\\Git_projects\\safer-r\\.github\\profile\\backbone.R") ; x = BACKBONE ; safer_check = TRUE ; export = TRUE # use the folling line before out <- 
+    # arg.user.setting = base::list(x = as.name(x = "BACKBONE"), safer_check = TRUE, export = TRUE)
     # package name
     package.name <- "saferDev"
     # end package name
@@ -96,11 +93,6 @@ all_args_here <- function(
 
 
     # main code
-    # inactivated functions
-    inactivated <- c(
-        "as.list" # because x arg and ..., with x without default value but not mandatory (?!), and because different args depending on input 
-    )
-    # end inactivated functions
     out <- .functions_detect(
         x = x, 
         arg.user.setting = arg.user.setting, 
@@ -146,7 +138,7 @@ all_args_here <- function(
             fun_pos_stop <- fun_pos_start + base::nchar(fun_names[[i1]][i2]) - 1
             tempo_fun <- substr(fun_1_line_replace, fun_pos_start, fun_pos_stop)
             if(tempo_fun != fun_names[[i1]][i2]){
-                tempo.cat <- base::paste0("INTERNAL ERROR 3 IN ", function.name, " OF THE ", package.name, " PACKAGE\ntempo_fun MUST BE IDENTICAL TO fun_names[[i1]][i2]\n\ntempo_fun: ", tempo_fun, "\n\nfun_names[[i1]][i2]: ", fun_names[[i1]][i2], "\n\ni1: ", i1, "\n\ni2: ", i2)
+                tempo.cat <- base::paste0("INTERNAL ERROR 1 IN ", function.name, " OF THE ", package.name, " PACKAGE\ntempo_fun MUST BE IDENTICAL TO fun_names[[i1]][i2]\n\ntempo_fun: ", tempo_fun, "\n\nfun_names[[i1]][i2]: ", fun_names[[i1]][i2], "\n\ni1: ", i1, "\n\ni2: ", i2)
                 base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n", base::ifelse(base::is.null(warn), "", base::paste0("IN ADDITION\nWARNING", base::ifelse(warn.count > 1, "S", ""), ":\n\n", warn))), call. = FALSE)
             }
             tempo_str_after <- base::substr(x = fun_1_line_replace, start = fun_pos_stop + 1, stop = base::nchar(fun_1_line_replace))
@@ -203,7 +195,7 @@ all_args_here <- function(
     middle_bracket_open_in_col3 <- base::lapply(X = middle_bracket, FUN = function(x){if( ! is.null(x)){x[seq(1, length(x), by = 2)]}else{NULL}})
     middle_bracket_close_in_col3 <- base::lapply(X = middle_bracket, FUN = function(x){if( ! is.null(x)){x[seq(2, length(x), by = 2)]}else{NULL}})
     if( ! (base::length(col1) == base::length(col2) & base::length(col1) == base::length(col3) & base::length(col1) == base::length(col4) & base::length(col1) == base::length(code_for_col) & base::length(col1) == base::length(middle_bracket))){
-        tempo.cat <- base::paste0("INTERNAL ERROR 3 IN ", function.name, " OF THE ", package.name, " PACKAGE\nLENGTHS OF col1 (", base::length(col1), "), col2 (", base::length(col2), "), col3 (", base::length(col3), "), col4 (", base::length(col4), "), code_for_col (", base::length(code_for_col), "), AND middle_bracket (", base::length(middle_bracket), "), SHOULD BE EQUAL\n")
+        tempo.cat <- base::paste0("INTERNAL ERROR 2 IN ", function.name, " OF THE ", package.name, " PACKAGE\nLENGTHS OF col1 (", base::length(col1), "), col2 (", base::length(col2), "), col3 (", base::length(col3), "), col4 (", base::length(col4), "), code_for_col (", base::length(code_for_col), "), AND middle_bracket (", base::length(middle_bracket), "), SHOULD BE EQUAL\n")
         base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n", base::ifelse(base::is.null(warn), "", base::paste0("IN ADDITION\nWARNING", base::ifelse(warn.count > 1, "S", ""), ":\n\n", warn))), call. = FALSE)
     }
     tempo.log <- base::as.vector(base::unlist(base::mapply(
@@ -222,7 +214,7 @@ all_args_here <- function(
         y = col3
     )))
     if(base::any(tempo.log, na.rm = TRUE)){
-        tempo.cat <- base::paste0("INTERNAL ERROR 5 IN ", function.name, " OF THE ", package.name, " PACKAGE\ncol3 MUST BE MADE OF STRINGS STARTING BY\n\"<FUNCTION_NAME>[\\s\\r\\n]*\\(\"\nAND FINISHING BY\")\"\nHERE IT IS:\n\n", base::paste(col3, collapse = "\n"))
+        tempo.cat <- base::paste0("INTERNAL ERROR 3 IN ", function.name, " OF THE ", package.name, " PACKAGE\ncol3 MUST BE MADE OF STRINGS STARTING BY\n\"<FUNCTION_NAME>[\\s\\r\\n]*\\(\"\nAND FINISHING BY\")\"\nHERE IT IS:\n\n", base::paste(col3, collapse = "\n"))
         base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n", base::ifelse(base::is.null(warn), "", base::paste0("IN ADDITION\nWARNING", base::ifelse(warn.count > 1, "S", ""), ":\n\n", warn))), call. = FALSE)
     }
     # data.frame(POS_IN_CODE = col1, FUN = col2, FUN_OBS_ARGS = col3, base::as.vector(base::unlist(arg_string_for_col5)))
@@ -266,10 +258,14 @@ all_args_here <- function(
                 # end check if the function exists
                 # recovering default args of the function
                 if(base::is.primitive(base::get(col2[i2]))){
-                    if(base::all(base::typeof(base::get(col2[i2])) == "special", na.rm = TRUE) & base::length(base::as.list(base::formals(base::args(name = col2[i2])))) == 0){
-                        arg_full <- NULL
+                    if(base::all(base::typeof(base::get(col2[i2])) %in% base::c("special", "symbol"), na.rm = TRUE)){
+                        if(base::length(base::as.list(base::formals(base::args(name = col2[i2])))) == 0){
+                            arg_full <- NULL
+                        }else{
+                            arg_full <- base::as.list(base::formals(base::args(name = col2[i2]))) # convert pairlist into list
+                        }
                     }else{
-                        arg_full <- base::as.list(base::formals(base::args(name = col2[i2]))) # convert pairlist into list
+                        arg_full <- base::as.list(base::formals(base::args(name = col2[i2])))
                     }
                 }else{
                     arg_full <- base::as.list(base::formals(fun = col2[i2])) # all the argument of the function in col2[i2] with default values # convert pairlist into list
@@ -295,7 +291,7 @@ all_args_here <- function(
                     # arguments: replacement of all the commas inside () of subfunctions
                     if(length(middle_bracket_open_in_col3[[i2]]) > 0){
                         if(length(middle_bracket_open_in_col3[[i2]]) != length(middle_bracket_close_in_col3[[i2]])){
-                            tempo.cat <- base::paste0("INTERNAL ERROR 6 IN ", function.name, " OF THE ", package.name, " PACKAGE\nmiddle_bracket_open_in_col3 AND middle_bracket_close_in_col3 MUST HAVE THE SAME LENGTH IN LOOP ", i2, "\n\nmiddle_bracket_open_in_col3 (", length(middle_bracket_open_in_col3), "):\n", base::paste(middle_bracket_open_in_col3, collapse = " "), "\n\nmiddle_bracket_close_in_col3 (", length(middle_bracket_close_in_col3), "):\n", base::paste(middle_bracket_close_in_col3, collapse = " "))
+                            tempo.cat <- base::paste0("INTERNAL ERROR 4 IN ", function.name, " OF THE ", package.name, " PACKAGE\nmiddle_bracket_open_in_col3 AND middle_bracket_close_in_col3 MUST HAVE THE SAME LENGTH IN LOOP ", i2, "\n\nmiddle_bracket_open_in_col3 (", length(middle_bracket_open_in_col3), "):\n", base::paste(middle_bracket_open_in_col3, collapse = " "), "\n\nmiddle_bracket_close_in_col3 (", length(middle_bracket_close_in_col3), "):\n", base::paste(middle_bracket_close_in_col3, collapse = " "), "\n\ni2:\n", i2)
                             base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n", base::ifelse(base::is.null(warn), "", base::paste0("IN ADDITION\nWARNING", base::ifelse(warn.count > 1, "S", ""), ":\n\n", warn))), call. = FALSE)
                         }
                         for(i6 in 1:length(middle_bracket_open_in_col3[[i2]])){
@@ -319,7 +315,7 @@ all_args_here <- function(
                         # resseting the pos of the removed commas to fit obs_args
                         pos_rep2 <- pos_rep2 - base::nchar(col2[i2]) - 1 # -1 for the opening (
                         if(base::any(pos_rep2 <= 0, na.rm = TRUE)){
-                            tempo.cat <- base::paste0("INTERNAL ERROR 6 IN ", function.name, " OF THE ", package.name, " PACKAGE\nPOSITIONS OF REMOVED COMMAS CANOT  OR LESS\n\npos_rep2 (", length(pos_rep2), "):\n", base::paste(pos_rep2, collapse = " "), "\n\nARGUMENT STRING obs_args:\n", base::paste(obs_args, collapse = " "))
+                            tempo.cat <- base::paste0("INTERNAL ERROR 5 IN ", function.name, " OF THE ", package.name, " PACKAGE\nPOSITIONS OF REMOVED COMMAS CANOT  OR LESS\n\npos_rep2 (", length(pos_rep2), "):\n", base::paste(pos_rep2, collapse = " "), "\n\nARGUMENT STRING obs_args:\n", base::paste(obs_args, collapse = " "), "\n\ni2:\n", i2)
                             base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n", base::ifelse(base::is.null(warn), "", base::paste0("IN ADDITION\nWARNING", base::ifelse(warn.count > 1, "S", ""), ":\n\n", warn))), call. = FALSE)
                         }
                         # end resseting the pos of the removed commas to fit obs_args
@@ -337,7 +333,7 @@ all_args_here <- function(
                     three_dots_log <- arg_full_names == "..."
                     # checking 
                     if(base::length(tempo_split) > base::length(arg_full_names) & ! base::any(three_dots_log, na.rm = TRUE)){
-                        tempo.cat <- base::paste0("INTERNAL ERROR 6 IN ", function.name, " OF THE ", package.name, " PACKAGE\nLENGTH OF tempo_split MUST LOWER OR EQUAL TO LENGTH OF arg_full_names IF ... IS NOT AN ARGUMENT OF THE FUNCTION\n\nFUNCTION: ", col2[i2], "\n\ntempo_split (", length(tempo_split), "):\n", base::paste(tempo_split, collapse = " "), "\n\narg_full_names (", length(arg_full_names), "):\n", base::paste(arg_full_names, collapse = " "))
+                        tempo.cat <- base::paste0("INTERNAL ERROR 6 IN ", function.name, " OF THE ", package.name, " PACKAGE\nLENGTH OF tempo_split MUST LOWER OR EQUAL TO LENGTH OF arg_full_names IF ... IS NOT AN ARGUMENT OF THE FUNCTION\n\nFUNCTION: ", col2[i2], "\n\ntempo_split (", length(tempo_split), "):\n", base::paste(tempo_split, collapse = " "), "\n\narg_full_names (", length(arg_full_names), "):\n", base::paste(arg_full_names, collapse = " "), "\n\ni2:\n", i2)
                         base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n", base::ifelse(base::is.null(warn), "", base::paste0("IN ADDITION\nWARNING", base::ifelse(warn.count > 1, "S", ""), ":\n\n", warn))), call. = FALSE)
                     }
                     # end checking
@@ -352,11 +348,7 @@ all_args_here <- function(
                     )
                     col6 <- base::c(col6, tempo_out$col6)
                     col7 <- base::c(col7, tempo_out$col7)
-                    if(base::any(inactivated %in% col2[i2], na.rm = TRUE)){
-                        col8 <- base::c(col8, "INACTIVATED")
-                    }else{
-                        col8 <- base::c(col8, tempo_out$col8)
-                    }
+                    col8 <- base::c(col8, tempo_out$col8)
                     # end working on each observed arg
                 }
             }else{

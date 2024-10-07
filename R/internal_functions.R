@@ -963,6 +963,11 @@
 #' @title .all_args_here_fill
 #' @description
 #' Get the $MISSING_ARG_NAMES, $MISSING_ARGS and $NEW of all_args_here()
+#' @param arg_full list of all arguments of the function with default value
+#' @param arg_full_names vector of strings of the names of the arguments of the function
+#' @param tempo_split vector of strings of the observed argument writting of the function.
+#' @param three_dots_log vector of logical. Is ... present among arg_full_names  
+#' @param col2_i2 name of the checked function
 #' @param function.name function name.
 #' @param package.name package name.
 #' @returns
