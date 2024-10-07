@@ -244,7 +244,7 @@ all_args_here <- function(
             if(col3[i2] != reserved_word){
                 # check if the function exists
                 if(col4[i2] <= 3){
-                    tempo.cat <- base::paste0("ERROR IN ", function.name, " OF THE ", package.name, " PACKAGE\nCANNOT GET THE ARGUMENTS OF A FUNCTION THAT IS NOT ASSOCIATED TO ITS PACKAGE IN LINE ", col1[i2], ":\n\n", base::paste(paste0(substr(x = code_for_col[i2], start = 1, stop = col4[i2] - 1), col3[i2]), collapse = "\n"), "\n\nPLEASE, RUN saferDev::colons_check(", arg.user.setting$x, ") FIRST,\nADD THE MISSING <PACKAGE>::<FUNCTION> (OR <PACKAGE>:::<FUNCTION> FOR FUNCTION STARTING BY A DOT)\nAND RERUN saferDev::all_args_here(", arg.user.setting$x, ")")
+                    tempo.cat <- base::paste0("ERROR IN ", function.name, " OF THE ", package.name, " PACKAGE\nCANNOT GET THE ARGUMENTS OF A FUNCTION THAT IS NOT ASSOCIATED TO ITS PACKAGE IN LINE ", col1[i2], ":\n\n", base::paste(paste0(substr(x = code_for_col[i2], start = 1, stop = col4[i2] - 1), col3[i2]), collapse = "\n"), "\n\n1) PLEASE, RUN saferDev::colons_check(", arg.user.setting$x, ")\n2) ADD THE MISSING <PACKAGE>::<FUNCTION> (OR <PACKAGE>:::<FUNCTION> FOR FUNCTION STARTING BY A DOT)\n3) RERUN saferDev::all_args_here(", arg.user.setting$x, ")")
                     base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n", base::ifelse(base::is.null(warn), "", base::paste0("IN ADDITION\nWARNING", base::ifelse(warn.count > 1, "S", ""), ":\n\n", warn))), call. = FALSE)
                 }
                 tempo_string <- base::substr(x = code_for_col[i2], start = col4[i2] - 2, stop = col4[i2] - 1)
@@ -321,8 +321,10 @@ all_args_here <- function(
                         # end resseting the pos of the removed commas to fit obs_args
                         for(i6 in 1:base::length(tempo_split)){
                             tempo_log <- pos_rep2 >= 1 & pos_rep2 <= nchar(tempo_split[i6])
-                            if(base::any(tempo_log, na.rm = TRUE)){
-                                substring(text = tempo_split[i6], first = pos_rep2[tempo_log], last = pos_rep2[tempo_log]) <- ","
+                            for(i7 in 1:base::length(x = tempo_log)){
+                                if(base::any(tempo_log[i7], na.rm = TRUE)){
+                                    substr(x = tempo_split[i6], start = pos_rep2[i7], stop = pos_rep2[i7]) <- ","
+                                }
                             }
                             pos_rep2 - nchar(tempo_split[i6]) - 1 # -1 because of the comma that separates each tempo_split
                         }
@@ -333,7 +335,7 @@ all_args_here <- function(
                     three_dots_log <- arg_full_names == "..."
                     # checking 
                     if(base::length(tempo_split) > base::length(arg_full_names) & ! base::any(three_dots_log, na.rm = TRUE)){
-                        tempo.cat <- base::paste0("INTERNAL ERROR 6 IN ", function.name, " OF THE ", package.name, " PACKAGE\nLENGTH OF tempo_split MUST LOWER OR EQUAL TO LENGTH OF arg_full_names IF ... IS NOT AN ARGUMENT OF THE FUNCTION\n\nFUNCTION: ", col2[i2], "\n\ntempo_split (", length(tempo_split), "):\n", base::paste(tempo_split, collapse = " "), "\n\narg_full_names (", length(arg_full_names), "):\n", base::paste(arg_full_names, collapse = " "), "\n\ni2:\n", i2)
+                        tempo.cat <- base::paste0("INTERNAL ERROR 6 IN ", function.name, " OF THE ", package.name, " PACKAGE\nLENGTH OF tempo_split MUST LOWER OR EQUAL TO LENGTH OF arg_full_names IF ... IS NOT AN ARGUMENT OF THE FUNCTION\n\nFUNCTION: ", col2[i2], "\n\ntempo_split (", length(tempo_split), "):\n", base::paste(tempo_split, collapse = "\n"), "\n\narg_full_names (", length(arg_full_names), "):\n", base::paste(arg_full_names, collapse = "\n"), "\n\ni2:\n", i2)
                         base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n", base::ifelse(base::is.null(warn), "", base::paste0("IN ADDITION\nWARNING", base::ifelse(warn.count > 1, "S", ""), ":\n\n", warn))), call. = FALSE)
                     }
                     # end checking
