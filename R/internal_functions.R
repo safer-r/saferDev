@@ -966,15 +966,16 @@
 #' @param arg_full list of all arguments of the function with default value
 #' @param arg_full_names vector of strings of the names of the arguments of the function
 #' @param tempo_split vector of strings of the observed argument writting of the function.
-#' @param three_dots_log vector of logical. Is ... present among arg_full_names  
+#' @param three_dots_log vector of logical. Is ... present among arg_full_names 
+#' @param i2 code line number of the checked function
 #' @param col2_i2 name of the checked function
 #' @param function.name function name.
 #' @param package.name package name.
 #' @returns
 #'  A list:
-#'  $col6: the $MISSING_ARG_NAMES.
-#'  $col7: the $MISSING_ARGS.
-#'  $col8: the $NEW.
+#'    $col6: the $MISSING_ARG_NAMES.
+#'    $col7: the $MISSING_ARGS.
+#'    $col8: the $STATUS.
 #' @author Gael Millot <gael.millot@pasteur.fr>
 #' @keywords internal
 #' @rdname internal_function
@@ -983,12 +984,13 @@
     arg_full_names, 
     tempo_split, 
     three_dots_log, 
+    i2, 
     col2_i2,
     function.name, 
     package.name
 ){
     # DEBUGGING
-    # arg_full = arg_full ; arg_full_names = arg_full_names ; tempo_split = tempo_split ; three_dots_log = three_dots_log ; col2_i2 = col2[i2] ; function.name = function.name ; package.name = package.name 
+    # arg_full = arg_full ; arg_full_names = arg_full_names ; tempo_split = tempo_split ; three_dots_log = three_dots_log ; i2 = i2 ; col2_i2 = col2[i2] ; function.name = function.name ; package.name = package.name 
     #  arg_full = list(definition = "sys.function(sys.parent())", call = "sys.call(sys.parent())", expand.dots = TRUE, envir = "parent.frame(2L)") ; arg_full_names = c("definition", "call", "expand.dots", "envir") ; tempo_split = "expand.dots = FALSE" ;  three_dots_log = c(FALSE, FALSE, FALSE, FALSE) ; col2_i2 = "match.call" ; col3_i2 = "match.call(expand.dots = FALSE)" ; function.name = "F1" ; package.name = "P1"
     #  arg_full = list(definition = sys.function(sys.parent()), call = sys.call(sys.parent()), expand.dots = TRUE, envir = parent.frame(2L)) ; arg_full_names = c("definition", "call", "expand.dots", "envir") ; tempo_split = c("sys.function(sys.parent())", "expand.dots = FALSE", "sys.call(sys.parent())") ;  three_dots_log = c(FALSE, FALSE, FALSE, FALSE) ; col2_i2 = "match.call" ; col3_i2 = "match.call(sys.function(sys.parent()), expand.dots = FALSE, sys.call(sys.parent()))" ; function.name = "F1" ; package.name = "P1"
     #  arg_full = list(... = "", collapse = " ", recycle0 = FALSE) ; arg_full_names = c("...", "collapse", "recycle0") ; tempo_split = c("AA", "collapse = \" \"", "BB", "recycle0 = FALSE") ; three_dots_log = c(TRUE, FALSE, FALSE) ; col2_i2 = "paste0" ; col3_i2 = 'paste0("AA", collapse = " ", "BB", recycle0 = FALSE)' ; function.name = "F1" ; package.name = "P1"
@@ -1022,8 +1024,35 @@
                 tempo.cat <- base::paste0("INTERNAL ERROR 1 IN .all_args_here_fill() IN ", function.name, " OF THE ", package.name, " PACKAGE\npattern3 DETECTED SEVERAL TIMES IN ARGUMENTS:\n\npattern3:\n", base::paste(pattern3, collapse = "\n"), "\n\ntempo_split:\n", base::paste(tempo_split[tempo.log], collapse = "\n"))
                 base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE)
             }
+
         }
         # end scan for args names present in tempo_split
+        # checking if arg name are not fully written
+        tempo_col8 <- NULL
+        if( ! base::is.null(missing_args_names)){
+            for(i3 in 1:base::length(tempo_split)){
+                pattern4 <- "^\\s*([a-zA-Z]|\\.[a-zA-Z._])[a-zA-Z0-9._]*[\\s\\r\\n]*=" # looking for the arg name
+                if(base::grepl(x = tempo_split[i3], pattern = pattern4, perl = TRUE)){
+                    tempo_arg_name <- base::strsplit(tempo_split[i3], split = "[\\s\\r\\n]*=", perl = TRUE)[[1]][1]
+                    tempo_arg_name <- base::gsub(pattern = "^[\\s]*", replacement = "", x = tempo_arg_name) # removing leading ; and space, 
+                    tempo.log <- base::grepl(x = missing_args_names, pattern = base::paste0("^", tempo_arg_name), perl = FALSE)
+                    if(base::sum(tempo.log > 1, na.rm = TRUE)){
+                        tempo.cat <- base::paste0("INTERNAL ERROR 2 IN .all_args_here_fill() IN ", function.name, " OF THE ", package.name, " PACKAGE\nIN LINE ", i2, " IN THE ", col2_i2, " FUNCTION\ntempo_arg_name DETECTS SEVERAL TIMES MISSING ARGUMENT NAMES:\n\nntempo_arg_name:\n", tempo_arg_name, "\n\nmissing_args_names:\n", base::paste(missing_args_names, collapse = "\n"), "\n\nmissing_args_names[tempo.log]:\n", base::paste(missing_args_names[tempo.log], collapse = "\n"))
+                        base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n", base::ifelse(base::is.null(warn), "", base::paste0("IN ADDITION\nWARNING", base::ifelse(warn.count > 1, "S", ""), ":\n\n", warn))), call. = FALSE)
+                    }
+                    if(base::sum(tempo.log == 1, na.rm = TRUE)){
+                        tempo_col8 <- base::c(
+                            tempo_col8, 
+                            base::paste0(
+                                base::ifelse(test = base::is.null(tempo_col8), yes = "", no = " ; "), 
+                                paste0(tempo_arg_name, " ARG NAME SHOULD BE WRITTEN ", missing_args_names[tempo.log])
+                            )
+                        )
+                    }
+                }
+            }
+        }
+        # end checking if arg name are not fully written
         # when ... is present or not
             # Of note, when ... is present, argument values must be preceeded by their arg name. This means that values without arg names of the scanned function are ...
             # Otherwise, the first value without names must take the first arg name not already used, the second value without names must take the second, etc., then finish by the none used arg names with their default values
@@ -1084,6 +1113,9 @@
             col8 <- "GOOD"
         }else{
             col8 <- tempo
+        }
+        if( ! base::is.null(tempo_col8)){
+            col8 <- tempo_col8
         }
     }
     return(base::list(col6 = col6, col7 = col7, col8 = col8))

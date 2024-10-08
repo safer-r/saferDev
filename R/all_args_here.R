@@ -9,14 +9,16 @@
 #' A data frame indicating the missing arguments or a message saying that everything seems fine.
 #' If export argument is TRUE, then the data frame is exported as res.tsv instead of being returned.
 #' Data frame: 
-#' $LINE_NB: the line number in the function code (starting at the "<- function" line, i.e., without counting the #' header lines)
-#' $FUN_NAME: the function name.
-#' $FUN_ARGS: the written arguments of $FUN_NAME. "NOT_CONSIDERED" means that the function is between quotes or after $
-#' $FUN_POS: the position of the first character of the function name in the $LINE_NB line of the code.
-#' $DEF_ARGS: the defaults arguments of $FUN_NAME. "NO_ARGS" means that the function has no arguments
-#' $MISSING_ARG_NAMES: the missing argument names in $FUN_ARGS.
-#' $MISSING_ARGS: the missing arguments with their values in $FUN_ARGS.
-#' $STATUS: either "GOOD", meaning that all the arguments are already written, or a new proposal of arguments writting, or nothing.
+#'  $LINE_NB: the line number in the function code (starting at the "<- function" line, i.e., without counting the #' header lines)
+#'  $FUN_NAME: the function name.
+#'  $FUN_ARGS: the written arguments of $FUN_NAME. "NOT_CONSIDERED" means that the function is between quotes or after $
+#'  $FUN_POS: the position of the first character of the function name in the $LINE_NB line of the code.
+#'  $DEF_ARGS: the defaults arguments of $FUN_NAME. "NO_ARGS" means that the function has no arguments
+#'  $MISSING_ARG_NAMES: the missing argument names in $FUN_ARGS.
+#'  $MISSING_ARGS: the missing arguments with their values in $FUN_ARGS.
+#'  $STATUS: either "GOOD", meaning that all the arguments are already written, or a new proposal of arguments writting, or indicates if some arguments are not fully written (abbreviation is discouraged), or nothing.
+#' 
+#' A message "EVERYTHING SEEMS CLEAN" if the $STATUS column is only made of "" and "GOOD".
 #' @details
 #' More precisely, all_args_here() verifies that all the strings before an opening bracket "(" are written with all their arguments. Thus, it cannot check function names written without brackets, like in the FUN argument of some functions, e.g., sapply(1:3, FUN = as.character).
 #' 
@@ -344,6 +346,7 @@ all_args_here <- function(
                         arg_full_names = arg_full_names, 
                         tempo_split = tempo_split, 
                         three_dots_log = three_dots_log, 
+                        i2 = i2, 
                         col2_i2 = col2[i2],
                         function.name = function.name, 
                         package.name = package.name 
@@ -361,7 +364,16 @@ all_args_here <- function(
             }
             # if(i2 != length(col8)){stop(paste0("caca ", i2))}
         }
-        output <- base::data.frame(LINE_NB = col1, FUN_NAME = col2, FUN_ARGS = col3, FUN_POS = col4, DEF_ARGS = col5, MISSING_ARG_NAMES = col6, MISSING_ARGS = col7, NEW = col8)
+    # end two new columns for arg proposal
+    # end main code
+    # output
+    # warning output
+    if( ! base::is.null(warn)){
+        base::on.exit(base::warning(base::paste0("FROM ", function.name, ":\n\n", warn), call. = FALSE))
+    }
+    base::on.exit(expr = base::options(warning.length = ini.warning.length), add = TRUE)
+    # end warning output
+        output <- base::data.frame(LINE_NB = col1, FUN_NAME = col2, FUN_ARGS = col3, FUN_POS = col4, DEF_ARGS = col5, MISSING_ARG_NAMES = col6, MISSING_ARGS = col7, STATUS = col8)
         if(export == TRUE){
             if(grepl(x = path_out, pattern = "/$")){
                 path_out <- base::sub(pattern = "/$", replacement = "", x = path_out, ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE)
@@ -373,16 +385,13 @@ all_args_here <- function(
             base::return(output)
         }
     }
-
-    # end two new columns for arg proposal
-    # end main code
-    # output
-    # warning output
-    if( ! base::is.null(warn)){
-        base::on.exit(base::warning(base::paste0("FROM ", function.name, ":\n\n", warn), call. = FALSE))
+    if(base::all(col8 %in%base::c("", "GOOD"))){
+        tempo.cat <- "EVERYTHING SEEMS CLEAN"
+        if(export == TRUE){
+            tempo.cat <- base::paste0("RESULT EXPORTED IN\n", paste0(path_out, "/res.tsv"), "\nBUT ", tempo.cat)
+        }
+        base::cat(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"))
     }
-    base::on.exit(expr = base::options(warning.length = ini.warning.length), add = TRUE)
-    # end warning output
     # end output
 }
 
