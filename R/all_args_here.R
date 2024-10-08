@@ -367,9 +367,17 @@ all_args_here <- function(
     # end two new columns for arg proposal
     # end main code
     # output
+    if(base::all(col8 %in%base::c("", "GOOD"))){
+        tempo.cat <- base::paste0("INSIDE ", base::as.character(out$arg.user.setting$x), "(), EVERYTHING SEEMS CLEAN")
+        if(export == TRUE){
+            tempo.cat <- base::paste0("RESULT EXPORTED IN\n", paste0(path_out, "/res.tsv"), "\nBUT ", tempo.cat)
+        }
+        tempo.cat <- base::paste0("AFTER RUNNING ", function.name, " OF THE ", package.name, " PACKAGE:\n", tempo.cat)
+        base::on.exit(base::cat(base::paste0("\n\n", tempo.cat, "\n\n")))
+    }
     # warning output
     if( ! base::is.null(warn)){
-        base::on.exit(base::warning(base::paste0("FROM ", function.name, ":\n\n", warn), call. = FALSE))
+        base::on.exit(base::warning(base::paste0("FROM ", function.name, " OF THE ", package.name, " PACKAGE:\n\n", warn), call. = FALSE))
     }
     base::on.exit(expr = base::options(warning.length = ini.warning.length), add = TRUE)
     # end warning output
@@ -384,13 +392,6 @@ all_args_here <- function(
         }else{
             base::return(output)
         }
-    }
-    if(base::all(col8 %in%base::c("", "GOOD"))){
-        tempo.cat <- "EVERYTHING SEEMS CLEAN"
-        if(export == TRUE){
-            tempo.cat <- base::paste0("RESULT EXPORTED IN\n", paste0(path_out, "/res.tsv"), "\nBUT ", tempo.cat)
-        }
-        base::cat(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"))
     }
     # end output
 }

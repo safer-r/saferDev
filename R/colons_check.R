@@ -149,12 +149,12 @@ colons_check <- function(
         output.cat.b <- NULL
     }
     # end analyse of :: before basic functions in x
-    if( ( ! base::any(tempo.log)) & ! base::any(tempo.log.b)){
-        base::cat("\n\nEVERYTHING SEEMS CLEAN\n\n")
+    if(( ! base::any(tempo.log)) & ! base::any(tempo.log.b)){
+        tempo.cat <- base::paste0("\n\nAFTER RUNNING ", function.name, " OF THE ", package.name, " PACKAGE:\nINSIDE ", base::as.character(out$arg.user.setting$x), "(), EVERYTHING SEEMS CLEAN\n\n")
     }else{
-        tempo.cat <- base::paste0(base::ifelse(base::is.null(output.cat), base::paste0("INSIDE ", out$arg.user.setting$x, "(), EVERYTHING SEEMS CLEAN FOR R BASIC FUNCTIONS\n\n"), base::paste0(output.cat, base::ifelse(base::is.null(output.cat.b), "", "\n\n"))), output.cat.b)
-        base::cat(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"))
+        tempo.cat <- base::paste0(base::ifelse(base::is.null(output.cat), base::paste0("AFTER RUNNING ", function.name, " OF THE ", package.name, " PACKAGE\nINSIDE ", out$arg.user.setting$x, "(), EVERYTHING SEEMS CLEAN FOR R BASIC FUNCTIONS\n\n"), base::paste0(output.cat, base::ifelse(base::is.null(output.cat.b), "", "\n\n"))), output.cat.b)
     }
+    base::cat(base::paste0("\n\n", tempo.cat, "\n\n"))
     # end main code
     # output
     # warning output
