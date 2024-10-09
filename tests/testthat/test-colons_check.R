@@ -1,4 +1,4 @@
-test_that("colons_check()", {
+testthat::test_that("colons_check()", {
     # Example datasets
     vec1 <- 3 
     vec2 <- 4
@@ -22,9 +22,9 @@ test_that("colons_check()", {
 
   # Test cases
   # Simple examples
-    expect_no_error(colons_check(x = fun1))
-    expect_no_error(colons_check(x = fun2))
-    expect_no_error(colons_check(x = fun2, safer_check = TRUE))
+    testthat::expect_no_error(colons_check(x = fun1))
+    testthat::expect_no_error(colons_check(x = fun2))
+    testthat::expect_no_error(colons_check(x = fun2, safer_check = TRUE))
 
 
   # sophisticated example
@@ -54,6 +54,6 @@ test_that("colons_check()", {
         "================", 
         ""
     )
-    expect_equal(result1, expected1)
+    testthat::expect_equal(result1, expected1)
 
 })

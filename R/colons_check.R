@@ -54,13 +54,13 @@ colons_check <- function(
     # package name
     package.name <- "saferDev"
     # end package name
-    #### function name
-    tempo_args <- base::as.list(x = base::match.call(definition = base::sys.function(which = base::sys.parent()), call = base::sys.call(which = base::sys.parent()), expand.dots = FALSE, envir = base::parent.frame(2L)))
+ #### function name
+    tempo_args <- base::as.list(x = base::match.call(definition = base::sys.function(which = base::sys.parent(n = 0)), call = base::sys.call(which = base::sys.parent(n = 0)), expand.dots = FALSE, envir = base::parent.frame(n = 2L)))
     function.name <- base::paste0(tempo_args[[1]], "()", collapse = NULL, recycle0 = FALSE) # function name with "()" paste, which split into a vector of three: c("::()", "package ()", "function ()") if "package::function()" is used.
     if(function.name[1] == "::()" | function.name[1] == ":::()"){
         function.name <- function.name[3]
     }
-    arg.names <- base::names(x = base::formals(fun = base::sys.function(which = base::sys.parent(n = 2)))) # names of all the arguments
+    arg.names <- base::names(x = base::formals(fun = base::sys.function(which = base::sys.parent(n = 2)), envir = base::parent.frame(n = 1))) # names of all the arguments
     arg.user.setting <- tempo_args[-1] # list of the argument settings (excluding default values not provided by the user)
     #### end function name
     # main code
