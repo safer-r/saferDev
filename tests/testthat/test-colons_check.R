@@ -33,7 +33,6 @@ testthat::test_that("colons_check()", {
     expected1 <- c(
         "", 
         "", 
-        "", 
         "INSIDE test(), SOME :: OR ::: ARE MISSING AT BASIC FUNCTION POSITIONS:", 
         "", 
         "LINE\tFUN\t\tSTRING_BEFORE", 
@@ -48,8 +47,7 @@ testthat::test_that("colons_check()", {
         "", 
         "LINE\tFUN\t\tSTRING_BEFORE", 
         "13\troc1\t\tbase::length(", 
-        "17\troc4\t\ttempo.cat <- base::paste0(\"IAGE\\nLENGTHS OF roc00() (\", base::ks.test(" , 
-        "", 
+        "17\troc4\t\ttempo.cat <- base::paste0(\"IAGE\\nLENGTHS OF roc00() (\", base::ks.test(" ,  
         ""
     )
     testthat::expect_equal(result1, expected1)
