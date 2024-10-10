@@ -2,9 +2,9 @@
 #' @description
 #' Check if required functions are present in installed packages. This controls modifications in of function names package versions.
 #' @param fun Character vector of the names of the required functions, preceded by the name of the package they belong to and a double or triple colon. Example: c("ggplot2::geom_point", "grid::gpar"). Warning: do not write "()" at the end of the function
-#' @param lib.path Character vector specifying the absolute pathways of the directories containing the listed packages in the fun argument, if not in the default directories. Ignored if NULL.
+#' @param lib_path Character vector specifying the absolute pathways of the directories containing the listed packages in the fun argument, if not in the default directories. Ignored if NULL.
 #' @param safer_check Single logical value. Perform some "safer" checks (see https://github.com/safer-r)? If TRUE, checkings are performed before main code running: 1) R classical operators (like "<-") not overwritten by another package because of the R scope and 2) required functions and related packages effectively present in local R lybraries. Must be set to FALSE if this fonction is used inside another "safer" function to avoid pointless multiple checkings.
-#' @returns  An error message if at least one of the checked packages is missing in lib.path, or if at least one of the checked functions is missing in the required package, nothing otherwise.
+#' @returns  An error message if at least one of the checked packages is missing in lib_path, or if at least one of the checked functions is missing in the required package, nothing otherwise.
 #' @seealso \code{\link{exists}} et \code{\link[methods]{findFunction}}
 #' @author Gael Millot <gael.millot@pasteur.fr>
 #' @author Yushi Han <yushi.han2000@gmail.com>
@@ -18,12 +18,12 @@
 
 is_function_here <- function(
         fun, 
-        lib.path = NULL,
+        lib_path = NULL,
         safer_check = TRUE
 ){
     # DEBUGGING
-    # fun = "ggplot2::geom_point" ; lib.path = "C:/Program Files/R/R-4.3.1/library" ; safer_check = TRUE
-    # fun = "saferDev:::.colons_check_message" ; lib.path = "C:/Program Files/R/R-4.3.1/library" ; safer_check = TRUE
+    # fun = "ggplot2::geom_point" ; lib_path = "C:/Program Files/R/R-4.3.1/library" ; safer_check = TRUE
+    # fun = "saferDev:::.colons_check_message" ; lib_path = "C:/Program Files/R/R-4.3.1/library" ; safer_check = TRUE
     # package name
     package.name <- "saferDev"
     # end package name
@@ -43,22 +43,22 @@ is_function_here <- function(
         )
     }
     # end critical operator checking
-    # check of lib.path
-    if( ! base::is.null(lib.path)){
-        if( ! base::all(base::typeof(lib.path) == "character")){ # no na.rm = TRUE with typeof
-            tempo.cat <- base::paste0("ERROR IN ", function.name, " OF THE ", package.name, " PACKAGE\nDIRECTORY PATH INDICATED IN THE lib.path ARGUMENT MUST BE A VECTOR OF CHARACTERS:\n", base::paste(lib.path, collapse = "\n"))
+    # check of lib_path
+    if( ! base::is.null(lib_path)){
+        if( ! base::all(base::typeof(lib_path) == "character")){ # no na.rm = TRUE with typeof
+            tempo.cat <- base::paste0("ERROR IN ", function.name, " OF THE ", package.name, " PACKAGE\nDIRECTORY PATH INDICATED IN THE lib_path ARGUMENT MUST BE A VECTOR OF CHARACTERS:\n", base::paste(lib_path, collapse = "\n"))
             base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
-        }else if( ! base::all(base::dir.exists(lib.path), na.rm = TRUE)){ # separation to avoid the problem of tempo$problem == FALSE and lib.path == NA
-            tempo.cat <- base::paste0("ERROR IN ", function.name, " OF THE ", package.name, " PACKAGE\nDIRECTORY PATH INDICATED IN THE lib.path ARGUMENT DOES NOT EXISTS:\n", base::paste(lib.path, collapse = "\n"))
+        }else if( ! base::all(base::dir.exists(lib_path), na.rm = TRUE)){ # separation to avoid the problem of tempo$problem == FALSE and lib_path == NA
+            tempo.cat <- base::paste0("ERROR IN ", function.name, " OF THE ", package.name, " PACKAGE\nDIRECTORY PATH INDICATED IN THE lib_path ARGUMENT DOES NOT EXISTS:\n", base::paste(lib_path, collapse = "\n"))
             base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
         }else{
-            base:::.libPaths(new = base::sub(x = lib.path, pattern = "/$|\\\\$", replacement = "")) # base:::.libPaths(new = ) add path to default path. BEWARE: base:::.libPaths() does not support / at the end of a submitted path. Thus check and replace last / or \\ in path
-            lib.path <- base:::.libPaths()
+            base:::.libPaths(new = base::sub(x = lib_path, pattern = "/$|\\\\$", replacement = "")) # base:::.libPaths(new = ) add path to default path. BEWARE: base:::.libPaths() does not support / at the end of a submitted path. Thus check and replace last / or \\ in path
+            lib_path <- base:::.libPaths()
         }
     }else{
-        lib.path <- base:::.libPaths() # base:::.libPaths(new = lib.path) # or base:::.libPaths(new = base::c(base:::.libPaths(), lib.path))
+        lib_path <- base:::.libPaths() # base:::.libPaths(new = lib_path) # or base:::.libPaths(new = base::c(base:::.libPaths(), lib_path))
     }
-    # end check of lib.path
+    # end check of lib_path
     # check of the required function from the required packages
     # end check of the required function from the required packages
     # end package checking
@@ -80,7 +80,7 @@ is_function_here <- function(
     checked.arg.names <- NULL # for function debbuging: used by r_debugging_tools
     ee <- base::expression(argum.check <- base::c(argum.check, tempo$problem) , text.check <- base::c(text.check, tempo$text) , checked.arg.names <- base::c(checked.arg.names, tempo$object.name))
     tempo <- saferDev::arg_check(data = fun, class = "vector", mode = "character", fun.name = function.name, safer_check = FALSE) ; base::eval(ee)
-    # lib.path already checked above
+    # lib_path already checked above
     if( ! base::is.null(argum.check)){
         if(base::any(argum.check, na.rm = TRUE) == TRUE){
             base::stop(base::paste0("\n\n================\n\n", base::paste(text.check[argum.check], collapse = "\n"), "\n\n================\n\n"), call. = FALSE) #
@@ -108,7 +108,7 @@ is_function_here <- function(
     # management of NULL arguments
     tempo.arg <-base::c(
         "fun",
-        # "lib.path", # inactivated because can be null
+        # "lib_path", # inactivated because can be null
         "safer_check"
     )
     tempo.log <- base::sapply(base::lapply(tempo.arg, FUN = base::get, env = base::sys.nframe(), inherit = FALSE), FUN = base::is.null)
@@ -141,7 +141,7 @@ is_function_here <- function(
     }
     pkg.fun.name.list <- base::strsplit(x = fun, split = ":{2,3}") # package in 1 and function in 2
     pkg.name <- base::sapply(X = pkg.fun.name.list, FUN = function(x){x[1]})
-    pkg.log <- pkg.name %in% base::rownames(utils::installed.packages(lib.loc = lib.path))
+    pkg.log <- pkg.name %in% base::rownames(utils::installed.packages(lib.loc = lib_path))
     if( ! base::all(pkg.log)){
         tempo <- pkg.name[ ! pkg.log]
         tempo.cat <- base::paste0(
@@ -153,9 +153,9 @@ is_function_here <- function(
             "\nREQUIRED PACKAGE", 
             base::ifelse(base::length(tempo) == 1L, base::paste0(":\n", tempo), base::paste0("S:\n", base::paste(tempo, collapse = "\n"))), 
             "MUST BE INSTALLED IN", 
-            base::ifelse(base::length(lib.path) == 1L, "", " ONE OF THESE FOLDERS"), 
+            base::ifelse(base::length(lib_path) == 1L, "", " ONE OF THESE FOLDERS"), 
             ":\n", 
-            base::paste(lib.path, collapse = "\n")
+            base::paste(lib_path, collapse = "\n")
         )
         base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
     }
@@ -173,9 +173,9 @@ is_function_here <- function(
             "MISSING IN THE INSTALLED PACKAGE", 
             base::ifelse(base::length(tempo) == 1L, base::paste0(":\n", tempo), base::paste0("S:\n", base::paste(tempo, collapse = "\n"))),
             "\n\nIN", 
-            base::ifelse(base::length(lib.path) == 1L, "", " ONE OF THESE FOLDERS"), 
+            base::ifelse(base::length(lib_path) == 1L, "", " ONE OF THESE FOLDERS"), 
             ":\n", 
-            base::paste(lib.path, collapse = "\n")
+            base::paste(lib_path, collapse = "\n")
         )
         base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
     }

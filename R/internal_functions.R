@@ -4,24 +4,24 @@
 #' Simplified version of saferDev::is_function_here(), used as internal function for the other functions of the package.
 #' @param fun Character vector of the names of the required functions, preceded by the name of the package they belong to and a double or triple colon. Example: c("ggplot2::geom_point", "grid::gpar").
 #' @param lib.path Character vector specifying the absolute pathways of the directories containing the listed packages in the fun argument, if not in the default directories. If NULL, the function checks only in the base::.libPaths() default R library folders.
-#' @param external.function.name Name of the function using the .pack_and_function_check() function.
-#' @param external.package.name Name of the package of the function using the .pack_and_function_check() function.
+#' @param external_function_name Name of the function using the .pack_and_function_check() function.
+#' @param external_package_name Name of the package of the function using the .pack_and_function_check() function.
 #' @returns An error message if at least one of the checked packages is missing in lib.path, or if at least one of the checked functions is missing in the required package, nothing otherwise.
 #' @author Gael Millot <gael.millot@pasteur.fr>
 #' @author Yushi Han <yushi.han2000@gmail.com>
 #' @author Haiding Wang <wanghaiding442@gmail.com>
 #' @examples
 #' \dontrun{ # Example that shouldn't be run because this is an internal function
-#' .pack_and_function_check(fun = "ggplot2::notgood", lib.path = base::.libPaths(), external.function.name = "F1", external.package.name = "P1") # this example returns an error
-#' .pack_and_function_check(fun = c("ggplot2::geom_point", "grid::gpar"), lib.path = base::.libPaths(), external.function.name = "F1", external.package.name = "P1")
+#' .pack_and_function_check(fun = "ggplot2::notgood", lib.path = base::.libPaths(), external_function_name = "F1", external_package_name = "P1") # this example returns an error
+#' .pack_and_function_check(fun = c("ggplot2::geom_point", "grid::gpar"), lib.path = base::.libPaths(), external_function_name = "F1", external_package_name = "P1")
 #' }
 #' @keywords internal
 #' @rdname internal_function
 .pack_and_function_check <- function(
     fun, 
     lib.path,
-    external.function.name,
-    external.package.name
+    external_function_name,
+    external_package_name
 ){
     # AIM
     # Check for the presence of required package::functions in the system  
@@ -30,13 +30,13 @@
     # ARGUMENTS
     # fun: vector of string of the package::function names to check
     # lib.path: path of the library folder in the system
-    # external.function.name: function name
-    # external.package.name: package name
+    # external_function_name: function name
+    # external_package_name: package name
     # RETURN
     # An error message or nothing 
     # DEBUGGING
-    # fun = "ggplot2::geom_point" ; lib.path = "C:/Program Files/R/R-4.3.1/library" ; external.function.name = "fun1" ; external.package.name = "1"
-    # fun = "saferDev:::.colons_check_message" ; ; lib.path = "C:/Program Files/R/R-4.3.1/library" ; external.function.name = "fun1" ; external.package.name = "1"
+    # fun = "ggplot2::geom_point" ; lib.path = "C:/Program Files/R/R-4.3.1/library" ; external_function_name = "fun1" ; external_package_name = "1"
+    # fun = "saferDev:::.colons_check_message" ; ; lib.path = "C:/Program Files/R/R-4.3.1/library" ; external_function_name = "fun1" ; external_package_name = "1"
     # check of lib.path
     # full check already done in the main function
     if(base::is.null(lib.path)){
@@ -49,7 +49,7 @@
     # (:{2}[a-zA-Z]|:{3}\\.[a-zA-Z._]) means either double colon and any single alphabet character or triple colon followed by a dot and any single alphabet character or dot (because .. is ok for function name) or underscore (because ._ is ok for function name). Starting "dot and num" or underscore is not authorized for function name
     # [a-zA-Z0-9._]* means any several of these characters or nothing
     if( ! base::all(tempo.log)){
-        tempo.cat <- base::paste0("INTERNAL ERROR IN THE CODE OF THE ", external.function.name, " OF THE ", external.package.name, " PACKAGE\nTHE STRING IN fun ARGUMENT MUST CONTAIN \"::\" OR \":::.\":\n", base::paste(fun[ ! tempo.log], collapse = "\n"))
+        tempo.cat <- base::paste0("INTERNAL ERROR IN THE CODE OF THE ", external_function_name, " OF THE ", external_package_name, " PACKAGE\nTHE STRING IN fun ARGUMENT MUST CONTAIN \"::\" OR \":::.\":\n", base::paste(fun[ ! tempo.log], collapse = "\n"))
         base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
     }
     pkg.fun.name.list <- base::strsplit(x = fun, split = ":{2,3}") # package in 1 and function in 2
@@ -59,8 +59,8 @@
         tempo <- pkg.name[ ! pkg.log]
         tempo.cat <- base::paste0(
             "ERROR IN ", 
-            external.function.name, 
-            " OF THE ", external.package.name, " PACKAGE\nREQUIRED PACKAGE", 
+            external_function_name, 
+            " OF THE ", external_package_name, " PACKAGE\nREQUIRED PACKAGE", 
             base::ifelse(base::length(tempo) == 1L, base::paste0(":\n", tempo), base::paste0("S:\n", base::paste(tempo, collapse = "\n"))), 
             "\nMUST BE INSTALLED IN", 
             base::ifelse(base::length(lib.path) == 1L, "", " ONE OF THESE FOLDERS"), 
@@ -74,8 +74,8 @@
         tempo <- fun[ ! fun.log]
         tempo.cat <- base::paste0(
             "ERROR IN ", 
-            external.function.name, 
-            " OF THE ", external.package.name, " PACKAGE\nREQUIRED FUNCTION",
+            external_function_name, 
+            " OF THE ", external_package_name, " PACKAGE\nREQUIRED FUNCTION",
             base::ifelse(base::length(tempo) == 1L, " IS ", "S ARE "), 
             "MISSING IN THE INSTALLED PACKAGE", 
             base::ifelse(base::length(tempo) == 1L, base::paste0(":\n", tempo), base::paste0("S:\n", base::paste(tempo, collapse = "\n"))),
@@ -94,8 +94,8 @@
 #' @description
 #' Check if critical operators of R are not present in other packages or in the global env.
 #' Others functions of the R scope can be overwritten because safer functions always use :: when using any function.
-#' @param external.function.name Name of the function using the .pack_and_function_check() function.
-#' @param external.package.name Name of the package of the function using the .pack_and_function_check() function.
+#' @param external_function_name Name of the function using the .pack_and_function_check() function.
+#' @param external_package_name Name of the package of the function using the .pack_and_function_check() function.
 #' @returns An error message if at least one of the checked operator is present in the R scope, nothing otherwise.
 #' @author Gael Millot <gael.millot@pasteur.fr>
 #' @author Yushi Han <yushi.han2000@gmail.com>
@@ -103,25 +103,25 @@
 #' @examples
 #' \dontrun{
 #' # Example that shouldn't be run because this is an internal function
-#' assign("!", 1) ; .base_op_check(external.function.name = "fun1") # commented because this example returns an error
+#' assign("!", 1) ; .base_op_check(external_function_name = "fun1") # commented because this example returns an error
 #' }
 #' @keywords internal
 #' @rdname internal_function
 .base_op_check <- function(
-    external.function.name,
-    external.package.name
+    external_function_name,
+    external_package_name
 ){
     # AIM
     # Check if basic operator names have been used in the scope of the opened environement
     # WARNING
     # arguments of the .base_op_check() function are not checked, so use carefully inside other functions
     # ARGUMENTS
-    # external.function.name: function name
-    # external.package.name: package name
+    # external_function_name: function name
+    # external_package_name: package name
     # RETURN
     # An error message or nothing 
     # DEBUGGING
-    # external.function.name = "f1" ; external.package.name = "p1"
+    # external_function_name = "f1" ; external_package_name = "p1"
     # main code
     reserved.objects <- base::c(
         "-", 
@@ -177,8 +177,8 @@
         tempo.pos <- base::sapply(X = tempo.name, FUN = function(x){base::paste(utils::find(x), collapse = " ")})
         tempo.cat <- base::paste0(
             "ERROR IN ", 
-            external.function.name, 
-            " OF THE ", external.package.name, " PACKAGE\nCRITICAL R OBJECT",
+            external_function_name, 
+            " OF THE ", external_package_name, " PACKAGE\nCRITICAL R OBJECT",
             base::ifelse(base::length(tempo.log) == 1L, " ", "S "), 
             "CANNOT BE PRESENT SOMEWHERE ELSE IN THE R SCOPE THAN IN \"package::base\":\n", 
             base::paste(base::paste(tempo.name, tempo.pos, sep = "\t"), collapse = "\n")
