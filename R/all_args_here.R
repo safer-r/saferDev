@@ -254,7 +254,7 @@ all_args_here <- function(
     #### second round of checking and data preparation
 
     ######## reserved words
-    reserved.words <- base::c("NOT_CONSIDERED")
+    reserved_words <- base::c("NOT_CONSIDERED")
     ######## end reserved words
 
     ######## new environment
@@ -319,9 +319,9 @@ all_args_here <- function(
 
     code <- out$code # vector of strings of the tested function code
     fun_1_line <- base::paste(out$code, collapse = " ") # assemble the code of the tested  function (without comments) in a single line
-    if(base::grepl(x = fun_1_line, pattern = reserved_word)){
+    if(base::grepl(x = fun_1_line, pattern = reserved_words)){
         warn.count <- warn.count + 1
-        tempo.warn <- base::paste0("(", warn.count,") THE RESERVED WORD \"", base::paste(reserved_word, collapse = " "), "\" HAS BEEN DETECTED IN THE CODE OF THE INPUT FUNCTION\nWHICH COULD HAMPER THE ACCURACY OF THE OUTPUT TABLE")
+        tempo.warn <- base::paste0("(", warn.count,") THE RESERVED WORD \"", base::paste(reserved_words, collapse = " "), "\" HAS BEEN DETECTED IN THE CODE OF THE INPUT FUNCTION\nWHICH COULD HAMPER THE ACCURACY OF THE OUTPUT TABLE")
         warn <- base::paste0(base::ifelse(base::is.null(warn), tempo.warn, base::paste0(warn, "\n\n", tempo.warn)))
     }
     # cumulative nchar of each non empty lines of code 
@@ -374,7 +374,7 @@ all_args_here <- function(
                     base::substr(x = fun_1_line_replace, start = 1, stop = tempo_pos$begin - 1) <- base::paste(base::rep(" ", tempo_pos$begin - 1), collapse = "") # trick that replaces function name by the same number of spaces. This, to avoid to take always the first paste0 for instance in the fun_1_line_replace string when several are present in fun_names
                 }
             }else{
-                arg_string_for_col3[[i1]][i2] <- reserved_word
+                arg_string_for_col3[[i1]][i2] <- reserved_words
                 arg_string[[i1]][i2] <- ""
             }
         }
@@ -415,7 +415,7 @@ all_args_here <- function(
     tempo.log <- base::as.vector(base::unlist(base::mapply(
         FUN = function(x, y){
             if(y != ""){
-                if(base::grepl(x = y, pattern = base::paste0("^", x, "[\\s\\r\\n]*\\(.*\\)$"), perl = TRUE) | base::grepl(x = y, pattern = base::paste0("^", reserved_word, "$"), perl = FALSE)){
+                if(base::grepl(x = y, pattern = base::paste0("^", x, "[\\s\\r\\n]*\\(.*\\)$"), perl = TRUE) | base::grepl(x = y, pattern = base::paste0("^", reserved_words, "$"), perl = FALSE)){
                     base::return(FALSE)
                 }else{
                     base::return(TRUE) # TRUE = problem: does not start by what is expected, i.e., base::paste0("^", x, "[\\s\\r\\n]*\\(.*\\)$"
@@ -455,7 +455,7 @@ all_args_here <- function(
         col7 <- NULL # potential missing args with values
         col8 <- NULL # reconstructed function with all arg
         for(i2 in 1:base::length(col1)){
-            if(col3[i2] != reserved_word){
+            if(col3[i2] != reserved_words){
                 # check if the function exists
                 if(col4[i2] <= 3){
                     tempo.cat <- base::paste0("ERROR IN ", function_name, " OF THE ", package_name, " PACKAGE\nCANNOT GET THE ARGUMENTS OF A FUNCTION THAT IS NOT ASSOCIATED TO ITS PACKAGE IN LINE ", col1[i2], ":\n\n", base::paste(base::paste0(base::substr(x = code_for_col[i2], start = 1, stop = col4[i2] - 1), col3[i2]), collapse = "\n"), "\n\n1) PLEASE, RUN saferDev::colons_check(", arg_user_setting$x, ")\n2) ADD THE MISSING <PACKAGE>::<FUNCTION> (OR <PACKAGE>:::<FUNCTION> FOR FUNCTION STARTING BY A DOT)\n3) RERUN saferDev::all_args_here(", arg_user_setting$x, ")")
