@@ -87,23 +87,23 @@ get_message <- function(
     #### critical operator checking
     if(safer_check == TRUE){
         saferDev:::.base_op_check(
-            external.function.name = function.name, 
-            external.package.name = package.name
+            external_function_name = function.name, 
+            external_package_name = package.name
         )
     }
     #### end critical operator checking
     #### package checking
-    ######## check of lib.path
-    ######## end check of lib.path
+    ######## check of lib_path
+    ######## end check of lib_path
     ######## check of the required functions from the required packages
     if(safer_check == TRUE){
         saferDev:::.pack_and_function_check(
             fun = base::c(
                 "ggplot2::ggplot_build"
             ),
-            lib.path = NULL, # NULL if the function does not have any lib.path argument
-            external.function.name = function.name,
-            external.package.name = package.name
+            lib_path = NULL, # NULL if the function does not have any lib_path argument
+            external_function_name = function.name,
+            external_package_name = package.name
         )
     }
     ######## end check of the required functions from the required packages

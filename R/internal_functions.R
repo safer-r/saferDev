@@ -666,7 +666,7 @@
 #' @description
 #' Detect all the functions names used inside a function.
 #' @param x a function name, written without quotes and brackets.
-#' @param arg.user.setting Argument user settings list.
+#' @param arg_user_setting Argument user settings list.
 #' @param function.name function name.
 #' @param package.name package name.
 #' @returns 
@@ -677,7 +677,7 @@
 #' $fun_names_pos: list of position of the first character of each $fun_names. Compartment names indicate the code line number of the functions in $code.
 #' $code_line_nb: vector of integers of the code line numbers of code for each non empty compartment of $fun_names and $fun_names_pos.
 #' $internal_fun_names: vector of string of names of internal functions in the code of the tested function.
-#' $arg.user.setting: list of arg user settings of the tested function.
+#' $arg_user_setting: list of arg user settings of the tested function.
 #' @details
 #' - Does not check if the functions inside the code exist.
 #' - Use the regex pattern "([a-zA-Z]|\\.[a-zA-Z._])[a-zA-Z0-9._]*\\s*\\(" to detect a function in the code.
@@ -685,27 +685,27 @@
 #' 
 #' @examples
 #' \dontrun{ # Example that shouldn't be run because this is an internal function
-#' source("C:\\Users\\gmillot\\Documents\\Git_projects\\safer-r\\saferDev\\dev\\other\\test.R") ; .functions_detect(x = test, arg.user.setting = base::list(x =  as.name(x = "test")), function.name = "F1", package.name = "P1")
+#' source("C:\\Users\\gmillot\\Documents\\Git_projects\\safer-r\\saferDev\\dev\\other\\test.R") ; .functions_detect(x = test, arg_user_setting = base::list(x =  as.name(x = "test")), function.name = "F1", package.name = "P1")
 #' }
 #' @author Gael Millot <gael.millot@pasteur.fr>
 #' @keywords internal
 #' @rdname internal_function
 .functions_detect <- function(
     x, 
-    arg.user.setting, 
+    arg_user_setting, 
     function.name, 
     package.name
 ){
     # DEBUGGING
-    # x = x ; arg.user.setting = arg.user.setting ; function.name = function.name ; package.name = package.name
-    # source("C:\\Users\\gmillot\\Documents\\Git_projects\\safer-r\\saferDev\\dev\\other\\test2.R") ; x = test2 ; arg.user.setting = base::list(x = as.name(x = "test2"), export = TRUE) ; function.name = "F1" ; package.name = "P1"
-    # source("C:\\Users\\gmillot\\Documents\\Git_projects\\safer-r\\saferDev\\.github\\profile\\backbone.R") ; x = a ; arg.user.setting = base::list(x = as.name(x = "a"), export = TRUE) ; function.name = "F1" ; package.name = "P1"
+    # x = x ; arg_user_setting = arg_user_setting ; function.name = function.name ; package.name = package.name
+    # source("C:\\Users\\gmillot\\Documents\\Git_projects\\safer-r\\saferDev\\dev\\other\\test2.R") ; x = test2 ; arg_user_setting = base::list(x = as.name(x = "test2"), export = TRUE) ; function.name = "F1" ; package.name = "P1"
+    # source("C:\\Users\\gmillot\\Documents\\Git_projects\\safer-r\\saferDev\\.github\\profile\\backbone.R") ; x = a ; arg_user_setting = base::list(x = as.name(x = "a"), export = TRUE) ; function.name = "F1" ; package.name = "P1"
     # main code
-    # modification of arg.user.setting$x for clean messages
-    if(base::as.character(x = arg.user.setting$x)[1] == "::" | base::as.character(x = arg.user.setting$x)[1] == ":::"){
-        arg.user.setting$x <- base::paste0(base::as.character(x = arg.user.setting$x)[3], "()")
+    # modification of arg_user_setting$x for clean messages
+    if(base::as.character(x = arg_user_setting$x)[1] == "::" | base::as.character(x = arg_user_setting$x)[1] == ":::"){
+        arg_user_setting$x <- base::paste0(base::as.character(x = arg_user_setting$x)[3], "()")
     }
-    # end modification of arg.user.setting$x for clean messages
+    # end modification of arg_user_setting$x for clean messages
     # recovering the basic functions of R
     s <- base::c("package:stats", "package:graphics",  "package:grDevices", "package:utils", "package:datasets", "package:methods", "Autoloads", "package:base") # basic base::search() scope
     if(base::any( ! s %in% base::search())){
@@ -730,7 +730,7 @@
     # removal of comments
     comment_line.log <- base::grepl(code, pattern = "^\\s*#") # removal of the lines starting by #
     if(base::length(code) == 0){
-        tempo.cat <- base::paste0("ERROR IN ", function.name, " OF THE ", package.name, " PACKAGE\nTHE TESTED FUNCTION ", arg.user.setting$x, " IS EMPTY OR ONLY MADE OF COMMENTS")
+        tempo.cat <- base::paste0("ERROR IN ", function.name, " OF THE ", package.name, " PACKAGE\nTHE TESTED FUNCTION ", arg_user_setting$x, " IS EMPTY OR ONLY MADE OF COMMENTS")
         base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
     }
     comment.log <- base::grepl(x = code, pattern = "#")
@@ -841,7 +841,7 @@
         fun_names_pos = fun_name_pos_wo_op, 
         code_line_nb = code_line_nb, 
         internal_fun_names = internal_fun_names,
-        arg.user.setting = arg.user.setting
+        arg_user_setting = arg_user_setting
     )
     base::return(output)
     #### end output
@@ -857,7 +857,7 @@
 #' @param list.fun.pos list of position of first character of names of all the functions in ini.
 #' @param line.nb vector of corresponding line number.
 #' @param ini vector of string of the initial function code analyzed.
-#' @param arg.user.setting list of arg user settings.
+#' @param arg_user_setting list of arg user settings.
 #' @param function.name function name.
 #' @param package.name package name.
 #' @param text either "BASIC" or "OTHER".
@@ -875,15 +875,15 @@
     list.fun.pos, 
     line.nb, 
     ini, 
-    arg.user.setting, 
+    arg_user_setting, 
     function.name, 
     package.name, 
     text,
     internal_fun_names
 ){
     # DEBUGGING
-    # list.fun = in_basic_fun ; fun.uni = in_basic_fun_uni ; list.fun.pos = in_basic_fun_name_pos_wo_op ; line.nb = in_basic_code_line_nb ; ini = out$ini ; arg.user.setting = out$arg.user.setting ; function.name = function.name ; package.name = package.name ; text = "OTHER" ; internal_fun_names = out$internal_fun_names
-    # list.fun = in_other_fun ; fun.uni = in_other_fun_uni ; list.fun.pos = in_other_fun_name_pos_wo_op ; line.nb = in_other_code_line_nb ; ini = out$ini ; arg.user.setting = out$arg.user.setting ; function.name = function.name ; package.name = package.name ; text = "OTHER" ; internal_fun_names = out$internal_fun_names
+    # list.fun = in_basic_fun ; fun.uni = in_basic_fun_uni ; list.fun.pos = in_basic_fun_name_pos_wo_op ; line.nb = in_basic_code_line_nb ; ini = out$ini ; arg_user_setting = out$arg_user_setting ; function.name = function.name ; package.name = package.name ; text = "OTHER" ; internal_fun_names = out$internal_fun_names
+    # list.fun = in_other_fun ; fun.uni = in_other_fun_uni ; list.fun.pos = in_other_fun_name_pos_wo_op ; line.nb = in_other_code_line_nb ; ini = out$ini ; arg_user_setting = out$arg_user_setting ; function.name = function.name ; package.name = package.name ; text = "OTHER" ; internal_fun_names = out$internal_fun_names
     if(base::length(text) != 1 & base::any( ! text %in% base::c("BASIC", "OTHER"))){
         tempo.cat <- base::paste0("INTERNAL ERROR 1 IN ", function.name, " OF THE ", package.name, " PACKAGE\nTHE text ARGUMENT OF .colons_check_message() MUST BE \"BASIC\" OR \"OTHER\".\nTHE PROBLEM IS:\n",
             base::paste(text, collapse = "\n"))
@@ -937,7 +937,7 @@
         if(base::length(col1) > 0){
             tempo.pos <- base::paste0(col1, "\t", col2, "\t\t", col3)
             output.cat <- base::paste0(
-                "INSIDE ", arg.user.setting$x, "(), SOME :: OR ::: ARE MISSING AT ", text, " FUNCTION POSITIONS:\n\n", 
+                "INSIDE ", arg_user_setting$x, "(), SOME :: OR ::: ARE MISSING AT ", text, " FUNCTION POSITIONS:\n\n", 
                 "LINE\tFUN\t\tSTRING_BEFORE\n",
                 base::paste(tempo.pos, collapse = "\n")
             )
@@ -950,7 +950,7 @@
     }
     if(text == "OTHER" & base::length(internal_fun_names) > 0){
         output.cat <- base::paste0(
-            "INSIDE ", arg.user.setting$x, "(), INTERNAL FUNCTION", base::ifelse(base::length(internal_fun_names) == 1, "", "S"), " DETECTED:\n", 
+            "INSIDE ", arg_user_setting$x, "(), INTERNAL FUNCTION", base::ifelse(base::length(internal_fun_names) == 1, "", "S"), " DETECTED:\n", 
             base::paste(internal_fun_names, collapse = "\n"), 
             "\n\n", 
             output.cat

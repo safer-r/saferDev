@@ -62,22 +62,26 @@ all_args_here <- function(
     # source("C:\\Users\\gmillot\\Documents\\Git_projects\\safer-r\\saferDev\\R\\get_message.R") ; x = get_message ; export = TRUE ; path_out = "." ; df_name = "res.tsv" ; overwrite = FALSE ; lib_path = NULL ; safer_check = TRUE
     # library(saferDev) ; x = get_message ; export = TRUE ; path_out = "." ; df_name = "res.tsv" ; overwrite = FALSE ; lib_path = NULL ; safer_check = TRUE
     # source("C:\\Users\\gmillot\\Documents\\Git_projects\\safer-r\\saferDev\\R\\all_args_here.R") ; x = all_args_here ; export = TRUE ; path_out = "." ; df_name = "res.tsv" ; overwrite = FALSE ; lib_path = NULL ; safer_check = TRUE
-    # arg.user.setting = base::list(x = as.name(x = "test2"), export = TRUE,  path_out = ".",  df_name = "res.tsv",  overwrite = TRUE,  lib_path = NULL,  safer_check = TRUE)
+    # arg_user_setting = base::list(x = as.name(x = "test2"), export = TRUE,  path_out = ".",  df_name = "res.tsv",  overwrite = TRUE,  lib_path = NULL,  safer_check = TRUE)
     # source("C:\\Users\\gmillot\\Documents\\Git_projects\\safer-r\\.github\\profile\\backbone.R") ; x = BACKBONE ; export = TRUE ; path_out = "." ; df_name = "res.tsv" ; overwrite = FALSE ; lib_path = NULL ; safer_check = TRUE # use the folling line before out <- 
-    # function_name <- "all_args_here" ; arg.user.setting = base::list(x = as.name(x = "BACKBONE"), export = TRUE,  path_out = ".",  df_name = "res.tsv",  overwrite = TRUE,  lib_path = NULL,  safer_check = TRUE)
+    # function_name <- "all_args_here" ; arg_user_setting = base::list(x = as.name(x = "BACKBONE"), export = TRUE,  path_out = ".",  df_name = "res.tsv",  overwrite = TRUE,  lib_path = NULL,  safer_check = TRUE)
     #### package name
     package_name <- "saferDev" # write NULL if the function developed is not in a package
     #### end package name
 
     #### function name
-    tempo_args <- base::as.list(x = base::match.call(definition = base::sys.function(which = base::sys.parent(n = 0)), call = base::sys.call(which = base::sys.parent(n = 0)), expand.dots = FALSE, envir = base::parent.frame(n = 2L))) # warning: I have written n = 0 to avoid error when a safer function is inside another functions
-    function_name <- base::paste0(tempo_args[[1]], "()", collapse = NULL, recycle0 = FALSE) # function name with "()" paste, which split into a vector of three: c("::()", "package ()", "function ()") if "package::function()" is used.
+    tempo_settings <- base::as.list(x = base::match.call(definition = base::sys.function(which = base::sys.parent(n = 0)), call = base::sys.call(which = base::sys.parent(n = 0)), expand.dots = FALSE, envir = base::parent.frame(n = 2L))) # warning: I have written n = 0 to avoid error when a safer function is inside another functions
+    function_name <- base::paste0(tempo_settings[[1]], "()", collapse = NULL, recycle0 = FALSE) 
+    # function name with "()" paste, which split into a vector of three: c("::()", "package ()", "function ()") if "package::function()" is used.
     if(function_name[1] == "::()" | function_name[1] == ":::()"){
         function_name <- function_name[3]
     }
-    arg.names <- base::names(x = base::formals(fun = base::sys.function(which = base::sys.parent(n = 2)), envir = base::parent.frame(n = 1))) # names of all the arguments
-    arg.user.setting <- tempo_args[-1] # list of the argument settings (excluding default values not provided by the user)
     #### end function name
+
+    #### arguments settings
+    arg_user_setting <- tempo_settings[-1] # list of the argument settings (excluding default values not provided by the user)
+    arg_names <- base::names(x = base::formals(fun = base::sys.function(which = base::sys.parent(n = 2)), envir = base::parent.frame(n = 1))) # names of all the arguments
+    #### end arguments settings
 
     #### critical operator checking
     if(safer_check == TRUE){
@@ -135,7 +139,7 @@ all_args_here <- function(
     mandat.args <- base::c(
         "x"
     )
-    tempo <- base::eval(expr = base::parse(text = base::paste0("base::c(base::missing(", base::paste0(mandat.args, collapse = "),base::missing(", recycle0 = FALSE), "))", collapse = NULL, recycle0 = FALSE), file = "", n = NULL, prompt = "?", keep.source = base::getOption(x = "keep.source", default = NULL), srcfile = NULL, encoding = "unknown"), envir = base::parent.frame(n = 1), enclos = if(base::is.list(x = envir) || base::is.pairlist(x = envir)){ base::parent.frame(n = 1)}else{base::baseenv()})
+    tempo <- base::eval(expr = base::parse(text = base::paste0("base::c(base::missing(", base::paste0(mandat.args, collapse = "),base::missing(", recycle0 = FALSE), "))", collapse = NULL, recycle0 = FALSE), file = "", n = NULL, prompt = "?", keep.source = base::getOption(x = "keep.source", default = NULL), srcfile = NULL, encoding = "unknown"), envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL))
     if(base::any(tempo, na.rm = FALSE)){
         tempo.cat <- base::paste0("ERROR IN ", function_name, base::ifelse(test = base::is.null(package_name), yes = "", no = base::paste(" OF THE ", package_name, " PACKAGE", collapse = NULL, recycle0 = FALSE)), "\nFOLLOWING ARGUMENT", base::ifelse(test = base::sum(tempo, na.rm = TRUE) > 1, yes = "S HAVE", no = " HAS"), " NO DEFAULT VALUE AND REQUIRE ONE:\n", base::paste0(mandat.args[tempo], collapse = "\n", recycle0 = FALSE), collapse = NULL, recycle0 = FALSE)
         base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL) # == in base::stop() to be able to add several messages between ==
@@ -147,13 +151,13 @@ all_args_here <- function(
     text.check <- NULL
     checked.arg.names <- NULL # for function debbuging: used by r_debugging_tools
     ee <- base::expression(argum.check <- base::c(argum.check, tempo$problem) , text.check <- base::c(text.check, tempo$text) , checked.arg.names <- base::c(checked.arg.names, tempo$object.name))
-    tempo <- saferDev::arg_check(data = x, class = "function", typeof = NULL, mode = NULL, length = NULL, prop = FALSE, double.as.integer.allowed = FALSE, options = NULL, all.options.in.data = FALSE, na.contain = TRUE, neg.values = TRUE, inf.values = TRUE, print = FALSE, data.name = NULL, fun.name = function_name, safer_check = FALSE) ; base::eval(expr = ee, envir = base::parent.frame(n = 1), enclos = if(base::is.list(x = envir) || base::is.pairlist(x = envir)){ base::parent.frame(n = 1)}else{base::baseenv()})
-    tempo <- saferDev::arg_check(data = export, class = "vector", typeof = "logical", mode = NULL, length = 1, prop = FALSE, double.as.integer.allowed = FALSE, options = NULL, all.options.in.data = FALSE, na.contain = FALSE, neg.values = TRUE, inf.values = TRUE, print = FALSE, data.name = NULL, fun.name = function_name, safer_check = FALSE) ; base::eval(expr = ee, envir = base::parent.frame(n = 1), enclos = if(base::is.list(x = envir) || base::is.pairlist(x = envir)){ base::parent.frame(n = 1)}else{base::baseenv()})
-    tempo <- saferDev::arg_check(data = path_out, class = "vector", typeof = "character", mode = NULL, length = 1, prop = FALSE, double.as.integer.allowed = FALSE, options = NULL, all.options.in.data = FALSE, na.contain = FALSE, neg.values = TRUE, inf.values = TRUE, print = FALSE, data.name = NULL, fun.name = function_name, safer_check = FALSE) ; base::eval(expr = ee, envir = base::parent.frame(n = 1), enclos = if(base::is.list(x = envir) || base::is.pairlist(x = envir)){ base::parent.frame(n = 1)}else{base::baseenv()})
-    tempo <- saferDev::arg_check(data = df_name, class = "vector", typeof = "character", mode = NULL, length = 1, prop = FALSE, double.as.integer.allowed = FALSE, options = NULL, all.options.in.data = FALSE, na.contain = FALSE, neg.values = TRUE, inf.values = TRUE, print = FALSE, data.name = NULL, fun.name = function_name, safer_check = FALSE) ; base::eval(expr = ee, envir = base::parent.frame(n = 1), enclos = if(base::is.list(x = envir) || base::is.pairlist(x = envir)){ base::parent.frame(n = 1)}else{base::baseenv()})
-    tempo <- saferDev::arg_check(data = overwrite, class = "vector", typeof = "logical", mode = NULL, length = 1, prop = FALSE, double.as.integer.allowed = FALSE, options = NULL, all.options.in.data = FALSE, na.contain = FALSE, neg.values = TRUE, inf.values = TRUE, print = FALSE, data.name = NULL, fun.name = function_name, safer_check = FALSE) ; base::eval(expr = ee, envir = base::parent.frame(n = 1), enclos = if(base::is.list(x = envir) || base::is.pairlist(x = envir)){ base::parent.frame(n = 1)}else{base::baseenv()})
-    # lib.path already checked above
-    tempo <- saferDev::arg_check(data = safer_check, class = "vector", typeof = "logical", mode = NULL, length = 1, prop = FALSE, double.as.integer.allowed = FALSE, options = NULL, all.options.in.data = FALSE, na.contain = FALSE, neg.values = TRUE, inf.values = TRUE, print = FALSE, data.name = NULL, fun.name = function_name, safer_check = FALSE) ; base::eval(expr = ee, envir = base::parent.frame(n = 1), enclos = if(base::is.list(x = envir) || base::is.pairlist(x = envir)){ base::parent.frame(n = 1)}else{base::baseenv()}) # rechecked even if already used above
+    tempo <- saferDev::arg_check(data = x, class = "function", typeof = NULL, mode = NULL, length = NULL, prop = FALSE, double.as.integer.allowed = FALSE, options = NULL, all.options.in.data = FALSE, na.contain = TRUE, neg.values = TRUE, inf.values = TRUE, print = FALSE, data.name = NULL, fun.name = function_name, safer_check = FALSE) ; base::eval(expr = ee, envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL))
+    tempo <- saferDev::arg_check(data = export, class = "vector", typeof = "logical", mode = NULL, length = 1, prop = FALSE, double.as.integer.allowed = FALSE, options = NULL, all.options.in.data = FALSE, na.contain = FALSE, neg.values = TRUE, inf.values = TRUE, print = FALSE, data.name = NULL, fun.name = function_name, safer_check = FALSE) ; base::eval(expr = ee, envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL))
+    tempo <- saferDev::arg_check(data = path_out, class = "vector", typeof = "character", mode = NULL, length = 1, prop = FALSE, double.as.integer.allowed = FALSE, options = NULL, all.options.in.data = FALSE, na.contain = FALSE, neg.values = TRUE, inf.values = TRUE, print = FALSE, data.name = NULL, fun.name = function_name, safer_check = FALSE) ; base::eval(expr = ee, envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL))
+    tempo <- saferDev::arg_check(data = df_name, class = "vector", typeof = "character", mode = NULL, length = 1, prop = FALSE, double.as.integer.allowed = FALSE, options = NULL, all.options.in.data = FALSE, na.contain = FALSE, neg.values = TRUE, inf.values = TRUE, print = FALSE, data.name = NULL, fun.name = function_name, safer_check = FALSE) ; base::eval(expr = ee, envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL))
+    tempo <- saferDev::arg_check(data = overwrite, class = "vector", typeof = "logical", mode = NULL, length = 1, prop = FALSE, double.as.integer.allowed = FALSE, options = NULL, all.options.in.data = FALSE, na.contain = FALSE, neg.values = TRUE, inf.values = TRUE, print = FALSE, data.name = NULL, fun.name = function_name, safer_check = FALSE) ; base::eval(expr = ee, envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL))
+    # lib_path already checked above
+    tempo <- saferDev::arg_check(data = safer_check, class = "vector", typeof = "logical", mode = NULL, length = 1, prop = FALSE, double.as.integer.allowed = FALSE, options = NULL, all.options.in.data = FALSE, na.contain = FALSE, neg.values = TRUE, inf.values = TRUE, print = FALSE, data.name = NULL, fun.name = function_name, safer_check = FALSE) ; base::eval(expr = ee, envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL)) # rechecked even if already used above
     if( ! base::is.null(x = argum.check)){
         if(base::any(argum.check, na.rm = TRUE)){
             base::stop(base::paste0("\n\n================\n\n", base::paste(text.check[argum.check], sep = " ", collapse = "\n", recycle0 = FALSE), "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL)
@@ -165,15 +169,11 @@ all_args_here <- function(
     ######## end argument checking with arg_check()
 
     ######## management of NA arguments
-    if( ! (base::all(base::class(x = arg.user.setting) %in% base::c("list", "NULL"), na.rm = TRUE) & base::length(x = arg.user.setting) == 0)){
-        tempo.arg <- base::names(x = arg.user.setting) # values provided by the user
+    if(base::length(x = arg_user_setting) != 0){
         tempo.log <- base::suppressWarnings(
             expr = base::sapply(
                 X = base::lapply(
-                    X = base::lapply(
-                        X = tempo.arg, 
-                        FUN = function(x){base::get(x = x, pos = -1L, envir = base::sys.nframe(), mode = "any", inherits = FALSE)}
-                    ), 
+                    X = arg_user_setting, 
                     FUN = function(x){base::is.na(x = x)}
                 ), 
                 FUN = function(x){base::any(x = x, na.rm = FALSE)}, 
@@ -182,14 +182,11 @@ all_args_here <- function(
             ), 
         classes = "warning"
         ) & base::lapply(
-            X = base::lapply(
-                X = tempo.arg, 
-                FUN = function(x){base::get(x = x, pos = -1L, envir = base::sys.nframe(), mode = "any", inherits = FALSE)}
-            ), 
+            X = arg_user_setting, 
             FUN = function(x){base::length(x = x)}
         ) == 1L # no argument provided by the user can be just NA
         if(base::any(tempo.log, na.rm = FALSE)){ # normally no NA because base::is.na() used here
-            tempo.cat <- base::paste0("ERROR IN ", function_name, base::ifelse(test = base::is.null(package_name), yes = "", no = base::paste(" OF THE ", package_name, " PACKAGE", collapse = NULL, recycle0 = FALSE)), "\n", base::ifelse(test = base::sum(tempo.log, na.rm = TRUE) > 1, yes = "THESE ARGUMENTS", no = "THIS ARGUMENT"), " CANNOT JUST BE NA:", base::paste0(tempo.arg[tempo.log], collapse = "\n", recycle0 = FALSE), collapse = NULL, recycle0 = FALSE)
+            tempo.cat <- base::paste0("ERROR IN ", function_name, base::ifelse(test = base::is.null(package_name), yes = "", no = base::paste(" OF THE ", package_name, " PACKAGE", collapse = NULL, recycle0 = FALSE)), "\n", base::ifelse(test = base::sum(tempo.log, na.rm = TRUE) > 1, yes = "THESE ARGUMENTS", no = "THIS ARGUMENT"), " CANNOT JUST BE NA:", base::paste0(arg_names[tempo.log], collapse = "\n", recycle0 = FALSE), collapse = NULL, recycle0 = FALSE)
             base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL) # == in base::stop() to be able to add several messages between ==
         }
     }
@@ -208,7 +205,7 @@ all_args_here <- function(
     tempo.log <- base::sapply(
         X = base::lapply(
             X = tempo.arg, 
-            FUN = function(x){base::get(x = x, pos = -1L, envir = base::sys.nframe(), mode = "any", inherits = FALSE)}
+            FUN = function(x){base::get(x = x, pos = -1L, envir = base::parent.frame(n = 2), mode = "any", inherits = FALSE)} # parent.frame(n = 2) because sapply(lapply())
         ), 
         FUN = function(x){base::is.null(x = x)}, 
         simplify = TRUE, 
@@ -228,7 +225,7 @@ all_args_here <- function(
     tempo.log <- ! base::sapply(
         X = base::lapply(
             X = tempo.arg, 
-            FUN = function(x){base::get(x = x, pos = -1L, envir = base::sys.nframe(), mode = "any", inherits = FALSE)}
+            FUN = function(x){base::get(x = x, pos = -1L, envir = base::parent.frame(n = 2), mode = "any", inherits = FALSE)} # parent.frame(n = 2) because sapply(lapply())
         ), 
         FUN = function(x){
             if(base::is.null(x = x)){
@@ -244,7 +241,7 @@ all_args_here <- function(
         tempo.cat <- base::paste0("INTERNAL ERROR IN ", function_name, base::ifelse(test = base::is.null(package_name), yes = "", no = base::paste(" OF THE ", package_name, " PACKAGE", collapse = NULL, recycle0 = FALSE)), "\n", base::ifelse(test = base::sum(tempo.log, na.rm = TRUE) > 1, yes = "THESE ARGUMENTS ARE", no = "THIS ARGUMENT IS"), " NOT MODE \"character\":\n", base::paste0(tempo.arg[tempo.log], collapse = "\n", recycle0 = FALSE), collapse = NULL, recycle0 = FALSE)
         base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL) # == in base::stop() to be able to add several messages between ==
     }else{
-        tempo.log <- base::sapply(X = base::lapply(X = tempo.arg, FUN = function(x){base::get(x = x, pos = -1L, envir = base::sys.nframe(), mode = "any", inherits = FALSE)}), FUN = function(x){base::any(x == "", na.rm = FALSE)}, simplify = TRUE, USE.NAMES = TRUE)
+        tempo.log <- base::sapply(X = base::lapply(X = tempo.arg, FUN = function(x){base::get(x = x, pos = -1L, envir = base::parent.frame(n = 2), mode = "any", inherits = FALSE)}), FUN = function(x){base::any(x == "", na.rm = FALSE)}, simplify = TRUE, USE.NAMES = TRUE) # parent.frame(n = 2) because sapply(lapply())
         if(base::any(tempo.log, na.rm = TRUE)){
             tempo.cat <- base::paste0("ERROR IN ", function_name, base::ifelse(test = base::is.null(package_name), yes = "", no = base::paste(" OF THE ", package_name, " PACKAGE", collapse = NULL, recycle0 = FALSE)), "\n", base::ifelse(test = base::sum(tempo.log, na.rm = TRUE) > 1, yes = "THESE ARGUMENTS\n", no = "THIS ARGUMENT\n"), base::paste0(tempo.arg[tempo.log], collapse = "\n", recycle0 = FALSE),"\nCANNOT CONTAIN \"\"", collapse = NULL, recycle0 = FALSE)
             base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL) # == in stop() to be able to add several messages between ==
@@ -312,7 +309,7 @@ all_args_here <- function(
     path_out <- base::paste0(path_out, "/", df_name)
     out <- saferDev:::.functions_detect(
         x = x, 
-        arg.user.setting = arg.user.setting, 
+        arg_user_setting = arg_user_setting, 
         function_name = function_name, 
         package_name = package_name
     )
@@ -461,12 +458,12 @@ all_args_here <- function(
             if(col3[i2] != reserved_word){
                 # check if the function exists
                 if(col4[i2] <= 3){
-                    tempo.cat <- base::paste0("ERROR IN ", function_name, " OF THE ", package_name, " PACKAGE\nCANNOT GET THE ARGUMENTS OF A FUNCTION THAT IS NOT ASSOCIATED TO ITS PACKAGE IN LINE ", col1[i2], ":\n\n", base::paste(base::paste0(base::substr(x = code_for_col[i2], start = 1, stop = col4[i2] - 1), col3[i2]), collapse = "\n"), "\n\n1) PLEASE, RUN saferDev::colons_check(", arg.user.setting$x, ")\n2) ADD THE MISSING <PACKAGE>::<FUNCTION> (OR <PACKAGE>:::<FUNCTION> FOR FUNCTION STARTING BY A DOT)\n3) RERUN saferDev::all_args_here(", arg.user.setting$x, ")")
+                    tempo.cat <- base::paste0("ERROR IN ", function_name, " OF THE ", package_name, " PACKAGE\nCANNOT GET THE ARGUMENTS OF A FUNCTION THAT IS NOT ASSOCIATED TO ITS PACKAGE IN LINE ", col1[i2], ":\n\n", base::paste(base::paste0(base::substr(x = code_for_col[i2], start = 1, stop = col4[i2] - 1), col3[i2]), collapse = "\n"), "\n\n1) PLEASE, RUN saferDev::colons_check(", arg_user_setting$x, ")\n2) ADD THE MISSING <PACKAGE>::<FUNCTION> (OR <PACKAGE>:::<FUNCTION> FOR FUNCTION STARTING BY A DOT)\n3) RERUN saferDev::all_args_here(", arg_user_setting$x, ")")
                     base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n", base::ifelse(base::is.null(warn), "", base::paste0("IN ADDITION\nWARNING", base::ifelse(warn.count > 1, "S", ""), ":\n\n", warn))), call. = FALSE)
                 }
                 tempo_string <- base::substr(x = code_for_col[i2], start = col4[i2] - 2, stop = col4[i2] - 1)
                 if(tempo_string != "::"){
-                    tempo.cat <- base::paste0("ERROR IN ", function_name, " OF THE ", package_name, " PACKAGE\nCANNOT GET THE ARGUMENTS OF A FUNCTION THAT IS NOT ASSOCIATED TO ITS PACKAGE IN LINE ", col1[i2], ":\n\n", base::paste(base::paste0(base::substr(x = code_for_col[i2], start = 1, stop = col4[i2] - 1), col3[i2]), collapse = "\n"), "\n\nPLEASE, RUN saferDev::colons_check(", arg.user.setting$x, ") FIRST,\nADD THE MISSING <PACKAGE>::<FUNCTION> (OR <PACKAGE>:::<FUNCTION> FOR FUNCTION STARTING BY A DOT)\nAND RERUN saferDev::all_args_here(", arg.user.setting$x, ")")
+                    tempo.cat <- base::paste0("ERROR IN ", function_name, " OF THE ", package_name, " PACKAGE\nCANNOT GET THE ARGUMENTS OF A FUNCTION THAT IS NOT ASSOCIATED TO ITS PACKAGE IN LINE ", col1[i2], ":\n\n", base::paste(base::paste0(base::substr(x = code_for_col[i2], start = 1, stop = col4[i2] - 1), col3[i2]), collapse = "\n"), "\n\nPLEASE, RUN saferDev::colons_check(", arg_user_setting$x, ") FIRST,\nADD THE MISSING <PACKAGE>::<FUNCTION> (OR <PACKAGE>:::<FUNCTION> FOR FUNCTION STARTING BY A DOT)\nAND RERUN saferDev::all_args_here(", arg_user_setting$x, ")")
                     base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n", base::ifelse(base::is.null(warn), "", base::paste0("IN ADDITION\nWARNING", base::ifelse(warn.count > 1, "S", ""), ":\n\n", warn))), call. = FALSE)
                 }
                 tempo_string <- base::substr(x = code_for_col[i2], start = 1, stop = col4[i2] - 1)
@@ -585,7 +582,7 @@ all_args_here <- function(
 
     #### output
     if(base::all(col8 %in%base::c("", "GOOD"))){
-        tempo.cat <- base::paste0("INSIDE ", base::as.character(out$arg.user.setting$x), "(), EVERYTHING SEEMS CLEAN")
+        tempo.cat <- base::paste0("INSIDE ", base::as.character(out$arg_user_setting$x), "(), EVERYTHING SEEMS CLEAN")
         if(export == TRUE){
             tempo.cat <- base::paste0("RESULT EXPORTED IN\n", path_out, "\nBUT ", tempo.cat)
         }
