@@ -470,15 +470,11 @@ all_args_here <- function(
                 tempo_package_name_colons <- saferDev:::.extract_all_fun_names(text = tempo_string, pattern = "[a-zA-Z][a-zA-Z0-9.]*:{2,3}$")$string # before 
                 saferDev::is_function_here(fun = base::paste0(tempo_package_name_colons, col2[i2]), lib_path = NULL, safer_check = FALSE) # check that exists
                 tempo_package_name <- base::sub(pattern =  ":+$", replacement = "", x = tempo_package_name_colons, perl = FALSE)
-                print(tempo_package_name)
-                print(col2[i2])
-                print(i2)
-                print(base::get(x = col2[i2], envir = base::asNamespace(tempo_package_name), mode = "function", inherits = FALSE))
                 # end check if the function exists
                 # recovering default args of the function
                 tempo_fun2 <- base::get(x = col2[i2], envir = base::asNamespace(tempo_package_name), mode = "function", inherits = FALSE)
                 if(base::is.primitive(tempo_fun2)){
-                    tempo_all_args <- base::as.list(base::suppressWarnings(base::formals(fun = base::args(name = col2[i2])), classes = "warning"))
+                    tempo_all_args <- base::as.list(base::suppressWarnings(base::formals(fun = base::args(name = col2[i2]), envir = base::asNamespace(tempo_package_name)), classes = "warning"))
                     if(base::all(base::typeof(tempo_fun2) %in% base::c("special", "symbol"), na.rm = TRUE)){
                         if(base::length(tempo_all_args) == 0){
                             arg_full <- NULL # all args of the function with default values
@@ -489,7 +485,7 @@ all_args_here <- function(
                         arg_full <- tempo_all_args
                     }
                 }else{
-                    arg_full <- base::as.list(base::formals(fun = col2[i2])) # all the argument of the function in col2[i2] with default values # convert pairlist into list
+                    arg_full <- base::as.list(base::formals(fun = col2[i2], envir = base::asNamespace(tempo_package_name))) # all the argument of the function in col2[i2] with default values # convert pairlist into list
                 }
                 # end recovering default args of the function
                 if(base::is.null(arg_full)){
