@@ -174,21 +174,7 @@ all_args_here <- function(
 
     ######## management of NA arguments
     if(base::length(x = arg_user_setting) != 0){
-        tempo.log <- base::suppressWarnings(
-            expr = base::sapply(
-                X = base::lapply(
-                    X = arg_user_setting, 
-                    FUN = function(x){base::is.na(x = x)}
-                ), 
-                FUN = function(x){base::any(x = x, na.rm = FALSE)}, 
-                simplify = TRUE, 
-                USE.NAMES = TRUE
-            ), 
-        classes = "warning"
-        ) & base::lapply(
-            X = arg_user_setting, 
-            FUN = function(x){base::length(x = x)}
-        ) == 1L # no argument provided by the user can be just NA
+        tempo.log <- base::suppressWarnings(expr = base::sapply(X = base::lapply(X = arg_user_setting, FUN = function(x){base::is.na(x = x)}), FUN = function(x){base::any(x = x, na.rm = FALSE)}, simplify = TRUE, USE.NAMES = TRUE), classes = "warning") & base::lapply(X = arg_user_setting, FUN = function(x){base::length(x = x)}) == 1L # no argument provided by the user can be just NA
         if(base::any(tempo.log, na.rm = FALSE)){ # normally no NA because base::is.na() used here
             tempo.cat <- base::paste0("ERROR IN ", function_name, base::ifelse(test = base::is.null(x = package_name), yes = "", no = base::paste0(" OF THE ", package_name, " PACKAGE", collapse = NULL, recycle0 = FALSE)), "\n", base::ifelse(test = base::sum(tempo.log, na.rm = TRUE) > 1, yes = "THESE ARGUMENTS", no = "THIS ARGUMENT"), " CANNOT JUST BE NA:", base::paste0(arg_names[tempo.log], collapse = "\n", recycle0 = FALSE), collapse = NULL, recycle0 = FALSE)
             base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL) # == in base::stop() to be able to add several messages between ==
@@ -203,18 +189,10 @@ all_args_here <- function(
         "path_out", 
         "df_name", 
         "overwrite", 
-        # "lib.path", # because can be NULL
+        # "lib_path", # because can be NULL
         "safer_check"
     )
-    tempo.log <- base::sapply(
-        X = base::lapply(
-            X = tempo.arg, 
-            FUN = function(x){base::get(x = x, pos = -1L, envir = base::parent.frame(n = 2), mode = "any", inherits = FALSE)} # parent.frame(n = 2) because sapply(lapply())
-        ), 
-        FUN = function(x){base::is.null(x = x)}, 
-        simplify = TRUE, 
-        USE.NAMES = TRUE
-    )
+    tempo.log <- base::sapply( X = base::lapply(X = tempo.arg, FUN = function(x){base::get(x = x, pos = -1L, envir = base::parent.frame(n = 2), mode = "any", inherits = FALSE)}), FUN = function(x){base::is.null(x = x)}, simplify = TRUE, USE.NAMES = TRUE) # parent.frame(n = 2) because sapply(lapply())
     if(base::any(tempo.log, na.rm = FALSE)){ # normally no NA with base::is.null()
         tempo.cat <- base::paste0("ERROR IN ", function_name, base::ifelse(test = base::is.null(x = package_name), yes = "", no = base::paste0(" OF THE ", package_name, " PACKAGE", collapse = NULL, recycle0 = FALSE)), "\n", base::ifelse(test = base::sum(tempo.log, na.rm = TRUE) > 1, yes = "THESE ARGUMENTS\n", no = "THIS ARGUMENT\n"), base::paste0(tempo.arg[tempo.log], collapse = "\n", recycle0 = FALSE),"\nCANNOT BE NULL", collapse = NULL, recycle0 = FALSE)
         base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL) # == in base::stop() to be able to add several messages between ==
@@ -224,23 +202,10 @@ all_args_here <- function(
     ######## management of "" in arguments of mode character
     tempo.arg <-base::c(
         "path_out", 
-        "df_name"
+        "df_name",
+        "lib_path"
     )
-    tempo.log <- ! base::sapply(
-        X = base::lapply(
-            X = tempo.arg, 
-            FUN = function(x){base::get(x = x, pos = -1L, envir = base::parent.frame(n = 2), mode = "any", inherits = FALSE)} # parent.frame(n = 2) because sapply(lapply())
-        ), 
-        FUN = function(x){
-            if(base::is.null(x = x)){
-                base::return(TRUE) # for character argument that can also be NULL, if NULL -> considered as character
-            }else{
-                base::all(base::mode(x = x) == "character", na.rm = TRUE)
-            }
-        }, 
-        simplify = TRUE, 
-        USE.NAMES = TRUE
-    )
+    tempo.log <- ! base::sapply(X = base::lapply(X = tempo.arg, FUN = function(x){base::get(x = x, pos = -1L, envir = base::parent.frame(n = 2), mode = "any", inherits = FALSE)}), FUN = function(x){if(base::is.null(x = x)){base::return(TRUE)}else{base::all(base::mode(x = x) == "character", na.rm = TRUE)}}, simplify = TRUE, USE.NAMES = TRUE) # parent.frame(n = 2) because sapply(lapply())  # for character argument that can also be NULL, if NULL -> considered as character
     if(base::any(tempo.log, na.rm = TRUE)){
         tempo.cat <- base::paste0("INTERNAL ERROR IN ", function_name, base::ifelse(test = base::is.null(x = package_name), yes = "", no = base::paste0(" OF THE ", package_name, " PACKAGE", collapse = NULL, recycle0 = FALSE)), "\n", base::ifelse(test = base::sum(tempo.log, na.rm = TRUE) > 1, yes = "THESE ARGUMENTS ARE", no = "THIS ARGUMENT IS"), " NOT MODE \"character\":\n", base::paste0(tempo.arg[tempo.log], collapse = "\n", recycle0 = FALSE), collapse = NULL, recycle0 = FALSE)
         base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL) # == in base::stop() to be able to add several messages between ==
