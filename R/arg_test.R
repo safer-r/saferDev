@@ -374,6 +374,7 @@ arg_test <- function(
         base::assign("data", data, envir = base::get(env.name, envir = base::sys.nframe(), inherits = FALSE)) # data assigned in a new envir for test
     }
     # end new environment
+
     base::cat("\ntest JOB IGNITION\n")
     ini.date <- base::Sys.time()
     ini.time <- base::as.numeric(ini.date) # time of process begin, converted into seconds
