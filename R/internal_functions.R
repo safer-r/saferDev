@@ -544,7 +544,8 @@
 #' \dontrun{ # Example that shouldn't be run because this is an internal function
 #' # Warning : examples only with strings that must be cleaned form brackets between quotes
 #' .fun_args_pos(text = "a$regmatches(x = text, m = matches)[[1]]", pattern = paste0("regmatches", "[\\s\\r\\n]*\\("), function_name = "F1", package_name = "P1")
-#' .fun_args_pos(text = ' "a" ; paste0("I", paste0(sum(1:3), collapse = " "), min(1) ) ; range(2)', pattern = paste0("paste0", "[\\s\\r\\n]*\\("), function_name = "F1", package_name = "P1") 
+#' .fun_args_pos(text = ' "a" ; paste0("I", paste0(sum(1:3), collapse = " "), min(1) ) ; range(2)', pattern = paste0("paste0", "[\\s\\r\\n]*\\("), function_name = "F1", package_name = "P1")
+#' }
 #' @keywords internal
 #' @rdname internal_function
 .fun_args_pos <- function(
@@ -967,7 +968,8 @@
 #' @param arg_full_names vector of strings of the names of the arguments of the function
 #' @param tempo_split vector of strings of the observed argument writting of the function.
 #' @param three_dots_log vector of logical. Is ... present among arg_full_names 
-#' @param i2 code line number of the checked function
+#' @param i2 loop number
+#' @param col1_i2 code line number of the checked function
 #' @param col2_i2 name of the checked function
 #' @param function_name function name.
 #' @param package_name package name.
@@ -985,12 +987,13 @@
     tempo_split, 
     three_dots_log, 
     i2, 
+    col1_i2, 
     col2_i2,
     function_name, 
     package_name
 ){
     # DEBUGGING
-    # arg_full = arg_full ; arg_full_names = arg_full_names ; tempo_split = tempo_split ; three_dots_log = three_dots_log ; i2 = i2 ; col2_i2 = col2[i2] ; function_name = function_name ; package_name = package_name 
+    # arg_full = arg_full ; arg_full_names = arg_full_names ; tempo_split = tempo_split ; three_dots_log = three_dots_log ; i2 = i2 ; col1_i2 = col1[i2] ; col2_i2 = col2[i2] ; function_name = function_name ; package_name = package_name 
     #  arg_full = list(definition = "sys.function(sys.parent())", call = "sys.call(sys.parent())", expand.dots = TRUE, envir = "parent.frame(2L)") ; arg_full_names = c("definition", "call", "expand.dots", "envir") ; tempo_split = "expand.dots = FALSE" ;  three_dots_log = c(FALSE, FALSE, FALSE, FALSE) ; col2_i2 = "match.call" ; col3_i2 = "match.call(expand.dots = FALSE)" ; function_name = "F1" ; package_name = "P1"
     #  arg_full = list(definition = sys.function(sys.parent()), call = sys.call(sys.parent()), expand.dots = TRUE, envir = parent.frame(2L)) ; arg_full_names = c("definition", "call", "expand.dots", "envir") ; tempo_split = c("sys.function(sys.parent())", "expand.dots = FALSE", "sys.call(sys.parent())") ;  three_dots_log = c(FALSE, FALSE, FALSE, FALSE) ; col2_i2 = "match.call" ; col3_i2 = "match.call(sys.function(sys.parent()), expand.dots = FALSE, sys.call(sys.parent()))" ; function_name = "F1" ; package_name = "P1"
     #  arg_full = list(... = "", collapse = " ", recycle0 = FALSE) ; arg_full_names = c("...", "collapse", "recycle0") ; tempo_split = c("AA", "collapse = \" \"", "BB", "recycle0 = FALSE") ; three_dots_log = c(TRUE, FALSE, FALSE) ; col2_i2 = "paste0" ; col3_i2 = 'paste0("AA", collapse = " ", "BB", recycle0 = FALSE)' ; function_name = "F1" ; package_name = "P1"
@@ -1028,6 +1031,11 @@
         }
         # end scan for args names present in tempo_split
         # checking if arg name are not fully written
+        arg_full_symbol_type <- base::sapply(X = arg_full, FUN = function(x){base::all(base::typeof(x) == "symbol", na.rm =TRUE)}) # to check if any arg without optional value are completed with obs arg values
+        if(base::any(arg_full_symbol_type, na.rm =TRUE) & length(tempo_split) == 0){
+            tempo.cat <- base::paste0("ERROR IN ", function_name, " OF THE ", package_name, " PACKAGE\nTHE TESTED FUNCTION ", arg_user_setting$x, " SEEMS TO HAVE A WRITTING ERROR IN LINE ",  col1_i2, " AND FUNCTION ", col2_i2, ".\nPLEASE, RUN THE TESTED FUNCTION FIRST.")
+            base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
+        }
         tempo_col8 <- NULL
         if( ! base::is.null(missing_args_names)){
             for(i3 in 1:base::length(tempo_split)){
@@ -1057,7 +1065,6 @@
             # Of note, when ... is present, argument values must be preceeded by their arg name. This means that values without arg names of the scanned function are ...
             # Otherwise, the first value without names must take the first arg name not already used, the second value without names must take the second, etc., then finish by the none used arg names with their default values
         missing_arg_log <- arg_full_names %in% missing_args_names
-        arg_full_symbol_type <- base::sapply(X = arg_full, FUN = function(x){base::all(base::typeof(x) == "symbol", na.rm =TRUE)}) # to check if any arg without optional value are completed with obs arg values
         if(base::any(three_dots_log, na.rm = TRUE) & base::all( ! arg_full_symbol_type, na.rm =TRUE)){ # ...present but no args with mandatory value to set 
             missing_args <-  base::unlist(base::mapply(FUN = function(x, y){base::paste0(x, " = ", if(base::is.null(y)){"NULL"}else{y})}, x = arg_full_names[missing_arg_log], y = arg_full[missing_arg_log])) # missing arg values with names
             good_args <- base::c(
