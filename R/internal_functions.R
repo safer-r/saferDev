@@ -1035,7 +1035,7 @@
         # checking if arg name are not fully written
         arg_full_symbol_type <- base::sapply(X = arg_full, FUN = function(x){base::all(base::typeof(x) == "symbol", na.rm =TRUE)}) # to check if any arg without optional value are completed with obs arg values
         if(base::any(arg_full_symbol_type, na.rm =TRUE) & length(tempo_split) == 0){
-            tempo.cat <- base::paste0("ERROR IN ", function_name, " OF THE ", package_name, " PACKAGE\nTHE TESTED FUNCTION ", arg_user_setting$x, " SEEMS TO HAVE A WRITTING ERROR IN LINE ",  col1_i2, " AND FUNCTION ", col2_i2, ".\nPLEASE, RUN THE TESTED FUNCTION FIRST.")
+            tempo.cat <- base::paste0("ERROR IN ", function_name, " OF THE ", package_name, " PACKAGE\nTHE TESTED FUNCTION ", arg_user_setting_x, " SEEMS TO HAVE A WRITTING ERROR IN LINE ",  col1_i2, " AND FUNCTION ", col2_i2, ".\nPLEASE, RUN THE TESTED FUNCTION FIRST.")
             base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
         }
         tempo_col8 <- NULL
