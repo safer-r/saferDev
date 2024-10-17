@@ -125,17 +125,17 @@ get_message <- function(
     text.check <- NULL
     checked.arg.names <- NULL # for function debbuging: used by r_debugging_tools
     ee <- base::expression(argum.check <- base::c(argum.check, tempo$problem) , text.check <- base::c(text.check, tempo$text) , checked.arg.names <- base::c(checked.arg.names, tempo$object.name))
-    tempo <- saferDev::arg_check(data = data, class = "vector", typeof = "character", length = 1, fun.name = function_name, safer_check = FALSE) ; base::eval(ee)
-    tempo <- saferDev::arg_check(data = kind, options = base::c("error", "warning", "message"), length = 1, fun.name = function_name, safer_check = FALSE) ; base::eval(ee)
-    tempo <- saferDev::arg_check(data = header, class = "vector", typeof = "logical", length = 1, fun.name = function_name, safer_check = FALSE) ; base::eval(ee)
-    tempo <- saferDev::arg_check(data = print.no, class = "vector", typeof = "logical", length = 1, fun.name = function_name, safer_check = FALSE) ; base::eval(ee)
+    tempo <- saferDev::arg_check(data = data, class = "vector", typeof = "character", length = 1, fun_name = function_name, safer_check = FALSE) ; base::eval(ee)
+    tempo <- saferDev::arg_check(data = kind, options = base::c("error", "warning", "message"), length = 1, fun_name = function_name, safer_check = FALSE) ; base::eval(ee)
+    tempo <- saferDev::arg_check(data = header, class = "vector", typeof = "logical", length = 1, fun_name = function_name, safer_check = FALSE) ; base::eval(ee)
+    tempo <- saferDev::arg_check(data = print.no, class = "vector", typeof = "logical", length = 1, fun_name = function_name, safer_check = FALSE) ; base::eval(ee)
     if( ! base::is.null(text)){
-        tempo <- saferDev::arg_check(data = text, class = "character", length = 1, fun.name = function_name, safer_check = FALSE) ; base::eval(ee)
+        tempo <- saferDev::arg_check(data = text, class = "character", length = 1, fun_name = function_name, safer_check = FALSE) ; base::eval(ee)
     }
     if( ! base::is.null(env)){
-        tempo <- saferDev::arg_check(data = env, class = "environment", fun.name = function_name, safer_check = FALSE) ; base::eval(ee) #
+        tempo <- saferDev::arg_check(data = env, class = "environment", fun_name = function_name, safer_check = FALSE) ; base::eval(ee) #
     }
-    tempo <- saferDev::arg_check(data = safer_check, class = "vector", typeof = "logical", length = 1, fun.name = function_name, safer_check = FALSE) ; base::eval(ee) # even if already used above
+    tempo <- saferDev::arg_check(data = safer_check, class = "vector", typeof = "logical", length = 1, fun_name = function_name, safer_check = FALSE) ; base::eval(ee) # even if already used above
     if( ! base::is.null(argum.check)){
         if(base::any(argum.check, na.rm = TRUE)){
             base::stop(base::paste0("\n\n================\n\n", base::paste(text.check[argum.check], collapse = "\n"), "\n\n================\n\n"), call. = FALSE)

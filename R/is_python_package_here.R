@@ -114,9 +114,9 @@ is_python_package_here <- function(
     text.check <- NULL #
     checked.arg.names <- NULL # for function debbuging: used by r_debugging_tools
     ee <- base::expression(argum.check <- base::c(argum.check, tempo$problem) , text.check <- base::c(text.check, tempo$text) , checked.arg.names <- base::c(checked.arg.names, tempo$object.name))
-    tempo <- saferDev::arg_check(data = req_package, class = "character", fun.name = function_name, safer_check = FALSE) ; base::eval(ee)
+    tempo <- saferDev::arg_check(data = req_package, class = "character", fun_name = function_name, safer_check = FALSE) ; base::eval(ee)
     if( ! base::is.null(python_exec_path)){
-        tempo <- saferDev::arg_check(data = python_exec_path, class = "character", length = 1, fun.name = function_name, safer_check = FALSE) ; base::eval(ee)
+        tempo <- saferDev::arg_check(data = python_exec_path, class = "character", length = 1, fun_name = function_name, safer_check = FALSE) ; base::eval(ee)
         if(tempo$problem == FALSE){
             if( ! base::all(base::file.exists(python_exec_path), na.rm = TRUE)){ # separation to avoid the problem of tempo$problem == FALSE and python_exec_path == NA
                 tempo.cat <- base::paste0("ERROR IN ", function_name, " OF THE ", package_name, " PACKAGE\nFILE PATH INDICATED IN THE python_exec_path ARGUMENT DOES NOT EXISTS:\n", base::paste(python_exec_path, collapse = "\n"))
@@ -126,7 +126,7 @@ is_python_package_here <- function(
         }
     }
     if( ! base::is.null(python_lib_path)){
-        tempo <- saferDev::arg_check(data = python_lib_path, class = "vector", mode = "character", fun.name = function_name, safer_check = FALSE) ; base::eval(ee)
+        tempo <- saferDev::arg_check(data = python_lib_path, class = "vector", mode = "character", fun_name = function_name, safer_check = FALSE) ; base::eval(ee)
         if(tempo$problem == FALSE){
             if( ! base::all(base::dir.exists(python_lib_path), na.rm = TRUE)){ # separation to avoid the problem of tempo$problem == FALSE and python_lib_path == NA
                 tempo.cat <- base::paste0("ERROR IN ", function_name, " OF THE ", package_name, " PACKAGE\nDIRECTORY PATH INDICATED IN THE python_lib_path ARGUMENT DOES NOT EXISTS:\n", base::paste(python_lib_path, collapse = "\n"))

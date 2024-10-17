@@ -107,9 +107,9 @@ env_check <- function(
     text.check <- NULL #
     checked.arg.names <- NULL # for function debugging: used by r_debugging_tools
     ee <- base::expression(argum.check <- base::c(argum.check, tempo$problem) , text.check <- base::c(text.check, tempo$text) , checked.arg.names <- base::c(checked.arg.names, tempo$object.name))
-    tempo <- saferDev::arg_check(data = pos, class = "vector", typeof = "integer", double.as.integer.allowed = TRUE, length = 1, fun.name = function_name, safer_check = FALSE) ; base::eval(ee)
+    tempo <- saferDev::arg_check(data = pos, class = "vector", typeof = "integer", double.as.integer.allowed = TRUE, length = 1, fun_name = function_name, safer_check = FALSE) ; base::eval(ee)
     if( ! base::is.null(name)){
-        tempo <- saferDev::arg_check(data = name, class = "vector", typeof = "character", fun.name = function_name, safer_check = FALSE) ; base::eval(ee)
+        tempo <- saferDev::arg_check(data = name, class = "vector", typeof = "character", fun_name = function_name, safer_check = FALSE) ; base::eval(ee)
     }
     if( ! base::is.null(argum.check)){
         if(base::any(argum.check, na.rm = TRUE) == TRUE){

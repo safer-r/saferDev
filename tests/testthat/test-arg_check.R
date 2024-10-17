@@ -101,7 +101,7 @@
         inf.values = TRUE, 
         print = FALSE, 
         data.name = NULL, 
-        fun.name = NULL,
+        fun_name = NULL,
         safer_check = TRUE
     )
     expected13 <- list(problem = FALSE, text = "NO PROBLEM DETECTED FOR THE vec1 OBJECT", object.name = "vec1")

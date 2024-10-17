@@ -190,16 +190,16 @@ arg_test <- function(
     text.check <- NULL #
     checked.arg.names <- NULL # for function debbuging: used by r_debugging_tools
     ee <- base::expression(argum.check <- base::c(argum.check, tempo$problem) , text.check <- base::c(text.check, tempo$text) , checked.arg.names <- base::c(checked.arg.names, tempo$object.name))
-    tempo <- saferDev::arg_check(data = fun, class = "vector", mode = "character", length = 1, fun.name = function_name, safer_check = FALSE) ; base::eval(ee)
-    tempo <- saferDev::arg_check(data = arg, class = "vector", mode = "character", fun.name = function_name, safer_check = FALSE) ; base::eval(ee)
-    tempo <- saferDev::arg_check(data = val, class = "list", na.contain = TRUE, fun.name = function_name, safer_check = FALSE) ; base::eval(ee)
+    tempo <- saferDev::arg_check(data = fun, class = "vector", mode = "character", length = 1, fun_name = function_name, safer_check = FALSE) ; base::eval(ee)
+    tempo <- saferDev::arg_check(data = arg, class = "vector", mode = "character", fun_name = function_name, safer_check = FALSE) ; base::eval(ee)
+    tempo <- saferDev::arg_check(data = val, class = "list", na.contain = TRUE, fun_name = function_name, safer_check = FALSE) ; base::eval(ee)
     if( ! base::is.null(expect.error)){
-        tempo <- saferDev::arg_check(data = expect.error, class = "list", fun.name = function_name, safer_check = FALSE) ; base::eval(ee)
+        tempo <- saferDev::arg_check(data = expect.error, class = "list", fun_name = function_name, safer_check = FALSE) ; base::eval(ee)
     }
-    tempo <- saferDev::arg_check(data = parall, class = "vector", mode = "logical", length = 1, fun.name = function_name, safer_check = FALSE) ; base::eval(ee)
+    tempo <- saferDev::arg_check(data = parall, class = "vector", mode = "logical", length = 1, fun_name = function_name, safer_check = FALSE) ; base::eval(ee)
     if(parall == TRUE){
         if( ! base::is.null(thread.nb)){
-            tempo <- saferDev::arg_check(data = thread.nb, typeof = "integer", double.as.integer.allowed = TRUE, neg.values = FALSE, length = 1, fun.name = function_name, safer_check = FALSE) ; base::eval(ee)
+            tempo <- saferDev::arg_check(data = thread.nb, typeof = "integer", double.as.integer.allowed = TRUE, neg.values = FALSE, length = 1, fun_name = function_name, safer_check = FALSE) ; base::eval(ee)
             if(tempo$problem == FALSE & thread.nb < 1){
                 tempo.cat <- base::paste0("ERROR IN ", function_name, " OF THE ", package_name, " PACKAGE\nthread.nb PARAMETER MUST EQUAL OR GREATER THAN 1: ", thread.nb)
                 text.check <- base::c(text.check, tempo.cat)
@@ -207,11 +207,11 @@ arg_test <- function(
             }
         }
     }
-    tempo <- saferDev::arg_check(data = print.count, class = "vector", typeof = "integer", length = 1, double.as.integer.allowed = TRUE, neg.values = FALSE, fun.name = function_name, safer_check = FALSE) ; base::eval(ee)
-    tempo <- saferDev::arg_check(data = plot.fun, class = "vector", mode = "logical", length = 1, fun.name = function_name, safer_check = FALSE) ; base::eval(ee)
-    tempo <- saferDev::arg_check(data = export, class = "vector", mode = "logical", length = 1, fun.name = function_name, safer_check = FALSE) ; base::eval(ee)
+    tempo <- saferDev::arg_check(data = print.count, class = "vector", typeof = "integer", length = 1, double.as.integer.allowed = TRUE, neg.values = FALSE, fun_name = function_name, safer_check = FALSE) ; base::eval(ee)
+    tempo <- saferDev::arg_check(data = plot.fun, class = "vector", mode = "logical", length = 1, fun_name = function_name, safer_check = FALSE) ; base::eval(ee)
+    tempo <- saferDev::arg_check(data = export, class = "vector", mode = "logical", length = 1, fun_name = function_name, safer_check = FALSE) ; base::eval(ee)
     if( ! base::is.null(res.path)){
-        tempo <- saferDev::arg_check(data = res.path, class = "vector", mode = "character", fun.name = function_name, safer_check = FALSE) ; base::eval(ee)
+        tempo <- saferDev::arg_check(data = res.path, class = "vector", mode = "character", fun_name = function_name, safer_check = FALSE) ; base::eval(ee)
     }
     # lib_path already checked above
     if( ! base::is.null(argum.check)){
@@ -283,8 +283,8 @@ arg_test <- function(
         base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n", base::ifelse(base::is.null(warn), "", base::paste0("IN ADDITION\nWARNING", base::ifelse(warn.count > 1, "S", ""), ":\n\n", warn))), call. = FALSE)
     }
     for(i2 in 1:base::length(val)){ # base::length(val) must be aequal to nb of arguments
-        tempo1 <- saferDev::arg_check(data = val[[i2]], class = "vector", na.contain = TRUE, fun.name = function_name, safer_check = FALSE)
-        tempo2 <- saferDev::arg_check(data = val[[i2]], class = "list", na.contain = TRUE, fun.name = function_name, safer_check = FALSE)
+        tempo1 <- saferDev::arg_check(data = val[[i2]], class = "vector", na.contain = TRUE, fun_name = function_name, safer_check = FALSE)
+        tempo2 <- saferDev::arg_check(data = val[[i2]], class = "list", na.contain = TRUE, fun_name = function_name, safer_check = FALSE)
         if(tempo1$problem == TRUE & tempo2$problem == TRUE){
             tempo.cat <- base::paste0("ERROR IN ", function_name, " OF THE ", package_name, " PACKAGE\nCOMPARTMENT ", i2, " OF val ARGUMENT MUST BE A VECTOR OR A LIST")
             base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n", base::ifelse(base::is.null(warn), "", base::paste0("IN ADDITION\nWARNING", base::ifelse(warn.count > 1, "S", ""), ":\n\n", warn))), call. = FALSE)
@@ -311,8 +311,8 @@ arg_test <- function(
             base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n", base::ifelse(base::is.null(warn), "", base::paste0("IN ADDITION\nWARNING", base::ifelse(warn.count > 1, "S", ""), ":\n\n", warn))), call. = FALSE)
         }
         for(i3 in 1:base::length(expect.error)){
-            tempo1 <- saferDev::arg_check(data = expect.error[[i3]], class = "vector",  mode = "logical", fun.name = function_name, safer_check = FALSE)
-            tempo2 <- saferDev::arg_check(data = expect.error[[i3]], class = "list", fun.name = function_name, safer_check = FALSE)
+            tempo1 <- saferDev::arg_check(data = expect.error[[i3]], class = "vector",  mode = "logical", fun_name = function_name, safer_check = FALSE)
+            tempo2 <- saferDev::arg_check(data = expect.error[[i3]], class = "list", fun_name = function_name, safer_check = FALSE)
             if(tempo1$problem == TRUE & tempo2$problem == TRUE){
                 tempo.cat <- base::paste0("ERROR IN ", function_name, " OF THE ", package_name, " PACKAGE\nCOMPARTMENT ", i3, " OF expect.error ARGUMENT MUST BE TRUE OR FALSE")
                 base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n", base::ifelse(base::is.null(warn), "", base::paste0("IN ADDITION\nWARNING", base::ifelse(warn.count > 1, "S", ""), ":\n\n", warn))), call. = FALSE)
