@@ -74,21 +74,21 @@ env_check <- function(
     # DEBUGGING
     # pos = 1 ; name = "mean"; safer_check = TRUE # for function debugging
     # package name
-    package.name <- "saferDev"
+    package_name <- "saferDev"
     # end package name
     # function name
-    function.name <- base::paste0(base::as.list(base::match.call(expand.dots = FALSE))[[1]], "()") # function name with "()" paste, which split into a vector of three: c("::()", "package ()", "function ()") if "package::function()" is used.
-    if(function.name[1] == "::()" | function.name[1] == ":::()"){
-        function.name <- function.name[3]
+    function_name <- base::paste0(base::as.list(base::match.call(expand.dots = FALSE))[[1]], "()") # function name with "()" paste, which split into a vector of three: c("::()", "package ()", "function ()") if "package::function()" is used.
+    if(function_name[1] == "::()" | function_name[1] == ":::()"){
+        function_name <- function_name[3]
     }
     arg.names <- base::names(base::formals(fun = base::sys.function(base::sys.parent(n = 2)))) # names of all the arguments
-    arg.user.setting <- base::as.list(base::match.call(expand.dots = FALSE))[-1] # list of the argument settings (excluding default values not provided by the user)
+    arg_user_setting <- base::as.list(base::match.call(expand.dots = FALSE))[-1] # list of the argument settings (excluding default values not provided by the user)
     # end function name
     # critical operator checking
     if(safer_check == TRUE){
         saferDev:::.base_op_check(
-            external_function_name = function.name,
-            external_package_name = package.name
+            external_function_name = function_name,
+            external_package_name = package_name
         )
     }
     # end critical operator checking
@@ -107,9 +107,9 @@ env_check <- function(
     text.check <- NULL #
     checked.arg.names <- NULL # for function debugging: used by r_debugging_tools
     ee <- base::expression(argum.check <- base::c(argum.check, tempo$problem) , text.check <- base::c(text.check, tempo$text) , checked.arg.names <- base::c(checked.arg.names, tempo$object.name))
-    tempo <- saferDev::arg_check(data = pos, class = "vector", typeof = "integer", double.as.integer.allowed = TRUE, length = 1, fun.name = function.name, safer_check = FALSE) ; base::eval(ee)
+    tempo <- saferDev::arg_check(data = pos, class = "vector", typeof = "integer", double.as.integer.allowed = TRUE, length = 1, fun.name = function_name, safer_check = FALSE) ; base::eval(ee)
     if( ! base::is.null(name)){
-        tempo <- saferDev::arg_check(data = name, class = "vector", typeof = "character", fun.name = function.name, safer_check = FALSE) ; base::eval(ee)
+        tempo <- saferDev::arg_check(data = name, class = "vector", typeof = "character", fun.name = function_name, safer_check = FALSE) ; base::eval(ee)
     }
     if( ! base::is.null(argum.check)){
         if(base::any(argum.check, na.rm = TRUE) == TRUE){
@@ -126,11 +126,11 @@ env_check <- function(
     # reserved words (to avoid bugs)
     # end reserved words (to avoid bugs)
     # management of NA arguments
-    if( ! (base::all(base::class(arg.user.setting) %in% base::c("list", "NULL"), na.rm = TRUE) & base::length(arg.user.setting) == 0)){
-        tempo.arg <- base::names(arg.user.setting) # values provided by the user
+    if( ! (base::all(base::class(arg_user_setting) %in% base::c("list", "NULL"), na.rm = TRUE) & base::length(arg_user_setting) == 0)){
+        tempo.arg <- base::names(arg_user_setting) # values provided by the user
         tempo.log <- base::suppressWarnings(base::sapply(base::lapply(base::lapply(tempo.arg, FUN = base::get, env = base::sys.nframe(), inherit = FALSE), FUN = base::is.na), FUN = base::any)) & base::lapply(base::lapply(tempo.arg, FUN = base::get, env = base::sys.nframe(), inherit = FALSE), FUN = base::length) == 1L # no argument provided by the user can be just NA
         if(base::any(tempo.log) == TRUE){ # normally no NA because base::is.na() used here
-            tempo.cat <- base::paste0("ERROR IN ", function.name, " OF THE ", package.name, " PACKAGE\n", base::ifelse(base::sum(tempo.log, na.rm = TRUE) > 1, "THESE ARGUMENTS", "THIS ARGUMENT"), " CANNOT JUST BE NA:", base::paste0(tempo.arg[tempo.log], collapse = "\n"))
+            tempo.cat <- base::paste0("ERROR IN ", function_name, " OF THE ", package_name, " PACKAGE\n", base::ifelse(base::sum(tempo.log, na.rm = TRUE) > 1, "THESE ARGUMENTS", "THIS ARGUMENT"), " CANNOT JUST BE NA:", base::paste0(tempo.arg[tempo.log], collapse = "\n"))
             base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
         }
     }
@@ -143,7 +143,7 @@ env_check <- function(
     )
     tempo.log <- base::sapply(base::lapply(tempo.arg, FUN = base::get, env = base::sys.nframe(), inherit = FALSE), FUN = base::is.null)
     if(base::any(tempo.log) == TRUE){# normally no NA with base::is.null()
-        tempo.cat <- base::paste0("ERROR IN ", function.name, " OF THE ", package.name, " PACKAGE\n", base::ifelse(base::sum(tempo.log, na.rm = TRUE) > 1, "THESE ARGUMENTS\n", "THIS ARGUMENT\n"), base::paste0(tempo.arg[tempo.log], collapse = "\n"),"\nCANNOT BE NULL")
+        tempo.cat <- base::paste0("ERROR IN ", function_name, " OF THE ", package_name, " PACKAGE\n", base::ifelse(base::sum(tempo.log, na.rm = TRUE) > 1, "THESE ARGUMENTS\n", "THIS ARGUMENT\n"), base::paste0(tempo.arg[tempo.log], collapse = "\n"),"\nCANNOT BE NULL")
         base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
     }
     # end management of NULL arguments

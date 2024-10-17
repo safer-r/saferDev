@@ -50,25 +50,25 @@ colons_check <- function(
     # library(saferDev) ; x = get_message ; safer_check = TRUE # Warning: does not return the same number of code lines than the previsou example
     # source("C:\\Users\\gmillot\\Documents\\Git_projects\\safer-r\\saferDev\\R\\colons_check.R") ; x = colons_check ; safer_check = TRUE # Warning: x = saferDev::get_message does not return the same number of code lines
     # source("https://raw.githubusercontent.com/safer-r/saferDev/main/dev/other/test.R") ; x = test ; safer_check = TRUE # Warning: x = saferDev::get_message does not return the same number of code lines
-    # arg.user.setting = base::list(x = as.name(x = "test"), safer_check = TRUE)
+    # arg_user_setting = base::list(x = as.name(x = "test"), safer_check = TRUE)
     # package name
-    package.name <- "saferDev"
+    package_name <- "saferDev"
     # end package name
  #### function name
     tempo_args <- base::as.list(x = base::match.call(definition = base::sys.function(which = base::sys.parent(n = 0)), call = base::sys.call(which = base::sys.parent(n = 0)), expand.dots = FALSE, envir = base::parent.frame(n = 2L)))
-    function.name <- base::paste0(tempo_args[[1]], "()", collapse = NULL, recycle0 = FALSE) # function name with "()" paste, which split into a vector of three: c("::()", "package ()", "function ()") if "package::function()" is used.
-    if(function.name[1] == "::()" | function.name[1] == ":::()"){
-        function.name <- function.name[3]
+    function_name <- base::paste0(tempo_args[[1]], "()", collapse = NULL, recycle0 = FALSE) # function name with "()" paste, which split into a vector of three: c("::()", "package ()", "function ()") if "package::function()" is used.
+    if(function_name[1] == "::()" | function_name[1] == ":::()"){
+        function_name <- function_name[3]
     }
     arg.names <- base::names(x = base::formals(fun = base::sys.function(which = base::sys.parent(n = 2)), envir = base::parent.frame(n = 1))) # names of all the arguments
-    arg.user.setting <- tempo_args[-1] # list of the argument settings (excluding default values not provided by the user)
+    arg_user_setting <- tempo_args[-1] # list of the argument settings (excluding default values not provided by the user)
     #### end function name
     # main code
     out <- .functions_detect(
         x = x, 
-        arg.user.setting = arg.user.setting, 
-        function.name = function.name, 
-        package.name = package.name
+        arg_user_setting = arg_user_setting, 
+        function_name = function_name, 
+        package_name = package_name
     )
 
     # basic function names in x
@@ -83,7 +83,7 @@ colons_check <- function(
     in_basic_fun_names_pos <- in_basic_fun_names_pos[ ! tempo.log]
     in_basic_code_line_nb <- out$code_line_nb[ ! tempo.log]
     if( ! (base::length(in_basic_fun) == base::length(in_basic_fun_names_pos) & base::length(in_basic_fun) == base::length(in_basic_code_line_nb))){
-        tempo.cat <- base::paste0("INTERNAL ERROR 1 IN ", function.name, " OF THE ", package.name, " PACKAGE\nLENGTHS SHOULD BE IDENTICAL\nin_basic_fun: ", base::length(in_basic_fun), "\nin_basic_fun_names_pos: ", base::length(in_basic_fun_names_pos), "\nin_basic_code_line_nb: ", base::length(in_basic_code_line_nb))
+        tempo.cat <- base::paste0("INTERNAL ERROR 1 IN ", function_name, " OF THE ", package_name, " PACKAGE\nLENGTHS SHOULD BE IDENTICAL\nin_basic_fun: ", base::length(in_basic_fun), "\nin_basic_fun_names_pos: ", base::length(in_basic_fun_names_pos), "\nin_basic_code_line_nb: ", base::length(in_basic_code_line_nb))
         base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
     }
     # end removal of string with empty function names
@@ -91,7 +91,7 @@ colons_check <- function(
     # end basic function names in x
      # other function names in x
     # selection of other functions
-    tempo.log <- base::lapply(out$fun_names, FUN = function(x){ ! x %in% base::c(out$all_basic_funs, out$arg.user.setting$x)}) #  names of all the other functions used in x, except the one tested (arg.user.setting$x), because can be in error messages
+    tempo.log <- base::lapply(out$fun_names, FUN = function(x){ ! x %in% base::c(out$all_basic_funs, out$arg_user_setting$x)}) #  names of all the other functions used in x, except the one tested (arg_user_setting$x), because can be in error messages
     in_other_fun <- mapply(FUN = function(x, y){x[y]}, x = out$fun_names, y = tempo.log)
     in_other_fun_names_pos <-  mapply(FUN = function(x, y){x[y]}, x = out$fun_names_pos, y = tempo.log)
     # end selection of other functions
@@ -101,7 +101,7 @@ colons_check <- function(
     in_other_fun_names_pos <- in_other_fun_names_pos[ ! tempo.log]
     in_other_code_line_nb <- out$code_line_nb[ ! tempo.log]
     if( ! (base::length(in_other_fun) == base::length(in_other_fun_names_pos) & base::length(in_other_fun) == base::length(in_other_code_line_nb))){
-        tempo.cat <- base::paste0("INTERNAL ERROR 2 IN ", function.name, " OF THE ", package.name, " PACKAGE\nLENGTHS SHOULD BE IDENTICAL\nin_other_fun: ", base::length(in_other_fun), "\nin_other_fun_names_pos: ", base::length(in_other_fun_names_pos), "\nin_other_code_line_nb: ", base::length(in_other_code_line_nb))
+        tempo.cat <- base::paste0("INTERNAL ERROR 2 IN ", function_name, " OF THE ", package_name, " PACKAGE\nLENGTHS SHOULD BE IDENTICAL\nin_other_fun: ", base::length(in_other_fun), "\nin_other_fun_names_pos: ", base::length(in_other_fun_names_pos), "\nin_other_code_line_nb: ", base::length(in_other_code_line_nb))
         base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
     }
     # end removal of string with empty function names
@@ -115,9 +115,9 @@ colons_check <- function(
             list.fun.pos = in_basic_fun_names_pos, 
             line.nb = in_basic_code_line_nb, 
             ini = out$code, 
-            arg.user.setting = out$arg.user.setting, 
-            function.name = function.name, 
-            package.name = package.name, 
+            arg_user_setting = out$arg_user_setting, 
+            function_name = function_name, 
+            package_name = package_name, 
             text = "BASIC",
             internal_fun_names = out$internal_fun_names
         )
@@ -136,9 +136,9 @@ colons_check <- function(
             list.fun.pos = in_other_fun_names_pos, 
             line.nb = in_other_code_line_nb, 
             ini = out$code, 
-            arg.user.setting = out$arg.user.setting, 
-            function.name = function.name, 
-            package.name = package.name, 
+            arg_user_setting = out$arg_user_setting, 
+            function_name = function_name, 
+            package_name = package_name, 
             text = "OTHER",
             internal_fun_names = out$internal_fun_names
         )
@@ -150,9 +150,9 @@ colons_check <- function(
     }
     # end analyse of :: before basic functions in x
     if(( ! base::any(tempo.log)) & ! base::any(tempo.log.b)){
-        tempo.cat <- base::paste0("AFTER RUNNING ", function.name, " OF THE ", package.name, " PACKAGE:\nINSIDE ", base::as.character(out$arg.user.setting$x), "(), EVERYTHING SEEMS CLEAN")
+        tempo.cat <- base::paste0("AFTER RUNNING ", function_name, " OF THE ", package_name, " PACKAGE:\nINSIDE ", base::as.character(out$arg_user_setting$x), "(), EVERYTHING SEEMS CLEAN")
     }else{
-        tempo.cat <- base::paste0(base::ifelse(base::is.null(output.cat), base::paste0("AFTER RUNNING ", function.name, " OF THE ", package.name, " PACKAGE\nINSIDE ", out$arg.user.setting$x, "(), EVERYTHING SEEMS CLEAN FOR R BASIC FUNCTIONS"), base::paste0(output.cat, base::ifelse(base::is.null(output.cat.b), "", "\n\n"))), output.cat.b)
+        tempo.cat <- base::paste0(base::ifelse(base::is.null(output.cat), base::paste0("AFTER RUNNING ", function_name, " OF THE ", package_name, " PACKAGE\nINSIDE ", out$arg_user_setting$x, "(), EVERYTHING SEEMS CLEAN FOR R BASIC FUNCTIONS"), base::paste0(output.cat, base::ifelse(base::is.null(output.cat.b), "", "\n\n"))), output.cat.b)
     }
     base::cat(base::paste0("\n\n", tempo.cat, "\n\n"))
     # end main code

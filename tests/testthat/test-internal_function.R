@@ -9,33 +9,33 @@ test_that("test .internal_function.R", {
 
     expect_no_error(.pack_and_function_check(
         fun = fun_good, 
-        lib.path = path_good,
-        external.function.name = "FUN1",
-        external.package.name = "P1"
+        lib_path = path_good,
+        external_function_name = "FUN1",
+        external_package_name = "P1"
     ))
     expect_error(.pack_and_function_check(
         fun = fun_wrong1, 
-        lib.path = path_good,
-        external.function.name = "FUN1",
-        external.package.name = "P1"
+        lib_path = path_good,
+        external_function_name = "FUN1",
+        external_package_name = "P1"
     ))
     expect_error(.pack_and_function_check(
         fun = fun_wrong2, 
-        lib.path = path_good,
-        external.function.name = "FUN1",
-        external.package.name = "P1"
+        lib_path = path_good,
+        external_function_name = "FUN1",
+        external_package_name = "P1"
     ))
     expect_error(.pack_and_function_check(
         fun = fun_good, 
-        lib.path = path_wrong,
-        external.function.name = "FUN1",
-        external.package.name = "P1"
+        lib_path = path_wrong,
+        external_function_name = "FUN1",
+        external_package_name = "P1"
     ))
 
     # .base_op_check()
     expect_no_error(.base_op_check(
-        external.function.name = "FUN1",
-        external.package.name = "P1"
+        external_function_name = "FUN1",
+        external_package_name = "P1"
     ))
     
 })
