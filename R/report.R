@@ -84,7 +84,7 @@ report <- function(
     tempo <- saferDev::arg_check(data = rownames.kept, class = "logical", length = 1, fun_name = function_name, safer_check = FALSE) ; base::eval(ee)
     tempo <- saferDev::arg_check(data = vector.cat, class = "logical", length = 1, fun_name = function_name, safer_check = FALSE) ; base::eval(ee)
     tempo <- saferDev::arg_check(data = noquote, class = "logical", length = 1, fun_name = function_name, safer_check = FALSE) ; base::eval(ee)
-    tempo <- saferDev::arg_check(data = sep, class = "vector", typeof = "integer", length = 1, double.as.integer.allowed = TRUE, neg.values = FALSE, fun_name = function_name, safer_check = FALSE) ; base::eval(ee)
+    tempo <- saferDev::arg_check(data = sep, class = "vector", typeof = "integer", length = 1, double_as_integer_allowed = TRUE, neg_values = FALSE, fun_name = function_name, safer_check = FALSE) ; base::eval(ee)
     if( ! base::is.null(argum.check)){
         if(base::any(argum.check, na.rm = TRUE) == TRUE){
             base::stop(base::paste0("\n\n================\n\n", base::paste(text.check[argum.check], collapse = "\n"), "\n\n================\n\n"), call. = FALSE) #

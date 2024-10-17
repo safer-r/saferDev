@@ -49,7 +49,7 @@ arg_check(data = vec1, class = "integer")
 # Check that vec1 is a numeric vector -> error because vec1 is a vector of integers
 arg_check(data = vec1, class = "numeric")
 # Check that vec1 is an integer vector of length 3 without negative values and without NA -> error because of length 5 and negative values inside vec1
-arg_check(data = vec1, class = "vector", typeof = "integer", length = 3, neg.values = FALSE, na.contain = FALSE)
+arg_check(data = vec1, class = "vector", typeof = "integer", length = 3, neg_values = FALSE, na_contain = FALSE)
 # No result displayed because the output list is assigned into res (see below the print argument)
 res <- arg_check(data = vec1, class = "integer")
 
@@ -95,12 +95,12 @@ arg_check(
 ```
 <br>
 
-### Argument double.as.integer.allowed
+### Argument double_as_integer_allowed
 ```{r}
 arg_check(
     data = vec3, 
     typeof = "integer",
-    double.as.integer.allowed = TRUE # with TRUE, integers stored as double are accepted
+    double_as_integer_allowed = TRUE # with TRUE, integers stored as double are accepted
 )
 ```
 <br>
@@ -114,58 +114,58 @@ arg_check(
 ```
 <br>
 
-### Argument all.options.in.data
+### Argument all_options_in_data
 ```{r}
 # No error
 arg_check(
     data = vec5,
     options = c("a", "b"), 
-    all.options.in.data = TRUE
+    all_options_in_data = TRUE
 )
 # No error
 arg_check(
     data = vec5,
     options = c("a", "b", "c"), 
-    all.options.in.data = FALSE
+    all_options_in_data = FALSE
 )
 # Error
 arg_check(
     data = vec5,
     options = c("a", "b", "c"), 
-    all.options.in.data = TRUE
+    all_options_in_data = TRUE
 )
 ```
 <br>
 
-### Argument na.contain
+### Argument na_contain
 ```{r}
 arg_check(
     data = mat2, 
     class = "matrix", 
     prop = TRUE,
-    na.contain = FALSE # with TRUE, integers stored as double are accepted
+    na_contain = FALSE # with TRUE, integers stored as double are accepted
 )
 ```
 <br>
 
-### Argument neg.values
+### Argument neg_values
 ```{r}
 # Warning: only considered if set to FALSE, to check for non negative values when class is set to "vector", "numeric", "matrix", "array", "data.frame", "table", or typeof is set to "double", "integer", or mode is set to "numeric"
 arg_check(
     data = mat1, 
     class = "matrix",
-    neg.values = FALSE # with TRUE, integers stored as double are accepted
+    neg_values = FALSE # with TRUE, integers stored as double are accepted
 )
 ```
 <br>
 
-### Argument inf.values
+### Argument inf_values
 ```{r}
 # Warning: only considered if set to FALSE, to check for non infinite values when class is set to "vector", "numeric", "matrix", "array", "data.frame", "table", or typeof is set to "double", "integer", or mode is set to "numeric"
 arg_check(
     data = mat1, 
     class = "matrix",
-    inf.values = FALSE
+    inf_values = FALSE
 )
 ```
 <br>
@@ -193,14 +193,15 @@ res <- arg_check(
 ```
 <br>
 
-### Arguments data.name and fun.name
+### Arguments data_name, fun_name and pack_name
 ```{r}
 # Example
 tempo <- arg_check(
     data = vec1, 
     class = "integer", 
-    data.name = "OBSERVATION_1", 
-    fun.name = "FUNCTION_1"
+    data_name = "OBSERVATION_1", 
+    fun_name = "FUNCTION_1", 
+    pack_name = "PACKAGE_2"
 )
 tempo$text
 # In fact, these two arguments are interesting when check() is used inside functions
@@ -208,8 +209,9 @@ fun1 <- function(arg1){
     tempo <- arg_check(
                 data = arg1, 
                 class = "integer", 
-                data.name = NULL, # if NULL, the name displayed is arg1
-                fun.name = NULL # if NULL, no name displayed
+                data_name = NULL, # if NULL, the name displayed is arg1
+                fun_name = NULL, # if NULL, no name displayed
+                pack_name = NULL # if NULL, no name displayed
     )
     if(tempo$problem == TRUE){
         cat(paste0("\n\n================\n\n", tempo$text, "\n\n================\n\n"))
@@ -220,8 +222,9 @@ fun2 <- function(arg1){
     tempo <- arg_check(
                 data = arg1, 
                 class = "integer", 
-                data.name = NULL, # if NULL, the name displayed is arg1
-                fun.name = "FUNCTION_2" # if NULL, no name displayed
+                data_name = NULL, # if NULL, the name displayed is arg1
+                fun_name = "FUNCTION_2",
+                pack_name = "PACKAGE_3"
     )
     if(tempo$problem == TRUE){
         cat(paste0("\n\n================\n\n", tempo$text, "\n\n================\n\n"))
@@ -259,15 +262,16 @@ arg_check(
     mode = NULL, 
     length = NULL, 
     prop = FALSE, 
-    double.as.integer.allowed = FALSE, 
+    double_as_integer_allowed = FALSE, 
     options = NULL, 
-    all.options.in.data = FALSE, 
-    na.contain = FALSE, 
-    neg.values = TRUE, 
-    inf.values = TRUE, 
+    all_options_in_data = FALSE, 
+    na_contain = FALSE, 
+    neg_values = TRUE, 
+    inf_values = TRUE, 
     print = FALSE, 
-    data.name = NULL, 
-    fun.name = NULL,
+    data_name = NULL, 
+    fun_name = NULL,
+    pack_name = NULL,
     safer_check = TRUE
 )
 ```

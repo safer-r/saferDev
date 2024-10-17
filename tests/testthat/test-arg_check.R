@@ -12,7 +12,7 @@
     expect_equal(result1,expected1)
     
     
-    result2 <- arg_check(data = vec1, class = "vector", typeof = "integer", length = 3, neg.values = FALSE, na.contain = FALSE)
+    result2 <- arg_check(data = vec1, class = "vector", typeof = "integer", length = 3, neg_values = FALSE, na_contain = FALSE)
     expected2 <- list(problem = TRUE, text = "ERROR\nTHE vec1 OBJECT MUST BE LENGTH 3 AND THE vec1 OBJECT MUST BE MADE OF NON NEGATIVE NUMERIC VALUES", object.name = "vec1")
     expect_equal(result2,expected2)
     
@@ -44,7 +44,7 @@
     
 
     result7 <- arg_check(data = vec3, typeof = "integer",
-    double.as.integer.allowed = TRUE # with TRUE, integers stored as double are accepted
+    double_as_integer_allowed = TRUE # with TRUE, integers stored as double are accepted
 )
     expected7 <- list(problem = FALSE, text = "NO PROBLEM DETECTED FOR THE vec3 OBJECT", object.name = "vec3")
     expect_equal(result7,expected7)
@@ -59,28 +59,28 @@
 
     result9 <- arg_check(data = vec5,
     options = c("a", "b", "c"), 
-    all.options.in.data = TRUE
+    all_options_in_data = TRUE
 )
     expected9 <- list(problem = TRUE, text = "ERROR\nTHE vec5 OBJECT MUST BE MADE OF ALL THESE OPTIONS: a b c\nTHE MISSING ELEMENTS OF THE options ARGUMENT ARE: c", object.name = "vec5")
     expect_equal(result9,expected9)
     
 
     result10 <- arg_check(data = mat2, class = "matrix", prop = TRUE,
-    na.contain = FALSE # with TRUE, integers stored as double are accepted
+    na_contain = FALSE # with TRUE, integers stored as double are accepted
 )
     expected10 <- list(problem = TRUE, text = "ERROR\nTHE mat2 OBJECT CONTAINS NA WHILE NOT AUTHORIZED", object.name = "mat2")
     expect_equal(result10,expected10)
     
 
     result11 <- arg_check(data = mat1, class = "matrix",
-    neg.values = FALSE # with TRUE, integers stored as double are accepted
+    neg_values = FALSE # with TRUE, integers stored as double are accepted
 )
     expected11 <- list(problem = TRUE, text = "ERROR\nTHE mat1 OBJECT MUST BE MADE OF NON NEGATIVE NUMERIC VALUES", object.name = "mat1")
     expect_equal(result11,expected11)
     
 
     result12 <- arg_check(data = mat1, class = "matrix",
-    inf.values = FALSE
+    inf_values = FALSE
 )
     expected12 <- list(problem = TRUE, text = "ERROR\nTHE mat1 OBJECT MUST BE MADE OF NON INFINITE VALUES BUT IS NOT EVEN TYPE DOUBLE", object.name = "mat1")
     expect_equal(result12,expected12)
@@ -93,15 +93,16 @@
         mode = NULL, 
         length = NULL, 
         prop = FALSE, 
-        double.as.integer.allowed = FALSE, 
+        double_as_integer_allowed = FALSE, 
         options = NULL, 
-        all.options.in.data = FALSE, 
-        na.contain = FALSE, 
-        neg.values = TRUE, 
-        inf.values = TRUE, 
+        all_options_in_data = FALSE, 
+        na_contain = FALSE, 
+        neg_values = TRUE, 
+        inf_values = TRUE, 
         print = FALSE, 
-        data.name = NULL, 
+        data_name = NULL, 
         fun_name = NULL,
+        pack_name = NULL, 
         safer_check = TRUE
     )
     expected13 <- list(problem = FALSE, text = "NO PROBLEM DETECTED FOR THE vec1 OBJECT", object.name = "vec1")
