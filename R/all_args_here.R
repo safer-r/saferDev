@@ -44,9 +44,9 @@
 #' @examples
 #' \dontrun{ # Example that return an error
 #' all_args_here(mean)
+#' source("https://raw.githubusercontent.com/safer-r/saferDev/main/dev/other/test2.R") ; all_args_here(test2, export = TRUE)
 #' }
 #' all_args_here(all_args_here)
-#' source("https://raw.githubusercontent.com/safer-r/saferDev/main/dev/other/test2.R") ; all_args_here(test2, export = TRUE)
 #' source("C:\\Users\\gmillot\\Documents\\Git_projects\\safer-r\\.github\\profile\\backbone.R") ; all_args_here(BACKBONE, export = TRUE)
 #' @export
 all_args_here <- function(
