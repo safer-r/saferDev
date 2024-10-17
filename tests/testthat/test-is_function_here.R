@@ -6,17 +6,17 @@ test_that("is_function_here()", {
     
     expect_error(object = is_function_here(
     fun = "wrongFct",
-    lib.path = "."
+    lib_path = "."
     ), regexp = NULL)
     
     expect_error(object = is_function_here(
         fun = f,
-        lib.path = path
+        lib_path = path
     ), regexp = NULL)
 
     expect_no_error(is_function_here(
         fun = f2,
-        lib.path = NULL,
+        lib_path = NULL,
         safer_check = TRUE
     ))
 })

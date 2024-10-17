@@ -11,7 +11,7 @@
 #' @param plot.fun Single logical value. Plot the plotting function tested for each test? Ignored if the tested function is not a graphic function.
 #' @param export Single logical value. Export the results into a .RData file and into a .tsv file? If FALSE, return a list into the console (see below). BEWARE: will be automatically set to TRUE if parall is TRUE. This means that when using parallelization, the results are systematically exported, not returned into the console.
 #' @param res.path Single character string indicating the absolute pathway of the folder where the txt results and pdfs, containing all the plots, will be saved. Several txt and pdf, one per thread, if parallelization. Ignored if export is FALSE. Must be specified if parall is TRUE or if export is TRUE.
-#' @param lib.path Vector of characters specifying the absolute pathways of the directories containing the required packages if not in the default directories. Ignored if NULL.
+#' @param lib_path Vector of characters specifying the absolute pathways of the directories containing the required packages if not in the default directories. Ignored if NULL.
 #' @param safer_check Single logical value. Perform some "safer" checks (see https://github.com/safer-r)? If TRUE, checkings are performed before main code running: 1) R classical operators (like "<-") not overwritten by another package because of the R scope and 2) required functions and related packages effectively present in local R lybraries. Must be set to FALSE if this fonction is used inside another "safer" function to avoid pointless multiple checkings.
 #' @returns
 #' One or several pdf if a plotting function is tested and if the plot.fun argument is TRUE. 
@@ -73,12 +73,12 @@
 #' arg_test(fun = "plot", arg = c("x", "y"), val = list(x = list(1:10, 12:13, NA, (1:10)^2), 
 #' y = list(1:10, NA, NA)),  expect.error = list(x = list(FALSE, TRUE, TRUE, FALSE), 
 #' y = list(FALSE, TRUE, TRUE)), parall = FALSE, thread.nb = NULL, plot.fun = TRUE, 
-#' res.path = ".", lib.path = NULL)
+#' res.path = ".", lib_path = NULL)
 #' 
 #' arg_test(fun = "plot", arg = c("x", "y"), val = list(x = list(1:10, 12:13, NA, 
 #' (1:10)^2), y = list(1:10, NA, NA)), parall = FALSE, thread.nb = 4, 
 #' plot.fun = TRUE, res.path = ".", 
-#' lib.path = NULL)
+#' lib_path = NULL)
 #' 
 #' # set.seed(1) ; 
 #' # obs1 <- data.frame(Time = c(rnorm(10), rnorm(10) + 2), Group1 = rep(c("G", "H"), each = 10), 
@@ -90,13 +90,13 @@
 #' # stringsAsFactors = TRUE) ; 
 #' # arg_test(fun = "ggbox", arg = c("data1", "y", "categ"), val = list(L1 = list(obs1), 
 #' # L2 = "Time", L3 = "Group1"), parall = FALSE, thread.nb = NULL, plot.fun = TRUE, 
-#' # res.path = "C:\\Users\\yhan\\Desktop\\", lib.path = "C:\\Program Files\\R\\R-4.3.1\\library\\")
+#' # res.path = "C:\\Users\\yhan\\Desktop\\", lib_path = "C:\\Program Files\\R\\R-4.3.1\\library\\")
 #' 
 #' # library(ggplot2) ; arg_test(fun = "geom_histogram", arg = c("data", "mapping"), 
 #' # val = list(x = list(data.frame(X = "a", stringsAsFactors = TRUE)), 
 #' # y = list(ggplot2::aes(x = X))), parall = FALSE, thread.nb = NULL, 
 #' # plot.fun = TRUE, res.path = "C:\\Users\\yhan\\Desktop\\", 
-#' # lib.path = "C:\\Program Files\\R\\R-4.3.1\\library\\") 
+#' # lib_path = "C:\\Program Files\\R\\R-4.3.1\\library\\") 
 #' # BEWARE: ggplot2::geom_histogram does not work
 #' @export
 arg_test <- function(
@@ -110,11 +110,11 @@ arg_test <- function(
         plot.fun = FALSE, 
         export = FALSE, 
         res.path = NULL, 
-        lib.path = NULL,
+        lib_path = NULL,
         safer_check = TRUE
 ){
     # DEBUGGING
-    # fun = "unique" ; arg = "x" ; val = base::list(x = base::list(1:3, mean)) ; expect.error = base::list(x = base::list(TRUE, TRUE)) ; parall = FALSE ; thread.nb = NULL ; plot.fun = FALSE ; export = FALSE ; res.path = "C:\\Users\\gmillot\\Desktop\\" ; lib.path = NULL ; print.count = 1; safer_check = TRUE # for function debugging
+    # fun = "unique" ; arg = "x" ; val = base::list(x = base::list(1:3, mean)) ; expect.error = base::list(x = base::list(TRUE, TRUE)) ; parall = FALSE ; thread.nb = NULL ; plot.fun = FALSE ; export = FALSE ; res.path = "C:\\Users\\gmillot\\Desktop\\" ; lib_path = NULL ; print.count = 1; safer_check = TRUE # for function debugging
     # package name
     package_name <- "saferDev"
     # end package name
@@ -136,22 +136,22 @@ arg_test <- function(
     }
     # end critical operator checking
     # package checking
-    # check of lib.path
-    if( ! base::is.null(lib.path)){
-        if( ! base::all(base::typeof(lib.path) == "character")){ # no na.rm = TRUE with typeof
-            tempo.cat <- base::paste0("ERROR IN ", function_name, " OF THE ", package_name, " PACKAGE\nDIRECTORY PATH INDICATED IN THE lib.path ARGUMENT MUST BE A VECTOR OF CHARACTERS:\n", base::paste(lib.path, collapse = "\n"))
+    # check of lib_path
+    if( ! base::is.null(lib_path)){
+        if( ! base::all(base::typeof(lib_path) == "character")){ # no na.rm = TRUE with typeof
+            tempo.cat <- base::paste0("ERROR IN ", function_name, " OF THE ", package_name, " PACKAGE\nDIRECTORY PATH INDICATED IN THE lib_path ARGUMENT MUST BE A VECTOR OF CHARACTERS:\n", base::paste(lib_path, collapse = "\n"))
             base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
-        }else if( ! base::all(base::dir.exists(lib.path), na.rm = TRUE)){ # separation to avoid the problem of tempo$problem == FALSE and lib.path == NA
-            tempo.cat <- base::paste0("ERROR IN ", function_name, " OF THE ", package_name, " PACKAGE\nDIRECTORY PATH INDICATED IN THE lib.path ARGUMENT DOES NOT EXISTS:\n", base::paste(lib.path, collapse = "\n"))
+        }else if( ! base::all(base::dir.exists(lib_path), na.rm = TRUE)){ # separation to avoid the problem of tempo$problem == FALSE and lib_path == NA
+            tempo.cat <- base::paste0("ERROR IN ", function_name, " OF THE ", package_name, " PACKAGE\nDIRECTORY PATH INDICATED IN THE lib_path ARGUMENT DOES NOT EXISTS:\n", base::paste(lib_path, collapse = "\n"))
             base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
         }else{
-            base::.libPaths(new = base::sub(x = lib.path, pattern = "/$|\\\\$", replacement = "")) # base::.libPaths(new = ) add path to default path. BEWARE: base::.libPaths() does not support / at the end of a submitted path. Thus check and replace last / or \\ in path
-            lib.path <- base::.libPaths()
+            base::.libPaths(new = base::sub(x = lib_path, pattern = "/$|\\\\$", replacement = "")) # base::.libPaths(new = ) add path to default path. BEWARE: base::.libPaths() does not support / at the end of a submitted path. Thus check and replace last / or \\ in path
+            lib_path <- base::.libPaths()
         }
     }else{
-        lib.path <- base::.libPaths() # base::.libPaths(new = lib.path) # or base::.libPaths(new = base::c(base::.libPaths(), lib.path))
+        lib_path <- base::.libPaths() # base::.libPaths(new = lib_path) # or base::.libPaths(new = base::c(base::.libPaths(), lib_path))
     }
-    # end check of lib.path
+    # end check of lib_path
     # check of the required function from the required packages
     if(safer_check == TRUE){
         saferDev:::.pack_and_function_check(
@@ -164,7 +164,7 @@ arg_test <- function(
             "parallel::clusterApply",
             "parallel::stopCluster"
         ),
-        lib.path = lib.path,
+        lib_path = lib_path,
         external_function_name = function_name,
         external_package_name = package_name
     )
@@ -213,7 +213,7 @@ arg_test <- function(
     if( ! base::is.null(res.path)){
         tempo <- saferDev::arg_check(data = res.path, class = "vector", mode = "character", fun.name = function_name, safer_check = FALSE) ; base::eval(ee)
     }
-    # lib.path already checked above
+    # lib_path already checked above
     if( ! base::is.null(argum.check)){
         if(base::any(argum.check, na.rm = TRUE) == TRUE){
             base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) #
@@ -250,7 +250,7 @@ arg_test <- function(
         "plot.fun", 
         "export",
         # "res.path", # because can be NULL
-        # "lib.path", # because can be NULL
+        # "lib_path", # because can be NULL
         "safer_check"
     )
     tempo.log <- base::sapply(base::lapply(tempo.arg, FUN = base::get, env = base::sys.nframe(), inherit = FALSE), FUN = base::is.null)
@@ -351,9 +351,9 @@ arg_test <- function(
         tempo.cat <- base::paste0("WARNING FROM ", function_name, " OF THE ", package_name, " PACKAGE\nexport ARGUMENT CONVERTED TO TRUE BECAUSE thread.nb ARGUMENT IS NOT NULL")
         base::warning(base::paste0("\n", tempo.cat, "\n"), call. = FALSE)
     }
-    if( ! base::is.null(lib.path)){
-        if( ! base::all(base::dir.exists(lib.path), na.rm = TRUE)){ # separation to avoid the problem of tempo$problem == FALSE and lib.path == NA
-            tempo.cat <- base::paste0("ERROR IN ", function_name, " OF THE ", package_name, " PACKAGE\nDIRECTORY PATH INDICATED IN THE lib.path ARGUMENT DOES NOT EXISTS:\n", base::paste(lib.path, collapse = "\n"))
+    if( ! base::is.null(lib_path)){
+        if( ! base::all(base::dir.exists(lib_path), na.rm = TRUE)){ # separation to avoid the problem of tempo$problem == FALSE and lib_path == NA
+            tempo.cat <- base::paste0("ERROR IN ", function_name, " OF THE ", package_name, " PACKAGE\nDIRECTORY PATH INDICATED IN THE lib_path ARGUMENT DOES NOT EXISTS:\n", base::paste(lib_path, collapse = "\n"))
             base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n", base::ifelse(base::is.null(warn), "", base::paste0("IN ADDITION\nWARNING", base::ifelse(warn.count > 1, "S", ""), ":\n\n", warn))), call. = FALSE)
         }
     }
@@ -629,7 +629,7 @@ arg_test <- function(
             code = code,
             plot.fun = plot.fun, 
             res.path = res.path, 
-            lib.path = lib.path, 
+            lib_path = lib_path, 
             fun = function(
         x, 
         function_name, 
@@ -653,7 +653,7 @@ arg_test <- function(
         code, 
         plot.fun, 
         res.path, 
-        lib.path
+        lib_path
             ){
                 # check again: very important because another R
                 process.id <- base::Sys.getpid()
@@ -662,7 +662,7 @@ arg_test <- function(
                     fun = base::c(
                         "lubridate::seconds_to_period"
                     ),
-                    lib.path = lib.path,
+                    lib_path = lib_path,
                     external_function_name = function_name, 
                     external_package_name = package_name
                 )

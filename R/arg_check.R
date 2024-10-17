@@ -118,8 +118,8 @@ arg_check <- function(
         )
     }
     # end critical operator checking
-    # check of lib.path
-    # end check of lib.path
+    # check of lib_path
+    # end check of lib_path
     # saferdev required function checking
     # end saferdev required function checking
     # check of the required function from the required packages

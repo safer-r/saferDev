@@ -1,26 +1,26 @@
 test_that("is_package_here()", {
-    req.pkg <- "ggplot2"
+    req_pkg <- "ggplot2"
     path <- "blablabla"
     
     expect_error(object = is_package_here(
-    req.package = "wrongname",
-    lib.path = "."
+    req_package = "wrongname",
+    lib_path = "."
     ), regexp = NULL)
     
     expect_error(object = is_package_here(
-        req.package = req.pkg,
-        lib.path = path
+        req_package = req_pkg,
+        lib_path = path
     ), regexp = NULL)
 
     expect_no_error(is_package_here(
-        req.package = "utils",
-        lib.path = NULL,
+        req_package = "utils",
+        lib_path = NULL,
         safer_check = TRUE
     ))
 
     expect_no_error(is_package_here(
-        req.package = "graphics",
-        lib.path = NULL,
+        req_package = "graphics",
+        lib_path = NULL,
         safer_check = TRUE
     ))
 })

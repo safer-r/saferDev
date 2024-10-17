@@ -55,8 +55,8 @@ report <- function(
     }
     # end critical operator checking
     # package checking
-    # check of lib.path
-    # end check of lib.path
+    # check of lib_path
+    # end check of lib_path
     # check of the required function from the required packages
     # end check of the required function from the required packages
     # end package checking

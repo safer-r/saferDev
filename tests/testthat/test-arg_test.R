@@ -15,7 +15,7 @@ test_that("arg_test()", {
         plot.fun = FALSE, 
         export = FALSE, 
         res.path = NULL, 
-        lib.path = NULL,
+        lib_path = NULL,
         safer_check = TRUE
     )
     # WARNING: trick to get the same result2$ini
@@ -30,7 +30,7 @@ test_that("arg_test()", {
         plot.fun = FALSE, 
         export = FALSE, 
         res.path = NULL, 
-        lib.path = NULL,
+        lib_path = NULL,
         safer_check = TRUE
     ){
         return(base::match.call(expand.dots = FALSE))
@@ -46,7 +46,7 @@ test_that("arg_test()", {
             plot.fun = FALSE, 
             export = FALSE, 
             res.path = NULL, 
-            lib.path = NULL,
+            lib_path = NULL,
             safer_check = TRUE
         )
     rm(arg_test)

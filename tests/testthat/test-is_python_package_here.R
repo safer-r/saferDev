@@ -1,18 +1,18 @@
 test_that("is_python_package_here()", {
-    lib.path <- "."
+    lib_path <- "."
     path <- "blablabla"
-    req.pkg <- "serpentine"
+    req_pkg <- "serpentine"
     
     expect_error(object = is_python_package_here(
-    req.package = req.pkg, 
-    lib.path = path
+    req_package = req_pkg, 
+    lib_path = path
     ), regexp = NULL)
     
     expect_error(object = is_python_package_here(
-        req.package = "serpentine", 
-        python.exec.path = ".", 
-        python.lib.path = ".", 
-        lib.path = lib.path, 
+        req_package = "serpentine", 
+        python_exec_path = ".", 
+        python_lib_path = ".", 
+        lib_path = lib_path, 
         safer_check = TRUE
     ), regexp = NULL)
 })
