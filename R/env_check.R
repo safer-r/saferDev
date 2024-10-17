@@ -87,8 +87,8 @@ env_check <- function(
     # critical operator checking
     if(safer_check == TRUE){
         saferDev:::.base_op_check(
-            external.function.name = function.name,
-            external.package.name = package.name
+            external_function_name = function.name,
+            external_package_name = package.name
         )
     }
     # end critical operator checking

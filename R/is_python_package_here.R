@@ -60,8 +60,8 @@ is_python_package_here <- function(
     # critical operator checking
     if(safer_check == TRUE){
         saferDev:::.base_op_check(
-            external.function.name = function.name,
-            external.package.name = package.name
+            external_function_name = function.name,
+            external_package_name = package.name
         )
     }
     # end critical operator checking
@@ -91,8 +91,8 @@ is_python_package_here <- function(
             "reticulate::import_from_path"
         ),
         lib.path = lib.path,
-        external.function.name = function.name,
-        external.package.name = package.name
+        external_function_name = function.name,
+        external_package_name = package.name
         )
     }
     # end check of the required function from the required packages

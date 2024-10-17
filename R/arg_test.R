@@ -130,8 +130,8 @@ arg_test <- function(
     # critical operator checking
     if(safer_check == TRUE){
         saferDev:::.base_op_check(
-            external.function.name = function.name,
-            external.package.name = package.name
+            external_function_name = function.name,
+            external_package_name = package.name
         )
     }
     # end critical operator checking
@@ -165,8 +165,8 @@ arg_test <- function(
             "parallel::stopCluster"
         ),
         lib.path = lib.path,
-        external.function.name = function.name,
-        external.package.name = package.name
+        external_function_name = function.name,
+        external_package_name = package.name
     )
     }
     # end check of the required function from the required packages
@@ -663,8 +663,8 @@ arg_test <- function(
                         "lubridate::seconds_to_period"
                     ),
                     lib.path = lib.path,
-                    external.function.name = function.name, 
-                    external.package.name = package.name
+                    external_function_name = function.name, 
+                    external_package_name = package.name
                 )
                 # end check again: very important because another R
                 # plot management
