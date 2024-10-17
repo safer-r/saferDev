@@ -539,6 +539,7 @@ all_args_here <- function(
                         i2 = i2, 
                         col1_i2 = col1[i2],
                         col2_i2 = col2[i2],
+                        arg_user_setting_x = arg_user_setting$x, 
                         function_name = function_name, 
                         package_name = package_name 
                     )

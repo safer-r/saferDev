@@ -970,7 +970,8 @@
 #' @param three_dots_log vector of logical. Is ... present among arg_full_names 
 #' @param i2 loop number
 #' @param col1_i2 code line number of the checked function
-#' @param col2_i2 name of the checked function
+#' @param col2_i2 name of the checked sub function
+#' @param arg_user_setting_x name of the checked function
 #' @param function_name function name.
 #' @param package_name package name.
 #' @returns
@@ -989,6 +990,7 @@
     i2, 
     col1_i2, 
     col2_i2,
+    arg_user_setting_x, 
     function_name, 
     package_name
 ){
