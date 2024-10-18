@@ -4,24 +4,25 @@
 \alias{is_function_here}
 \title{is_function_here}
 \usage{
-is_function_here(fun, lib.path = NULL, safer_check = TRUE)
+is_function_here(fun, lib_path = NULL, safer_check = TRUE)
 }
 \arguments{
-\item{fun}{Character vector of the names of the required functions, preceded by the name of the package they belong to and a double colon. Example: c("ggplot2::geom_point", "grid::gpar"). Warning: do not write "()" at the end of the function}
+\item{fun}{Character vector of the names of the required functions, preceded by the name of the package they belong to and a double or triple colon. Example: c("ggplot2::geom_point", "grid::gpar"). Warning: do not write "()" at the end of the function}
 
-\item{lib.path}{Character vector specifying the absolute pathways of the directories containing the listed packages in the fun argument, if not in the default directories. Ignored if NULL.}
+\item{lib_path}{Character vector specifying the absolute pathways of the directories containing the listed packages in the fun argument, if not in the default directories. Ignored if NULL.}
 
 \item{safer_check}{Single logical value. Perform some "safer" checks (see https://github.com/safer-r)? If TRUE, checkings are performed before main code running: 1) R classical operators (like "<-") not overwritten by another package because of the R scope and 2) required functions and related packages effectively present in local R lybraries. Must be set to FALSE if this fonction is used inside another "safer" function to avoid pointless multiple checkings.}
 }
 \value{
-An error message if at least one of the checked packages is missing in lib.path, or if at least one of the checked functions is missing in the required package, nothing otherwise.
+An error message if at least one of the checked packages is missing in lib_path, or if at least one of the checked functions is missing in the required package, nothing otherwise.
 }
 \description{
 Check if required functions are present in installed packages. This controls modifications in of function names package versions.
 }
 \examples{
 # is_function_here(fun = "ggplot2::notgood") # commented because this example returns an error
-is_function_here(fun = c("ggplot2::geom_point", "grid::gpar"))
+# is_function_here(fun = c("ggplot2::geom_point", "grid::gpar"))
+# is_function_here(fun = "c")
 }
 \seealso{
 \code{\link{exists}} et \code{\link[methods]{findFunction}}

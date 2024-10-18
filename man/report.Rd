@@ -25,13 +25,13 @@ report(
 
 \item{overwrite}{Single logical value. If output file already exists, defines if the printing is appended (default FALSE) or if the output file content is erased before printing (TRUE).}
 
-\item{rownames.kept}{Single logical value. Defines whether row names have to be removed or not in small tables (less than length.rows rows).}
+\item{rownames.kept}{Single logical value. Defines whether row names have to be removed or in 2D objects. Warning: in 1D tables, names over the values are taken as row names, and are thus removed if rownames.kept is FALSE.}
 
-\item{vector.cat}{Single logical value. If TRUE print a vector of length > 1 using cat() instead of capture.output(). Otherwise (default FALSE) the opposite.}
+\item{vector.cat}{Single logical value. If TRUE print a vector of length > 1 using cat() instead of capture.output(). Otherwise (default FALSE) the opposite. Names of values are not printed when TRUE}
 
 \item{noquote}{Single logical value. If TRUE no quote are present for the characters.}
 
-\item{sep}{Single integer representing the number of empty lines after printed data.}
+\item{sep}{Single non null and positive integer representing the number of empty lines after printed data.}
 
 \item{safer_check}{Single logical value. Perform some "safer" checks (see https://github.com/safer-r)? If TRUE, checkings are performed before main code running: 1) R classical operators (like "<-") not overwritten by another package because of the R scope and 2) required functions and related packages effectively present in local R lybraries. Must be set to FALSE if this fonction is used inside another "safer" function to avoid pointless multiple checkings.}
 }

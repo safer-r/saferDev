@@ -12,22 +12,42 @@ colons_check(x, safer_check = TRUE)
 \item{safer_check}{Single logical value. Perform some "safer" checks (see https://github.com/safer-r)? If TRUE, checkings are performed before main code running: 1) R classical operators (like "<-") not overwritten by another package because of the R scope and 2) required functions and related packages effectively present in local R lybraries. Must be set to FALSE if this fonction is used inside another "safer" function to avoid pointless multiple checkings.}
 }
 \value{
-A message indicating the missing :: or :::, or a message saying that everything seems fine.
+A table-like message indicating the missing :: or ::: or a message saying that everything seems fine.
+Table-like: column 1, the line number in the function code (starting at the "<- function" line, i.e., without counting the #' header lines); column 2,  the function name; column 3, the code preceeding the function name
+With missing :: or :::, the message also indicates if internal functions are created inside the checked function code, since these functions cannot have :: or :::.
 }
 \description{
 Verify that all the functions used inside a function are all referenced by their package attribution. For instance: base::mean() and not mean(), or saferDev:::.base_op_check() and not .base_op_check().
 }
 \details{
-- More precisely, colons_check() verifies that all the strings before an opening bracket "(" are preceeded by "::". Of note, ":::" are also detected but considered as "::".
+- Use the result to modify the code of the function like this: <PACKAGE>::<FUNCTION> (OR <PACKAGE>:::<FUNCTION> for function names starting by a dot)
 
-- The regex used to detect a function name is: "[a-zA-Z.]{1}[a-zA-Z0-9._]*\\(".
+- More precisely, colons_check() verifies that all the strings before an opening bracket "(" are preceeded by "::" 
+
+- ":::" are not checked per se, because incorrect writting, like saferDev::.colons_check_message() returns an error, and because base:::sum() is as ok as base::sum(). In the same manner, more than three colons are not checked because it returns an error.
+
+- Warning: the function cannot check function names written without brackets, like in the FUN argument of some functions, e.g., sapply(1:3, FUN = as.character).
+
+- The perl regex used to detect a function name is: "[a-zA-Z.]{1}[a-zA-Z0-9._]*\\s*\\(".
+
+- Function names preceeded by $ and any space are not considered (pattern "\\$ *[a-zA-Z.]{1}[a-zA-Z0-9._]* *\\(")
  
-- The following R operators using bracket are not considered: "function", "if", "for", "while" and "repeat".
+- The following R functions using bracket are not considered: "function", "if", "for", "while" and "repeat".
+
+- Most of the time, colons_check() does not check inside comments, but some unexpected writting could dupe colons_check().
+
+- The returned line numbers are indicative, depending on which source is checked. For instance, saferDev::report (compiled) has not the same line numbers as its source file (https://github.com/safer-r/saferDev/blob/main/R/report.R). Notably, compiled functions do not have comments anymore, compared to the same source function sourced into the working environment. In addition, the counting starts at the "<- function" line, i.e., without counting the #' header lines potentially present in source files.
+
+- Of note, during package creation, the devtools::check() command tells which functions where wrongly attributed to package. Example: 
+    checking dependencies in R code ... WARNING
+      '::' or ':::' import not declared from: 'sbase'
+      Missing or unexported objects:
+        'base::dev.off' 'base::graphics.off' 'base::hcl' 'base::par' 'base::read.table' 'saferGG::report'
 }
 \examples{
 colons_check(mean)
 colons_check(colons_check)
-
+source("https://raw.githubusercontent.com/safer-r/saferDev/main/dev/other/test.R") ; colons_check(test)
 }
 \author{
 Gael Millot <gael.millot@pasteur.fr>

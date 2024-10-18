@@ -11,15 +11,16 @@ arg_check(
   mode = NULL,
   length = NULL,
   prop = FALSE,
-  double.as.integer.allowed = FALSE,
+  double_as_integer_allowed = FALSE,
   options = NULL,
-  all.options.in.data = FALSE,
-  na.contain = FALSE,
-  neg.values = TRUE,
-  inf.values = TRUE,
+  all_options_in_data = FALSE,
+  na_contain = FALSE,
+  neg_values = TRUE,
+  inf_values = TRUE,
   print = FALSE,
-  data.name = NULL,
-  fun.name = NULL,
+  data_name = NULL,
+  fun_name = NULL,
+  pack_name = NULL,
   safer_check = TRUE
 )
 }
@@ -36,23 +37,25 @@ arg_check(
 
 \item{prop}{Single logical value. Are the numeric values between 0 and 1 (proportion)? If TRUE, can be used alone, without considering class, etc.}
 
-\item{double.as.integer.allowed}{Single logical value. If TRUE, no error is reported in the cheking message if argument is set to typeof == "integer" or class == "integer", while the reality is typeof == "double" or class == "numeric" but the numbers strictly have zero as modulo (remainder of a division). This means that i <- 1, which is typeof(i) -> "double" is considered as integer with double.as.integer.allowed = TRUE. WARNING: data mod 1 == 0L but not isTRUE(all.equal(data mod 1, 0)) is used here because the argument checks for integers stored as double (does not check for decimal numbers that are approximate integers).}
+\item{double_as_integer_allowed}{Single logical value. If TRUE, no error is reported in the cheking message if argument is set to typeof == "integer" or class == "integer", while the reality is typeof == "double" or class == "numeric" but the numbers strictly have zero as modulo (remainder of a division). This means that i <- 1, which is typeof(i) -> "double" is considered as integer with double_as_integer_allowed = TRUE. WARNING: data mod 1 == 0L but not isTRUE(all.equal(data mod 1, 0)) is used here because the argument checks for integers stored as double (does not check for decimal numbers that are approximate integers).}
 
 \item{options}{Vector of character strings or integers indicating all the possible option values for the data argument, or NULL. Numbers of type "double" are accepted if they have a 0 modulo.}
 
-\item{all.options.in.data}{Single logical value. If TRUE, all of the options must be present at least once in the data argument, and nothing else. If FALSE, some or all of the options must be present in the data argument, and nothing else. Ignored if options is NULL.}
+\item{all_options_in_data}{Single logical value. If TRUE, all of the options must be present at least once in the data argument, and nothing else. If FALSE, some or all of the options must be present in the data argument, and nothing else. Ignored if options is NULL.}
 
-\item{na.contain}{Single logical value. Can the data argument contain NA?}
+\item{na_contain}{Single logical value. Can the data argument contain NA?}
 
-\item{neg.values}{Single logical value. Are negative numeric values authorized? Warning: the default setting is TRUE, meaning that, in that case, no check is performed for the presence of negative values. The neg.values argument is activated only when set to FALSE. In addition, (1) neg.values = FALSE can only be used when class, typeof or mode arguments are not NULL, otherwise return an error message, (2) the presence of negative values is not checked with neg.values = FALSE if the tested object is a factor and the following checking message is returned "OBJECT MUST BE MADE OF NON NEGATIVE VALUES BUT IS A FACTOR".}
+\item{neg_values}{Single logical value. Are negative numeric values authorized? Warning: the default setting is TRUE, meaning that, in that case, no check is performed for the presence of negative values. The neg_values argument is activated only when set to FALSE. In addition, (1) neg_values = FALSE can only be used when class, typeof or mode arguments are not NULL, otherwise return an error message, (2) the presence of negative values is not checked with neg_values = FALSE if the tested object is a factor and the following checking message is returned "OBJECT MUST BE MADE OF NON NEGATIVE VALUES BUT IS A FACTOR".}
 
-\item{inf.values}{Single logical value. Are infinite numeric values authorized (Inf or -Inf)? Identical remarks as for the neg.values argument.}
+\item{inf_values}{Single logical value. Are infinite numeric values authorized (Inf or -Inf)? Identical remarks as for the neg_values argument.}
 
 \item{print}{Single logical value. Print the message if $problem is TRUE? Warning: set by default to FALSE, which facilitates the control of the checking message output when using arg_check() inside functions. See the example section.}
 
-\item{data.name}{Single character string indicating the name of the object to test. If NULL, use what is assigned to the data argument for the returned message.}
+\item{data_name}{Single character string indicating the name of the object to test. If NULL, use what is assigned to the data argument for the returned message.}
 
-\item{fun.name}{Single character string indicating the name of the function checked (i.e., when arg_check() is used to check the arguments of this function). If non-null, the value of fun.name will be added into the message returned by arg_check().}
+\item{fun_name}{Single character string indicating the name of the function checked (i.e., when arg_check() is used to check the arguments of this function). If non-null, the value of fun_name will be added into the message returned by arg_check().}
+
+\item{pack_name}{Single character string indicating the name of the package of fun_name. If non-null, the value of pack_name will be added into the message returned by arg_check().}
 
 \item{safer_check}{Single logical value. Perform some "safer" checks (see https://github.com/safer-r)? If TRUE, checkings are performed before main code running: 1) R classical operators (like "<-") not overwritten by another package because of the R scope and 2) required functions and related packages effectively present in local R lybraries. Must be set to FALSE if this fonction is used inside another "safer" function to avoid pointless multiple checkings.}
 }
@@ -63,7 +66,7 @@ A list containing:
 
 - §text: message indicating the details of the problem, or the absence of problem.
 
-- §object.name: value of the data.name argument (i.e., name of the checked object if provided, NULL otherwise).
+- §object.name: value of the data_name argument (i.e., name of the checked object if provided, NULL otherwise).
 }
 \description{
 Check expected values of an argument of functions: class, type, mode, length, restricted values panel, kind of numeric values in addition to the distinction between 'integer' and 'double' (proportion only? Inf values authorized? negative values authorized? Integers of type 'double'?)

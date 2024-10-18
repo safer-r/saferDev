@@ -3,30 +3,199 @@
 \name{.pack_and_function_check}
 \alias{.pack_and_function_check}
 \alias{.base_op_check}
+\alias{.has_odd_number_of_quotes}
+\alias{.extract_all_fun_names}
+\alias{.in_quotes_replacement}
+\alias{.in_parenthesis_replacement}
+\alias{.noclean_functions}
+\alias{.fun_args_pos}
+\alias{.functions_detect}
+\alias{.colons_check_message}
+\alias{.all_args_here_fill}
 \title{.pack_and_function_check}
 \usage{
 .pack_and_function_check(
   fun,
-  lib.path,
-  external.function.name,
-  external.package.name
+  lib_path,
+  external_function_name,
+  external_package_name
 )
 
-.base_op_check(external.function.name, external.package.name)
+.base_op_check(external_function_name, external_package_name)
+
+.has_odd_number_of_quotes(input_string, pattern = "\\"")
+
+.extract_all_fun_names(text, pattern)
+
+.in_quotes_replacement(
+  string,
+  pattern,
+  no_regex_pattern,
+  replacement,
+  perl,
+  function_name,
+  package_name
+)
+
+.in_parenthesis_replacement(
+  string,
+  pattern,
+  no_regex_pattern,
+  replacement,
+  perl,
+  open_pos,
+  close_pos,
+  function_name,
+  package_name
+)
+
+.noclean_functions(col1, col2, col3, ini)
+
+.fun_args_pos(text, pattern, function_name, package_name)
+
+.functions_detect(x, arg_user_setting, function_name, package_name)
+
+.colons_check_message(
+  list.fun,
+  fun.uni,
+  list.fun.pos,
+  line.nb,
+  ini,
+  arg_user_setting,
+  function_name,
+  package_name,
+  text,
+  internal_fun_names
+)
+
+.all_args_here_fill(
+  arg_full,
+  arg_full_names,
+  tempo_split,
+  three_dots_log,
+  i2,
+  col1_i2,
+  col2_i2,
+  arg_user_setting_x,
+  function_name,
+  package_name
+)
 }
 \arguments{
-\item{fun}{Character vector of the names of the required functions, preceded by the name of the package they belong to and a double colon. Example: c("ggplot2::geom_point", "grid::gpar").}
+\item{fun}{Character vector of the names of the required functions, preceded by the name of the package they belong to and a double or triple colon. Example: c("ggplot2::geom_point", "grid::gpar").}
 
-\item{lib.path}{Character vector specifying the absolute pathways of the directories containing the listed packages in the fun argument, if not in the default directories. If NULL, the function checks only in the base::.libPaths() default R library folders.}
+\item{lib_path}{Character vector specifying the absolute pathways of the directories containing the listed packages in the fun argument, if not in the default directories. If NULL, the function checks only in the base::.libPaths() default R library folders.}
 
-\item{external.function.name}{Name of the function using the .pack_and_function_check() function.}
+\item{external_function_name}{Name of the function using the .pack_and_function_check() function.}
 
-\item{external.package.name}{Name of the package of the function using the .pack_and_function_check() function.}
+\item{external_package_name}{Name of the package of the function using the .pack_and_function_check() function.}
+
+\item{input_string}{Single string.}
+
+\item{pattern}{Single string indicating the pattern to detect. Warning : must be very simple pattern, like ",".}
+
+\item{text}{either "BASIC" or "OTHER".}
+
+\item{string}{Single string.}
+
+\item{no_regex_pattern}{Single string of the pattern to detect but without escape characters or list, etc.}
+
+\item{replacement}{Single string for pattern replacement. Is not regex.}
+
+\item{perl}{Single logical value. Use Perl regex in pattern ?}
+
+\item{function_name}{function name.}
+
+\item{package_name}{package name.}
+
+\item{open_pos}{single integer indicating the position of the opening parenthesis.}
+
+\item{close_pos}{single integer indicating the position of the closing parenthesis.}
+
+\item{col1}{vector of strings.}
+
+\item{col2}{vector of strings of the function names.}
+
+\item{col3}{vector of strings of the code before the function name.}
+
+\item{ini}{vector of string of the initial function code analyzed.}
+
+\item{x}{a function name, written without quotes and brackets.}
+
+\item{arg_user_setting}{list of arg user settings.}
+
+\item{list.fun}{list of names of all the functions.}
+
+\item{fun.uni}{vector of all the unique function names.}
+
+\item{list.fun.pos}{list of position of first character of names of all the functions in ini.}
+
+\item{line.nb}{vector of corresponding line number.}
+
+\item{internal_fun_names}{vector of string of names of internal functions in the function code analyzed.}
+
+\item{arg_full}{list of all arguments of the function with default value}
+
+\item{arg_full_names}{vector of strings of the names of the arguments of the function}
+
+\item{tempo_split}{vector of strings of the observed argument writting of the function.}
+
+\item{three_dots_log}{vector of logical. Is ... present among arg_full_names}
+
+\item{i2}{loop number}
+
+\item{col1_i2}{code line number of the checked function}
+
+\item{col2_i2}{name of the checked sub function}
+
+\item{arg_user_setting_x}{name of the checked function}
+
+\item{pattern:}{A perl regex to extract function name and (), using generally paste0(<FUNCTION_NAME>, "[\\s\\r\\n]*\\(").}
 }
 \value{
-An error message if at least one of the checked packages is missing in lib.path, or if at least one of the checked functions is missing in the required package, nothing otherwise.
+An error message if at least one of the checked packages is missing in lib_path, or if at least one of the checked functions is missing in the required package, nothing otherwise.
 
 An error message if at least one of the checked operator is present in the R scope, nothing otherwise.
+
+TRUE or FALSE.
+
+A list containing:
+$string: the function names without parenthesis.
+$pos: position of the first character of the function names in the input string
+
+A list containing:
+$string: The input string with all pattern replaced by the replacement pattern.
+$pos: the positions of the 1rst character of the replaced pattern. NULL if no replaced pattern. In that case, $string is identical to the input string.
+
+A list containing:
+$string: The input string with all pattern replaced by the replacement pattern.
+$pos: the positions of the 1rst character of the replaced pattern. NULL if no replaced pattern. In that case, $string is identical to the input string
+
+A logical vector indicating if function names of col2 are inside quotes or after $ (TRUE) in ini or not (FALSE). Can be length 0
+
+A list containing two positions:
+$begin_fun: position of 1st letter of the function name.
+$begin: position of the "(" of the function.
+$end: position of the closing ")" of the function.
+$middle_bracket_pos: list of positions of the couple of brackets in the middle of the begin and end positions. In each compartment, the first number is the position of ( and the second the position of ). NULL if no inside brackets.
+
+A list:
+$code: vector of strings of the code of the tested function.
+$all_basic_funs: vector or strings of names of all the basic R functions.
+$fun_names: list of names of all the functions, not considering base::c("function", "if", "for", "while", "repeat"). Compartment names indicate the code line number of the functions in $code.
+$fun_names_pos: list of position of the first character of each $fun_names. Compartment names indicate the code line number of the functions in $code.
+$code_line_nb: vector of integers of the code line numbers of code for each non empty compartment of $fun_names and $fun_names_pos.
+$internal_fun_names: vector of string of names of internal functions in the code of the tested function.
+$arg_user_setting: list of arg user settings of the tested function.
+
+A list:
+ $output.cat: the message (string).
+ $colon_not_here: logical vector. Does list.fun contain function names without :: or ::: ?
+
+A list:
+   $col6: the $MISSING_ARG_NAMES.
+   $col7: the $MISSING_ARGS.
+   $col8: the $STATUS.
 }
 \description{
 Check if 1) required functions are present in required packages and 2) required packages are installed locally.
@@ -34,15 +203,70 @@ Simplified version of saferDev::is_function_here(), used as internal function fo
 
 Check if critical operators of R are not present in other packages or in the global env.
 Others functions of the R scope can be overwritten because safer functions always use :: when using any function.
+
+Determine if a string has a odd number of quotes.
+
+Extract all function names.
+
+Replace any pattern inside simple ou double quotes by another replacement pattern and get the position of replacements
+
+Replace any pattern inside () by another replacement pattern
+
+Indicate if function names are inside quotes or after $
+
+Return the positions of 1st letter of the function name and opening and closing parenthesis, as well as positions of the internal parenthesis.
+
+Detect all the functions names used inside a function.
+
+Create the message for the colons_check() function.
+
+Get the $MISSING_ARG_NAMES, $MISSING_ARGS and $NEW of all_args_here()
+}
+\details{
+Warning : must be very simple pattern, like "\\(".
+
+Warning : must be very simple pattern, like "\\(".
+
+Warning: the string must be cleaned form brackets between quotes. Use .in_quotes_replacement() for that.
+Warning: quotes in strings are escaped, so that position of ( in \"a( is 3, not 4.
+
+- Does not check if the functions inside the code exist.
+- Use the regex pattern "([a-zA-Z]|\\.[a-zA-Z._])[a-zA-Z0-9._]*\\s*\\(" to detect a function in the code.
+- $all_basic_funs are all the functions in base::c("package:stats", "package:graphics",  "package:grDevices", "package:utils", "package:datasets", "package:methods", "Autoloads", "package:base")
 }
 \examples{
 \dontrun{ # Example that shouldn't be run because this is an internal function
-.pack_and_function_check(fun = "ggplot2::notgood", lib.path = base::.libPaths(), external.function.name = "fun1") # this example returns an error
-.pack_and_function_check(fun = c("ggplot2::geom_point", "grid::gpar"), lib.path = base::.libPaths(), external.function.name = "fun1")
+.pack_and_function_check(fun = "ggplot2::notgood", lib_path = base::.libPaths(), external_function_name = "F1", external_package_name = "P1") # this example returns an error
+.pack_and_function_check(fun = c("ggplot2::geom_point", "grid::gpar"), lib_path = base::.libPaths(), external_function_name = "F1", external_package_name = "P1")
 }
 \dontrun{
 # Example that shouldn't be run because this is an internal function
-assign("!", 1) ; .base_op_check(external.function.name = "fun1") # commented because this example returns an error
+assign("!", 1) ; .base_op_check(external_function_name = "fun1") # commented because this example returns an error
+}
+\dontrun{ # Example that shouldn't be run because this is an internal function
+.has_odd_number_of_quotes(input_string = 'This is a "test" string with "even" quotes', pattern = '"')
+}
+\dontrun{ # Example that shouldn't be run because this is an internal function
+.extract_all_fun_names(text = 'This is a test string with sum()', pattern = "[a-zA-Z.][a-zA-Z0-9._]*\\\\s*\\\\(")
+}
+\dontrun{ # Example that shouldn't be run because this is an internal function
+source("https://raw.githubusercontent.com/safer-r/saferDev/main/dev/other/test.R") ; .in_quotes_replacement(string = paste(deparse(test), collapse = ""), pattern = "\\\\)", no_regex_pattern = ")", replacement = " ", perl = TRUE, function_name = "F1", package_name = "P1")
+.in_quotes_replacement(string = 'paste0("IAGE((", paste0(1:3, collapse = " "), "A)B()")', pattern = "\\\\)", no_regex_pattern = ")", replacement = " ", perl = TRUE, function_name = "F1", package_name = "P1")
+}
+\dontrun{ # Example that shouldn't be run because this is an internal function
+.in_parenthesis_replacement(string = "pattern = base::paste0(pattern, \"\\\\\\\\(#\"), text = text", pattern = ",", no_regex_pattern = ",", replacement = " ", perl = TRUE, open_pos = 23, close_pos = 39, function_name = "F1", package_name = "P1")
+}
+\dontrun{ # Example that shouldn't be run because this is an internal function
+source("https://raw.githubusercontent.com/safer-r/saferDev/main/dev/other/test.R")
+.noclean_functions(col1 =  c(15, 17), col2 = c("gregexpr", "regmatches"), col3 = c("matches <- ",  "matched_strings <- " ), ini = utils::capture.output(test))
+}
+\dontrun{ # Example that shouldn't be run because this is an internal function
+# Warning : examples only with strings that must be cleaned form brackets between quotes
+.fun_args_pos(text = "a$regmatches(x = text, m = matches)[[1]]", pattern = paste0("regmatches", "[\\\\s\\\\r\\\\n]*\\\\("), function_name = "F1", package_name = "P1")
+.fun_args_pos(text = ' "a" ; paste0("I", paste0(sum(1:3), collapse = " "), min(1) ) ; range(2)', pattern = paste0("paste0", "[\\\\s\\\\r\\\\n]*\\\\("), function_name = "F1", package_name = "P1")
+}
+\dontrun{ # Example that shouldn't be run because this is an internal function
+source("C:\\\\Users\\\\gmillot\\\\Documents\\\\Git_projects\\\\safer-r\\\\saferDev\\\\dev\\\\other\\\\test.R") ; .functions_detect(x = test, arg_user_setting = base::list(x =  as.name(x = "test")), function_name = "F1", package_name = "P1")
 }
 }
 \author{

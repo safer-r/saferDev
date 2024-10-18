@@ -40,11 +40,11 @@ Using argument print.no = FALSE, return NULL if no message, which is convenient 
 \details{
 WARNINGS
 
-Only the first message is returned.
+Only the first standard/error/warning message is returned.
 
 Always use the env argument when get_message() is used inside functions.
 
-The function does not prevent printing if print() is used inside the instruction tested. To prevent that, use tempo <- utils::capture.output(error <- get_message(data = "arg_check(data = 'a', class = mean, neg.values = FALSE, print = TRUE)")). The return of get_message() is assigned into error and the printed messages are captured by utils::capture.output() and assigned into tempo. See the examples.
+The function does not prevent printing if print() is used inside the instruction tested. To prevent that, use tempo <- utils::capture.output(error <- get_message(data = "arg_check(data = 'a', class = mean, neg_values = FALSE, print = TRUE)")). The return of get_message() is assigned into error and the printed messages are captured by utils::capture.output() and assigned into tempo. See the examples.
 }
 \examples{
 get_message(data = "wilcox.test(c(1,1,3), c(1, 2, 4), paired = TRUE)", kind = "error", print.no = TRUE, text = "IN A")
@@ -55,6 +55,7 @@ print.no = TRUE, text = "IN A")
 get_message(data = "wilcox.test(c(1,1,3), c(1, 2, 4), paired = TRUE)", kind = "message", 
 print.no = TRUE, text = "IN A")
 
+get_message(data = "wilcox.test()", kind = "message", print.no = TRUE, text = "IN A")
 get_message(data = "wilcox.test()", kind = "error", print.no = TRUE, text = "IN A")
 
 get_message(data = "sum(1)", kind = "error", print.no = TRUE, text = "IN A")
@@ -63,15 +64,15 @@ get_message(data = "message('ahah')", kind = "error", print.no = TRUE, text = "I
 
 get_message(data = "message('ahah')", kind = "message", print.no = TRUE, text = "IN A")
 
-get_message(data = "ggplot(data = data.frame(X = 1:10, stringsAsFactors = TRUE), 
-mapping = aes(x = X)) + geom_histogram()", kind = "message", print.no = TRUE, 
-text = "IN FUNCTION 1")
+get_message(data = "ggplot2::ggplot(data = data.frame(X = 1:10, stringsAsFactors = TRUE), 
+mapping = ggplot2::aes(x = X)) + ggplot2::geom_histogram()", kind = "message", print.no = TRUE, 
+text = "IN INSTRUCTION 1")
 
 set.seed(1) ; 
 obs1 <- data.frame(Time = c(rnorm(10), rnorm(10) + 2), 
 Group1 = rep(c("G", "H"), each = 10), stringsAsFactors = TRUE) ; 
 get_message(data = 'gg_boxplot(data = obs1, y = "Time", categ = "Group1")', 
-kind = "message", print.no = TRUE, text = "IN FUNCTION 1")
+kind = "message", print.no = TRUE, text = "IN INSTRUCTION 1")
 
 }
 \seealso{

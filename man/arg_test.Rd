@@ -15,7 +15,7 @@ arg_test(
   plot.fun = FALSE,
   export = FALSE,
   res.path = NULL,
-  lib.path = NULL,
+  lib_path = NULL,
   safer_check = TRUE
 )
 }
@@ -40,7 +40,7 @@ arg_test(
 
 \item{res.path}{Single character string indicating the absolute pathway of the folder where the txt results and pdfs, containing all the plots, will be saved. Several txt and pdf, one per thread, if parallelization. Ignored if export is FALSE. Must be specified if parall is TRUE or if export is TRUE.}
 
-\item{lib.path}{Vector of characters specifying the absolute pathways of the directories containing the required packages if not in the default directories. Ignored if NULL.}
+\item{lib_path}{Vector of characters specifying the absolute pathways of the directories containing the required packages if not in the default directories. Ignored if NULL.}
 
 \item{safer_check}{Single logical value. Perform some "safer" checks (see https://github.com/safer-r)? If TRUE, checkings are performed before main code running: 1) R classical operators (like "<-") not overwritten by another package because of the R scope and 2) required functions and related packages effectively present in local R lybraries. Must be set to FALSE if this fonction is used inside another "safer" function to avoid pointless multiple checkings.}
 }
@@ -98,12 +98,12 @@ export = TRUE, res.path = getwd())
 arg_test(fun = "plot", arg = c("x", "y"), val = list(x = list(1:10, 12:13, NA, (1:10)^2), 
 y = list(1:10, NA, NA)),  expect.error = list(x = list(FALSE, TRUE, TRUE, FALSE), 
 y = list(FALSE, TRUE, TRUE)), parall = FALSE, thread.nb = NULL, plot.fun = TRUE, 
-res.path = ".", lib.path = NULL)
+res.path = ".", lib_path = NULL)
 
 arg_test(fun = "plot", arg = c("x", "y"), val = list(x = list(1:10, 12:13, NA, 
 (1:10)^2), y = list(1:10, NA, NA)), parall = FALSE, thread.nb = 4, 
 plot.fun = TRUE, res.path = ".", 
-lib.path = NULL)
+lib_path = NULL)
 
 # set.seed(1) ; 
 # obs1 <- data.frame(Time = c(rnorm(10), rnorm(10) + 2), Group1 = rep(c("G", "H"), each = 10), 
@@ -115,13 +115,13 @@ lib.path = NULL)
 # stringsAsFactors = TRUE) ; 
 # arg_test(fun = "ggbox", arg = c("data1", "y", "categ"), val = list(L1 = list(obs1), 
 # L2 = "Time", L3 = "Group1"), parall = FALSE, thread.nb = NULL, plot.fun = TRUE, 
-# res.path = "C:\\Users\\yhan\\Desktop\\", lib.path = "C:\\Program Files\\R\\R-4.3.1\\library\\")
+# res.path = "C:\\Users\\yhan\\Desktop\\", lib_path = "C:\\Program Files\\R\\R-4.3.1\\library\\")
 
 # library(ggplot2) ; arg_test(fun = "geom_histogram", arg = c("data", "mapping"), 
 # val = list(x = list(data.frame(X = "a", stringsAsFactors = TRUE)), 
 # y = list(ggplot2::aes(x = X))), parall = FALSE, thread.nb = NULL, 
 # plot.fun = TRUE, res.path = "C:\\Users\\yhan\\Desktop\\", 
-# lib.path = "C:\\Program Files\\R\\R-4.3.1\\library\\") 
+# lib_path = "C:\\Program Files\\R\\R-4.3.1\\library\\") 
 # BEWARE: ggplot2::geom_histogram does not work
 }
 \seealso{

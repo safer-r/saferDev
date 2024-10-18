@@ -5,26 +5,26 @@
 \title{is_python_package_here}
 \usage{
 is_python_package_here(
-  req.package,
-  python.exec.path = NULL,
-  python.lib.path = NULL,
-  lib.path = NULL,
+  req_package,
+  python_exec_path = NULL,
+  python_lib_path = NULL,
+  lib_path = NULL,
   safer_check = TRUE
 )
 }
 \arguments{
-\item{req.package}{Character vector of package names to import.}
+\item{req_package}{Character vector of package names to import.}
 
-\item{python.exec.path}{Single optional character vector specifying the absolute pathways of the executable python file to use (associated to the packages to use). If NULL, the reticulate::import_from_path() function used in is_python_package_here() seeks for an available version of python.exe, and then uses python_config(python_version, required_module, python_versions). But might not be the correct one for the python.lib.path parameter specified. Thus, it is recommanded to do not leave NULL, notably when using computing clusters.}
+\item{python_exec_path}{Single optional character vector specifying the absolute pathways of the executable python file to use (associated to the packages to use). If NULL, the reticulate::import_from_path() function used in is_python_package_here() seeks for an available version of python.exe, and then uses python_config(python_version, required_module, python_versions). But might not be the correct one for the python_lib_path parameter specified. Thus, it is recommanded to do not leave NULL, notably when using computing clusters.}
 
-\item{python.lib.path}{Optional character vector specifying the absolute pathways of the directories containing some of the listed packages in the req.package argument, if not in the default directories.}
+\item{python_lib_path}{Optional character vector specifying the absolute pathways of the directories containing some of the listed packages in the req_package argument, if not in the default directories.}
 
-\item{lib.path}{Absolute path of the reticulate packages, if not in the default folders.}
+\item{lib_path}{Absolute path of the reticulate packages, if not in the default folders.}
 
 \item{safer_check}{Single logical value. Perform some "safer" checks (see https://github.com/safer-r)? If TRUE, checkings are performed before main code running: 1) R classical operators (like "<-") not overwritten by another package because of the R scope and 2) required functions and related packages effectively present in local R lybraries. Must be set to FALSE if this fonction is used inside another "safer" function to avoid pointless multiple checkings.}
 }
 \value{
-An error message if at least one of the checked packages is missing in python.lib.path, nothing otherwise.
+An error message if at least one of the checked packages is missing in python_lib_path, nothing otherwise.
 }
 \description{
 Check if the specified python packages are installed locally.
@@ -37,19 +37,19 @@ for python 3.7. Previous versions return an error "Error in sys$stdout$flush() :
 \examples{
 # example of error message
 
-# is_python_package_here(req.package = "nopackage")
+# is_python_package_here(req_package = "nopackage")
 
 
 # commented because this example returns an error if the python package is not installed on the computer
 # (require the installation of the python serpentine package 
 # from https://github.com/koszullab/serpentine
 
-# is_python_package_here(req.package = "serpentine")
+# is_python_package_here(req_package = "serpentine")
 
 
 # another example of error message
 
-# is_python_package_here(req.package = "serpentine", python.lib.path = "blablabla")
+# is_python_package_here(req_package = "serpentine", python_lib_path = "blablabla")
 }
 \author{
 Gael Millot <gael.millot@pasteur.fr>
