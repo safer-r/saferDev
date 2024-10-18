@@ -25,7 +25,7 @@ path <- "blablabla"
 ### Datasets info
 ```{r}
 f # Character vector of function name
-path # character vector specifying the absolute pathways of the directories, this lib.path will return an error
+path # character vector specifying the absolute pathways of the directories, this lib_path will return an error
 ```
 <br>
 
@@ -35,11 +35,11 @@ is_function_here(fun = f) # check if the package serpentine is in the computer
 ```
 <br>
 
-### Argument lib.path
+### Argument lib_path
 ```{r, echo = TRUE, error = TRUE}
 is_function_here(
     fun = f,
-    lib.path = "."
+    lib_path = "."
 ) # check if the function is present in the package
 ```
 <br>
@@ -54,7 +54,7 @@ is_function_here(safer_check = TRUE) # with TRUE, checkings are performed before
 ```{r, echo = TRUE, error = TRUE}
 is_function_here(
     fun = f,
-    lib.path = path,
+    lib_path = path,
     safer_check = TRUE
 ) # check if the function is present in the package, returns an error because the path doesn't exist
 ```

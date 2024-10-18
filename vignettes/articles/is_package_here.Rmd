@@ -25,7 +25,7 @@ path <- "blablabla"
 ### Datasets info
 ```{r}
 req.pkg # Character vector of package names
-path # character vector specifying the absolute pathways of the directories, this lib.path will return an error
+path # character vector specifying the absolute pathways of the directories, this lib_path will return an error
 ```
 <br>
 
@@ -35,11 +35,11 @@ is_package_here(req.package = req.pkg) # check if the package serpentine is in t
 ```
 <br>
 
-### Argument lib.path
+### Argument lib_path
 ```{r, echo = TRUE, error = TRUE}
 is_package_here(
     req.package = req.pkg,
-    lib.path = "."
+    lib_path = "."
 ) # check if the package is in the computer
 ```
 <br>
@@ -57,7 +57,7 @@ is_package_here(
 ```{r, echo = TRUE, error = TRUE}
 is_package_here(
     req.package = req.pkg,
-    lib.path = path,
+    lib_path = path,
     safer_check = TRUE
 ) # check if the package is in the computer
 ```

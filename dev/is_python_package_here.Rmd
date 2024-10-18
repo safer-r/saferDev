@@ -25,7 +25,7 @@ path <- "blablabla"
 ### Datasets info
 ```{r}
 req.pkg # Character vector of package names to import
-path # character vector specifying the absolute pathways of the directories, this lib.path will return an error
+path # character vector specifying the absolute pathways of the directories, this lib_path will return an error
 ```
 <br>
 
@@ -35,11 +35,11 @@ is_python_package_here(req.package = req.pkg) # check if the package serpentine 
 ```
 <br>
 
-### Argument lib.path
+### Argument lib_path
 ```{r, echo = TRUE, error = TRUE}
 is_python_package_here(
     req.package = req.pkg,
-    lib.path = path
+    lib_path = path
 ) # check if the package is in the computer
 ```
 <br>
@@ -58,8 +58,8 @@ is_python_package_here(
 is_python_package_here(
     req.package = "serpentine", 
     python.exec.path = ".", 
-    python.lib.path = ".",
-    lib.path = ".",
+    python.lib_path = ".",
+    lib_path = ".",
     safer_check =TRUE
 ) # check if the python package serpentine is present in the computer, returns an error if the package is not in the computer
 ```
