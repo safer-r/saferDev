@@ -1,0 +1,74 @@
+---
+title: "all_args_check"
+---
+<br>
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+    collapse = TRUE,
+    comment = ">"
+)
+```
+
+```{r setup}
+library(saferDev)
+```
+<br>
+
+### Datasets
+```{r}
+source("https://raw.githubusercontent.com/safer-r/saferDev/main/dev/other/test2.R")
+```
+<br>
+
+### Datasets info
+```{r}
+test2 # function with no significance. The aim is to challenge all_args_here()
+```
+<br>
+
+### Simple examples
+```{r}
+all_args_here(
+    x = mean # R function
+)
+```
+<br>
+
+### Argument export (associated with argument path_out, df_name and overwrite)
+```{r}
+all_args_here(
+    x = test2, # R function
+    export = TRUE, # export the data frame into a .tsv file?
+    path_out = ".", # pathway of the folder where to export the data frame
+    df_name = "res.tsv", # name of the exported data frame file
+    overwrite = TRUE # Overwrite potential df_name file already existing in path_out?
+)
+```
+<br>
+
+### Argument export (associated with argument path_out, df_name and overwrite)
+```{r}
+all_args_here(
+    x = test2, # R function
+    export = TRUE, # export the data frame into a .tsv file?
+    path_out = ".", # pathway of the folder where to export the data frame
+    df_name = "res.tsv", # name of the exported data frame file
+    overwrite = TRUE # Overwrite potential df_name file already existing in path_out?
+)
+```
+<br>
+
+
+### All the arguments
+```{r}
+all_args_here(
+    x = test2, # R function
+    export = FALSE, # export the data frame into a .tsv file?
+    path_out = ".", # pathway of the folder where to export the data frame
+    df_name = "res.tsv", # name of the exported data frame file
+    overwrite = TRUE, # Overwrite potential df_name file already existing in path_out?
+    lib_path = NULL, # absolute pathways of the directories containing the required packages if not in the default directories
+    safer_check = TRUE # perform some "safer" checks? Warning : always set this argument to FALSE if all_args_here() is used inside another safer function.
+)
+```

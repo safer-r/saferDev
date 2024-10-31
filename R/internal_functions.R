@@ -1026,7 +1026,7 @@
             }else if(base::sum(tempo.log, na.rm = TRUE) == 0){ # arg i2 has not its names written in the args between ()
                 missing_args_names <- base::c(missing_args_names, arg_full_names[i2])
             }else{
-                tempo.cat <- base::paste0("INTERNAL ERROR 1 IN .all_args_here_fill() IN ", function_name, " OF THE ", package_name, " PACKAGE\npattern3 DETECTED SEVERAL TIMES IN ARGUMENTS:\n\npattern3:\n", base::paste(pattern3, collapse = "\n"), "\n\ntempo_split:\n", base::paste(tempo_split[tempo.log], collapse = "\n"))
+                tempo.cat <- base::paste0("INTERNAL ERROR 1 IN .all_args_here_fill() IN ", function_name, " OF THE ", package_name, " PACKAGE\npattern3 DETECTED SEVERAL TIMES IN ARGUMENTS:\n\npattern3:\n", base::paste(pattern3, collapse = "\n"), "\n\ntempo_split:\n", base::paste(tempo_split[tempo.log], collapse = "\n"), "\n\nCHECK IF THE ARGUMENT IS PRESENT SEVERAL TIMES IN LINE ", col1_i2, ", INSIDE ", col2_i2, collapse = NULL, recycle0 = FALSE)
                 base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE)
             }
 

@@ -5,9 +5,9 @@
 #' @param export Single logical value. Export the data frame into a .tsv file? If TRUE, the data frame is not returned by the function but only exported.
 #' @param path_out Single character string indicating the absolute pathway of the folder where to export the data frame. path_out = "." means the R working directory set by the user. Ignored if export is FALSE
 #' @param df_name Single character string indicating the name of the exported data frame file. Ignored if export is FALSE.
-#' @param overwrite Single logical value. Overwrite potantial df_name file already existing in path_out? Ignored if export is FALSE.
+#' @param overwrite Single logical value. Overwrite potential df_name file already existing in path_out? Ignored if export is FALSE.
 #' @param lib_path Vector of characters specifying the absolute pathways of the directories containing the required packages if not in the default directories. If NULL, the pathway specified by .libPaths() is used.
-#' @param safer_check Single logical value. Perform some "safer" checks (see https://github.com/safer-r)? If TRUE, checkings are performed before main code running: 1) R classical operators (like "<-") not overwritten by another package because of the R scope and 2) required functions and related packages effectively present in local R lybraries. Must be set to FALSE if this fonction is used inside another "safer" function to avoid pointless multiple checkings.
+#' @param safer_check Single logical value. Perform some "safer" checks (see https://github.com/safer-r)? If TRUE, checkings are performed before main code running: 1) R classical operators (like "<-") not overwritten by another package because of the R scope and 2) required functions and related packages effectively present in local R lybraries. Must be set to FALSE if all_args_here() fonction is used inside another "safer" function to avoid pointless multiple checkings.
 #' @returns 
 #' A data frame indicating the missing arguments or a message saying that everything seems fine.
 #' If export argument is TRUE, then the data frame is exported as res.tsv instead of being returned.
@@ -38,7 +38,7 @@
 #' Warnings: 
 #' 1) The function could not properly work if any comma is present in default argument values. Please, report here https://github.com/safer-r/saferDev/issues if it is the case.
 #' 
-#' 2) Results are only suggestions, as it is difficult to anticipate all the exceptions with arguments writting.
+#' 2) Proposals in the STATUS column are only suggestions, as it is difficult to anticipate all the exceptions with arguments writting.
 #' 
 #' @author Gael Millot <gael.millot@pasteur.fr>
 #' @examples
@@ -47,7 +47,7 @@
 #' source("https://raw.githubusercontent.com/safer-r/saferDev/main/dev/other/test2.R") ; all_args_here(test2, export = TRUE)
 #' }
 #' all_args_here(all_args_here)
-#' source("C:\\Users\\gmillot\\Documents\\Git_projects\\safer-r\\.github\\profile\\backbone.R") ; all_args_here(BACKBONE, export = TRUE)
+#' source("https://raw.githubusercontent.com/safer-r/.github/refs/heads/main/profile/backbone.R") ; all_args_here(BACKBONE, export = TRUE)
 #' @export
 all_args_here <- function(
     x, 
@@ -257,9 +257,9 @@ all_args_here <- function(
             base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL)
         }
         # removal of trailing / or \\ in the path
-        if(base::grepl(x = path_out, pattern = "/$")){
+        if(base::grepl(x = path_out, pattern = "/$", ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE)){
             path_out <- base::sub(pattern = "/$", replacement = "", x = path_out, ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE)
-        }else if(base::grepl(x = path_out, pattern = "\\\\$")){
+        }else if(base::grepl(x = path_out, pattern = "\\\\$", ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE)){
             path_out <- base::sub(pattern = "\\\\$", replacement = "", x = path_out, ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE)
         }
         # end removal of trailing / or \\ in the path
@@ -268,8 +268,8 @@ all_args_here <- function(
             base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL)
         }
         if(overwrite == FALSE){
-            if(base::file.exists(base::paste0(path_out, "/", df_name))){
-                tempo.cat <- base::paste0("ERROR IN ", function_name, base::ifelse(test = base::is.null(x = package_name), yes = "", no = base::paste0(" OF THE ", package_name, " PACKAGE", collapse = NULL, recycle0 = FALSE)), "\nFILE NAME ALREADY EXISTS AT THE INDICATED PATH:\n", base::paste0(path_out, "/", df_name), collapse = NULL, recycle0 = FALSE)
+            if(base::file.exists(base::paste0(path_out, "/", df_name, collapse = NULL, recycle0 = FALSE))){
+                tempo.cat <- base::paste0("ERROR IN ", function_name, base::ifelse(test = base::is.null(x = package_name), yes = "", no = base::paste0(" OF THE ", package_name, " PACKAGE", collapse = NULL, recycle0 = FALSE)), "\nFILE NAME ALREADY EXISTS AT THE INDICATED PATH:\n", base::paste0(path_out, "/", df_name, collapse = NULL, recycle0 = FALSE), collapse = NULL, recycle0 = FALSE)
                 base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL)
             }
         }
@@ -280,8 +280,8 @@ all_args_here <- function(
 
     #### main code
     # arg_user_setting$x <- base::as.character(arg_user_setting$x)
-    arg_user_setting$x <- base::deparse(arg_user_setting$x) # because arg_user_setting$x is str(arg_user_setting$x) "language saferDev::colons_check". When I use it as string, like as.character(arg_user_setting$x), it splits  "::"           "saferDev"     "colons_check"
-    path_out <- base::paste0(path_out, "/", df_name)
+    arg_user_setting$x <- base::deparse(expr = arg_user_setting$x, width.cutoff = 60L, backtick = FALSE, control = base::c("keepNA", "keepInteger", "niceNames", "showAttributes"), nlines = -1L) # because arg_user_setting$x is str(arg_user_setting$x) "language saferDev::colons_check". When I use it as string, like as.character(arg_user_setting$x), it splits  "::"           "saferDev"     "colons_check"
+    path_out <- base::paste0(path_out, "/", df_name, collapse = NULL, recycle0 = FALSE)
     out <- saferDev:::.functions_detect(
         x = x, 
         arg_user_setting = arg_user_setting, 
@@ -293,15 +293,15 @@ all_args_here <- function(
     fun_names_pos <-  out$fun_names_pos # list of pos (1st character) of function names for each line of code
 
     code <- out$code # vector of strings of the tested function code
-    fun_1_line <- base::paste(out$code, collapse = " ") # assemble the code of the tested  function (without comments) in a single line
-    if(base::grepl(x = fun_1_line, pattern = reserved_words)){
+    fun_1_line <- base::paste(out$code, collapse = " ", recycle0 = FALSE, sep = " ") # assemble the code of the tested  function (without comments) in a single line
+    if(base::grepl(x = fun_1_line, pattern = reserved_words, ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE)){
         warn_count <- warn_count + 1
-        tempo_warn <- base::paste0("(", warn_count,") THE RESERVED WORD \"", base::paste(reserved_words, collapse = " "), "\" HAS BEEN DETECTED IN THE CODE OF THE INPUT FUNCTION\nWHICH COULD HAMPER THE ACCURACY OF THE OUTPUT TABLE")
+        tempo_warn <- base::paste0("(", warn_count,") THE RESERVED WORD \"", base::paste(reserved_words, collapse = " ", recycle0 = FALSE), "\" HAS BEEN DETECTED IN THE CODE OF THE INPUT FUNCTION\nWHICH COULD HAMPER THE ACCURACY OF THE OUTPUT TABLE", collapse = NULL, recycle0 = FALSE)
         warn <- base::paste0(base::ifelse(test = base::is.null(x = warn), yes = tempo_warn, no = base::paste0(warn, "\n\n", tempo_warn, collapse = NULL, recycle0 = FALSE)), collapse = NULL, recycle0 = FALSE)
     }
     # cumulative nchar of each non empty lines of code 
-    cum_nchar_code_line <- base::cumsum(base::nchar(out$code) + 1) # +1 because of the 1 space added between lines of codes fused # will serve to know the position of first character of fun_names in fun_1_line
-    cum_nchar_code_line <- base::c(0, cum_nchar_code_line[-base::length(cum_nchar_code_line)]) # because pos in fun_names_pos will be added to this
+    cum_nchar_code_line <- base::cumsum(x = base::nchar(x = out$code, type = "chars", allowNA = FALSE, keepNA = NA) + 1) # +1 because of the 1 space added between lines of codes fused # will serve to know the position of first character of fun_names in fun_1_line
+    cum_nchar_code_line <- base::c(0, cum_nchar_code_line[-base::length(x = cum_nchar_code_line)]) # because pos in fun_names_pos will be added to this
     cum_nchar_code_line <- cum_nchar_code_line[code_line_nb]
     # end cumulative nchar of each non empty lines of code 
     # replacement of all the ) between quotes
@@ -312,41 +312,41 @@ all_args_here <- function(
     # replacement of all the ( between quotes
     tempo <- saferDev:::.in_quotes_replacement(string = fun_1_line_replace, pattern = "\\(", no_regex_pattern = "(", replacement = " ", perl = TRUE, function_name = function_name, package_name = package_name)
     fun_1_line_replace <- tempo$string
-    pos_rep <- base::sort(base::c(pos_rep, tempo$pos))
+    pos_rep <- base::sort(x = base::c(pos_rep, tempo$pos), decreasing = FALSE)
     # end replacement of all the ( between quotes
     # recovery of the functions, in the tested function, with written arguments inside ()
     arg_string_for_col3 <- fun_names # like fun_names but added with all what is between ()
     arg_string <- fun_names # like arg_string_for_col3 but with only the arguments
     mid_bracket_pos_in_fun_1_line <- base::lapply(X = fun_names, FUN = function(x){base::lapply(X = x, FUN = function(y){NULL})}) # list of lists, will be used to get inside ( and ) positions, from fun_1_line
 
-    for(i1 in 1:base::length(fun_names)){
-        tempo_pos_in_code <- base::as.integer(base::sub(pattern = "^c", replacement = "", x = base::names(fun_names)[i1], ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE))
-        tempo_which <- base::which(code_line_nb %in% tempo_pos_in_code)
-        for(i2 in 1:base::length(fun_names[[i1]])){
+    for(i1 in 1:base::length(x = fun_names)){
+        tempo_pos_in_code <- base::as.integer(x = base::sub(pattern = "^c", replacement = "", x = base::names(x = fun_names)[i1], ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE))
+        tempo_which <- base::which(x = code_line_nb %in% tempo_pos_in_code, arr.ind = FALSE, useNames = TRUE)
+        for(i2 in 1:base::length(x = fun_names[[i1]])){
             fun_pos_start <- fun_names_pos[[i1]][i2] + cum_nchar_code_line[tempo_which]
-            fun_pos_stop <- fun_pos_start + base::nchar(fun_names[[i1]][i2]) - 1
-            tempo_fun <- base::substr(fun_1_line_replace, fun_pos_start, fun_pos_stop)
+            fun_pos_stop <- fun_pos_start + base::nchar(x = fun_names[[i1]][i2], type = "chars", allowNA = FALSE, keepNA = NA) - 1
+            tempo_fun <- base::substr(x = fun_1_line_replace, start = fun_pos_start, stop = fun_pos_stop)
             if(tempo_fun != fun_names[[i1]][i2]){
-                tempo.cat <- base::paste0("INTERNAL ERROR 1 IN ", function_name, " OF THE ", package_name, " PACKAGE\ntempo_fun MUST BE IDENTICAL TO fun_names[[i1]][i2]\n\ntempo_fun: ", tempo_fun, "\n\nfun_names[[i1]][i2]: ", fun_names[[i1]][i2], "\n\ni1: ", i1, "\n\ni2: ", i2)
-                base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n", base::ifelse(base::is.null(warn), "", base::paste0("IN ADDITION\nWARNING", base::ifelse(warn.count > 1, "S", ""), ":\n\n", warn))), call. = FALSE)
+                tempo.cat <- base::paste0("INTERNAL ERROR 1 IN ", function_name, " OF THE ", package_name, " PACKAGE\ntempo_fun MUST BE IDENTICAL TO fun_names[[i1]][i2]\n\ntempo_fun: ", tempo_fun, "\n\nfun_names[[i1]][i2]: ", fun_names[[i1]][i2], "\n\ni1: ", i1, "\n\ni2: ", i2, collapse = NULL, recycle0 = FALSE)
+                base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n", base::ifelse(test = base::is.null(x = warn), yes = "", no = base::paste0("IN ADDITION\nWARNING", base::ifelse(test = warn_count > 1, yes = "S", no = ""), ":\n\n", warn, collapse = NULL, recycle0 = FALSE)), collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL)
             }
-            tempo_str_after <- base::substr(x = fun_1_line_replace, start = fun_pos_stop + 1, stop = base::nchar(fun_1_line_replace))
-            if(base::grepl(x = tempo_str_after, pattern = "^[\\s\\r\\n]*\\(", perl = TRUE)){ # detection that it is a function of interest because ( after function name not removed
-                tempo_pos <- saferDev:::.fun_args_pos(text = fun_1_line_replace, pattern = base::paste0(fun_names[[i1]][i2], "[\\s\\r\\n]*\\("), function_name = function_name, package_name = package_name) # positions of 1st letter of the function name and opening and closing brackets # Warning: fun_1_line_replace used because the input string must be cleaned form brackets between quotes
+            tempo_str_after <- base::substr(x = fun_1_line_replace, start = fun_pos_stop + 1, stop = base::nchar(x = fun_1_line_replace, type = "chars", allowNA = FALSE, keepNA = NA))
+            if(base::grepl(x = tempo_str_after, pattern = "^[\\s\\r\\n]*\\(", ignore.case = FALSE, perl = TRUE, fixed = FALSE, useBytes = FALSE)){ # detection that it is a function of interest because ( after function name not removed
+                tempo_pos <- saferDev:::.fun_args_pos(text = fun_1_line_replace, pattern = base::paste0(fun_names[[i1]][i2], "[\\s\\r\\n]*\\(", collapse = NULL, recycle0 = FALSE), function_name = function_name, package_name = package_name) # positions of 1st letter of the function name and opening and closing brackets # Warning: fun_1_line_replace used because the input string must be cleaned form brackets between quotes
                 tempo_str_before <- base::substr(x = fun_1_line_replace, start = 1, stop = fun_pos_start - 1)
-                tempo_log <- base::grepl(x = tempo_str_before, pattern = "\\$ *$")
+                tempo_log <- base::grepl(x = tempo_str_before, pattern = "\\$ *$", ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE)
                 if(tempo_log){ # remove functions preceeded by $, like a$fun()
                     arg_string_for_col3[[i1]][i2] <- ""
                     fun_names[[i1]][i2] <- ""
                     arg_string[[i1]][i2] <- ""
-                    base::substr(x = fun_1_line_replace, start = 1, stop = fun_pos_start - 1) <- base::paste(base::rep(" ", fun_pos_start - 1), collapse = "")
+                    base::substr(x = fun_1_line_replace, start = 1, stop = fun_pos_start - 1) <- base::paste(base::rep(x = " ", fun_pos_start - 1), collapse = "", recycle0 = FALSE, sep = " ")
                 }else{
                     arg_string_for_col3[[i1]][i2] <- base::substr(x = fun_1_line, start = tempo_pos$begin_fun, stop = tempo_pos$end) # add the "function(args)" string into arg_string_for_col3. I use fun_1_line because I want unaltered values of args here (fun_1_line_replace have quoted () replaced by spaces)
                     arg_string[[i1]][i2] <- base::substr(x = fun_1_line, start = tempo_pos$begin + 1, stop = tempo_pos$end - 1) # idem arg_string_for_col3 but inside () of the function (just the arguments written)
-                    if( ! base::is.null(tempo_pos$middle_bracket_pos)){ # I have to use if(){}, otherwise mid_bracket_pos_in_fun_1_line[[i1]][[i2]] disappears
-                        mid_bracket_pos_in_fun_1_line[[i1]][[i2]] <- base::unlist(tempo_pos$middle_bracket_pos) # positions of the () inside a function
+                    if( ! base::is.null(x = tempo_pos$middle_bracket_pos)){ # I have to use if(){}, otherwise mid_bracket_pos_in_fun_1_line[[i1]][[i2]] disappears
+                        mid_bracket_pos_in_fun_1_line[[i1]][[i2]] <- base::unlist(x = tempo_pos$middle_bracket_pos, recursive = TRUE, use.names = TRUE) # positions of the () inside a function
                     }
-                    base::substr(x = fun_1_line_replace, start = 1, stop = tempo_pos$begin - 1) <- base::paste(base::rep(" ", tempo_pos$begin - 1), collapse = "") # trick that replaces function name by the same number of spaces. This, to avoid to take always the first paste0 for instance in the fun_1_line_replace string when several are present in fun_names
+                    base::substr(x = fun_1_line_replace, start = 1, stop = tempo_pos$begin - 1) <- base::paste(base::rep(x = " ", tempo_pos$begin - 1), collapse = "", recycle0 = FALSE, sep = " ") # trick that replaces function name by the same number of spaces. This, to avoid to take always the first paste0 for instance in the fun_1_line_replace string when several are present in fun_names
                 }
             }else{
                 arg_string_for_col3[[i1]][i2] <- reserved_words
@@ -357,17 +357,17 @@ all_args_here <- function(
     # end recovery of the functions, in the tested function, with written arguments inside ()
     # recovery of the positions of inside () in col3
     mid_bracket_pos_in_col3 <- base::lapply(X = fun_names, FUN = function(x){base::lapply(X = x, FUN = function(y){NULL})}) # list of lists, will be used to get inside ( and ) positions, from col3
-    for(i1 in 1:base::length(fun_names)){
-        for(i2 in 1:base::length(fun_names[[i1]])){
-            pattern2 <- base::paste0(fun_names[[i1]][i2], "[\\s\\r\\n]*\\(") # function detection in 
+    for(i1 in 1:base::length(x = fun_names)){
+        for(i2 in 1:base::length(x = fun_names[[i1]])){
+            pattern2 <- base::paste0(fun_names[[i1]][i2], "[\\s\\r\\n]*\\(", collapse = NULL, recycle0 = FALSE) # function detection in 
             # pattern2 <- paste0("[a-zA-Z.][a-zA-Z0-9._]* *\\$ *", fun_names[[i1]][i2], "[\\s\\r\\n]*\\(") # function like a$fun()
-            if(base::grepl(x = arg_string_for_col3[[i1]][i2], pattern = pattern2)){ # because of "NOT_CONSIDERED" in some cases
+            if(base::grepl(x = arg_string_for_col3[[i1]][i2], pattern = pattern2, ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE)){ # because of "NOT_CONSIDERED" in some cases
                 # detection of inside () between quotes
                 tempo1 <- saferDev:::.in_quotes_replacement(string = arg_string_for_col3[[i1]][i2], pattern = "\\(", no_regex_pattern = "(", replacement = " ", perl = TRUE, function_name = function_name, package_name = package_name)
                 tempo2 <- saferDev:::.in_quotes_replacement(string =tempo1$string, pattern = "\\)", no_regex_pattern = ")", replacement = " ", perl = TRUE, function_name = function_name, package_name = package_name)
                 tempo_pos <- saferDev:::.fun_args_pos(text = tempo2$string, pattern = pattern2,     function_name = function_name, package_name = package_name) # positions of 1st letter of the function name and opening and closing brackets # Warning: fun_1_line_replace used because the input string must be cleaned form brackets between quotes
-                if( ! base::is.null(tempo_pos$middle_bracket_pos)){ # I have to use if(){}, otherwise mid_bracket_pos_in_fun_1_line[[i1]][[i2]] disappears
-                    mid_bracket_pos_in_col3[[i1]][[i2]] <- base::unlist(tempo_pos$middle_bracket_pos) # positions of the () inside a function
+                if( ! base::is.null(x = tempo_pos$middle_bracket_pos)){ # I have to use if(){}, otherwise mid_bracket_pos_in_fun_1_line[[i1]][[i2]] disappears
+                    mid_bracket_pos_in_col3[[i1]][[i2]] <- base::unlist(x = tempo_pos$middle_bracket_pos, recursive = TRUE, use.names = TRUE) # positions of the () inside a function
                 }
             }
         }
@@ -375,22 +375,22 @@ all_args_here <- function(
     # end recovery of the positions of inside () in col3
     # preparation of columns
     code_for_col <- code[code_line_nb]
-    code_for_col <- base::as.vector(base::unlist(base::mapply(FUN = function(x, y){base::rep(y, base::length(x))}, x = fun_names, y = code_for_col)))
-    col1 <- base::as.vector(base::unlist(base::mapply(FUN = function(x, y){base::rep(y, base::length(x))}, x = fun_names, y = code_line_nb))) # code line number
-    col2 <- base::as.vector(base::unlist(fun_names)) # all the function names inside the tested functions (functions between quotes are already removed thanks to fun_1_line_replace)
-    col3 <- base::as.vector(base::unlist(arg_string_for_col3)) # as col2 but with its arguments between ()
-    col4 <- base::as.vector(base::unlist(fun_names_pos)) # as col2 but position in the code string of 1st character of function name. From col4, we can have pos of opening ( with col4 + nchar(col2) and pos of closing ) with col4 + nchar(col3)
-    middle_bracket <- base::do.call(base::c,  mid_bracket_pos_in_col3) #  concatenate the sublists into a single list -> flatten the outer list while keeping the result as a list
-    middle_bracket_open_in_col3 <- base::lapply(X = middle_bracket, FUN = function(x){if( ! base::is.null(x)){x[base::seq(1, base::length(x), by = 2)]}else{NULL}})
-    middle_bracket_close_in_col3 <- base::lapply(X = middle_bracket, FUN = function(x){if( ! base::is.null(x)){x[base::seq(2, base::length(x), by = 2)]}else{NULL}})
-    if( ! (base::length(col1) == base::length(col2) & base::length(col1) == base::length(col3) & base::length(col1) == base::length(col4) & base::length(col1) == base::length(code_for_col) & base::length(col1) == base::length(middle_bracket))){
-        tempo.cat <- base::paste0("INTERNAL ERROR 2 IN ", function_name, " OF THE ", package_name, " PACKAGE\nLENGTHS OF col1 (", base::length(col1), "), col2 (", base::length(col2), "), col3 (", base::length(col3), "), col4 (", base::length(col4), "), code_for_col (", base::length(code_for_col), "), AND middle_bracket (", base::length(middle_bracket), "), SHOULD BE EQUAL\n")
-        base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n", base::ifelse(base::is.null(warn), "", base::paste0("IN ADDITION\nWARNING", base::ifelse(warn.count > 1, "S", ""), ":\n\n", warn))), call. = FALSE)
+    code_for_col <- base::as.vector(x = base::unlist(x = base::mapply(FUN = function(x, y){base::rep(x = y, base::length(x = x))}, x = fun_names, y = code_for_col, MoreArgs = NULL, SIMPLIFY = TRUE, USE.NAMES = TRUE), recursive = TRUE, use.names = TRUE), mode = "any")
+    col1 <- base::as.vector(x = base::unlist(x = base::mapply(FUN = function(x, y){base::rep(x = y, base::length(x = x))}, x = fun_names, y = code_line_nb, MoreArgs = NULL, SIMPLIFY = TRUE, USE.NAMES = TRUE), recursive = TRUE, use.names = TRUE), mode = "any") # code line number
+    col2 <- base::as.vector(x = base::unlist(x = fun_names, recursive = TRUE, use.names = TRUE), mode = "any") # all the function names inside the tested functions (functions between quotes are already removed thanks to fun_1_line_replace)
+    col3 <- base::as.vector(x = base::unlist(x = arg_string_for_col3, recursive = TRUE, use.names = TRUE), mode = "any") # as col2 but with its arguments between ()
+    col4 <- base::as.vector(x = base::unlist(x = fun_names_pos, recursive = TRUE, use.names = TRUE), mode = "any") # as col2 but position in the code string of 1st character of function name. From col4, we can have pos of opening ( with col4 + nchar(col2) and pos of closing ) with col4 + nchar(col3)
+    middle_bracket <- base::do.call(what = base::c, args = mid_bracket_pos_in_col3, quote = FALSE, envir = base::parent.frame(n = 1)) #  concatenate the sublists into a single list -> flatten the outer list while keeping the result as a list
+    middle_bracket_open_in_col3 <- base::lapply(X = middle_bracket, FUN = function(x){if( ! base::is.null(x = x)){x[base::seq(1, base::length(x = x), by = 2)]}else{NULL}})
+    middle_bracket_close_in_col3 <- base::lapply(X = middle_bracket, FUN = function(x){if( ! base::is.null(x = x)){x[base::seq(2, base::length(x = x), by = 2)]}else{NULL}})
+    if( ! (base::length(x = col1) == base::length(x = col2) & base::length(x = col1) == base::length(x = col3) & base::length(x = col1) == base::length(x = col4) & base::length(x = col1) == base::length(x = code_for_col) & base::length(x = col1) == base::length(x = middle_bracket))){
+        tempo.cat <- base::paste0("INTERNAL ERROR 2 IN ", function_name, " OF THE ", package_name, " PACKAGE\nLENGTHS OF col1 (", base::length(x = col1), "), col2 (", base::length(x = col2), "), col3 (", base::length(x = col3), "), col4 (", base::length(x = col4), "), code_for_col (", base::length(x = code_for_col), "), AND middle_bracket (", base::length(x = middle_bracket), "), SHOULD BE EQUAL\n", collapse = NULL, recycle0 = FALSE)
+        base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n", base::ifelse(test = base::is.null(x = warn), yes = "", no = base::paste0("IN ADDITION\nWARNING", base::ifelse(test = warn_count > 1, yes = "S", no = ""), ":\n\n", warn, collapse = NULL, recycle0 = FALSE)), collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL)
     }
-    tempo.log <- base::as.vector(base::unlist(base::mapply(
+    tempo.log <- base::as.vector(x = base::unlist(x = base::mapply(
         FUN = function(x, y){
             if(y != ""){
-                if(base::grepl(x = y, pattern = base::paste0("^", x, "[\\s\\r\\n]*\\(.*\\)$"), perl = TRUE) | base::grepl(x = y, pattern = base::paste0("^", reserved_words, "$"), perl = FALSE)){
+                if(base::grepl(x = y, pattern = base::paste0("^", x, "[\\s\\r\\n]*\\(.*\\)$", collapse = NULL, recycle0 = FALSE), ignore.case = FALSE, perl = TRUE, fixed = FALSE, useBytes = FALSE) | base::grepl(x = y, pattern = base::paste0("^", reserved_words, "$", collapse = NULL, recycle0 = FALSE), ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE)){
                     base::return(FALSE)
                 }else{
                     base::return(TRUE) # TRUE = problem: does not start by what is expected, i.e., base::paste0("^", x, "[\\s\\r\\n]*\\(.*\\)$"
@@ -400,11 +400,14 @@ all_args_here <- function(
             }
         }, 
         x = col2, 
-        y = col3
-    )))
+        y = col3,
+        MoreArgs = NULL, 
+        SIMPLIFY = TRUE, 
+        USE.NAMES = TRUE
+    ), recursive = TRUE, use.names = TRUE), mode = "any")
     if(base::any(tempo.log, na.rm = TRUE)){
-        tempo.cat <- base::paste0("INTERNAL ERROR 3 IN ", function_name, " OF THE ", package_name, " PACKAGE\ncol3 MUST BE MADE OF STRINGS STARTING BY\n\"<FUNCTION_NAME>[\\s\\r\\n]*\\(\"\nAND FINISHING BY\")\"\nHERE IT IS:\n\n", base::paste(col3, collapse = "\n"))
-        base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n", base::ifelse(base::is.null(warn), "", base::paste0("IN ADDITION\nWARNING", base::ifelse(warn.count > 1, "S", ""), ":\n\n", warn))), call. = FALSE)
+        tempo.cat <- base::paste0("INTERNAL ERROR 3 IN ", function_name, " OF THE ", package_name, " PACKAGE\ncol3 MUST BE MADE OF STRINGS STARTING BY\n\"<FUNCTION_NAME>[\\s\\r\\n]*\\(\"\nAND FINISHING BY\")\"\nHERE IT IS:\n\n", base::paste(col3, collapse = "\n", recycle0 = FALSE, sep = " "), collapse = NULL, recycle0 = FALSE)
+        base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n", base::ifelse(test = base::is.null(x = warn), yes = "", no = base::paste0("IN ADDITION\nWARNING", base::ifelse(test = warn_count > 1, yes = "S", no = ""), ":\n\n", warn, collapse = NULL, recycle0 = FALSE)), collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL)
     }
     # data.frame(POS_IN_CODE = col1, FUN = col2, FUN_OBS_ARGS = col3, base::as.vector(base::unlist(arg_string_for_col5)))
     # removal of detected function preceeded by $, which are "" in col2
@@ -422,36 +425,36 @@ all_args_here <- function(
     # end removal of detected function preceeded by $, which are "" in col2
     # end preparation of columns
     # two new columns for arg proposal
-    if( (base::length(col1) == 0)){
-        base::cat("\n\nEVERYTHING SEEMS CLEAN\n\n")
+    if( (base::length(x = col1) == 0)){
+        base::cat("\n\nEVERYTHING SEEMS CLEAN\n\n", file = "", sep = " ", fill = FALSE, labels = NULL, append = FALSE)
     }else{
         col5 <- NULL # all arguments of the function with default value
         col6 <- NULL # missing arg names
         col7 <- NULL # potential missing args with values
         col8 <- NULL # reconstructed function with all arg
-        for(i2 in 1:base::length(col1)){
+        for(i2 in 1:base::length(x = col1)){
             if(col3[i2] != reserved_words){
                 # check if the function exists
                 if(col4[i2] <= 3){
-                    tempo.cat <- base::paste0("ERROR IN ", function_name, " OF THE ", package_name, " PACKAGE\nCANNOT GET THE ARGUMENTS OF A FUNCTION THAT IS NOT ASSOCIATED TO ITS PACKAGE IN LINE ", col1[i2], ":\n\n", base::paste(base::paste0(base::substr(x = code_for_col[i2], start = 1, stop = col4[i2] - 1), col3[i2]), collapse = "\n"), "\n\n1) PLEASE, RUN saferDev::colons_check(", arg_user_setting$x, ")\n2) ADD THE MISSING <PACKAGE>::<FUNCTION> (OR <PACKAGE>:::<FUNCTION> FOR FUNCTION STARTING BY A DOT)\n3) RERUN saferDev::all_args_here(", arg_user_setting$x, ")")
-                    base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n", base::ifelse(base::is.null(warn), "", base::paste0("IN ADDITION\nWARNING", base::ifelse(warn.count > 1, "S", ""), ":\n\n", warn))), call. = FALSE)
+                    tempo.cat <- base::paste0("ERROR IN ", function_name, " OF THE ", package_name, " PACKAGE\nCANNOT GET THE ARGUMENTS OF A FUNCTION THAT IS NOT ASSOCIATED TO ITS PACKAGE IN LINE ", col1[i2], ":\n\n", base::paste(base::paste0(base::substr(x = code_for_col[i2], start = 1, stop = col4[i2] - 1), col3[i2], collapse = NULL, recycle0 = FALSE), collapse = "\n", recycle0 = FALSE, sep = " "), "\n\n1) PLEASE, RUN saferDev::colons_check(", arg_user_setting$x, ")\n2) ADD THE MISSING <PACKAGE>::<FUNCTION> (OR <PACKAGE>:::<FUNCTION> FOR FUNCTION STARTING BY A DOT)\n3) RERUN saferDev::all_args_here(", arg_user_setting$x, ")", collapse = NULL, recycle0 = FALSE)
+                    base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n", base::ifelse(test = base::is.null(x = warn), yes = "", no = base::paste0("IN ADDITION\nWARNING", base::ifelse(test = warn_count > 1, yes = "S", no = ""), ":\n\n", warn, collapse = NULL, recycle0 = FALSE)), collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL)
                 }
                 tempo_string <- base::substr(x = code_for_col[i2], start = col4[i2] - 2, stop = col4[i2] - 1)
                 if(tempo_string != "::"){
-                    tempo.cat <- base::paste0("ERROR IN ", function_name, " OF THE ", package_name, " PACKAGE\nCANNOT GET THE ARGUMENTS OF A FUNCTION THAT IS NOT ASSOCIATED TO ITS PACKAGE IN LINE ", col1[i2], ":\n\n", base::paste(base::paste0(base::substr(x = code_for_col[i2], start = 1, stop = col4[i2] - 1), col3[i2]), collapse = "\n"), "\n\nPLEASE, RUN saferDev::colons_check(", arg_user_setting$x, ") FIRST,\nADD THE MISSING <PACKAGE>::<FUNCTION> (OR <PACKAGE>:::<FUNCTION> FOR FUNCTION STARTING BY A DOT)\nAND RERUN saferDev::all_args_here(", arg_user_setting$x, ")")
-                    base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n", base::ifelse(base::is.null(warn), "", base::paste0("IN ADDITION\nWARNING", base::ifelse(warn.count > 1, "S", ""), ":\n\n", warn))), call. = FALSE)
+                    tempo.cat <- base::paste0("ERROR IN ", function_name, " OF THE ", package_name, " PACKAGE\nCANNOT GET THE ARGUMENTS OF A FUNCTION THAT IS NOT ASSOCIATED TO ITS PACKAGE IN LINE ", col1[i2], ":\n\n", base::paste(base::paste0(base::substr(x = code_for_col[i2], start = 1, stop = col4[i2] - 1), col3[i2], collapse = NULL, recycle0 = FALSE), collapse = "\n", recycle0 = FALSE, sep = " "), "\n\nPLEASE, RUN saferDev::colons_check(", arg_user_setting$x, ") FIRST,\nADD THE MISSING <PACKAGE>::<FUNCTION> (OR <PACKAGE>:::<FUNCTION> FOR FUNCTION STARTING BY A DOT)\nAND RERUN saferDev::all_args_here(", arg_user_setting$x, ")", collapse = NULL, recycle0 = FALSE)
+                    base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n", base::ifelse(test = base::is.null(x = warn), yes = "", no = base::paste0("IN ADDITION\nWARNING", base::ifelse(test = warn_count > 1, yes = "S", no = ""), ":\n\n", warn, collapse = NULL, recycle0 = FALSE)), collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL)
                 }
                 tempo_string <- base::substr(x = code_for_col[i2], start = 1, stop = col4[i2] - 1)
                 tempo_package_name_colons <- saferDev:::.extract_all_fun_names(text = tempo_string, pattern = "[a-zA-Z][a-zA-Z0-9.]*:{2,3}$")$string # before 
-                saferDev::is_function_here(fun = base::paste0(tempo_package_name_colons, col2[i2]), lib_path = NULL, safer_check = FALSE) # check that exists
-                tempo_package_name <- base::sub(pattern =  ":+$", replacement = "", x = tempo_package_name_colons, perl = FALSE)
+                saferDev::is_function_here(fun = base::paste0(tempo_package_name_colons, col2[i2], collapse = NULL, recycle0 = FALSE), lib_path = NULL, safer_check = FALSE) # check that exists
+                tempo_package_name <- base::sub(pattern =  ":+$", replacement = "", x = tempo_package_name_colons, ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE)
                 # end check if the function exists
                 # recovering default args of the function
-                tempo_fun2 <- base::get(x = col2[i2], envir = base::asNamespace(tempo_package_name), mode = "function", inherits = FALSE)
-                if(base::is.primitive(tempo_fun2)){
-                    tempo_all_args <- base::as.list(base::suppressWarnings(base::formals(fun = base::args(name = col2[i2]), envir = base::asNamespace(tempo_package_name)), classes = "warning"))
-                    if(base::all(base::typeof(tempo_fun2) %in% base::c("special", "symbol"), na.rm = TRUE)){
-                        if(base::length(tempo_all_args) == 0){
+                tempo_fun2 <- base::get(x = col2[i2], envir = base::asNamespace(ns = tempo_package_name, base.OK = TRUE), mode = "function", inherits = FALSE, pos = -1L)
+                if(base::is.primitive(x = tempo_fun2)){
+                    tempo_all_args <- base::as.list(x = base::suppressWarnings(expr = base::formals(fun = base::args(name = col2[i2]), envir = base::asNamespace(ns = tempo_package_name, base.OK = TRUE)), classes = "warning"))
+                    if(base::all(base::typeof(x = tempo_fun2) %in% base::c("special", "symbol"), na.rm = TRUE)){
+                        if(base::length(x = tempo_all_args) == 0){
                             arg_full <- NULL # all args of the function with default values
                         }else{
                             arg_full <- tempo_all_args # convert pairlist into list
@@ -460,18 +463,18 @@ all_args_here <- function(
                         arg_full <- tempo_all_args
                     }
                 }else{
-                    arg_full <- base::as.list(base::formals(fun = col2[i2], envir = base::asNamespace(tempo_package_name))) # all the argument of the function in col2[i2] with default values # convert pairlist into list
+                    arg_full <- base::as.list(x = base::formals(fun = col2[i2], envir = base::asNamespace(ns = tempo_package_name, base.OK = TRUE))) # all the argument of the function in col2[i2] with default values # convert pairlist into list
                 }
                 # end recovering default args of the function
-                if(base::is.null(arg_full)){
+                if(base::is.null(x = arg_full)){
                     col5 <- base::c(col5, "NO_ARGS")
                     col6 <- base::c(col6, "")
                     col7 <- base::c(col7, "")
                     col8 <- base::c(col8, "")
                 }else{
                     # all arguments of the function with default value in col5
-                    tempo <- base::sapply(X = arg_full, FUN = function(x){base::paste0(base::ifelse(base::all(base::typeof(x) == "symbol", na.rm =TRUE), "", " = "), base::deparse(x))})
-                    tempo <- base::paste(base::paste0(base::names(tempo), tempo), collapse = ", ")
+                    tempo <- base::sapply(X = arg_full, FUN = function(x){base::paste0(base::ifelse(test = base::all(base::typeof(x = x) == "symbol", na.rm =TRUE), yes = "", no = " = "), base::deparse(expr = x, width.cutoff = 60L, backtick = FALSE, control = base::c("keepNA", "keepInteger", "niceNames", "showAttributes"), nlines = -1L), collapse = NULL, recycle0 = FALSE)}, simplify = TRUE, USE.NAMES = TRUE)
+                    tempo <- base::paste(base::paste0(base::names(x = tempo), tempo, collapse = NULL, recycle0 = FALSE), collapse = ", ", recycle0 = FALSE, sep = " ")
                     col5 <- base::c(col5, tempo)
                     # end all arguments of the function with default value in col5
                     # arguments: replacement of all the commas between quotes
@@ -481,12 +484,12 @@ all_args_here <- function(
                     pos_rep2 <- tempo$pos # replaced positions in obs_args
                     # end arguments: replacement of all the commas between quotes
                     # arguments: replacement of all the commas inside () of subfunctions
-                    if(base::length(middle_bracket_open_in_col3[[i2]]) > 0){
-                        if(base::length(middle_bracket_open_in_col3[[i2]]) != base::length(middle_bracket_close_in_col3[[i2]])){
-                            tempo.cat <- base::paste0("INTERNAL ERROR 4 IN ", function_name, " OF THE ", package_name, " PACKAGE\nmiddle_bracket_open_in_col3 AND middle_bracket_close_in_col3 MUST HAVE THE SAME LENGTH IN LOOP ", i2, "\n\nmiddle_bracket_open_in_col3 (", base::length(middle_bracket_open_in_col3), "):\n", base::paste(middle_bracket_open_in_col3, collapse = " "), "\n\nmiddle_bracket_close_in_col3 (", base::length(middle_bracket_close_in_col3), "):\n", base::paste(middle_bracket_close_in_col3, collapse = " "), "\n\ni2:\n", i2)
-                            base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n", base::ifelse(base::is.null(warn), "", base::paste0("IN ADDITION\nWARNING", base::ifelse(warn.count > 1, "S", ""), ":\n\n", warn))), call. = FALSE)
+                    if(base::length(x = middle_bracket_open_in_col3[[i2]]) > 0){
+                        if(base::length(x = middle_bracket_open_in_col3[[i2]]) != base::length(x = middle_bracket_close_in_col3[[i2]])){
+                            tempo.cat <- base::paste0("INTERNAL ERROR 4 IN ", function_name, " OF THE ", package_name, " PACKAGE\nmiddle_bracket_open_in_col3 AND middle_bracket_close_in_col3 MUST HAVE THE SAME LENGTH IN LOOP ", i2, "\n\nmiddle_bracket_open_in_col3 (", base::length(x = middle_bracket_open_in_col3), "):\n", base::paste(middle_bracket_open_in_col3, collapse = " ", recycle0 = FALSE, sep = " "), "\n\nmiddle_bracket_close_in_col3 (", base::length(x = middle_bracket_close_in_col3), "):\n", base::paste(middle_bracket_close_in_col3, collapse = " ", recycle0 = FALSE, sep = " "), "\n\ni2:\n", i2, collapse = NULL, recycle0 = FALSE)
+                            base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n", base::ifelse(test = base::is.null(x = warn), yes = "", no = base::paste0("IN ADDITION\nWARNING", base::ifelse(test = warn_count > 1, yes = "S", no = ""), ":\n\n", warn, collapse = NULL, recycle0 = FALSE)), collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL)
                         }
-                        for(i6 in 1:base::length(middle_bracket_open_in_col3[[i2]])){
+                        for(i6 in 1:base::length(x = middle_bracket_open_in_col3[[i2]])){
                             tempo <- saferDev:::.in_parenthesis_replacement(string = tempo_col3, pattern = ",", no_regex_pattern = ",", replacement = " ", perl = TRUE, open_pos = middle_bracket_open_in_col3[[i2]][i6], close_pos = middle_bracket_close_in_col3[[i2]][i6], function_name = function_name, package_name = package_name)
                             tempo_col3 <- tempo$string
                             pos_rep2 <- base::c(pos_rep2, tempo$pos) # replaced positions in obs_args
@@ -494,8 +497,8 @@ all_args_here <- function(
                     }
                     # end arguments: replacement of all the commas inside () of subfunctions
                     # recovering obs arguments
-                    obs_args <- base::sub(pattern =  base::paste0("^", col2[i2], "[\\s\\r\\n]*\\("), replacement = "", x = tempo_col3, perl = TRUE) # removal of function name and (
-                    obs_args <- base::sub(pattern =  "\\)$", replacement = "", x = obs_args, perl = FALSE) # removal of trailing )
+                    obs_args <- base::sub(pattern =  base::paste0("^", col2[i2], "[\\s\\r\\n]*\\(", collapse = NULL, recycle0 = FALSE), replacement = "", x = tempo_col3, ignore.case = FALSE, perl = TRUE, fixed = FALSE, useBytes = FALSE) # removal of function name and (
+                    obs_args <- base::sub(pattern =  "\\)$", replacement = "", x = obs_args, ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE) # removal of trailing )
                     # end recovering obs arguments
                     # splitting the arguments using commas
                     tempo_split <- base::strsplit(x = obs_args, split = " *, *", fixed = FALSE, perl = FALSE, useBytes = FALSE)[[1]] # separation of args
@@ -505,30 +508,30 @@ all_args_here <- function(
                     # rewriting the commas inside args
                     if( ! base::is.null(x = pos_rep2)){
                         # resseting the pos of the removed commas to fit obs_args
-                        pos_rep2 <- pos_rep2 - base::nchar(col2[i2]) - 1 # -1 for the opening (
+                        pos_rep2 <- pos_rep2 - base::nchar(x = col2[i2], type = "chars", allowNA = FALSE, keepNA = NA) - 1 # -1 for the opening (
                         if(base::any(pos_rep2 <= 0, na.rm = TRUE)){
-                            tempo.cat <- base::paste0("INTERNAL ERROR 5 IN ", function_name, " OF THE ", package_name, " PACKAGE\nPOSITIONS OF REMOVED COMMAS CANOT  OR LESS\n\npos_rep2 (", base::length(pos_rep2), "):\n", base::paste(pos_rep2, collapse = " "), "\n\nARGUMENT STRING obs_args:\n", base::paste(obs_args, collapse = " "), "\n\ni2:\n", i2)
-                            base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n", base::ifelse(base::is.null(warn), "", base::paste0("IN ADDITION\nWARNING", base::ifelse(warn.count > 1, "S", ""), ":\n\n", warn))), call. = FALSE)
+                            tempo.cat <- base::paste0("INTERNAL ERROR 5 IN ", function_name, " OF THE ", package_name, " PACKAGE\nPOSITIONS OF REMOVED COMMAS CANOT  OR LESS\n\npos_rep2 (", base::length(x = pos_rep2), "):\n", base::paste(pos_rep2, collapse = " ", recycle0 = FALSE, sep = " "), "\n\nARGUMENT STRING obs_args:\n", base::paste(obs_args, collapse = " ", recycle0 = FALSE, sep = " "), "\n\ni2:\n", i2, collapse = NULL, recycle0 = FALSE)
+                            base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n", base::ifelse(test = base::is.null(x = warn), yes = "", no = base::paste0("IN ADDITION\nWARNING", base::ifelse(test = warn_count > 1, yes = "S", no = ""), ":\n\n", warn, collapse = NULL, recycle0 = FALSE)), collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL)
                         }
                         # end resseting the pos of the removed commas to fit obs_args
-                        for(i6 in 1:base::length(tempo_split)){
-                            tempo_log <- pos_rep2 >= 1 & pos_rep2 <= base::nchar(tempo_split[i6])
+                        for(i6 in 1:base::length(x = tempo_split)){
+                            tempo_log <- pos_rep2 >= 1 & pos_rep2 <= base::nchar(x = tempo_split[i6], type = "chars", allowNA = FALSE, keepNA = NA)
                             for(i7 in 1:base::length(x = tempo_log)){
                                 if(base::any(tempo_log[i7], na.rm = TRUE)){
                                     base::substr(x = tempo_split[i6], start = pos_rep2[i7], stop = pos_rep2[i7]) <- ","
                                 }
                             }
-                            pos_rep2 - base::nchar(tempo_split[i6]) - 1 # -1 because of the comma that separates each tempo_split
+                            pos_rep2 - base::nchar(x = tempo_split[i6], type = "chars", allowNA = FALSE, keepNA = NA) - 1 # -1 because of the comma that separates each tempo_split
                         }
                     }
                     # end rewriting the commas inside args
                     # working on each observed arg
-                    arg_full_names <-  base::names(arg_full)
+                    arg_full_names <-  base::names(x = arg_full)
                     three_dots_log <- arg_full_names == "..."
                     # checking 
-                    if(base::length(tempo_split) > base::length(arg_full_names) & ! base::any(three_dots_log, na.rm = TRUE)){
-                        tempo.cat <- base::paste0("INTERNAL ERROR 6 IN ", function_name, " OF THE ", package_name, " PACKAGE\nLENGTH OF tempo_split MUST LOWER OR EQUAL TO LENGTH OF arg_full_names IF ... IS NOT AN ARGUMENT OF THE FUNCTION\n\nFUNCTION: ", col2[i2], "\n\ntempo_split (", base::length(tempo_split), "):\n", base::paste(tempo_split, collapse = "\n"), "\n\narg_full_names (", base::length(arg_full_names), "):\n", base::paste(arg_full_names, collapse = "\n"), "\n\ni2:\n", i2)
-                        base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n", base::ifelse(base::is.null(warn), "", base::paste0("IN ADDITION\nWARNING", base::ifelse(warn.count > 1, "S", ""), ":\n\n", warn))), call. = FALSE)
+                    if(base::length(x = tempo_split) > base::length(x = arg_full_names) & ! base::any(three_dots_log, na.rm = TRUE)){
+                        tempo.cat <- base::paste0("INTERNAL ERROR 6 IN ", function_name, " OF THE ", package_name, " PACKAGE\nLENGTH OF tempo_split MUST LOWER OR EQUAL TO LENGTH OF arg_full_names IF ... IS NOT AN ARGUMENT OF THE FUNCTION\n\nFUNCTION: ", col2[i2], "\n\ntempo_split (", base::length(x = tempo_split), "):\n", base::paste(tempo_split, collapse = "\n", recycle0 = FALSE, sep = " "), "\n\narg_full_names (", base::length(x = arg_full_names), "):\n", base::paste(arg_full_names, collapse = "\n", , recycle0 = FALSE, sep = " "), "\n\ni2:\n", i2, collapse = NULL, recycle0 = FALSE)
+                        base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n", base::ifelse(test = base::is.null(x = warn), yes = "", no = base::paste0("IN ADDITION\nWARNING", base::ifelse(test = warn_count > 1, yes = "S", no = ""), ":\n\n", warn, collapse = NULL, recycle0 = FALSE)), collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL)
                     }
                     # end checking
                     tempo_out <- saferDev:::.all_args_here_fill(
@@ -561,17 +564,17 @@ all_args_here <- function(
     #### end main code
 
     #### output
-    if(base::all(col8 %in%base::c("", "GOOD"))){
-        tempo.cat <- base::paste0("INSIDE ", base::as.character(out$arg_user_setting$x), "(), EVERYTHING SEEMS CLEAN")
+    if(base::all(col8 %in%base::c("", "GOOD"), na.rm = FALSE)){
+        tempo.cat <- base::paste0("INSIDE ", base::as.character(x = out$arg_user_setting$x), "(), EVERYTHING SEEMS CLEAN", collapse = NULL, recycle0 = FALSE)
         if(export == TRUE){
-            tempo.cat <- base::paste0("RESULT EXPORTED IN\n", path_out, "\nBUT ", tempo.cat)
+            tempo.cat <- base::paste0("RESULT EXPORTED IN\n", path_out, "\nBUT ", tempo.cat, collapse = NULL, recycle0 = FALSE)
         }
-        tempo.cat <- base::paste0("AFTER RUNNING ", function_name, " OF THE ", package_name, " PACKAGE:\n", tempo.cat)
-        base::on.exit(base::cat(base::paste0("\n\n", tempo.cat, "\n\n")))
+        tempo.cat <- base::paste0("AFTER RUNNING ", function_name, " OF THE ", package_name, " PACKAGE:\n", tempo.cat, collapse = NULL, recycle0 = FALSE)
+        base::on.exit(expr = base::cat(base::paste0("\n\n", tempo.cat, "\n\n", collapse = NULL, recycle0 = FALSE), file = "", sep = " ", fill = FALSE, labels = NULL, append = FALSE), add = FALSE, after = TRUE)
     }
-    output <- base::data.frame(LINE_NB = col1, FUN_NAME = col2, FUN_ARGS = col3, FUN_POS = col4, DEF_ARGS = col5, MISSING_ARG_NAMES = col6, MISSING_ARGS = col7, STATUS = col8)
+    output <- base::data.frame(LINE_NB = col1, FUN_NAME = col2, FUN_ARGS = col3, FUN_POS = col4, DEF_ARGS = col5, MISSING_ARG_NAMES = col6, MISSING_ARGS = col7, STATUS = col8, row.names = NULL, check.rows = FALSE, check.names = TRUE, fix.empty.names = TRUE, stringsAsFactors = FALSE)
     if(export == TRUE){
-        utils::write.table(output, file = path_out, row.names = FALSE, col.names = TRUE, append = FALSE, quote = FALSE, sep = "\t", eol = "\n", na = "")
+        utils::write.table(x = output, file = path_out, row.names = FALSE, col.names = TRUE, append = FALSE, quote = FALSE, sep = "\t", eol = "\n", na = "", dec = ".", qmethod = base::c("escape", "double"), fileEncoding = "")
     }else{
         base::return(output)
     }
