@@ -1007,6 +1007,7 @@
     good_args <- NULL
     missing_args <- NULL
     missing_args_names <- NULL
+    obs_arg_log <- logical()
     if(base::any(three_dots_log, na.rm = TRUE)){
         arg_full_names <- arg_full_names[ ! three_dots_log]
         arg_full <- arg_full[ ! three_dots_log]
