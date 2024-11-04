@@ -32,15 +32,16 @@ test_that("all_args_here()", {
         safer_check = FALSE # perform some "safer" checks? Warning : always set this argument to FALSE if all_args_here() is used inside another safer function.
     ))
 
-    result3 <- all_args_here(
+    all_args_here(
         x = all_args_here, # R function
-        export = FALSE, # export the data frame into a .tsv file?
+        export = TRUE, # export the data frame into a .tsv file?
         path_out = ".", # pathway of the folder where to export the data frame
         df_name = "a.tsv", # name of the exported data frame file
-        overwrite = FALSE, # Overwrite potential df_name file already existing in path_out?
+        overwrite = TRUE, # Overwrite potential df_name file already existing in path_out?
         lib_path = NULL, # absolute pathways of the directories containing the required packages if not in the default directories
         safer_check = FALSE # perform some "safer" checks? Warning : always set this argument to FALSE if all_args_here() is used inside another safer function.
     )
+    result3 <- read.table("./a.tsv", sep = "\t", header = TRUE)
     testthat::expect_equal(result3, expected3)
 })
 
