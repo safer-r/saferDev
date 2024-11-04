@@ -1007,7 +1007,6 @@
     good_args <- NULL
     missing_args <- NULL
     missing_args_names <- NULL
-    obs_arg_log <- base::rep(TRUE, base::length(tempo_split)) # will help for counting the tempo_split args without arg name before. All the remaining TRUE will be values that need an arg name
     if(base::any(three_dots_log, na.rm = TRUE)){
         arg_full_names <- arg_full_names[ ! three_dots_log]
         arg_full <- arg_full[ ! three_dots_log]
@@ -1020,20 +1019,25 @@
     }else{
         # scan for args names present in tempo_split
         good_count <- 0 # to define if all the args are written (not considering ...)
-        for(i2 in 1:base::length(arg_full_names)){
-            pattern3 <- base::paste0("^[\\s\\r\\n]*", arg_full_names[i2], "[\\s]*=") # looking for the arg name
-            tempo.log <- grepl(x = tempo_split, pattern = pattern3, perl = TRUE)
-            if(base::sum(tempo.log, na.rm = TRUE) == 1){ # arg i2 has its names written in the args between ()
-                good_args <- base::c(good_args, tempo_split[tempo.log])
-                obs_arg_log <- obs_arg_log & ! tempo.log # remove the position of the taken arg in tempo_split
-                good_count <- good_count + 1
-            }else if(base::sum(tempo.log, na.rm = TRUE) == 0){ # arg i2 has not its names written in the args between ()
-                missing_args_names <- base::c(missing_args_names, arg_full_names[i2])
-            }else{
-                tempo.cat <- base::paste0("INTERNAL ERROR 1 IN .all_args_here_fill() IN ", function_name, " OF THE ", package_name, " PACKAGE\npattern3 DETECTED SEVERAL TIMES IN ARGUMENTS:\n\npattern3:\n", base::paste(pattern3, collapse = "\n"), "\n\ntempo_split:\n", base::paste(tempo_split[tempo.log], collapse = "\n"), "\n\nCHECK IF THE ARGUMENT IS PRESENT SEVERAL TIMES IN LINE ", col1_i2, ", INSIDE ", col2_i2, collapse = NULL, recycle0 = FALSE)
-                base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE)
-            }
+        if(base::length(tempo_split) == 0 & base::length(arg_full_names) > 0){
+            missing_args_names <- arg_full_names
+        }else{
+            obs_arg_log <- base::rep(TRUE, base::length(tempo_split)) # will help for counting the tempo_split args without arg name before. All the remaining TRUE will be values that need an arg name
+            for(i2 in 1:base::length(arg_full_names)){
+                pattern3 <- base::paste0("^[\\s\\r\\n]*", arg_full_names[i2], "[\\s]*=") # looking for the arg name
+                tempo.log <- grepl(x = tempo_split, pattern = pattern3, perl = TRUE)
+                if(base::sum(tempo.log, na.rm = TRUE) == 1){ # arg i2 has its names written in the args between ()
+                    good_args <- base::c(good_args, tempo_split[tempo.log])
+                    obs_arg_log <- obs_arg_log & ! tempo.log # remove the position of the taken arg in tempo_split
+                    good_count <- good_count + 1
+                }else if(base::sum(tempo.log, na.rm = TRUE) == 0){ # arg i2 has not its names written in the args between ()
+                    missing_args_names <- base::c(missing_args_names, arg_full_names[i2])
+                }else{
+                    tempo.cat <- base::paste0("INTERNAL ERROR 1 IN .all_args_here_fill() IN ", function_name, " OF THE ", package_name, " PACKAGE\npattern3 DETECTED SEVERAL TIMES IN ARGUMENTS:\n\npattern3:\n", base::paste(pattern3, collapse = "\n"), "\n\ntempo_split:\n", base::paste(tempo_split[tempo.log], collapse = "\n"), "\n\nCHECK IF THE ARGUMENT IS PRESENT SEVERAL TIMES IN LINE ", col1_i2, ", INSIDE ", col2_i2, collapse = NULL, recycle0 = FALSE)
+                    base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE)
+                }
 
+            }
         }
         # end scan for args names present in tempo_split
         # checking if arg name are not fully written
@@ -1043,7 +1047,7 @@
             base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
         }
         tempo_col8 <- NULL
-        if( ! base::is.null(missing_args_names)){
+        if(( ! base::is.null(missing_args_names)) & base::length(tempo_split) != 0){
             for(i3 in 1:base::length(tempo_split)){
                 pattern4 <- "^\\s*([a-zA-Z]|\\.[a-zA-Z._])[a-zA-Z0-9._]*[\\s\\r\\n]*=" # looking for the arg name
                 if(base::grepl(x = tempo_split[i3], pattern = pattern4, perl = TRUE)){
