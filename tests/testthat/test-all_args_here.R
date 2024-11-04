@@ -1,6 +1,6 @@
     test_that("all_args_here()", {
     source("https://raw.githubusercontent.com/safer-r/saferDev/main/dev/other/test2.R")
-    source("https://raw.githubusercontent.com/safer-r/saferDev/main/dev/other/all_args_here_on_all_args_here_res.tsv")
+    expected3 <- read.table("https://raw.githubusercontent.com/safer-r/saferDev/main/dev/other/all_args_here_on_all_args_here_res.tsv", sep = "\t", header = TRUE)
 
   # Simple examples
     result1 <- saferDev::get_message("all_args_here(x = test2)", kind = "error", print.no = TRUE, text = NULL)
@@ -22,11 +22,8 @@
 
   # sophisticated example
 
-
-
-
-      testthat::expect_no_error(all_args_here(
-        x = test2, # R function
+    testthat::expect_no_error(all_args_here(
+        x = all_args_here, # R function
         export = TRUE, # export the data frame into a .tsv file?
         path_out = ".", # pathway of the folder where to export the data frame
         df_name = "a.tsv", # name of the exported data frame file
@@ -34,27 +31,16 @@
         lib_path = NULL, # absolute pathways of the directories containing the required packages if not in the default directories
         safer_check = FALSE # perform some "safer" checks? Warning : always set this argument to FALSE if all_args_here() is used inside another safer function.
     ))
-    result1 <- capture.output(all_args_here(x = test2))
-    expected1 <- c(
-        "", 
-        "", 
-        "INSIDE test(), SOME :: OR ::: ARE MISSING AT BASIC FUNCTION POSITIONS:", 
-        "", 
-        "LINE\tFUN\t\tSTRING_BEFORE", 
-        "3\tgregexpr\t\tmatches <- " , 
-        "6\tregmatches\t\tmatched_strings <- " , 
-        "8\tsum\t\t", 
-        "15\tsub\t\tresult <- " , 
-        "16\trange\t\t", 
-        "19\treturn\t\t", 
-        "", 
-        "INSIDE test(), SOME :: OR ::: ARE MISSING AT OTHER FUNCTION POSITIONS:", 
-        "", 
-        "LINE\tFUN\t\tSTRING_BEFORE", 
-        "13\troc1\t\tbase::length(", 
-        "17\troc4\t\ttempo.cat <- base::paste0(\"IAGE\\nLENGTHS OF roc00() (\", base::ks.test(" ,  
-        ""
-    )
-    testthat::expect_equal(result1, expected1)
+
+    result3 <- all_args_here(
+        x = all_args_here, # R function
+        export = FALSE, # export the data frame into a .tsv file?
+        path_out = ".", # pathway of the folder where to export the data frame
+        df_name = "a.tsv", # name of the exported data frame file
+        overwrite = FALSE, # Overwrite potential df_name file already existing in path_out?
+        lib_path = NULL, # absolute pathways of the directories containing the required packages if not in the default directories
+        safer_check = FALSE # perform some "safer" checks? Warning : always set this argument to FALSE if all_args_here() is used inside another safer function.
+    ))
+    testthat::expect_equal(result3, expected3)
 })
 
