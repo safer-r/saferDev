@@ -45,7 +45,7 @@ test_that("all_args_here()", {
 
     result3 <- all_args_here(
         x = FUN1, # R function
-        export = TRUE, # export the data frame into a .tsv file?
+        export = FALSE, # export the data frame into a .tsv file?
         path_out = ".", # pathway of the folder where to export the data frame
         df_name = "a.tsv", # name of the exported data frame file
         overwrite = TRUE, # Overwrite potential df_name file already existing in path_out?
@@ -59,7 +59,7 @@ test_that("all_args_here()", {
         FUN_POS = c(23, 43, 60, 94, 111, 24, 44, 61, 95, 112, 25, 26, 100), 
         DEF_ARGS = c('x, mode = "any"', 'x, recursive = TRUE, use.names = TRUE', 'FUN, ..., MoreArgs = NULL, SIMPLIFY = TRUE, USE.NAMES = TRUE', 'x, ...', 'x', 'x, mode = "any"', 'x, recursive = TRUE, use.names = TRUE', 'FUN, ..., MoreArgs = NULL, SIMPLIFY = TRUE, USE.NAMES = TRUE', 'x, ...', 'x', 'what, args, quote = FALSE, envir = parent.frame()', 'what, args, quote = FALSE, envir = parent.frame()', 'n = 1'), 
         MISSING_ARG_NAMES = c('', '', '', '', '', 'mode', 'recursive, use.names', 'MoreArgs, SIMPLIFY, USE.NAMES', '', '', 'quote, envir', '', 'n'), 
-        MISSING_ARGS = c('', '', '', '', 'mode = "any"', 'recursive = TRUE, use.names = TRUE', 'MoreArgs = x = x, SIMPLIFY = y = y, USE.NAMES = TRUE', '', '', 'quote = FALSE, envir = parent.frame()', '', 'n = 1'), 
+        MISSING_ARGS = c('', '', '', '', '', 'mode = "any"', 'recursive = TRUE, use.names = TRUE', 'MoreArgs = x = x, SIMPLIFY = y = y, USE.NAMES = TRUE', '', '', 'quote = FALSE, envir = parent.frame()', '', 'n = 1'), 
         STATUS = c('GOOD', 'GOOD', 'GOOD', 'GOOD', 'GOOD', 'as.vector(x = base::unlist(x = base::mapply(FUN = function(x, y){base::rep(x = y, base::length(x = x))}, x = x, y = y)), mode = "any")', 'unlist(x = base::mapply(FUN = function(x, y){base::rep(x = y, base::length(x = x))}, x = x, y = y), recursive = TRUE, use.names = TRUE)', 'mapply(FUN = function(x, y){base::rep(x = y, base::length(x = x))}, MoreArgs = x = x, SIMPLIFY = y = y, USE.NAMES = TRUE)', 'GOOD', 'GOOD', 'do.call(what = base::c, args = code_for_col, quote = FALSE, envir = parent.frame())', 'GOOD', 'parent.frame(n = 1)')
     )
     testthat::expect_equal(result3, expected3)
