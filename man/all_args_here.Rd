@@ -23,11 +23,11 @@ all_args_here(
 
 \item{df_name}{Single character string indicating the name of the exported data frame file. Ignored if export is FALSE.}
 
-\item{overwrite}{Single logical value. Overwrite potantial df_name file already existing in path_out? Ignored if export is FALSE.}
+\item{overwrite}{Single logical value. Overwrite potential df_name file already existing in path_out? Ignored if export is FALSE.}
 
 \item{lib_path}{Vector of characters specifying the absolute pathways of the directories containing the required packages if not in the default directories. If NULL, the pathway specified by .libPaths() is used.}
 
-\item{safer_check}{Single logical value. Perform some "safer" checks (see https://github.com/safer-r)? If TRUE, checkings are performed before main code running: 1) R classical operators (like "<-") not overwritten by another package because of the R scope and 2) required functions and related packages effectively present in local R lybraries. Must be set to FALSE if this fonction is used inside another "safer" function to avoid pointless multiple checkings.}
+\item{safer_check}{Single logical value. Perform some "safer" checks (see https://github.com/safer-r)? If TRUE, checkings are performed before main code running: 1) R classical operators (like "<-") not overwritten by another package because of the R scope and 2) required functions and related packages effectively present in local R lybraries. Must be set to FALSE if all_args_here() fonction is used inside another "safer" function to avoid pointless multiple checkings.}
 }
 \value{
 A data frame indicating the missing arguments or a message saying that everything seems fine.
@@ -63,7 +63,7 @@ The returned line numbers are indicative, depending on which source is checked. 
 Warnings: 
 1) The function could not properly work if any comma is present in default argument values. Please, report here https://github.com/safer-r/saferDev/issues if it is the case.
 
-2) Results are only suggestions, as it is difficult to anticipate all the exceptions with arguments writting.
+2) Proposals in the STATUS column are only suggestions, as it is difficult to anticipate all the exceptions with arguments writting.
 }
 \examples{
 \dontrun{ # Example that return an error
@@ -71,7 +71,7 @@ all_args_here(mean)
 source("https://raw.githubusercontent.com/safer-r/saferDev/main/dev/other/test2.R") ; all_args_here(test2, export = TRUE)
 }
 all_args_here(all_args_here)
-source("C:\\\\Users\\\\gmillot\\\\Documents\\\\Git_projects\\\\safer-r\\\\.github\\\\profile\\\\backbone.R") ; all_args_here(BACKBONE, export = TRUE)
+source("https://raw.githubusercontent.com/safer-r/.github/refs/heads/main/profile/backbone.R") ; all_args_here(BACKBONE, export = TRUE)
 }
 \author{
 Gael Millot <gael.millot@pasteur.fr>

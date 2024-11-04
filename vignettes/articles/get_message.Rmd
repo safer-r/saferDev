@@ -77,7 +77,8 @@ get_message(
     kind = "warning", 
     header = FALSE, 
     print.no = TRUE, 
-    text = "IN A") # print the warning message in text
+    text = "IN A"
+) # print the warning message in text
 ```
 <br>
 
