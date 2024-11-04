@@ -1,0 +1,507 @@
+LINE_NB	FUN_NAME	FUN_ARGS	FUN_POS	DEF_ARGS	MISSING_ARG_NAMES	MISSING_ARGS	STATUS
+5	as.list	as.list(x = base::match.call(definition = base::sys.function(which = base::sys.parent(n = 0)),  call = base::sys.call(which = base::sys.parent(n = 0)),  expand.dots = FALSE, envir = base::parent.frame(n = 2L)))	25	x, ...			GOOD
+5	match.call	match.call(definition = base::sys.function(which = base::sys.parent(n = 0)),  call = base::sys.call(which = base::sys.parent(n = 0)),  expand.dots = FALSE, envir = base::parent.frame(n = 2L))	43	definition = sys.function(sys.parent()), call = sys.call(sys.parent()), expand.dots = TRUE, envir = parent.frame(2L)			GOOD
+5	sys.function	sys.function(which = base::sys.parent(n = 0))	73	which = 0L			GOOD
+5	sys.parent	sys.parent(n = 0)	100	n = 1L			GOOD
+6	sys.call	sys.call(which = base::sys.parent(n = 0))	14	which = 0L			GOOD
+6	sys.parent	sys.parent(n = 0)	37	n = 1L			GOOD
+7	parent.frame	parent.frame(n = 2L)	36	n = 1			GOOD
+8	paste0	paste0(tempo_settings[[1]], "()",  collapse = NULL, recycle0 = FALSE)	24	..., collapse = NULL, recycle0 = FALSE			GOOD
+14	names	names(x = base::formals(fun = base::sys.function(which = base::sys.parent(n = 2)),  envir = base::parent.frame(n = 1)))	20	x			GOOD
+14	formals	formals(fun = base::sys.function(which = base::sys.parent(n = 2)),  envir = base::parent.frame(n = 1))	36	fun = sys.function(sys.parent()), envir = parent.frame()			GOOD
+14	sys.function	sys.function(which = base::sys.parent(n = 2))	56	which = 0L			GOOD
+14	sys.parent	sys.parent(n = 2)	83	n = 1L			GOOD
+15	parent.frame	parent.frame(n = 1)	15	n = 1			GOOD
+16	all	all(safer_check %in% base::c(TRUE, FALSE), na.rm = FALSE)	13	..., na.rm = FALSE			GOOD
+16	c	c(TRUE, FALSE)	40	...			
+17	length	length(x = safer_check)	7	x			GOOD
+17	all	all(base::is.logical(x = safer_check),  na.rm = TRUE)	44	..., na.rm = FALSE			GOOD
+17	is.logical	is.logical(x = safer_check)	54	x			GOOD
+19	paste0	paste0("ERROR IN ", function_name,  base::ifelse(test = base::is.null(x = package_name),  yes = "", no = base::paste0(" OF THE ", package_name,  " PACKAGE", collapse = NULL, recycle0 = FALSE)),  "\nsafer_check ARGUMENT MUST BE EITHER TRUE OR FALSE. HER IT IS:\n",  base::paste0(safer_check, collapse = "\n", recycle0 = FALSE),  collapse = NULL, recycle0 = FALSE)	20	..., collapse = NULL, recycle0 = FALSE			GOOD
+20	ifelse	ifelse(test = base::is.null(x = package_name),  yes = "", no = base::paste0(" OF THE ", package_name,  " PACKAGE", collapse = NULL, recycle0 = FALSE))	7	test, yes, no			GOOD
+20	is.null	is.null(x = package_name)	27	x			GOOD
+21	paste0	paste0(" OF THE ", package_name,  " PACKAGE", collapse = NULL, recycle0 = FALSE)	22	..., collapse = NULL, recycle0 = FALSE			GOOD
+24	paste0	paste0(safer_check, collapse = "\n", recycle0 = FALSE)	7	..., collapse = NULL, recycle0 = FALSE			GOOD
+26	stop	stop(base::paste0("\n\n================\n\n", tempo_cat,  "\n\n================\n\n", collapse = NULL, recycle0 = FALSE),  call. = FALSE, domain = NULL)	7	..., call. = TRUE, domain = NULL			GOOD
+26	paste0	paste0("\n\n================\n\n", tempo_cat,  "\n\n================\n\n", collapse = NULL, recycle0 = FALSE)	18	..., collapse = NULL, recycle0 = FALSE			GOOD
+31	.base_op_check	.base_op_check(external_function_name = function_name,  external_package_name = package_name)	12	external_function_name, external_package_name			GOOD
+34	is.null	is.null(x = lib_path)	12	x			GOOD
+35	all	all(base::typeof(x = lib_path) == "character",  na.rm = FALSE)	12	..., na.rm = FALSE			GOOD
+35	typeof	typeof(x = lib_path)	22	x			GOOD
+37	paste0	paste0("ERROR IN ", function_name,  base::ifelse(test = base::is.null(x = package_name),  yes = "", no = base::paste0(" OF THE ", package_name,  " PACKAGE", collapse = NULL, recycle0 = FALSE)),  "\nDIRECTORY PATH INDICATED IN THE lib_path ARGUMENT MUST BE A VECTOR OF CHARACTERS:\n",  base::paste(lib_path, sep = " ", collapse = "\n",  recycle0 = FALSE), collapse = NULL, recycle0 = FALSE)	20	..., collapse = NULL, recycle0 = FALSE			GOOD
+38	ifelse	ifelse(test = base::is.null(x = package_name),  yes = "", no = base::paste0(" OF THE ", package_name,  " PACKAGE", collapse = NULL, recycle0 = FALSE))	7	test, yes, no			GOOD
+38	is.null	is.null(x = package_name)	27	x			GOOD
+39	paste0	paste0(" OF THE ", package_name,  " PACKAGE", collapse = NULL, recycle0 = FALSE)	22	..., collapse = NULL, recycle0 = FALSE			GOOD
+42	paste	paste(lib_path, sep = " ", collapse = "\n",  recycle0 = FALSE)	7	..., sep = " ", collapse = NULL, recycle0 = FALSE			GOOD
+44	stop	stop(base::paste0("\n\n================\n\n",  tempo_cat, "\n\n================\n\n", collapse = NULL,  recycle0 = FALSE), call. = FALSE, domain = NULL)	7	..., call. = TRUE, domain = NULL			GOOD
+44	paste0	paste0("\n\n================\n\n",  tempo_cat, "\n\n================\n\n", collapse = NULL,  recycle0 = FALSE)	18	..., collapse = NULL, recycle0 = FALSE			GOOD
+48	all	all(base::dir.exists(paths = lib_path),  na.rm = TRUE)	17	..., na.rm = FALSE			GOOD
+48	dir.exists	dir.exists(paths = lib_path)	27	paths			GOOD
+50	paste0	paste0("ERROR IN ", function_name,  base::ifelse(test = base::is.null(x = package_name),  yes = "", no = base::paste0(" OF THE ", package_name,  " PACKAGE", collapse = NULL, recycle0 = FALSE)),  "\nDIRECTORY PATH INDICATED IN THE lib_path ARGUMENT DOES NOT EXISTS:\n",  base::paste(lib_path, sep = " ", collapse = "\n",  recycle0 = FALSE), collapse = NULL, recycle0 = FALSE)	20	..., collapse = NULL, recycle0 = FALSE			GOOD
+51	ifelse	ifelse(test = base::is.null(x = package_name),  yes = "", no = base::paste0(" OF THE ", package_name,  " PACKAGE", collapse = NULL, recycle0 = FALSE))	7	test, yes, no			GOOD
+51	is.null	is.null(x = package_name)	27	x			GOOD
+52	paste0	paste0(" OF THE ", package_name,  " PACKAGE", collapse = NULL, recycle0 = FALSE)	22	..., collapse = NULL, recycle0 = FALSE			GOOD
+55	paste	paste(lib_path, sep = " ", collapse = "\n",  recycle0 = FALSE)	7	..., sep = " ", collapse = NULL, recycle0 = FALSE			GOOD
+57	stop	stop(base::paste0("\n\n================\n\n",  tempo_cat, "\n\n================\n\n", collapse = NULL,  recycle0 = FALSE), call. = FALSE, domain = NULL)	7	..., call. = TRUE, domain = NULL			GOOD
+57	paste0	paste0("\n\n================\n\n",  tempo_cat, "\n\n================\n\n", collapse = NULL,  recycle0 = FALSE)	18	..., collapse = NULL, recycle0 = FALSE			GOOD
+62	.libPaths	.libPaths(new = base::sub(x = lib_path, pattern = "/$|\\\\$",  replacement = "", ignore.case = FALSE, perl = FALSE,  fixed = FALSE, useBytes = FALSE), include.site = TRUE)	8	new, include.site = TRUE			GOOD
+62	sub	sub(x = lib_path, pattern = "/$|\\\\$",  replacement = "", ignore.case = FALSE, perl = FALSE,  fixed = FALSE, useBytes = FALSE)	30	pattern, replacement, x, ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE			GOOD
+65	.libPaths	.libPaths(new = , include.site = TRUE)	20	new, include.site = TRUE			GOOD
+69	.libPaths	.libPaths(new = , include.site = TRUE)	20	new, include.site = TRUE			GOOD
+72	.pack_and_function_check	.pack_and_function_check(fun = base::c("saferDev::arg_check",  "saferDev::is_function_here", "saferDev:::.functions_detect",  "saferDev:::.in_quotes_replacement", "saferDev:::.fun_args_pos",  "saferDev:::.extract_all_fun_names", "saferDev:::.in_parenthesis_replacement",  "saferDev:::.all_args_here_fill"), lib_path = lib_path,  external_function_name = function_name, external_package_name = package_name)	12	fun, lib_path, external_function_name, external_package_name			GOOD
+72	c	c("saferDev::arg_check",  "saferDev::is_function_here", "saferDev:::.functions_detect",  "saferDev:::.in_quotes_replacement", "saferDev:::.fun_args_pos",  "saferDev:::.extract_all_fun_names", "saferDev:::.in_parenthesis_replacement",  "saferDev:::.all_args_here_fill")	49	...			
+79	c	c("x")	22	...			
+80	eval	eval(expr = base::parse(text = base::paste0("base::c(base::missing(",  base::paste0(mandat_args, collapse = "),base::missing(",  recycle0 = FALSE), "))", collapse = NULL, recycle0 = FALSE),  file = "", n = NULL, prompt = "?", keep.source = base::getOption(x = "keep.source",  default = NULL), srcfile = NULL, encoding = "unknown"),  envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL))	16	expr, envir = parent.frame(), enclos = if (is.list(envir) || is.pairlist(envir)) parent.frame() else baseenv()			GOOD
+80	parse	parse(text = base::paste0("base::c(base::missing(",  base::paste0(mandat_args, collapse = "),base::missing(",  recycle0 = FALSE), "))", collapse = NULL, recycle0 = FALSE),  file = "", n = NULL, prompt = "?", keep.source = base::getOption(x = "keep.source",  default = NULL), srcfile = NULL, encoding = "unknown")	34	file = "", n = NULL, text = NULL, prompt = "?", keep.source = getOption("keep.source"), srcfile = NULL, encoding = "unknown"			GOOD
+80	paste0	paste0("base::c(base::missing(",  base::paste0(mandat_args, collapse = "),base::missing(",  recycle0 = FALSE), "))", collapse = NULL, recycle0 = FALSE)	53	..., collapse = NULL, recycle0 = FALSE			GOOD
+80	c	NOT_CONSIDERED	67				
+80	missing	NOT_CONSIDERED	75				
+81	paste0	paste0(mandat_args, collapse = "),base::missing(",  recycle0 = FALSE)	7	..., collapse = NULL, recycle0 = FALSE			GOOD
+81	missing	NOT_CONSIDERED	47				
+83	getOption	getOption(x = "keep.source",  default = NULL)	56	x, default = NULL			GOOD
+85	environment	environment(fun = NULL)	15	fun = NULL			GOOD
+85	environment	environment(fun = NULL)	55	fun = NULL			GOOD
+86	any	any(tempo, na.rm = FALSE)	11	..., na.rm = FALSE			GOOD
+87	paste0	paste0("ERROR IN ", function_name,  base::ifelse(test = base::is.null(x = package_name),  yes = "", no = base::paste0(" OF THE ", package_name,  " PACKAGE", collapse = NULL, recycle0 = FALSE)),  "\nFOLLOWING ARGUMENT", base::ifelse(test = base::sum(tempo,  na.rm = TRUE) > 1, yes = "S HAVE", no = " HAS"),  " NO DEFAULT VALUE AND REQUIRE ONE:\n", base::paste0(mandat_args[tempo],  collapse = "\n", recycle0 = FALSE), collapse = NULL,  recycle0 = FALSE)	20	..., collapse = NULL, recycle0 = FALSE			GOOD
+88	ifelse	ifelse(test = base::is.null(x = package_name),  yes = "", no = base::paste0(" OF THE ", package_name,  " PACKAGE", collapse = NULL, recycle0 = FALSE))	7	test, yes, no			GOOD
+88	is.null	is.null(x = package_name)	27	x			GOOD
+89	paste0	paste0(" OF THE ", package_name,  " PACKAGE", collapse = NULL, recycle0 = FALSE)	22	..., collapse = NULL, recycle0 = FALSE			GOOD
+91	ifelse	ifelse(test = base::sum(tempo,  na.rm = TRUE) > 1, yes = "S HAVE", no = " HAS")	31	test, yes, no			GOOD
+91	sum	sum(tempo,  na.rm = TRUE)	51	..., na.rm = FALSE			GOOD
+93	paste0	paste0(mandat_args[tempo],  collapse = "\n", recycle0 = FALSE)	47	..., collapse = NULL, recycle0 = FALSE			GOOD
+96	stop	stop(base::paste0("\n\n================\n\n", tempo_cat,  "\n\n================\n\n", collapse = NULL, recycle0 = FALSE),  call. = FALSE, domain = NULL)	7	..., call. = TRUE, domain = NULL			GOOD
+96	paste0	paste0("\n\n================\n\n", tempo_cat,  "\n\n================\n\n", collapse = NULL, recycle0 = FALSE)	18	..., collapse = NULL, recycle0 = FALSE			GOOD
+103	expression	expression(argum_check <- base::c(argum_check,  tempo$problem), text_check <- base::c(text_check, tempo$text),  checked_arg_names <- base::c(checked_arg_names, tempo$object.name))	13	...			
+103	c	c(argum_check,  tempo$problem)	45	...			
+104	c	c(text_check, tempo$text)	37	...			
+105	c	c(checked_arg_names, tempo$object.name)	28	...			
+106	arg_check	arg_check(data = x, class = "function",  typeof = NULL, mode = NULL, length = NULL, prop = FALSE,  double_as_integer_allowed = FALSE, options = NULL, all_options_in_data = FALSE,  na_contain = TRUE, neg_values = TRUE, inf_values = TRUE,  print = FALSE, data_name = NULL, fun_name = function_name,  pack_name = NULL, safer_check = FALSE)	20	data, class = NULL, typeof = NULL, mode = NULL, length = NULL, prop = FALSE, double_as_integer_allowed = FALSE, options = NULL, all_options_in_data = FALSE, na_contain = FALSE, neg_values = TRUE, inf_values = TRUE, print = FALSE, data_name = NULL, fun_name = NULL, pack_name = NULL, safer_check = TRUE			GOOD
+112	eval	eval(expr = ee, envir = base::environment(fun = NULL),  enclos = base::environment(fun = NULL))	7	expr, envir = parent.frame(), enclos = if (is.list(envir) || is.pairlist(envir)) parent.frame() else baseenv()			GOOD
+112	environment	environment(fun = NULL)	37	fun = NULL			GOOD
+113	environment	environment(fun = NULL)	16	fun = NULL			GOOD
+114	arg_check	arg_check(data = export, class = "vector",  typeof = "logical", mode = NULL, length = 1, prop = FALSE,  double_as_integer_allowed = FALSE, options = NULL, all_options_in_data = FALSE,  na_contain = FALSE, neg_values = TRUE, inf_values = TRUE,  print = FALSE, data_name = NULL, fun_name = function_name,  pack_name = NULL, safer_check = FALSE)	20	data, class = NULL, typeof = NULL, mode = NULL, length = NULL, prop = FALSE, double_as_integer_allowed = FALSE, options = NULL, all_options_in_data = FALSE, na_contain = FALSE, neg_values = TRUE, inf_values = TRUE, print = FALSE, data_name = NULL, fun_name = NULL, pack_name = NULL, safer_check = TRUE			GOOD
+120	eval	eval(expr = ee, envir = base::environment(fun = NULL),  enclos = base::environment(fun = NULL))	7	expr, envir = parent.frame(), enclos = if (is.list(envir) || is.pairlist(envir)) parent.frame() else baseenv()			GOOD
+120	environment	environment(fun = NULL)	37	fun = NULL			GOOD
+121	environment	environment(fun = NULL)	16	fun = NULL			GOOD
+122	arg_check	arg_check(data = path_out, class = "vector",  typeof = "character", mode = NULL, length = 1, prop = FALSE,  double_as_integer_allowed = FALSE, options = NULL, all_options_in_data = FALSE,  na_contain = FALSE, neg_values = TRUE, inf_values = TRUE,  print = FALSE, data_name = NULL, fun_name = function_name,  pack_name = NULL, safer_check = FALSE)	20	data, class = NULL, typeof = NULL, mode = NULL, length = NULL, prop = FALSE, double_as_integer_allowed = FALSE, options = NULL, all_options_in_data = FALSE, na_contain = FALSE, neg_values = TRUE, inf_values = TRUE, print = FALSE, data_name = NULL, fun_name = NULL, pack_name = NULL, safer_check = TRUE			GOOD
+128	eval	eval(expr = ee, envir = base::environment(fun = NULL),  enclos = base::environment(fun = NULL))	7	expr, envir = parent.frame(), enclos = if (is.list(envir) || is.pairlist(envir)) parent.frame() else baseenv()			GOOD
+128	environment	environment(fun = NULL)	37	fun = NULL			GOOD
+129	environment	environment(fun = NULL)	16	fun = NULL			GOOD
+130	arg_check	arg_check(data = df_name, class = "vector",  typeof = "character", mode = NULL, length = 1, prop = FALSE,  double_as_integer_allowed = FALSE, options = NULL, all_options_in_data = FALSE,  na_contain = FALSE, neg_values = TRUE, inf_values = TRUE,  print = FALSE, data_name = NULL, fun_name = function_name,  pack_name = NULL, safer_check = FALSE)	20	data, class = NULL, typeof = NULL, mode = NULL, length = NULL, prop = FALSE, double_as_integer_allowed = FALSE, options = NULL, all_options_in_data = FALSE, na_contain = FALSE, neg_values = TRUE, inf_values = TRUE, print = FALSE, data_name = NULL, fun_name = NULL, pack_name = NULL, safer_check = TRUE			GOOD
+136	eval	eval(expr = ee, envir = base::environment(fun = NULL),  enclos = base::environment(fun = NULL))	7	expr, envir = parent.frame(), enclos = if (is.list(envir) || is.pairlist(envir)) parent.frame() else baseenv()			GOOD
+136	environment	environment(fun = NULL)	37	fun = NULL			GOOD
+137	environment	environment(fun = NULL)	16	fun = NULL			GOOD
+138	arg_check	arg_check(data = overwrite, class = "vector",  typeof = "logical", mode = NULL, length = 1, prop = FALSE,  double_as_integer_allowed = FALSE, options = NULL, all_options_in_data = FALSE,  na_contain = FALSE, neg_values = TRUE, inf_values = TRUE,  print = FALSE, data_name = NULL, fun_name = function_name,  pack_name = NULL, safer_check = FALSE)	20	data, class = NULL, typeof = NULL, mode = NULL, length = NULL, prop = FALSE, double_as_integer_allowed = FALSE, options = NULL, all_options_in_data = FALSE, na_contain = FALSE, neg_values = TRUE, inf_values = TRUE, print = FALSE, data_name = NULL, fun_name = NULL, pack_name = NULL, safer_check = TRUE			GOOD
+144	eval	eval(expr = ee, envir = base::environment(fun = NULL),  enclos = base::environment(fun = NULL))	7	expr, envir = parent.frame(), enclos = if (is.list(envir) || is.pairlist(envir)) parent.frame() else baseenv()			GOOD
+144	environment	environment(fun = NULL)	37	fun = NULL			GOOD
+145	environment	environment(fun = NULL)	16	fun = NULL			GOOD
+146	is.null	is.null(x = argum_check)	12	x			GOOD
+147	any	any(argum_check, na.rm = TRUE)	11	..., na.rm = FALSE			GOOD
+148	stop	stop(base::paste0("\n\n================\n\n",  base::paste(text_check[argum_check], sep = " ",  collapse = "\n", recycle0 = FALSE), "\n\n================\n\n",  collapse = NULL, recycle0 = FALSE), call. = FALSE,  domain = NULL)	7	..., call. = TRUE, domain = NULL			GOOD
+148	paste0	paste0("\n\n================\n\n",  base::paste(text_check[argum_check], sep = " ",  collapse = "\n", recycle0 = FALSE), "\n\n================\n\n",  collapse = NULL, recycle0 = FALSE)	18	..., collapse = NULL, recycle0 = FALSE			GOOD
+149	paste	paste(text_check[argum_check], sep = " ",  collapse = "\n", recycle0 = FALSE)	7	..., sep = " ", collapse = NULL, recycle0 = FALSE			GOOD
+155	length	length(x = arg_user_setting)	11	x			GOOD
+156	suppressWarnings	suppressWarnings(expr = base::sapply(X = base::lapply(X = arg_user_setting,  FUN = function(x) { base::is.na(x = x) }), FUN = function(x) { base::any(x = x, na.rm = FALSE) }, simplify = TRUE, USE.NAMES = TRUE), classes = "warning")	20	expr, classes = "warning"			GOOD
+156	sapply	sapply(X = base::lapply(X = arg_user_setting,  FUN = function(x) { base::is.na(x = x) }), FUN = function(x) { base::any(x = x, na.rm = FALSE) }, simplify = TRUE, USE.NAMES = TRUE)	50	X, FUN, ..., simplify = TRUE, USE.NAMES = TRUE			GOOD
+156	lapply	lapply(X = arg_user_setting,  FUN = function(x) { base::is.na(x = x) })	67	X, FUN, ...			GOOD
+158	is.na	is.na(x = x)	7	x			GOOD
+160	any	any(x = x, na.rm = FALSE)	7	..., na.rm = FALSE			GOOD
+162	lapply	lapply(X = arg_user_setting, FUN = function(x) { base::length(x = x) })	7	X, FUN, ...			GOOD
+163	length	length(x = x)	7	x			GOOD
+165	any	any(tempo_log, na.rm = FALSE)	11	..., na.rm = FALSE			GOOD
+166	paste0	paste0("ERROR IN ", function_name,  base::ifelse(test = base::is.null(x = package_name),  yes = "", no = base::paste0(" OF THE ", package_name,  " PACKAGE", collapse = NULL, recycle0 = FALSE)),  "\n", base::ifelse(test = base::sum(tempo_log,  na.rm = TRUE) > 1, yes = "THESE ARGUMENTS",  no = "THIS ARGUMENT"), " CANNOT JUST BE NA:",  base::paste0(arg_names[tempo_log], collapse = "\n",  recycle0 = FALSE), collapse = NULL, recycle0 = FALSE)	20	..., collapse = NULL, recycle0 = FALSE			GOOD
+167	ifelse	ifelse(test = base::is.null(x = package_name),  yes = "", no = base::paste0(" OF THE ", package_name,  " PACKAGE", collapse = NULL, recycle0 = FALSE))	7	test, yes, no			GOOD
+167	is.null	is.null(x = package_name)	27	x			GOOD
+168	paste0	paste0(" OF THE ", package_name,  " PACKAGE", collapse = NULL, recycle0 = FALSE)	22	..., collapse = NULL, recycle0 = FALSE			GOOD
+170	ifelse	ifelse(test = base::sum(tempo_log,  na.rm = TRUE) > 1, yes = "THESE ARGUMENTS",  no = "THIS ARGUMENT")	13	test, yes, no			GOOD
+170	sum	sum(tempo_log,  na.rm = TRUE)	33	..., na.rm = FALSE			GOOD
+173	paste0	paste0(arg_names[tempo_log], collapse = "\n",  recycle0 = FALSE)	7	..., collapse = NULL, recycle0 = FALSE			GOOD
+175	stop	stop(base::paste0("\n\n================\n\n",  tempo_cat, "\n\n================\n\n", collapse = NULL,  recycle0 = FALSE), call. = FALSE, domain = NULL)	7	..., call. = TRUE, domain = NULL			GOOD
+175	paste0	paste0("\n\n================\n\n",  tempo_cat, "\n\n================\n\n", collapse = NULL,  recycle0 = FALSE)	18	..., collapse = NULL, recycle0 = FALSE			GOOD
+180	c	c("x", "export", "path_out", "df_name",  "overwrite", "safer_check")	20	...			
+182	sapply	sapply(X = base::lapply(X = tempo_arg,  FUN = function(x) { base::get(x = x, pos = -1L, envir = base::parent.frame(n = 2),  mode = "any", inherits = FALSE) }), FUN = function(x) { base::is.null(x = x) }, simplify = TRUE, USE.NAMES = TRUE)	20	X, FUN, ..., simplify = TRUE, USE.NAMES = TRUE			GOOD
+182	lapply	lapply(X = tempo_arg,  FUN = function(x) { base::get(x = x, pos = -1L, envir = base::parent.frame(n = 2),  mode = "any", inherits = FALSE) })	37	X, FUN, ...			GOOD
+184	get	get(x = x, pos = -1L, envir = base::parent.frame(n = 2),  mode = "any", inherits = FALSE)	7	x, pos = -1L, envir = as.environment(pos), mode = "any", inherits = TRUE			GOOD
+184	parent.frame	parent.frame(n = 2)	43	n = 1			GOOD
+187	is.null	is.null(x = x)	7	x			GOOD
+189	any	any(tempo_log, na.rm = FALSE)	11	..., na.rm = FALSE			GOOD
+190	paste0	paste0("ERROR IN ", function_name,  base::ifelse(test = base::is.null(x = package_name),  yes = "", no = base::paste0(" OF THE ", package_name,  " PACKAGE", collapse = NULL, recycle0 = FALSE)),  "\n", base::ifelse(test = base::sum(tempo_log, na.rm = TRUE) >  1, yes = "THESE ARGUMENTS\n", no = "THIS ARGUMENT\n"),  base::paste0(tempo_arg[tempo_log], collapse = "\n",  recycle0 = FALSE), "\nCANNOT BE NULL", collapse = NULL,  recycle0 = FALSE)	20	..., collapse = NULL, recycle0 = FALSE			GOOD
+191	ifelse	ifelse(test = base::is.null(x = package_name),  yes = "", no = base::paste0(" OF THE ", package_name,  " PACKAGE", collapse = NULL, recycle0 = FALSE))	7	test, yes, no			GOOD
+191	is.null	is.null(x = package_name)	27	x			GOOD
+192	paste0	paste0(" OF THE ", package_name,  " PACKAGE", collapse = NULL, recycle0 = FALSE)	22	..., collapse = NULL, recycle0 = FALSE			GOOD
+194	ifelse	ifelse(test = base::sum(tempo_log, na.rm = TRUE) >  1, yes = "THESE ARGUMENTS\n", no = "THIS ARGUMENT\n")	13	test, yes, no			GOOD
+194	sum	sum(tempo_log, na.rm = TRUE)	33	..., na.rm = FALSE			GOOD
+196	paste0	paste0(tempo_arg[tempo_log], collapse = "\n",  recycle0 = FALSE)	7	..., collapse = NULL, recycle0 = FALSE			GOOD
+199	stop	stop(base::paste0("\n\n================\n\n", tempo_cat,  "\n\n================\n\n", collapse = NULL, recycle0 = FALSE),  call. = FALSE, domain = NULL)	7	..., call. = TRUE, domain = NULL			GOOD
+199	paste0	paste0("\n\n================\n\n", tempo_cat,  "\n\n================\n\n", collapse = NULL, recycle0 = FALSE)	18	..., collapse = NULL, recycle0 = FALSE			GOOD
+203	c	c("path_out", "df_name", "lib_path")	20	...			
+204	sapply	sapply(X = base::lapply(X = tempo_arg,  FUN = function(x) { base::get(x = x, pos = -1L, envir = base::parent.frame(n = 2),  mode = "any", inherits = FALSE) }), FUN = function(x) { if (base::is.null(x = x)) { base::return(TRUE) } else { base::all(base::mode(x = x) == "character", na.rm = TRUE) } }, simplify = TRUE, USE.NAMES = TRUE)	21	X, FUN, ..., simplify = TRUE, USE.NAMES = TRUE			GOOD
+204	lapply	lapply(X = tempo_arg,  FUN = function(x) { base::get(x = x, pos = -1L, envir = base::parent.frame(n = 2),  mode = "any", inherits = FALSE) })	38	X, FUN, ...			GOOD
+206	get	get(x = x, pos = -1L, envir = base::parent.frame(n = 2),  mode = "any", inherits = FALSE)	7	x, pos = -1L, envir = as.environment(pos), mode = "any", inherits = TRUE			GOOD
+206	parent.frame	parent.frame(n = 2)	43	n = 1			GOOD
+209	is.null	is.null(x = x)	11	x			GOOD
+210	return	return(TRUE)	7	NO_ARGS			
+213	all	all(base::mode(x = x) == "character", na.rm = TRUE)	7	..., na.rm = FALSE			GOOD
+213	mode	mode(x = x)	17	x			GOOD
+216	any	any(tempo_log, na.rm = TRUE)	11	..., na.rm = FALSE			GOOD
+217	paste0	paste0("INTERNAL ERROR IN ", function_name,  base::ifelse(test = base::is.null(x = package_name),  yes = "", no = base::paste0(" OF THE ", package_name,  " PACKAGE", collapse = NULL, recycle0 = FALSE)),  "\n", base::ifelse(test = base::sum(tempo_log, na.rm = TRUE) >  1, yes = "THESE ARGUMENTS ARE", no = "THIS ARGUMENT IS"),  " NOT MODE \"character\":\n", base::paste0(tempo_arg[tempo_log],  collapse = "\n", recycle0 = FALSE), collapse = NULL,  recycle0 = FALSE)	20	..., collapse = NULL, recycle0 = FALSE			GOOD
+218	ifelse	ifelse(test = base::is.null(x = package_name),  yes = "", no = base::paste0(" OF THE ", package_name,  " PACKAGE", collapse = NULL, recycle0 = FALSE))	7	test, yes, no			GOOD
+218	is.null	is.null(x = package_name)	27	x			GOOD
+219	paste0	paste0(" OF THE ", package_name,  " PACKAGE", collapse = NULL, recycle0 = FALSE)	22	..., collapse = NULL, recycle0 = FALSE			GOOD
+221	ifelse	ifelse(test = base::sum(tempo_log, na.rm = TRUE) >  1, yes = "THESE ARGUMENTS ARE", no = "THIS ARGUMENT IS")	13	test, yes, no			GOOD
+221	sum	sum(tempo_log, na.rm = TRUE)	33	..., na.rm = FALSE			GOOD
+223	paste0	paste0(tempo_arg[tempo_log],  collapse = "\n", recycle0 = FALSE)	37	..., collapse = NULL, recycle0 = FALSE			GOOD
+226	stop	stop(base::paste0("\n\n================\n\n", tempo_cat,  "\n\n================\n\n", collapse = NULL, recycle0 = FALSE),  call. = FALSE, domain = NULL)	7	..., call. = TRUE, domain = NULL			GOOD
+226	paste0	paste0("\n\n================\n\n", tempo_cat,  "\n\n================\n\n", collapse = NULL, recycle0 = FALSE)	18	..., collapse = NULL, recycle0 = FALSE			GOOD
+231	sapply	sapply(X = base::lapply(X = tempo_arg,  FUN = function(x) { base::get(x = x, pos = -1L, envir = base::parent.frame(n = 2),  mode = "any", inherits = FALSE) }), FUN = function(x) { base::any(x == "", na.rm = FALSE) }, simplify = TRUE, USE.NAMES = TRUE)	20	X, FUN, ..., simplify = TRUE, USE.NAMES = TRUE			GOOD
+231	lapply	lapply(X = tempo_arg,  FUN = function(x) { base::get(x = x, pos = -1L, envir = base::parent.frame(n = 2),  mode = "any", inherits = FALSE) })	37	X, FUN, ...			GOOD
+233	get	get(x = x, pos = -1L, envir = base::parent.frame(n = 2),  mode = "any", inherits = FALSE)	7	x, pos = -1L, envir = as.environment(pos), mode = "any", inherits = TRUE			GOOD
+233	parent.frame	parent.frame(n = 2)	43	n = 1			GOOD
+236	any	any(x == "", na.rm = FALSE)	7	..., na.rm = FALSE			GOOD
+238	any	any(tempo_log, na.rm = TRUE)	11	..., na.rm = FALSE			GOOD
+239	paste0	paste0("ERROR IN ", function_name,  base::ifelse(test = base::is.null(x = package_name),  yes = "", no = base::paste0(" OF THE ", package_name,  " PACKAGE", collapse = NULL, recycle0 = FALSE)),  "\n", base::ifelse(test = base::sum(tempo_log,  na.rm = TRUE) > 1, yes = "THESE ARGUMENTS\n",  no = "THIS ARGUMENT\n"), base::paste0(tempo_arg[tempo_log],  collapse = "\n", recycle0 = FALSE), "\nCANNOT CONTAIN \"\"",  collapse = NULL, recycle0 = FALSE)	20	..., collapse = NULL, recycle0 = FALSE			GOOD
+240	ifelse	ifelse(test = base::is.null(x = package_name),  yes = "", no = base::paste0(" OF THE ", package_name,  " PACKAGE", collapse = NULL, recycle0 = FALSE))	7	test, yes, no			GOOD
+240	is.null	is.null(x = package_name)	27	x			GOOD
+241	paste0	paste0(" OF THE ", package_name,  " PACKAGE", collapse = NULL, recycle0 = FALSE)	22	..., collapse = NULL, recycle0 = FALSE			GOOD
+243	ifelse	ifelse(test = base::sum(tempo_log,  na.rm = TRUE) > 1, yes = "THESE ARGUMENTS\n",  no = "THIS ARGUMENT\n")	13	test, yes, no			GOOD
+243	sum	sum(tempo_log,  na.rm = TRUE)	33	..., na.rm = FALSE			GOOD
+245	paste0	paste0(tempo_arg[tempo_log],  collapse = "\n", recycle0 = FALSE)	32	..., collapse = NULL, recycle0 = FALSE			GOOD
+248	stop	stop(base::paste0("\n\n================\n\n",  tempo_cat, "\n\n================\n\n", collapse = NULL,  recycle0 = FALSE), call. = FALSE, domain = NULL)	7	..., call. = TRUE, domain = NULL			GOOD
+248	paste0	paste0("\n\n================\n\n",  tempo_cat, "\n\n================\n\n", collapse = NULL,  recycle0 = FALSE)	18	..., collapse = NULL, recycle0 = FALSE			GOOD
+253	c	c("NOT_CONSIDERED")	25	...			
+254	options	options()	29	...			
+255	options	options(warning.length = 8170)	7	...			
+258	is.null	is.null(x = lib_path)	12	x			GOOD
+259	all	all(base::dir.exists(paths = lib_path), na.rm = TRUE)	12	..., na.rm = FALSE			GOOD
+259	dir.exists	dir.exists(paths = lib_path)	22	paths			GOOD
+260	paste0	paste0("ERROR IN ", function_name,  base::ifelse(test = base::is.null(x = package_name),  yes = "", no = base::paste0(" OF THE ", package_name,  " PACKAGE", collapse = NULL, recycle0 = FALSE)),  "\nDIRECTORY PATH INDICATED IN THE lib_path ARGUMENT DOES NOT EXISTS:\n",  base::paste(lib_path, sep = " ", collapse = "\n",  recycle0 = FALSE), collapse = NULL, recycle0 = FALSE)	20	..., collapse = NULL, recycle0 = FALSE			GOOD
+261	ifelse	ifelse(test = base::is.null(x = package_name),  yes = "", no = base::paste0(" OF THE ", package_name,  " PACKAGE", collapse = NULL, recycle0 = FALSE))	7	test, yes, no			GOOD
+261	is.null	is.null(x = package_name)	27	x			GOOD
+262	paste0	paste0(" OF THE ", package_name,  " PACKAGE", collapse = NULL, recycle0 = FALSE)	22	..., collapse = NULL, recycle0 = FALSE			GOOD
+265	paste	paste(lib_path, sep = " ", collapse = "\n",  recycle0 = FALSE)	7	..., sep = " ", collapse = NULL, recycle0 = FALSE			GOOD
+267	stop	stop(base::paste0("\n\n================\n\n",  tempo.cat, "\n\n================\n\n", collapse = NULL,  recycle0 = FALSE), call. = FALSE, domain = NULL)	7	..., call. = TRUE, domain = NULL			GOOD
+267	paste0	paste0("\n\n================\n\n",  tempo.cat, "\n\n================\n\n", collapse = NULL,  recycle0 = FALSE)	18	..., collapse = NULL, recycle0 = FALSE			GOOD
+273	all	all(base::dir.exists(paths = path_out), na.rm = TRUE)	12	..., na.rm = FALSE			GOOD
+273	dir.exists	dir.exists(paths = path_out)	22	paths			GOOD
+274	paste0	paste0("ERROR IN ", function_name,  base::ifelse(test = base::is.null(x = package_name),  yes = "", no = base::paste0(" OF THE ", package_name,  " PACKAGE", collapse = NULL, recycle0 = FALSE)),  "\nDIRECTORY PATH INDICATED IN THE path_out ARGUMENT DOES NOT EXISTS:\n",  base::paste(path_out, sep = " ", collapse = "\n",  recycle0 = FALSE), collapse = NULL, recycle0 = FALSE)	20	..., collapse = NULL, recycle0 = FALSE			GOOD
+275	ifelse	ifelse(test = base::is.null(x = package_name),  yes = "", no = base::paste0(" OF THE ", package_name,  " PACKAGE", collapse = NULL, recycle0 = FALSE))	7	test, yes, no			GOOD
+275	is.null	is.null(x = package_name)	27	x			GOOD
+276	paste0	paste0(" OF THE ", package_name,  " PACKAGE", collapse = NULL, recycle0 = FALSE)	22	..., collapse = NULL, recycle0 = FALSE			GOOD
+279	paste	paste(path_out, sep = " ", collapse = "\n",  recycle0 = FALSE)	7	..., sep = " ", collapse = NULL, recycle0 = FALSE			GOOD
+281	stop	stop(base::paste0("\n\n================\n\n",  tempo.cat, "\n\n================\n\n", collapse = NULL,  recycle0 = FALSE), call. = FALSE, domain = NULL)	7	..., call. = TRUE, domain = NULL			GOOD
+281	paste0	paste0("\n\n================\n\n",  tempo.cat, "\n\n================\n\n", collapse = NULL,  recycle0 = FALSE)	18	..., collapse = NULL, recycle0 = FALSE			GOOD
+285	grepl	grepl(x = path_out, pattern = "/$", ignore.case = FALSE,  perl = FALSE, fixed = FALSE, useBytes = FALSE)	11	pattern, x, ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE			GOOD
+287	sub	sub(pattern = "/$", replacement = "",  x = path_out, ignore.case = FALSE, perl = FALSE,  fixed = FALSE, useBytes = FALSE)	19	pattern, replacement, x, ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE			GOOD
+291	grepl	grepl(x = path_out, pattern = "\\\\$",  ignore.case = FALSE, perl = FALSE, fixed = FALSE,  useBytes = FALSE)	16	pattern, x, ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE			GOOD
+294	sub	sub(pattern = "\\\\$", replacement = "",  x = path_out, ignore.case = FALSE, perl = FALSE,  fixed = FALSE, useBytes = FALSE)	19	pattern, replacement, x, ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE			GOOD
+298	dir.exists	dir.exists(paths = path_out)	12	paths			GOOD
+299	paste0	paste0("ERROR IN ", function_name,  base::ifelse(test = base::is.null(x = package_name),  yes = "", no = base::paste0(" OF THE ", package_name,  " PACKAGE", collapse = NULL, recycle0 = FALSE)),  "\nDIRECTORY PATH INDICATED IN THE path_out ARGUMENT DOES NOT EXISTS:\n",  path_out, collapse = NULL, recycle0 = FALSE)	20	..., collapse = NULL, recycle0 = FALSE			GOOD
+300	ifelse	ifelse(test = base::is.null(x = package_name),  yes = "", no = base::paste0(" OF THE ", package_name,  " PACKAGE", collapse = NULL, recycle0 = FALSE))	7	test, yes, no			GOOD
+300	is.null	is.null(x = package_name)	27	x			GOOD
+301	paste0	paste0(" OF THE ", package_name,  " PACKAGE", collapse = NULL, recycle0 = FALSE)	22	..., collapse = NULL, recycle0 = FALSE			GOOD
+305	stop	stop(base::paste0("\n\n================\n\n",  tempo.cat, "\n\n================\n\n", collapse = NULL,  recycle0 = FALSE), call. = FALSE, domain = NULL)	7	..., call. = TRUE, domain = NULL			GOOD
+305	paste0	paste0("\n\n================\n\n",  tempo.cat, "\n\n================\n\n", collapse = NULL,  recycle0 = FALSE)	18	..., collapse = NULL, recycle0 = FALSE			GOOD
+310	file.exists	file.exists(base::paste0(path_out, "/",  df_name, collapse = NULL, recycle0 = FALSE))	11	...			
+310	paste0	paste0(path_out, "/",  df_name, collapse = NULL, recycle0 = FALSE)	29	..., collapse = NULL, recycle0 = FALSE			GOOD
+312	paste0	paste0("ERROR IN ", function_name,  base::ifelse(test = base::is.null(x = package_name),  yes = "", no = base::paste0(" OF THE ", package_name,  " PACKAGE", collapse = NULL, recycle0 = FALSE)),  "\nFILE NAME ALREADY EXISTS AT THE INDICATED PATH:\n",  base::paste0(path_out, "/", df_name, collapse = NULL,  recycle0 = FALSE), collapse = NULL, recycle0 = FALSE)	20	..., collapse = NULL, recycle0 = FALSE			GOOD
+313	ifelse	ifelse(test = base::is.null(x = package_name),  yes = "", no = base::paste0(" OF THE ", package_name,  " PACKAGE", collapse = NULL, recycle0 = FALSE))	7	test, yes, no			GOOD
+313	is.null	is.null(x = package_name)	27	x			GOOD
+314	paste0	paste0(" OF THE ", package_name,  " PACKAGE", collapse = NULL, recycle0 = FALSE)	22	..., collapse = NULL, recycle0 = FALSE			GOOD
+317	paste0	paste0(path_out, "/", df_name, collapse = NULL,  recycle0 = FALSE)	7	..., collapse = NULL, recycle0 = FALSE			GOOD
+319	stop	stop(base::paste0("\n\n================\n\n",  tempo.cat, "\n\n================\n\n", collapse = NULL,  recycle0 = FALSE), call. = FALSE, domain = NULL)	7	..., call. = TRUE, domain = NULL			GOOD
+319	paste0	paste0("\n\n================\n\n",  tempo.cat, "\n\n================\n\n", collapse = NULL,  recycle0 = FALSE)	18	..., collapse = NULL, recycle0 = FALSE			GOOD
+325	deparse	deparse(expr = arg_user_setting$x,  width.cutoff = 60L, backtick = FALSE, control = base::c("keepNA",  "keepInteger", "niceNames", "showAttributes"), nlines = -1L)	29	expr, width.cutoff = 60L, backtick = mode(expr) %in% c("call", "expression", "(", "function"), control = c("keepNA", "keepInteger", "niceNames", "showAttributes"), nlines = -1L			GOOD
+326	c	c("keepNA",  "keepInteger", "niceNames", "showAttributes")	55	...			
+328	paste0	paste0(path_out, "/", df_name, collapse = NULL,  recycle0 = FALSE)	19	..., collapse = NULL, recycle0 = FALSE			GOOD
+330	.functions_detect	.functions_detect(x = x, arg_user_setting = arg_user_setting,  function_name = function_name, package_name = package_name)	19	x, arg_user_setting, function_name, package_name			GOOD
+336	paste	paste(out$code, collapse = " ", recycle0 = FALSE,  sep = " ")	21	..., sep = " ", collapse = NULL, recycle0 = FALSE			GOOD
+338	grepl	grepl(x = fun_1_line, pattern = reserved_words,  ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE)	11	pattern, x, ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE			GOOD
+341	paste0	paste0("(", warn_count, ") THE RESERVED WORD \"",  base::paste(reserved_words, collapse = " ", recycle0 = FALSE),  "\" HAS BEEN DETECTED IN THE CODE OF THE INPUT FUNCTION\nWHICH COULD HAMPER THE ACCURACY OF THE OUTPUT TABLE",  collapse = NULL, recycle0 = FALSE)	21	..., collapse = NULL, recycle0 = FALSE			GOOD
+342	paste	NOT_CONSIDERED	7				
+345	paste0	paste0(base::ifelse(test = base::is.null(x = warn),  yes = tempo_warn, no = base::paste0(warn, "\n\n",  tempo_warn, collapse = NULL, recycle0 = FALSE)),  collapse = NULL, recycle0 = FALSE)	15	..., collapse = NULL, recycle0 = FALSE			GOOD
+345	ifelse	ifelse(test = base::is.null(x = warn),  yes = tempo_warn, no = base::paste0(warn, "\n\n",  tempo_warn, collapse = NULL, recycle0 = FALSE))	28	test, yes, no			GOOD
+345	is.null	is.null(x = warn)	48	x			GOOD
+346	paste0	paste0(warn, "\n\n",  tempo_warn, collapse = NULL, recycle0 = FALSE)	30	..., collapse = NULL, recycle0 = FALSE			GOOD
+350	cumsum	cumsum(x = base::nchar(x = out$code,  type = "chars", allowNA = FALSE, keepNA = NA) + 1)	30	x			GOOD
+350	nchar	nchar(x = out$code,  type = "chars", allowNA = FALSE, keepNA = NA)	47	x, type = "chars", allowNA = FALSE, keepNA = NA			GOOD
+352	c	c(0, cum_nchar_code_line[-base::length(x = cum_nchar_code_line)])	30	...			
+352	length	length(x = cum_nchar_code_line)	62	x			GOOD
+354	.in_quotes_replacement	.in_quotes_replacement(string = fun_1_line,  pattern = "\\)", no_regex_pattern = ")", replacement = " ",  perl = TRUE, function_name = function_name, package_name = package_name)	21	string, pattern, no_regex_pattern, replacement, perl, function_name, package_name			GOOD
+359	.in_quotes_replacement	.in_quotes_replacement(string = fun_1_line_replace,  pattern = "\\(", no_regex_pattern = "(", replacement = " ",  perl = TRUE, function_name = function_name, package_name = package_name)	21	string, pattern, no_regex_pattern, replacement, perl, function_name, package_name			GOOD
+363	sort	sort(x = base::c(pos_rep, tempo$pos), decreasing = FALSE)	18	x, decreasing = FALSE, ...			GOOD
+363	c	c(pos_rep, tempo$pos)	33	...			
+366	lapply	lapply(X = fun_names,  FUN = function(x) { base::lapply(X = x, FUN = function(y) { NULL }) })	40	X, FUN, ...			GOOD
+368	lapply	lapply(X = x, FUN = function(y) { NULL })	7	X, FUN, ...			GOOD
+372	length	length(x = fun_names)	20	x			GOOD
+373	as.integer	as.integer(x = base::sub(pattern = "^c",  replacement = "", x = base::names(x = fun_names)[i1],  ignore.case = FALSE, perl = FALSE, fixed = FALSE,  useBytes = FALSE))	28	x, ...			GOOD
+373	sub	sub(pattern = "^c",  replacement = "", x = base::names(x = fun_names)[i1],  ignore.case = FALSE, perl = FALSE, fixed = FALSE,  useBytes = FALSE)	49	pattern, replacement, x, ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE			GOOD
+374	names	names(x = fun_names)	29	x			GOOD
+377	which	which(x = code_line_nb %in% tempo_pos_in_code,  arr.ind = FALSE, useNames = TRUE)	22	x, arr.ind = FALSE, useNames = TRUE			GOOD
+379	length	length(x = fun_names[[i1]])	20	x			GOOD
+381	nchar	nchar(x = fun_names[[i1]][i2],  type = "chars", allowNA = FALSE, keepNA = NA)	39	x, type = "chars", allowNA = FALSE, keepNA = NA			GOOD
+384	substr	substr(x = fun_1_line_replace,  start = fun_pos_start, stop = fun_pos_stop)	20	x, start, stop			GOOD
+387	paste0	paste0("INTERNAL ERROR 1 IN ",  function_name, " OF THE ", package_name, " PACKAGE\ntempo_fun MUST BE IDENTICAL TO fun_names[[i1]][i2]\n\ntempo_fun: ",  tempo_fun, "\n\nfun_names[[i1]][i2]: ", fun_names[[i1]][i2],  "\n\ni1: ", i1, "\n\ni2: ", i2, collapse = NULL,  recycle0 = FALSE)	20	..., collapse = NULL, recycle0 = FALSE			GOOD
+392	stop	stop(base::paste0("\n\n================\n\n",  tempo.cat, "\n\n================\n\n", base::ifelse(test = base::is.null(x = warn),  yes = "", no = base::paste0("IN ADDITION\nWARNING",  base::ifelse(test = warn_count > 1, yes = "S",  no = ""), ":\n\n", warn, collapse = NULL,  recycle0 = FALSE)), collapse = NULL, recycle0 = FALSE),  call. = FALSE, domain = NULL)	7	..., call. = TRUE, domain = NULL			GOOD
+392	paste0	paste0("\n\n================\n\n",  tempo.cat, "\n\n================\n\n", base::ifelse(test = base::is.null(x = warn),  yes = "", no = base::paste0("IN ADDITION\nWARNING",  base::ifelse(test = warn_count > 1, yes = "S",  no = ""), ":\n\n", warn, collapse = NULL,  recycle0 = FALSE)), collapse = NULL, recycle0 = FALSE)	18	..., collapse = NULL, recycle0 = FALSE			GOOD
+393	ifelse	ifelse(test = base::is.null(x = warn),  yes = "", no = base::paste0("IN ADDITION\nWARNING",  base::ifelse(test = warn_count > 1, yes = "S",  no = ""), ":\n\n", warn, collapse = NULL,  recycle0 = FALSE))	46	test, yes, no			GOOD
+393	is.null	is.null(x = warn)	66	x			GOOD
+394	paste0	paste0("IN ADDITION\nWARNING",  base::ifelse(test = warn_count > 1, yes = "S",  no = ""), ":\n\n", warn, collapse = NULL,  recycle0 = FALSE)	22	..., collapse = NULL, recycle0 = FALSE			GOOD
+395	ifelse	ifelse(test = warn_count > 1, yes = "S",  no = "")	7	test, yes, no			GOOD
+400	substr	substr(x = fun_1_line_replace,  start = fun_pos_stop + 1, stop = base::nchar(x = fun_1_line_replace,  type = "chars", allowNA = FALSE, keepNA = NA))	26	x, start, stop			GOOD
+401	nchar	nchar(x = fun_1_line_replace,  type = "chars", allowNA = FALSE, keepNA = NA)	40	x, type = "chars", allowNA = FALSE, keepNA = NA			GOOD
+403	grepl	grepl(x = tempo_str_after, pattern = "^[\\s\\r\\n]*\\(",  ignore.case = FALSE, perl = TRUE, fixed = FALSE,  useBytes = FALSE)	11	pattern, x, ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE			GOOD
+406	.fun_args_pos	.fun_args_pos(text = fun_1_line_replace,  pattern = base::paste0(fun_names[[i1]][i2],  "[\\s\\r\\n]*\\(", collapse = NULL, recycle0 = FALSE),  function_name = function_name, package_name = package_name)	25	text, pattern, function_name, package_name			GOOD
+407	paste0	paste0(fun_names[[i1]][i2],  "[\\s\\r\\n]*\\(", collapse = NULL, recycle0 = FALSE)	17	..., collapse = NULL, recycle0 = FALSE			GOOD
+410	substr	substr(x = fun_1_line_replace,  start = 1, stop = fun_pos_start - 1)	27	x, start, stop			GOOD
+412	grepl	grepl(x = tempo_str_before,  pattern = "\\$ *$", ignore.case = FALSE, perl = FALSE,  fixed = FALSE, useBytes = FALSE)	20	pattern, x, ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE			GOOD
+419	substr	substr(x = fun_1_line_replace, start = 1,  stop = fun_pos_start - 1)	7	x, start, stop			GOOD
+420	paste	paste(base::rep(x = " ",  fun_pos_start - 1), collapse = "", recycle0 = FALSE,  sep = " ")	36	..., sep = " ", collapse = NULL, recycle0 = FALSE			GOOD
+420	rep	rep(x = " ",  fun_pos_start - 1)	48	x, ...			GOOD
+425	substr	substr(x = fun_1_line,  start = tempo_pos$begin_fun, stop = tempo_pos$end)	40	x, start, stop			GOOD
+427	substr	substr(x = fun_1_line,  start = tempo_pos$begin + 1, stop = tempo_pos$end -  1)	31	x, start, stop			GOOD
+430	is.null	is.null(x = tempo_pos$middle_bracket_pos)	12	x			GOOD
+431	unlist	unlist(x = tempo_pos$middle_bracket_pos,  recursive = TRUE, use.names = TRUE)	52	x, recursive = TRUE, use.names = TRUE			GOOD
+434	substr	substr(x = fun_1_line_replace, start = 1,  stop = tempo_pos$begin - 1)	7	x, start, stop			GOOD
+435	paste	paste(base::rep(x = " ",  tempo_pos$begin - 1), collapse = "", recycle0 = FALSE,  sep = " ")	38	..., sep = " ", collapse = NULL, recycle0 = FALSE			GOOD
+435	rep	rep(x = " ",  tempo_pos$begin - 1)	50	x, ...			GOOD
+446	lapply	lapply(X = fun_names, FUN = function(x) { base::lapply(X = x, FUN = function(y) { NULL }) })	34	X, FUN, ...			GOOD
+447	lapply	lapply(X = x, FUN = function(y) { NULL })	7	X, FUN, ...			GOOD
+451	length	length(x = fun_names)	20	x			GOOD
+452	length	length(x = fun_names[[i1]])	20	x			GOOD
+453	paste0	paste0(fun_names[[i1]][i2], "[\\s\\r\\n]*\\(",  collapse = NULL, recycle0 = FALSE)	19	..., collapse = NULL, recycle0 = FALSE			GOOD
+455	grepl	grepl(x = arg_string_for_col3[[i1]][i2],  pattern = pattern2, ignore.case = FALSE, perl = FALSE,  fixed = FALSE, useBytes = FALSE)	11	pattern, x, ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE			GOOD
+458	.in_quotes_replacement	.in_quotes_replacement(string = arg_string_for_col3[[i1]][i2],  pattern = "\\(", no_regex_pattern = "(", replacement = " ",  perl = TRUE, function_name = function_name,  package_name = package_name)	22	string, pattern, no_regex_pattern, replacement, perl, function_name, package_name			GOOD
+462	.in_quotes_replacement	.in_quotes_replacement(string = tempo1$string,  pattern = "\\)", no_regex_pattern = ")", replacement = " ",  perl = TRUE, function_name = function_name,  package_name = package_name)	22	string, pattern, no_regex_pattern, replacement, perl, function_name, package_name			GOOD
+466	.fun_args_pos	.fun_args_pos(text = tempo2$string,  pattern = pattern2, function_name = function_name,  package_name = package_name)	25	text, pattern, function_name, package_name			GOOD
+469	is.null	is.null(x = tempo_pos$middle_bracket_pos)	12	x			GOOD
+470	unlist	unlist(x = tempo_pos$middle_bracket_pos,  recursive = TRUE, use.names = TRUE)	46	x, recursive = TRUE, use.names = TRUE			GOOD
+477	as.vector	as.vector(x = base::unlist(x = base::mapply(FUN = function(x,  y) { base::rep(x = y, base::length(x = x)) }, x = fun_names, y = code_for_col, MoreArgs = NULL, SIMPLIFY = TRUE,  USE.NAMES = TRUE), recursive = TRUE, use.names = TRUE),  mode = "any")	23	x, mode = "any"			GOOD
+477	unlist	unlist(x = base::mapply(FUN = function(x,  y) { base::rep(x = y, base::length(x = x)) }, x = fun_names, y = code_for_col, MoreArgs = NULL, SIMPLIFY = TRUE,  USE.NAMES = TRUE), recursive = TRUE, use.names = TRUE)	43	x, recursive = TRUE, use.names = TRUE			GOOD
+477	mapply	mapply(FUN = function(x,  y) { base::rep(x = y, base::length(x = x)) }, x = fun_names, y = code_for_col, MoreArgs = NULL, SIMPLIFY = TRUE,  USE.NAMES = TRUE)	60	FUN, ..., MoreArgs = NULL, SIMPLIFY = TRUE, USE.NAMES = TRUE			GOOD
+479	rep	rep(x = y, base::length(x = x))	7	x, ...			GOOD
+479	length	length(x = x)	24	x			GOOD
+483	as.vector	as.vector(x = base::unlist(x = base::mapply(FUN = function(x,  y) { base::rep(x = y, base::length(x = x)) }, x = fun_names, y = code_line_nb, MoreArgs = NULL, SIMPLIFY = TRUE,  USE.NAMES = TRUE), recursive = TRUE, use.names = TRUE),  mode = "any")	15	x, mode = "any"			GOOD
+483	unlist	unlist(x = base::mapply(FUN = function(x,  y) { base::rep(x = y, base::length(x = x)) }, x = fun_names, y = code_line_nb, MoreArgs = NULL, SIMPLIFY = TRUE,  USE.NAMES = TRUE), recursive = TRUE, use.names = TRUE)	35	x, recursive = TRUE, use.names = TRUE			GOOD
+483	mapply	mapply(FUN = function(x,  y) { base::rep(x = y, base::length(x = x)) }, x = fun_names, y = code_line_nb, MoreArgs = NULL, SIMPLIFY = TRUE,  USE.NAMES = TRUE)	52	FUN, ..., MoreArgs = NULL, SIMPLIFY = TRUE, USE.NAMES = TRUE			GOOD
+485	rep	rep(x = y, base::length(x = x))	7	x, ...			GOOD
+485	length	length(x = x)	24	x			GOOD
+489	as.vector	as.vector(x = base::unlist(x = fun_names, recursive = TRUE,  use.names = TRUE), mode = "any")	15	x, mode = "any"			GOOD
+489	unlist	unlist(x = fun_names, recursive = TRUE,  use.names = TRUE)	35	x, recursive = TRUE, use.names = TRUE			GOOD
+491	as.vector	as.vector(x = base::unlist(x = arg_string_for_col3,  recursive = TRUE, use.names = TRUE), mode = "any")	15	x, mode = "any"			GOOD
+491	unlist	unlist(x = arg_string_for_col3,  recursive = TRUE, use.names = TRUE)	35	x, recursive = TRUE, use.names = TRUE			GOOD
+493	as.vector	as.vector(x = base::unlist(x = fun_names_pos,  recursive = TRUE, use.names = TRUE), mode = "any")	15	x, mode = "any"			GOOD
+493	unlist	unlist(x = fun_names_pos,  recursive = TRUE, use.names = TRUE)	35	x, recursive = TRUE, use.names = TRUE			GOOD
+495	do.call	do.call(what = base::c, args = mid_bracket_pos_in_col3,  quote = FALSE, envir = base::parent.frame(n = 1))	25	what, args, quote = FALSE, envir = parent.frame()			GOOD
+496	parent.frame	parent.frame(n = 1)	30	n = 1			GOOD
+497	lapply	lapply(X = middle_bracket,  FUN = function(x) { if (!base::is.null(x = x)) { x[base::seq(1, base::length(x = x), by = 2)] } else { NULL } })	38	X, FUN, ...			GOOD
+499	is.null	is.null(x = x)	12	x			GOOD
+500	seq	seq(1, base::length(x = x), by = 2)	9	...			
+500	length	length(x = x)	22	x			GOOD
+506	lapply	lapply(X = middle_bracket,  FUN = function(x) { if (!base::is.null(x = x)) { x[base::seq(2, base::length(x = x), by = 2)] } else { NULL } })	39	X, FUN, ...			GOOD
+508	is.null	is.null(x = x)	12	x			GOOD
+509	seq	seq(2, base::length(x = x), by = 2)	9	...			
+509	length	length(x = x)	22	x			GOOD
+515	length	length(x = col1)	13	x			GOOD
+515	length	length(x = col2)	39	x			GOOD
+516	length	length(x = col1)	7	x			GOOD
+516	length	length(x = col3)	33	x			GOOD
+516	length	length(x = col1)	58	x			GOOD
+517	length	length(x = col4)	7	x			GOOD
+517	length	length(x = col1)	32	x			GOOD
+517	length	length(x = code_for_col)	58	x			GOOD
+518	length	length(x = col1)	7	x			GOOD
+518	length	length(x = middle_bracket)	33	x			GOOD
+519	paste0	paste0("INTERNAL ERROR 2 IN ", function_name,  " OF THE ", package_name, " PACKAGE\nLENGTHS OF col1 (",  base::length(x = col1), "), col2 (", base::length(x = col2),  "), col3 (", base::length(x = col3), "), col4 (",  base::length(x = col4), "), code_for_col (", base::length(x = code_for_col),  "), AND middle_bracket (", base::length(x = middle_bracket),  "), SHOULD BE EQUAL\n", collapse = NULL, recycle0 = FALSE)	20	..., collapse = NULL, recycle0 = FALSE			GOOD
+520	col1	NOT_CONSIDERED	49				
+521	length	length(x = col1)	7	x			GOOD
+521	col2	NOT_CONSIDERED	29				
+521	length	length(x = col2)	44	x			GOOD
+522	col3	NOT_CONSIDERED	5				
+522	length	length(x = col3)	20	x			GOOD
+522	col4	NOT_CONSIDERED	42				
+523	length	length(x = col4)	7	x			GOOD
+523	code_for_col	NOT_CONSIDERED	29				
+523	length	length(x = code_for_col)	52	x			GOOD
+524	middle_bracket	NOT_CONSIDERED	9				
+524	length	length(x = middle_bracket)	34	x			GOOD
+526	stop	stop(base::paste0("\n\n================\n\n", tempo.cat,  "\n\n================\n\n", base::ifelse(test = base::is.null(x = warn),  yes = "", no = base::paste0("IN ADDITION\nWARNING",  base::ifelse(test = warn_count > 1, yes = "S",  no = ""), ":\n\n", warn, collapse = NULL,  recycle0 = FALSE)), collapse = NULL, recycle0 = FALSE),  call. = FALSE, domain = NULL)	7	..., call. = TRUE, domain = NULL			GOOD
+526	paste0	paste0("\n\n================\n\n", tempo.cat,  "\n\n================\n\n", base::ifelse(test = base::is.null(x = warn),  yes = "", no = base::paste0("IN ADDITION\nWARNING",  base::ifelse(test = warn_count > 1, yes = "S",  no = ""), ":\n\n", warn, collapse = NULL,  recycle0 = FALSE)), collapse = NULL, recycle0 = FALSE)	18	..., collapse = NULL, recycle0 = FALSE			GOOD
+527	ifelse	ifelse(test = base::is.null(x = warn),  yes = "", no = base::paste0("IN ADDITION\nWARNING",  base::ifelse(test = warn_count > 1, yes = "S",  no = ""), ":\n\n", warn, collapse = NULL,  recycle0 = FALSE))	35	test, yes, no			GOOD
+527	is.null	is.null(x = warn)	55	x			GOOD
+528	paste0	paste0("IN ADDITION\nWARNING",  base::ifelse(test = warn_count > 1, yes = "S",  no = ""), ":\n\n", warn, collapse = NULL,  recycle0 = FALSE)	22	..., collapse = NULL, recycle0 = FALSE			GOOD
+529	ifelse	ifelse(test = warn_count > 1, yes = "S",  no = "")	7	test, yes, no			GOOD
+534	as.vector	as.vector(x = base::unlist(x = base::mapply(FUN = function(x,  y) { if (y != "") { if (base::grepl(x = y, pattern = base::paste0("^",  x, "[\\s\\r\\n]*\\(.*\\)$", collapse = NULL,  recycle0 = FALSE), ignore.case = FALSE, perl = TRUE,  fixed = FALSE, useBytes = FALSE) | base::grepl(x = y,  pattern = base::paste0("^", reserved_words, "$",  collapse = NULL, recycle0 = FALSE), ignore.case = FALSE,  perl = FALSE, fixed = FALSE, useBytes = FALSE)) { base::return(FALSE) } else { base::return(TRUE) } } else { base::return(FALSE) } }, x = col2, y = col3, MoreArgs = NULL, SIMPLIFY = TRUE,  USE.NAMES = TRUE), recursive = TRUE, use.names = TRUE),  mode = "any")	20	x, mode = "any"			GOOD
+534	unlist	unlist(x = base::mapply(FUN = function(x,  y) { if (y != "") { if (base::grepl(x = y, pattern = base::paste0("^",  x, "[\\s\\r\\n]*\\(.*\\)$", collapse = NULL,  recycle0 = FALSE), ignore.case = FALSE, perl = TRUE,  fixed = FALSE, useBytes = FALSE) | base::grepl(x = y,  pattern = base::paste0("^", reserved_words, "$",  collapse = NULL, recycle0 = FALSE), ignore.case = FALSE,  perl = FALSE, fixed = FALSE, useBytes = FALSE)) { base::return(FALSE) } else { base::return(TRUE) } } else { base::return(FALSE) } }, x = col2, y = col3, MoreArgs = NULL, SIMPLIFY = TRUE,  USE.NAMES = TRUE), recursive = TRUE, use.names = TRUE)	40	x, recursive = TRUE, use.names = TRUE			GOOD
+534	mapply	mapply(FUN = function(x,  y) { if (y != "") { if (base::grepl(x = y, pattern = base::paste0("^",  x, "[\\s\\r\\n]*\\(.*\\)$", collapse = NULL,  recycle0 = FALSE), ignore.case = FALSE, perl = TRUE,  fixed = FALSE, useBytes = FALSE) | base::grepl(x = y,  pattern = base::paste0("^", reserved_words, "$",  collapse = NULL, recycle0 = FALSE), ignore.case = FALSE,  perl = FALSE, fixed = FALSE, useBytes = FALSE)) { base::return(FALSE) } else { base::return(TRUE) } } else { base::return(FALSE) } }, x = col2, y = col3, MoreArgs = NULL, SIMPLIFY = TRUE,  USE.NAMES = TRUE)	57	FUN, ..., MoreArgs = NULL, SIMPLIFY = TRUE, USE.NAMES = TRUE			GOOD
+537	grepl	grepl(x = y, pattern = base::paste0("^",  x, "[\\s\\r\\n]*\\(.*\\)$", collapse = NULL,  recycle0 = FALSE), ignore.case = FALSE, perl = TRUE,  fixed = FALSE, useBytes = FALSE)	11	pattern, x, ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE			GOOD
+537	paste0	paste0("^",  x, "[\\s\\r\\n]*\\(.*\\)$", collapse = NULL,  recycle0 = FALSE)	40	..., collapse = NULL, recycle0 = FALSE			GOOD
+540	grepl	grepl(x = y,  pattern = base::paste0("^", reserved_words, "$",  collapse = NULL, recycle0 = FALSE), ignore.case = FALSE,  perl = FALSE, fixed = FALSE, useBytes = FALSE)	42	pattern, x, ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE			GOOD
+541	paste0	paste0("^", reserved_words, "$",  collapse = NULL, recycle0 = FALSE)	17	..., collapse = NULL, recycle0 = FALSE			GOOD
+544	return	return(FALSE)	7	NO_ARGS			
+547	return	return(TRUE)	7	NO_ARGS			
+551	return	return(FALSE)	7	NO_ARGS			
+556	any	any(tempo.log, na.rm = TRUE)	11	..., na.rm = FALSE			GOOD
+557	paste0	paste0("INTERNAL ERROR 3 IN ", function_name,  " OF THE ", package_name, " PACKAGE\ncol3 MUST BE MADE OF STRINGS STARTING BY\n\"<FUNCTION_NAME>[\\s\\r\\n]*\\(\"\nAND FINISHING BY\")\"\nHERE IT IS:\n\n",  base::paste(col3, collapse = "\n", recycle0 = FALSE,  sep = " "), collapse = NULL, recycle0 = FALSE)	20	..., collapse = NULL, recycle0 = FALSE			GOOD
+559	paste	paste(col3, collapse = "\n", recycle0 = FALSE,  sep = " ")	7	..., sep = " ", collapse = NULL, recycle0 = FALSE			GOOD
+561	stop	stop(base::paste0("\n\n================\n\n", tempo.cat,  "\n\n================\n\n", base::ifelse(test = base::is.null(x = warn),  yes = "", no = base::paste0("IN ADDITION\nWARNING",  base::ifelse(test = warn_count > 1, yes = "S",  no = ""), ":\n\n", warn, collapse = NULL,  recycle0 = FALSE)), collapse = NULL, recycle0 = FALSE),  call. = FALSE, domain = NULL)	7	..., call. = TRUE, domain = NULL			GOOD
+561	paste0	paste0("\n\n================\n\n", tempo.cat,  "\n\n================\n\n", base::ifelse(test = base::is.null(x = warn),  yes = "", no = base::paste0("IN ADDITION\nWARNING",  base::ifelse(test = warn_count > 1, yes = "S",  no = ""), ":\n\n", warn, collapse = NULL,  recycle0 = FALSE)), collapse = NULL, recycle0 = FALSE)	18	..., collapse = NULL, recycle0 = FALSE			GOOD
+562	ifelse	ifelse(test = base::is.null(x = warn),  yes = "", no = base::paste0("IN ADDITION\nWARNING",  base::ifelse(test = warn_count > 1, yes = "S",  no = ""), ":\n\n", warn, collapse = NULL,  recycle0 = FALSE))	35	test, yes, no			GOOD
+562	is.null	is.null(x = warn)	55	x			GOOD
+563	paste0	paste0("IN ADDITION\nWARNING",  base::ifelse(test = warn_count > 1, yes = "S",  no = ""), ":\n\n", warn, collapse = NULL,  recycle0 = FALSE)	22	..., collapse = NULL, recycle0 = FALSE			GOOD
+564	ifelse	ifelse(test = warn_count > 1, yes = "S",  no = "")	7	test, yes, no			GOOD
+570	any	any(tempo_log, na.rm = TRUE)	11	..., na.rm = FALSE			GOOD
+580	length	length(x = col1)	12	x			GOOD
+581	cat	cat("\n\nEVERYTHING SEEMS CLEAN\n\n", file = "",  sep = " ", fill = FALSE, labels = NULL, append = FALSE)	7	..., file = "", sep = " ", fill = FALSE, labels = NULL, append = FALSE			GOOD
+589	length	length(x = col1)	20	x			GOOD
+592	paste0	paste0("ERROR IN ", function_name,  " OF THE ", package_name, " PACKAGE\nCANNOT GET THE ARGUMENTS OF A FUNCTION THAT IS NOT ASSOCIATED TO ITS PACKAGE IN LINE ",  col1[i2], ":\n\n", base::paste(base::paste0(base::substr(x = code_for_col[i2],  start = 1, stop = col4[i2] - 1), col3[i2],  collapse = NULL, recycle0 = FALSE), collapse = "\n",  recycle0 = FALSE, sep = " "), "\n\n1) PLEASE, RUN saferDev::colons_check(",  arg_user_setting$x, ")\n2) ADD THE MISSING <PACKAGE>::<FUNCTION> (OR <PACKAGE>:::<FUNCTION> FOR FUNCTION STARTING BY A DOT)\n3) RERUN saferDev::all_args_here(",  arg_user_setting$x, ")", collapse = NULL,  recycle0 = FALSE)	20	..., collapse = NULL, recycle0 = FALSE			GOOD
+594	paste	paste(base::paste0(base::substr(x = code_for_col[i2],  start = 1, stop = col4[i2] - 1), col3[i2],  collapse = NULL, recycle0 = FALSE), collapse = "\n",  recycle0 = FALSE, sep = " ")	26	..., sep = " ", collapse = NULL, recycle0 = FALSE			GOOD
+594	paste0	paste0(base::substr(x = code_for_col[i2],  start = 1, stop = col4[i2] - 1), col3[i2],  collapse = NULL, recycle0 = FALSE)	38	..., collapse = NULL, recycle0 = FALSE			GOOD
+594	substr	substr(x = code_for_col[i2],  start = 1, stop = col4[i2] - 1)	51	x, start, stop			GOOD
+597	colons_check	NOT_CONSIDERED	61				
+598	all_args_here	NOT_CONSIDERED	145				
+601	stop	stop(base::paste0("\n\n================\n\n",  tempo.cat, "\n\n================\n\n", base::ifelse(test = base::is.null(x = warn),  yes = "", no = base::paste0("IN ADDITION\nWARNING",  base::ifelse(test = warn_count > 1, yes = "S",  no = ""), ":\n\n", warn, collapse = NULL,  recycle0 = FALSE)), collapse = NULL,  recycle0 = FALSE), call. = FALSE, domain = NULL)	7	..., call. = TRUE, domain = NULL			GOOD
+601	paste0	paste0("\n\n================\n\n",  tempo.cat, "\n\n================\n\n", base::ifelse(test = base::is.null(x = warn),  yes = "", no = base::paste0("IN ADDITION\nWARNING",  base::ifelse(test = warn_count > 1, yes = "S",  no = ""), ":\n\n", warn, collapse = NULL,  recycle0 = FALSE)), collapse = NULL,  recycle0 = FALSE)	18	..., collapse = NULL, recycle0 = FALSE			GOOD
+602	ifelse	ifelse(test = base::is.null(x = warn),  yes = "", no = base::paste0("IN ADDITION\nWARNING",  base::ifelse(test = warn_count > 1, yes = "S",  no = ""), ":\n\n", warn, collapse = NULL,  recycle0 = FALSE))	46	test, yes, no			GOOD
+602	is.null	is.null(x = warn)	66	x			GOOD
+603	paste0	paste0("IN ADDITION\nWARNING",  base::ifelse(test = warn_count > 1, yes = "S",  no = ""), ":\n\n", warn, collapse = NULL,  recycle0 = FALSE)	22	..., collapse = NULL, recycle0 = FALSE			GOOD
+604	ifelse	ifelse(test = warn_count > 1, yes = "S",  no = "")	7	test, yes, no			GOOD
+609	substr	substr(x = code_for_col[i2],  start = col4[i2] - 2, stop = col4[i2] - 1)	23	x, start, stop			GOOD
+612	paste0	paste0("ERROR IN ", function_name,  " OF THE ", package_name, " PACKAGE\nCANNOT GET THE ARGUMENTS OF A FUNCTION THAT IS NOT ASSOCIATED TO ITS PACKAGE IN LINE ",  col1[i2], ":\n\n", base::paste(base::paste0(base::substr(x = code_for_col[i2],  start = 1, stop = col4[i2] - 1), col3[i2],  collapse = NULL, recycle0 = FALSE), collapse = "\n",  recycle0 = FALSE, sep = " "), "\n\nPLEASE, RUN saferDev::colons_check(",  arg_user_setting$x, ") FIRST,\nADD THE MISSING <PACKAGE>::<FUNCTION> (OR <PACKAGE>:::<FUNCTION> FOR FUNCTION STARTING BY A DOT)\nAND RERUN saferDev::all_args_here(",  arg_user_setting$x, ")", collapse = NULL,  recycle0 = FALSE)	20	..., collapse = NULL, recycle0 = FALSE			GOOD
+614	paste	paste(base::paste0(base::substr(x = code_for_col[i2],  start = 1, stop = col4[i2] - 1), col3[i2],  collapse = NULL, recycle0 = FALSE), collapse = "\n",  recycle0 = FALSE, sep = " ")	26	..., sep = " ", collapse = NULL, recycle0 = FALSE			GOOD
+614	paste0	paste0(base::substr(x = code_for_col[i2],  start = 1, stop = col4[i2] - 1), col3[i2],  collapse = NULL, recycle0 = FALSE)	38	..., collapse = NULL, recycle0 = FALSE			GOOD
+614	substr	substr(x = code_for_col[i2],  start = 1, stop = col4[i2] - 1)	51	x, start, stop			GOOD
+617	colons_check	NOT_CONSIDERED	58				
+618	all_args_here	NOT_CONSIDERED	150				
+621	stop	stop(base::paste0("\n\n================\n\n",  tempo.cat, "\n\n================\n\n", base::ifelse(test = base::is.null(x = warn),  yes = "", no = base::paste0("IN ADDITION\nWARNING",  base::ifelse(test = warn_count > 1, yes = "S",  no = ""), ":\n\n", warn, collapse = NULL,  recycle0 = FALSE)), collapse = NULL,  recycle0 = FALSE), call. = FALSE, domain = NULL)	7	..., call. = TRUE, domain = NULL			GOOD
+621	paste0	paste0("\n\n================\n\n",  tempo.cat, "\n\n================\n\n", base::ifelse(test = base::is.null(x = warn),  yes = "", no = base::paste0("IN ADDITION\nWARNING",  base::ifelse(test = warn_count > 1, yes = "S",  no = ""), ":\n\n", warn, collapse = NULL,  recycle0 = FALSE)), collapse = NULL,  recycle0 = FALSE)	18	..., collapse = NULL, recycle0 = FALSE			GOOD
+622	ifelse	ifelse(test = base::is.null(x = warn),  yes = "", no = base::paste0("IN ADDITION\nWARNING",  base::ifelse(test = warn_count > 1, yes = "S",  no = ""), ":\n\n", warn, collapse = NULL,  recycle0 = FALSE))	46	test, yes, no			GOOD
+622	is.null	is.null(x = warn)	66	x			GOOD
+623	paste0	paste0("IN ADDITION\nWARNING",  base::ifelse(test = warn_count > 1, yes = "S",  no = ""), ":\n\n", warn, collapse = NULL,  recycle0 = FALSE)	22	..., collapse = NULL, recycle0 = FALSE			GOOD
+624	ifelse	ifelse(test = warn_count > 1, yes = "S",  no = "")	7	test, yes, no			GOOD
+629	substr	substr(x = code_for_col[i2],  start = 1, stop = col4[i2] - 1)	23	x, start, stop			GOOD
+631	.extract_all_fun_names	.extract_all_fun_names(text = tempo_string,  pattern = "[a-zA-Z][a-zA-Z0-9.]*:{2,3}$")	41	text, pattern			GOOD
+633	is_function_here	is_function_here(fun = base::paste0(tempo_package_name_colons,  col2[i2], collapse = NULL, recycle0 = FALSE),  lib_path = NULL, safer_check = FALSE)	11	fun, lib_path = NULL, safer_check = TRUE			GOOD
+633	paste0	paste0(tempo_package_name_colons,  col2[i2], collapse = NULL, recycle0 = FALSE)	40	..., collapse = NULL, recycle0 = FALSE			GOOD
+636	sub	sub(pattern = ":+$",  replacement = "", x = tempo_package_name_colons,  ignore.case = FALSE, perl = FALSE, fixed = FALSE,  useBytes = FALSE)	29	pattern, replacement, x, ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE			GOOD
+640	get	get(x = col2[i2], envir = base::asNamespace(ns = tempo_package_name,  base.OK = TRUE), mode = "function", inherits = FALSE,  pos = -1L)	21	x, pos = -1L, envir = as.environment(pos), mode = "any", inherits = TRUE			GOOD
+640	asNamespace	asNamespace(ns = tempo_package_name,  base.OK = TRUE)	53	ns, base.OK = TRUE			GOOD
+643	is.primitive	is.primitive(x = tempo_fun2)	11	x			GOOD
+644	as.list	as.list(x = base::suppressWarnings(expr = base::formals(fun = base::args(name = col2[i2]),  envir = base::asNamespace(ns = tempo_package_name,  base.OK = TRUE)), classes = "warning"))	25	x, ...			GOOD
+644	suppressWarnings	suppressWarnings(expr = base::formals(fun = base::args(name = col2[i2]),  envir = base::asNamespace(ns = tempo_package_name,  base.OK = TRUE)), classes = "warning")	43	expr, classes = "warning"			GOOD
+644	formals	formals(fun = base::args(name = col2[i2]),  envir = base::asNamespace(ns = tempo_package_name,  base.OK = TRUE))	73	fun = sys.function(sys.parent()), envir = parent.frame()			GOOD
+644	args	args(name = col2[i2])	93	name			GOOD
+645	asNamespace	asNamespace(ns = tempo_package_name,  base.OK = TRUE)	15	ns, base.OK = TRUE			GOOD
+647	all	all(base::typeof(x = tempo_fun2) %in%  base::c("special", "symbol"), na.rm = TRUE)	11	..., na.rm = FALSE			GOOD
+647	typeof	typeof(x = tempo_fun2)	21	x			GOOD
+648	c	c("special", "symbol")	7	...			
+649	length	length(x = tempo_all_args)	11	x			GOOD
+661	as.list	as.list(x = base::formals(fun = col2[i2],  envir = base::asNamespace(ns = tempo_package_name,  base.OK = TRUE)))	19	x, ...			GOOD
+661	formals	formals(fun = col2[i2],  envir = base::asNamespace(ns = tempo_package_name,  base.OK = TRUE))	37	fun = sys.function(sys.parent()), envir = parent.frame()			GOOD
+662	asNamespace	asNamespace(ns = tempo_package_name,  base.OK = TRUE)	15	ns, base.OK = TRUE			GOOD
+665	is.null	is.null(x = arg_full)	11	x			GOOD
+666	c	c(col5, "NO_ARGS")	15	...			
+667	c	c(col6, "")	15	...			
+668	c	c(col7, "")	15	...			
+669	c	c(col8, "")	15	...			
+672	sapply	sapply(X = arg_full, FUN = function(x) { base::paste0(base::ifelse(test = base::all(base::typeof(x = x) ==  "symbol", na.rm = TRUE), yes = "", no = " = "),  base::deparse(expr = x, width.cutoff = 60L,  backtick = FALSE, control = base::c("keepNA",  "keepInteger", "niceNames", "showAttributes"),  nlines = -1L), collapse = NULL, recycle0 = FALSE) }, simplify = TRUE, USE.NAMES = TRUE)	16	X, FUN, ..., simplify = TRUE, USE.NAMES = TRUE			GOOD
+673	paste0	paste0(base::ifelse(test = base::all(base::typeof(x = x) ==  "symbol", na.rm = TRUE), yes = "", no = " = "),  base::deparse(expr = x, width.cutoff = 60L,  backtick = FALSE, control = base::c("keepNA",  "keepInteger", "niceNames", "showAttributes"),  nlines = -1L), collapse = NULL, recycle0 = FALSE)	7	..., collapse = NULL, recycle0 = FALSE			GOOD
+673	ifelse	ifelse(test = base::all(base::typeof(x = x) ==  "symbol", na.rm = TRUE), yes = "", no = " = ")	20	test, yes, no			GOOD
+673	all	all(base::typeof(x = x) ==  "symbol", na.rm = TRUE)	40	..., na.rm = FALSE			GOOD
+673	typeof	typeof(x = x)	50	x			GOOD
+675	deparse	deparse(expr = x, width.cutoff = 60L,  backtick = FALSE, control = base::c("keepNA",  "keepInteger", "niceNames", "showAttributes"),  nlines = -1L)	7	expr, width.cutoff = 60L, backtick = mode(expr) %in% c("call", "expression", "(", "function"), control = c("keepNA", "keepInteger", "niceNames", "showAttributes"), nlines = -1L			GOOD
+676	c	c("keepNA",  "keepInteger", "niceNames", "showAttributes")	35	...			
+680	paste	paste(base::paste0(base::names(x = tempo),  tempo, collapse = NULL, recycle0 = FALSE),  collapse = ", ", recycle0 = FALSE, sep = " ")	16	..., sep = " ", collapse = NULL, recycle0 = FALSE			GOOD
+680	paste0	paste0(base::names(x = tempo),  tempo, collapse = NULL, recycle0 = FALSE)	28	..., collapse = NULL, recycle0 = FALSE			GOOD
+680	names	names(x = tempo)	41	x			GOOD
+683	c	c(col5, tempo)	15	...			
+685	.in_quotes_replacement	.in_quotes_replacement(string = tempo_col3,  pattern = ",", no_regex_pattern = ",", replacement = " ",  perl = TRUE, function_name = function_name,  package_name = package_name)	21	string, pattern, no_regex_pattern, replacement, perl, function_name, package_name			GOOD
+691	length	length(x = middle_bracket_open_in_col3[[i2]])	11	x			GOOD
+693	length	length(x = middle_bracket_open_in_col3[[i2]])	11	x			GOOD
+694	length	length(x = middle_bracket_close_in_col3[[i2]])	7	x			GOOD
+695	paste0	paste0("INTERNAL ERROR 4 IN ",  function_name, " OF THE ", package_name,  " PACKAGE\nmiddle_bracket_open_in_col3 AND middle_bracket_close_in_col3 MUST HAVE THE SAME LENGTH IN LOOP ",  i2, "\n\nmiddle_bracket_open_in_col3 (",  base::length(x = middle_bracket_open_in_col3),  "):\n", base::paste(middle_bracket_open_in_col3,  collapse = " ", recycle0 = FALSE, sep = " "),  "\n\nmiddle_bracket_close_in_col3 (",  base::length(x = middle_bracket_close_in_col3),  "):\n", base::paste(middle_bracket_close_in_col3,  collapse = " ", recycle0 = FALSE, sep = " "),  "\n\ni2:\n", i2, collapse = NULL, recycle0 = FALSE)	20	..., collapse = NULL, recycle0 = FALSE			GOOD
+698	nmiddle_bracket_open_in_col3	NOT_CONSIDERED	9				
+699	length	length(x = middle_bracket_open_in_col3)	7	x			GOOD
+700	paste	paste(middle_bracket_open_in_col3,  collapse = " ", recycle0 = FALSE, sep = " ")	15	..., sep = " ", collapse = NULL, recycle0 = FALSE			GOOD
+702	nmiddle_bracket_close_in_col3	NOT_CONSIDERED	5				
+703	length	length(x = middle_bracket_close_in_col3)	7	x			GOOD
+704	paste	paste(middle_bracket_close_in_col3,  collapse = " ", recycle0 = FALSE, sep = " ")	15	..., sep = " ", collapse = NULL, recycle0 = FALSE			GOOD
+707	stop	stop(base::paste0("\n\n================\n\n",  tempo.cat, "\n\n================\n\n",  base::ifelse(test = base::is.null(x = warn),  yes = "", no = base::paste0("IN ADDITION\nWARNING",  base::ifelse(test = warn_count >  1, yes = "S", no = ""), ":\n\n",  warn, collapse = NULL, recycle0 = FALSE)),  collapse = NULL, recycle0 = FALSE), call. = FALSE,  domain = NULL)	7	..., call. = TRUE, domain = NULL			GOOD
+707	paste0	paste0("\n\n================\n\n",  tempo.cat, "\n\n================\n\n",  base::ifelse(test = base::is.null(x = warn),  yes = "", no = base::paste0("IN ADDITION\nWARNING",  base::ifelse(test = warn_count >  1, yes = "S", no = ""), ":\n\n",  warn, collapse = NULL, recycle0 = FALSE)),  collapse = NULL, recycle0 = FALSE)	18	..., collapse = NULL, recycle0 = FALSE			GOOD
+709	ifelse	ifelse(test = base::is.null(x = warn),  yes = "", no = base::paste0("IN ADDITION\nWARNING",  base::ifelse(test = warn_count >  1, yes = "S", no = ""), ":\n\n",  warn, collapse = NULL, recycle0 = FALSE))	7	test, yes, no			GOOD
+709	is.null	is.null(x = warn)	27	x			GOOD
+710	paste0	paste0("IN ADDITION\nWARNING",  base::ifelse(test = warn_count >  1, yes = "S", no = ""), ":\n\n",  warn, collapse = NULL, recycle0 = FALSE)	22	..., collapse = NULL, recycle0 = FALSE			GOOD
+711	ifelse	ifelse(test = warn_count >  1, yes = "S", no = "")	7	test, yes, no			GOOD
+717	length	length(x = middle_bracket_open_in_col3[[i2]])	20	x			GOOD
+718	.in_parenthesis_replacement	.in_parenthesis_replacement(string = tempo_col3,  pattern = ",", no_regex_pattern = ",",  replacement = " ", perl = TRUE, open_pos = middle_bracket_open_in_col3[[i2]][i6],  close_pos = middle_bracket_close_in_col3[[i2]][i6],  function_name = function_name, package_name = package_name)	21	string, pattern, no_regex_pattern, replacement, perl, open_pos, close_pos, function_name, package_name			GOOD
+724	c	c(pos_rep2, tempo$pos)	19	...			
+727	sub	sub(pattern = base::paste0("^",  col2[i2], "[\\s\\r\\n]*\\(", collapse = NULL,  recycle0 = FALSE), replacement = "", x = tempo_col3,  ignore.case = FALSE, perl = TRUE, fixed = FALSE,  useBytes = FALSE)	19	pattern, replacement, x, ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE			GOOD
+727	paste0	paste0("^",  col2[i2], "[\\s\\r\\n]*\\(", collapse = NULL,  recycle0 = FALSE)	39	..., collapse = NULL, recycle0 = FALSE			GOOD
+732	sub	sub(pattern = "\\)$", replacement = "",  x = obs_args, ignore.case = FALSE, perl = FALSE,  fixed = FALSE, useBytes = FALSE)	19	pattern, replacement, x, ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE			GOOD
+735	strsplit	strsplit(x = obs_args,  split = " *, *", fixed = FALSE, perl = FALSE,  useBytes = FALSE)	22	x, split, fixed = FALSE, perl = FALSE, useBytes = FALSE			GOOD
+738	is.null	is.null(x = pos_rep2)	12	x			GOOD
+739	nchar	nchar(x = col2[i2],  type = "chars", allowNA = FALSE, keepNA = NA)	30	x, type = "chars", allowNA = FALSE, keepNA = NA			GOOD
+742	any	any(pos_rep2 <= 0, na.rm = TRUE)	11	..., na.rm = FALSE			GOOD
+743	paste0	paste0("INTERNAL ERROR 5 IN ",  function_name, " OF THE ", package_name,  " PACKAGE\nPOSITIONS OF REMOVED COMMAS CANOT OR LESS\n\npos_rep2 (",  base::length(x = pos_rep2), "):\n", base::paste(pos_rep2,  collapse = " ", recycle0 = FALSE, sep = " "),  "\n\nARGUMENT STRING obs_args:\n", base::paste(obs_args,  collapse = " ", recycle0 = FALSE, sep = " "),  "\n\ni2:\n", i2, collapse = NULL, recycle0 = FALSE)	20	..., collapse = NULL, recycle0 = FALSE			GOOD
+745	npos_rep2	NOT_CONSIDERED	56				
+746	length	length(x = pos_rep2)	7	x			GOOD
+746	paste	paste(pos_rep2,  collapse = " ", recycle0 = FALSE, sep = " ")	43	..., sep = " ", collapse = NULL, recycle0 = FALSE			GOOD
+748	paste	paste(obs_args,  collapse = " ", recycle0 = FALSE, sep = " ")	42	..., sep = " ", collapse = NULL, recycle0 = FALSE			GOOD
+751	stop	stop(base::paste0("\n\n================\n\n",  tempo.cat, "\n\n================\n\n",  base::ifelse(test = base::is.null(x = warn),  yes = "", no = base::paste0("IN ADDITION\nWARNING",  base::ifelse(test = warn_count >  1, yes = "S", no = ""), ":\n\n",  warn, collapse = NULL, recycle0 = FALSE)),  collapse = NULL, recycle0 = FALSE), call. = FALSE,  domain = NULL)	7	..., call. = TRUE, domain = NULL			GOOD
+751	paste0	paste0("\n\n================\n\n",  tempo.cat, "\n\n================\n\n",  base::ifelse(test = base::is.null(x = warn),  yes = "", no = base::paste0("IN ADDITION\nWARNING",  base::ifelse(test = warn_count >  1, yes = "S", no = ""), ":\n\n",  warn, collapse = NULL, recycle0 = FALSE)),  collapse = NULL, recycle0 = FALSE)	18	..., collapse = NULL, recycle0 = FALSE			GOOD
+753	ifelse	ifelse(test = base::is.null(x = warn),  yes = "", no = base::paste0("IN ADDITION\nWARNING",  base::ifelse(test = warn_count >  1, yes = "S", no = ""), ":\n\n",  warn, collapse = NULL, recycle0 = FALSE))	7	test, yes, no			GOOD
+753	is.null	is.null(x = warn)	27	x			GOOD
+754	paste0	paste0("IN ADDITION\nWARNING",  base::ifelse(test = warn_count >  1, yes = "S", no = ""), ":\n\n",  warn, collapse = NULL, recycle0 = FALSE)	22	..., collapse = NULL, recycle0 = FALSE			GOOD
+755	ifelse	ifelse(test = warn_count >  1, yes = "S", no = "")	7	test, yes, no			GOOD
+761	length	length(x = tempo_split)	20	x			GOOD
+763	nchar	nchar(x = tempo_split[i6], type = "chars",  allowNA = FALSE, keepNA = NA)	7	x, type = "chars", allowNA = FALSE, keepNA = NA			GOOD
+765	length	length(x = tempo_log)	20	x			GOOD
+766	any	any(tempo_log[i7], na.rm = TRUE)	11	..., na.rm = FALSE			GOOD
+767	substr	substr(x = tempo_split[i6], start = pos_rep2[i7],  stop = pos_rep2[i7])	7	x, start, stop			GOOD
+771	nchar	nchar(x = tempo_split[i6],  type = "chars", allowNA = FALSE, keepNA = NA)	18	x, type = "chars", allowNA = FALSE, keepNA = NA			GOOD
+776	names	names(x = arg_full)	25	x			GOOD
+778	length	length(x = tempo_split)	11	x			GOOD
+778	length	length(x = arg_full_names)	43	x			GOOD
+779	any	any(three_dots_log, na.rm = TRUE)	8	..., na.rm = FALSE			GOOD
+780	paste0	paste0("INTERNAL ERROR 6 IN ",  function_name, " OF THE ", package_name,  " PACKAGE\nLENGTH OF tempo_split MUST LOWER OR EQUAL TO LENGTH OF arg_full_names IF ... IS NOT AN ARGUMENT OF THE FUNCTION\n\nFUNCTION: ",  col2[i2], "\n\ntempo_split (", base::length(x = tempo_split),  "):\n", base::paste(tempo_split, collapse = "\n",  recycle0 = FALSE, sep = " "), "\n\narg_full_names (",  base::length(x = arg_full_names), "):\n",  base::paste(arg_full_names, collapse = "\n",  , recycle0 = FALSE, sep = " "), "\n\ni2:\n",  i2, collapse = NULL, recycle0 = FALSE)	20	..., collapse = NULL, recycle0 = FALSE			GOOD
+783	ntempo_split	NOT_CONSIDERED	15				
+783	length	length(x = tempo_split)	38	x			GOOD
+784	paste	paste(tempo_split, collapse = "\n",  recycle0 = FALSE, sep = " ")	15	..., sep = " ", collapse = NULL, recycle0 = FALSE			GOOD
+785	narg_full_names	NOT_CONSIDERED	35				
+786	length	length(x = arg_full_names)	7	x			GOOD
+787	paste	paste(arg_full_names, collapse = "\n",  , recycle0 = FALSE, sep = " ")	7	..., sep = " ", collapse = NULL, recycle0 = FALSE			GOOD
+790	stop	stop(base::paste0("\n\n================\n\n",  tempo.cat, "\n\n================\n\n",  base::ifelse(test = base::is.null(x = warn),  yes = "", no = base::paste0("IN ADDITION\nWARNING",  base::ifelse(test = warn_count > 1,  yes = "S", no = ""), ":\n\n", warn,  collapse = NULL, recycle0 = FALSE)),  collapse = NULL, recycle0 = FALSE), call. = FALSE,  domain = NULL)	7	..., call. = TRUE, domain = NULL			GOOD
+790	paste0	paste0("\n\n================\n\n",  tempo.cat, "\n\n================\n\n",  base::ifelse(test = base::is.null(x = warn),  yes = "", no = base::paste0("IN ADDITION\nWARNING",  base::ifelse(test = warn_count > 1,  yes = "S", no = ""), ":\n\n", warn,  collapse = NULL, recycle0 = FALSE)),  collapse = NULL, recycle0 = FALSE)	18	..., collapse = NULL, recycle0 = FALSE			GOOD
+792	ifelse	ifelse(test = base::is.null(x = warn),  yes = "", no = base::paste0("IN ADDITION\nWARNING",  base::ifelse(test = warn_count > 1,  yes = "S", no = ""), ":\n\n", warn,  collapse = NULL, recycle0 = FALSE))	7	test, yes, no			GOOD
+792	is.null	is.null(x = warn)	27	x			GOOD
+793	paste0	paste0("IN ADDITION\nWARNING",  base::ifelse(test = warn_count > 1,  yes = "S", no = ""), ":\n\n", warn,  collapse = NULL, recycle0 = FALSE)	22	..., collapse = NULL, recycle0 = FALSE			GOOD
+794	ifelse	ifelse(test = warn_count > 1,  yes = "S", no = "")	7	test, yes, no			GOOD
+800	.all_args_here_fill	.all_args_here_fill(arg_full = arg_full,  arg_full_names = arg_full_names, tempo_split = tempo_split,  three_dots_log = three_dots_log, i2 = i2,  col1_i2 = col1[i2], col2_i2 = col2[i2], arg_user_setting_x = arg_user_setting$x,  function_name = function_name, package_name = package_name)	25	arg_full, arg_full_names, tempo_split, three_dots_log, i2, col1_i2, col2_i2, arg_user_setting_x, function_name, package_name			GOOD
+805	c	c(col6, tempo_out$col6)	15	...			
+806	c	c(col7, tempo_out$col7)	15	...			
+807	c	c(col8, tempo_out$col8)	15	...			
+811	c	c(col5, "")	15	...			
+812	c	c(col6, "")	15	...			
+813	c	c(col7, "")	15	...			
+814	c	c(col8, "")	15	...			
+818	all	all(col8 %in% base::c("", "GOOD"), na.rm = FALSE)	11	..., na.rm = FALSE			GOOD
+818	c	c("", "GOOD")	31	...			
+819	paste0	paste0("INSIDE ", base::as.character(x = out$arg_user_setting$x),  "(), EVERYTHING SEEMS CLEAN", collapse = NULL, recycle0 = FALSE)	20	..., collapse = NULL, recycle0 = FALSE			GOOD
+819	as.character	as.character(x = out$arg_user_setting$x)	44	x, ...			GOOD
+822	paste0	paste0("RESULT EXPORTED IN\n",  path_out, "\nBUT ", tempo.cat, collapse = NULL,  recycle0 = FALSE)	20	..., collapse = NULL, recycle0 = FALSE			GOOD
+826	paste0	paste0("AFTER RUNNING ", function_name,  " OF THE ", package_name, " PACKAGE:\n", tempo.cat,  collapse = NULL, recycle0 = FALSE)	20	..., collapse = NULL, recycle0 = FALSE			GOOD
+829	on.exit	on.exit(expr = base::cat(base::paste0("\n\n", tempo.cat,  "\n\n", collapse = NULL, recycle0 = FALSE), file = "",  sep = " ", fill = FALSE, labels = NULL, append = FALSE),  add = FALSE, after = TRUE)	7	expr = NULL, add = FALSE, after = TRUE			GOOD
+829	cat	cat(base::paste0("\n\n", tempo.cat,  "\n\n", collapse = NULL, recycle0 = FALSE), file = "",  sep = " ", fill = FALSE, labels = NULL, append = FALSE)	28	..., file = "", sep = " ", fill = FALSE, labels = NULL, append = FALSE			GOOD
+829	paste0	paste0("\n\n", tempo.cat,  "\n\n", collapse = NULL, recycle0 = FALSE)	38	..., collapse = NULL, recycle0 = FALSE			GOOD
+834	data.frame	data.frame(LINE_NB = col1, FUN_NAME = col2,  FUN_ARGS = col3, FUN_POS = col4, DEF_ARGS = col5, MISSING_ARG_NAMES = col6,  MISSING_ARGS = col7, STATUS = col8, row.names = NULL,  check.rows = FALSE, check.names = TRUE, fix.empty.names = TRUE,  stringsAsFactors = FALSE)	17	..., row.names = NULL, check.rows = FALSE, check.names = TRUE, fix.empty.names = TRUE, stringsAsFactors = FALSE			GOOD
+840	write.table	write.table(x = output, file = path_out, row.names = FALSE,  col.names = TRUE, append = FALSE, quote = FALSE,  sep = "\t", eol = "\n", na = "", dec = ".", qmethod = base::c("escape",  "double"), fileEncoding = "")	8	x, file = "", append = FALSE, quote = TRUE, sep = " ", eol = "\n", na = "NA", dec = ".", row.names = TRUE, col.names = TRUE, qmethod = c("escape", "double"), fileEncoding = ""			GOOD
+842	c	c("escape",  "double")	61	...			
+846	return	return(output)	7	NO_ARGS			
+848	is.null	is.null(x = warn)	12	x			GOOD
+849	on.exit	on.exit(expr = base::warning(base::paste0("FROM ",  function_name, base::ifelse(test = base::is.null(x = package_name),  yes = "", no = base::paste0(" OF THE ", package_name,  " PACKAGE", collapse = NULL, recycle0 = FALSE)),  "\n\n", warn, collapse = NULL, recycle0 = FALSE),  call. = FALSE, immediate. = FALSE, noBreaks. = FALSE,  domain = NULL), add = FALSE, after = TRUE)	7	expr = NULL, add = FALSE, after = TRUE			GOOD
+849	warning	warning(base::paste0("FROM ",  function_name, base::ifelse(test = base::is.null(x = package_name),  yes = "", no = base::paste0(" OF THE ", package_name,  " PACKAGE", collapse = NULL, recycle0 = FALSE)),  "\n\n", warn, collapse = NULL, recycle0 = FALSE),  call. = FALSE, immediate. = FALSE, noBreaks. = FALSE,  domain = NULL)	28	..., call. = TRUE, immediate. = FALSE, noBreaks. = FALSE, domain = NULL			GOOD
+849	paste0	paste0("FROM ",  function_name, base::ifelse(test = base::is.null(x = package_name),  yes = "", no = base::paste0(" OF THE ", package_name,  " PACKAGE", collapse = NULL, recycle0 = FALSE)),  "\n\n", warn, collapse = NULL, recycle0 = FALSE)	42	..., collapse = NULL, recycle0 = FALSE			GOOD
+850	ifelse	ifelse(test = base::is.null(x = package_name),  yes = "", no = base::paste0(" OF THE ", package_name,  " PACKAGE", collapse = NULL, recycle0 = FALSE))	22	test, yes, no			GOOD
+850	is.null	is.null(x = package_name)	42	x			GOOD
+851	paste0	paste0(" OF THE ", package_name,  " PACKAGE", collapse = NULL, recycle0 = FALSE)	22	..., collapse = NULL, recycle0 = FALSE			GOOD
+857	on.exit	on.exit(expr = base::options(warning.length = ini_warning_length),  add = TRUE, after = TRUE)	7	expr = NULL, add = FALSE, after = TRUE			GOOD
+857	options	options(warning.length = ini_warning_length)	28	...			
