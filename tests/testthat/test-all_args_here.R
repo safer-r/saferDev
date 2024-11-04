@@ -40,7 +40,7 @@ test_that("all_args_here()", {
         overwrite = FALSE, # Overwrite potential df_name file already existing in path_out?
         lib_path = NULL, # absolute pathways of the directories containing the required packages if not in the default directories
         safer_check = FALSE # perform some "safer" checks? Warning : always set this argument to FALSE if all_args_here() is used inside another safer function.
-    ))
+    )
     testthat::expect_equal(result3, expected3)
 })
 
