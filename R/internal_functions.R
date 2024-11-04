@@ -887,8 +887,8 @@
     internal_fun_names
 ){
     # DEBUGGING
-    # list.fun = in_basic_fun ; fun.uni = in_basic_fun_uni ; list.fun.pos = in_basic_fun_name_pos_wo_op ; line.nb = in_basic_code_line_nb ; ini = out$ini ; arg_user_setting = out$arg_user_setting ; function_name = function_name ; package_name = package_name ; text = "OTHER" ; internal_fun_names = out$internal_fun_names
-    # list.fun = in_other_fun ; fun.uni = in_other_fun_uni ; list.fun.pos = in_other_fun_name_pos_wo_op ; line.nb = in_other_code_line_nb ; ini = out$ini ; arg_user_setting = out$arg_user_setting ; function_name = function_name ; package_name = package_name ; text = "OTHER" ; internal_fun_names = out$internal_fun_names
+    # list.fun = in_basic_fun ; fun.uni = in_basic_fun_uni ; list.fun.pos = in_basic_fun_names_pos ; line.nb = in_basic_code_line_nb ; ini = out$code ; arg_user_setting = out$arg_user_setting ; function_name = function_name ; package_name = package_name ; text = "BASIC" ; internal_fun_names = out$internal_fun_names
+    # list.fun = in_other_fun ; fun.uni = in_other_fun_uni ; list.fun.pos = in_other_fun_names_pos ; line.nb = in_other_code_line_nb ; ini = out$code ; arg_user_setting = out$arg_user_setting ; function_name = function_name ; package_name = package_name ; text = "OTHER" ; internal_fun_names = out$internal_fun_names
     if(base::length(text) != 1 & base::any( ! text %in% base::c("BASIC", "OTHER"))){
         tempo.cat <- base::paste0("INTERNAL ERROR 1 IN ", function_name, " OF THE ", package_name, " PACKAGE\nTHE text ARGUMENT OF .colons_check_message() MUST BE \"BASIC\" OR \"OTHER\".\nTHE PROBLEM IS:\n",
             base::paste(text, collapse = "\n"))
@@ -903,7 +903,7 @@
     }
     res <- list.fun.pos
     for(i1 in 1:base::length(basic_ini)){
-        res[[i1]] <- mapply(FUN = function(x , y){z <- substr(x = x, start = 1, stop = y - 1)}, x = basic_ini[i1], y = list.fun.pos[[i1]], , SIMPLIFY = TRUE, USE.NAMES = FALSE)
+        res[[i1]] <- mapply(FUN = function(x , y){z <- substr(x = x, start = 1, stop = y - 1)}, x = basic_ini[i1], y = list.fun.pos[[i1]], SIMPLIFY = TRUE, USE.NAMES = FALSE)
     }
     # res <- base::strsplit(x = basic_ini, split = pattern2, perl = TRUE) # in res, all the strings should finish by ::
     # tempo.log <- ! base::grepl(x = basic_ini, pattern = pattern3, perl = TRUE) # strings of basic_ini that does not finish by the function name

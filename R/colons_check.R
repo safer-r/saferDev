@@ -44,13 +44,14 @@ colons_check <- function(
     safer_check = TRUE
 ){
     # DEBUGGING
+    # x = mean ; safer_check = TRUE
     # x = .expand_R_libs_env_var ; safer_check = TRUE
     # library(saferGraph) ; x = close2 ; safer_check = TRUE 
     # source("C:\\Users\\gmillot\\Documents\\Git_projects\\safer-r\\saferDev\\R\\get_message.R") ; x = get_message ; safer_check = TRUE # Warning: x = saferDev::get_message does not return the same number of code lines
     # library(saferDev) ; x = get_message ; safer_check = TRUE # Warning: does not return the same number of code lines than the previsou example
     # source("C:\\Users\\gmillot\\Documents\\Git_projects\\safer-r\\saferDev\\R\\colons_check.R") ; x = colons_check ; safer_check = TRUE # Warning: x = saferDev::get_message does not return the same number of code lines
     # source("https://raw.githubusercontent.com/safer-r/saferDev/main/dev/other/test.R") ; x = test ; safer_check = TRUE # Warning: x = saferDev::get_message does not return the same number of code lines
-    # arg_user_setting = base::list(x = as.name(x = "test"), safer_check = TRUE)
+    # function_name <- "colons_check" ; arg_user_setting = base::list(x = as.name(x = "test"), safer_check = TRUE)
     # package name
     package_name <- "saferDev"
     # end package name
@@ -64,7 +65,7 @@ colons_check <- function(
     arg_user_setting <- tempo_args[-1] # list of the argument settings (excluding default values not provided by the user)
     #### end function name
     # main code
-    out <- .functions_detect(
+    out <- saferDev:::.functions_detect(
         x = x, 
         arg_user_setting = arg_user_setting, 
         function_name = function_name, 
@@ -109,7 +110,7 @@ colons_check <- function(
     # end other function names in x
     # analyse of :: before basic functions in x
     if(base::length(in_basic_fun_uni) > 0){
-        tempo <- .colons_check_message(
+        tempo <- saferDev:::.colons_check_message(
             list.fun = in_basic_fun, 
             fun.uni = in_basic_fun_uni, 
             list.fun.pos = in_basic_fun_names_pos, 
@@ -118,7 +119,7 @@ colons_check <- function(
             arg_user_setting = out$arg_user_setting, 
             function_name = function_name, 
             package_name = package_name, 
-            text = "BASIC",
+            text = "BASIC", 
             internal_fun_names = out$internal_fun_names
         )
         tempo.log <- tempo$colon_not_here
@@ -130,7 +131,7 @@ colons_check <- function(
     # end analyse of :: before basic functions in x
     # analyse of :: before other functions in x
     if(base::length(in_other_fun_uni) > 0){
-        tempo <- .colons_check_message(
+        tempo <- saferDev:::.colons_check_message(
             list.fun = in_other_fun, 
             fun.uni = in_other_fun_uni, 
             list.fun.pos = in_other_fun_names_pos, 
@@ -139,7 +140,7 @@ colons_check <- function(
             arg_user_setting = out$arg_user_setting, 
             function_name = function_name, 
             package_name = package_name, 
-            text = "OTHER",
+            text = "OTHER", 
             internal_fun_names = out$internal_fun_names
         )
         tempo.log.b <- tempo$colon_not_here
