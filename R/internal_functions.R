@@ -700,7 +700,8 @@
     # DEBUGGING
     # x = x ; arg_user_setting = arg_user_setting ; function_name = function_name ; package_name = package_name
     # source("C:\\Users\\gmillot\\Documents\\Git_projects\\safer-r\\saferDev\\dev\\other\\test2.R") ; x = test2 ; arg_user_setting = base::list(x = as.name(x = "test2"), export = TRUE) ; function_name = "F1" ; package_name = "P1"
-    # source("C:\\Users\\gmillot\\Documents\\Git_projects\\safer-r\\saferDev\\.github\\profile\\backbone.R") ; x = a ; arg_user_setting = base::list(x = as.name(x = "a"), export = TRUE) ; function_name = "F1" ; package_name = "P1"
+    # source("C:\\Users\\gmillot\\Documents\\Git_projects\\safer-r\\.github\\profile\\backbone.R") ; x = BACKBONE ; arg_user_setting = base::list(x = as.name(x = "BACKBONE"), export = FALSE,  path_out = ".",  df_name = "res.tsv",  overwrite = FALSE,  lib_path = NULL,  safer_check = TRUE) ; function_name = "F1" ; package_name = "P1"
+    # FUN1 <- function(x, y){middle_bracket2 <- base::do.call(what = base::c, args = code_for_col, quote = FALSE, envir = base::parent.frame())} ; x = FUN1 ; arg_user_setting = base::list(x = as.name(x = "FUN1"), export = FALSE,  path_out = ".",  df_name = "res.tsv",  overwrite = FALSE,  lib_path = NULL,  safer_check = TRUE) ; function_name = "F1" ; package_name = "P1"
     # main code
     # modification of arg_user_setting$x for clean messages
     if(base::as.character(x = arg_user_setting$x)[1] == "::" | base::as.character(x = arg_user_setting$x)[1] == ":::"){
@@ -810,8 +811,8 @@
     # tempo <- base::lapply(code, FUN = function(x){saferDev:::.extract_all_fun_names(text = x, pattern = pattern1)})
     # removal of special functions
     tempo_log <- base::lapply(fun_name, FUN = function(x){ ! x %in% base::c("function", "if", "for", "while", "repeat")})
-    fun_name_wo_op <- base::mapply(FUN = function(x, y){x[y]}, x = fun_name, y = tempo_log)
-    fun_name_pos_wo_op <- base::mapply(FUN = function(x, y){x[y]}, x = fun_name_pos, y = tempo_log)
+    fun_name_wo_op <- base::mapply(FUN = function(x, y){x[y]}, x = fun_name, y = tempo_log, SIMPLIFY = FALSE)
+    fun_name_pos_wo_op <- base::mapply(FUN = function(x, y){x[y]}, x = fun_name_pos, y = tempo_log, SIMPLIFY = FALSE)
     # end removal of special functions
     # removal of empty string
     tempo.log <- base::sapply(fun_name_wo_op, FUN = function(x){base::length(x) == 0}) # detection of string with empty function names
@@ -821,15 +822,18 @@
     if( ! (base::length(fun_name_wo_op) == base::length(fun_name_pos_wo_op) & base::length(fun_name_wo_op) == base::length(code_line_nb))){
         tempo.cat <- base::paste0("INTERNAL ERROR 2 IN .functions_detect() INSIDE ", function_name, " OF THE ", package_name, " PACKAGE\nLENGTHS SHOULD BE IDENTICAL\nfun_name_wo_op: ", base::length(fun_name_wo_op), "\nfun_name_pos_wo_op: ", base::length(fun_name_pos_wo_op), "\ncode_line_nb: ", base::length(code_line_nb))
         base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
+    }else if(base::any(base::is.na(code_line_nb))){
+        tempo.cat <- base::paste0("INTERNAL ERROR 3 IN .functions_detect() INSIDE ", function_name, " OF THE ", package_name, " PACKAGE\ncode_line_nb SHOULD NOT CONTAIN NA.\ncode_line_nb:\n", base::paste(code_line_nb, collapse = "\n"))
+        base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
     }else{
         # with that, now the code line of code is indicated in as compartment names
         names(fun_name_wo_op) <- paste0("c", code_line_nb)
         names(fun_name_pos_wo_op) <- paste0("c", code_line_nb)
     }
     # end removal of empty string
-    test.log <- mapply(FUN = function(x, y){length(x) != length(y)}, x = fun_name_wo_op, y = fun_name_pos_wo_op)
+    test.log <- mapply(FUN = function(x, y){length(x) != length(y)}, x = fun_name_wo_op, y = fun_name_pos_wo_op, SIMPLIFY = TRUE)
     if(base::any(test.log, na.rm = TRUE)){
-        tempo.cat <- base::paste0("INTERNAL ERROR 3 IN .functions_detect() INSIDE ", function_name, " OF THE ", package_name, " PACKAGE\nLENGTHS SHOULD BE IDENTICAL IN COMPARTMENTS ", paste(which(test.log), collapse = ", "), " OF fun_name_wo_op AND fun_name_pos_wo_op")
+        tempo.cat <- base::paste0("INTERNAL ERROR 4 IN .functions_detect() INSIDE ", function_name, " OF THE ", package_name, " PACKAGE\nLENGTHS SHOULD BE IDENTICAL IN COMPARTMENTS ", paste(which(test.log), collapse = ", "), " OF fun_name_wo_op AND fun_name_pos_wo_op")
         base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
     }
     # fun_name_wo_op_uni <- base::unlist(base::unique(fun_name_wo_op)) # in case
@@ -899,7 +903,7 @@
     }
     res <- list.fun.pos
     for(i1 in 1:base::length(basic_ini)){
-        res[[i1]] <- mapply(FUN = function(x , y){z <- substr(x = x, start = 1, stop = y - 1)}, x = basic_ini[i1], y = list.fun.pos[[i1]], USE.NAMES = FALSE)
+        res[[i1]] <- mapply(FUN = function(x , y){z <- substr(x = x, start = 1, stop = y - 1)}, x = basic_ini[i1], y = list.fun.pos[[i1]], , SIMPLIFY = TRUE, USE.NAMES = FALSE)
     }
     # res <- base::strsplit(x = basic_ini, split = pattern2, perl = TRUE) # in res, all the strings should finish by ::
     # tempo.log <- ! base::grepl(x = basic_ini, pattern = pattern3, perl = TRUE) # strings of basic_ini that does not finish by the function name
@@ -920,9 +924,9 @@
         base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
     }
     if(base::any(base::unlist(colon_not_here))){
-        col1 <- base::as.vector(base::unlist(base::mapply(FUN = function(x, y){base::rep(y, base::sum(x))}, x = colon_not_here, y = line.nb)))
-        col2 <- base::as.vector(base::unlist(base::mapply(FUN = function(x, y){y[x]}, x = colon_not_here, y = list.fun)))
-        col3 <- base::as.vector(base::unlist(base::mapply(FUN = function(x, y){y[x]}, x = colon_not_here, y = res)))
+        col1 <- base::as.vector(base::unlist(base::mapply(FUN = function(x, y){base::rep(y, base::sum(x))}, x = colon_not_here, y = line.nb, SIMPLIFY = TRUE)))
+        col2 <- base::as.vector(base::unlist(base::mapply(FUN = function(x, y){y[x]}, x = colon_not_here, y = list.fun, SIMPLIFY = TRUE)))
+        col3 <- base::as.vector(base::unlist(base::mapply(FUN = function(x, y){y[x]}, x = colon_not_here, y = res, SIMPLIFY = TRUE)))
         if( ! (base::length(col1) == base::length(col2) & base::length(col1) == base::length(col3) & base::length(col2) == base::length(col3))){
             tempo.cat <- base::paste0("INTERNAL ERROR 4 IN ", function_name, " OF THE ", package_name, " PACKAGE\nLENGTHS OF col1 (", base::length(col1), "), col2 (", base::length(col2), "), AND col3 (", base::length(col3), "), SHOULD BE EQUAL\n")
             base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
@@ -1068,7 +1072,7 @@
             # Otherwise, the first value without names must take the first arg name not already used, the second value without names must take the second, etc., then finish by the none used arg names with their default values
         missing_arg_log <- arg_full_names %in% missing_args_names
         if(base::any(three_dots_log, na.rm = TRUE) & base::all( ! arg_full_symbol_type, na.rm =TRUE)){ # ...present but no args with mandatory value to set 
-            missing_args <-  base::unlist(base::mapply(FUN = function(x, y){base::paste0(x, " = ", if(base::is.null(y)){"NULL"}else{y})}, x = arg_full_names[missing_arg_log], y = arg_full[missing_arg_log])) # missing arg values with names
+            missing_args <-  base::unlist(base::mapply(FUN = function(x, y){base::paste0(x, " = ", if(base::is.null(y)){"NULL"}else{y})}, x = arg_full_names[missing_arg_log], y = arg_full[missing_arg_log], SIMPLIFY = TRUE)) # missing arg values with names
             good_args <- base::c(
                 tempo_split[ ! tempo_split %in% good_args], # arg values without names
                 good_args, # obs arg values with names

@@ -173,8 +173,8 @@ get_message <- function(
     ######## end management of NULL arguments
     ######## management of "" in arguments of mode character
     tempo.arg <-base::c(
-        "data", 
-        "text"
+        "data"
+        # "text" # inactivated because can be ""
     )
     tempo.log <- ! base::sapply(base::lapply(tempo.arg, FUN = get, env = base::sys.nframe(), inherit = FALSE), FUN = function(x){
         if(base::is.null(x)){

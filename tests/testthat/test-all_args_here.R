@@ -1,6 +1,16 @@
 test_that("all_args_here()", {
     source("https://raw.githubusercontent.com/safer-r/saferDev/main/dev/other/test2.R")
-    expected3 <- read.table("https://raw.githubusercontent.com/safer-r/saferDev/main/dev/other/all_args_here_on_all_args_here_res.tsv", sep = "\t", header = TRUE)
+    # expected3 <- read.table("https://raw.githubusercontent.com/safer-r/saferDev/main/dev/other/all_args_here_on_all_args_here_res.tsv", sep = "\t", header = TRUE) # too complicate to get the same
+    FUN1 <- function(x, y){
+        code_for_col <- base::as.vector(x = base::unlist(x = base::mapply(FUN = function(x, y){base::rep(x = y, base::length(x = x))}, x = x, y = y, MoreArgs = NULL, SIMPLIFY = TRUE, USE.NAMES = TRUE), recursive = TRUE, use.names = TRUE), mode = "any")
+        code_for_col2 <- base::as.vector(x = base::unlist(x = base::mapply(FUN = function(x, y){base::rep(x = y, base::length(x = x))}, x = x, y = y)))
+        middle_bracket <- base::do.call(what = base::c, args = code_for_col)
+        middle_bracket2 <- base::do.call(what = base::c, args = code_for_col, quote = FALSE, envir = base::parent.frame())
+    }
+
+    FUN2 <- function(x, y){
+        middle_bracket2 <- base::do.call(what = base::c, args = code_for_col, quote = FALSE, envir = base::parent.frame())
+    }
 
   # Simple examples
     result1 <- saferDev::get_message("all_args_here(x = test2)", kind = "error", print.no = TRUE, text = NULL)
@@ -27,20 +37,22 @@ test_that("all_args_here()", {
         export = TRUE, # export the data frame into a .tsv file?
         path_out = ".", # pathway of the folder where to export the data frame
         df_name = "a.tsv", # name of the exported data frame file
+        overwrite = TRUE, # Overwrite potential df_name file already existing in path_out?
+        lib_path = NULL, # absolute pathways of the directories containing the required packages if not in the default directories
+        safer_check = FALSE # perform some "safer" checks? Warning : always set this argument to FALSE if all_args_here() is used inside another safer function.
+    ))
+
+    result3 <- all_args_here(
+        x = all_args_here, # R function
+        export = FALSE, # export the data frame into a .tsv file?
+        path_out = ".", # pathway of the folder where to export the data frame
+        df_name = "a.tsv", # name of the exported data frame file
         overwrite = FALSE, # Overwrite potential df_name file already existing in path_out?
         lib_path = NULL, # absolute pathways of the directories containing the required packages if not in the default directories
         safer_check = FALSE # perform some "safer" checks? Warning : always set this argument to FALSE if all_args_here() is used inside another safer function.
     ))
 
-    all_args_here(
-        x = all_args_here, # R function
-        export = TRUE, # export the data frame into a .tsv file?
-        path_out = ".", # pathway of the folder where to export the data frame
-        df_name = "a.tsv", # name of the exported data frame file
-        overwrite = TRUE, # Overwrite potential df_name file already existing in path_out?
-        lib_path = NULL, # absolute pathways of the directories containing the required packages if not in the default directories
-        safer_check = FALSE # perform some "safer" checks? Warning : always set this argument to FALSE if all_args_here() is used inside another safer function.
-    )
+
     result3 <- read.table("./a.tsv", sep = "\t", header = TRUE)
     testthat::expect_equal(result3, expected3)
 })
