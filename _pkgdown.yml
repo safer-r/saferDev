@@ -10,11 +10,16 @@ template:
 authors:
     Yushi Han:
         href: https://github.com/yushiHn
+    Haiding Wang:
+        href: https://github.com/Tintin2710
     Gaël Millot:
-        href: https://gitlab.pasteur.fr/gmillot
+        href: https://github.com/gael-millot
     
 
 reference:
+- title: "all_args_here"
+  contents: 
+  - all_args_here
 - title: "arg_check"
   contents: 
   - arg_check
