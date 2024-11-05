@@ -27,6 +27,7 @@
 <li class="nav-item dropdown">
   <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-articles">Articles</a>
   <div class="dropdown-menu" aria-labelledby="dropdown-articles">
+    <a class="dropdown-item" href="../articles/all_args_here.html">all_args_here</a>
     <a class="dropdown-item" href="../articles/arg_check.html">arg_check</a>
     <a class="dropdown-item" href="../articles/arg_test.html">arg_test</a>
     <a class="dropdown-item" href="../articles/colons_check.html">colons_check</a>
@@ -66,15 +67,16 @@
 <span>  mode <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  length <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  prop <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  double.as.integer.allowed <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  double_as_integer_allowed <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  options <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  all.options.in.data <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  na.contain <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  neg.values <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  inf.values <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  all_options_in_data <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  na_contain <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  neg_values <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  inf_values <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  print <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  data.name <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  fun.name <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  data_name <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  fun_name <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  pack_name <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  safer_check <span class="op">=</span> <span class="cn">TRUE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -105,40 +107,44 @@
 <dd><p>Single logical value. Are the numeric values between 0 and 1 (proportion)? If TRUE, can be used alone, without considering class, etc.</p></dd>
 
 
-<dt>double.as.integer.allowed</dt>
-<dd><p>Single logical value. If TRUE, no error is reported in the cheking message if argument is set to typeof == "integer" or class == "integer", while the reality is typeof == "double" or class == "numeric" but the numbers strictly have zero as modulo (remainder of a division). This means that i &lt;- 1, which is typeof(i) -&gt; "double" is considered as integer with double.as.integer.allowed = TRUE. WARNING: data mod 1 == 0L but not isTRUE(all.equal(data mod 1, 0)) is used here because the argument checks for integers stored as double (does not check for decimal numbers that are approximate integers).</p></dd>
+<dt>double_as_integer_allowed</dt>
+<dd><p>Single logical value. If TRUE, no error is reported in the cheking message if argument is set to typeof == "integer" or class == "integer", while the reality is typeof == "double" or class == "numeric" but the numbers strictly have zero as modulo (remainder of a division). This means that i &lt;- 1, which is typeof(i) -&gt; "double" is considered as integer with double_as_integer_allowed = TRUE. WARNING: data mod 1 == 0L but not isTRUE(all.equal(data mod 1, 0)) is used here because the argument checks for integers stored as double (does not check for decimal numbers that are approximate integers).</p></dd>
 
 
 <dt>options</dt>
 <dd><p>Vector of character strings or integers indicating all the possible option values for the data argument, or NULL. Numbers of type "double" are accepted if they have a 0 modulo.</p></dd>
 
 
-<dt>all.options.in.data</dt>
+<dt>all_options_in_data</dt>
 <dd><p>Single logical value. If TRUE, all of the options must be present at least once in the data argument, and nothing else. If FALSE, some or all of the options must be present in the data argument, and nothing else. Ignored if options is NULL.</p></dd>
 
 
-<dt>na.contain</dt>
+<dt>na_contain</dt>
 <dd><p>Single logical value. Can the data argument contain NA?</p></dd>
 
 
-<dt>neg.values</dt>
-<dd><p>Single logical value. Are negative numeric values authorized? Warning: the default setting is TRUE, meaning that, in that case, no check is performed for the presence of negative values. The neg.values argument is activated only when set to FALSE. In addition, (1) neg.values = FALSE can only be used when class, typeof or mode arguments are not NULL, otherwise return an error message, (2) the presence of negative values is not checked with neg.values = FALSE if the tested object is a factor and the following checking message is returned "OBJECT MUST BE MADE OF NON NEGATIVE VALUES BUT IS A FACTOR".</p></dd>
+<dt>neg_values</dt>
+<dd><p>Single logical value. Are negative numeric values authorized? Warning: the default setting is TRUE, meaning that, in that case, no check is performed for the presence of negative values. The neg_values argument is activated only when set to FALSE. In addition, (1) neg_values = FALSE can only be used when class, typeof or mode arguments are not NULL, otherwise return an error message, (2) the presence of negative values is not checked with neg_values = FALSE if the tested object is a factor and the following checking message is returned "OBJECT MUST BE MADE OF NON NEGATIVE VALUES BUT IS A FACTOR".</p></dd>
 
 
-<dt>inf.values</dt>
-<dd><p>Single logical value. Are infinite numeric values authorized (Inf or -Inf)? Identical remarks as for the neg.values argument.</p></dd>
+<dt>inf_values</dt>
+<dd><p>Single logical value. Are infinite numeric values authorized (Inf or -Inf)? Identical remarks as for the neg_values argument.</p></dd>
 
 
 <dt>print</dt>
 <dd><p>Single logical value. Print the message if $problem is TRUE? Warning: set by default to FALSE, which facilitates the control of the checking message output when using arg_check() inside functions. See the example section.</p></dd>
 
 
-<dt>data.name</dt>
+<dt>data_name</dt>
 <dd><p>Single character string indicating the name of the object to test. If NULL, use what is assigned to the data argument for the returned message.</p></dd>
 
 
-<dt>fun.name</dt>
-<dd><p>Single character string indicating the name of the function checked (i.e., when arg_check() is used to check the arguments of this function). If non-null, the value of fun.name will be added into the message returned by arg_check().</p></dd>
+<dt>fun_name</dt>
+<dd><p>Single character string indicating the name of the function checked (i.e., when arg_check() is used to check the arguments of this function). If non-null, the value of fun_name will be added into the message returned by arg_check().</p></dd>
+
+
+<dt>pack_name</dt>
+<dd><p>Single character string indicating the name of the package of fun_name. If non-null, the value of pack_name will be added into the message returned by arg_check().</p></dd>
 
 
 <dt>safer_check</dt>
@@ -158,7 +164,7 @@
 <p>- §text: message indicating the details of the problem, or the absence of problem.</p>
 
 
-<p>- §object.name: value of the data.name argument (i.e., name of the checked object if provided, NULL otherwise).</p>
+<p>- §object.name: value of the data_name argument (i.e., name of the checked object if provided, NULL otherwise).</p>
     </div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
@@ -191,7 +197,7 @@
 
 
     <footer><div class="pkgdown-footer-left">
-  <p>Developed by Haiding Wang, Gael Millot.</p>
+  <p>Developed by <a href="https://github.com/Tintin2710" class="external-link">Haiding Wang</a>, Gael Millot.</p>
 </div>
 
 <div class="pkgdown-footer-right">

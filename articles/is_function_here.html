@@ -51,6 +51,7 @@
 <li class="active nav-item dropdown">
   <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-articles">Articles</a>
   <div class="dropdown-menu" aria-labelledby="dropdown-articles">
+    <a class="dropdown-item" href="../articles/all_args_here.html">all_args_here</a>
     <a class="dropdown-item" href="../articles/arg_check.html">arg_check</a>
     <a class="dropdown-item" href="../articles/arg_test.html">arg_test</a>
     <a class="dropdown-item" href="../articles/colons_check.html">colons_check</a>
@@ -105,7 +106,7 @@
 </h3>
 <div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a>f <span class="co"># Character vector of function name</span></span>
 <span id="cb3-2"><a href="#cb3-2" tabindex="-1"></a><span class="sc">&gt;</span> [<span class="dv">1</span>] <span class="st">"ggplot2::geom_point"</span></span>
-<span id="cb3-3"><a href="#cb3-3" tabindex="-1"></a>path <span class="co"># character vector specifying the absolute pathways of the directories, this lib.path will return an error</span></span>
+<span id="cb3-3"><a href="#cb3-3" tabindex="-1"></a>path <span class="co"># character vector specifying the absolute pathways of the directories, this lib_path will return an error</span></span>
 <span id="cb3-4"><a href="#cb3-4" tabindex="-1"></a><span class="sc">&gt;</span> [<span class="dv">1</span>] <span class="st">"blablabla"</span></span></code></pre></div>
 <p><br></p>
 </div>
@@ -117,11 +118,11 @@
 <p><br></p>
 </div>
 <div class="section level3">
-<h3 id="argument-lib-path">Argument lib.path<a class="anchor" aria-label="anchor" href="#argument-lib-path"></a>
+<h3 id="argument-lib_path">Argument lib_path<a class="anchor" aria-label="anchor" href="#argument-lib_path"></a>
 </h3>
 <div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a><span class="fu">is_function_here</span>(</span>
 <span id="cb5-2"><a href="#cb5-2" tabindex="-1"></a>    <span class="at">fun =</span> f,</span>
-<span id="cb5-3"><a href="#cb5-3" tabindex="-1"></a>    <span class="at">lib.path =</span> <span class="st">"."</span></span>
+<span id="cb5-3"><a href="#cb5-3" tabindex="-1"></a>    <span class="at">lib_path =</span> <span class="st">"."</span></span>
 <span id="cb5-4"><a href="#cb5-4" tabindex="-1"></a>) <span class="co"># check if the function is present in the package</span></span>
 <span id="cb5-5"><a href="#cb5-5" tabindex="-1"></a><span class="sc">&gt;</span> Error<span class="sc">:</span> </span>
 <span id="cb5-6"><a href="#cb5-6" tabindex="-1"></a><span class="er">&gt;</span> </span>
@@ -157,7 +158,7 @@
 </h3>
 <div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a><span class="fu">is_function_here</span>(</span>
 <span id="cb7-2"><a href="#cb7-2" tabindex="-1"></a>    <span class="at">fun =</span> f,</span>
-<span id="cb7-3"><a href="#cb7-3" tabindex="-1"></a>    <span class="at">lib.path =</span> path,</span>
+<span id="cb7-3"><a href="#cb7-3" tabindex="-1"></a>    <span class="at">lib_path =</span> path,</span>
 <span id="cb7-4"><a href="#cb7-4" tabindex="-1"></a>    <span class="at">safer_check =</span> <span class="cn">TRUE</span></span>
 <span id="cb7-5"><a href="#cb7-5" tabindex="-1"></a>) <span class="co"># check if the function is present in the package, returns an error because the path doesn't exist</span></span>
 <span id="cb7-6"><a href="#cb7-6" tabindex="-1"></a><span class="sc">&gt;</span> Error<span class="sc">:</span> </span>
@@ -165,7 +166,7 @@
 <span id="cb7-8"><a href="#cb7-8" tabindex="-1"></a><span class="er">&gt;</span> <span class="er">================</span></span>
 <span id="cb7-9"><a href="#cb7-9" tabindex="-1"></a><span class="er">&gt;</span> </span>
 <span id="cb7-10"><a href="#cb7-10" tabindex="-1"></a><span class="er">&gt;</span> ERROR IN <span class="fu">is_function_here</span>() OF THE saferDev PACKAGE</span>
-<span id="cb7-11"><a href="#cb7-11" tabindex="-1"></a><span class="sc">&gt;</span> DIRECTORY PATH INDICATED IN THE lib.path ARGUMENT DOES NOT EXISTS<span class="sc">:</span></span>
+<span id="cb7-11"><a href="#cb7-11" tabindex="-1"></a><span class="sc">&gt;</span> DIRECTORY PATH INDICATED IN THE lib_path ARGUMENT DOES NOT EXISTS<span class="sc">:</span></span>
 <span id="cb7-12"><a href="#cb7-12" tabindex="-1"></a><span class="er">&gt;</span> blablabla</span>
 <span id="cb7-13"><a href="#cb7-13" tabindex="-1"></a><span class="sc">&gt;</span> </span>
 <span id="cb7-14"><a href="#cb7-14" tabindex="-1"></a><span class="er">&gt;</span> <span class="er">================</span></span></code></pre></div>
@@ -178,7 +179,7 @@
 
 
     <footer><div class="pkgdown-footer-left">
-  <p>Developed by Haiding Wang, Gael Millot.</p>
+  <p>Developed by <a href="https://github.com/Tintin2710" class="external-link">Haiding Wang</a>, Gael Millot.</p>
 </div>
 
 <div class="pkgdown-footer-right">

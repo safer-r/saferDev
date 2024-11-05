@@ -4,6 +4,9 @@
     <loc>/404.html</loc>
   </url>
   <url>
+    <loc>/articles/all_args_here.html</loc>
+  </url>
+  <url>
     <loc>/articles/arg_check.html</loc>
   </url>
   <url>
@@ -41,6 +44,9 @@
   </url>
   <url>
     <loc>/index.html</loc>
+  </url>
+  <url>
+    <loc>/reference/all_args_here.html</loc>
   </url>
   <url>
     <loc>/reference/arg_check.html</loc>

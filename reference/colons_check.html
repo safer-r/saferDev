@@ -27,6 +27,7 @@
 <li class="nav-item dropdown">
   <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-articles">Articles</a>
   <div class="dropdown-menu" aria-labelledby="dropdown-articles">
+    <a class="dropdown-item" href="../articles/all_args_here.html">all_args_here</a>
     <a class="dropdown-item" href="../articles/arg_check.html">arg_check</a>
     <a class="dropdown-item" href="../articles/arg_test.html">arg_test</a>
     <a class="dropdown-item" href="../articles/colons_check.html">colons_check</a>
@@ -76,13 +77,26 @@
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
     
 
-<p>A message indicating the missing :: or :::, or a message saying that everything seems fine.</p>
+<p>A table-like message indicating the missing :: or ::: or a message saying that everything seems fine.
+Table-like: column 1, the line number in the function code (starting at the "&lt;- function" line, i.e., without counting the #' header lines); column 2,  the function name; column 3, the code preceeding the function name
+With missing :: or :::, the message also indicates if internal functions are created inside the checked function code, since these functions cannot have :: or :::.</p>
     </div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
-    <p>- More precisely, colons_check() verifies that all the strings before an opening bracket "(" are preceeded by "::". Of note, ":::" are also detected but considered as "::".</p>
-<p>- The regex used to detect a function name is: "[a-zA-Z.]1[a-zA-Z0-9._]*\(".</p> 
-<p>- The following R operators using bracket are not considered: "function", "if", "for", "while" and "repeat".</p>
+    <p>- Use the result to modify the code of the function like this: &lt;PACKAGE&gt;::&lt;FUNCTION&gt; (OR &lt;PACKAGE&gt;:::&lt;FUNCTION&gt; for function names starting by a dot)</p>
+<p>- More precisely, colons_check() verifies that all the strings before an opening bracket "(" are preceeded by "::"</p>
+<p>- ":::" are not checked per se, because incorrect writting, like saferDev::.colons_check_message() returns an error, and because base:::sum() is as ok as base::sum(). In the same manner, more than three colons are not checked because it returns an error.</p>
+<p>- Warning: the function cannot check function names written without brackets, like in the FUN argument of some functions, e.g., sapply(1:3, FUN = as.character).</p>
+<p>- The perl regex used to detect a function name is: "[a-zA-Z.]1[a-zA-Z0-9._]*\s*\(".</p>
+<p>- Function names preceeded by $ and any space are not considered (pattern "\$ *[a-zA-Z.]1[a-zA-Z0-9._]* *\(")</p> 
+<p>- The following R functions using bracket are not considered: "function", "if", "for", "while" and "repeat".</p>
+<p>- Most of the time, colons_check() does not check inside comments, but some unexpected writting could dupe colons_check().</p>
+<p>- The returned line numbers are indicative, depending on which source is checked. For instance, saferDev::report (compiled) has not the same line numbers as its source file (https://github.com/safer-r/saferDev/blob/main/R/report.R). Notably, compiled functions do not have comments anymore, compared to the same source function sourced into the working environment. In addition, the counting starts at the "&lt;- function" line, i.e., without counting the #' header lines potentially present in source files.</p>
+<p>- Of note, during package creation, the devtools::check() command tells which functions where wrongly attributed to package. Example: 
+    checking dependencies in R code ... WARNING
+      '::' or ':::' import not declared from: 'sbase'
+      Missing or unexported objects:
+        'base::dev.off' 'base::graphics.off' 'base::hcl' 'base::par' 'base::read.table' 'saferGG::report'</p>
     </div>
     <div class="section level2">
     <h2 id="author">Author<a class="anchor" aria-label="anchor" href="#author"></a></h2>
@@ -112,14 +126,25 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span> 46	mapply		in_other_fun &lt;- </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 49	mapply		in_other_fun_names_pos &lt;- </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> INSIDE colons_check(), SOME :: OR ::: ARE MISSING AT OTHER FUNCTION POSITIONS:</span>
+<span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/source.html" class="external-link">source</a></span><span class="op">(</span><span class="st">"https://raw.githubusercontent.com/safer-r/saferDev/main/dev/other/test.R"</span><span class="op">)</span> ; <span class="fu">colons_check</span><span class="op">(</span><span class="va">test</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> INSIDE test(), SOME :: OR ::: ARE MISSING AT BASIC FUNCTION POSITIONS:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> LINE	FUN		STRING_BEFORE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 15	.functions_detect		out &lt;- </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 70	.colons_check_message		tempo &lt;- </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 83	.colons_check_message		tempo &lt;- </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3	gregexpr		matches &lt;- </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6	regmatches		matched_strings &lt;- </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8	sum		</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 15	sub		result &lt;- </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 16	range		</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 19	return		</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-in"><span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> INSIDE test(), SOME :: OR ::: ARE MISSING AT OTHER FUNCTION POSITIONS:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> LINE	FUN		STRING_BEFORE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 13	roc1		base::length(</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 17	roc4		tempo.cat &lt;- base::paste0("IAGE\nLENGTHS OF roc00() (", base::ks.test(</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
@@ -127,7 +152,7 @@
 
 
     <footer><div class="pkgdown-footer-left">
-  <p>Developed by Haiding Wang, Gael Millot.</p>
+  <p>Developed by <a href="https://github.com/Tintin2710" class="external-link">Haiding Wang</a>, Gael Millot.</p>
 </div>
 
 <div class="pkgdown-footer-right">

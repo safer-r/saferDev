@@ -27,6 +27,7 @@
 <li class="nav-item dropdown">
   <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-articles">Articles</a>
   <div class="dropdown-menu" aria-labelledby="dropdown-articles">
+    <a class="dropdown-item" href="../articles/all_args_here.html">all_args_here</a>
     <a class="dropdown-item" href="../articles/arg_check.html">arg_check</a>
     <a class="dropdown-item" href="../articles/arg_test.html">arg_test</a>
     <a class="dropdown-item" href="../articles/colons_check.html">colons_check</a>
@@ -70,7 +71,7 @@
 <span>  plot.fun <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  export <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  res.path <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  lib.path <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  lib_path <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  safer_check <span class="op">=</span> <span class="cn">TRUE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -117,7 +118,7 @@
 <dd><p>Single character string indicating the absolute pathway of the folder where the txt results and pdfs, containing all the plots, will be saved. Several txt and pdf, one per thread, if parallelization. Ignored if export is FALSE. Must be specified if parall is TRUE or if export is TRUE.</p></dd>
 
 
-<dt>lib.path</dt>
+<dt>lib_path</dt>
 <dd><p>Vector of characters specifying the absolute pathways of the directories containing the required packages if not in the default directories. Ignored if NULL.</p></dd>
 
 
@@ -360,7 +361,7 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> test JOB END</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> TIME: 2024-10-10 13:07:49.901594</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> TIME: 2024-11-05 15:53:18.537296</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> TOTAL TIME LAPSE: 0S</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
@@ -372,13 +373,13 @@
 <span class="r-in"><span><span class="fu">arg_test</span><span class="op">(</span>fun <span class="op">=</span> <span class="st">"plot"</span>, arg <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"x"</span>, <span class="st">"y"</span><span class="op">)</span>, val <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">10</span>, <span class="fl">12</span><span class="op">:</span><span class="fl">13</span>, <span class="cn">NA</span>, <span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">10</span><span class="op">)</span><span class="op">^</span><span class="fl">2</span><span class="op">)</span>, </span></span>
 <span class="r-in"><span>y <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">10</span>, <span class="cn">NA</span>, <span class="cn">NA</span><span class="op">)</span><span class="op">)</span>,  expect.error <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="cn">FALSE</span>, <span class="cn">TRUE</span>, <span class="cn">TRUE</span>, <span class="cn">FALSE</span><span class="op">)</span>, </span></span>
 <span class="r-in"><span>y <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="cn">FALSE</span>, <span class="cn">TRUE</span>, <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span>, parall <span class="op">=</span> <span class="cn">FALSE</span>, thread.nb <span class="op">=</span> <span class="cn">NULL</span>, plot.fun <span class="op">=</span> <span class="cn">TRUE</span>, </span></span>
-<span class="r-in"><span>res.path <span class="op">=</span> <span class="st">"."</span>, lib.path <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></span>
+<span class="r-in"><span>res.path <span class="op">=</span> <span class="st">"."</span>, lib_path <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> test JOB IGNITION</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> TOTAL NUMBER OF TESTS: 12</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> LOOP 10 / 12 | TIME SPENT: 0S | EXPECTED END: 2024-10-10 13:07:50.121447</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> LOOP 10 / 12 | TIME SPENT: 0S | EXPECTED END: 2024-11-05 15:53:18.765286</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> LOOP PROCESS ENDED | LOOP 12 / 12 | TIME SPENT: 0S</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> NO DISCREPANCY BETWEEN EXPECTED AND OBSERVED ERRORS</span>
@@ -390,7 +391,7 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span> arg_test(fun = "plot", arg = c("x", "y"), val = list(x = list(1:10, </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     12:13, NA, (1:10)^2), y = list(1:10, NA, NA)), expect.error = list(x = list(FALSE, </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     TRUE, TRUE, FALSE), y = list(FALSE, TRUE, TRUE)), parall = FALSE, </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     thread.nb = NULL, plot.fun = TRUE, res.path = ".", lib.path = NULL)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     thread.nb = NULL, plot.fun = TRUE, res.path = ".", lib_path = NULL)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $data</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                                       x                    y  kind problem</span>
@@ -481,13 +482,13 @@
 <span class="r-in"><span><span class="fu">arg_test</span><span class="op">(</span>fun <span class="op">=</span> <span class="st">"plot"</span>, arg <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"x"</span>, <span class="st">"y"</span><span class="op">)</span>, val <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">10</span>, <span class="fl">12</span><span class="op">:</span><span class="fl">13</span>, <span class="cn">NA</span>, </span></span>
 <span class="r-in"><span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">10</span><span class="op">)</span><span class="op">^</span><span class="fl">2</span><span class="op">)</span>, y <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">10</span>, <span class="cn">NA</span>, <span class="cn">NA</span><span class="op">)</span><span class="op">)</span>, parall <span class="op">=</span> <span class="cn">FALSE</span>, thread.nb <span class="op">=</span> <span class="fl">4</span>, </span></span>
 <span class="r-in"><span>plot.fun <span class="op">=</span> <span class="cn">TRUE</span>, res.path <span class="op">=</span> <span class="st">"."</span>, </span></span>
-<span class="r-in"><span>lib.path <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></span>
+<span class="r-in"><span>lib_path <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> test JOB IGNITION</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> TOTAL NUMBER OF TESTS: 12</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> LOOP 10 / 12 | TIME SPENT: 0S | EXPECTED END: 2024-10-10 13:07:50.354831</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> LOOP 10 / 12 | TIME SPENT: 0S | EXPECTED END: 2024-11-05 15:53:19.003839</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> LOOP PROCESS ENDED | LOOP 12 / 12 | TIME SPENT: 0S</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $fun</span>
@@ -496,7 +497,7 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span> $ini</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> arg_test(fun = "plot", arg = c("x", "y"), val = list(x = list(1:10, </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     12:13, NA, (1:10)^2), y = list(1:10, NA, NA)), parall = FALSE, </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     thread.nb = 4, plot.fun = TRUE, res.path = ".", lib.path = NULL)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     thread.nb = 4, plot.fun = TRUE, res.path = ".", lib_path = NULL)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $data</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                                       x                    y  kind problem</span>
@@ -581,13 +582,13 @@
 <span class="r-in"><span><span class="co"># stringsAsFactors = TRUE) ; </span></span></span>
 <span class="r-in"><span><span class="co"># arg_test(fun = "ggbox", arg = c("data1", "y", "categ"), val = list(L1 = list(obs1), </span></span></span>
 <span class="r-in"><span><span class="co"># L2 = "Time", L3 = "Group1"), parall = FALSE, thread.nb = NULL, plot.fun = TRUE, </span></span></span>
-<span class="r-in"><span><span class="co"># res.path = "C:\Users\yhan\Desktop\", lib.path = "C:\Program Files\R\R-4.3.1\library\")</span></span></span>
+<span class="r-in"><span><span class="co"># res.path = "C:\Users\yhan\Desktop\", lib_path = "C:\Program Files\R\R-4.3.1\library\")</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># library(ggplot2) ; arg_test(fun = "geom_histogram", arg = c("data", "mapping"), </span></span></span>
 <span class="r-in"><span><span class="co"># val = list(x = list(data.frame(X = "a", stringsAsFactors = TRUE)), </span></span></span>
 <span class="r-in"><span><span class="co"># y = list(ggplot2::aes(x = X))), parall = FALSE, thread.nb = NULL, </span></span></span>
 <span class="r-in"><span><span class="co"># plot.fun = TRUE, res.path = "C:\Users\yhan\Desktop\", </span></span></span>
-<span class="r-in"><span><span class="co"># lib.path = "C:\Program Files\R\R-4.3.1\library\") </span></span></span>
+<span class="r-in"><span><span class="co"># lib_path = "C:\Program Files\R\R-4.3.1\library\") </span></span></span>
 <span class="r-in"><span><span class="co"># BEWARE: ggplot2::geom_histogram does not work</span></span></span>
 </code></pre></div>
     </div>
@@ -596,7 +597,7 @@
 
 
     <footer><div class="pkgdown-footer-left">
-  <p>Developed by Haiding Wang, Gael Millot.</p>
+  <p>Developed by <a href="https://github.com/Tintin2710" class="external-link">Haiding Wang</a>, Gael Millot.</p>
 </div>
 
 <div class="pkgdown-footer-right">

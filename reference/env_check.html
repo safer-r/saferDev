@@ -27,6 +27,7 @@
 <li class="nav-item dropdown">
   <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-articles">Articles</a>
   <div class="dropdown-menu" aria-labelledby="dropdown-articles">
+    <a class="dropdown-item" href="../articles/all_args_here.html">all_args_here</a>
     <a class="dropdown-item" href="../articles/arg_check.html">arg_check</a>
     <a class="dropdown-item" href="../articles/arg_test.html">arg_test</a>
     <a class="dropdown-item" href="../articles/colons_check.html">colons_check</a>
@@ -95,69 +96,246 @@
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># Example in the working environment</span></span></span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="va">mean</span> <span class="op">&lt;-</span> <span class="fl">1</span> </span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># Examples in the working environment</span></span></span>
 <span class="r-in"><span><span class="co"># creation of the object mean with value 1 in the .GlobalEnv environment, </span></span></span>
-<span class="r-in"><span><span class="co"># knowing that the mean() function also exists in the environment base, above .GlobalEnv.</span></span></span>
-<span class="r-in"><span><span class="va">t.test</span> <span class="op">&lt;-</span> <span class="fl">1</span> </span></span>
+<span class="r-in"><span><span class="co"># knowing that the mean() function also exists in the environment base, above .GlobalEnv:</span></span></span>
+<span class="r-in"><span><span class="va">mean</span> <span class="op">&lt;-</span> <span class="fl">1</span> </span></span>
 <span class="r-in"><span><span class="co"># creation of the object t.test with value 1 in the .GlobalEnv environment, </span></span></span>
-<span class="r-in"><span><span class="co"># knowing that the t.test() function also exists in the environment stats, above .GlobalEnv.</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/search.html" class="external-link">search</a></span><span class="op">(</span><span class="op">)</span> </span></span>
+<span class="r-in"><span><span class="co"># knowing that the t.test() function also exists in the environment stats, above .GlobalEnv:</span></span></span>
+<span class="r-in"><span><span class="va">t.test</span> <span class="op">&lt;-</span> <span class="fl">1</span> </span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/search.html" class="external-link">search</a></span><span class="op">(</span><span class="op">)</span> <span class="co"># current R scope (order of the successive R environments).</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  [1] ".GlobalEnv"        "package:saferDev"  "package:stats"    </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  [4] "package:graphics"  "package:grDevices" "package:utils"    </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  [7] "package:datasets"  "package:methods"   "Autoloads"        </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [10] "package:base"     </span>
-<span class="r-in"><span><span class="co"># current R scope (order of the successive R environments).</span></span></span>
-<span class="r-in"><span><span class="fu">utils</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/utils/apropos.html" class="external-link">find</a></span><span class="op">(</span><span class="st">"mean"</span><span class="op">)</span> </span></span>
+<span class="r-in"><span><span class="fu">utils</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/utils/apropos.html" class="external-link">find</a></span><span class="op">(</span><span class="st">"mean"</span><span class="op">)</span> <span class="co"># where the objects with the name "mean" are present.</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "package:base"</span>
-<span class="r-in"><span><span class="co"># where the objects with the name "mean" are present.</span></span></span>
-<span class="r-in"><span><span class="fu">utils</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/utils/apropos.html" class="external-link">find</a></span><span class="op">(</span><span class="st">"t.test"</span><span class="op">)</span> </span></span>
+<span class="r-in"><span><span class="fu">utils</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/utils/apropos.html" class="external-link">find</a></span><span class="op">(</span><span class="st">"t.test"</span><span class="op">)</span> <span class="co"># where the objects with the name "mean" are present.</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "package:stats"</span>
-<span class="r-in"><span><span class="co"># where the objects with the name "mean" are present.</span></span></span>
-<span class="r-in"><span><span class="va">a</span> <span class="op">&lt;-</span> <span class="fu">env_check</span><span class="op">(</span>pos <span class="op">=</span> <span class="fl">1</span><span class="op">)</span> </span></span>
-<span class="r-in"><span><span class="co"># test if any object name of the global environment are above environments </span></span></span>
-<span class="r-in"><span><span class="co"># (or env_check(), as pos = 1 is the default value).</span></span></span>
-<span class="r-in"><span><span class="va">a</span> <span class="co"># the output string of sec().</span></span></span>
+<span class="r-in"><span><span class="va">a</span> <span class="op">&lt;-</span> <span class="fu">env_check</span><span class="op">(</span>pos <span class="op">=</span> <span class="fl">1</span><span class="op">)</span> <span class="co"># test if any object name of the global environment are above environments </span></span></span>
+<span class="r-in"><span><span class="va">a</span> <span class="co"># output string.</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "SOME VARIABLES OF THE CHECKED ENVIRONMENT ARE ALSO PRESENT IN :\npackage:stats: t.test\npackage:base: mean\n"</span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="va">a</span><span class="op">)</span> <span class="co"># the evaluated output.</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="va">a</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> SOME VARIABLES OF THE CHECKED ENVIRONMENT ARE ALSO PRESENT IN :</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> package:stats: t.test</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> package:base: mean</span>
+<span class="r-in"><span><span class="co"># test if any object of the stats environment (one step above .GlobalEnv) </span></span></span>
+<span class="r-in"><span><span class="co"># are in upper environments of stats. Returns NULL since no object names of stats are in upper environments:</span></span></span>
 <span class="r-in"><span><span class="fu">env_check</span><span class="op">(</span>pos <span class="op">=</span> <span class="fl">2</span><span class="op">)</span> </span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "SOME VARIABLES OF THE CHECKED ENVIRONMENT ARE ALSO PRESENT IN :\neval_with_user_handlers(expr, envir, enclos, user_handlers): enclos envir expr\nwithCallingHandlers(withVisible(eval_with_user_handlers(expr, envir, enclos, user_handlers)), warning = wHandler, error = eHandler, message = mHandler): expr\ndoTryCatch(return(expr), name, parentenv, handler): expr\ntryCatchOne(expr, names, parentenv, handlers[[1]]): expr\ntryCatchList(expr, classes, parentenv, handlers): expr\ntryCatch(expr, error = function(e) {\n    call &lt;- conditionCall(e)\n    if (!is.null(call)) {\n        if (identical(call[[1]], quote(doTryCatch))) \n            call &lt;- sys.call(-4)\n        dcall &lt;- deparse(call, nlines = 1)\n        prefix &lt;- paste(\"Error in\", dcall, \": \")\n        LONG &lt;- 75\n        sm &lt;- strsplit(conditionMessage(e), \"\\n\")[[1]]\n        w &lt;- 14 + nchar(dcall, type = \"w\") + nchar(sm[1], type = \"w\")\n        if (is.na(w)) \n            w &lt;- 14 + nchar(dcall, type = \"b\") + nchar(sm[1], type = \"b\")\n        if (w &gt; LONG) \n            prefix &lt;- paste0(prefix, \"\\n  \")\n    }\n    else prefix &lt;- \"Error : \"\n    msg &lt;- paste0(prefix, conditionMessage(e), \"\\n\")\n    .Internal(seterrmessage(msg[1]))\n    if (!silent &amp;&amp; isTRUE(getOption(\"show.error.messages\"))) {\n        cat(msg, file = outFile)\n        .Internal(printDeferredWarnings())\n    }\n    invisible(structure(msg, class = \"try-error\", condition = e))\n}): expr\ntry(f, silent = TRUE): expr\nevaluate_call(expr, parsed$src[[i]], envir = envir, enclos = enclos, debug = debug, last = i == length(out), use_try = stop_on_error != 2, keep_warning = keep_warning, keep_message = keep_message, log_echo = log_echo, log_warning = log_warning, output_handler = output_handler, include_timing = include_timing): enclos envir expr\nevaluate::evaluate(code, child_env(env), new_device = TRUE, output_handler = output_handler): enclos envir expr\nwithCallingHandlers(data_reference_topic(topic, pkg, examples_env = examples_env, run_dont_run = run_dont_run), error = function(err) {\n    cli::cli_abort(\"Failed to parse Rd in {.file {topic$file_in}}\", parent = err, call = quote(build_reference()))\n}): expr\nwithCallingHandlers(expr, error = function(cnd) {\n    if (i == 0) {\n    }\n    else {\n        message &lt;- c(i = \"In index: {i}.\")\n        if (!is.null(names) &amp;&amp; !is.na(names[[i]]) &amp;&amp; names[[i]] != \"\") {\n            name &lt;- names[[i]]\n            message &lt;- c(message, i = \"With name: {name}.\")\n        }\n        else {\n            name &lt;- NULL\n        }\n        cli::cli_abort(message, location = i, name = name, parent = cnd, call = error_call, class = \"purrr_error_indexed\")\n    }\n}): expr\nwith_indexed_errors(i = i, names = names, error_call = .purrr_error_call, call_with_cleanup(map_impl, environment(), .type, .progress, n, names, i)): expr\nwithCallingHandlers(code, purrr_error_indexed = function(err) {\n    cnd_signal(err$parent)\n}): expr\n"</span>
-<span class="r-in"><span><span class="co"># test if any object of the stats environment (one step above .GlobalEnv) </span></span></span>
-<span class="r-in"><span><span class="co"># are above environments. Returns NULL since no object names of stats are in above environments</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/rm.html" class="external-link">rm</a></span><span class="op">(</span><span class="va">mean</span><span class="op">)</span> ; <span class="fu"><a href="https://rdrr.io/r/base/rm.html" class="external-link">rm</a></span> <span class="op">(</span><span class="va">t.test</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># Example inside a function</span></span></span>
-<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Examples inside a function</span></span></span>
+<span class="r-in"><span><span class="co"># env_check() checks if the object names inside the fun1 function </span></span></span>
+<span class="r-in"><span><span class="co"># exist in the .GlobalEnv environment and above:</span></span></span>
 <span class="r-in"><span><span class="va">fun1</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="op">)</span><span class="op">{</span><span class="va">t.test</span> <span class="op">&lt;-</span> <span class="fl">0</span> ; <span class="va">mean</span> <span class="op">&lt;-</span> <span class="fl">5</span> ; <span class="fu">env_check</span><span class="op">(</span>pos <span class="op">=</span> <span class="fl">1</span><span class="op">)</span><span class="op">}</span> </span></span>
-<span class="r-in"><span><span class="co"># env_check() will check if the object names inside the fun1 function </span></span></span>
-<span class="r-in"><span><span class="co"># exist in the .GlobalEnv environment and above.</span></span></span>
 <span class="r-in"><span><span class="fu">fun1</span><span class="op">(</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "SOME VARIABLES OF THE CHECKED ENVIRONMENT ARE ALSO PRESENT IN :\neval(expr, envir, enclos): mean t.test\npackage:stats: t.test\npackage:base: mean\n"</span>
-<span class="r-in"><span><span class="va">fun2</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="op">)</span><span class="op">{</span><span class="va">t.test</span> <span class="op">&lt;-</span> <span class="fl">0</span> ; <span class="va">mean</span> <span class="op">&lt;-</span> <span class="fl">5</span> ; <span class="fu">env_check</span><span class="op">(</span>pos <span class="op">=</span> <span class="fl">2</span><span class="op">)</span><span class="op">}</span> </span></span>
-<span class="r-in"><span><span class="co"># env_check() will check if the object names inside the fun2 function </span></span></span>
-<span class="r-in"><span><span class="co"># exist in the stats environment and above.</span></span></span>
-<span class="r-in"><span><span class="fu">fun2</span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "SOME VARIABLES OF THE CHECKED ENVIRONMENT ARE ALSO PRESENT IN :\npackage:stats: t.test\npackage:base: mean\n"</span>
-<span class="r-in"><span><span class="va">fun3</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="op">)</span><span class="op">{</span><span class="va">t.test</span> <span class="op">&lt;-</span> <span class="fl">0</span> ; <span class="va">mean</span> <span class="op">&lt;-</span> <span class="fl">5</span> ; <span class="fu">env_check</span><span class="op">(</span>pos <span class="op">=</span> <span class="fl">2</span>, name <span class="op">=</span> <span class="st">"fun3"</span><span class="op">)</span><span class="op">}</span> </span></span>
-<span class="r-in"><span><span class="co"># idem fun2() but with the name of the function fun2 indicated. </span></span></span>
-<span class="r-in"><span><span class="co"># Instead of writting name = "fun3", </span></span></span>
-<span class="r-in"><span><span class="co"># we can also use name = as.character(sys.calls()[[length(sys.calls())]]), </span></span></span>
-<span class="r-in"><span><span class="co"># as sys.calls() gives the function name at top stack of the imbricated functions, </span></span></span>
-<span class="r-in"><span><span class="co"># sys.calls()[[length(sys.calls())]] the name of the just above function. </span></span></span>
-<span class="r-in"><span><span class="co"># This can also been used for the above function: as.character(sys.call(1))</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="fu">fun1</span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> SOME VARIABLES OF THE CHECKED ENVIRONMENT ARE ALSO PRESENT IN :</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> package:stats: t.test</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> package:base: mean</span>
+<span class="r-in"><span><span class="co"># env_check() checks if the object names inside the environment one step above fun2(), </span></span></span>
+<span class="r-in"><span><span class="co"># here .GlobalEnv, exist in the upper environments of .GlobalEnv:</span></span></span>
+<span class="r-in"><span><span class="va">fun2</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="op">)</span><span class="op">{</span><span class="va">sum</span> <span class="op">&lt;-</span> <span class="fl">0</span> ; <span class="fu">env_check</span><span class="op">(</span>pos <span class="op">=</span> <span class="fl">2</span><span class="op">)</span><span class="op">}</span> </span></span>
+<span class="r-in"><span><span class="fu">fun2</span><span class="op">(</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> NULL</span>
+<span class="r-in"><span><span class="co"># Warning: cat(fun2()) does not return NULL, because the environement tested is not anymore .GlobalEnv but inside cat().</span></span></span>
+<span class="r-in"><span><span class="co"># With the name of the function fun3 indicated in the message:</span></span></span>
+<span class="r-in"><span><span class="va">fun3</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="op">)</span><span class="op">{</span><span class="va">t.test</span> <span class="op">&lt;-</span> <span class="fl">0</span> ; <span class="va">mean</span> <span class="op">&lt;-</span> <span class="fl">5</span> ; <span class="fu">env_check</span><span class="op">(</span>pos <span class="op">=</span> <span class="fl">1</span>, name <span class="op">=</span> <span class="st">"fun3"</span><span class="op">)</span><span class="op">}</span></span></span>
 <span class="r-in"><span><span class="fu">fun3</span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "SOME VARIABLES OF fun3 ARE ALSO PRESENT IN :\npackage:stats: t.test\npackage:base: mean\n"</span>
-<span class="r-in"><span><span class="va">test.pos</span> <span class="op">&lt;-</span> <span class="fl">1</span></span></span>
-<span class="r-in"><span><span class="fu">env_check</span><span class="op">(</span>pos <span class="op">=</span> <span class="va">test.pos</span>, </span></span>
-<span class="r-in"><span>name <span class="op">=</span> <span class="kw">if</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sys.parent.html" class="external-link">sys.calls</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span> <span class="op">&gt;=</span> <span class="va">test.pos</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="op">{</span><span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">as.character</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sys.parent.html" class="external-link">sys.calls</a></span><span class="op">(</span><span class="op">)</span><span class="op">[[</span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sys.parent.html" class="external-link">sys.calls</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> <span class="fl">1</span> <span class="op">-</span> <span class="va">test.pos</span><span class="op">]</span><span class="op">]</span><span class="op">)</span><span class="op">}</span></span></span>
-<span class="r-in"><span><span class="kw">else</span><span class="op">{</span><span class="fu"><a href="https://rdrr.io/r/base/search.html" class="external-link">search</a></span><span class="op">(</span><span class="op">)</span><span class="op">[</span> <span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/search.html" class="external-link">search</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span><span class="op">)</span><span class="op">[</span><span class="va">test.pos</span> <span class="op">-</span> <span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sys.parent.html" class="external-link">sys.calls</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span><span class="op">]</span><span class="op">]</span><span class="op">}</span><span class="op">)</span> </span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "SOME VARIABLES OF eval ARE ALSO PRESENT IN :\npackage:stats: t.test\npackage:base: mean\n"</span>
-<span class="r-in"><span><span class="co"># here is a way to have the name of the tested environment according to test.pos value</span></span></span>
+<span class="r-in"><span><span class="co"># Alternative way:</span></span></span>
+<span class="r-in"><span><span class="va">fun4</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="op">)</span><span class="op">{</span><span class="va">t.test</span> <span class="op">&lt;-</span> <span class="fl">0</span> ; <span class="va">mean</span> <span class="op">&lt;-</span> <span class="fl">5</span> ; <span class="fu">env_check</span><span class="op">(</span>pos <span class="op">=</span> <span class="fl">1</span>, name <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">as.character</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sys.parent.html" class="external-link">sys.calls</a></span><span class="op">(</span><span class="op">)</span><span class="op">[[</span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sys.parent.html" class="external-link">sys.calls</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span><span class="op">]</span><span class="op">]</span><span class="op">)</span><span class="op">)</span><span class="op">}</span></span></span>
+<span class="r-in"><span><span class="fu">fun4</span><span class="op">(</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "SOME VARIABLES OF fun4 ARE ALSO PRESENT IN :\npackage:stats: t.test\npackage:base: mean\n"</span>
+<span class="r-in"><span><span class="co"># sys.calls() gives the name of the imbricated functions, </span></span></span>
+<span class="r-in"><span><span class="co"># sys.calls()[[length(sys.calls())]] the name of the function one step above.</span></span></span>
+<span class="r-in"><span><span class="va">fun5</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="op">)</span><span class="op">{</span><span class="va">fun6</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="op">)</span><span class="op">{</span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sys.parent.html" class="external-link">sys.calls</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span><span class="op">}</span> ; <span class="fu">fun6</span><span class="op">(</span><span class="op">)</span><span class="op">}</span></span></span>
+<span class="r-in"><span><span class="fu">fun5</span><span class="op">(</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [[1]]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> pkgdown::build_site_github_pages(new_process = FALSE, install = FALSE)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [[2]]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> build_site(pkg, preview = FALSE, install = install, new_process = new_process, </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     ...)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [[3]]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> build_site_local(pkg = pkg, examples = examples, run_dont_run = run_dont_run, </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     seed = seed, lazy = lazy, override = override, preview = preview, </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     devel = devel)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [[4]]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> build_reference(pkg, lazy = lazy, examples = examples, run_dont_run = run_dont_run, </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     seed = seed, override = override, preview = FALSE, devel = devel)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [[5]]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> unwrap_purrr_error(purrr::map(topics, build_reference_topic, </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     pkg = pkg, lazy = lazy, examples_env = examples_env, run_dont_run = run_dont_run))</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [[6]]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> withCallingHandlers(code, purrr_error_indexed = function(err) {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     cnd_signal(err$parent)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> })</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [[7]]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> purrr::map(topics, build_reference_topic, pkg = pkg, lazy = lazy, </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     examples_env = examples_env, run_dont_run = run_dont_run)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [[8]]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> map_("list", .x, .f, ..., .progress = .progress)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [[9]]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> with_indexed_errors(i = i, names = names, error_call = .purrr_error_call, </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     call_with_cleanup(map_impl, environment(), .type, .progress, </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         n, names, i))</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [[10]]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> withCallingHandlers(expr, error = function(cnd) {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     if (i == 0L) {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     }</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     else {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         message &lt;- c(i = "In index: {i}.")</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         if (!is.null(names) &amp;&amp; !is.na(names[[i]]) &amp;&amp; names[[i]] != </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>             "") {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>             name &lt;- names[[i]]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>             message &lt;- c(message, i = "With name: {name}.")</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         }</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         else {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>             name &lt;- NULL</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         }</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         cli::cli_abort(message, location = i, name = name, parent = cnd, </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>             call = error_call, class = "purrr_error_indexed")</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     }</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> })</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [[11]]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> call_with_cleanup(map_impl, environment(), .type, .progress, </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     n, names, i)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [[12]]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> .f(.x[[i]], ...)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [[13]]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> withCallingHandlers(data_reference_topic(topic, pkg, examples_env = examples_env, </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     run_dont_run = run_dont_run), error = function(err) {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     cli::cli_abort("Failed to parse Rd in {.file {topic$file_in}}", </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         parent = err, call = quote(build_reference()))</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> })</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [[14]]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> data_reference_topic(topic, pkg, examples_env = examples_env, </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     run_dont_run = run_dont_run)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [[15]]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> run_examples(tags$tag_examples[[1]], env = if (is.null(examples_env)) NULL else new.env(parent = examples_env), </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     topic = tools::file_path_sans_ext(topic$file_in), run_dont_run = run_dont_run)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [[16]]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> highlight_examples(code, topic, env = env)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [[17]]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> downlit::evaluate_and_highlight(code, fig_save = fig_save_topic, </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     env = child_env(env), output_handler = evaluate::new_output_handler(value = pkgdown_print))</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [[18]]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> evaluate::evaluate(code, child_env(env), new_device = TRUE, output_handler = output_handler)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [[19]]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> evaluate_call(expr, parsed$src[[i]], envir = envir, enclos = enclos, </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     debug = debug, last = i == length(out), use_try = stop_on_error != </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         2L, keep_warning = keep_warning, keep_message = keep_message, </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     log_echo = log_echo, log_warning = log_warning, output_handler = output_handler, </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     include_timing = include_timing)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [[20]]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> timing_fn(handle(ev &lt;- withCallingHandlers(withVisible(eval_with_user_handlers(expr, </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     envir, enclos, user_handlers)), warning = wHandler, error = eHandler, </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     message = mHandler)))</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [[21]]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> handle(ev &lt;- withCallingHandlers(withVisible(eval_with_user_handlers(expr, </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     envir, enclos, user_handlers)), warning = wHandler, error = eHandler, </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     message = mHandler))</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [[22]]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> try(f, silent = TRUE)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [[23]]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> tryCatch(expr, error = function(e) {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     call &lt;- conditionCall(e)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     if (!is.null(call)) {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         if (identical(call[[1L]], quote(doTryCatch))) </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>             call &lt;- sys.call(-4L)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         dcall &lt;- deparse(call, nlines = 1L)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         prefix &lt;- paste("Error in", dcall, ": ")</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         LONG &lt;- 75L</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         sm &lt;- strsplit(conditionMessage(e), "\n")[[1L]]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         w &lt;- 14L + nchar(dcall, type = "w") + nchar(sm[1L], type = "w")</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         if (is.na(w)) </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>             w &lt;- 14L + nchar(dcall, type = "b") + nchar(sm[1L], </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                 type = "b")</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         if (w &gt; LONG) </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>             prefix &lt;- paste0(prefix, "\n  ")</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     }</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     else prefix &lt;- "Error : "</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     msg &lt;- paste0(prefix, conditionMessage(e), "\n")</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     .Internal(seterrmessage(msg[1L]))</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     if (!silent &amp;&amp; isTRUE(getOption("show.error.messages"))) {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         cat(msg, file = outFile)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         .Internal(printDeferredWarnings())</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     }</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     invisible(structure(msg, class = "try-error", condition = e))</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> })</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [[24]]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> tryCatchList(expr, classes, parentenv, handlers)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [[25]]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> tryCatchOne(expr, names, parentenv, handlers[[1L]])</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [[26]]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> doTryCatch(return(expr), name, parentenv, handler)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [[27]]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> withCallingHandlers(withVisible(eval_with_user_handlers(expr, </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     envir, enclos, user_handlers)), warning = wHandler, error = eHandler, </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     message = mHandler)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [[28]]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> withVisible(eval_with_user_handlers(expr, envir, enclos, user_handlers))</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [[29]]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> eval_with_user_handlers(expr, envir, enclos, user_handlers)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [[30]]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> eval(expr, envir, enclos)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [[31]]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> eval(expr, envir, enclos)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [[32]]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> fun5()</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [[33]]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> fun6()</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-in"><span><span class="co"># A way to have the name of the tested environment according to test.pos value:</span></span></span>
+<span class="r-in"><span><span class="va">fun7</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="op">)</span><span class="op">{</span></span></span>
+<span class="r-in"><span>    <span class="va">min</span> <span class="op">&lt;-</span> <span class="st">"a"</span></span></span>
+<span class="r-in"><span>    <span class="va">fun8</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="op">)</span><span class="op">{</span></span></span>
+<span class="r-in"><span>        <span class="va">test.pos</span> <span class="op">&lt;-</span> <span class="fl">1</span> <span class="co"># value 1 tests the fun8 env, 2 tests the fun7 env.</span></span></span>
+<span class="r-in"><span>        <span class="va">range</span> <span class="op">&lt;-</span> <span class="st">"a"</span></span></span>
+<span class="r-in"><span>        <span class="fu">env_check</span><span class="op">(</span>pos <span class="op">=</span> <span class="va">test.pos</span>, name <span class="op">=</span> <span class="kw">if</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sys.parent.html" class="external-link">sys.calls</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span> <span class="op">&gt;=</span> <span class="va">test.pos</span><span class="op">)</span><span class="op">{</span></span></span>
+<span class="r-in"><span>            <span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">as.character</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sys.parent.html" class="external-link">sys.calls</a></span><span class="op">(</span><span class="op">)</span><span class="op">[[</span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sys.parent.html" class="external-link">sys.calls</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> <span class="fl">1</span> <span class="op">-</span> <span class="va">test.pos</span><span class="op">]</span><span class="op">]</span><span class="op">)</span></span></span>
+<span class="r-in"><span>        <span class="op">}</span><span class="kw">else</span><span class="op">{</span></span></span>
+<span class="r-in"><span>            <span class="fu"><a href="https://rdrr.io/r/base/search.html" class="external-link">search</a></span><span class="op">(</span><span class="op">)</span><span class="op">[</span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/search.html" class="external-link">search</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span><span class="op">)</span><span class="op">[</span><span class="va">test.pos</span> <span class="op">-</span> <span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sys.parent.html" class="external-link">sys.calls</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span><span class="op">]</span><span class="op">]</span></span></span>
+<span class="r-in"><span>        <span class="op">}</span><span class="op">)</span> </span></span>
+<span class="r-in"><span>    <span class="op">}</span></span></span>
+<span class="r-in"><span>    <span class="fu">fun8</span><span class="op">(</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">}</span></span></span>
+<span class="r-in"><span><span class="fu">fun7</span><span class="op">(</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "SOME VARIABLES OF fun8 ARE ALSO PRESENT IN :\npackage:base: range\n"</span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
@@ -165,7 +343,7 @@
 
 
     <footer><div class="pkgdown-footer-left">
-  <p>Developed by Haiding Wang, Gael Millot.</p>
+  <p>Developed by <a href="https://github.com/Tintin2710" class="external-link">Haiding Wang</a>, Gael Millot.</p>
 </div>
 
 <div class="pkgdown-footer-right">

@@ -27,6 +27,7 @@
 <li class="nav-item dropdown">
   <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-articles">Articles</a>
   <div class="dropdown-menu" aria-labelledby="dropdown-articles">
+    <a class="dropdown-item" href="../articles/all_args_here.html">all_args_here</a>
     <a class="dropdown-item" href="../articles/arg_check.html">arg_check</a>
     <a class="dropdown-item" href="../articles/arg_test.html">arg_test</a>
     <a class="dropdown-item" href="../articles/colons_check.html">colons_check</a>
@@ -60,29 +61,29 @@
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">is_python_package_here</span><span class="op">(</span></span>
-<span>  <span class="va">req.package</span>,</span>
-<span>  python.exec.path <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  python.lib.path <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  lib.path <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  <span class="va">req_package</span>,</span>
+<span>  python_exec_path <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  python_lib_path <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  lib_path <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  safer_check <span class="op">=</span> <span class="cn">TRUE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
-    <dl><dt>req.package</dt>
+    <dl><dt>req_package</dt>
 <dd><p>Character vector of package names to import.</p></dd>
 
 
-<dt>python.exec.path</dt>
-<dd><p>Single optional character vector specifying the absolute pathways of the executable python file to use (associated to the packages to use). If NULL, the reticulate::import_from_path() function used in is_python_package_here() seeks for an available version of python.exe, and then uses python_config(python_version, required_module, python_versions). But might not be the correct one for the python.lib.path parameter specified. Thus, it is recommanded to do not leave NULL, notably when using computing clusters.</p></dd>
+<dt>python_exec_path</dt>
+<dd><p>Single optional character vector specifying the absolute pathways of the executable python file to use (associated to the packages to use). If NULL, the reticulate::import_from_path() function used in is_python_package_here() seeks for an available version of python.exe, and then uses python_config(python_version, required_module, python_versions). But might not be the correct one for the python_lib_path parameter specified. Thus, it is recommanded to do not leave NULL, notably when using computing clusters.</p></dd>
 
 
-<dt>python.lib.path</dt>
-<dd><p>Optional character vector specifying the absolute pathways of the directories containing some of the listed packages in the req.package argument, if not in the default directories.</p></dd>
+<dt>python_lib_path</dt>
+<dd><p>Optional character vector specifying the absolute pathways of the directories containing some of the listed packages in the req_package argument, if not in the default directories.</p></dd>
 
 
-<dt>lib.path</dt>
+<dt>lib_path</dt>
 <dd><p>Absolute path of the reticulate packages, if not in the default folders.</p></dd>
 
 
@@ -94,7 +95,7 @@
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
     
 
-<p>An error message if at least one of the checked packages is missing in python.lib.path, nothing otherwise.</p>
+<p>An error message if at least one of the checked packages is missing in python_lib_path, nothing otherwise.</p>
     </div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
@@ -112,19 +113,19 @@
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># example of error message</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># is_python_package_here(req.package = "nopackage")</span></span></span>
+<span class="r-in"><span><span class="co"># is_python_package_here(req_package = "nopackage")</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># commented because this example returns an error if the python package is not installed on the computer</span></span></span>
 <span class="r-in"><span><span class="co"># (require the installation of the python serpentine package </span></span></span>
 <span class="r-in"><span><span class="co"># from https://github.com/koszullab/serpentine</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># is_python_package_here(req.package = "serpentine")</span></span></span>
+<span class="r-in"><span><span class="co"># is_python_package_here(req_package = "serpentine")</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># another example of error message</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># is_python_package_here(req.package = "serpentine", python.lib.path = "blablabla")</span></span></span>
+<span class="r-in"><span><span class="co"># is_python_package_here(req_package = "serpentine", python_lib_path = "blablabla")</span></span></span>
 <span class="r-in"></span>
 </code></pre></div>
     </div>
@@ -133,7 +134,7 @@
 
 
     <footer><div class="pkgdown-footer-left">
-  <p>Developed by Haiding Wang, Gael Millot.</p>
+  <p>Developed by <a href="https://github.com/Tintin2710" class="external-link">Haiding Wang</a>, Gael Millot.</p>
 </div>
 
 <div class="pkgdown-footer-right">

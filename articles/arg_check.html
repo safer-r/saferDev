@@ -51,6 +51,7 @@
 <li class="active nav-item dropdown">
   <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-articles">Articles</a>
   <div class="dropdown-menu" aria-labelledby="dropdown-articles">
+    <a class="dropdown-item" href="../articles/all_args_here.html">all_args_here</a>
     <a class="dropdown-item" href="../articles/arg_check.html">arg_check</a>
     <a class="dropdown-item" href="../articles/arg_test.html">arg_test</a>
     <a class="dropdown-item" href="../articles/colons_check.html">colons_check</a>
@@ -157,7 +158,7 @@
 <span id="cb4-19"><a href="#cb4-19" tabindex="-1"></a><span class="er">&gt;</span> <span class="er">$</span>object.name</span>
 <span id="cb4-20"><a href="#cb4-20" tabindex="-1"></a><span class="sc">&gt;</span> [<span class="dv">1</span>] <span class="st">"vec1"</span></span>
 <span id="cb4-21"><a href="#cb4-21" tabindex="-1"></a><span class="co"># Check that vec1 is an integer vector of length 3 without negative values and without NA -&gt; error because of length 5 and negative values inside vec1</span></span>
-<span id="cb4-22"><a href="#cb4-22" tabindex="-1"></a><span class="fu">arg_check</span>(<span class="at">data =</span> vec1, <span class="at">class =</span> <span class="st">"vector"</span>, <span class="at">typeof =</span> <span class="st">"integer"</span>, <span class="at">length =</span> <span class="dv">3</span>, <span class="at">neg.values =</span> <span class="cn">FALSE</span>, <span class="at">na.contain =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb4-22"><a href="#cb4-22" tabindex="-1"></a><span class="fu">arg_check</span>(<span class="at">data =</span> vec1, <span class="at">class =</span> <span class="st">"vector"</span>, <span class="at">typeof =</span> <span class="st">"integer"</span>, <span class="at">length =</span> <span class="dv">3</span>, <span class="at">neg_values =</span> <span class="cn">FALSE</span>, <span class="at">na_contain =</span> <span class="cn">FALSE</span>)</span>
 <span id="cb4-23"><a href="#cb4-23" tabindex="-1"></a><span class="sc">&gt;</span> <span class="er">$</span>problem</span>
 <span id="cb4-24"><a href="#cb4-24" tabindex="-1"></a><span class="sc">&gt;</span> [<span class="dv">1</span>] <span class="cn">TRUE</span></span>
 <span id="cb4-25"><a href="#cb4-25" tabindex="-1"></a><span class="sc">&gt;</span> </span>
@@ -258,12 +259,12 @@ corresponding R function, except class which<a class="anchor" aria-label="anchor
 <p><br></p>
 </div>
 <div class="section level3">
-<h3 id="argument-double-as-integer-allowed">Argument double.as.integer.allowed<a class="anchor" aria-label="anchor" href="#argument-double-as-integer-allowed"></a>
+<h3 id="argument-double_as_integer_allowed">Argument double_as_integer_allowed<a class="anchor" aria-label="anchor" href="#argument-double_as_integer_allowed"></a>
 </h3>
 <div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a><span class="fu">arg_check</span>(</span>
 <span id="cb7-2"><a href="#cb7-2" tabindex="-1"></a>    <span class="at">data =</span> vec3, </span>
 <span id="cb7-3"><a href="#cb7-3" tabindex="-1"></a>    <span class="at">typeof =</span> <span class="st">"integer"</span>,</span>
-<span id="cb7-4"><a href="#cb7-4" tabindex="-1"></a>    <span class="at">double.as.integer.allowed =</span> <span class="cn">TRUE</span> <span class="co"># with TRUE, integers stored as double are accepted</span></span>
+<span id="cb7-4"><a href="#cb7-4" tabindex="-1"></a>    <span class="at">double_as_integer_allowed =</span> <span class="cn">TRUE</span> <span class="co"># with TRUE, integers stored as double are accepted</span></span>
 <span id="cb7-5"><a href="#cb7-5" tabindex="-1"></a>)</span>
 <span id="cb7-6"><a href="#cb7-6" tabindex="-1"></a><span class="sc">&gt;</span> <span class="er">$</span>problem</span>
 <span id="cb7-7"><a href="#cb7-7" tabindex="-1"></a><span class="sc">&gt;</span> [<span class="dv">1</span>] <span class="cn">FALSE</span></span>
@@ -293,13 +294,13 @@ corresponding R function, except class which<a class="anchor" aria-label="anchor
 <p><br></p>
 </div>
 <div class="section level3">
-<h3 id="argument-all-options-in-data">Argument all.options.in.data<a class="anchor" aria-label="anchor" href="#argument-all-options-in-data"></a>
+<h3 id="argument-all_options_in_data">Argument all_options_in_data<a class="anchor" aria-label="anchor" href="#argument-all_options_in_data"></a>
 </h3>
 <div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" tabindex="-1"></a><span class="co"># No error</span></span>
 <span id="cb9-2"><a href="#cb9-2" tabindex="-1"></a><span class="fu">arg_check</span>(</span>
 <span id="cb9-3"><a href="#cb9-3" tabindex="-1"></a>    <span class="at">data =</span> vec5,</span>
 <span id="cb9-4"><a href="#cb9-4" tabindex="-1"></a>    <span class="at">options =</span> <span class="fu">c</span>(<span class="st">"a"</span>, <span class="st">"b"</span>), </span>
-<span id="cb9-5"><a href="#cb9-5" tabindex="-1"></a>    <span class="at">all.options.in.data =</span> <span class="cn">TRUE</span></span>
+<span id="cb9-5"><a href="#cb9-5" tabindex="-1"></a>    <span class="at">all_options_in_data =</span> <span class="cn">TRUE</span></span>
 <span id="cb9-6"><a href="#cb9-6" tabindex="-1"></a>)</span>
 <span id="cb9-7"><a href="#cb9-7" tabindex="-1"></a><span class="sc">&gt;</span> <span class="er">$</span>problem</span>
 <span id="cb9-8"><a href="#cb9-8" tabindex="-1"></a><span class="sc">&gt;</span> [<span class="dv">1</span>] <span class="cn">FALSE</span></span>
@@ -313,7 +314,7 @@ corresponding R function, except class which<a class="anchor" aria-label="anchor
 <span id="cb9-16"><a href="#cb9-16" tabindex="-1"></a><span class="fu">arg_check</span>(</span>
 <span id="cb9-17"><a href="#cb9-17" tabindex="-1"></a>    <span class="at">data =</span> vec5,</span>
 <span id="cb9-18"><a href="#cb9-18" tabindex="-1"></a>    <span class="at">options =</span> <span class="fu">c</span>(<span class="st">"a"</span>, <span class="st">"b"</span>, <span class="st">"c"</span>), </span>
-<span id="cb9-19"><a href="#cb9-19" tabindex="-1"></a>    <span class="at">all.options.in.data =</span> <span class="cn">FALSE</span></span>
+<span id="cb9-19"><a href="#cb9-19" tabindex="-1"></a>    <span class="at">all_options_in_data =</span> <span class="cn">FALSE</span></span>
 <span id="cb9-20"><a href="#cb9-20" tabindex="-1"></a>)</span>
 <span id="cb9-21"><a href="#cb9-21" tabindex="-1"></a><span class="sc">&gt;</span> <span class="er">$</span>problem</span>
 <span id="cb9-22"><a href="#cb9-22" tabindex="-1"></a><span class="sc">&gt;</span> [<span class="dv">1</span>] <span class="cn">FALSE</span></span>
@@ -327,7 +328,7 @@ corresponding R function, except class which<a class="anchor" aria-label="anchor
 <span id="cb9-30"><a href="#cb9-30" tabindex="-1"></a><span class="fu">arg_check</span>(</span>
 <span id="cb9-31"><a href="#cb9-31" tabindex="-1"></a>    <span class="at">data =</span> vec5,</span>
 <span id="cb9-32"><a href="#cb9-32" tabindex="-1"></a>    <span class="at">options =</span> <span class="fu">c</span>(<span class="st">"a"</span>, <span class="st">"b"</span>, <span class="st">"c"</span>), </span>
-<span id="cb9-33"><a href="#cb9-33" tabindex="-1"></a>    <span class="at">all.options.in.data =</span> <span class="cn">TRUE</span></span>
+<span id="cb9-33"><a href="#cb9-33" tabindex="-1"></a>    <span class="at">all_options_in_data =</span> <span class="cn">TRUE</span></span>
 <span id="cb9-34"><a href="#cb9-34" tabindex="-1"></a>)</span>
 <span id="cb9-35"><a href="#cb9-35" tabindex="-1"></a><span class="sc">&gt;</span> <span class="er">$</span>problem</span>
 <span id="cb9-36"><a href="#cb9-36" tabindex="-1"></a><span class="sc">&gt;</span> [<span class="dv">1</span>] <span class="cn">TRUE</span></span>
@@ -340,13 +341,13 @@ corresponding R function, except class which<a class="anchor" aria-label="anchor
 <p><br></p>
 </div>
 <div class="section level3">
-<h3 id="argument-na-contain">Argument na.contain<a class="anchor" aria-label="anchor" href="#argument-na-contain"></a>
+<h3 id="argument-na_contain">Argument na_contain<a class="anchor" aria-label="anchor" href="#argument-na_contain"></a>
 </h3>
 <div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" tabindex="-1"></a><span class="fu">arg_check</span>(</span>
 <span id="cb10-2"><a href="#cb10-2" tabindex="-1"></a>    <span class="at">data =</span> mat2, </span>
 <span id="cb10-3"><a href="#cb10-3" tabindex="-1"></a>    <span class="at">class =</span> <span class="st">"matrix"</span>, </span>
 <span id="cb10-4"><a href="#cb10-4" tabindex="-1"></a>    <span class="at">prop =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb10-5"><a href="#cb10-5" tabindex="-1"></a>    <span class="at">na.contain =</span> <span class="cn">FALSE</span> <span class="co"># with TRUE, integers stored as double are accepted</span></span>
+<span id="cb10-5"><a href="#cb10-5" tabindex="-1"></a>    <span class="at">na_contain =</span> <span class="cn">FALSE</span> <span class="co"># with TRUE, integers stored as double are accepted</span></span>
 <span id="cb10-6"><a href="#cb10-6" tabindex="-1"></a>)</span>
 <span id="cb10-7"><a href="#cb10-7" tabindex="-1"></a><span class="sc">&gt;</span> <span class="er">$</span>problem</span>
 <span id="cb10-8"><a href="#cb10-8" tabindex="-1"></a><span class="sc">&gt;</span> [<span class="dv">1</span>] <span class="cn">TRUE</span></span>
@@ -359,13 +360,13 @@ corresponding R function, except class which<a class="anchor" aria-label="anchor
 <p><br></p>
 </div>
 <div class="section level3">
-<h3 id="argument-neg-values">Argument neg.values<a class="anchor" aria-label="anchor" href="#argument-neg-values"></a>
+<h3 id="argument-neg_values">Argument neg_values<a class="anchor" aria-label="anchor" href="#argument-neg_values"></a>
 </h3>
 <div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" tabindex="-1"></a><span class="co"># Warning: only considered if set to FALSE, to check for non negative values when class is set to "vector", "numeric", "matrix", "array", "data.frame", "table", or typeof is set to "double", "integer", or mode is set to "numeric"</span></span>
 <span id="cb11-2"><a href="#cb11-2" tabindex="-1"></a><span class="fu">arg_check</span>(</span>
 <span id="cb11-3"><a href="#cb11-3" tabindex="-1"></a>    <span class="at">data =</span> mat1, </span>
 <span id="cb11-4"><a href="#cb11-4" tabindex="-1"></a>    <span class="at">class =</span> <span class="st">"matrix"</span>,</span>
-<span id="cb11-5"><a href="#cb11-5" tabindex="-1"></a>    <span class="at">neg.values =</span> <span class="cn">FALSE</span> <span class="co"># with TRUE, integers stored as double are accepted</span></span>
+<span id="cb11-5"><a href="#cb11-5" tabindex="-1"></a>    <span class="at">neg_values =</span> <span class="cn">FALSE</span> <span class="co"># with TRUE, integers stored as double are accepted</span></span>
 <span id="cb11-6"><a href="#cb11-6" tabindex="-1"></a>)</span>
 <span id="cb11-7"><a href="#cb11-7" tabindex="-1"></a><span class="sc">&gt;</span> <span class="er">$</span>problem</span>
 <span id="cb11-8"><a href="#cb11-8" tabindex="-1"></a><span class="sc">&gt;</span> [<span class="dv">1</span>] <span class="cn">TRUE</span></span>
@@ -378,13 +379,13 @@ corresponding R function, except class which<a class="anchor" aria-label="anchor
 <p><br></p>
 </div>
 <div class="section level3">
-<h3 id="argument-inf-values">Argument inf.values<a class="anchor" aria-label="anchor" href="#argument-inf-values"></a>
+<h3 id="argument-inf_values">Argument inf_values<a class="anchor" aria-label="anchor" href="#argument-inf_values"></a>
 </h3>
 <div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" tabindex="-1"></a><span class="co"># Warning: only considered if set to FALSE, to check for non infinite values when class is set to "vector", "numeric", "matrix", "array", "data.frame", "table", or typeof is set to "double", "integer", or mode is set to "numeric"</span></span>
 <span id="cb12-2"><a href="#cb12-2" tabindex="-1"></a><span class="fu">arg_check</span>(</span>
 <span id="cb12-3"><a href="#cb12-3" tabindex="-1"></a>    <span class="at">data =</span> mat1, </span>
 <span id="cb12-4"><a href="#cb12-4" tabindex="-1"></a>    <span class="at">class =</span> <span class="st">"matrix"</span>,</span>
-<span id="cb12-5"><a href="#cb12-5" tabindex="-1"></a>    <span class="at">inf.values =</span> <span class="cn">FALSE</span></span>
+<span id="cb12-5"><a href="#cb12-5" tabindex="-1"></a>    <span class="at">inf_values =</span> <span class="cn">FALSE</span></span>
 <span id="cb12-6"><a href="#cb12-6" tabindex="-1"></a>)</span>
 <span id="cb12-7"><a href="#cb12-7" tabindex="-1"></a><span class="sc">&gt;</span> <span class="er">$</span>problem</span>
 <span id="cb12-8"><a href="#cb12-8" tabindex="-1"></a><span class="sc">&gt;</span> [<span class="dv">1</span>] <span class="cn">TRUE</span></span>
@@ -428,50 +429,53 @@ corresponding R function, except class which<a class="anchor" aria-label="anchor
 <p><br></p>
 </div>
 <div class="section level3">
-<h3 id="arguments-data-name-and-fun-name">Arguments data.name and fun.name<a class="anchor" aria-label="anchor" href="#arguments-data-name-and-fun-name"></a>
+<h3 id="arguments-data_name-fun_name-and-pack_name">Arguments data_name, fun_name and pack_name<a class="anchor" aria-label="anchor" href="#arguments-data_name-fun_name-and-pack_name"></a>
 </h3>
 <div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" tabindex="-1"></a><span class="co"># Example</span></span>
 <span id="cb14-2"><a href="#cb14-2" tabindex="-1"></a>tempo <span class="ot">&lt;-</span> <span class="fu">arg_check</span>(</span>
 <span id="cb14-3"><a href="#cb14-3" tabindex="-1"></a>    <span class="at">data =</span> vec1, </span>
 <span id="cb14-4"><a href="#cb14-4" tabindex="-1"></a>    <span class="at">class =</span> <span class="st">"integer"</span>, </span>
-<span id="cb14-5"><a href="#cb14-5" tabindex="-1"></a>    <span class="at">data.name =</span> <span class="st">"OBSERVATION_1"</span>, </span>
-<span id="cb14-6"><a href="#cb14-6" tabindex="-1"></a>    <span class="at">fun.name =</span> <span class="st">"FUNCTION_1"</span></span>
-<span id="cb14-7"><a href="#cb14-7" tabindex="-1"></a>)</span>
-<span id="cb14-8"><a href="#cb14-8" tabindex="-1"></a>tempo<span class="sc">$</span>text</span>
-<span id="cb14-9"><a href="#cb14-9" tabindex="-1"></a><span class="sc">&gt;</span> [<span class="dv">1</span>] <span class="st">"IN FUNCTION_1</span><span class="sc">\n</span><span class="st">NO PROBLEM DETECTED FOR THE OBSERVATION_1 OBJECT"</span></span>
-<span id="cb14-10"><a href="#cb14-10" tabindex="-1"></a><span class="co"># In fact, these two arguments are interesting when check() is used inside functions</span></span>
-<span id="cb14-11"><a href="#cb14-11" tabindex="-1"></a>fun1 <span class="ot">&lt;-</span> <span class="cf">function</span>(arg1){</span>
-<span id="cb14-12"><a href="#cb14-12" tabindex="-1"></a>    tempo <span class="ot">&lt;-</span> <span class="fu">arg_check</span>(</span>
-<span id="cb14-13"><a href="#cb14-13" tabindex="-1"></a>                <span class="at">data =</span> arg1, </span>
-<span id="cb14-14"><a href="#cb14-14" tabindex="-1"></a>                <span class="at">class =</span> <span class="st">"integer"</span>, </span>
-<span id="cb14-15"><a href="#cb14-15" tabindex="-1"></a>                <span class="at">data.name =</span> <span class="cn">NULL</span>, <span class="co"># if NULL, the name displayed is arg1</span></span>
-<span id="cb14-16"><a href="#cb14-16" tabindex="-1"></a>                <span class="at">fun.name =</span> <span class="cn">NULL</span> <span class="co"># if NULL, no name displayed</span></span>
-<span id="cb14-17"><a href="#cb14-17" tabindex="-1"></a>    )</span>
-<span id="cb14-18"><a href="#cb14-18" tabindex="-1"></a>    <span class="cf">if</span>(tempo<span class="sc">$</span>problem <span class="sc">==</span> <span class="cn">TRUE</span>){</span>
-<span id="cb14-19"><a href="#cb14-19" tabindex="-1"></a>        <span class="fu">cat</span>(<span class="fu">paste0</span>(<span class="st">"</span><span class="sc">\n\n</span><span class="st">================</span><span class="sc">\n\n</span><span class="st">"</span>, tempo<span class="sc">$</span>text, <span class="st">"</span><span class="sc">\n\n</span><span class="st">================</span><span class="sc">\n\n</span><span class="st">"</span>))</span>
-<span id="cb14-20"><a href="#cb14-20" tabindex="-1"></a>    }</span>
-<span id="cb14-21"><a href="#cb14-21" tabindex="-1"></a>}</span>
-<span id="cb14-22"><a href="#cb14-22" tabindex="-1"></a><span class="fu">fun1</span>(<span class="at">arg1 =</span> vec4) <span class="co"># error message because arg1 requires a vector of integers</span></span>
-<span id="cb14-23"><a href="#cb14-23" tabindex="-1"></a><span class="sc">&gt;</span> </span>
-<span id="cb14-24"><a href="#cb14-24" tabindex="-1"></a><span class="er">&gt;</span> </span>
-<span id="cb14-25"><a href="#cb14-25" tabindex="-1"></a><span class="er">&gt;</span> <span class="er">================</span></span>
+<span id="cb14-5"><a href="#cb14-5" tabindex="-1"></a>    <span class="at">data_name =</span> <span class="st">"OBSERVATION_1"</span>, </span>
+<span id="cb14-6"><a href="#cb14-6" tabindex="-1"></a>    <span class="at">fun_name =</span> <span class="st">"FUNCTION_1"</span>, </span>
+<span id="cb14-7"><a href="#cb14-7" tabindex="-1"></a>    <span class="at">pack_name =</span> <span class="st">"PACKAGE_2"</span></span>
+<span id="cb14-8"><a href="#cb14-8" tabindex="-1"></a>)</span>
+<span id="cb14-9"><a href="#cb14-9" tabindex="-1"></a>tempo<span class="sc">$</span>text</span>
+<span id="cb14-10"><a href="#cb14-10" tabindex="-1"></a><span class="sc">&gt;</span> [<span class="dv">1</span>] <span class="st">"IN FUNCTION_1</span><span class="sc">\n</span><span class="st">NO PROBLEM DETECTED FOR THE OBSERVATION_1 OBJECT"</span></span>
+<span id="cb14-11"><a href="#cb14-11" tabindex="-1"></a><span class="co"># In fact, these two arguments are interesting when check() is used inside functions</span></span>
+<span id="cb14-12"><a href="#cb14-12" tabindex="-1"></a>fun1 <span class="ot">&lt;-</span> <span class="cf">function</span>(arg1){</span>
+<span id="cb14-13"><a href="#cb14-13" tabindex="-1"></a>    tempo <span class="ot">&lt;-</span> <span class="fu">arg_check</span>(</span>
+<span id="cb14-14"><a href="#cb14-14" tabindex="-1"></a>                <span class="at">data =</span> arg1, </span>
+<span id="cb14-15"><a href="#cb14-15" tabindex="-1"></a>                <span class="at">class =</span> <span class="st">"integer"</span>, </span>
+<span id="cb14-16"><a href="#cb14-16" tabindex="-1"></a>                <span class="at">data_name =</span> <span class="cn">NULL</span>, <span class="co"># if NULL, the name displayed is arg1</span></span>
+<span id="cb14-17"><a href="#cb14-17" tabindex="-1"></a>                <span class="at">fun_name =</span> <span class="cn">NULL</span>, <span class="co"># if NULL, no name displayed</span></span>
+<span id="cb14-18"><a href="#cb14-18" tabindex="-1"></a>                <span class="at">pack_name =</span> <span class="cn">NULL</span> <span class="co"># if NULL, no name displayed</span></span>
+<span id="cb14-19"><a href="#cb14-19" tabindex="-1"></a>    )</span>
+<span id="cb14-20"><a href="#cb14-20" tabindex="-1"></a>    <span class="cf">if</span>(tempo<span class="sc">$</span>problem <span class="sc">==</span> <span class="cn">TRUE</span>){</span>
+<span id="cb14-21"><a href="#cb14-21" tabindex="-1"></a>        <span class="fu">cat</span>(<span class="fu">paste0</span>(<span class="st">"</span><span class="sc">\n\n</span><span class="st">================</span><span class="sc">\n\n</span><span class="st">"</span>, tempo<span class="sc">$</span>text, <span class="st">"</span><span class="sc">\n\n</span><span class="st">================</span><span class="sc">\n\n</span><span class="st">"</span>))</span>
+<span id="cb14-22"><a href="#cb14-22" tabindex="-1"></a>    }</span>
+<span id="cb14-23"><a href="#cb14-23" tabindex="-1"></a>}</span>
+<span id="cb14-24"><a href="#cb14-24" tabindex="-1"></a><span class="fu">fun1</span>(<span class="at">arg1 =</span> vec4) <span class="co"># error message because arg1 requires a vector of integers</span></span>
+<span id="cb14-25"><a href="#cb14-25" tabindex="-1"></a><span class="sc">&gt;</span> </span>
 <span id="cb14-26"><a href="#cb14-26" tabindex="-1"></a><span class="er">&gt;</span> </span>
-<span id="cb14-27"><a href="#cb14-27" tabindex="-1"></a><span class="er">&gt;</span> ERROR</span>
-<span id="cb14-28"><a href="#cb14-28" tabindex="-1"></a><span class="sc">&gt;</span> THE arg1 OBJECT MUST BE CLASS integer</span>
-<span id="cb14-29"><a href="#cb14-29" tabindex="-1"></a><span class="sc">&gt;</span> </span>
-<span id="cb14-30"><a href="#cb14-30" tabindex="-1"></a><span class="er">&gt;</span> <span class="er">================</span></span>
-<span id="cb14-31"><a href="#cb14-31" tabindex="-1"></a>fun2 <span class="ot">&lt;-</span> <span class="cf">function</span>(arg1){</span>
-<span id="cb14-32"><a href="#cb14-32" tabindex="-1"></a>    tempo <span class="ot">&lt;-</span> <span class="fu">arg_check</span>(</span>
-<span id="cb14-33"><a href="#cb14-33" tabindex="-1"></a>                <span class="at">data =</span> arg1, </span>
-<span id="cb14-34"><a href="#cb14-34" tabindex="-1"></a>                <span class="at">class =</span> <span class="st">"integer"</span>, </span>
-<span id="cb14-35"><a href="#cb14-35" tabindex="-1"></a>                <span class="at">data.name =</span> <span class="cn">NULL</span>, <span class="co"># if NULL, the name displayed is arg1</span></span>
-<span id="cb14-36"><a href="#cb14-36" tabindex="-1"></a>                <span class="at">fun.name =</span> <span class="st">"FUNCTION_2"</span> <span class="co"># if NULL, no name displayed</span></span>
-<span id="cb14-37"><a href="#cb14-37" tabindex="-1"></a>    )</span>
-<span id="cb14-38"><a href="#cb14-38" tabindex="-1"></a>    <span class="cf">if</span>(tempo<span class="sc">$</span>problem <span class="sc">==</span> <span class="cn">TRUE</span>){</span>
-<span id="cb14-39"><a href="#cb14-39" tabindex="-1"></a>        <span class="fu">cat</span>(<span class="fu">paste0</span>(<span class="st">"</span><span class="sc">\n\n</span><span class="st">================</span><span class="sc">\n\n</span><span class="st">"</span>, tempo<span class="sc">$</span>text, <span class="st">"</span><span class="sc">\n\n</span><span class="st">================</span><span class="sc">\n\n</span><span class="st">"</span>))</span>
-<span id="cb14-40"><a href="#cb14-40" tabindex="-1"></a>    }</span>
-<span id="cb14-41"><a href="#cb14-41" tabindex="-1"></a>}</span>
-<span id="cb14-42"><a href="#cb14-42" tabindex="-1"></a><span class="fu">fun2</span>(<span class="at">arg1 =</span> vec1) <span class="co"># error message with the name of the function, because arg1 requires a vector of integers</span></span></code></pre></div>
+<span id="cb14-27"><a href="#cb14-27" tabindex="-1"></a><span class="er">&gt;</span> <span class="er">================</span></span>
+<span id="cb14-28"><a href="#cb14-28" tabindex="-1"></a><span class="er">&gt;</span> </span>
+<span id="cb14-29"><a href="#cb14-29" tabindex="-1"></a><span class="er">&gt;</span> ERROR</span>
+<span id="cb14-30"><a href="#cb14-30" tabindex="-1"></a><span class="sc">&gt;</span> THE arg1 OBJECT MUST BE CLASS integer</span>
+<span id="cb14-31"><a href="#cb14-31" tabindex="-1"></a><span class="sc">&gt;</span> </span>
+<span id="cb14-32"><a href="#cb14-32" tabindex="-1"></a><span class="er">&gt;</span> <span class="er">================</span></span>
+<span id="cb14-33"><a href="#cb14-33" tabindex="-1"></a>fun2 <span class="ot">&lt;-</span> <span class="cf">function</span>(arg1){</span>
+<span id="cb14-34"><a href="#cb14-34" tabindex="-1"></a>    tempo <span class="ot">&lt;-</span> <span class="fu">arg_check</span>(</span>
+<span id="cb14-35"><a href="#cb14-35" tabindex="-1"></a>                <span class="at">data =</span> arg1, </span>
+<span id="cb14-36"><a href="#cb14-36" tabindex="-1"></a>                <span class="at">class =</span> <span class="st">"integer"</span>, </span>
+<span id="cb14-37"><a href="#cb14-37" tabindex="-1"></a>                <span class="at">data_name =</span> <span class="cn">NULL</span>, <span class="co"># if NULL, the name displayed is arg1</span></span>
+<span id="cb14-38"><a href="#cb14-38" tabindex="-1"></a>                <span class="at">fun_name =</span> <span class="st">"FUNCTION_2"</span>,</span>
+<span id="cb14-39"><a href="#cb14-39" tabindex="-1"></a>                <span class="at">pack_name =</span> <span class="st">"PACKAGE_3"</span></span>
+<span id="cb14-40"><a href="#cb14-40" tabindex="-1"></a>    )</span>
+<span id="cb14-41"><a href="#cb14-41" tabindex="-1"></a>    <span class="cf">if</span>(tempo<span class="sc">$</span>problem <span class="sc">==</span> <span class="cn">TRUE</span>){</span>
+<span id="cb14-42"><a href="#cb14-42" tabindex="-1"></a>        <span class="fu">cat</span>(<span class="fu">paste0</span>(<span class="st">"</span><span class="sc">\n\n</span><span class="st">================</span><span class="sc">\n\n</span><span class="st">"</span>, tempo<span class="sc">$</span>text, <span class="st">"</span><span class="sc">\n\n</span><span class="st">================</span><span class="sc">\n\n</span><span class="st">"</span>))</span>
+<span id="cb14-43"><a href="#cb14-43" tabindex="-1"></a>    }</span>
+<span id="cb14-44"><a href="#cb14-44" tabindex="-1"></a>}</span>
+<span id="cb14-45"><a href="#cb14-45" tabindex="-1"></a><span class="fu">fun2</span>(<span class="at">arg1 =</span> vec1) <span class="co"># error message with the name of the function, because arg1 requires a vector of integers</span></span></code></pre></div>
 <p><br></p>
 </div>
 <div class="section level3">
@@ -517,25 +521,26 @@ corresponding R function, except class which<a class="anchor" aria-label="anchor
 <span id="cb16-6"><a href="#cb16-6" tabindex="-1"></a>    <span class="at">mode =</span> <span class="cn">NULL</span>, </span>
 <span id="cb16-7"><a href="#cb16-7" tabindex="-1"></a>    <span class="at">length =</span> <span class="cn">NULL</span>, </span>
 <span id="cb16-8"><a href="#cb16-8" tabindex="-1"></a>    <span class="at">prop =</span> <span class="cn">FALSE</span>, </span>
-<span id="cb16-9"><a href="#cb16-9" tabindex="-1"></a>    <span class="at">double.as.integer.allowed =</span> <span class="cn">FALSE</span>, </span>
+<span id="cb16-9"><a href="#cb16-9" tabindex="-1"></a>    <span class="at">double_as_integer_allowed =</span> <span class="cn">FALSE</span>, </span>
 <span id="cb16-10"><a href="#cb16-10" tabindex="-1"></a>    <span class="at">options =</span> <span class="cn">NULL</span>, </span>
-<span id="cb16-11"><a href="#cb16-11" tabindex="-1"></a>    <span class="at">all.options.in.data =</span> <span class="cn">FALSE</span>, </span>
-<span id="cb16-12"><a href="#cb16-12" tabindex="-1"></a>    <span class="at">na.contain =</span> <span class="cn">FALSE</span>, </span>
-<span id="cb16-13"><a href="#cb16-13" tabindex="-1"></a>    <span class="at">neg.values =</span> <span class="cn">TRUE</span>, </span>
-<span id="cb16-14"><a href="#cb16-14" tabindex="-1"></a>    <span class="at">inf.values =</span> <span class="cn">TRUE</span>, </span>
+<span id="cb16-11"><a href="#cb16-11" tabindex="-1"></a>    <span class="at">all_options_in_data =</span> <span class="cn">FALSE</span>, </span>
+<span id="cb16-12"><a href="#cb16-12" tabindex="-1"></a>    <span class="at">na_contain =</span> <span class="cn">FALSE</span>, </span>
+<span id="cb16-13"><a href="#cb16-13" tabindex="-1"></a>    <span class="at">neg_values =</span> <span class="cn">TRUE</span>, </span>
+<span id="cb16-14"><a href="#cb16-14" tabindex="-1"></a>    <span class="at">inf_values =</span> <span class="cn">TRUE</span>, </span>
 <span id="cb16-15"><a href="#cb16-15" tabindex="-1"></a>    <span class="at">print =</span> <span class="cn">FALSE</span>, </span>
-<span id="cb16-16"><a href="#cb16-16" tabindex="-1"></a>    <span class="at">data.name =</span> <span class="cn">NULL</span>, </span>
-<span id="cb16-17"><a href="#cb16-17" tabindex="-1"></a>    <span class="at">fun.name =</span> <span class="cn">NULL</span>,</span>
-<span id="cb16-18"><a href="#cb16-18" tabindex="-1"></a>    <span class="at">safer_check =</span> <span class="cn">TRUE</span></span>
-<span id="cb16-19"><a href="#cb16-19" tabindex="-1"></a>)</span>
-<span id="cb16-20"><a href="#cb16-20" tabindex="-1"></a><span class="sc">&gt;</span> <span class="er">$</span>problem</span>
-<span id="cb16-21"><a href="#cb16-21" tabindex="-1"></a><span class="sc">&gt;</span> [<span class="dv">1</span>] <span class="cn">FALSE</span></span>
-<span id="cb16-22"><a href="#cb16-22" tabindex="-1"></a><span class="sc">&gt;</span> </span>
-<span id="cb16-23"><a href="#cb16-23" tabindex="-1"></a><span class="er">&gt;</span> <span class="er">$</span>text</span>
-<span id="cb16-24"><a href="#cb16-24" tabindex="-1"></a><span class="sc">&gt;</span> [<span class="dv">1</span>] <span class="st">"NO PROBLEM DETECTED FOR THE vec1 OBJECT"</span></span>
-<span id="cb16-25"><a href="#cb16-25" tabindex="-1"></a><span class="sc">&gt;</span> </span>
-<span id="cb16-26"><a href="#cb16-26" tabindex="-1"></a><span class="er">&gt;</span> <span class="er">$</span>object.name</span>
-<span id="cb16-27"><a href="#cb16-27" tabindex="-1"></a><span class="sc">&gt;</span> [<span class="dv">1</span>] <span class="st">"vec1"</span></span></code></pre></div>
+<span id="cb16-16"><a href="#cb16-16" tabindex="-1"></a>    <span class="at">data_name =</span> <span class="cn">NULL</span>, </span>
+<span id="cb16-17"><a href="#cb16-17" tabindex="-1"></a>    <span class="at">fun_name =</span> <span class="cn">NULL</span>,</span>
+<span id="cb16-18"><a href="#cb16-18" tabindex="-1"></a>    <span class="at">pack_name =</span> <span class="cn">NULL</span>,</span>
+<span id="cb16-19"><a href="#cb16-19" tabindex="-1"></a>    <span class="at">safer_check =</span> <span class="cn">TRUE</span></span>
+<span id="cb16-20"><a href="#cb16-20" tabindex="-1"></a>)</span>
+<span id="cb16-21"><a href="#cb16-21" tabindex="-1"></a><span class="sc">&gt;</span> <span class="er">$</span>problem</span>
+<span id="cb16-22"><a href="#cb16-22" tabindex="-1"></a><span class="sc">&gt;</span> [<span class="dv">1</span>] <span class="cn">FALSE</span></span>
+<span id="cb16-23"><a href="#cb16-23" tabindex="-1"></a><span class="sc">&gt;</span> </span>
+<span id="cb16-24"><a href="#cb16-24" tabindex="-1"></a><span class="er">&gt;</span> <span class="er">$</span>text</span>
+<span id="cb16-25"><a href="#cb16-25" tabindex="-1"></a><span class="sc">&gt;</span> [<span class="dv">1</span>] <span class="st">"NO PROBLEM DETECTED FOR THE vec1 OBJECT"</span></span>
+<span id="cb16-26"><a href="#cb16-26" tabindex="-1"></a><span class="sc">&gt;</span> </span>
+<span id="cb16-27"><a href="#cb16-27" tabindex="-1"></a><span class="er">&gt;</span> <span class="er">$</span>object.name</span>
+<span id="cb16-28"><a href="#cb16-28" tabindex="-1"></a><span class="sc">&gt;</span> [<span class="dv">1</span>] <span class="st">"vec1"</span></span></code></pre></div>
 </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
     </nav></aside>
@@ -544,7 +549,7 @@ corresponding R function, except class which<a class="anchor" aria-label="anchor
 
 
     <footer><div class="pkgdown-footer-left">
-  <p>Developed by Haiding Wang, Gael Millot.</p>
+  <p>Developed by <a href="https://github.com/Tintin2710" class="external-link">Haiding Wang</a>, Gael Millot.</p>
 </div>
 
 <div class="pkgdown-footer-right">

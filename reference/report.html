@@ -27,6 +27,7 @@
 <li class="nav-item dropdown">
   <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-articles">Articles</a>
   <div class="dropdown-menu" aria-labelledby="dropdown-articles">
+    <a class="dropdown-item" href="../articles/all_args_here.html">all_args_here</a>
     <a class="dropdown-item" href="../articles/arg_check.html">arg_check</a>
     <a class="dropdown-item" href="../articles/arg_test.html">arg_test</a>
     <a class="dropdown-item" href="../articles/colons_check.html">colons_check</a>
@@ -91,11 +92,11 @@
 
 
 <dt>rownames.kept</dt>
-<dd><p>Single logical value. Defines whether row names have to be removed or not in small tables (less than length.rows rows).</p></dd>
+<dd><p>Single logical value. Defines whether row names have to be removed or in 2D objects. Warning: in 1D tables, names over the values are taken as row names, and are thus removed if rownames.kept is FALSE.</p></dd>
 
 
 <dt>vector.cat</dt>
-<dd><p>Single logical value. If TRUE print a vector of length &gt; 1 using cat() instead of capture.output(). Otherwise (default FALSE) the opposite.</p></dd>
+<dd><p>Single logical value. If TRUE print a vector of length &gt; 1 using cat() instead of capture.output(). Otherwise (default FALSE) the opposite. Names of values are not printed when TRUE</p></dd>
 
 
 <dt>noquote</dt>
@@ -103,7 +104,7 @@
 
 
 <dt>sep</dt>
-<dd><p>Single integer representing the number of empty lines after printed data.</p></dd>
+<dd><p>Single non null and positive integer representing the number of empty lines after printed data.</p></dd>
 
 
 <dt>safer_check</dt>
@@ -139,7 +140,7 @@
 
 
     <footer><div class="pkgdown-footer-left">
-  <p>Developed by Haiding Wang, Gael Millot.</p>
+  <p>Developed by <a href="https://github.com/Tintin2710" class="external-link">Haiding Wang</a>, Gael Millot.</p>
 </div>
 
 <div class="pkgdown-footer-right">

@@ -29,6 +29,7 @@ Using argument print.no = FALSE, return NULL if no message, which is convenient 
 <li class="nav-item dropdown">
   <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-articles">Articles</a>
   <div class="dropdown-menu" aria-labelledby="dropdown-articles">
+    <a class="dropdown-item" href="../articles/all_args_here.html">all_args_here</a>
     <a class="dropdown-item" href="../articles/arg_check.html">arg_check</a>
     <a class="dropdown-item" href="../articles/arg_test.html">arg_test</a>
     <a class="dropdown-item" href="../articles/colons_check.html">colons_check</a>
@@ -112,9 +113,9 @@ Using argument print.no = FALSE, return NULL if no message, which is convenient 
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
     <p>WARNINGS</p>
-<p>Only the first message is returned.</p>
+<p>Only the first standard/error/warning message is returned.</p>
 <p>Always use the env argument when get_message() is used inside functions.</p>
-<p>The function does not prevent printing if print() is used inside the instruction tested. To prevent that, use tempo &lt;- utils::capture.output(error &lt;- get_message(data = "arg_check(data = 'a', class = mean, neg.values = FALSE, print = TRUE)")). The return of get_message() is assigned into error and the printed messages are captured by utils::capture.output() and assigned into tempo. See the examples.</p>
+<p>The function does not prevent printing if print() is used inside the instruction tested. To prevent that, use tempo &lt;- utils::capture.output(error &lt;- get_message(data = "arg_check(data = 'a', class = mean, neg_values = FALSE, print = TRUE)")). The return of get_message() is assigned into error and the printed messages are captured by utils::capture.output() and assigned into tempo. See the examples.</p>
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
@@ -140,6 +141,8 @@ Using argument print.no = FALSE, return NULL if no message, which is convenient 
 <span class="r-in"><span>print.no <span class="op">=</span> <span class="cn">TRUE</span>, text <span class="op">=</span> <span class="st">"IN A"</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "NO STANDARD (NON ERROR AND NON WARNING) MESSAGE REPORTED IN A"</span>
 <span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="fu">get_message</span><span class="op">(</span>data <span class="op">=</span> <span class="st">"wilcox.test()"</span>, kind <span class="op">=</span> <span class="st">"message"</span>, print.no <span class="op">=</span> <span class="cn">TRUE</span>, text <span class="op">=</span> <span class="st">"IN A"</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "NO POTENTIAL STANDARD (NON ERROR AND NON WARNING) MESSAGE BECAUSE OF ERROR MESSAGE REPORTED IN A"</span>
 <span class="r-in"><span><span class="fu">get_message</span><span class="op">(</span>data <span class="op">=</span> <span class="st">"wilcox.test()"</span>, kind <span class="op">=</span> <span class="st">"error"</span>, print.no <span class="op">=</span> <span class="cn">TRUE</span>, text <span class="op">=</span> <span class="st">"IN A"</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "ERROR MESSAGE REPORTED IN A:\nIn wilcox.test.default() : argument \"x\" is missing, with no default\n"</span>
 <span class="r-in"><span></span></span>
@@ -153,17 +156,18 @@ Using argument print.no = FALSE, return NULL if no message, which is convenient 
 <span class="r-msg co"><span class="r-pr">#&gt;</span> ahah</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "NO STANDARD (NON ERROR AND NON WARNING) MESSAGE REPORTED IN A"</span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="fu">get_message</span><span class="op">(</span>data <span class="op">=</span> <span class="st">"ggplot(data = data.frame(X = 1:10, stringsAsFactors = TRUE), </span></span></span>
-<span class="r-in"><span><span class="st">mapping = aes(x = X)) + geom_histogram()"</span>, kind <span class="op">=</span> <span class="st">"message"</span>, print.no <span class="op">=</span> <span class="cn">TRUE</span>, </span></span>
-<span class="r-in"><span>text <span class="op">=</span> <span class="st">"IN FUNCTION 1"</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "NO POTENTIAL STANDARD (NON ERROR AND NON WARNING) MESSAGE BECAUSE OF ERROR MESSAGE REPORTED IN FUNCTION 1"</span>
+<span class="r-in"><span><span class="fu">get_message</span><span class="op">(</span>data <span class="op">=</span> <span class="st">"ggplot2::ggplot(data = data.frame(X = 1:10, stringsAsFactors = TRUE), </span></span></span>
+<span class="r-in"><span><span class="st">mapping = ggplot2::aes(x = X)) + ggplot2::geom_histogram()"</span>, kind <span class="op">=</span> <span class="st">"message"</span>, print.no <span class="op">=</span> <span class="cn">TRUE</span>, </span></span>
+<span class="r-in"><span>text <span class="op">=</span> <span class="st">"IN INSTRUCTION 1"</span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "NO STANDARD (NON ERROR AND NON WARNING) MESSAGE REPORTED IN INSTRUCTION 1"</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span> ; </span></span>
 <span class="r-in"><span><span class="va">obs1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>Time <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="fl">10</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="fl">10</span><span class="op">)</span> <span class="op">+</span> <span class="fl">2</span><span class="op">)</span>, </span></span>
 <span class="r-in"><span>Group1 <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"G"</span>, <span class="st">"H"</span><span class="op">)</span>, each <span class="op">=</span> <span class="fl">10</span><span class="op">)</span>, stringsAsFactors <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> ; </span></span>
 <span class="r-in"><span><span class="fu">get_message</span><span class="op">(</span>data <span class="op">=</span> <span class="st">'gg_boxplot(data = obs1, y = "Time", categ = "Group1")'</span>, </span></span>
-<span class="r-in"><span>kind <span class="op">=</span> <span class="st">"message"</span>, print.no <span class="op">=</span> <span class="cn">TRUE</span>, text <span class="op">=</span> <span class="st">"IN FUNCTION 1"</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "NO POTENTIAL STANDARD (NON ERROR AND NON WARNING) MESSAGE BECAUSE OF ERROR MESSAGE REPORTED IN FUNCTION 1"</span>
+<span class="r-in"><span>kind <span class="op">=</span> <span class="st">"message"</span>, print.no <span class="op">=</span> <span class="cn">TRUE</span>, text <span class="op">=</span> <span class="st">"IN INSTRUCTION 1"</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "NO POTENTIAL STANDARD (NON ERROR AND NON WARNING) MESSAGE BECAUSE OF ERROR MESSAGE REPORTED IN INSTRUCTION 1"</span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
@@ -172,7 +176,7 @@ Using argument print.no = FALSE, return NULL if no message, which is convenient 
 
 
     <footer><div class="pkgdown-footer-left">
-  <p>Developed by Haiding Wang, Gael Millot.</p>
+  <p>Developed by <a href="https://github.com/Tintin2710" class="external-link">Haiding Wang</a>, Gael Millot.</p>
 </div>
 
 <div class="pkgdown-footer-right">
