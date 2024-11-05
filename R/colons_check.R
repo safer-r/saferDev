@@ -153,7 +153,7 @@ colons_check <- function(
     if(( ! base::any(tempo.log)) & ! base::any(tempo.log.b)){
         tempo.cat <- base::paste0("AFTER RUNNING ", function_name, " OF THE ", package_name, " PACKAGE:\nINSIDE ", base::as.character(out$arg_user_setting$x), "(), EVERYTHING SEEMS CLEAN")
     }else{
-        tempo.cat <- base::paste0(base::ifelse(base::is.null(output.cat), base::paste0("AFTER RUNNING ", function_name, " OF THE ", package_name, " PACKAGE\nINSIDE ", out$arg_user_setting$x, "(), EVERYTHING SEEMS CLEAN FOR R BASIC FUNCTIONS"), base::paste0(output.cat, base::ifelse(base::is.null(output.cat.b), "", "\n\n"))), output.cat.b)
+        tempo.cat <- base::paste0(base::ifelse(base::is.null(output.cat), base::paste0("AFTER RUNNING ", function_name, " OF THE ", package_name, " PACKAGE\n\nINSIDE ", out$arg_user_setting$x, "(), EVERYTHING SEEMS CLEAN FOR R BASIC FUNCTIONS\n\n"), base::paste0(output.cat, base::ifelse(base::is.null(output.cat.b), "", "\n\n"))), output.cat.b)
     }
     base::cat(base::paste0("\n\n", tempo.cat, "\n\n"))
     # end main code
