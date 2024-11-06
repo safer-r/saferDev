@@ -39,7 +39,7 @@ Set of R functions for the development of R functions, written according to the 
 
 | Function | Description |
 | :--- | :--- |
-| **arg_check()** | Verify that all the functions used inside a function are written with all their arguments. For instance: base::paste0(letters[1:2], collapse = NULL, recycle0 = FALSE) and not paste0(letters[1:2]). |
+| **all_args_here()** | Verify that all the functions used inside a function are written with all their arguments. For instance: base::paste0(letters[1:2], collapse = NULL, recycle0 = FALSE) and not paste0(letters[1:2]). |
 | **arg_check()** | Check expected values of arguments of functions: class, type, mode, length, restricted values panel, kind of numeric values in addition to the distinction between 'integer' and 'double' (proportion only? Inf values authorized? negative values authorized? Integers of type 'double'?). |
 | **arg_test()** | Test a set of values for a defined set of arguments of a function. Contrary to `testthat::test_that()`, the function 1) test a batch of argument values and 2) does not control that the result is identical to an expected one but control only if an error is returned or not. |
 | **colons_check()** | Verify that all the functions used inside a function are all referenced by their package attribution. For instance: base::mean() and not mean(), or saferDev:::.base_op_check() and not .base_op_check(). |
