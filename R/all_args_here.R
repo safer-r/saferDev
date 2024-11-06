@@ -71,6 +71,8 @@ all_args_here <- function(
     # function_name <- "all_args_here" ; arg_user_setting = base::list(x = as.name(x = "BACKBONE"), export = TRUE,  path_out = ".",  df_name = "res.tsv",  overwrite = TRUE,  lib_path = NULL,  safer_check = TRUE) ; arg_names <- c("x", "export",  "path_out",  "df_name",  "overwrite", "lib_path", "safer_check")
     # FUN1 <- function(x, y){middle_bracket2 <- base::do.call(what = base::c, args = code_for_col, quote = FALSE, envir = base::parent.frame())} ; x = FUN1 ; export = FALSE ; path_out = "." ; df_name = "res.tsv" ; overwrite = FALSE ; lib_path = NULL ; safer_check = TRUE
     # function_name <- "all_args_here" ; arg_user_setting = base::list(x = as.name(x = "FUN1"), export = FALSE,  path_out = ".",  df_name = "res.tsv",  overwrite = FALSE,  lib_path = NULL,  safer_check = TRUE) ; arg_names <- c("x", "export",  "path_out",  "df_name",  "overwrite", "lib_path", "safer_check")
+    # x = colons_check ; export = FALSE ; path_out = "." ; df_name = "res.tsv" ; overwrite = FALSE ; lib_path = NULL ; safer_check = TRUE
+    # function_name <- "colons.check" ; arg_user_setting = base::list(x = as.name(x = "colons.check"), export = FALSE,  path_out = ".",  df_name = "res.tsv",  overwrite = FALSE,  lib_path = NULL,  safer_check = TRUE) ; arg_names <- c("x", "export",  "path_out",  "df_name",  "overwrite", "lib_path", "safer_check")
 
     #### package name
     package_name <- "saferDev" # write NULL if the function developed is not in a package
@@ -524,7 +526,7 @@ all_args_here <- function(
                                     base::substr(x = tempo_split[i6], start = pos_rep2[i7], stop = pos_rep2[i7]) <- ","
                                 }
                             }
-                            pos_rep2 - base::nchar(x = tempo_split[i6], type = "chars", allowNA = FALSE, keepNA = NA) - 1 # -1 because of the comma that separates each tempo_split
+                            pos_rep2 <- pos_rep2 - base::nchar(x = tempo_split[i6], type = "chars", allowNA = FALSE, keepNA = NA) - 1 # -1 because of the comma that separates each tempo_split
                         }
                     }
                     # end rewriting the commas inside args
@@ -537,7 +539,7 @@ all_args_here <- function(
                         base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n", base::ifelse(test = base::is.null(x = warn), yes = "", no = base::paste0("IN ADDITION\nWARNING", base::ifelse(test = warn_count > 1, yes = "S", no = ""), ":\n\n", warn, collapse = NULL, recycle0 = FALSE)), collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL)
                     }
                     # end checking
-                    tempo_out <- saferDev:::.all_args_here_fill(
+                    tempo_out <- .all_args_here_fill(
                         arg_full = arg_full, 
                         arg_full_names = arg_full_names, 
                         tempo_split = tempo_split, 
@@ -547,7 +549,9 @@ all_args_here <- function(
                         col2_i2 = col2[i2],
                         arg_user_setting_x = arg_user_setting$x, 
                         function_name = function_name, 
-                        package_name = package_name 
+                        package_name = package_name,
+                        warn = warn,
+                        warn_count = warn_count
                     )
                     col6 <- base::c(col6, tempo_out$col6)
                     col7 <- base::c(col7, tempo_out$col7)
