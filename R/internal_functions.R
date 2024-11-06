@@ -1049,10 +1049,12 @@
         # removal of arguments without arg name before in obs_arg_log
         supp_args_in_three_dots <- NULL
         if(base::any(three_dots_log, na.rm = TRUE)){
-            for(i3 in 1:base::length(tempo_split)){
-                if(base::grepl(x = tempo_split[i3], pattern = pattern1, perl = TRUE) & obs_arg_log[i3] == TRUE){ # obs_arg_log[i3] == TRUE means values that need an arg name but detection of a = with only arg name rule before
-                    obs_arg_log[i3] <- FALSE # remove this arg from the args that need an arg name
-                    supp_args_in_three_dots <- base::c(supp_args_in_three_dots, tempo_split[i3])
+            if(base::length(x = obs_arg_log) != 0){ # no need to add & base::length(tempo_split) != 0 because both have the same length
+                for(i3 in 1:base::length(tempo_split)){
+                    if(base::grepl(x = tempo_split[i3], pattern = pattern1, perl = TRUE) & obs_arg_log[i3] == TRUE){ # obs_arg_log[i3] == TRUE means values that need an arg name but detection of a = with only arg name rule before
+                        obs_arg_log[i3] <- FALSE # remove this arg from the args that need an arg name
+                        supp_args_in_three_dots <- base::c(supp_args_in_three_dots, tempo_split[i3])
+                    }
                 }
             }
         }
