@@ -1009,6 +1009,7 @@
     #  arg_full = list(definition = sys.function(sys.parent()), call = sys.call(sys.parent()), expand.dots = TRUE, envir = parent.frame(2L)) ; arg_full_names = c("definition", "call", "expand.dots", "envir") ; tempo_split = c("sys.function(sys.parent())", "expand.dots = FALSE", "sys.call(sys.parent())") ;  three_dots_log = c(FALSE, FALSE, FALSE, FALSE) ; col2_i2 = "match.call" ; col3_i2 = "match.call(sys.function(sys.parent()), expand.dots = FALSE, sys.call(sys.parent()))" ; function_name = "F1" ; package_name = "P1"
     #  arg_full = list(... = "", collapse = " ", recycle0 = FALSE) ; arg_full_names = c("...", "collapse", "recycle0") ; tempo_split = c("AA", "collapse = \" \"", "BB", "recycle0 = FALSE") ; three_dots_log = c(TRUE, FALSE, FALSE) ; col2_i2 = "paste0" ; col3_i2 = 'paste0("AA", collapse = " ", "BB", recycle0 = FALSE)' ; function_name = "F1" ; package_name = "P1"
     #  arg_full = list(... = "", collapse = " ", recycle0 = FALSE) ; arg_full_names = c("...", "collapse", "recycle0") ; tempo_split = c("AA", "collapse = \" \"", "BB") ; three_dots_log = c(TRUE, FALSE, FALSE) ; col2_i2 = "paste0" ; col3_i2 = 'paste0("AA", collapse = " ", "BB")' ; function_name = "F1" ; package_name = "P1"
+    pattern1 <- "^\\s*([a-zA-Z]|\\.[a-zA-Z._])[a-zA-Z0-9._]*[\\s\\r\\n]*=" # looking for the arg name
     good_args <- NULL
     missing_args <- NULL
     missing_args_names <- NULL
@@ -1049,8 +1050,7 @@
         supp_args_in_three_dots <- NULL
         if(base::any(three_dots_log, na.rm = TRUE)){
             for(i3 in 1:base::length(tempo_split)){
-                pattern1 <- "^\\s*([a-zA-Z]|\\.[a-zA-Z._])[a-zA-Z0-9._]*[\\s\\r\\n]*=" # looking for the arg name
-                if(base::grepl(x = tempo_split[i3], pattern = pattern4, perl = TRUE) & obs_arg_log[i3] == TRUE){ # obs_arg_log[i3] == TRUE means values that need an arg name but detection of a = with only arg name rule before
+                if(base::grepl(x = tempo_split[i3], pattern = pattern1, perl = TRUE) & obs_arg_log[i3] == TRUE){ # obs_arg_log[i3] == TRUE means values that need an arg name but detection of a = with only arg name rule before
                     obs_arg_log[i3] <- FALSE # remove this arg from the args that need an arg name
                     supp_args_in_three_dots <- base::c(supp_args_in_three_dots, tempo_split[i3])
                 }
@@ -1081,8 +1081,7 @@
         tempo_col8 <- NULL
         if(( ! base::is.null(missing_args_names)) & base::length(tempo_split) != 0){
             for(i3 in 1:base::length(tempo_split)){
-                pattern4 <- "^\\s*([a-zA-Z]|\\.[a-zA-Z._])[a-zA-Z0-9._]*[\\s\\r\\n]*=" # looking for the arg name
-                if(base::grepl(x = tempo_split[i3], pattern = pattern4, perl = TRUE)){
+                if(base::grepl(x = tempo_split[i3], pattern = pattern1, perl = TRUE)){
                     tempo_arg_name <- base::strsplit(tempo_split[i3], split = "[\\s\\r\\n]*=", perl = TRUE)[[1]][1]
                     tempo_arg_name <- base::gsub(pattern = "^[\\s]*", replacement = "", x = tempo_arg_name) # removing leading ; and space
                     if( ! base::is.null(same_begin)){
