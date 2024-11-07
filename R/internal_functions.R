@@ -36,7 +36,7 @@
     # An error message or nothing 
     # DEBUGGING
     # fun = "ggplot2::geom_point" ; lib_path = "C:/Program Files/R/R-4.3.1/library" ; external_function_name = "fun1" ; external_package_name = "1"
-    # fun = "saferDev:::.colons_check_message" ; ; lib_path = "C:/Program Files/R/R-4.3.1/library" ; external_function_name = "fun1" ; external_package_name = "1"
+    # fun = "saferDev:::.colons_check_message" ; lib_path = "C:/Program Files/R/R-4.3.1/library" ; external_function_name = "fun1" ; external_package_name = "1"
     # check of lib_path
     # full check already done in the main function
     if(base::is.null(lib_path)){
@@ -69,7 +69,7 @@
         )
         base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
     }
-    fun.log <- base::sapply(X = pkg.fun.name.list, FUN = function(x){base::exists(x[2], envir = base::asNamespace(x[1]))})
+    fun.log <- base::sapply(X = pkg.fun.name.list, FUN = function(x){base::exists(x[2], envir = base::getNamespace(x[1]), inherits = FALSE)})
     if( ! base::all(fun.log)){
         tempo <- fun[ ! fun.log]
         tempo.cat <- base::paste0(
@@ -1071,7 +1071,7 @@
             X = arg_full_names
         ))
         if( ! base::is.null(same_begin)){
-            tempo_col8_end <- base::paste0("WARNING: SEVERAL ARGUMENT NAMES OF THE FUNCTION BEGINING WITH ", paste0(same_begin[ ! base::is.null(same_begin)], collapse = " ", recycle0 = FALSE), collapse = NULL, recycle0 = FALSE)
+            tempo_col8_end <- base::paste0("WARNING: SEVERAL ARGUMENT NAMES OF THE FUNCTION BEGINNING WITH ", paste0(same_begin[ ! base::is.null(same_begin)], collapse = " ", recycle0 = FALSE), collapse = NULL, recycle0 = FALSE)
         }
         # end detection of arguments that starts by the same string in the sub function
         # checking if arg name are not fully written
@@ -1090,7 +1090,7 @@
                         if( ! tempo_arg_name %in% same_begin){
                             tempo.log <- base::grepl(x = missing_args_names, pattern = base::paste0("^", tempo_arg_name), perl = FALSE)
                             if(base::sum(tempo.log, na.rm = TRUE) > 1){
-                                tempo.cat <- base::paste0("INTERNAL ERROR 2 IN .all_args_here_fill() IN ", function_name, " OF THE ", package_name, " PACKAGE\nIN LINE ", i2, " IN THE ", col2_i2, " FUNCTION\ntempo_arg_name DETECTS SEVERAL TIMES ARGUMENT NAMES:\n\nntempo_arg_name:\n", tempo_arg_name, "\n\nmissing_args_names:\n", base::paste(missing_args_names, collapse = "\n"), "\n\nmissing_args_names[tempo.log]:\n", base::paste(missing_args_names[tempo.log], collapse = "\n"))
+                                tempo.cat <- base::paste0("INTERNAL ERROR 2 IN .all_args_here_fill() IN ", function_name, " OF THE ", package_name, " PACKAGE\nIN LINE ", i2, " IN THE ", col2_i2, " FUNCTION\ntempo_arg_name DETECTS SEVERAL TIMES ARGUMENT NAMES:\n\ntempo_arg_name:\n", tempo_arg_name, "\n\nmissing_args_names:\n", base::paste(missing_args_names, collapse = "\n"), "\n\nmissing_args_names[tempo.log]:\n", base::paste(missing_args_names[tempo.log], collapse = "\n"))
                                 base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n", base::ifelse(base::is.null(warn), "", base::paste0("IN ADDITION\nWARNING", base::ifelse(warn_count > 1, "S", ""), ":\n\n", warn))), call. = FALSE)
                             }
                             if(base::sum(tempo.log, na.rm = TRUE) == 1){
@@ -1098,7 +1098,7 @@
                                     tempo_col8, 
                                     base::paste0(
                                         base::ifelse(test = base::is.null(tempo_col8), yes = "", no = " ; "), 
-                                        base::paste0(tempo_arg_name, " ARG NAME SHOULD BE WRITTEN ", missing_args_names[tempo.log])
+                                        base::paste0(tempo_arg_name, " ARG NAME HAS TO BE FULLY WRITTEN ", missing_args_names[tempo.log])
                                     )
                                 )
                             }
@@ -1107,7 +1107,7 @@
                 }
             }
             if(( ! base::is.null(tempo_col8)) & ! base::is.null(tempo_col8_end)){
-                tempo_col8 <- paste0(tempo_col8, " ", tempo_col8_end, collapse = NULL, recycle0 = FALSE)
+                tempo_col8 <- paste0(tempo_col8, " & ", tempo_col8_end, collapse = NULL, recycle0 = FALSE)
             }
         }
         # end checking if arg name are not fully written
