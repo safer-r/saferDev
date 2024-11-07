@@ -19,7 +19,7 @@ test_that("all_args_here()", {
     testthat::expect_equal(result1, expected1)
 
     result2 <- saferDev::get_message("all_args_here(x = mean)", kind = "error", print.no = TRUE, text = NULL)
-    expected2 <- "ERROR MESSAGE REPORTED:\nError : \n\n================\n\nERROR IN all_args_here() OF THE saferDev PACKAGE\nCANNOT GET THE ARGUMENTS OF A FUNCTION THAT IS NOT ASSOCIATED TO ITS PACKAGE IN LINE 2:\n\nUseMethod(\"mean\")\n\n1) PLEASE, RUN saferDev::colons_check(mean)\n2) ADD THE MISSING <PACKAGE>::<FUNCTION> (OR <PACKAGE>:::<FUNCTION> FOR FUNCTION STARTING BY A DOT)\n3) RERUN saferDev::all_args_here(mean)\n\n================\n\n\n"
+    expected2 <- "ERROR MESSAGE REPORTED:\nError : \n\n================\n\nERROR IN all_args_here() OF THE saferDev PACKAGE\nCANNOT GET THE ARGUMENTS OF A FUNCTION THAT IS NOT ASSOCIATED TO ITS PACKAGE IN LINE 2:\n\nUseMethod(\"mean\")\n\nPLEASE, RUN saferDev::colons_check(mean) FIRST,\nADD THE MISSING <PACKAGE>::<FUNCTION> (OR <PACKAGE>:::<FUNCTION> FOR FUNCTION STARTING BY A DOT)\nAND RERUN saferDev::all_args_here(mean)\n\n================\n\n\n"
     testthat::expect_equal(result2, expected2)
 
     testthat::expect_error(all_args_here(x = "a"))
@@ -59,8 +59,8 @@ test_that("all_args_here()", {
         FUN_POS = c(23, 43, 60, 94, 111, 24, 44, 61, 95, 112, 25, 26, 100), 
         DEF_ARGS = c('x, mode = "any"', 'x, recursive = TRUE, use.names = TRUE', 'FUN, ..., MoreArgs = NULL, SIMPLIFY = TRUE, USE.NAMES = TRUE', 'x, ...', 'x', 'x, mode = "any"', 'x, recursive = TRUE, use.names = TRUE', 'FUN, ..., MoreArgs = NULL, SIMPLIFY = TRUE, USE.NAMES = TRUE', 'x, ...', 'x', 'what, args, quote = FALSE, envir = parent.frame()', 'what, args, quote = FALSE, envir = parent.frame()', 'n = 1'), 
         MISSING_ARG_NAMES = c('', '', '', '', '', 'mode', 'recursive, use.names', 'MoreArgs, SIMPLIFY, USE.NAMES', '', '', 'quote, envir', '', 'n'), 
-        MISSING_ARGS = c('', '', '', '', '', 'mode = "any"', 'recursive = TRUE, use.names = TRUE', 'MoreArgs = x = x, SIMPLIFY = y = y, USE.NAMES = TRUE', '', '', 'quote = FALSE, envir = parent.frame()', '', 'n = 1'), 
-        STATUS = c('GOOD', 'GOOD', 'GOOD', 'GOOD', 'GOOD', 'as.vector(x = base::unlist(x = base::mapply(FUN = function(x, y){base::rep(x = y, base::length(x = x))}, x = x, y = y)), mode = "any")', 'unlist(x = base::mapply(FUN = function(x, y){base::rep(x = y, base::length(x = x))}, x = x, y = y), recursive = TRUE, use.names = TRUE)', 'mapply(FUN = function(x, y){base::rep(x = y, base::length(x = x))}, MoreArgs = x = x, SIMPLIFY = y = y, USE.NAMES = TRUE)', 'GOOD', 'GOOD', 'do.call(what = base::c, args = code_for_col, quote = FALSE, envir = parent.frame())', 'GOOD', 'parent.frame(n = 1)')
+        MISSING_ARGS = c('', '', '', '', '', 'mode = "any"', 'recursive = TRUE, use.names = TRUE', 'MoreArgs = NULL, SIMPLIFY = TRUE, USE.NAMES = TRUE', '', '', 'quote = FALSE, envir = parent.frame()', '', 'n = 1'), 
+        STATUS = c('GOOD', 'GOOD', 'GOOD', 'GOOD', 'GOOD', 'as.vector(x = base::unlist(x = base::mapply(FUN = function(x, y){base::rep(x = y, base::length(x = x))}, x = x, y = y)), mode = "any")', 'unlist(x = base::mapply(FUN = function(x, y){base::rep(x = y, base::length(x = x))}, x = x, y = y), recursive = TRUE, use.names = TRUE)', 'mapply(x = x, y = y, FUN = function(x, y){base::rep(x = y, base::length(x = x))}, MoreArgs = NULL, SIMPLIFY = TRUE, USE.NAMES = TRUE)', 'GOOD', 'GOOD', 'do.call(what = base::c, args = code_for_col, quote = FALSE, envir = parent.frame())', 'GOOD', 'parent.frame(n = 1)')
     )
     testthat::expect_equal(result3, expected3)
 
