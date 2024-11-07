@@ -17,7 +17,7 @@ Imports:
     ggplot2,
     lubridate,
     parallel,
-    pdftools,
+    qpdf,
     reticulate
 Suggests: 
     knitr,

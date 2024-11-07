@@ -43,7 +43,7 @@
 #' @details 
 #' Limited to 43 arguments with at least 2 values each. The total number of arguments tested can be more if the additional arguments have a single value. The limit is due to nested "for" loops (https://stat.ethz.ch/pipermail/r-help/2008-March/157341.html), but this limitation is away from the number of tests performed that would be 2^43.
 #' @importFrom lubridate seconds_to_period
-#' @importFrom pdftools pdf_combine
+#' @importFrom qpdf pdf_combine
 #' @importFrom parallel detectCores
 #' @importFrom parallel makeCluster
 #' @importFrom parallel clusterSplit
@@ -157,7 +157,7 @@ arg_test <- function(
         saferDev:::.pack_and_function_check(
         fun = base::c(
             "lubridate::seconds_to_period", 
-            "pdftools::pdf_combine",
+            "qpdf::pdf_combine",
             "parallel::detectCores",
             "parallel::makeCluster",
             "parallel::clusterSplit",
@@ -779,7 +779,7 @@ arg_test <- function(
             }
             # combine pdf and save
             if( ! base::is.null(final.pdf)){
-                pdftools::pdf_combine(
+                qpdf::pdf_combine(
                     input = final.pdf,
                     output = base::paste0(res.path, "/plots_from_arg_test_1-", total.comp.nb, ".pdf")
                 )
