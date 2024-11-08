@@ -1120,7 +1120,7 @@
             good_args <- base::c(
                 tempo_split[ ! tempo_split %in% good_args], # arg values without names
                 good_args, # obs arg values with names
-                missing_args # missing arg values with names
+                paste0(" ", missing_args) # missing arg values with names #a space added to finally have  comma followed by a space
             )
         }else{
             count_good_args <- 0
@@ -1135,7 +1135,7 @@
                         tempo <- base::paste0(arg_full_names[i3], " = ", if(base::is.null(base::deparse(arg_full[[i3]]))){"NULL"}else{base::deparse(arg_full[[i3]])})
                     }
                     missing_args <- base::c(missing_args, tempo)
-                    final <- base::c(final, tempo) # take the first pos always of the args with no arg names
+                    final <- base::c(final, base::ifelse(test = i3 == 1, yes = tempo, no = paste0(" ", tempo))) # take the first pos always of the args with no arg names
                 }else{
                     count_good_args <- count_good_args + 1
                     final <- base::c(final, good_args[count_good_args])
@@ -1168,9 +1168,9 @@
         tempo <- base::paste0(
             col2_i2, 
             "(", 
-            base::ifelse(test = ! base::is.null(supp_args_in_three_dots), yes = base::paste0(supp_args_in_three_dots, collapse = ", "), no = ""), 
-            base::ifelse(test = ( ! base::is.null(supp_args_in_three_dots)) & ( ! base::is.null(good_args)) , yes = ", ", no = ""), 
-            base::ifelse(test = ! base::is.null(good_args), yes = base::paste0(good_args, collapse = ", "), no = ""),
+            base::ifelse(test = ! base::is.null(supp_args_in_three_dots), yes = base::paste0(supp_args_in_three_dots, collapse = ","), no = ""), 
+            base::ifelse(test = ( ! base::is.null(supp_args_in_three_dots)) & ( ! base::is.null(good_args)) , yes = ",", no = ""), 
+            base::ifelse(test = ! base::is.null(good_args), yes = base::paste0(good_args, collapse = ","), no = ""),
             ")"
         )
         if(base::length(arg_full_names) == good_count){
