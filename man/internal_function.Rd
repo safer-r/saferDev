@@ -78,7 +78,9 @@
   col2_i2,
   arg_user_setting_x,
   function_name,
-  package_name
+  package_name,
+  warn,
+  warn_count
 )
 }
 \arguments{
@@ -150,6 +152,10 @@
 
 \item{arg_user_setting_x}{name of the checked function}
 
+\item{warn}{warning string.}
+
+\item{warn_count}{warning count.}
+
 \item{pattern:}{A perl regex to extract function name and (), using generally paste0(<FUNCTION_NAME>, "[\\s\\r\\n]*\\(").}
 }
 \value{
@@ -165,7 +171,7 @@ $pos: position of the first character of the function names in the input string
 
 A list containing:
 $string: The input string with all pattern replaced by the replacement pattern.
-$pos: the positions of the 1rst character of the replaced pattern. NULL if no replaced pattern. In that case, $string is identical to the input string.
+$pos: vector of the positions of the 1rst character of the replaced pattern. NULL if no replaced pattern. In that case, $string is identical to the input string.
 
 A list containing:
 $string: The input string with all pattern replaced by the replacement pattern.

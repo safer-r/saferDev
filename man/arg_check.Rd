@@ -41,7 +41,7 @@ arg_check(
 
 \item{options}{Vector of character strings or integers indicating all the possible option values for the data argument, or NULL. Numbers of type "double" are accepted if they have a 0 modulo.}
 
-\item{all_options_in_data}{Single logical value. If TRUE, all of the options must be present at least once in the data argument, and nothing else. If FALSE, some or all of the options must be present in the data argument, and nothing else. Ignored if options is NULL.}
+\item{all_options_in_data}{Single logical value. If TRUE, all of the options must be present at least once in the data argument, and nothing else. If FALSE, some or all of the options must be present in the data argument, and nothing else. Ignored if options base::is.null.}
 
 \item{na_contain}{Single logical value. Can the data argument contain NA?}
 
@@ -78,7 +78,7 @@ Check expected values of an argument of functions: class, type, mode, length, re
  
 - The function tests what is written in its arguments, even if what is written is incoherent. For instance, arg_check(data = factor(1), class = "factor", mode = "character") will return a problem, whatever the object tested in the data argument, because no object can be class "factor" and mode "character" (factors are class "factor" and mode "numeric"). Of note, length of object of class "environment" is always 0.
  
-- If the tested object is NULL, then the function will always return a checking problem.
+- If the tested object base::is.null, then the function will always return a checking problem.
  
 - Argument "class" with value "vector" means that the object is tested for class(data) returning only "numeric", "integer", "character", "logical", "complex" or "expression". Please, use another value of class (e.g., class = "call" or class = "list") for other types and class of objects
  
