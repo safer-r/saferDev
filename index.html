@@ -119,38 +119,42 @@
 </tr></thead>
 <tbody>
 <tr class="odd">
+<td align="left"><strong>all_args_here()</strong></td>
+<td align="left">Verify that all the functions used inside a function are written with all their arguments. For instance: <code>base::paste0(letters[1:2], collapse = NULL, recycle0 = FALSE)</code> and not <code>paste0(letters[1:2])</code>.</td>
+</tr>
+<tr class="even">
 <td align="left"><strong>arg_check()</strong></td>
 <td align="left">Check expected values of arguments of functions: class, type, mode, length, restricted values panel, kind of numeric values in addition to the distinction between ‘integer’ and ‘double’ (proportion only? Inf values authorized? negative values authorized? Integers of type ‘double’?).</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td align="left"><strong>arg_test()</strong></td>
 <td align="left">Test a set of values for a defined set of arguments of a function. Contrary to <code><a href="https://testthat.r-lib.org/reference/test_that.html" class="external-link">testthat::test_that()</a></code>, the function 1) test a batch of argument values and 2) does not control that the result is identical to an expected one but control only if an error is returned or not.</td>
 </tr>
-<tr class="odd">
-<td align="left"><strong>colons_check()</strong></td>
-<td align="left">Verify that all the functions used inside a function are all referenced by their package attribution. For instance: base::mean() and not mean(), or saferDev:::.base_op_check() and not .base_op_check().</td>
-</tr>
 <tr class="even">
+<td align="left"><strong>colons_check()</strong></td>
+<td align="left">Verify that all the functions used inside a function are all referenced by their package attribution. For instance: <code><a href="https://rdrr.io/r/base/mean.html" class="external-link">base::mean()</a></code> and not <code><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean()</a></code>, or <code>saferDev:::.base_op_check()</code> and not <code><a href="reference/internal_function.html">.base_op_check()</a></code>.</td>
+</tr>
+<tr class="odd">
 <td align="left"><strong>env_check()</strong></td>
 <td align="left">Verify that object names in the environment defined by the pos argument are identical or not to object names in the above environments (following R Scope). This can be used to verify that names used for objects inside a function or in the working environment do not override names of objects already present in the above R environments, following the R scope.</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td align="left"><strong>get_message()</strong></td>
 <td align="left">Return the error, warning or simple (non error non warning) message if ever exist of an instruction written between quotes.</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td align="left"><strong>is_function_here()</strong></td>
 <td align="left">Check if required functions are present in installed packages. This controls modifications in of function names package versions.</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td align="left"><strong>is_package_here()</strong></td>
 <td align="left">Check if required packages are installed locally.</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td align="left"><strong>is_python_package_here()</strong></td>
 <td align="left">Check if required python packages are installed locally.</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td align="left"><strong>report()</strong></td>
 <td align="left">Print a character string or a data object into a same log file.</td>
 </tr>
@@ -199,7 +203,7 @@
 </h2>
 <p><a href="https://github.com/Tintin2710" class="external-link">Haiding Wang</a>, Bioinformatics and Biostatistics Hub, Institut Pasteur, Paris, France</p>
 <p><a href="https://github.com/yushiHn" class="external-link">Yushi Han</a>, Bioinformatics and Biostatistics Hub, Institut Pasteur, Paris, France</p>
-<p><a href="https://github.com/js2264" class="external-link">Jacques Serizai</a>, Spatial Regulation of Genomes team, Institut Pasteur, Paris, France</p>
+<p><a href="https://github.com/js2264" class="external-link">Jacques Serizay</a>, Spatial Regulation of Genomes team, Institut Pasteur, Paris, France</p>
 <p><a href="https://github.com/gael-millot" class="external-link">Gael A. Millot</a>, Bioinformatics and Biostatistics Hub, Institut Pasteur, Paris, France</p>
 <p><br></p>
 </div>

@@ -160,7 +160,9 @@ Others functions of the R scope can be overwritten because safer functions alway
 <span>  <span class="va">col2_i2</span>,</span>
 <span>  <span class="va">arg_user_setting_x</span>,</span>
 <span>  <span class="va">function_name</span>,</span>
-<span>  <span class="va">package_name</span></span>
+<span>  <span class="va">package_name</span>,</span>
+<span>  <span class="va">warn</span>,</span>
+<span>  <span class="va">warn_count</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -302,6 +304,14 @@ Others functions of the R scope can be overwritten because safer functions alway
 <dd><p>name of the checked function</p></dd>
 
 
+<dt>warn</dt>
+<dd><p>warning string.</p></dd>
+
+
+<dt>warn_count</dt>
+<dd><p>warning count.</p></dd>
+
+
 <dt>pattern:</dt>
 <dd><p>A perl regex to extract function name and (), using generally paste0(&lt;FUNCTION_NAME&gt;, "[\s\r\n]*\(").</p></dd>
 
@@ -326,7 +336,7 @@ $pos: position of the first character of the function names in the input string<
 
 <p>A list containing:
 $string: The input string with all pattern replaced by the replacement pattern.
-$pos: the positions of the 1rst character of the replaced pattern. NULL if no replaced pattern. In that case, $string is identical to the input string.</p>
+$pos: vector of the positions of the 1rst character of the replaced pattern. NULL if no replaced pattern. In that case, $string is identical to the input string.</p>
 
 
 <p>A list containing:
