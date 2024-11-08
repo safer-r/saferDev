@@ -1085,7 +1085,7 @@
             for(i3 in 1:base::length(tempo_split)){
                 if(base::grepl(x = tempo_split[i3], pattern = pattern1, perl = TRUE)){
                     tempo_arg_name <- base::strsplit(tempo_split[i3], split = "[\\s\\r\\n]*=", perl = TRUE)[[1]][1]
-                    tempo_arg_name <- base::gsub(pattern = "^[\\s]*", replacement = "", x = tempo_arg_name) # removing leading ; and space
+                    tempo_arg_name <- base::gsub(pattern = "^[\\s]*", replacement = "", x = tempo_arg_name) # removing leading space
                     if( ! base::is.null(same_begin)){
                         if( ! tempo_arg_name %in% same_begin){
                             tempo.log <- base::grepl(x = missing_args_names, pattern = base::paste0("^", tempo_arg_name), perl = FALSE)
@@ -1168,7 +1168,7 @@
         tempo <- base::paste0(
             col2_i2, 
             "(", 
-            base::ifelse(test = ! base::is.null(supp_args_in_three_dots), yes = base::paste0(supp_args_in_three_dots, collapse = ","), no = ""), 
+            base::ifelse(test = ! base::is.null(supp_args_in_three_dots), yes = base::gsub(pattern = "^[\\s]*", replacement = "", x = base::paste0(supp_args_in_three_dots, collapse = ",")), no = ""), 
             base::ifelse(test = ( ! base::is.null(supp_args_in_three_dots)) & ( ! base::is.null(good_args)) , yes = ",", no = ""), 
             base::ifelse(test = ! base::is.null(good_args), yes = base::paste0(good_args, collapse = ","), no = ""),
             ")"
