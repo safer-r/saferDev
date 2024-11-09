@@ -45,7 +45,7 @@ Set of R functions for the development of R functions, written according to the 
 | **colons_check()** | Verify that all the functions used inside a function are all referenced by their package attribution. For instance: `base::mean()` and not `mean()`, or `saferDev:::.base_op_check()` and not `.base_op_check()`. |
 | **env_check()** | Verify that object names in the environment defined by the pos argument are identical or not to object names in the above environments (following R Scope). This can be used to verify that names used for objects inside a function or in the working environment do not override names of objects already present in the above R environments, following the R scope. |
 | **get_message()** | Return the error, warning or simple (non error non warning) message if ever exist of an instruction written between quotes. |
-| **is_function_here()** | Check if required functions are present in installed packages. This controls modifications in of function names package versions. |
+| **is_function_here()** | Check if required functions are present in installed packages. This controls for instance modifications of function names depending on package versions. |
 | **is_package_here()** | Check if required packages are installed locally. |
 | **is_python_package_here()** | Check if required python packages are installed locally. |
 | **report()** | Print a character string or a data object into a same log file. |
