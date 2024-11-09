@@ -71,7 +71,7 @@ test_that("all_args_here()", {
                 'mapply(x = x, y = y,FUN = function(x, y){base::rep(x = y, base::length(x = x))}, MoreArgs = NULL, SIMPLIFY = TRUE, USE.NAMES = TRUE)', 
                 'GOOD', 
                 'GOOD', 
-                'do.call(what = base::c,  args = code_for_col, quote = FALSE, envir = parent.frame())', 
+                'do.call(what = base::c, args = code_for_col, quote = FALSE, envir = parent.frame())', 
                 'GOOD', 
                 'parent.frame(n = 1)'
             )
