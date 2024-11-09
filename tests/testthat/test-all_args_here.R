@@ -60,7 +60,21 @@ test_that("all_args_here()", {
         DEF_ARGS = c('x, mode = "any"', 'x, recursive = TRUE, use.names = TRUE', 'FUN, ..., MoreArgs = NULL, SIMPLIFY = TRUE, USE.NAMES = TRUE', 'x, ...', 'x', 'x, mode = "any"', 'x, recursive = TRUE, use.names = TRUE', 'FUN, ..., MoreArgs = NULL, SIMPLIFY = TRUE, USE.NAMES = TRUE', 'x, ...', 'x', 'what, args, quote = FALSE, envir = parent.frame()', 'what, args, quote = FALSE, envir = parent.frame()', 'n = 1'), 
         MISSING_ARG_NAMES = c('', '', '', '', '', 'mode', 'recursive, use.names', 'MoreArgs, SIMPLIFY, USE.NAMES', '', '', 'quote, envir', '', 'n'), 
         MISSING_ARGS = c('', '', '', '', '', 'mode = "any"', 'recursive = TRUE, use.names = TRUE', 'MoreArgs = NULL, SIMPLIFY = TRUE, USE.NAMES = TRUE', '', '', 'quote = FALSE, envir = parent.frame()', '', 'n = 1'), 
-        STATUS = c('GOOD', 'GOOD', 'GOOD', 'GOOD', 'GOOD', 'as.vector(x = base::unlist(x = base::mapply(FUN = function(x, y){base::rep(x = y, base::length(x = x))}, x = x, y = y)), mode = \"any\")', 'unlist(x = base::mapply(FUN = function(x, y){base::rep(x = y, base::length(x = x))}, x = x, y = y), recursive = TRUE, use.names = TRUE)', 'mapply( x = x,  y = y, FUN = function(x, y){base::rep(x = y, base::length(x = x))}, MoreArgs = NULL, SIMPLIFY = TRUE, USE.NAMES = TRUE)', 'GOOD', 'GOOD', 'do.call(what = base::c,  args = code_for_col, quote = FALSE, envir = parent.frame())', 'GOOD', 'parent.frame(n = 1)')
+        STATUS = c(
+                'GOOD', 
+                'GOOD', 
+                'GOOD', 
+                'GOOD', 
+                'GOOD', 
+                'as.vector(x = base::unlist(x = base::mapply(FUN = function(x, y){base::rep(x = y, base::length(x = x))}, x = x, y = y)), mode = \"any\")', 
+                'unlist(x = base::mapply(FUN = function(x, y){base::rep(x = y, base::length(x = x))}, x = x, y = y), recursive = TRUE, use.names = TRUE)', 
+                'mapply(x = x, y = y,FUN = function(x, y){base::rep(x = y, base::length(x = x))}, MoreArgs = NULL, SIMPLIFY = TRUE, USE.NAMES = TRUE)', 
+                'GOOD', 
+                'GOOD', 
+                'do.call(what = base::c,  args = code_for_col, quote = FALSE, envir = parent.frame())', 
+                'GOOD', 
+                'parent.frame(n = 1)'
+            )
         # a space between mapply( and x because FUN was the first arg in the initial writting, replaced by x in the final writting, which is preceeded by a space after string split.
     )
     testthat::expect_equal(result3, expected3)
