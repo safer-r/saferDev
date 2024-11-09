@@ -38,16 +38,16 @@ testthat::test_that("colons_check()", {
         "LINE\tFUN\t\tSTRING_BEFORE", 
         "3\tgregexpr\t\tmatches <- " , 
         "6\tregmatches\t\tmatched_strings <- " , 
-        "8\tsum\t\ttempo4 <- a$regmatches(x = text, m = matches)[[1]] ; ", 
+        "8\tsum\t\t", 
         "15\tsub\t\tresult <- " , 
-        "16\trange\t\tresult <- sub(\"\\\\($##\", \"\", matched_strings) ; ", 
-        "25\treturn\t\t", 
+        "16\trange\t\t", 
+        "19\treturn\t\t", 
         "", 
         "INSIDE test(), SOME :: OR ::: ARE MISSING AT OTHER FUNCTION POSITIONS:", 
         "", 
         "LINE\tFUN\t\tSTRING_BEFORE", 
-        "22\troc1\t\ttempo.cat <- base::paste0(\"INTERNAL ERROR 4 IN \", function.name, \" OF THE \", package.name, \" PACKAGE\\nLENGTHS OF col1 (\", base::length(", 
-        "24\troc4\t\ttempo.cat <- base::paste0(\"IAGE\\nLENGTHS OF roc00() (\", base::ks.test(", 
+        "13\troc1\t\tbase::length(", 
+        "17\troc4\t\ttempo.cat <- base::paste0(\"IAGE\\nLENGTHS OF roc00() (\", base::ks.test(", 
         ""
     )
     testthat::expect_equal(result1, expected1)
