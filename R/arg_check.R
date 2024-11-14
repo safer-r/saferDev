@@ -67,9 +67,9 @@ arg_check <- function(
 ){
     # DEBUGGING
     # data = mean ; class = NULL ; typeof = NULL ; mode = NULL ; length = NULL ; prop = FALSE ; double_as_integer_allowed = FALSE ; options = "a" ; all_options_in_data = FALSE ; na_contain = FALSE ; neg_values = TRUE ; inf_values = TRUE ; print = TRUE ; data_name = NULL ; fun_name = NULL; safer_check = TRUE
-    # package name
+    #### package name
     package_name <- "saferDev"# write NULL if the function developed is not in a package
-    # end package name
+    #### end package name
 
     #### function name
     tempo_settings <- base::as.list(x = base::match.call(definition = base::sys.function(which = base::sys.parent(n = 0)), call = base::sys.call(which = base::sys.parent(n = 0)), expand.dots = FALSE, envir = base::parent.frame(n = 2L))) # warning: I have written n = 0 to avoid error when a safer function is inside another functions
@@ -114,7 +114,7 @@ arg_check <- function(
     #### argument primary checking
 
     ######## arg with no default values
-    mandat.args <- base::c(
+    mandat_args <- base::c(
         "data"
     )
     tempo <- base::eval(expr = base::parse(text = base::paste0("base::c(base::missing(", base::paste0(mandat_args, collapse = "),base::missing(", recycle0 = FALSE), "))", collapse = NULL, recycle0 = FALSE), file = "", n = NULL, prompt = "?", keep.source = base::getOption(x = "keep.source", default = NULL), srcfile = NULL, encoding = "unknown"), envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL))
@@ -129,73 +129,6 @@ arg_check <- function(
     # source("https://gitlab.pasteur.fr/gmillot/debugging_tools_for_r_dev/-/raw/v1.8/r_debugging_tools.R") ; eval(parse(text = str_basic_arg_check_dev)) ; eval(parse(text = str_arg_check_with_fun_check_dev)) # activate this line and use the function (with no arguments left as NULL) to check arguments status and if they have been checked using saferDev::arg_check()
     # end check with r_debugging_tools
     ######## end argument checking with arg_check()
-
-    
-    ######## management of special classes
-    basic.class <- base::c(
-        "NULL", # because base::class(NULL) is "NULL". The NULL aspect will be dealt later
-        "logical", 
-        "integer", 
-        "numeric", 
-        # "complex", 
-        "character"
-        # "matrix", 
-        # "array", 
-        # "data.frame", 
-        # "list", 
-        # "factor", 
-        # "table", 
-        # "expression", 
-        # "name", 
-        # "symbol", 
-        # "function", 
-        # "uneval", 
-        # "environment", 
-        # "ggplot2", 
-        # "ggplot_built", 
-        # "call"
-    )
-    tempo.arg.base <-base::c( # no base::names(base::formals(fun = base::sys.function(base::sys.parent(n = 2)))) used with arg_check() to be sure to deal with the correct environment
-        "class", 
-        "typeof", 
-        "mode", 
-        "length", 
-        "prop", 
-        "double_as_integer_allowed", 
-        "options", 
-        "all_options_in_data", 
-        "na_contain", 
-        "neg_values", 
-        "inf_values", 
-        "print", 
-        "data_name", 
-        "fun_name"
-    )
-    tempo.class <-base::list( # no base::get() used to be sure to deal with the correct environment
-        base::class(class), 
-        base::class(typeof), 
-        base::class(mode), 
-        base::class(length), 
-        base::class(prop), 
-        base::class(double_as_integer_allowed), 
-        base::class(options), 
-        base::class(all_options_in_data), 
-        base::class(na_contain), 
-        base::class(neg_values), 
-        base::class(inf_values), 
-        base::class(print), 
-        base::class(data_name), 
-        base::class(fun_name)
-    )
-    tempo <- ! base::sapply(base::lapply(tempo.class, FUN = "%in%", basic.class), FUN = base::all)
-    if(base::any(tempo)){
-        tempo.cat1 <- tempo.arg.base[tempo]
-        tempo.cat2 <- base::sapply(tempo.class[tempo], FUN = base::paste0, collapse = " ")
-        tempo.sep <- base::sapply(base::mapply(" ", base::max(base::nchar(tempo.cat1)) - base::nchar(tempo.cat1) + 3, FUN = base::rep, SIMPLIFY = FALSE), FUN = base::paste0, collapse = "")
-        tempo.cat <- base::paste0("ERROR IN ", function_name, "() OF THE ", package_name, " PACKAGE", base::ifelse(base::is.null(fun_name), "", base::paste0(" INSIDE ", fun_name, base::ifelse(test = base::is.null(pack_name), yes = "", no = base::paste0(" OF THE PACKAGE ", pack_name)))), "\nANY ARGUMENT EXCEPT data MUST HAVE A BASIC CLASS\nPROBLEMATIC ARGUMENT", base::ifelse(base::length(tempo.cat1) > 1, "S", ""), " AND ASSOCIATED CLASS", base::ifelse(base::length(tempo.cat1) > 1, "ES ARE", " IS"), ":\n", base::paste0(tempo.cat1, tempo.sep, tempo.cat2, collapse = "\n")) # normally no NA with base::is.na()
-        base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
-    }
-    ######## end management of special classes
 
     ######## management of NA arguments
     if(base::length(x = arg_user_setting) != 0){
@@ -261,6 +194,73 @@ arg_check <- function(
     ######## end warning initiation
 
     ######## other checkings
+
+    ######## management of special classes
+    basic.class <- base::c(
+        "NULL", # because base::class(NULL) is "NULL". The NULL aspect will be dealt later
+        "logical", 
+        "integer", 
+        "numeric", 
+        # "complex", 
+        "character"
+        # "matrix", 
+        # "array", 
+        # "data.frame", 
+        # "list", 
+        # "factor", 
+        # "table", 
+        # "expression", 
+        # "name", 
+        # "symbol", 
+        # "function", 
+        # "uneval", 
+        # "environment", 
+        # "ggplot2", 
+        # "ggplot_built", 
+        # "call"
+    )
+    tempo.arg.base <-base::c( # no base::names(base::formals(fun = base::sys.function(base::sys.parent(n = 2)))) used with arg_check() to be sure to deal with the correct environment
+        "class", 
+        "typeof", 
+        "mode", 
+        "length", 
+        "prop", 
+        "double_as_integer_allowed", 
+        "options", 
+        "all_options_in_data", 
+        "na_contain", 
+        "neg_values", 
+        "inf_values", 
+        "print", 
+        "data_name", 
+        "fun_name"
+    )
+    tempo.class <-base::list( # no base::get() used to be sure to deal with the correct environment
+        base::class(class), 
+        base::class(typeof), 
+        base::class(mode), 
+        base::class(length), 
+        base::class(prop), 
+        base::class(double_as_integer_allowed), 
+        base::class(options), 
+        base::class(all_options_in_data), 
+        base::class(na_contain), 
+        base::class(neg_values), 
+        base::class(inf_values), 
+        base::class(print), 
+        base::class(data_name), 
+        base::class(fun_name)
+    )
+    tempo <- ! base::sapply(base::lapply(tempo.class, FUN = "%in%", basic.class), FUN = base::all)
+    if(base::any(tempo)){
+        tempo.cat1 <- tempo.arg.base[tempo]
+        tempo.cat2 <- base::sapply(tempo.class[tempo], FUN = base::paste0, collapse = " ")
+        tempo.sep <- base::sapply(base::mapply(" ", base::max(base::nchar(tempo.cat1)) - base::nchar(tempo.cat1) + 3, FUN = base::rep, SIMPLIFY = FALSE), FUN = base::paste0, collapse = "")
+        tempo.cat <- base::paste0("ERROR IN ", function_name, "() OF THE ", package_name, " PACKAGE", base::ifelse(base::is.null(fun_name), "", base::paste0(" INSIDE ", fun_name, base::ifelse(test = base::is.null(pack_name), yes = "", no = base::paste0(" OF THE PACKAGE ", pack_name)))), "\nANY ARGUMENT EXCEPT data MUST HAVE A BASIC CLASS\nPROBLEMATIC ARGUMENT", base::ifelse(base::length(tempo.cat1) > 1, "S", ""), " AND ASSOCIATED CLASS", base::ifelse(base::length(tempo.cat1) > 1, "ES ARE", " IS"), ":\n", base::paste0(tempo.cat1, tempo.sep, tempo.cat2, collapse = "\n")) # normally no NA with base::is.na()
+        base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
+    }
+    ######## end management of special classes
+    
     if( ! base::is.null(data_name)){
         if( ! (base::length(data_name) == 1L & base::all(base::class(data_name) == "character"))){ # base::all() without na.rm -> ok because base::class(NA) is "logical"
             tempo.cat <- base::paste0("ERROR IN ", function_name, "() OF THE ", package_name, " PACKAGE", base::ifelse(base::is.null(fun_name), "", base::paste0(" INSIDE ", fun_name, base::ifelse(test = base::is.null(pack_name), yes = "", no = base::paste0(" OF THE PACKAGE ", pack_name)))), "\ndata_name ARGUMENT MUST BE A SINGLE CHARACTER ELEMENT AND NOT ", base::paste(data_name, collapse = " "))
