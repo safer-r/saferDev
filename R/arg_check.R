@@ -85,7 +85,7 @@ arg_check <- function(
     arg_names <- base::names(x = base::formals(fun = base::sys.function(which = base::sys.parent(n = 2)), envir = base::parent.frame(n = 1))) # names of all the arguments
     #### end arguments settings
 
-    # critical operator checking
+    #### critical operator checking
     if( ! (base::all(safer_check %in% base::c(TRUE, FALSE), na.rm = FALSE) & base::length(x = safer_check) == 1 & base::all(base::is.logical(x = safer_check), na.rm = TRUE))){
         tempo_cat <- base::paste0("ERROR IN ", function_name, base::ifelse(test = base::is.null(x = package_name), yes = "", no = base::paste0(" OF THE ", package_name, " PACKAGE", collapse = NULL, recycle0 = FALSE)), "\nsafer_check ARGUMENT MUST BE EITHER TRUE OR FALSE. HER IT IS:\n", base::paste0(safer_check, collapse = "\n", recycle0 = FALSE), collapse = NULL, recycle0 = FALSE)
         base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL) # == in base::stop() to be able to add several messages between ==
@@ -96,7 +96,7 @@ arg_check <- function(
             external_package_name = package_name
         )
     }
-    # end critical operator checking
+    #### end critical operator checking
 
     #### package checking
 
@@ -141,7 +141,7 @@ arg_check <- function(
     ######## end management of NA arguments
 
     ######## management of NULL arguments
-    tempo.arg <- base::c(
+    tempo_arg <- base::c(
         "prop", 
         "double_as_integer_allowed", 
         "all_options_in_data", 
