@@ -121,6 +121,7 @@ arg_test <- function(
     #### end package name
 
     #### function name
+    ini <- base::match.call(expand.dots = FALSE) # initial parameters (specific of arg_test())
     tempo_settings <- base::as.list(x = base::match.call(definition = base::sys.function(which = base::sys.parent(n = 0)), call = base::sys.call(which = base::sys.parent(n = 0)), expand.dots = FALSE, envir = base::parent.frame(n = 2L))) # warning: I have written n = 0 to avoid error when a safer function is inside another functions
     function_name <- base::paste0(tempo_settings[[1]], "()", collapse = NULL, recycle0 = FALSE) 
     # function name with "()" paste, which split into a vector of three: c("::()", "package ()", "function ()") if "package::function()" is used.
@@ -216,7 +217,7 @@ arg_test <- function(
     tempo <- saferDev::arg_check(data = parall, class = "vector", typeof = NULL, mode = "logical", length = 1, prop = FALSE, double_as_integer_allowed = FALSE, options = NULL, all_options_in_data = FALSE, na_contain = FALSE, neg_values = TRUE, inf_values = TRUE, print = FALSE, data_name = NULL, fun_name = function_name, pack_name = NULL, safer_check = FALSE) ; base::eval(expr = ee, envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL))
     if(parall == TRUE){
         if( ! base::is.null(x = thread.nb)){
-            tempo <- saferDev::arg_check(data = thread.nb, typeof = "integer", mode = NULL, double_as_integer_allowed = TRUE, neg_values = FALSE, length = 1, prop = FALSE, double_as_integer_allowed = TRUE, options = NULL, all_options_in_data = FALSE, na_contain = FALSE, neg_values = TRUE, inf_values = FALSE, print = FALSE, data_name = NULL, fun_name = function_name, pack_name = NULL, safer_check = FALSE) ; base::eval(expr = ee, envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL))
+            tempo <- saferDev::arg_check(data = thread.nb, class = "numeric", typeof = "integer", mode = NULL, double_as_integer_allowed = TRUE, neg_values = FALSE, length = 1, prop = FALSE, double_as_integer_allowed = TRUE, options = NULL, all_options_in_data = FALSE, na_contain = FALSE, neg_values = TRUE, inf_values = FALSE, print = FALSE, data_name = NULL, fun_name = function_name, pack_name = NULL, safer_check = FALSE) ; base::eval(expr = ee, envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL))
             if(tempo$problem == FALSE & thread.nb < 1){
                 tempo.cat <- base::paste0("ERROR IN ", function_name, " OF THE ", package_name, " PACKAGE\nthread.nb PARAMETER MUST EQUAL OR GREATER THAN 1: ", thread.nb)
                 text.check <- base::c(text.check, tempo.cat)
