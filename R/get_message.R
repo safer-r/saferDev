@@ -176,7 +176,7 @@ get_message <- function(
     ######## end management of NA arguments
 
     ######## management of NULL arguments
-    tempo.arg <- base::c(
+    tempo_arg <- base::c(
         "data", 
         "kind", 
         "header", 
