@@ -72,9 +72,21 @@ is_function_here <- function(
         lib_path <- base:::.libPaths(new = , include.site = TRUE) # base:::.libPaths(new = lib_path) # or base:::.libPaths(new = base::c(base:::.libPaths(), lib_path))
     }
     ######## end check of lib_path
-    # check of the required function from the required packages
-    # end check of the required function from the required packages
-    # end package checking
+
+    ######## check of the required functions from the required packages
+    if(safer_check == TRUE){
+        saferDev:::.pack_and_function_check(
+            fun = base::c(
+                "saferDev::arg_check"
+            ),
+            lib_path = lib_path, # NULL if the function does not have any lib_path argument
+            external_function_name = function_name,
+            external_package_name = package_name
+        )
+    }
+    ######## end check of the required functions from the required packages
+
+    #### end package checking
 
     # argument primary checking
     # arg with no default values
