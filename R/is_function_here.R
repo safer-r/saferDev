@@ -244,4 +244,3 @@ is_function_here <- function(
     #### end warning output
 }
 
-
