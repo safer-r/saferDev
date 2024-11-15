@@ -1,7 +1,7 @@
 test_that("arg_test()", {
     f <- "unique"
     argum <- c("x", "incomparables")
-    value <- list(x = list(as.numeric(1:10), as.numeric(c(1,1,2,8)), NA), incomparable = c(TRUE, FALSE, NA))
+    value <- list(x = list(1:10, c(1,1,2,8), NA), incomparable = c(TRUE, FALSE, NA))
     error <- list(x = list(FALSE, FALSE, TRUE), incomparable = c(FALSE, FALSE, TRUE))
     
     result2 <- arg_test(

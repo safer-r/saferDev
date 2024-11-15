@@ -55,15 +55,15 @@
 #' @author Haiding Wang <wanghaiding442@gmail.com>
 #' @examples
 #' arg_test(fun = "unique", arg = c("x", "incomparables"), 
-#' val = list(x = list(x = list(as.numeric(1:10), as.numeric(c(1,1,2,8)), NA), incomparable = c(TRUE, FALSE, NA)))
+#' val = list(x = list(x = list(1:10, c(1,1,2,8), NA), incomparable = c(TRUE, FALSE, NA)))
 #' 
 #' arg_test(fun = "unique", arg = c("x", "incomparables"), 
-#' val = list(x = list(x = list(as.numeric(1:10), as.numeric(c(1,1,2,8)), NA), 
+#' val = list(x = list(x = list(1:10, c(1,1,2,8), NA), 
 #' incomparable = c(TRUE, FALSE, NA)), expect.error = list(x = list(FALSE, FALSE, TRUE), 
 #' incomparable = c(FALSE, FALSE, TRUE)))
 #' 
 #' arg_test(fun = "unique", arg = c("x", "incomparables"), 
-#' val = list(x = list(x = list(as.numeric(1:10), as.numeric(c(1,1,2,8)), NA), incomparable = c(TRUE, FALSE, NA)), 
+#' val = list(x = list(x = list(1:10, c(1,1,2,8), NA), incomparable = c(TRUE, FALSE, NA)), 
 #' expect.error = list(x = list(FALSE, FALSE, TRUE), incomparable = c(FALSE, FALSE, TRUE)), 
 #' export = TRUE, res.path = getwd())
 #' 
