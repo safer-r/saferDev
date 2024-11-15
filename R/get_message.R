@@ -194,7 +194,9 @@ get_message <- function(
 
     ######## management of "" in arguments of mode character
     tempo_arg <-base::c(
-        "lib_path"
+        "data", 
+        "kind", 
+        "text"
     )
     tempo_log <- ! base::sapply(X = base::lapply(X = tempo_arg, FUN = function(x){base::get(x = x, pos = -1L, envir = base::parent.frame(n = 2), mode = "any", inherits = FALSE)}), FUN = function(x){if(base::is.null(x = x)){base::return(TRUE)}else{base::all(base::mode(x = x) == "character", na.rm = TRUE)}}, simplify = TRUE, USE.NAMES = TRUE) # parent.frame(n = 2) because sapply(lapply())  # for character argument that can also be NULL, if NULL -> considered as character
     if(base::any(tempo_log, na.rm = TRUE)){
