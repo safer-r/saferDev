@@ -408,6 +408,13 @@ arg_test <- function(
     #### end second round of checking and data preparation
 
     #### main code
+
+    ######## warning
+    warn_count <- warn_count + 1
+    tempo_warn <- base::paste0("(", warn_count,") THE FIRST FOR & WHILE LOOP STEPS HAVE BEEN TOO FAR AND SUBSEQUENT LOOP STEPS WILL NOT RUN", collapse = NULL, recycle0 = FALSE)
+    warn <- base::paste0(base::ifelse(test = base::is.null(x = warn), yes = tempo_warn, no = base::paste0(warn, "\n\n", tempo_warn, collapse = NULL, recycle0 = FALSE)), collapse = NULL, recycle0 = FALSE)
+    ######## end warning
+    
     # declaration of special plot functions
     sp.plot.fun <- base::c("gg_scatter", "gg_bar", "gg_boxplot")
     # end declaration of special plot functions
