@@ -242,5 +242,6 @@ is_function_here <- function(
 
     #### warning output
     #### end warning output
+    
 }
 
