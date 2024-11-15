@@ -76,7 +76,7 @@ report <- function(
             fun = base::c(
                 "saferDev::arg_check" # write each function preceeded by their package name
             ),
-            lib_path = lib_path, # write NULL if your function does not have any lib_path argument
+            lib_path = NULL, # write NULL if your function does not have any lib_path argument
             external_function_name = function_name,
             external_package_name = package_name
         )
