@@ -16,7 +16,7 @@ test_that("is_function_here()", {
 
     expect_no_error(is_function_here(
         fun = f2,
-        lib_path = "C:/Program Files/R/R-4.3.3/library",
+        lib_path = NULL,
         safer_check = TRUE
     ))
 })
