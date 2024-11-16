@@ -16,7 +16,7 @@ test_that("is_function_here()", {
 
     expect_no_error(is_function_here(
         fun = f2,
-        lib_path = NULL,
+        lib_path = ".",
         safer_check = TRUE
     ))
 })
