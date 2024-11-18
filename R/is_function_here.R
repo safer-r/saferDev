@@ -10,9 +10,12 @@
 #' @author Yushi Han <yushi.han2000@gmail.com>
 #' @author Haiding Wang <wanghaiding442@gmail.com>
 #' @examples
-#' # is_function_here(fun = "ggplot2::notgood") # commented because this example returns an error
-#' # is_function_here(fun = c("ggplot2::geom_point", "grid::gpar"))
-#' # is_function_here(fun = "c")
+#' \dontrun{ # Example that return an error
+#' is_function_here(fun = "ggplot2::notgood") # commented because this example returns an error
+#' is_function_here(fun = c("ggplot2::geom_point", "grid::gpar"))
+#' is_function_here(fun = "c")
+#' }
+#' is_function_here(fun = "base::c")
 #' @export
 
 

@@ -14,7 +14,7 @@ test_that("is_function_here()", {
     result2 <- saferDev::get_message("is_function_here(x = 'mean')", kind = "error", print.no = TRUE, text = NULL)
     expected2 <- "ERROR MESSAGE REPORTED:\nIn is_function_here(x = \"mean\") : unused argument (x = \"mean\")\n"
     testthat::expect_equal(result2, expected2)
-
+    # do not use safer_check = TRUE because test_that() in CI does not like the package presence checking
     testthat::expect_error(is_function_here(fun = "a", safer_check = FALSE))
     testthat::expect_error(is_function_here(fun = "f2", lib_path = "a", safer_check = FALSE))
     testthat::expect_error(is_function_here(fun = "f2", safer_check = "a", safer_check = FALSE))
@@ -23,17 +23,19 @@ test_that("is_function_here()", {
 
     expect_error(object = is_function_here(
     fun = "wrongFct",
-    lib_path = ".", safer_check = FALSE # should be the problem
+    lib_path = ".", # should be the problem
+    safer_check = FALSE # do not set to TRUE because test_that() in CI does not like the package presence checking
     ), regexp = NULL)
     
     expect_error(object = is_function_here(
         fun = f, # should be the problem
-        lib_path = path, safer_check = FALSE # should be the problem
+        lib_path = path, 
+        safer_check = FALSE # do not set to TRUE because test_that() in CI does not like the package presence checking
     ), regexp = NULL)
 
     expect_no_error(is_function_here(
         fun = f2,
         lib_path = NULL,
-        safer_check = FALSE
+        safer_check = FALSE # do not set to TRUE because test_that() in CI does not like the package presence checking
     ))
 })
