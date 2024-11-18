@@ -1,4 +1,4 @@
-test_that("is_function_here()", {
+testthat::test_that("is_function_here()", {
     f <- "ggplot2::geom_point"
     path <- "blablabla"
     f2 <- "base::sum"
@@ -15,25 +15,25 @@ test_that("is_function_here()", {
     expected2 <- "ERROR MESSAGE REPORTED:\nIn is_function_here(x = \"mean\") : unused argument (x = \"mean\")\n"
     testthat::expect_equal(result2, expected2)
     # do not use safer_check = TRUE because test_that() in CI does not like the package presence checking
-    testthat::expect_error(is_function_here(fun = "a", safer_check = FALSE))
-    testthat::expect_error(is_function_here(fun = "f2", lib_path = "a", safer_check = FALSE))
-    testthat::expect_error(is_function_here(fun = "f2", safer_check = "a", safer_check = FALSE))
+    testthat::expect_error(saferDev::is_function_here(fun = "a", safer_check = FALSE))
+    testthat::expect_error(saferDev::is_function_here(fun = "f2", lib_path = "a", safer_check = FALSE))
+    testthat::expect_error(saferDev::is_function_here(fun = "f2", safer_check = "a", safer_check = FALSE))
 
   # sophisticated example
 
-    expect_error(object = is_function_here(
+    testthat::expect_error(object = saferDev::is_function_here(
     fun = "wrongFct",
     lib_path = ".", # should be the problem
     safer_check = FALSE # do not set to TRUE because test_that() in CI does not like the package presence checking
     ), regexp = NULL)
     
-    expect_error(object = is_function_here(
+    testthat::expect_error(object = saferDev::is_function_here(
         fun = f, # should be the problem
         lib_path = path, 
         safer_check = FALSE # do not set to TRUE because test_that() in CI does not like the package presence checking
     ), regexp = NULL)
 
-    expect_no_error(is_function_here(
+    testthat::expect_no_error(saferDev::is_function_here(
         fun = f2,
         lib_path = NULL,
         safer_check = FALSE # do not set to TRUE because test_that() in CI does not like the package presence checking
