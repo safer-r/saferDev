@@ -111,8 +111,6 @@ env_check <- function(
     ######## end check of lib_path
 
     ######## check of the required function from the required packages
-
-    ######## end check of the required function from the required packages
     if(safer_check == TRUE){
         saferDev:::.pack_and_function_check(
             fun = base::c(
@@ -123,6 +121,8 @@ env_check <- function(
             external_package_name = package_name
         )
     }
+    ######## end check of the required function from the required packages
+
     #### end package checking
     
     #### argument primary checking
@@ -240,22 +240,15 @@ env_check <- function(
             match.list[i1] <- base::list(base::ls(name = ls.input[[i1]], all.names = TRUE)[base::ls(name = ls.input[[i1]], all.names = TRUE) %in% base::ls(name = ls.tested, all.names = TRUE)])
         }
     }
-    #### end main code
 
-    #### output
+    ######## output
     if( ! base::all(base::sapply(match.list, FUN = is.null), na.rm = TRUE)){
         output <- base::paste0("SOME VARIABLES ", base::ifelse(base::is.null(name), "OF THE CHECKED ENVIRONMENT", base::paste0("OF ", name)), " ARE ALSO PRESENT IN :\n", base::paste0(base::names(match.list[ ! base::sapply(match.list, FUN = base::is.null)]), ": ", base::sapply(match.list[ ! base::sapply(match.list, FUN = base::is.null)], FUN = base::paste0, collapse = " "), collapse = "\n"), "\n")
     }else{
         output <- NULL
     }
     base::return(output)
-    #### end output
-
-    #### warning output
-    if( ! base::is.null(x = warn)){
-        base::on.exit(expr = base::warning(base::paste0("FROM ", function_name, base::ifelse(test = base::is.null(x = package_name), yes = "", no = base::paste0(" OF THE ", package_name, " PACKAGE", collapse = NULL, recycle0 = FALSE)), "\n\n", warn, collapse = NULL, recycle0 = FALSE), call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, domain = NULL), add = FALSE, after = TRUE)
-        }
-        base::on.exit(expr = base::options(warning.length = ini_warning_length), add = TRUE, after = TRUE)
-    #### end warning output
+    ######## end output
+    #### end main code
 }
 
