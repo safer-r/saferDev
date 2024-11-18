@@ -54,9 +54,9 @@
     }
     pkg.fun.name.list <- base::strsplit(x = fun, split = ":{2,3}") # package in 1 and function in 2
     pkg.name <- base::sapply(X = pkg.fun.name.list, FUN = function(x){x[1]})
-    print(pkg.name)
+    tempo_cac <- base::rownames(utils::installed.packages(lib.loc = lib_path))
+    print(paste0("\n\nexternal_function_name\n", external_function_name, "\n\npkg.name\n", pkg.name, "\n\nlib_path\n", paste0(lib_path, collapse = " "), "\n\ntempo_cac\n", paste0(tempo_cac, collapse = " "))
     pkg.log <- pkg.name %in% base::rownames(utils::installed.packages(lib.loc = lib_path))
-    print(base::rownames(utils::installed.packages(lib.loc = lib_path)))
     if( ! base::all(pkg.log)){
         tempo <- pkg.name[ ! pkg.log]
         tempo.cat <- base::paste0(
