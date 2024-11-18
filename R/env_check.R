@@ -131,7 +131,7 @@ env_check <- function(
     ###### end arg with no default values
     
     ###### argument checking with arg_check()
-     argum_check <- NULL
+    argum_check <- NULL
     text_check <- NULL
     checked_arg_names <- NULL # for function debbuging: used by r_debugging_tools
     ee <- base::expression(argum_check <- base::c(argum_check, tempo$problem) , text_check <- base::c(text_check, tempo$text) , checked_arg_names <- base::c(checked_arg_names, tempo$object.name))
