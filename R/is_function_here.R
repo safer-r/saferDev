@@ -87,6 +87,7 @@ is_function_here <- function(
     }
     ######## end check of the required functions from the required packages
 
+
     #### end package checking
 
     # argument primary checking
