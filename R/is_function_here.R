@@ -77,8 +77,7 @@ is_function_here <- function(
     if(safer_check == TRUE){
         saferDev:::.pack_and_function_check(
             fun = base::c(
-                "saferDev::arg_check",
-                "ggplot2::ggplot_build"
+                "saferDev::arg_check"
             ),
             lib_path = NULL, # NULL if the function does not have any lib_path argument
             external_function_name = function_name,
