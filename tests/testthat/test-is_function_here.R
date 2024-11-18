@@ -15,25 +15,25 @@ test_that("is_function_here()", {
     expected2 <- "ERROR MESSAGE REPORTED:\nIn is_function_here(x = \"mean\") : unused argument (x = \"mean\")\n"
     testthat::expect_equal(result2, expected2)
 
-    testthat::expect_error(is_function_here(fun = "a"))
-    testthat::expect_error(is_function_here(fun = "f2", lib_path = "a"))
-    testthat::expect_error(is_function_here(fun = "f2", safer_check = "a"))
+    testthat::expect_error(is_function_here(fun = "a", safer_check = FALSE))
+    testthat::expect_error(is_function_here(fun = "f2", lib_path = "a", safer_check = FALSE))
+    testthat::expect_error(is_function_here(fun = "f2", safer_check = "a", safer_check = FALSE))
 
   # sophisticated example
 
     expect_error(object = is_function_here(
     fun = "wrongFct",
-    lib_path = "." # should be the problem
+    lib_path = ".", safer_check = FALSE # should be the problem
     ), regexp = NULL)
     
     expect_error(object = is_function_here(
         fun = f, # should be the problem
-        lib_path = path # should be the problem
+        lib_path = path, safer_check = FALSE # should be the problem
     ), regexp = NULL)
 
     expect_no_error(is_function_here(
         fun = f2,
         lib_path = NULL,
-        safer_check = TRUE
+        safer_check = FALSE
     ))
 })
