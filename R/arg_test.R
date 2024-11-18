@@ -176,7 +176,8 @@ arg_test <- function(
             "parallel::makeCluster",
             "parallel::clusterSplit",
             "parallel::clusterApply",
-            "parallel::stopCluster"
+            "parallel::stopCluster",
+            "saferDev::arg_check"
         ),
         lib_path = lib_path,
         external_function_name = function_name,
