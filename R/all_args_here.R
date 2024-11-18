@@ -46,8 +46,10 @@
 #' all_args_here(mean)
 #' source("https://raw.githubusercontent.com/safer-r/saferDev/main/dev/other/test2.R") ; all_args_here(test2, export = TRUE)
 #' }
-#' all_args_here(all_args_here)
-#' source("https://raw.githubusercontent.com/safer-r/.github/refs/heads/main/profile/backbone.R") ; all_args_here(BACKBONE, export = TRUE)
+#' FUN2 <- function(x, y){middle_bracket2 <- base::do.call(what = base::c, args = code_for_col, quote = FALSE, envir = base::parent.frame())}
+#' all_args_here(FUN2)
+#' source("https://raw.githubusercontent.com/safer-r/.github/refs/heads/main/profile/backbone.R")
+#' all_args_here(BACKBONE, export = TRUE)
 #' @export
 all_args_here <- function(
     x, 
