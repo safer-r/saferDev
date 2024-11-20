@@ -290,9 +290,6 @@ all_args_here <- function(
     #### main code
 
     ######## warning
-    warn_count <- warn_count + 1
-    tempo_warn <- base::paste0("(", warn_count,") THE FIRST FOR & WHILE LOOP STEPS HAVE BEEN TOO FAR AND SUBSEQUENT LOOP STEPS WILL NOT RUN", collapse = NULL, recycle0 = FALSE)
-    warn <- base::paste0(base::ifelse(test = base::is.null(x = warn), yes = tempo_warn, no = base::paste0(warn, "\n\n", tempo_warn, collapse = NULL, recycle0 = FALSE)), collapse = NULL, recycle0 = FALSE)
     ######## end warning
 
     # arg_user_setting$x <- base::as.character(arg_user_setting$x)
