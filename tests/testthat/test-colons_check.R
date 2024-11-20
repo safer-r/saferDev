@@ -43,9 +43,13 @@ testthat::test_that("colons_check()", {
         "16\trange\t\t", 
         "19\treturn\t\t", 
         "", 
+        "INSIDE test(), INTERNAL FUNCTION DETECTED:", 
+        "F", 
+        "", 
         "INSIDE test(), SOME :: OR ::: ARE MISSING AT OTHER FUNCTION POSITIONS:", 
         "", 
         "LINE\tFUN\t\tSTRING_BEFORE", 
+        "12\tFUN1\t\t", 
         "13\troc1\t\tbase::length(", 
         "17\troc4\t\ttempo.cat <- base::paste0(\"IAGE\\nLENGTHS OF roc00() (\", base::ks.test(", 
         ""

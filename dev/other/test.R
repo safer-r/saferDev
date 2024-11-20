@@ -11,11 +11,12 @@ test <- function(
         # A list containing the functions names, each compartment being one of the string of the input vector
         # DEBUGGING
         # text = ini[1] ; pattern = pattern
+        FUN1 <- function(){}
         #### Find all matches, including trailing '(' #
         matches <- gregexpr(pattern = base::paste0(pattern, "\\(#"), text = text) # # test
         dt <- base::c(2:8)
         matched_strings <- regmatches(x = text, m = matches)[[1]]
-        
+        FUN1()
         # Remove trailing '(' from each match #
         tempo4 <- a$regmatches(x = text, m = matches)[[1]] ; sum(1:3) ; a$regmatches(x = 1)
         tempo5 <- a$count
