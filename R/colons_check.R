@@ -187,21 +187,24 @@ colons_check <- function(
         function_name = function_name, 
         package_name = package_name
     )
-
+    if( ! (base::all(base::typeof(x = out$fun_names) == "list", na.rm = TRUE) & base::all(base::typeof(x = out$fun_names_pos) == "list", na.rm = TRUE))){
+        tempo.cat <- base::paste0("INTERNAL ERROR 1 IN ", function_name, " OF THE ", package_name, " PACKAGE\nout$fun_names AND out$fun_names_pos MUST BE TYPE list\nout$fun_names:\n", out$fun_names, "\nout$fun_names_pos:\n", out$fun_names_pos, collapse = NULL, recycle0 = FALSE)
+        base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL) # == in base::stop() to be able to add several messages between ==
+    }
     # basic function names in x
     # selection of basic functions
     tempo.log <- base::lapply(X = out$fun_names, FUN = function(x){x %in% out$all_basic_funs}) #  are names basic functions used in x?
-    in_basic_fun <-  base::unlist(base::mapply(FUN = function(x, y){x[y]}, x = out$fun_names, y = tempo.log, MoreArgs = NULL, SIMPLIFY = FALSE, USE.NAMES = TRUE), recursive = TRUE, use.names = TRUE)
-    in_basic_fun_names_pos <-  base::unlist(base::mapply(FUN = function(x, y){x[y]}, x = out$fun_names_pos, y = tempo.log, MoreArgs = NULL, SIMPLIFY = FALSE, USE.NAMES = TRUE), recursive = TRUE, use.names = TRUE)
+    in_basic_fun <- base::mapply(FUN = function(x, y){x[y]}, x = out$fun_names, y = tempo.log, MoreArgs = NULL, SIMPLIFY = FALSE, USE.NAMES = TRUE)
+    in_basic_fun_names_pos <-  base::mapply(FUN = function(x, y){x[y]}, x = out$fun_names_pos, y = tempo.log, MoreArgs = NULL, SIMPLIFY = FALSE, USE.NAMES = TRUE)
     # end selection of basic functions
-    if(base::length(x = in_basic_fun_names_pos) != 0){
+    if(base::length(x = base::unlist(in_basic_fun, recursive = TRUE, use.names = TRUE)) != 0){ # check if basic fun present
         # removal of string with empty function names
         tempo.log <- base::sapply(X = in_basic_fun, FUN = function(x){base::length(x = x) == 0}, simplify = TRUE, USE.NAMES = TRUE) # detection of string with empty function names
         in_basic_fun <- in_basic_fun[ ! tempo.log] # removal of empty string
         in_basic_fun_names_pos <- in_basic_fun_names_pos[ ! tempo.log]
         in_basic_code_line_nb <- out$code_line_nb[ ! tempo.log]
         if( ! (base::length(x = in_basic_fun) == base::length(x = in_basic_fun_names_pos) & base::length(x = in_basic_fun) == base::length(x = in_basic_code_line_nb))){
-            tempo.cat <- base::paste0("INTERNAL ERROR 1 IN ", function_name, " OF THE ", package_name, " PACKAGE\nLENGTHS SHOULD BE IDENTICAL\nin_basic_fun: ", base::length(x = in_basic_fun), "\nin_basic_fun_names_pos: ", base::length(x = in_basic_fun_names_pos), "\nin_basic_code_line_nb: ", base::length(x = in_basic_code_line_nb), collapse = NULL, recycle0 = FALSE)
+            tempo.cat <- base::paste0("INTERNAL ERROR 2 IN ", function_name, " OF THE ", package_name, " PACKAGE\nLENGTHS SHOULD BE IDENTICAL\nin_basic_fun: ", base::length(x = in_basic_fun), "\nin_basic_fun_names_pos: ", base::length(x = in_basic_fun_names_pos), "\nin_basic_code_line_nb: ", base::length(x = in_basic_code_line_nb), collapse = NULL, recycle0 = FALSE)
             base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL) # == in base::stop() to be able to add several messages between ==
         }
         # end removal of string with empty function names
@@ -221,31 +224,31 @@ colons_check <- function(
                 text = "BASIC", 
                 internal_fun_names = out$internal_fun_names
             )
-            tempo.log <- tempo$colon_not_here
-            output.cat <- tempo$output.cat
+            log_basic <- tempo$colon_not_here
+            cat_basic <- tempo$output.cat
         }else{
-            tempo.log <- FALSE
-            output.cat <- NULL
+            log_basic <- FALSE
+            cat_basic <- NULL
         }
         # end analyse of :: before basic functions in x
     }else{
-        tempo.log <- FALSE
-        output.cat <- NULL
+        log_basic <- FALSE
+        cat_basic <- NULL
     }
     # other function names in x
     # selection of other functions
     tempo.log <- base::lapply(X = out$fun_names, FUN = function(x){ ! x %in% base::c(out$all_basic_funs, out$arg_user_setting$x)}) #  names of all the other functions used in x, except the one tested (arg_user_setting$x), because can be in error messages
-    in_other_fun <- base::unlist(base::mapply(FUN = function(x, y){x[y]}, x = out$fun_names, y = tempo.log, MoreArgs = NULL, SIMPLIFY = FALSE, USE.NAMES = TRUE), recursive = TRUE, use.names = TRUE)
-    in_other_fun_names_pos <-  base::unlist(base::mapply(FUN = function(x, y){x[y]}, x = out$fun_names_pos, y = tempo.log, MoreArgs = NULL, SIMPLIFY = FALSE, USE.NAMES = TRUE), recursive = TRUE, use.names = TRUE)
+    in_other_fun <- base::mapply(FUN = function(x, y){x[y]}, x = out$fun_names, y = tempo.log, MoreArgs = NULL, SIMPLIFY = FALSE, USE.NAMES = TRUE)
+    in_other_fun_names_pos <-  base::mapply(FUN = function(x, y){x[y]}, x = out$fun_names_pos, y = tempo.log, MoreArgs = NULL, SIMPLIFY = FALSE, USE.NAMES = TRUE)
     # end selection of other functions
-    if(base::length(x = in_other_fun) != 0){
+    if(base::length(x = base::unlist(in_other_fun, recursive = TRUE, use.names = TRUE)) != 0){ # check if other fun present
         # removal of string with empty function names
         tempo.log <- base::sapply(X = in_other_fun, FUN = function(x){base::length(x = x) == 0}, simplify = TRUE, USE.NAMES = TRUE) # detection of string with empty function names
         in_other_fun <- in_other_fun[ ! tempo.log] # removal of empty string
         in_other_fun_names_pos <- in_other_fun_names_pos[ ! tempo.log]
         in_other_code_line_nb <- out$code_line_nb[ ! tempo.log]
         if( ! (base::length(x = in_other_fun) == base::length(x = in_other_fun_names_pos) & base::length(x = in_other_fun) == base::length(x = in_other_code_line_nb))){
-            tempo.cat <- base::paste0("INTERNAL ERROR 2 IN ", function_name, " OF THE ", package_name, " PACKAGE\nLENGTHS SHOULD BE IDENTICAL\nin_other_fun: ", base::length(x = in_other_fun), "\nin_other_fun_names_pos: ", base::length(x = in_other_fun_names_pos), "\nin_other_code_line_nb: ", base::length(x = in_other_code_line_nb), collapse = NULL, recycle0 = FALSE)
+            tempo.cat <- base::paste0("INTERNAL ERROR 3 IN ", function_name, " OF THE ", package_name, " PACKAGE\nLENGTHS SHOULD BE IDENTICAL\nin_other_fun: ", base::length(x = in_other_fun), "\nin_other_fun_names_pos: ", base::length(x = in_other_fun_names_pos), "\nin_other_code_line_nb: ", base::length(x = in_other_code_line_nb), collapse = NULL, recycle0 = FALSE)
             base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL) # == in base::stop() to be able to add several messages between ==
         }
         # end removal of string with empty function names
@@ -265,21 +268,21 @@ colons_check <- function(
                 text = "OTHER", 
                 internal_fun_names = out$internal_fun_names
             )
-            tempo.log.b <- tempo$colon_not_here
-            output.cat.b <- tempo$output.cat
+            log_other <- tempo$colon_not_here
+            cat_other <- tempo$output.cat
         }else{
-            tempo.log.b <- FALSE
-            output.cat.b <- NULL
+            log_other <- FALSE
+            cat_other <- NULL
         }
     }else{
-        tempo.log.b <- FALSE
-        output.cat.b <- NULL
+        log_other <- FALSE
+        cat_other <- NULL
     }
     # end analyse of :: before basic functions in x
-    if(( ! base::any(tempo.log, na.rm = TRUE)) & ! base::any(tempo.log.b, na.rm = TRUE)){
+    if(( ! base::any(log_basic, na.rm = TRUE)) & ! base::any(log_other, na.rm = TRUE)){
         tempo.cat <- base::paste0("AFTER RUNNING ", function_name, " OF THE ", package_name, " PACKAGE:\nINSIDE ", base::as.character(x = out$arg_user_setting$x), ", EVERYTHING SEEMS CLEAN", collapse = NULL, recycle0 = FALSE)
     }else{
-        tempo.cat <- base::paste0(base::ifelse(test = base::is.null(x = output.cat), yes = base::paste0("AFTER RUNNING ", function_name, " OF THE ", package_name, " PACKAGE\n\nINSIDE ", out$arg_user_setting$x, ", EVERYTHING SEEMS CLEAN FOR R BASIC FUNCTIONS\n\n", collapse = NULL, recycle0 = FALSE), no = base::paste0(output.cat, base::ifelse(test = base::is.null(x = output.cat.b), yes =  "", no =  "\n\n"), collapse = NULL, recycle0 = FALSE)), output.cat.b, collapse = NULL, recycle0 = FALSE)
+        tempo.cat <- base::paste0(base::ifelse(test = base::is.null(x = cat_basic), yes = base::paste0("AFTER RUNNING ", function_name, " OF THE ", package_name, " PACKAGE\n\nINSIDE ", out$arg_user_setting$x, ", EVERYTHING SEEMS CLEAN FOR R BASIC FUNCTIONS\n\n", collapse = NULL, recycle0 = FALSE), no = base::paste0(cat_basic, base::ifelse(test = base::is.null(x = cat_other), yes =  "", no =  "\n\n"), collapse = NULL, recycle0 = FALSE)), cat_other, collapse = NULL, recycle0 = FALSE)
     }
     base::cat(base::paste0("\n\n", tempo.cat, "\n\n", collapse = NULL, recycle0 = FALSE), file = "", sep = " ", fill = FALSE, labels = NULL, append = FALSE)
     #### end main code
