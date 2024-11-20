@@ -119,7 +119,7 @@ With missing :: or :::, the message also indicates if internal functions are cre
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> AFTER RUNNING colons_check() OF THE saferDev PACKAGE:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> INSIDE colons_check(), EVERYTHING SEEMS CLEAN</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> INSIDE colons_check, EVERYTHING SEEMS CLEAN</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/source.html" class="external-link">source</a></span><span class="op">(</span><span class="st">"https://raw.githubusercontent.com/safer-r/saferDev/main/dev/other/test.R"</span><span class="op">)</span> ; <span class="fu">colons_check</span><span class="op">(</span><span class="va">test</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
@@ -127,18 +127,22 @@ With missing :: or :::, the message also indicates if internal functions are cre
 <span class="r-out co"><span class="r-pr">#&gt;</span> INSIDE test(), SOME :: OR ::: ARE MISSING AT BASIC FUNCTION POSITIONS:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> LINE	FUN		STRING_BEFORE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3	gregexpr		matches &lt;- </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6	regmatches		matched_strings &lt;- </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 8	sum		</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 15	sub		result &lt;- </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 16	range		</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 19	return		</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5	gregexpr		matches &lt;- </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8	regmatches		matched_strings &lt;- </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 11	sum		</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 18	sub		result &lt;- </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 19	range		</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 22	return		</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> INSIDE test(), INTERNAL FUNCTION DETECTED:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> F</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> INSIDE test(), SOME :: OR ::: ARE MISSING AT OTHER FUNCTION POSITIONS:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> LINE	FUN		STRING_BEFORE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 13	roc1		base::length(</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 17	roc4		tempo.cat &lt;- base::paste0("IAGE\nLENGTHS OF roc00() (", base::ks.test(</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9	FUN1		</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 16	roc1		base::length(</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 20	roc4		tempo.cat &lt;- base::paste0("IAGE\nLENGTHS OF roc00() (", base::ks.test(</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 </code></pre></div>
     </div>
