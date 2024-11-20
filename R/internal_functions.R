@@ -321,8 +321,8 @@
         while(count < base::length(string_split)){
             count <- count + 1
             # if odds number of quotes, it means that # has broken the string in the middle of a quoted part
-            double.quote.test <- .has_odd_number_of_quotes(input_string = string_out, pattern = '"') # here FALSE means even number of quotes, thus that ")" is not between quotes, thus has to be kept. TRUE means that ")" is between quotes, thus has to be removed
-            simple.quote.test <- .has_odd_number_of_quotes(input_string = string_out, pattern = "'") # idem
+            double.quote.test <- saferDev:::.has_odd_number_of_quotes(input_string = string_out, pattern = '"') # here FALSE means even number of quotes, thus that ")" is not between quotes, thus has to be kept. TRUE means that ")" is between quotes, thus has to be removed
+            simple.quote.test <- saferDev:::.has_odd_number_of_quotes(input_string = string_out, pattern = "'") # idem
             odds.quotes.log <- double.quote.test |  simple.quote.test # remove ")" ?
             if(odds.quotes.log == TRUE){
                 pos <- base::c(pos, base::nchar(string_out) + 1)
@@ -334,8 +334,8 @@
         }
     }
     if(base::nchar(string) == base::nchar(string_out) + 1){ # this is when the pattern is the last character of string. strsplit("a)", split = "\\)") gives "a". Should also deal when while loop has run, i.e., when several pattern in string including the last one: "a)vb)"
-        double.quote.test <- .has_odd_number_of_quotes(input_string = string_out, pattern = '"') # here FALSE means even number of quotes, thus that ")" is not between quotes, thus has to be kept. TRUE means that ")" is between quotes, thus has to be removed
-        simple.quote.test <- .has_odd_number_of_quotes(input_string = string_out, pattern = "'") # idem
+        double.quote.test <- saferDev:::.has_odd_number_of_quotes(input_string = string_out, pattern = '"') # here FALSE means even number of quotes, thus that ")" is not between quotes, thus has to be kept. TRUE means that ")" is between quotes, thus has to be removed
+        simple.quote.test <- saferDev:::.has_odd_number_of_quotes(input_string = string_out, pattern = "'") # idem
         odds.quotes.log <- double.quote.test |  simple.quote.test # remove ")" ?
         if(odds.quotes.log == TRUE){
             pos <- base::c(pos, base::nchar(string_out) + 1)
@@ -419,7 +419,7 @@
             # Calculate the global position of the comma in the original string
             global_comma_position <- open_pos + relative_comma_position - 1
             # Replace that comma using substring or substr
-            substring(string_out, global_comma_position, global_comma_position) <- replacement
+            base::substring(string_out, global_comma_position, global_comma_position) <- replacement
             # Store the global position
             pos <- base::c(pos, global_comma_position)
         }
@@ -1065,13 +1065,13 @@
             FUN = function(x){
                 tempo_log <- base::grepl(x = arg_full_names, pattern = base::paste0("^", x), perl = FALSE)
                 if(base::sum(tempo_log, na.rm = TRUE) > 1){ 
-                    base::return(arg_full_names[tempo_log][which.min(nchar(arg_full_names[tempo_log]))])
+                    base::return(arg_full_names[tempo_log][base::which.min(base::nchar(arg_full_names[tempo_log]))])
                 }
             }, 
             X = arg_full_names
         ))
         if( ! base::is.null(same_begin)){
-            tempo_col8_end <- base::paste0("WARNING: SEVERAL ARGUMENT NAMES OF THE FUNCTION BEGINNING WITH ", paste0(same_begin[ ! base::is.null(same_begin)], collapse = " ", recycle0 = FALSE), collapse = NULL, recycle0 = FALSE)
+            tempo_col8_end <- base::paste0("WARNING: SEVERAL ARGUMENT NAMES OF THE FUNCTION BEGINNING WITH ", base::paste0(same_begin[ ! base::is.null(same_begin)], collapse = " ", recycle0 = FALSE), collapse = NULL, recycle0 = FALSE)
         }
         # end detection of arguments that starts by the same string in the sub function
         # checking if arg name are not fully written
@@ -1107,7 +1107,7 @@
                 }
             }
             if(( ! base::is.null(tempo_col8)) & ! base::is.null(tempo_col8_end)){
-                tempo_col8 <- paste0(tempo_col8, " & ", tempo_col8_end, collapse = NULL, recycle0 = FALSE)
+                tempo_col8 <- base::paste0(tempo_col8, " & ", tempo_col8_end, collapse = NULL, recycle0 = FALSE)
             }
         }
         # end checking if arg name are not fully written
@@ -1120,7 +1120,7 @@
             good_args <- base::c(
                 tempo_split[ ! tempo_split %in% good_args], # arg values without names
                 good_args, # obs arg values with names
-                paste0(" ", missing_args) # missing arg values with names #a space added to finally have  comma followed by a space
+                base::paste0(" ", missing_args) # missing arg values with names #a space added to finally have  comma followed by a space
             )
         }else{
             count_good_args <- 0
@@ -1135,7 +1135,7 @@
                         tempo <- base::paste0(arg_full_names[i3], " = ", if(base::is.null(base::deparse(arg_full[[i3]]))){"NULL"}else{base::deparse(arg_full[[i3]])})
                     }
                     missing_args <- base::c(missing_args, tempo)
-                    final <- base::c(final, base::ifelse(test = i3 == 1, yes = tempo, no = paste0(" ", tempo))) # take the first pos always of the args with no arg names
+                    final <- base::c(final, base::ifelse(test = i3 == 1, yes = tempo, no = base::paste0(" ", tempo))) # take the first pos always of the args with no arg names
                 }else{
                     count_good_args <- count_good_args + 1
                     final <- base::c(final, good_args[count_good_args])

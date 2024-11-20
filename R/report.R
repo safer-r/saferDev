@@ -211,7 +211,7 @@ report <- function(
     #### main code
     if( ! base::is.null(data)){
         if(base::all(base::class(data) == "expression")){
-            data <- as.character(data)
+            data <- base::as.character(data)
         }
         if(base::all(base::class(data) == "data.frame") | base::all(base::class(data) == "table") | base::all(base::class(data) %in% base::c("matrix", "array"))){ # before R4.0.0, it was  base::all(base::class(data) %in% c("matrix", "data.frame", "table")) # base::class() never returns NA
             if(rownames.kept == FALSE & base::all(base::class(data) == "data.frame") & base::nrow(data) != 0 & base::nrow(data) <= 4){ # for data frames with nrows <= 4
