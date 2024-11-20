@@ -805,7 +805,7 @@
     fun_name <- base::list()
     fun_name_pos <- base::list()
     for(i1 in 1:base::length(code)){
-        tempo <- .extract_all_fun_names(text = code[i1], pattern = pattern1) # recover all the function names, followed by "(", present in code, using a perl pattern
+        tempo <- saferDev:::.extract_all_fun_names(text = code[i1], pattern = pattern1) # recover all the function names, followed by "(", present in code, using a perl pattern
         fun_name <- base::c(fun_name, base::list(tempo$string))
         fun_name_pos <- base::c(fun_name_pos, base::list(tempo$pos))
     }
