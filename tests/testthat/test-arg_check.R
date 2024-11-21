@@ -83,7 +83,7 @@ test_that("arg_check()", {
     inf_values = FALSE
 )
     expected12 <- base::list(problem = TRUE, text = "ERROR\nTHE mat1 OBJECT MUST BE MADE OF NON INFINITE VALUES BUT IS NOT EVEN TYPE DOUBLE", object.name = "mat1")
-    saferDev::expect_equal(result12,expected12)
+    testthat::expect_equal(result12,expected12)
     
 
     result13 <- saferDev::arg_check(
