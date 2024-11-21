@@ -53,6 +53,7 @@
 #' kind = "message", print.no = TRUE, text = "IN INSTRUCTION 1")
 #' 
 #' @importFrom ggplot2 ggplot_build
+#' @importFrom saferDev arg_check
 #' @export
 get_message <- function(
         data, 

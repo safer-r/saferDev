@@ -16,6 +16,7 @@
 #' is_function_here(fun = "c")
 #' }
 #' is_function_here(fun = "base::c")
+#' @importFrom saferDev arg_check
 #' @export
 
 
