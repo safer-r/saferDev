@@ -10,7 +10,7 @@ testthat::test_that("colons_check()", {
         base::return(output)
     }
     vec3 <- 3:8
-    mat1 <- matrix(vec3, nrow = 2, ncol = 3, byrow = TRUE)
+    mat1 <- base::matrix(vec3, nrow = 2, ncol = 3, byrow = TRUE)
     fun2 <- function(mat1){
         nc <- base::ncol(mat1)
         means <- numeric(nc)

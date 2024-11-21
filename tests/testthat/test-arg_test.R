@@ -19,7 +19,7 @@ test_that("arg_test()", {
         safer_check = TRUE
     )
     # WARNING: trick to get the same result2$ini
-    arg_test <- base::function(
+    arg_test <- function(
         fun = f, 
         arg = argum, 
         val = value, 
