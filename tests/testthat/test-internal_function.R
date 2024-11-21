@@ -7,25 +7,25 @@ test_that("test .internal_function.R", {
     path_wrong <- "path/to/library"  # incorrect input
     path_good <- NULL  # incorrect input
 
-    expect_no_error(.pack_and_function_check(
+    testthat::expect_no_error(.pack_and_function_check(
         fun = fun_good, 
         lib_path = path_good,
         external_function_name = "FUN1",
         external_package_name = "P1"
     ))
-    expect_error(.pack_and_function_check(
+    testthat::expect_error(.pack_and_function_check(
         fun = fun_wrong1, 
         lib_path = path_good,
         external_function_name = "FUN1",
         external_package_name = "P1"
     ))
-    expect_error(.pack_and_function_check(
+    testthat::expect_error(.pack_and_function_check(
         fun = fun_wrong2, 
         lib_path = path_good,
         external_function_name = "FUN1",
         external_package_name = "P1"
     ))
-    expect_error(.pack_and_function_check(
+    testthat::expect_error(.pack_and_function_check(
         fun = fun_good, 
         lib_path = path_wrong,
         external_function_name = "FUN1",
@@ -33,7 +33,7 @@ test_that("test .internal_function.R", {
     ))
 
     # .base_op_check()
-    expect_no_error(.base_op_check(
+    testthat::expect_no_error(.base_op_check(
         external_function_name = "FUN1",
         external_package_name = "P1"
     ))
