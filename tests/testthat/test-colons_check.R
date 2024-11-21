@@ -15,7 +15,7 @@ testthat::test_that("colons_check()", {
         nc <- base::ncol(mat1)
         means <- numeric(nc)
         for (i in 1:nc){
-        means[i] <- mean(mat1[,i])
+        means[i] <- base::mean(mat1[,i])
         }
         base::return(means)
     } 
@@ -28,9 +28,9 @@ testthat::test_that("colons_check()", {
 
 
   # sophisticated example
-    source("https://raw.githubusercontent.com/safer-r/saferDev/main/dev/other/test.R") # Warning: comments are removed by the CI and lines are changed
-    result1 <- capture.output(colons_check(x = test))
-    expected1 <- c(
+    base::source("https://raw.githubusercontent.com/safer-r/saferDev/main/dev/other/test.R") # Warning: comments are removed by the CI and lines are changed
+    result1 <- utils::capture.output(colons_check(x = test))
+    expected1 <- base::c(
         "", 
         "", 
         "INSIDE test(), SOME :: OR ::: ARE MISSING AT BASIC FUNCTION POSITIONS:", 
