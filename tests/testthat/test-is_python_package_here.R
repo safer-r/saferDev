@@ -3,12 +3,12 @@ test_that("is_python_package_here()", {
     path <- "blablabla"
     req_pkg <- "serpentine"
     
-    expect_error(object = is_python_package_here(
+    testthat::expect_error(object = is_python_package_here(
     req_package = req_pkg, 
     lib_path = path
     ), regexp = NULL)
     
-    expect_error(object = is_python_package_here(
+    testthat::expect_error(object = is_python_package_here(
         req_package = "serpentine", 
         python_exec_path = ".", 
         python_lib_path = ".", 
