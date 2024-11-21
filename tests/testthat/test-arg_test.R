@@ -4,7 +4,7 @@ test_that("arg_test()", {
     value <- base::list(x = base::list(1:10, base::c(1,1,2,8), NA), incomparable = base::c(TRUE, FALSE, NA))
     error <- base::list(x = base::list(FALSE, FALSE, TRUE), incomparable = base::c(FALSE, FALSE, TRUE))
     
-    result2 <- saferDev::arg_test(
+    result2 <- arg_test(
         fun = f, 
         arg = argum, 
         val = value, 
@@ -35,7 +35,7 @@ test_that("arg_test()", {
     ){
         base::return(base::match.call(expand.dots = FALSE))
     }
-    tempo <- saferDev::arg_test(
+    tempo <- arg_test(
             fun = f, 
             arg = argum, 
             val = value, 
