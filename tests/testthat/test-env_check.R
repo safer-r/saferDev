@@ -21,14 +21,14 @@ test_that("env_check()", {
     base::rm(result2)
     base::rm(expected2)
 
-    list <- 0
+    list_2 <- 0
     result3 <- saferDev::env_check(
-        pos = 2, # The environment two steps above the current local environment
-        safer_check = TRUE
+        pos = 1, # The environment two steps above the current local environment
+        safer_check = FALSE
     )
-    expected3 <- "NULL"
+    expected3 <- NULL
     testthat::expect_equal(result3, expected3)
-    base::rm(list)
+    base::rm(list_2)
     base::rm(result3)
     base::rm(expected3)
 
