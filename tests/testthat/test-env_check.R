@@ -21,6 +21,17 @@ test_that("env_check()", {
     base::rm(result2)
     base::rm(expected2)
 
+    list <- 0
+    result3 <- saferDev::env_check(
+        pos = 2, # The environment two steps above the current local environment
+        safer_check = TRUE
+    )
+    expected3 <- "NULL"
+    testthat::expect_equal(result3, expected3)
+    base::rm(list)
+    base::rm(result3)
+    base::rm(expected3)
+
     # Examples inside a function
     # env_check() checks if the object names inside the fun1 function 
     # exist in the .GlobalEnv environment and above:
