@@ -19,12 +19,28 @@ testthat::test_that("colons_check()", {
         }
         base::return(means)
     } 
+    mat2 <- base::matrix(1:6, nrow = 2, ncol = 3, byrow = TRUE)
+    fun3 <- function(mat2){
+        nc <- base::ncol(mat2)
+        means <- numeric(nc)
+        for (i in 1:nc){
+        means[i] <- base::mean(mat2[,i])
+        }
+        base::return(means)
+    }
+    list1 <- base::list(1,2,3)
+    fun4 <- function(list1){
+        base::return(base::length(list1))
+    }
 
   # Test cases
   # Simple examples
     testthat::expect_no_error(colons_check(x = fun1))
     testthat::expect_no_error(colons_check(x = fun2))
     testthat::expect_no_error(colons_check(x = fun2, safer_check = TRUE))
+    testthat::expect_no_error(colons_check(x = fun3))
+    testthat::expect_no_error(colons_check(x = fun4))
+    testthat::expect_no_error(colons_check(x = fun4, safer_check = TRUE))
 
 
   # sophisticated example
