@@ -3,6 +3,7 @@ test_that("arg_check()", {
     vec3 <- base::c(1, 2, 3)
     vec4 <- "pearson"
     vec5 <- base::c("a", "b","a", "b")
+    vec6 <- base::list(1:3, 4:6)
     mat1 <- base::matrix(vec1)
     mat2 <- base::matrix(base::c(1:3 / 3, NA))
 
@@ -30,6 +31,22 @@ test_that("arg_check()", {
     testthat::expect_equal(result4,expected4)
     
     
+    testthat::expect_no_error(object = arg_check(
+        data = vec1, 
+        mode = "numeric", # the mode "numeric" exists and is consistent with typeof "integer"
+        ))
+
+    testthat::expect_no_error(object = arg_check(
+        data = vec1, 
+        mode = "numeric", 
+        typeof = "integer", # the mode "numeric" exists and is consistent with typeof "integer"
+        ))
+
+    testthat::expect_no_error(object = arg_check(
+        data = vec1, 
+        class = "integer",
+        ))
+
     testthat::expect_error(object = arg_check(
         data = vec1, 
         mode = "integer", # the mode "integer" does not exist in the mode() function of R
@@ -84,9 +101,37 @@ test_that("arg_check()", {
 )
     expected12 <- base::list(problem = TRUE, text = "ERROR\nTHE mat1 OBJECT MUST BE MADE OF NON INFINITE VALUES BUT IS NOT EVEN TYPE DOUBLE", object.name = "mat1")
     testthat::expect_equal(result12,expected12)
-    
 
-    result13 <- saferDev::arg_check(
+    result13 <- saferDev::arg_check(data = vec6, class = "list"
+    # vec6 is a list of two vectors of integers
+)
+    expected13 <- base::list(problem = FALSE, text = "NO PROBLEM DETECTED FOR THE vec6 OBJECT", object.name = "vec6")
+    testthat::expect_equal(result13,expected13)
+
+    result14 <- saferDev::arg_check(data = vec6, class = "list", typeof = "integer" # vec6 is a list of two vectors of integers
+)
+    expected14 <- base::list(problem = TRUE, text = "ERROR\nTHE vec6 OBJECT MUST BE TYPEOF integer", object.name = "vec6")
+    testthat::expect_equal(result14,expected14)
+
+    result15 <- saferDev::arg_check(data = vec6, class = "list", neg_values = TRUE, # vec6 is a list of two vectors of integers
+)
+    expected15 <- base::list(problem = TRUE, text = "NO PROBLEM DETECTED FOR THE vec6 OBJECT", object.name = "vec6")
+
+
+    testthat::expect_error(saferDev::arg_check(data = vec6, class = "list", prop = TRUE, # vec6 is a list of two vectors of integers
+), regexp = NULL)
+
+    testthat::expect_no_error(saferDev::arg_check(data = vec6, class = "list", mode = "list", prop = FALSE, neg_values = TRUE, inf_values = TRUE, # vec6 is a list of two vectors of integers, no check is performed for the presence of negative values, infinite values are allowed
+))
+    testthat::expect_no_error(saferDev::arg_check(data = vec6, class = "list", na_contain = TRUE, # vec6 is a list of two vectors of integers, it could contain NA
+))
+
+    result16 <- saferDev::arg_check(data = vec6, class = "list",  length = 2, # vec6 is a list of two vectors of integers
+)
+    expected16 <- base::list(problem = FALSE, text = "NO PROBLEM DETECTED FOR THE vec6 OBJECT", object.name = "vec6")
+    testthat::expect_equal(result16, expected16)
+
+    result17 <- saferDev::arg_check(
         data = vec1, 
         class = "integer", 
         typeof = NULL, 
@@ -105,7 +150,7 @@ test_that("arg_check()", {
         pack_name = NULL, 
         safer_check = TRUE
     )
-    expected13 <- base::list(problem = FALSE, text = "NO PROBLEM DETECTED FOR THE vec1 OBJECT", object.name = "vec1")
-    testthat::expect_equal(result13, expected13)
+    expected17 <- base::list(problem = FALSE, text = "NO PROBLEM DETECTED FOR THE vec1 OBJECT", object.name = "vec1")
+    testthat::expect_equal(result17, expected17)
 })
 
