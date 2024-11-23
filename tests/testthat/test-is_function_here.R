@@ -3,6 +3,7 @@ testthat::test_that("is_function_here()", {
     path <- "blablabla"
     f2 <- "base::sum"
     f3 <- "graphics::par"
+    f4 <- "stats::mean"
 
 
   # Simple examples
@@ -14,10 +15,16 @@ testthat::test_that("is_function_here()", {
     result2 <- saferDev::get_message("is_function_here(x = 'mean')", kind = "error", print.no = TRUE, text = NULL)
     expected2 <- "ERROR MESSAGE REPORTED:\nIn is_function_here(x = \"mean\") : unused argument (x = \"mean\")\n"
     testthat::expect_equal(result2, expected2)
+
+    result3 <- saferDev::get_message("is_function_here(fun = 'base::mean')", kind = "error", print.no = TRUE, text = NULL)
+    expected3 <- "NO ERROR MESSAGE REPORTED"
+    
     # do not use safer_check = TRUE because test_that() in CI does not like the package presence checking
     testthat::expect_error(saferDev::is_function_here(fun = "a", safer_check = FALSE))
     testthat::expect_error(saferDev::is_function_here(fun = "f2", lib_path = "a", safer_check = FALSE))
     testthat::expect_error(saferDev::is_function_here(fun = "f2", safer_check = "a", safer_check = FALSE))
+    testthat::expect_error(saferDev::is_function_here(fun = "f4", safer_check = FALSE))
+
 
   # sophisticated example
 
