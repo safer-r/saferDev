@@ -1,6 +1,9 @@
 test_that("get_message()", {
     char1 <- "wilcox.test(c(1,1,3), c(1, 2, 4), paired = TRUE)" # single character string
     char2 <- "message('ahah')"
+    char3 <- "message('ahah'); warning('ohoh')"
+    char4 <- "sum(1, 2, 3)"
+    char5 <- "ggplot2::ggplot(data = data.frame(X = 1:10, stringsAsFactors = TRUE), mapping = ggplot2::aes(x = X)) + ggplot2::geom_histogram()"
     
     result1 <- saferDev::get_message(data = char1, header = FALSE)
     testthat::expect_null(result1)
@@ -28,4 +31,22 @@ test_that("get_message()", {
     )
     expected5 <- "simpleWarning in wilcox.test.default(c(1, 1, 3), c(1, 2, 4), paired = TRUE): cannot compute exact p-value with zeroes\n"
     testthat::expect_equal(result5, expected5)
+
+    result6 <- saferDev::get_message(
+        data = char3, 
+        kind = "warning", 
+        header = FALSE,
+        print.no = TRUE, 
+        text = "IN A",
+    )
+    expected6 <- "simpleWarning in base::eval(base::parse(text = data), envir = if (base::is.null(env)) {: ohoh\n"
+    testthat::expect_equal(result6, expected6)
+
+    result7 <- saferDev::get_message(data = char4, kind = "error",print.no = TRUE, text = "IN A")
+    expected7 <- "NO ERROR MESSAGE REPORTED IN A"
+    testthat::expect_equal(result7,expected7)
+
+    result8 <- saferDev::get_message(data = char5, kind = "message",print.no = TRUE, text = "IN INSTRUCTION 1")
+    expected8 <- "STANDARD (NON ERROR AND NON WARNING) MESSAGE REPORTED IN INSTRUCTION 1:\n`stat_bin()` using `bins = 30`. Pick better value with `binwidth`."
+
 })
