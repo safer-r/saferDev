@@ -46,4 +46,20 @@ test_that("is_python_package_here()", {
         safer_check = TRUE
     ), regexp = NULL)
 
+    testthat::expect_error(
+        is_python_package_here(
+        req_package = "numpy", 
+        python_exec_path = "/invalid/path/to/python",
+        lib_path = "some/path"
+    ), regexp = NULL)
+
+    # some simple tests
+    result1 <- saferDev::get_message("is_python_package_here(req_package = 'serpentine', lib_path = 'blablabla')", kind = "error", print.no = TRUE, text = NULL)
+    expected1 <- "ERROR MESSAGE REPORTED:\nError : \n\n================\n\nERROR IN is_python_package_here() OF THE saferDev PACKAGE\nDIRECTORY PATH INDICATED IN THE lib_path ARGUMENT DOES NOT EXISTS:\nblablabla\n\n================\n\n\n"
+    testthat::expect_equal(result1, expected1)
+
+    result2 <- saferDev::get_message("is_python_package_here(req_package = 'blabla', safer_check = TRUE)", kind = "error", print.no = TRUE, text = NULL)
+    expected2 <- "ERROR MESSAGE REPORTED:\nIn py_run_string_impl(code, local, convert) : \n    File \"<string>\", line 2\n    path_lib = sys.path\nIndentationError: unexpected indent\nRun `reticulate::py_last_error()` for details.\n"
+    testthat::expect_equal(result2, expected2)
+
 })
