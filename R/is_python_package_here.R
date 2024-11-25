@@ -145,7 +145,7 @@ is_python_package_here <- function(
         }
     }
     if( ! base::is.null(x = python_lib_path)){
-        tempo <- saferDev::arg_check(data = python_lib_path, class = "vector", typeof = NULL, mode = "character", length = NULL, prop = FALSE, double_as_integer_allowed = TRUE, options = NULL, all_options_in_data = FALSE, na_contain = FALSE, neg_values = TRUE, inf_values = FALSE, print = FALSE, data_name = NULL, fun_name = function_name, pack_name = package_name, safer_check = FALSE) ; base::eval(expr = ee, envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL))
+        tempo <- saferDev::arg_check(data = python_lib_path, class = "vector", typeof = NULL, mode = "character", length = NULL, prop = FALSE, double_as_integer_allowed = TRUE, options = NULL, all_options_in_data = FALSE, na_contain = FALSE, neg_values = TRUE, inf_values = TRUE, print = FALSE, data_name = NULL, fun_name = function_name, pack_name = package_name, safer_check = FALSE) ; base::eval(expr = ee, envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL))
         if(tempo$problem == FALSE){
             if( ! base::all(base::dir.exists(python_lib_path), na.rm = TRUE)){ # separation to avoid the problem of tempo$problem == FALSE and python_lib_path == NA
                 tempo_cat <- base::paste0("ERROR IN ", function_name, " OF THE ", package_name, " PACKAGE\nDIRECTORY PATH INDICATED IN THE python_lib_path ARGUMENT DOES NOT EXISTS:\n", base::paste(python_lib_path, collapse = "\n"))
