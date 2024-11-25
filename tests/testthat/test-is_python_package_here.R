@@ -5,7 +5,7 @@ test_that("is_python_package_here()", {
     req_pkg2 <- "not_a_real_package"
 
     # some simple tests
-    result1 <- saferDev::get_message("is_python_package_here(req_package = 'serpentine', lib_path = 'blablabla')", kind = "error", print.no = TRUE, text = NULL)
+    result1 <- saferDev::get_message("is_python_package_here(req_package = 'serpentine', lib_path = 'blablabla')", kind = "error", print.no = TRUE, text = NULL, safer_check = FALSE)
     expected1 <- "ERROR MESSAGE REPORTED:\nError : \n\n================\n\nERROR IN is_python_package_here() OF THE saferDev PACKAGE\nDIRECTORY PATH INDICATED IN THE lib_path ARGUMENT DOES NOT EXISTS:\nblablabla\n\n================\n\n\n"
     testthat::expect_equal(result1, expected1)
 
