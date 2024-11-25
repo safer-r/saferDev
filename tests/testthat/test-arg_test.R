@@ -6,7 +6,20 @@ test_that("arg_test()", {
     f2 <- "plot"
     argum2 <- base::c("x", "y")
     value2 <- base::list(x = base::list(1:10, 12:13, NA, (1:10)^2), y = base::list(1:10, NA, NA))
-    error2 <- base::list(x = list(FALSE, TRUE, TRUE, FALSE), y = list(FALSE, TRUE, TRUE))
+    error2 <- base::list(x = base::list(FALSE, TRUE, TRUE, FALSE), y = base::list(FALSE, TRUE, TRUE))
+    f3 <- "round"
+    argum3 <- base::c("data", "dec.nb", "after.lead.zero")
+    value3 <- base::list(L1 = base::list(c(1, 1.0002256, 1.23568), "a", NA), L2 = base::list(2, c(1,3), NA), L3 = base::c(TRUE, FALSE, NA))
+    f4 <- "ggbox"
+    argum4 <- base::c("x", "y", "color")
+    value4 <- base::data.frame(x = base::c(1:10, 12:13, NA), y = base::c(1:10, NA, NA, NA), color = base::c("red", "blue", "green", rep(NA, 10)))
+    error4 <- base::list(x = base::list(FALSE, TRUE, TRUE), y = base::list(FALSE, TRUE, TRUE), color = base::c(FALSE, TRUE, TRUE))
+
+    #simple test
+    testthat::expect_no_error(arg_test(fun = f2, arg = argum2, val = value2, expect.error = error2, parall = FALSE, thread.nb = 4, print.count = 10, plot.fun = TRUE, export = FALSE, res.path = ".", lib_path = NULL, safer_check = TRUE))
+    testthat::expect_error(arg_test(fun = f3, arg = argum3, val = value3))
+    testthat::expect_error(arg_test(fun = f4, arg = argum4, val = value4, expect.error = error4, parall = FALSE, thread.nb = NULL, print.count = 10, plot.fun = TRUE, export = FALSE, res.path = ".", lib_path = NULL, safer_check = TRUE))
+
     
     result2 <- arg_test(
         fun = f, 
