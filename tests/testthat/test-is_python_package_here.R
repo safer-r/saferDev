@@ -9,18 +9,42 @@ test_that("is_python_package_here()", {
     expected1 <- "ERROR MESSAGE REPORTED:\nError : \n\n================\n\nERROR IN is_python_package_here() OF THE saferDev PACKAGE\nDIRECTORY PATH INDICATED IN THE lib_path ARGUMENT DOES NOT EXISTS:\nblablabla\n\n================\n\n\n"
     testthat::expect_equal(result1, expected1)
 
+    result2 <- saferDev::get_message("is_python_package_here(req_package = '', lib_path = NULL, safer_check = FALSE)", kind = "error", print.no = TRUE, text = NULL, safer_check = FALSE)
+    expected2 <- "ERROR MESSAGE REPORTED:\nError : \n\n================\n\nERROR IN is_python_package_here() OF THE saferDev PACKAGE\nTHIS ARGUMENT\nreq_package\nCANNOT CONTAIN \"\"\n\n================\n\n\n"
+    testthat::expect_equal(result2, expected2)
+
+    result3 <- saferDev::get_message("is_python_package_here(req_package = serpentine, lib_path = NULL, safer_check = FALSE)", kind = "error", print.no = TRUE, text = NULL, safer_check = FALSE)
+    expected3 <- "ERROR MESSAGE REPORTED:\nIn base::eval(base::parse(text = data), envir = if (base::is.null(env)) { : \n  object 'serpentine' not found\n"
+    testthat::expect_equal(result3, expected3)
+
+    result4 <- saferDev::get_message("is_python_package_here( lib_path = NULL, safer_check = FALSE)", kind = "error", print.no = TRUE, text = NULL, safer_check = FALSE)
+    expected4 <- "ERROR MESSAGE REPORTED:\nError : \n\n================\n\nERROR IN is_python_package_here() OF THE saferDev PACKAGE\nFOLLOWING ARGUMENT HAS NO DEFAULT VALUE AND REQUIRE ONE:\nreq_package\n\n================\n\n\n"
+    testthat::expect_equal(result4, expected4)
+
     
-    testthat::expect_error(object = is_python_package_here(
-    req_package = req_pkg, 
-    lib_path = path
+    testthat::expect_error(object = saferDev::is_python_package_here(
+        req_package = req_pkg, 
+        lib_path = path
     ), regexp = NULL)
 
-    testthat::expect_error(object = is_python_package_here(
+    testthat::expect_error(object = saferDev::is_python_package_here(
+        req_package = req_pkg, 
+        lib_path = 1, 
+        safer_check = FALSE
+    ), regexp = NULL)
+
+    testthat::expect_error(object = saferDev::is_python_package_here(
+        req_package = req_pkg, 
+        lib_path = NULL, 
+        safer_check = 1
+    ), regexp = NULL)
+
+    testthat::expect_error(object = saferDev::is_python_package_here(
         req_package = req_pkg2,
         lib_path = path
     ), regexp = NULL)
     
-    testthat::expect_error(object = is_python_package_here(
+    testthat::expect_error(object = saferDev::is_python_package_here(
         req_package = "serpentine", 
         python_exec_path = ".", 
         python_lib_path = ".", 
@@ -28,7 +52,7 @@ test_that("is_python_package_here()", {
         safer_check = TRUE
     ), regexp = NULL)
 
-    testthat::expect_error(object = is_python_package_here(
+    testthat::expect_error(object = saferDev::is_python_package_here(
         req_package = "serpentine", 
         python_exec_path = ".", 
         python_lib_path = ".", 
@@ -36,14 +60,14 @@ test_that("is_python_package_here()", {
         safer_check = TRUE
     ), regexp = NULL)
 
-    testthat::expect_error(object = is_python_package_here(
+    testthat::expect_error(object = saferDev::is_python_package_here(
         req_package = req_pkg,
         python_exec_path = ".",
         python_lib_path = ".",
         lib_path = path
     ), regexp = NULL)
 
-    testthat::expect_error(object = is_python_package_here(
+    testthat::expect_error(object = saferDev::is_python_package_here(
         req_package = req_pkg2, 
         python_exec_path = ".", 
         python_lib_path = ".", 
@@ -52,7 +76,7 @@ test_that("is_python_package_here()", {
     ), regexp = NULL)
 
     testthat::expect_error(
-        is_python_package_here(
+        saferDev::is_python_package_here(
         req_package = "numpy", 
         python_exec_path = "/invalid/path/to/python",
         lib_path = "some/path"
