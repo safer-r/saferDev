@@ -7,6 +7,7 @@ test_that("arg_test()", {
     argum2 <- base::c("x", "y")
     value2 <- base::list(x = base::list(1:10, 12:13, NA, (1:10)^2), y = base::list(1:10, NA, NA))
     error2 <- base::list(x = base::list(FALSE, TRUE, TRUE, FALSE), y = base::list(FALSE, TRUE, TRUE))
+    error5 <- base::list(x = base::list('a','b','c','d'), y = base::list('e','f','g'))
     f3 <- "round"
     argum3 <- base::c("data", "dec.nb", "after.lead.zero")
     value3 <- base::list(L1 = base::list(c(1, 1.0002256, 1.23568), "a", NA), L2 = base::list(2, c(1,3), NA), L3 = base::c(TRUE, FALSE, NA))
@@ -18,26 +19,29 @@ test_that("arg_test()", {
     #simple test
     testthat::expect_no_error(arg_test(fun = f2, arg = argum2, val = value2, expect.error = error2, parall = FALSE, thread.nb = 4, print.count = 10, plot.fun = TRUE, export = FALSE, res.path = ".", lib_path = NULL, safer_check = TRUE
 ))
-    testthat::expect_error(arg_test(fun = f2, arg = argum, val = value2, expect.error = error2, parall = FALSE, thread.nb = 4, print.count = 10, plot.fun = TRUE, export = FALSE, res.path = NULL, lib_path = NULL, safer_check = TRUE
+    testthat::expect_error(arg_test(fun = f2, arg = argum, val = value2, expect.error = error2, parall = FALSE, thread.nb = 4, print.count = 10, plot.fun = TRUE, export = FALSE, res.path = NULL, lib_path = NULL, safer_check = TRUE # wrong arg
 ))
-    testthat::expect_error(arg_test(fun = f3, arg = argum3, val = value3
+    testthat::expect_error(arg_test(fun = f3, arg = argum3, val = value3 # some of the strings in arg are not arguments of fun 
 ))
-    testthat::expect_error(arg_test(fun = f4, arg = argum4, val = value4, expect.error = error4, parall = FALSE, thread.nb = NULL, print.count = 10, plot.fun = TRUE, export = FALSE, res.path = ".", lib_path = NULL, safer_check = TRUE
+    testthat::expect_error(arg_test(fun = f4, arg = argum4, val = value4, expect.error = error4, parall = FALSE, thread.nb = NULL, print.count = 10, plot.fun = TRUE, export = FALSE, res.path = ".", lib_path = NULL, safer_check = TRUE # wrong val, it must be class list
 ))
-    testthat::expect_error(arg_test(arg = argum4, val = value4, expect.error = error4, parall = FALSE, thread.nb = NULL, print.count = 10, plot.fun = TRUE, export = FALSE, res.path = ".", lib_path = NULL, safer_check = FALSE
+    testthat::expect_error(arg_test(arg = argum4, val = value4, expect.error = error4, parall = FALSE, thread.nb = NULL, print.count = 10, plot.fun = TRUE, export = FALSE, res.path = ".", lib_path = NULL, safer_check = FALSE # wrong fun, it must have a default value
 ))
-    testthat::expect_error(arg_test(fun = f4, val = value4, expect.error = error4, parall = FALSE, thread.nb = NULL, print.count = "10", plot.fun = TRUE, export = FALSE, res.path = ".", lib_path = NULL, safer_check = FALSE
+    testthat::expect_error(arg_test(fun = f4, val = value4, expect.error = error4, parall = FALSE, thread.nb = NULL, print.count = "10", plot.fun = TRUE, export = FALSE, res.path = ".", lib_path = NULL, safer_check = FALSE # wrong arg, it must have a default value
 ))
-    testthat::expect_error(arg_test(fun = f4, arg = argum4, expect.error = error4, parall = FALSE, thread.nb = NULL, print.count = 10, plot.fun = TRUE, export = FALSE, res.path = ".", lib_path = NULL, safer_check = FALSE
+    testthat::expect_error(arg_test(fun = f4, arg = argum4, expect.error = error4, parall = FALSE, thread.nb = NULL, print.count = 10, plot.fun = TRUE, export = FALSE, res.path = ".", lib_path = NULL, safer_check = FALSE # wrong val, it must have a default value
 ))
-    testthat::expect_error(arg_test(fun = f4, arg = argum4, val = value4, parall = FALSE, thread.nb = NULL, print.count = 10, plot.fun = TRUE, export = FALSE, res.path = ".", lib_path = "not_real_path", safer_check = FALSE
+    testthat::expect_error(arg_test(fun = f4, arg = argum4, val = value4, parall = FALSE, thread.nb = NULL, print.count = 10, plot.fun = TRUE, export = FALSE, res.path = ".", lib_path = "not_real_path", safer_check = FALSE # wrong lib_path, it does not exist
 ))
-    testthat::expect_error(arg_test(fun = f4, arg = argum4, val = value4, expect.error = error4, parall = FALSE, thread.nb = NULL, print.count = 10, plot.fun = TRUE, export = FALSE, res.path = ".", lib_path = 1, safer_check = TRUE
+    testthat::expect_error(arg_test(fun = f4, arg = argum4, val = value4, expect.error = error4, parall = FALSE, thread.nb = NULL, print.count = 10, plot.fun = TRUE, export = FALSE, res.path = ".", lib_path = 1, safer_check = TRUE # wrong lib_path, it must be a character
 ))
-    testthat::expect_error(arg_test(fun = f4, arg = argum4, val = value4, expect.error = error4, parall = FANALSE, thread.nb = NULL, print.count = 10, plot.fun = TRUE, export = FALSE, res.path = ".", lib_path = NULL, safer_check = TRUE
+    testthat::expect_error(arg_test(fun = base::list(1:2), arg = base::list(3:4), val = value, expect.error = error, parall = FALSE, thread.nb = NULL, print.count = 10, plot.fun = TRUE, export = FALSE, res.path = NULL, lib_path = NULL, safer_check = FALSE # wrong fun and arg, they must be character
 ))
-    testthat::expect_error(arg_test(fun = base::list(1:2), arg = base::list(3:4), val = value, expect.error = error, parall = FALSE, thread.nb = NULL, print.count = 10, plot.fun = TRUE, export = FALSE, res.path = NULL, lib_path = NULL, safer_check = FALSE
+    testthat::expect_error(arg_test(fun = f2, arg = argum2, val = value2, expect.error = error, parall = FALSE, thread.nb = 4, print.count = 10, plot.fun = TRUE, export = FALSE, res.path = ".", lib_path = NULL, safer_check = FALSE # wrong ecpext.error, length of expect.error is not equal to length of val
 ))
+    testthat::expect_error(arg_test(fun = f2, arg = argum2, val = value2, expect.error = error5, parall = FALSE, thread.nb = 4, print.count = 10, plot.fun = TRUE, export = FALSE, res.path = ".", lib_path = NULL, safer_check = FALSE 
+))# wrong ecpext.error, it must be logical values, TRUE or FALSE
+    # tests with get_message
 
     result1 <- saferDev::get_message("arg_test(fun = 1, arg = argum, val = value, expect.error = error, parall = FALSE, thread.nb = NULL, print.count = 10, plot.fun = FALSE, export = FALSE, res.path = NULL, lib_path = NULL, safer_check = TRUE)", kind = "error", print.no = TRUE, text = NULL)
     expected1 <- "ERROR MESSAGE REPORTED:\nError : \n\n================\n\nERROR IN arg_test()\nTHE fun OBJECT MUST BE MODE character\n\n================\n\n\n"
