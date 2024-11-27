@@ -4,6 +4,7 @@ testthat::test_that("is_function_here()", {
     f2 <- "base::sum"
     f3 <- "graphics::par"
     f4 <- "stats::mean"
+    lib_path1 <- 1
 
 
   # Simple examples
@@ -26,6 +27,9 @@ testthat::test_that("is_function_here()", {
     result5 <- saferDev::get_message("is_function_here(fun = 'base::mean', lib_path = NULL, safer_check = FALSE)", kind = "message", print.no = TRUE, text = NULL)
     expected5 <- "NO STANDARD (NON ERROR AND NON WARNING) MESSAGE REPORTED"
     testthat::expect_equal(result5, expected5)
+
+    result6 <- saferDev::get_message("is_function_here(fun = 'base::mean', lib_path = lib_path1, safer_check = FALSE)", kind = "error", print.no = TRUE, text = NULL)
+    expected6 <- "ERROR MESSAGE REPORTED:\nError : \n\n================\n\nERROR IN is_function_here() OF THE saferDev PACKAGE\nTHE lib_path ARGUMENT MUST BE CLASS character\n\n================\n\n\n"
 
     
     # do not use safer_check = TRUE because test_that() in CI does not like the package presence checking
