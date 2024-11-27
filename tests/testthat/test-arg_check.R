@@ -6,6 +6,7 @@ test_that("arg_check()", {
     vec6 <- base::list(1:3, 4:6)
     mat1 <- base::matrix(vec1)
     mat2 <- base::matrix(base::c(1:3 / 3, NA))
+    number <- 1
 
     #Test cases
     result1 <- saferDev::arg_check(data = vec1, class = "numeric")
@@ -131,6 +132,10 @@ test_that("arg_check()", {
     expected16 <- base::list(problem = FALSE, text = "NO PROBLEM DETECTED FOR THE vec6 OBJECT", object.name = "vec6")
     testthat::expect_equal(result16, expected16)
 
+    testthat::expect_no_error(saferDev::arg_check(data = number, class = "numeric",typeof = "double", mode = "numeric", length = 1, double_as_integer_allowed = TRUE, neg_values = FALSE, inf_values = FALSE
+))
+
+
     result17 <- saferDev::arg_check(
         data = vec1, 
         class = "integer", 
@@ -152,5 +157,6 @@ test_that("arg_check()", {
     )
     expected17 <- base::list(problem = FALSE, text = "NO PROBLEM DETECTED FOR THE vec1 OBJECT", object.name = "vec1")
     testthat::expect_equal(result17, expected17)
+
 })
 
