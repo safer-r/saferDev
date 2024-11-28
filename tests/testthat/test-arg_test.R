@@ -39,8 +39,9 @@ test_that("arg_test()", {
 ))
     testthat::expect_error(arg_test(fun = f2, arg = argum2, val = value2, expect.error = error, parall = FALSE, thread.nb = 4, print.count = 10, plot.fun = TRUE, export = FALSE, res.path = ".", lib_path = NULL, safer_check = FALSE # wrong ecpext.error, length of expect.error is not equal to length of val
 ))
-    testthat::expect_error(arg_test(fun = f2, arg = argum2, val = value2, expect.error = error5, parall = FALSE, thread.nb = 4, print.count = 10, plot.fun = TRUE, export = FALSE, res.path = ".", lib_path = NULL, safer_check = FALSE 
-))# wrong ecpext.error, it must be logical values, TRUE or FALSE
+    testthat::expect_error(arg_test(fun = f2, arg = argum2, val = value2, expect.error = error5, parall = FALSE, thread.nb = 4, print.count = 10, plot.fun = TRUE, export = FALSE, res.path = ".", lib_path = NULL, safer_check = FALSE # wrong ecpext.error, it must be logical values, TRUE or FALSE
+))
+
     # tests with get_message
 
     result1 <- saferDev::get_message("arg_test(fun = 1, arg = argum, val = value, expect.error = error, parall = FALSE, thread.nb = NULL, print.count = 10, plot.fun = FALSE, export = FALSE, res.path = NULL, lib_path = NULL, safer_check = TRUE)", kind = "error", print.no = TRUE, text = NULL)
