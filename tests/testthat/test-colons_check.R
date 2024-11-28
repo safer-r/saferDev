@@ -35,17 +35,17 @@ testthat::test_that("colons_check()", {
 
   # Test cases
   # Simple examples
-    testthat::expect_no_error(colons_check(x = fun1))
-    testthat::expect_no_error(colons_check(x = fun2))
-    testthat::expect_no_error(colons_check(x = fun2, safer_check = TRUE))
-    testthat::expect_no_error(colons_check(x = fun3))
-    testthat::expect_no_error(colons_check(x = fun4))
-    testthat::expect_no_error(colons_check(x = fun4, safer_check = TRUE))
+    testthat::expect_no_error(saferDev::colons_check(x = fun1))
+    testthat::expect_no_error(saferDev::colons_check(x = fun2))
+    testthat::expect_no_error(saferDev::colons_check(x = fun2, safer_check = TRUE))
+    testthat::expect_no_error(saferDev::colons_check(x = fun3))
+    testthat::expect_no_error(saferDev::colons_check(x = fun4))
+    testthat::expect_no_error(saferDev::colons_check(x = fun4, safer_check = TRUE))
 
 
   # sophisticated example
     base::source("https://raw.githubusercontent.com/safer-r/saferDev/main/dev/other/test.R") # Warning: comments are removed by the CI and lines are changed
-    result1 <- utils::capture.output(colons_check(x = test))
+    result1 <- utils::capture.output(saferDev::colons_check(x = test))
     expected1 <- base::c(
         "", 
         "", 
