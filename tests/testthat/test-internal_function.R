@@ -37,5 +37,17 @@ test_that("test .internal_function.R", {
         external_function_name = "FUN1",
         external_package_name = "P1"
     ))
+    testthat::expect_error(.base_op_check(
+        external_function_name = "FUN1",
+        external_package_name = "",
+    ))
+    testthat::expect_error(.base_op_check(
+        external_function_name = "",
+        external_package_name = "P1",
+    ))
+    testthat::expect_error(.base_op_check(
+        external_function_name = "FUN1",
+        external_package_name = P1,
+    ))
     
 })
