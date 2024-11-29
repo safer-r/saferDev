@@ -12,10 +12,20 @@ test_that("report()", {
     t2 <- base::table(vec2, vec2)
     l1 <- base::list(vec1, vec2)
 
+    testthat::expect_error(report(
+        path = ".", 
+        overwrite = FALSE, 
+        safer_check = FALSE # do not set to TRUE because test_that() in CI does not like the package presence checking
+        ))
     testthat::expect_no_error(report(
         data = vec1, 
         path = ".",
         safer_check = FALSE # do not set to TRUE because test_that() in CI does not like the package presence checking
+        ))
+    testthat::expect_error(report(
+        data = vec1, 
+        path = ".", 
+        safer_check = 'FALSE' # do not set to TRUE because test_that() in CI does not like the package presence checking
         ))
     testthat::expect_no_error(report(
         data = vec2, 
@@ -82,5 +92,17 @@ test_that("report()", {
           sep = 4,
           safer_check = FALSE # do not set to TRUE because test_that() in CI does not like the package presence checking
     ))
+    testthat::expect_error(report(
+          data = mat1, 
+          output = "test.txt", 
+          path = ".", 
+          overwrite = TRUE, 
+          rownames.kept = TRUE, 
+          vector.cat = TRUE, 
+          noquote = FALSE, 
+          sep = '4',
+          safer_check = FALSE # do not set to TRUE because test_that() in CI does not like the package presence checking
+    ))
+
 })
 
