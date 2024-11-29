@@ -3,7 +3,7 @@ testthat::test_that("is_function_here()", {
     path <- "blablabla"
     f2 <- "base::sum"
     f3 <- "graphics::par"
-    f4 <- "stats::mean"
+    f4 <- "ggplot2::mean"
     lib_path1 <- 1
 
 
@@ -43,13 +43,27 @@ testthat::test_that("is_function_here()", {
     result9 <- saferDev::get_message("is_function_here(fun = 'mean', lib_path = NULL, safer_check = FALSE)", kind = "error", print.no = TRUE, text = NULL)
     expected9 <- "ERROR MESSAGE REPORTED:\nError : \n\n================\n\nERROR IN is_function_here() OF THE saferDev PACKAGE\nTHE STRING IN fun ARGUMENT MUST CONTAIN \"::\" OR \":::.\":\nmean\n\n================\n\n\n"
     testthat::expect_equal(result9, expected9)
+
+    result10 <- saferDev::get_message("is_function_here(fun = 'base::mean', lib_path = NULL, safer_check = 'FALSE')", kind = "error", print.no = TRUE, text = NULL)#safer_check = 'FALSE'
+    expected10 <- "ERROR MESSAGE REPORTED:\nError : \n\n================\n\nERROR IN is_function_here() OF THE saferDev PACKAGE\nsafer_check ARGUMENT MUST BE EITHER TRUE OR FALSE. HER IT IS:\nFALSE\n\n================\n\n\n"
+    testthat::expect_equal(result10, expected10)
+
+    result11 <- saferDev::get_message("is_function_here(fun = base::c('base::mean', NA), lib_path = NULL, safer_check = FALSE)", kind = "error", print.no = TRUE, text = NULL)
+    expected11 <- "ERROR MESSAGE REPORTED:\nError : \n\n================\n\nERROR IN is_function_here() OF THE saferDev PACKAGE\nTHE STRING IN fun ARGUMENT MUST CONTAIN \"::\" OR \":::.\":\nNA\n\n================\n\n\n"
+    testthat::expect_equal(result11, expected11)
+
+    result12 <- saferDev::get_message("is_function_here(fun = '', lib_path = NULL, safer_check = FALSE)", kind = "error", print.no = TRUE, text = NULL)
+    expected12 <- "ERROR MESSAGE REPORTED:\nError : \n\n================\n\nERROR IN is_function_here() OF THE saferDev PACKAGE\nTHIS ARGUMENT\nfun\nCANNOT CONTAIN \"\"\n\n================\n\n\n"
+    testthat::expect_equal(result12, expected12)
+
+    
     
     # do not use safer_check = TRUE because test_that() in CI does not like the package presence checking
     testthat::expect_error(saferDev::is_function_here(fun = "a", safer_check = FALSE))
     testthat::expect_error(saferDev::is_function_here(fun = f2, lib_path = "a", safer_check = FALSE))
     testthat::expect_error(saferDev::is_function_here(fun = f2, lib_path = 2, safer_check = FALSE))
     testthat::expect_error(saferDev::is_function_here(fun = f2, safer_check = "a", safer_check = FALSE))
-    testthat::expect_no_error(saferDev::is_function_here(fun = f4, safer_check = FALSE))
+    testthat::expect_no_error(saferDev::is_function_here(fun = f2, safer_check = FALSE))
     testthat::expect_no_error(saferDev::is_function_here(fun = f3, safer_check = FALSE))
     testthat::expect_error(saferDev::is_function_here(fun = 1, lib_path = NULL, safer_check = FALSE))
     testthat::expect_error(saferDev::is_function_here(fun = f2, lib_path = null, safer_check = NULL))
@@ -73,5 +87,10 @@ testthat::test_that("is_function_here()", {
         fun = f2,
         lib_path = NULL,
         safer_check = FALSE # do not set to TRUE because test_that() in CI does not like the package presence checking
+    ))
+    testthat::expect_error(saferDev::is_function_here(
+        fun = f3,
+        lib_path = NULL,
+        safer_check = 'FALSE' # do not set to TRUE because test_that() in CI does not like the package presence checking
     ))
 })
