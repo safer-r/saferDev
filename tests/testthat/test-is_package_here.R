@@ -59,7 +59,7 @@ testthat::test_that("is_package_here()", {
     expected2 <- "ERROR MESSAGE REPORTED:\nError : \n\n================\n\nERROR IN is_package_here() OF THE saferDev PACKAGE\nFOLLOWING ARGUMENT HAS NO DEFAULT VALUE AND REQUIRE ONE:\nreq_package\n\n================\n\n\n"
     testthat::expect_equal(result2, expected2)
 
-    result3 <- get_message("is_package_here(req_package = list('ggplot2'), lib_path = NULL, safer_check = TRUE)", kind = "error", print.no = TRUE, text = NULL)
+    result3 <- get_message("is_package_here(req_package = list('ggplot2'), lib_path = NULL, safer_check = FALSE)", kind = "error", print.no = TRUE, text = NULL)
     expected3 <- "ERROR MESSAGE REPORTED:\nError : \n\n================\n\nERROR IN is_package_here()\nTHE req_package OBJECT MUST BE CLASS vector AND MODE character\n\n================\n\n\n"
     testthat::expect_equal(result3, expected3)
     
