@@ -51,7 +51,7 @@ testthat::test_that("is_package_here()", {
     ))
 
 
-    result1 <- get_message("is_package_here(req_package = 'ggplot2', lib_path = 'not_a_path', safer_check = TRUE)", kind = "error", print.no = TRUE, text = NULL)
+    result1 <- get_message("is_package_here(req_package = 'ggplot2', lib_path = 'not_a_path', safer_check = FALSE)", kind = "error", print.no = TRUE, text = NULL)
     expected1 <- "ERROR MESSAGE REPORTED:\nError : \n\n================\n\nERROR IN is_package_here() OF THE saferDev PACKAGE\nDIRECTORY PATH INDICATED IN THE lib_path ARGUMENT DOES NOT EXISTS:\nnot_a_path\n\n================\n\n\n"
     testthat::expect_equal(result1, expected1)
 
