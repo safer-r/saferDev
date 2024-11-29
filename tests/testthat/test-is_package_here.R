@@ -25,7 +25,7 @@ testthat::test_that("is_package_here()", {
         lib_path = NULL,
         safer_check = FALSE # do not set to TRUE because test_that() in CI does not like the package presence checking
     ))
-    testthat::expect_no_error(saferDev::is_package_here(
+    testthat::expect_error(saferDev::is_package_here(
         req_package = "stats",
         lib_path = NULL,
         safer_check = 'FALSE' # do not set to TRUE because test_that() in CI does not like the package presence checking
