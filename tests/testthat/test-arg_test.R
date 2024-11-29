@@ -44,11 +44,11 @@ test_that("arg_test()", {
 
     # tests with get_message
 
-    result1 <- saferDev::get_message("arg_test(fun = 1, arg = argum, val = value, expect.error = error, parall = FALSE, thread.nb = NULL, print.count = 10, plot.fun = FALSE, export = FALSE, res.path = NULL, lib_path = NULL, safer_check = TRUE)", kind = "error", print.no = TRUE, text = NULL)
+    result1 <- saferDev::get_message("arg_test(fun = 1, arg = argum, val = value, expect.error = error, parall = FALSE, thread.nb = NULL, print.count = 10, plot.fun = FALSE, export = FALSE, res.path = NULL, lib_path = NULL, safer_check = FALSE)", kind = "error", print.no = TRUE, text = NULL)
     expected1 <- "ERROR MESSAGE REPORTED:\nError : \n\n================\n\nERROR IN arg_test()\nTHE fun OBJECT MUST BE MODE character\n\n================\n\n\n"
     testthat::expect_equal(result1, expected1)
 
-    result2 <- saferDev::get_message("arg_test(fun = f2, arg = argum2, val = value2, expect.error = error2, parall = FALSE, thread.nb = NULL, print.count = 10, plot.fun = TRUE, export = FALSE, res.path = NULL, lib_path = 1, safer_check = TRUE)", kind = "error", print.no = TRUE, text = NULL)
+    result2 <- saferDev::get_message("arg_test(fun = f2, arg = argum2, val = value2, expect.error = error2, parall = FALSE, thread.nb = NULL, print.count = 10, plot.fun = TRUE, export = FALSE, res.path = NULL, lib_path = 1, safer_check = FALSE)", kind = "error", print.no = TRUE, text = NULL)
     expected2 <- "ERROR MESSAGE REPORTED:\nError : \n\n================\n\nERROR IN arg_test() OF THE saferDev PACKAGE\nDIRECTORY PATH INDICATED IN THE lib_path ARGUMENT MUST BE A VECTOR OF CHARACTERS:\n1\n\n================\n\n\n"
     testthat::expect_equal(result2, expected2)
 
@@ -72,8 +72,49 @@ test_that("arg_test()", {
     expected7 <- "ERROR MESSAGE REPORTED:\nError : \n\n================\n\nERROR IN arg_test() OF THE saferDev PACKAGE\narg ARGUMENT CANNOT BE LENGTH 0\n\n================\n\n\n"
     testthat::expect_equal(result7, expected7)
 
+    result8 <- saferDev::get_message("arg_test(fun = f, arg = argum, val = value, expect.error = error, parall = FALSE, thread.nb = NULL, print.count = 10, plot.fun = FALSE, export = FALSE, res.path = NA, lib_path = NULL, safer_check = FALSE)", kind = "error", print.no = TRUE, text = NULL)
+    expected8 <- "ERROR MESSAGE REPORTED:\nError : \n\n================\n\nERROR IN arg_test()\nTHE res.path OBJECT MUST BE MODE character AND THE res.path OBJECT CONTAINS NA WHILE NOT AUTHORIZED\n\n================\n\n\n"
+    testthat::expect_equal(result8, expected8)
+
+    result9 <- saferDev::get_message("arg_test(fun = f, arg = argum, val =  base::list(base::c(1, 2, 3), base::list(a = 1, b = 2)), expect.error = error, parall = FALSE, thread.nb = NULL, print.count = 10, plot.fun = FALSE, export = FALSE, res.path = NULL, lib_path = NULL, safer_check = FALSE)", kind = "error", print.no = TRUE, text = NULL)
+    expected9 <- "ERROR MESSAGE REPORTED:\nError : \n\n================\n\nERROR IN arg_test() OF THE saferDev PACKAGE\nLENGTH OF COMPARTMENT 2 OF val ARGUMENT MUST BE IDENTICAL TO LENGTH OF COMPARTMENT 2 OF expect.error ARGUMENT:\nHERE IT IS: 2 VERSUS 3\n\n================\n\n\n"
+    testthat::expect_equal(result9, expected9)
+
+    result10 <- saferDev::get_message("arg_test(fun = f2, arg = argum2, val = base::list(base::matrix(1:4, 2, 2)), expect.error = error2, parall = FALSE, thread.nb = NULL, print.count = 10, plot.fun = TRUE, export = FALSE, res.path = '.', lib_path = NULL, safer_check = FALSE)", kind = "error", print.no = TRUE, text = NULL)
+    expected10 <- "ERROR MESSAGE REPORTED:\nError : \n\n================\n\nERROR IN arg_test() OF THE saferDev PACKAGE\nCOMPARTMENT 1 OF val ARGUMENT MUST BE A VECTOR OR A LIST\n\n================\n\n\n"
+    testthat::expect_equal(result10, expected10)
+
+    result11 <- saferDev::get_message("arg_test(fun = f2, arg = base::c('x'), val = value2, expect.error = error2, parall = FALSE, thread.nb = NULL, print.count = 10, plot.fun = TRUE, export = FALSE, res.path = '.', lib_path = NULL, safer_check = FALSE)", kind = "error", print.no = TRUE, text = NULL)
+    expectd11 <- "ERROR MESSAGE REPORTED:\nError : \n\n================\n\nERROR IN arg_test() OF THE saferDev PACKAGE\nLENGTH OF arg ARGUMENT MUST BE IDENTICAL TO LENGTH OF val ARGUMENT:\nHERE IT IS: 1 VERSUS 2\n\n================\n\n\n"
+    testthat::expect_equal(result11, expectd11)
+
+    result12 <- saferDev::get_message("arg_test(fun = f2, arg = base::rep(argum2,22), val = rep(value2, 22), expect.error = rep(error2,22), parall = FALSE, thread.nb = NULL, print.count = 10, plot.fun = TRUE, export = FALSE, res.path = '.', lib_path = NULL, safer_check = FALSE)", kind = "error", print.no = TRUE, text = NULL)
+    expected12 <- "ERROR MESSAGE REPORTED:\nError : \n\n================\n\nERROR IN arg_test() OF THE saferDev PACKAGE\nCANNOT TEST MORE THAN 43 ARGUMENTS IF THEY ALL HAVE AT LEAST 2 VALUES EACH\nHERE THE NUMBER IS: 44\n\n================\n\n\n"
+    testthat::expect_equal(result12, expected12)
+
+    result13 <- saferDev::get_message("arg_test(fun = f2, arg = argum2, val = base::list(x = base::list(1,2,3,4), y = base::list(3,5)), expect.error = error2, parall = FALSE, thread.nb = NULL, print.count = 10, plot.fun = TRUE, export = FALSE, res.path = '.', lib_path = NULL, safer_check = FALSE)", kind = "error", print.no = TRUE, text = NULL)
+    expected13 <- "ERROR MESSAGE REPORTED:\nError : \n\n================\n\nERROR IN arg_test() OF THE saferDev PACKAGE\nLENGTH OF COMPARTMENT 2 OF val ARGUMENT MUST BE IDENTICAL TO LENGTH OF COMPARTMENT 2 OF expect.error ARGUMENT:\nHERE IT IS: 2 VERSUS 3\n\n================\n\n\n"
+    testthat::expect_equal(result13, expected13)
+
+    result14 <- saferDev::get_message("arg_test(fun = f2, arg = argum2, val = value2, expect.error = error5, parall = FALSE, thread.nb = 4, print.count = 10, plot.fun = TRUE, export = FALSE, res.path = '.', lib_path = NULL, safer_check = FALSE)", kind = "error", print.no = TRUE, text = NULL)
+    expected14 <- "ERROR MESSAGE REPORTED:\nIn expect.error[[1]][[i1]] | expect.error[[2]][[i2]] : \n  operations are possible only for numeric, logical or complex types\n"
+    testthat::expect_equal(result14, expected14)
+
+    result15 <- saferDev::get_message("arg_test(fun = f, arg = argum, val = value, expect.error = error, parall = TRUE, thread.nb = NULL, print.count = 10, plot.fun = FALSE, export = FALSE, res.path = NULL, lib_path = NULL, safer_check = FALSE)", kind = "error", print.no = TRUE, text = NULL)
+    expected15 <- "ERROR MESSAGE REPORTED:\nError : \n\n================\n\nERROR IN arg_test() OF THE saferDev PACKAGE\nres.path ARGUMENT MUST BE SPECIFIED IF parall ARGUMENT IS TRUE\n\n================\n\n\n"
+    testthat::expect_equal(result15, expected15)
+
+    result16 <- saferDev::get_message("arg_test(fun = f2, arg = argum2, val = value2, expect.error = error2, parall = FALSE, thread.nb = NULL, print.count = 10, plot.fun = TRUE, export = TRUE, res.path = NULL, lib_path = NULL, safer_check = FALSE)", kind = "error", print.no = TRUE, text = NULL)
+    expected16 <- "ERROR MESSAGE REPORTED:\nError : \n\n================\n\nERROR IN arg_test() OF THE saferDev PACKAGE\nres.path ARGUMENT MUST BE SPECIFIED IF export ARGUMENT TRUE\n\n================\n\n\n"
+    testthat::expect_equal(result16, expected16)
+
+    result17 <- saferDev::get_message("arg_test(fun = f2, arg = argum2, val = value2, expect.error = error2, parall = FALSE, thread.nb = NULL, print.count = 10, plot.fun = TRUE, export = FALSE, res.path = NULL, lib_path = 'not_real_path', safer_check = FALSE)", kind = "error", print.no = TRUE, text = NULL)
+    expected17 <- "ERROR MESSAGE REPORTED:\nError : \n\n================\n\nERROR IN arg_test() OF THE saferDev PACKAGE\nDIRECTORY PATH INDICATED IN THE lib_path ARGUMENT DOES NOT EXISTS:\nnot_real_path\n\n================\n\n\n"
+    testthat::expect_equal(result17, expected17)
+
+
        
-    result8 <- arg_test(
+    result18 <- arg_test(
         fun = f, 
         arg = argum, 
         val = value, 
@@ -120,7 +161,7 @@ test_that("arg_test()", {
         )
     base::rm(arg_test)
     # end WARNING: trick to get the same result2$ini
-    expected8 <- base::list(
+    expected18 <- base::list(
         fun = "unique",
         ini = tempo,
         data = base::data.frame(
@@ -133,9 +174,9 @@ test_that("arg_test()", {
             row.names = base::c("arg_test_1", "arg_test_2", "arg_test_3", "arg_test_4", "arg_test_5", "arg_test_6", "arg_test_7", "arg_test_8", "arg_test_9")
         )
     )
-    testthat::expect_equal(result8[1:3], expected8) # [1:3] to do not compare system parameters
+    testthat::expect_equal(result18[1:3], expected18) # [1:3] to do not compare system parameters
 
-    result9 <- arg_test(
+    result19 <- arg_test(
         fun = f2, 
         arg = argum2, 
         val = value2, 
@@ -182,7 +223,7 @@ test_that("arg_test()", {
         )
     base::rm(arg_test)
     # end WARNING: trick
-    expected9 <- base::list(
+    expected19 <- base::list(
         fun = "plot",
         ini = tempo2,
         data = base::data.frame(
@@ -205,5 +246,5 @@ test_that("arg_test()", {
                         "Error in xy.coords(x, y, xlabel, ylabel, log) : \n  'x' and 'y' lengths differ\n"),
             row.names = c("arg_test_01", "arg_test_02", "arg_test_03", "arg_test_04", "arg_test_05", "arg_test_06", "arg_test_07", "arg_test_08", "arg_test_09", "arg_test_10", "arg_test_11", "arg_test_12")
         ))
-    testthat::expect_equal(result9[1:3], expected9) # [1:3] to do not compare system parameters
+    testthat::expect_equal(result19[1:3], expected19) # [1:3] to do not compare system parameters
 })
