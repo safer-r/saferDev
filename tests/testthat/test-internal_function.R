@@ -31,6 +31,18 @@ test_that("test .internal_function.R", {
         external_function_name = "FUN1",
         external_package_name = "P1"
     ))
+    testthat::expect_error(.pack_and_function_check(
+        fun = NULL, 
+        lib_path = path_good,
+        external_function_name = "FUN1",
+        external_package_name = "P1"
+    ))
+    testthat::expect_error(.pack_and_function_check(
+        fun = NA, 
+        lib_path = NULL,
+        external_function_name = "FUN1",
+        external_package_name = "P1"
+    ))
 
     # .base_op_check()
     testthat::expect_no_error(.base_op_check(
@@ -48,6 +60,14 @@ test_that("test .internal_function.R", {
     testthat::expect_error(.base_op_check(
         external_function_name = "FUN1",
         external_package_name = P1,
+    ))
+    testthat::expect_error(.base_op_check(
+        external_function_name = NULL,
+        external_package_name = "P1",
+    ))
+    testthat::expect_error(.base_op_check(
+        external_function_name = "FUN1",
+        external_package_name = NA,
     ))
     
 })
