@@ -144,7 +144,7 @@ test_that("arg_check()", {
 
     result18 <- saferDev::get_message("saferDev::arg_check(data = vec6, class = NA, typeof = 'integer', safer_check = FALSE)", kind = "error", print.no = TRUE, text = NULL
 )
-    expected18 <- "ERROR MESSAGE REPORTED:\nError : \n\n================\n\nERROR IN arg_check() OF THE saferDev PACKAGE\nTHIS ARGUMENT CANNOT JUST BE NA:class\nprop\nna_contain\ndata_name\n\n================\n\n\n"
+    expected18 <- "ERROR MESSAGE REPORTED:\nError : \n\n================\n\nERROR IN arg_check() OF THE saferDev PACKAGE\nTHIS ARGUMENT CANNOT JUST BE NA:envir\n\n================\n\n\n"
     testthat::expect_equal(result18, expected18)
 
     result19 <- saferDev::get_message("saferDev::arg_check(data = vec6, class = 'list', typeof = 'integer', prop = NULL, safer_check = FALSE)", kind = "error", print.no = TRUE, text = NULL
