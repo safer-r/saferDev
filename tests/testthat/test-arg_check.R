@@ -152,12 +152,49 @@ test_that("arg_check()", {
     expected19 <- "ERROR MESSAGE REPORTED:\nError : \n\n================\n\nERROR IN arg_check() OF THE saferDev PACKAGE\nTHIS ARGUMENT\nprop\nCANNOT BE NULL\n\n================\n\n\n"
     testthat::expect_equal(result19, expected19)
 
+    testthat::expect_error(saferDev::arg_check(data = vec6, class = "list", typeof = "integer", prop = 'FALSE', safer_check = FALSE))
+
+    result20 <- saferDev::get_message("saferDev::arg_check(data = vec6, class = list, typeof = 'integer', prop = FALSE, double_as_integer_allowed = FALSE, safer_check = FALSE)", kind = "error", print.no = TRUE, text = NULL
+)
+    expected20 <- "ERROR MESSAGE REPORTED:\nError : \n\n================\n\nINTERNAL ERROR IN arg_check() OF THE saferDev PACKAGE\nTHIS ARGUMENT IS NOT MODE \"character\":\nclass\n\n================\n\n\n"
+    testthat::expect_equal(result20, expected20)
+
+    testthat::expect_error(saferDev::arg_check(data = vec6
+))
+
+    result21 <- saferDev::get_message("saferDev::arg_check(data = vec6, class = 'list', typeof = 'integer', prop = FALSE, data_name = base::c('first', 'second'), safer_check = FALSE)", kind = "error", print.no = TRUE, text = NULL
+)
+    expected21 <- "ERROR MESSAGE REPORTED:\nError : \n\n================\n\nERROR IN arg_check()() OF THE saferDev PACKAGE\ndata_name ARGUMENT MUST BE A SINGLE CHARACTER ELEMENT AND NOT first second\n\n================\n\n\n"
+    testthat::expect_equal(result21, expected21)
+
+    result22 <- saferDev::get_message("saferDev::arg_check(data = vec6)", kind = "error", print.no = TRUE, text = NULL
+)
+    expected22 <- "ERROR MESSAGE REPORTED:\nError : \n\n================\n\nERROR IN arg_check()() OF THE saferDev PACKAGE\nAT LEAST ONE OF THE options, class, typeof, mode, prop, OR length ARGUMENT MUST BE SPECIFIED (I.E, TRUE FOR prop)\n\n================\n\n\n"
+    testthat::expect_equal(result22, expected22)
+
+    result23 <- saferDev::get_message("saferDev::arg_check(data = vec5, class = 'character', options = base::c('a', 'b', 'c'), all_options_in_data = TRUE)", kind = "error", print.no = TRUE, text = NULL
+)
+    expected23 <- "ERROR MESSAGE REPORTED:\nError : \n\n================\n\nERROR IN arg_check()() OF THE saferDev PACKAGE\nTHE class, typeof, mode ARGUMENTS MUST BE NULL, AND prop FALSE, IF THE options ARGUMENT IS SPECIFIED\nTHE options ARGUMENT MUST BE NULL IF THE class AND/OR typeof AND/OR mode AND/OR prop ARGUMENT IS SPECIFIED\n\n================\n\n\n"
+    testthat::expect_equal(result23, expected23)
+
+    testthat::expect_error(saferDev::arg_check(data = vec5, class = "character", options = NULL, all_options_in_data = FALSE, neg_values = 'TRUE', safer_check = FALSE))
+
+    result24 <- saferDev::get_message("saferDev::arg_check(data = base::list(x = 'a', y = '2'), length = 2, options = NULL, prop = FALSE, all_options_in_data = FALSE, neg_values = FALSE, safer_check = FALSE)", kind = "error", print.no = TRUE, text = NULL
+)
+    expected24 <- "ERROR MESSAGE REPORTED:\nError : \n\n================\n\nERROR IN arg_check()() OF THE saferDev PACKAGE\nTHE neg_values ARGUMENT CANNOT BE SWITCHED FROM TRUE (DEFAULT VALUE) TO FALSE IF class, typeof AND mode ARGUMENTS ARE NULL\n\n================\n\n\n"
+    testthat::expect_equal(result24, expected24)
+
+    testthat::expect_error(saferDev::arg_check(data = vec5, class = "character", options = NULL, all_options_in_data = FALSE, inf_values = 'TRUE', safer_check = FALSE))
+
+    result25 <- saferDev::get_message("saferDev::arg_check(data = base::list(x = 'a', y = '2'), length = 2, options = NULL, prop = FALSE, all_options_in_data = FALSE, inf_values = FALSE, safer_check = FALSE)", kind = "error", print.no = TRUE, text = NULL
+)
+    expected25 <- "ERROR MESSAGE REPORTED:\nError : \n\n================\n\nERROR IN arg_check()() OF THE saferDev PACKAGE\nTHE inf_values ARGUMENT CANNOT BE SWITCHED FROM TRUE (DEFAULT VALUE) TO FALSE IF class, typeof AND mode ARGUMENTS ARE NULL\n\n================\n\n\n"
+    testthat::expect_equal(result25, expected25)
+
+    testthat::expect_error(saferDev::arg_check(data = vec5, class = "wrong_class", options = NULL, all_options_in_data = FALSE, na_contain = 'TRUE', safer_check = FALSE))
 
 
-
-
-
-    result20 <- saferDev::arg_check(
+    result26 <- saferDev::arg_check(
         data = vec1, 
         class = "integer", 
         typeof = NULL, 
@@ -176,8 +213,8 @@ test_that("arg_check()", {
         pack_name = NULL, 
         safer_check = TRUE
     )
-    expected20 <- base::list(problem = FALSE, text = "NO PROBLEM DETECTED FOR THE vec1 OBJECT", object.name = "vec1")
-    testthat::expect_equal(result20, expected20)
+    expected26 <- base::list(problem = FALSE, text = "NO PROBLEM DETECTED FOR THE vec1 OBJECT", object.name = "vec1")
+    testthat::expect_equal(result26, expected26)
 
 })
 
