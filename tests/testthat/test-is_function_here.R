@@ -24,7 +24,7 @@ testthat::test_that("is_function_here()", {
     result4 <- saferDev::get_message("is_function_here(fun = 'base::mean', lib_path = 'base')", kind = "error", print.no = TRUE, text = NULL)
     expected4 <- "ERROR MESSAGE REPORTED:\nError : \n\n================\n\nERROR IN is_function_here() OF THE saferDev PACKAGE\nDIRECTORY PATH INDICATED IN THE lib_path ARGUMENT DOES NOT EXISTS:\nbase\n\n================\n\n\n"
 
-    result5 <- saferDev::get_message("is_function_here(fun = 'base::mean', lib_path = NULL, safer_check = FALSE)", kind = "message", print.no = TRUE, text = NULL)
+    result5 <- saferDev::get_message("is_function_here(fun = 'base::mean', lib_path = NULL, safer_check = TRUE)", kind = "message", print.no = TRUE, text = NULL)
     expected5 <- "NO STANDARD (NON ERROR AND NON WARNING) MESSAGE REPORTED"
     testthat::expect_equal(result5, expected5)
 
