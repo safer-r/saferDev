@@ -135,8 +135,29 @@ test_that("arg_check()", {
     testthat::expect_no_error(saferDev::arg_check(data = number, class = "numeric",typeof = "double", mode = "numeric", length = 1, double_as_integer_allowed = TRUE, neg_values = FALSE, inf_values = FALSE
 ))
 
+    testthat::expect_error(saferDev::arg_check(data = vec6, class = "list", safer_check = 1
+))
+    result17 <- saferDev::get_message("saferDev::arg_check(class = 'list', safer_check = FALSE)", kind = "error", print.no = TRUE, text = NULL 
+) 
+    expected17 <- "ERROR MESSAGE REPORTED:\nError : \n\n================\n\nERROR IN arg_check() OF THE saferDev PACKAGE\nFOLLOWING ARGUMENT HAS NO DEFAULT VALUE AND REQUIRE ONE:\ndata\n\n================\n\n\n"
+    testthat::expect_equal(result17, expected17)
 
-    result17 <- saferDev::arg_check(
+    result18 <- saferDev::get_message("saferDev::arg_check(data = vec6, class = NA, typeof = 'integer', safer_check = FALSE)", kind = "error", print.no = TRUE, text = NULL
+)
+    expected18 <- "ERROR MESSAGE REPORTED:\nError : \n\n================\n\nERROR IN arg_check() OF THE saferDev PACKAGE\nTHIS ARGUMENT CANNOT JUST BE NA:class\nprop\nna_contain\ndata_name\n\n================\n\n\n"
+    testthat::expect_equal(result18, expected18)
+
+    result19 <- saferDev::get_message("saferDev::arg_check(data = vec6, class = 'list', typeof = 'integer', prop = NULL, safer_check = FALSE)", kind = "error", print.no = TRUE, text = NULL
+)
+    expected19 <- "ERROR MESSAGE REPORTED:\nError : \n\n================\n\nERROR IN arg_check() OF THE saferDev PACKAGE\nTHIS ARGUMENT\nprop\nCANNOT BE NULL\n\n================\n\n\n"
+    testthat::expect_equal(result19, expected19)
+
+
+
+
+
+
+    result20 <- saferDev::arg_check(
         data = vec1, 
         class = "integer", 
         typeof = NULL, 
@@ -155,8 +176,8 @@ test_that("arg_check()", {
         pack_name = NULL, 
         safer_check = TRUE
     )
-    expected17 <- base::list(problem = FALSE, text = "NO PROBLEM DETECTED FOR THE vec1 OBJECT", object.name = "vec1")
-    testthat::expect_equal(result17, expected17)
+    expected20 <- base::list(problem = FALSE, text = "NO PROBLEM DETECTED FOR THE vec1 OBJECT", object.name = "vec1")
+    testthat::expect_equal(result20, expected20)
 
 })
 
