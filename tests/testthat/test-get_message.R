@@ -47,6 +47,21 @@ test_that("get_message()", {
     testthat::expect_equal(result7,expected7)
 
     result8 <- saferDev::get_message(data = char5, kind = "message",print.no = TRUE, text = "IN INSTRUCTION 1")
-    expected8 <- "STANDARD (NON ERROR AND NON WARNING) MESSAGE REPORTED IN INSTRUCTION 1:\n`stat_bin()` using `bins = 30`. Pick better value with `binwidth`."
+    expected8 <- "NO STANDARD (NON ERROR AND NON WARNING) MESSAGE REPORTED IN INSTRUCTION 1"
+    testthat::expect_equal(result8,expected8)
+
+    testthat::expect_error(saferDev::get_message(data = char1, kind = "error", print.no = TRUE, text = "IN A", safer_check = 'TRUE'))
+
+    testthat::expect_error(saferDev::get_message( kind = "warning", print.no = TRUE, text = "IN A", safer_check = FALSE))
+
+    testthat::expect_no_error(saferDev::get_message(data = char1, kind = "message", print.no = TRUE,text = NULL, safer_check = FALSE))
+    
+    testthat::expect_error(saferDev::get_message(data = char1, kind = NULL, print.no = TRUE,text = NULL, safer_check = FALSE))
+
+    testthat::expect_error(saferDev::get_message(data = "", kind = "error", print.no = TRUE,text = NULL, safer_check = FALSE))
+
+    testthat::expect_error(saferDev::get_message(data = NOT_CHARACTER, kind = "error", print.no = TRUE,text = NULL, safer_check = FALSE))
+
+    
 
 })
