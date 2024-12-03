@@ -21,7 +21,15 @@ test_that("is_python_package_here()", {
     expected4 <- "ERROR MESSAGE REPORTED:\nError : \n\n================\n\nERROR IN is_python_package_here() OF THE saferDev PACKAGE\nFOLLOWING ARGUMENT HAS NO DEFAULT VALUE AND REQUIRE ONE:\nreq_package\n\n================\n\n\n"
     testthat::expect_equal(result4, expected4)
 
-    
+    result5 <- saferDev::get_message("is_python_package_here(req_package = 'serpentine', python_exec_path = 'blablabla', safer_check = FALSE)", kind = "error", print.no = TRUE, text = NULL, safer_check = FALSE)
+    expected5 <- "ERROR MESSAGE REPORTED:\nError : \n\n================\n\nERROR IN is_python_package_here() OF THE saferDev PACKAGE\nFILE PATH INDICATED IN THE python_exec_path ARGUMENT DOES NOT EXISTS:\nblablabla\n\n================\n\n\n"
+    testthat::expect_equal(result5, expected5)
+
+    result6 <- saferDev::get_message("is_python_package_here(req_package = 'serpentine', python_lib_path = 'not_exist', safer_check = FALSE)", kind = "error", print.no = TRUE, text = NULL, safer_check = FALSE)
+    expected6 <- "ERROR MESSAGE REPORTED:\nError : \n\n================\n\nERROR IN is_python_package_here() OF THE saferDev PACKAGE\nDIRECTORY PATH INDICATED IN THE python_lib_path ARGUMENT DOES NOT EXISTS:\nnot_exist\n\n================\n\n\n"
+    testthat::expect_equal(result6, expected6)
+
+      
     testthat::expect_error(object = saferDev::is_python_package_here(
         req_package = req_pkg, 
         lib_path = path
