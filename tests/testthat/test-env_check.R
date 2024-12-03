@@ -86,4 +86,13 @@ test_that("env_check()", {
     testthat::expect_equal(result7, expected7)
     base::rm(result7)
     base::rm(expected7)
+
+    testthat::expect_error(saferDev::env_check(pos = 0, safer_check = 'FALSE'
+))
+    testthat::expect_error(saferDev::env_check(pos = 0, name = NA,safer_check = FALSE
+))
+    testthat::expect_error(saferDev::env_check(pos = 0, name = "", safer_check = FALSE
+))
+
+
 })
