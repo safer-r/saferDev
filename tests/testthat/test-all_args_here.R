@@ -25,11 +25,20 @@ test_that("all_args_here()", {
     testthat::expect_error(saferDev::all_args_here(x = "a"))
     testthat::expect_error(saferDev::all_args_here(x = test2, export = "a"))
     testthat::expect_error(saferDev::all_args_here(x = test2, path_out = 1))
-    testthat::expect_error(saferDev::all_args_here(x = test2, path_out = "a"))
+    testthat::expect_error(saferDev::all_args_here(x = test2, path_out = 'blabla'))
     testthat::expect_error(saferDev::all_args_here(x = test2, df_name = 1))
     testthat::expect_error(saferDev::all_args_here(x = test2, overwrite = "a"))
+    testthat::expect_error(saferDev::all_args_here(x = FUN2, lib_path = 1))
     testthat::expect_error(saferDev::all_args_here(x = test2, lib_path = "a"))
     testthat::expect_error(saferDev::all_args_here(x = test2, safer_check = "a"))
+    testthat::expect_error(saferDev::all_args_here(export = TRUE, safer_check = FALSE))
+    testthat::expect_error(saferDev::all_args_here(x = test2, export = NA, safer_check = FALSE))
+    testthat::expect_error(saferDev::all_args_here(x = test2,overwrite = NULL))
+    testthat::expect_error(saferDev::all_args_here(x = test2,path_out = ""))
+    testthat::expect_error(saferDev::all_args_here(x = FUN2, export = TRUE, path_out = 'not_exist'))
+    testthat::expect_error(saferDev::all_args_here(x = FUN2, export = TRUE, path_out = 'not/exist'))
+
+
 
   # sophisticated example
 
