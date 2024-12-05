@@ -41,6 +41,9 @@ testthat::test_that("colons_check()", {
     testthat::expect_no_error(saferDev::colons_check(x = fun3))
     testthat::expect_no_error(saferDev::colons_check(x = fun4))
     testthat::expect_no_error(saferDev::colons_check(x = fun4, safer_check = TRUE))
+    testthat::expect_error(saferDev::colons_check(x = fun4, safer_check = 'FALSE'))
+    testthat::expect_error(saferDev::colons_check( safer_check = FALSE))
+    testthat::expect_error(saferDev::colons_check( x = NULL, safer_check = FALSE))
 
 
   # sophisticated example
