@@ -156,7 +156,7 @@ test_that("arg_check()", {
 
     result20 <- saferDev::get_message("saferDev::arg_check(data = vec6, class = list, typeof = 'integer', prop = FALSE, double_as_integer_allowed = FALSE, safer_check = FALSE)", kind = "error", print.no = TRUE, text = NULL
 )
-    expected20 <- "ERROR MESSAGE REPORTED:\nError : \n\n================\n\nINTERNAL ERROR IN arg_check() OF THE saferDev PACKAGE\nTHIS ARGUMENT IS NOT MODE \"character\":\nclass\n\n================\n\n\n"
+    expected20 <- "ERROR MESSAGE REPORTED:\nError : \n\n================\n\nINTERNAL ERROR IN THE BACKBONE PART OF THE arg_check() OF THE saferDev PACKAGE\nTHIS ARGUMENT IS NOT MODE \"character\":\nclass\n\nPLEASE, REPORT THIS ERROR HERE: https://github.com/safer-r/saferDev/issues/new\n\n================\n\n\n"
     testthat::expect_equal(result20, expected20)
 
     testthat::expect_error(saferDev::arg_check(data = vec6
