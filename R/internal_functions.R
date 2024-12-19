@@ -4,8 +4,9 @@
 #' Simplified version of saferDev::is_function_here(), used as internal function for the other functions of the package.
 #' @param fun Character vector of the names of the required functions, preceded by the name of the package they belong to and a double or triple colon. Example: c("ggplot2::geom_point", "grid::gpar").
 #' @param lib_path Character vector specifying the absolute pathways of the directories containing the listed packages in the fun argument, if not in the default directories. If NULL, the function checks only in the base::.libPaths() default R library folders.
-#' @param external_function_name Name of the function using the .pack_and_function_check() function.
-#' @param external_package_name Name of the package of the function using the .pack_and_function_check() function.
+#' @param external_function_name Name of the function using this internal function.
+#' @param external_package_name Name of the package of the function using this internal function.
+#' @param internal_error_report_link String of the report link for internal error messages.
 #' @returns An error message if at least one of the checked packages is missing in lib_path, or if at least one of the checked functions is missing in the required package, nothing otherwise.
 #' @author Gael Millot <gael.millot@pasteur.fr>
 #' @author Yushi Han <yushi.han2000@gmail.com>
@@ -21,7 +22,8 @@
     fun, 
     lib_path,
     external_function_name,
-    external_package_name
+    external_package_name,
+    internal_error_report_link
 ){
     # AIM
     # Check for the presence of required package::functions in the system  
@@ -49,7 +51,7 @@
     # (:{2}[a-zA-Z]|:{3}\\.[a-zA-Z._]) means either double colon and any single alphabet character or triple colon followed by a dot and any single alphabet character or dot (because .. is ok for function name) or underscore (because ._ is ok for function name). Starting "dot and num" or underscore is not authorized for function name
     # [a-zA-Z0-9._]* means any several of these characters or nothing
     if( ! base::all(tempo.log)){
-        tempo.cat <- base::paste0("INTERNAL ERROR IN THE CODE OF THE ", external_function_name, " OF THE ", external_package_name, " PACKAGE\nTHE STRING IN fun ARGUMENT MUST CONTAIN \"::\" OR \":::.\":\n", base::paste(fun[ ! tempo.log], collapse = "\n"))
+        tempo.cat <- base::paste0("INTERNAL ERROR 1 IN .pack_and_function_check() INSIDE ", external_function_name, " OF THE ", external_package_name, " PACKAGE\nTHE STRING IN fun ARGUMENT MUST CONTAIN \"::\" OR \":::.\":\n", base::paste(fun[ ! tempo.log], collapse = "\n"), base::ifelse(test = base::is.null(x = internal_error_report_link), yes = "", no = base::paste0("\n\nPLEASE, REPORT THIS ERROR HERE: ", internal_error_report_link, collapse = NULL, recycle0 = FALSE)))
         base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
     }
     pkg.fun.name.list <- base::strsplit(x = fun, split = ":{2,3}") # package in 1 and function in 2
@@ -280,8 +282,9 @@
 #' @param no_regex_pattern Single string of the pattern to detect but without escape characters or list, etc.
 #' @param replacement Single string for pattern replacement. Is not regex.
 #' @param perl Single logical value. Use Perl regex in pattern ?
-#' @param function_name function name.
-#' @param package_name package name.
+#' @param function_name Name of the function using this internal function.
+#' @param package_name Name of the package of the function using this internal function.
+#' @param internal_error_report_link String of the report link for internal error messages.
 #' @returns A list containing:
 #' $string: The input string with all pattern replaced by the replacement pattern.
 #' $pos: vector of the positions of the 1rst character of the replaced pattern. NULL if no replaced pattern. In that case, $string is identical to the input string.
@@ -302,7 +305,8 @@
     replacement, 
     perl,
     function_name,
-    package_name
+    package_name,
+    internal_error_report_link
 ){
     # DEBUGGING
     # source("https://raw.githubusercontent.com/safer-r/saferDev/main/dev/other/test.R") ; string = paste(deparse(test), collapse = "") ; pattern = "\\)" ; no_regex_pattern = ")" ; replacement = " " ; perl = FALSE ; function_name = "F1" ; package_name = "P1"
@@ -310,7 +314,7 @@
     # string = 'paste0("IAGE((", paste0(1:3, collapse = " "), "A)B()' ; pattern = "\\)" ; no_regex_pattern = ")" ; replacement = " " ; perl = FALSE ; function_name = "F1" ; package_name = "P1" # last is ) between strings because odds number in front of
     # string = '\"INTERNAL ERROR 4 IN \", function_name, \" OF THE \", package_name, \" PACKAGE\\nLENGTHS OF col1 (\", base::length(roc1()), \"), col2 (\", base::length(roc2), \"), AND col3 (\", base::length(roc3), \"), SHOULD BE EQUAL\\n\"' ; pattern = "," ; no_regex_pattern = "," ; replacement = " " ; perl = FALSE ; function_name = "F1" ; package_name = "P1"
     if(base::nchar(no_regex_pattern) != base::nchar(replacement)){
-        tempo.cat <- base::paste0("INTERNAL ERROR 1 IN ", function_name, " OF THE ", package_name, " PACKAGE\nARGUMENTS no_regex_pattern AND replacement IN THE .in_quotes_replacement() MUST HAVE THE SAME NUMBER OF CHARACTERS\nno_regex_pattern (", base::nchar(no_regex_pattern), " characters):\n", base::paste(no_regex_pattern, collapse = "\n"), "\nreplacement (", base::nchar(replacement), " characters):\n", base::paste(replacement, collapse = "\n"))
+        tempo.cat <- base::paste0("INTERNAL ERROR 1 IN .in_quotes_replacement() INSIDE ", function_name, " OF THE ", package_name, " PACKAGE\nARGUMENTS no_regex_pattern AND replacement MUST HAVE THE SAME NUMBER OF CHARACTERS\nno_regex_pattern (", base::nchar(no_regex_pattern), " characters):\n", base::paste(no_regex_pattern, collapse = "\n"), "\nreplacement (", base::nchar(replacement), " characters):\n", base::paste(replacement, collapse = "\n"), base::ifelse(test = base::is.null(x = internal_error_report_link), yes = "", no = base::paste0("\n\nPLEASE, REPORT THIS ERROR HERE: ", internal_error_report_link, collapse = NULL, recycle0 = FALSE)), )
         base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
     }
     string_split <- base::strsplit(string, split = pattern, perl = perl)[[1]]
@@ -353,7 +357,7 @@
     if( ! base::is.null(pos)){
         tempo <- base::substring(string, pos, pos)
         if( ! base::all(base::unique(tempo) == no_regex_pattern, na.rm = TRUE)){
-            tempo.cat <- base::paste0("INTERNAL ERROR 2 IN ", function_name, " OF THE ", package_name, " PACKAGE\nIN .in_quotes_replacement(), ARGUMENT no_regex_pattern NOT CORRECTLY DETECTED\nno_regex_pattern: \"", no_regex_pattern, "\"\nREPLACED CHARACTERS IN string ARGUMENT:\n", base::paste(tempo, collapse = "\n"))
+            tempo.cat <- base::paste0("INTERNAL ERROR 2 IN .in_quotes_replacement() INSIDE ", function_name, " OF THE ", package_name, " PACKAGE\nARGUMENT no_regex_pattern NOT CORRECTLY DETECTED\nno_regex_pattern: \"", no_regex_pattern, "\"\nREPLACED CHARACTERS IN string ARGUMENT:\n", base::paste(tempo, collapse = "\n"), base::ifelse(test = base::is.null(x = internal_error_report_link), yes = "", no = base::paste0("\n\nPLEASE, REPORT THIS ERROR HERE: ", internal_error_report_link, collapse = NULL, recycle0 = FALSE)))
             base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
         }
     }
@@ -372,8 +376,9 @@
 #' @param perl Single logical value. Use Perl regex in pattern ?
 #' @param open_pos single integer indicating the position of the opening parenthesis.
 #' @param close_pos single integer indicating the position of the closing parenthesis.
-#' @param function_name function name.
-#' @param package_name package name.
+#' @param function_name Name of the function using this internal function.
+#' @param package_name Name of the package of the function using this internal function.
+#' @param internal_error_report_link String of the report link for internal error messages.
 #' @returns A list containing:
 #' $string: The input string with all pattern replaced by the replacement pattern.
 #' $pos: the positions of the 1rst character of the replaced pattern. NULL if no replaced pattern. In that case, $string is identical to the input string
@@ -395,16 +400,17 @@
     open_pos,
     close_pos,
     function_name,
-    package_name
+    package_name,
+    internal_error_report_link
 ){
     # DEBUGGING
     # string = "pattern = base::paste0(pattern, \"\\\\(#\"), text = text" ; pattern = "," ; no_regex_pattern = "," ; replacement = " " ; perl = TRUE ; open_pos = 23 ; close_pos = 39 ; function_name = "F1" ; package_name = "P1"
     if(base::substr(string, open_pos, open_pos) != "("){
-        tempo.cat <- base::paste0("INTERNAL ERROR 1 IN ", function_name, " OF THE ", package_name, " PACKAGE\nARGUMENT open_pos IN THE .in_parenthesis_replacement() DOES NOT REFER TO A POSITION OF OPENING PARENTHESIS\nopen_pos:\n", base::paste(open_pos, collapse = "\n"), "\nstring:\n", base::paste(string, collapse = "\n"), "\nsubstr(string, open_pos, open_pos):\n", base::paste(base::substr(string, open_pos, open_pos), collapse = "\n"))
+        tempo.cat <- base::paste0("INTERNAL ERROR 1 IN .in_parenthesis_replacement() INSIDE ", function_name, " OF THE ", package_name, " PACKAGE\nARGUMENT open_pos DOES NOT REFER TO A POSITION OF OPENING PARENTHESIS\nopen_pos:\n", base::paste(open_pos, collapse = "\n"), "\nstring:\n", base::paste(string, collapse = "\n"), "\nsubstr(string, open_pos, open_pos):\n", base::paste(base::substr(string, open_pos, open_pos), collapse = "\n"), base::ifelse(test = base::is.null(x = internal_error_report_link), yes = "", no = base::paste0("\n\nPLEASE, REPORT THIS ERROR HERE: ", internal_error_report_link, collapse = NULL, recycle0 = FALSE)))
         base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
     }
     if(base::substr(string, close_pos, close_pos) != ")"){
-        tempo.cat <- base::paste0("INTERNAL ERROR 2 IN ", function_name, " OF THE ", package_name, " PACKAGE\nARGUMENT close_pos IN THE .in_parenthesis_replacement() DOES NOT REFER TO A POSITION OF CLOSING PARENTHESIS\nclose_pos:\n", base::paste(close_pos, collapse = "\n"), "\nstring:\n", base::paste(string, collapse = "\n"), "\nsubstr(string, close_pos, close_pos):\n", base::paste(base::substr(string, close_pos, close_pos), collapse = "\n"))
+        tempo.cat <- base::paste0("INTERNAL ERROR 2 IN .in_parenthesis_replacement() INSIDE ", function_name, " OF THE ", package_name, " PACKAGE\nARGUMENT close_pos DOES NOT REFER TO A POSITION OF CLOSING PARENTHESIS\nclose_pos:\n", base::paste(close_pos, collapse = "\n"), "\nstring:\n", base::paste(string, collapse = "\n"), "\nsubstr(string, close_pos, close_pos):\n", base::paste(base::substr(string, close_pos, close_pos), collapse = "\n"), base::ifelse(test = base::is.null(x = internal_error_report_link), yes = "", no = base::paste0("\n\nPLEASE, REPORT THIS ERROR HERE: ", internal_error_report_link, collapse = NULL, recycle0 = FALSE)))
         base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
     }
     string_out <- string
@@ -427,7 +433,7 @@
     if( ! base::is.null(pos)){
         tempo <- base::substring(string, pos, pos)
         if( ! base::all(base::unique(tempo) == no_regex_pattern, na.rm = TRUE)){
-            tempo.cat <- base::paste0("INTERNAL ERROR 2 IN ", function_name, " OF THE ", package_name, " PACKAGE\nIN .in_parenthesis_replacement(), ARGUMENT no_regex_pattern NOT CORRECTLY DETECTED\nno_regex_pattern: \"", no_regex_pattern, "\"\nREPLACED CHARACTERS IN string ARGUMENT:\n", base::paste(tempo, collapse = "\n"))
+            tempo.cat <- base::paste0("INTERNAL ERROR 3 IN .in_parenthesis_replacement() INSIDE ", function_name, " OF THE ", package_name, " PACKAGE\nARGUMENT no_regex_pattern NOT CORRECTLY DETECTED\nno_regex_pattern: \"", no_regex_pattern, "\"\nREPLACED CHARACTERS IN string ARGUMENT:\n", base::paste(tempo, collapse = "\n"), base::ifelse(test = base::is.null(x = internal_error_report_link), yes = "", no = base::paste0("\n\nPLEASE, REPORT THIS ERROR HERE: ", internal_error_report_link, collapse = NULL, recycle0 = FALSE)))
             base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
         }
     }
@@ -529,8 +535,9 @@
 #' Return the positions of 1st letter of the function name and opening and closing parenthesis, as well as positions of the internal parenthesis.
 #' @param text A string.
 #' @param pattern: A perl regex to extract function name and (), using generally paste0(<FUNCTION_NAME>, "[\\s\\r\\n]*\\(").
-#' @param function_name function name.
-#' @param package_name package name.
+#' @param function_name Name of the function using this internal function.
+#' @param package_name Name of the package of the function using this internal function.
+#' @param internal_error_report_link String of the report link for internal error messages.
 #' @returns A list containing two positions:
 #' $begin_fun: position of 1st letter of the function name.
 #' $begin: position of the "(" of the function.
@@ -552,7 +559,8 @@
     text, 
     pattern,
     function_name, 
-    package_name
+    package_name,
+    internal_error_report_link
 ){
     # DEBUGGING
     # source("https://raw.githubusercontent.com/safer-r/saferDev/main/dev/other/test.R")
@@ -560,7 +568,7 @@
     # text = 'base::gregexpr(pattern = base::paste0(pattern, "\\(#"), text = text)' ; pattern = 'gregexpr[\\s\\r\\n]*\\(' ; function_name = "F1" ; package_name = "P1"
     check_pos <- function(x){
         if(base::length(x) != 1 | base::any(base::is.na(x), na.rm = TRUE) | base::is.null(x) | base::any(x < 0 , na.rm = TRUE)){
-            tempo.cat <- base::paste0("INTERNAL ERROR IN ", function_name, " OF THE ", package_name, " PACKAGE\nTHE .fun_args_pos() INTERNAL FUNCTION DID NOT PROPERLY DETECT THE POSITION OF ", base::match.call(expand.dots = FALSE)$x, "\ntext: ", base::paste(text, collapse = "\n"), "\npattern: ", base::paste(pattern, collapse = "\n"), "\nfun_pos: ", base::paste(fun_pos, collapse = "\n"))
+            tempo.cat <- base::paste0("INTERNAL ERROR 1 IN .fun_args_pos() INSIDE ", function_name, " OF THE ", package_name, " PACKAGE\nINTERNAL FUNCTION DID NOT PROPERLY DETECT THE POSITION OF ", base::match.call(expand.dots = FALSE)$x, "\ntext: ", base::paste(text, collapse = "\n"), "\npattern: ", base::paste(pattern, collapse = "\n"), "\nfun_pos: ", base::paste(fun_pos, collapse = "\n"), base::ifelse(test = base::is.null(x = internal_error_report_link), yes = "", no = base::paste0("\n\nPLEASE, REPORT THIS ERROR HERE: ", internal_error_report_link, collapse = NULL, recycle0 = FALSE)))
             base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
         }
     }
@@ -572,6 +580,7 @@
         close_pos,
         function_name,
         package_name,
+        internal_error_report_link, 
         text,
         pattern
     ){
@@ -589,7 +598,7 @@
             loop.nb <- loop.nb + 1
         }
         if(count != 0){
-            tempo.cat <- base::paste0("INTERNAL ERROR IN ", function_name, " OF THE ", package_name, " PACKAGE\nTHE .fun_args_pos() INTERNAL FUNCTION DID NOT PROPERLY DETECT THE POSITION OF THE CLOSING BRACKET IN ", base::match.call(expand.dots = FALSE)$x, "\ntext: ", base::paste(text, collapse = "\n"), "\npattern: ", base::paste(pattern, collapse = "\n"), "\ncount: ", base::paste(count, collapse = "\n"))
+            tempo.cat <- base::paste0("INTERNAL ERROR 1 IN while_loop() INSIDE ", function_name, " OF THE ", package_name, " PACKAGE\nINTERNAL FUNCTION DID NOT PROPERLY DETECT THE POSITION OF THE CLOSING BRACKET IN ", base::match.call(expand.dots = FALSE)$x, "\ntext: ", base::paste(text, collapse = "\n"), "\npattern: ", base::paste(pattern, collapse = "\n"), "\ncount: ", base::paste(count, collapse = "\n"), base::ifelse(test = base::is.null(x = internal_error_report_link), yes = "", no = base::paste0("\n\nPLEASE, REPORT THIS ERROR HERE: ", internal_error_report_link, collapse = NULL, recycle0 = FALSE)))
             base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
         }else{
             base::return(final_pos)
@@ -628,7 +637,7 @@
         close_paren_pos_inside <- all_pos_inside[all_pos_inside %in% close_paren_pos]
         count_close_paren_pos_inside <- base::length(open_paren_pos_inside)
         if(count_open_paren_pos_inside != count_close_paren_pos_inside | count_open_paren_pos_inside == 0){ #count_open_paren_pos_inside == 0 because tempo_log above has some TRUE
-            tempo.cat <- base::paste0("INTERNAL ERROR IN ", function_name, " OF THE ", package_name, " PACKAGE\nTHE .fun_args_pos() INTERNAL FUNCTION DID NOT PROPERLY DETECT THE POSITION ALL THE BRACKETS INSIDE THE FUN(    ) BRACKETS IN ", base::match.call(expand.dots = FALSE)$x, "\ntext: ", base::paste(text, collapse = "\n"), "\npattern: ", base::paste(pattern, collapse = "\n"), "\nCOUNT OF OPENED BRACKETS: ", count_open_paren_pos_inside, "\nCOUNT OF CLOSING BRACKETS: ", count_close_paren_pos_inside, "\nCHECK THAT THE STRING HAS ALL THE BRACKETS BETWEEN QUOTES REMOVED")
+            tempo.cat <- base::paste0("INTERNAL ERROR 2 IN while_loop() INSIDE ", function_name, " OF THE ", package_name, " PACKAGE\nTHE .fun_args_pos() INTERNAL FUNCTION DID NOT PROPERLY DETECT THE POSITION ALL THE BRACKETS INSIDE THE FUN(    ) BRACKETS IN ", base::match.call(expand.dots = FALSE)$x, "\ntext: ", base::paste(text, collapse = "\n"), "\npattern: ", base::paste(pattern, collapse = "\n"), "\nCOUNT OF OPENED BRACKETS: ", count_open_paren_pos_inside, "\nCOUNT OF CLOSING BRACKETS: ", count_close_paren_pos_inside, "\nCHECK THAT THE STRING HAS ALL THE BRACKETS BETWEEN QUOTES REMOVED", base::ifelse(test = base::is.null(x = internal_error_report_link), yes = "", no = base::paste0("\n\nPLEASE, REPORT THIS ERROR HERE: ", internal_error_report_link, collapse = NULL, recycle0 = FALSE)))
             base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
         }
         middle_bracket_pos <- base::vector(mode = "list", length = count_open_paren_pos_inside)
@@ -668,8 +677,9 @@
 #' Detect all the functions names used inside a function.
 #' @param x a function name, written without quotes and brackets.
 #' @param arg_user_setting Argument user settings list.
-#' @param function_name function name.
-#' @param package_name package name.
+#' @param function_name Name of the function using this internal function.
+#' @param package_name Name of the package of the function using this internal function.
+#' @param internal_error_report_link String of the report link for internal error messages.
 #' @returns 
 #'  A list:
 #' $code: vector of strings of the code of the tested function.
@@ -695,7 +705,8 @@
     x, 
     arg_user_setting, 
     function_name, 
-    package_name
+    package_name,
+    internal_error_report_link
 ){
     # DEBUGGING
     # x = x ; arg_user_setting = arg_user_setting ; function_name = function_name ; package_name = package_name
@@ -713,7 +724,7 @@
     s <- base::c("package:stats", "package:graphics",  "package:grDevices", "package:utils", "package:datasets", "package:methods", "Autoloads", "package:base") # basic base::search() scope
     if(base::any( ! s %in% base::search())){
         tempo.cat <- base::paste0("INTERNAL ERROR 1 IN .functions_detect() INSIDE ", function_name, " OF THE ", package_name, " PACKAGE\nTHE base::search() SCOPE OF R HAS CHANGED.\nTHE PROBLEM IS:\n",
-            base::paste(s[ ! s %in% base::search()], collapse = "\n"))
+            base::paste(s[ ! s %in% base::search()], collapse = "\n"), base::ifelse(test = base::is.null(x = internal_error_report_link), yes = "", no = base::paste0("\n\nPLEASE, REPORT THIS ERROR HERE: ", internal_error_report_link, collapse = NULL, recycle0 = FALSE)))
         base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
     }
     fun <- base::unlist(base::sapply(X = s, FUN = function(x){base::ls(x, all.names = TRUE)})) # all the basic functions of R in all the scope
@@ -821,10 +832,10 @@
     fun_name_pos_wo_op <- fun_name_pos_wo_op[ ! tempo.log]
     code_line_nb <- code_line_nb[( ! tempo.log) & ( ! comment_line.log) & ( ! empty_line.log)]
     if( ! (base::length(fun_name_wo_op) == base::length(fun_name_pos_wo_op) & base::length(fun_name_wo_op) == base::length(code_line_nb))){
-        tempo.cat <- base::paste0("INTERNAL ERROR 2 IN .functions_detect() INSIDE ", function_name, " OF THE ", package_name, " PACKAGE\nLENGTHS SHOULD BE IDENTICAL\nfun_name_wo_op: ", base::length(fun_name_wo_op), "\nfun_name_pos_wo_op: ", base::length(fun_name_pos_wo_op), "\ncode_line_nb: ", base::length(code_line_nb))
+        tempo.cat <- base::paste0("INTERNAL ERROR 2 IN .functions_detect() INSIDE ", function_name, " OF THE ", package_name, " PACKAGE\nLENGTHS SHOULD BE IDENTICAL\nfun_name_wo_op: ", base::length(fun_name_wo_op), "\nfun_name_pos_wo_op: ", base::length(fun_name_pos_wo_op), "\ncode_line_nb: ", base::length(code_line_nb), base::ifelse(test = base::is.null(x = internal_error_report_link), yes = "", no = base::paste0("\n\nPLEASE, REPORT THIS ERROR HERE: ", internal_error_report_link, collapse = NULL, recycle0 = FALSE)))
         base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
     }else if(base::any(base::is.na(code_line_nb))){
-        tempo.cat <- base::paste0("INTERNAL ERROR 3 IN .functions_detect() INSIDE ", function_name, " OF THE ", package_name, " PACKAGE\ncode_line_nb SHOULD NOT CONTAIN NA.\ncode_line_nb:\n", base::paste(code_line_nb, collapse = "\n"))
+        tempo.cat <- base::paste0("INTERNAL ERROR 3 IN .functions_detect() INSIDE ", function_name, " OF THE ", package_name, " PACKAGE\ncode_line_nb SHOULD NOT CONTAIN NA.\ncode_line_nb:\n", base::paste(code_line_nb, collapse = "\n"), base::ifelse(test = base::is.null(x = internal_error_report_link), yes = "", no = base::paste0("\n\nPLEASE, REPORT THIS ERROR HERE: ", internal_error_report_link, collapse = NULL, recycle0 = FALSE)))
         base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
     }else{
         # with that, now the code line of code is indicated in as compartment names
@@ -834,7 +845,7 @@
     # end removal of empty string
     test.log <- base::mapply(FUN = function(x, y){base::length(x) != base::length(y)}, x = fun_name_wo_op, y = fun_name_pos_wo_op, SIMPLIFY = TRUE)
     if(base::any(test.log, na.rm = TRUE)){
-        tempo.cat <- base::paste0("INTERNAL ERROR 4 IN .functions_detect() INSIDE ", function_name, " OF THE ", package_name, " PACKAGE\nLENGTHS SHOULD BE IDENTICAL IN COMPARTMENTS ", base::paste(base::which(test.log), collapse = ", "), " OF fun_name_wo_op AND fun_name_pos_wo_op")
+        tempo.cat <- base::paste0("INTERNAL ERROR 4 IN .functions_detect() INSIDE ", function_name, " OF THE ", package_name, " PACKAGE\nLENGTHS SHOULD BE IDENTICAL IN COMPARTMENTS ", base::paste(base::which(test.log), collapse = ", "), " OF fun_name_wo_op AND fun_name_pos_wo_op", base::ifelse(test = base::is.null(x = internal_error_report_link), yes = "", no = base::paste0("\n\nPLEASE, REPORT THIS ERROR HERE: ", internal_error_report_link, collapse = NULL, recycle0 = FALSE)))
         base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
     }
     # fun_name_wo_op_uni <- base::unlist(base::unique(fun_name_wo_op)) # in case
@@ -864,8 +875,9 @@
 #' @param line.nb vector of corresponding line number.
 #' @param ini vector of string of the initial function code analyzed.
 #' @param arg_user_setting list of arg user settings.
-#' @param function_name function name.
-#' @param package_name package name.
+#' @param function_name Name of the function using this internal function.
+#' @param package_name Name of the package of the function using this internal function.
+#' @param internal_error_report_link String of the report link for internal error messages.
 #' @param text either "BASIC" or "OTHER".
 #' @param internal_fun_names vector of string of names of internal functions in the function code analyzed.
 #' @returns
@@ -884,6 +896,7 @@
     arg_user_setting, 
     function_name, 
     package_name, 
+    internal_error_report_link, 
     text,
     internal_fun_names
 ){
@@ -891,15 +904,15 @@
     # list.fun = in_basic_fun ; fun.uni = in_basic_fun_uni ; list.fun.pos = in_basic_fun_names_pos ; line.nb = in_basic_code_line_nb ; ini = out$code ; arg_user_setting = out$arg_user_setting ; function_name = function_name ; package_name = package_name ; text = "BASIC" ; internal_fun_names = out$internal_fun_names
     # list.fun = in_other_fun ; fun.uni = in_other_fun_uni ; list.fun.pos = in_other_fun_names_pos ; line.nb = in_other_code_line_nb ; ini = out$code ; arg_user_setting = out$arg_user_setting ; function_name = function_name ; package_name = package_name ; text = "OTHER" ; internal_fun_names = out$internal_fun_names
     if(base::length(text) != 1 & base::any( ! text %in% base::c("BASIC", "OTHER"))){
-        tempo.cat <- base::paste0("INTERNAL ERROR 1 IN ", function_name, " OF THE ", package_name, " PACKAGE\nTHE text ARGUMENT OF .colons_check_message() MUST BE \"BASIC\" OR \"OTHER\".\nTHE PROBLEM IS:\n",
-            base::paste(text, collapse = "\n"))
+        tempo.cat <- base::paste0("INTERNAL ERROR 1 IN .colons_check_message() INSIDE ", function_name, " OF THE ", package_name, " PACKAGE\nTHE text ARGUMENT OF .colons_check_message() MUST BE \"BASIC\" OR \"OTHER\".\nTHE PROBLEM IS:\n",
+            base::paste(text, collapse = "\n"), base::ifelse(test = base::is.null(x = internal_error_report_link), yes = "", no = base::paste0("\n\nPLEASE, REPORT THIS ERROR HERE: ", internal_error_report_link, collapse = NULL, recycle0 = FALSE)))
         base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
     }
     # pattern2 <- base::paste(base::paste0("(?<![A-Za-z0-9._])", fun.uni, "\\s*\\("), collapse = "|") # to split string according to function name as splitter. Pattern (?<![A-Za-z0-9._]) means "must not be preceeded by any alphanum or .or _
     # pattern3 <- base::paste(base::paste0("(?<![A-Za-z0-9._])", fun.uni, "\\s*\\($"), collapse = "|") # same as pattern2 but used to know if the seeked function is at the end of the string
     basic_ini <- ini[line.nb]
     if( ! (base::length(list.fun) == base::length(list.fun.pos) & base::length(list.fun) == base::length(line.nb) & base::length(list.fun) == base::length(basic_ini))){
-        tempo.cat <- base::paste0("INTERNAL ERROR 1 IN ", function_name, " OF THE ", package_name, " PACKAGE\nIN .colons_check_message(), LENGTHS SHOULD BE IDENTICAL\nlist.fun: ", base::length(list.fun), "\nlist.fun.pos: ", base::length(list.fun.pos), "\nline.nb: ", base::length(line.nb), "\nbasic_ini: ", base::length(basic_ini))
+        tempo.cat <- base::paste0("INTERNAL ERROR 2 IN .colons_check_message() INSIDE ", function_name, " OF THE ", package_name, " PACKAGE\nIN .colons_check_message(), LENGTHS SHOULD BE IDENTICAL\nlist.fun: ", base::length(list.fun), "\nlist.fun.pos: ", base::length(list.fun.pos), "\nline.nb: ", base::length(line.nb), "\nbasic_ini: ", base::length(basic_ini), base::ifelse(test = base::is.null(x = internal_error_report_link), yes = "", no = base::paste0("\n\nPLEASE, REPORT THIS ERROR HERE: ", internal_error_report_link, collapse = NULL, recycle0 = FALSE)))
         base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
     }
     res <- list.fun.pos
@@ -916,12 +929,12 @@
     res2 <- base::lapply(X = res, FUN = function(x){base::substr(x, base::nchar(x)-1, base::nchar(x))}) # base::nchar(x)-1 takes only :: if the strings ends by :::
     base::names(res2) <- NULL
     if( ! base::all(base::sapply(X = res2, FUN = function(x){base::length(x)}) == base::sapply(X = res, FUN = function(x){base::length(x)}))){
-        tempo.cat <- base::paste0("INTERNAL ERROR 2 IN ", function_name, " OF THE ", package_name, " PACKAGE\nLENGTHS SHOULD BE IDENTICAL\nres2: ", base::paste(base::sapply(X = res2, FUN = function(x){base::length(x)}), collapse = " "), "\nres: ", base::paste(base::sapply(X = res, FUN = function(x){base::length(x)}), collapse = " "))
+        tempo.cat <- base::paste0("INTERNAL ERROR 3 IN .colons_check_message() INSIDE ", function_name, " OF THE ", package_name, " PACKAGE\nLENGTHS SHOULD BE IDENTICAL\nres2: ", base::paste(base::sapply(X = res2, FUN = function(x){base::length(x)}), collapse = " "), "\nres: ", base::paste(base::sapply(X = res, FUN = function(x){base::length(x)}), collapse = " "), base::ifelse(test = base::is.null(x = internal_error_report_link), yes = "", no = base::paste0("\n\nPLEASE, REPORT THIS ERROR HERE: ", internal_error_report_link, collapse = NULL, recycle0 = FALSE)))
         base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
     }
     colon_not_here <- base::lapply(X = res2, FUN = function(x){ ! x %in% "::"}) # no need to check for ":::" because base::nchar(x)-1 takes only :: if the strings ends by :::
     if( ! base::all(base::sapply(X = res2, FUN = function(x){base::length(x)}) == base::sapply(X = colon_not_here, FUN = function(x){base::length(x)}))){
-        tempo.cat <- base::paste0("INTERNAL ERROR 3 IN ", function_name, " OF THE ", package_name, " PACKAGE\nLENGTHS SHOULD BE IDENTICAL\nres2: ", base::paste(base::sapply(X = res2, FUN = function(x){base::length(x)}), collapse = " "), "\ncolon_not_here: ", base::paste(base::sapply(X = colon_not_here, FUN = function(x){base::length(x)}), collapse = " "))
+        tempo.cat <- base::paste0("INTERNAL ERROR 4 IN .colons_check_message() INSIDE ", function_name, " OF THE ", package_name, " PACKAGE\nLENGTHS SHOULD BE IDENTICAL\nres2: ", base::paste(base::sapply(X = res2, FUN = function(x){base::length(x)}), collapse = " "), "\ncolon_not_here: ", base::paste(base::sapply(X = colon_not_here, FUN = function(x){base::length(x)}), collapse = " "), base::ifelse(test = base::is.null(x = internal_error_report_link), yes = "", no = base::paste0("\n\nPLEASE, REPORT THIS ERROR HERE: ", internal_error_report_link, collapse = NULL, recycle0 = FALSE)))
         base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
     }
     if(base::any(base::unlist(colon_not_here))){
@@ -929,7 +942,7 @@
         col2 <- base::as.vector(base::unlist(base::mapply(FUN = function(x, y){y[x]}, x = colon_not_here, y = list.fun, SIMPLIFY = TRUE)))
         col3 <- base::as.vector(base::unlist(base::mapply(FUN = function(x, y){y[x]}, x = colon_not_here, y = res, SIMPLIFY = TRUE)))
         if( ! (base::length(col1) == base::length(col2) & base::length(col1) == base::length(col3) & base::length(col2) == base::length(col3))){
-            tempo.cat <- base::paste0("INTERNAL ERROR 4 IN ", function_name, " OF THE ", package_name, " PACKAGE\nLENGTHS OF col1 (", base::length(col1), "), col2 (", base::length(col2), "), AND col3 (", base::length(col3), "), SHOULD BE EQUAL\n")
+            tempo.cat <- base::paste0("INTERNAL ERROR 5 IN .colons_check_message() INSIDE ", function_name, " OF THE ", package_name, " PACKAGE\nLENGTHS OF col1 (", base::length(col1), "), col2 (", base::length(col2), "), AND col3 (", base::length(col3), "), SHOULD BE EQUAL\n", base::ifelse(test = base::is.null(x = internal_error_report_link), yes = "", no = base::paste0("\n\nPLEASE, REPORT THIS ERROR HERE: ", internal_error_report_link, collapse = NULL, recycle0 = FALSE)))
             base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
         }
         # removal of functions between quotes and after $
@@ -977,8 +990,9 @@
 #' @param col1_i2 code line number of the checked function
 #' @param col2_i2 name of the checked sub function
 #' @param arg_user_setting_x name of the checked function
-#' @param function_name function name.
-#' @param package_name package name.
+#' @param function_name Name of the function using this internal function.
+#' @param package_name Name of the package of the function using this internal function.
+#' @param internal_error_report_link String of the report link for internal error messages.
 #' @param warn warning string.
 #' @param warn_count warning count.
 #' @returns
@@ -1000,6 +1014,7 @@
     arg_user_setting_x, 
     function_name, 
     package_name,
+    internal_error_report_link, 
     warn,
     warn_count
 ){
@@ -1040,7 +1055,7 @@
                 }else if(base::sum(tempo.log, na.rm = TRUE) == 0){ # arg i3 has not its names written in the args between ()
                     missing_args_names <- base::c(missing_args_names, arg_full_names[i3])
                 }else{
-                    tempo.cat <- base::paste0("INTERNAL ERROR 1 IN .all_args_here_fill() IN ", function_name, " OF THE ", package_name, " PACKAGE\npattern3 DETECTED SEVERAL TIMES IN ARGUMENTS:\n\npattern3:\n", base::paste(pattern3, collapse = "\n"), "\n\ntempo_split:\n", base::paste(tempo_split[tempo.log], collapse = "\n"), "\n\nCHECK IF THE ARGUMENT IS PRESENT SEVERAL TIMES IN LINE ", col1_i2, ", INSIDE ", col2_i2, collapse = NULL, recycle0 = FALSE)
+                    tempo.cat <- base::paste0("INTERNAL ERROR 1 IN .all_args_here_fill() INSIDE ", function_name, " OF THE ", package_name, " PACKAGE\npattern3 DETECTED SEVERAL TIMES IN ARGUMENTS:\n\npattern3:\n", base::paste(pattern3, collapse = "\n"), "\n\ntempo_split:\n", base::paste(tempo_split[tempo.log], collapse = "\n"), "\n\nCHECK IF THE ARGUMENT IS PRESENT SEVERAL TIMES IN LINE ", col1_i2, ", INSIDE ", col2_i2, base::ifelse(test = base::is.null(x = internal_error_report_link), yes = "", no = base::paste0("\n\nPLEASE, REPORT THIS ERROR HERE: ", internal_error_report_link, collapse = NULL, recycle0 = FALSE)), collapse = NULL, recycle0 = FALSE)
                     base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n", base::ifelse(base::is.null(warn), "", base::paste0("IN ADDITION\nWARNING", base::ifelse(warn_count > 1, "S", ""), ":\n\n", warn))), call. = FALSE)
                 }
             }
@@ -1090,7 +1105,7 @@
                         if( ! tempo_arg_name %in% same_begin){
                             tempo.log <- base::grepl(x = missing_args_names, pattern = base::paste0("^", tempo_arg_name), perl = FALSE)
                             if(base::sum(tempo.log, na.rm = TRUE) > 1){
-                                tempo.cat <- base::paste0("INTERNAL ERROR 2 IN .all_args_here_fill() IN ", function_name, " OF THE ", package_name, " PACKAGE\nIN LINE ", i2, " IN THE ", col2_i2, " FUNCTION\ntempo_arg_name DETECTS SEVERAL TIMES ARGUMENT NAMES:\n\ntempo_arg_name:\n", tempo_arg_name, "\n\nmissing_args_names:\n", base::paste(missing_args_names, collapse = "\n"), "\n\nmissing_args_names[tempo.log]:\n", base::paste(missing_args_names[tempo.log], collapse = "\n"))
+                                tempo.cat <- base::paste0("INTERNAL ERROR 2 IN .all_args_here_fill() INSIDE ", function_name, " OF THE ", package_name, " PACKAGE\nIN LINE ", i2, " IN THE ", col2_i2, " FUNCTION\ntempo_arg_name DETECTS SEVERAL TIMES ARGUMENT NAMES:\n\ntempo_arg_name:\n", tempo_arg_name, "\n\nmissing_args_names:\n", base::paste(missing_args_names, collapse = "\n"), "\n\nmissing_args_names[tempo.log]:\n", base::paste(missing_args_names[tempo.log], collapse = "\n"), base::ifelse(test = base::is.null(x = internal_error_report_link), yes = "", no = base::paste0("\n\nPLEASE, REPORT THIS ERROR HERE: ", internal_error_report_link, collapse = NULL, recycle0 = FALSE)))
                                 base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n", base::ifelse(base::is.null(warn), "", base::paste0("IN ADDITION\nWARNING", base::ifelse(warn_count > 1, "S", ""), ":\n\n", warn))), call. = FALSE)
                             }
                             if(base::sum(tempo.log, na.rm = TRUE) == 1){
@@ -1144,15 +1159,15 @@
             }
             good_args <- final
             if(base::any(arg_full_symbol_type)){
-                tempo.cat <- base::paste0("INTERNAL ERROR 2 IN .all_args_here_fill() IN ", function_name, " OF THE ", package_name, " PACKAGE\nARGUMENT WITHOUT OPTIONAL VALUES (MANDATORY ARGS) CANNOT REMAIN WITHOUT VALUE:\n\narg_full_symbol_type:\n", base::paste(arg_full_symbol_type, collapse = "\n"), "\n\narg_full_names:\n", base::paste(arg_full_names, collapse = "\n"))
+                tempo.cat <- base::paste0("INTERNAL ERROR 3 IN .all_args_here_fill() INSIDE ", function_name, " OF THE ", package_name, " PACKAGE\nARGUMENT WITHOUT OPTIONAL VALUES (MANDATORY ARGS) CANNOT REMAIN WITHOUT VALUE:\n\narg_full_symbol_type:\n", base::paste(arg_full_symbol_type, collapse = "\n"), "\n\narg_full_names:\n", base::paste(arg_full_names, collapse = "\n"), base::ifelse(test = base::is.null(x = internal_error_report_link), yes = "", no = base::paste0("\n\nPLEASE, REPORT THIS ERROR HERE: ", internal_error_report_link, collapse = NULL, recycle0 = FALSE)))
                 base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n", base::ifelse(base::is.null(warn), "", base::paste0("IN ADDITION\nWARNING", base::ifelse(warn_count > 1, "S", ""), ":\n\n", warn))), call. = FALSE)
             }
             if(( ! base::any(three_dots_log, na.rm = TRUE)) & base::any(obs_arg_log, na.rm =TRUE)){
-                tempo.cat <- base::paste0("INTERNAL ERROR 3 IN .all_args_here_fill() IN ", function_name, " OF THE ", package_name, " PACKAGE\nCANNOT HAVE OBS ARGUMENT NOT INCORPORATED YET IF ! base::any(three_dots_log, na.rm = TRUE) IS TRUE:\n\nthree_dots_log:\n", base::paste(three_dots_log, collapse = " "), "\n\nobs_arg_log:\n", base::paste(obs_arg_log, collapse = " "))
+                tempo.cat <- base::paste0("INTERNAL ERROR 4 IN .all_args_here_fill() INSIDE ", function_name, " OF THE ", package_name, " PACKAGE\nCANNOT HAVE OBS ARGUMENT NOT INCORPORATED YET IF ! base::any(three_dots_log, na.rm = TRUE) IS TRUE:\n\nthree_dots_log:\n", base::paste(three_dots_log, collapse = " "), "\n\nobs_arg_log:\n", base::paste(obs_arg_log, collapse = " "), base::ifelse(test = base::is.null(x = internal_error_report_link), yes = "", no = base::paste0("\n\nPLEASE, REPORT THIS ERROR HERE: ", internal_error_report_link, collapse = NULL, recycle0 = FALSE)))
                 base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n", base::ifelse(base::is.null(warn), "", base::paste0("IN ADDITION\nWARNING", base::ifelse(warn_count > 1, "S", ""), ":\n\n", warn))), call. = FALSE)
             }
             if(count_good_args > base::length(tempo_split)){
-                tempo.cat <- base::paste0("INTERNAL ERROR 4 IN .all_args_here_fill() IN ", function_name, " OF THE ", package_name, " PACKAGE\ncount_good_args + 1 CANNOT BE MORE THAN length(tempo_split):\n\nlength(tempo_split): ", base::length(tempo_split), "\n\ncount_good_args + 1: ", count_good_args + 1)
+                tempo.cat <- base::paste0("INTERNAL ERROR 5 IN .all_args_here_fill() INSIDE ", function_name, " OF THE ", package_name, " PACKAGE\ncount_good_args + 1 CANNOT BE MORE THAN length(tempo_split):\n\nlength(tempo_split): ", base::length(tempo_split), "\n\ncount_good_args + 1: ", count_good_args + 1, base::ifelse(test = base::is.null(x = internal_error_report_link), yes = "", no = base::paste0("\n\nPLEASE, REPORT THIS ERROR HERE: ", internal_error_report_link, collapse = NULL, recycle0 = FALSE)))
                 base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n", base::ifelse(base::is.null(warn), "", base::paste0("IN ADDITION\nWARNING", base::ifelse(warn_count > 1, "S", ""), ":\n\n", warn))), call. = FALSE)
             }
             if(base::any(three_dots_log, na.rm = TRUE) & base::any(obs_arg_log, na.rm =TRUE)){ # obs values not yet in good_args
