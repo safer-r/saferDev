@@ -623,6 +623,7 @@
         close_pos = close_paren_pos, 
         function_name = function_name,
         package_name = package_name,
+        internal_error_report_link = internal_error_report_link, 
         text = text,
         pattern = pattern
     )
@@ -648,7 +649,8 @@
                 open_pos = open_paren_pos_inside, 
                 close_pos = close_paren_pos_inside, 
                 function_name = function_name,
-                package_name = package_name,
+                package_name = package_name, 
+                internal_error_report_link = internal_error_report_link, 
                 text = text,
                 pattern = pattern
             )

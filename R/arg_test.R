@@ -187,7 +187,8 @@ arg_test <- function(
         ),
         lib_path = lib_path,
         external_function_name = function_name,
-        external_package_name = package_name
+        external_package_name = package_name,
+        internal_error_report_link = internal_error_report_link
     )
     }
     ######## end check of the required functions from the required packages
@@ -729,7 +730,8 @@ arg_test <- function(
                     ),
                     lib_path = lib_path,
                     external_function_name = function_name, 
-                    external_package_name = package_name
+                    external_package_name = package_name,
+                    internal_error_report_link = internal_error_report_link
                 )
                 # end check again: very important because another R
                 # plot management

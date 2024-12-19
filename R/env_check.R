@@ -123,7 +123,8 @@ env_check <- function(
             ),
             lib_path = NULL, # write NULL if your function does not have any lib_path argument
             external_function_name = function_name,
-            external_package_name = package_name
+            external_package_name = package_name,
+            internal_error_report_link = internal_error_report_link
         )
     }
     ######## end check of the required function from the required packages

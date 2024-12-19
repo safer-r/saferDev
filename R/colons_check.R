@@ -104,7 +104,8 @@ colons_check <- function(
             ),
             lib_path = NULL, # write NULL if your function does not have any lib_path argument
             external_function_name = function_name,
-            external_package_name = package_name
+            external_package_name = package_name,
+            internal_error_report_link = internal_error_report_link
         )
     }
     ######## end check of the required functions from the required packages
@@ -191,7 +192,8 @@ colons_check <- function(
         x = x, 
         arg_user_setting = arg_user_setting, 
         function_name = function_name, 
-        package_name = package_name
+        package_name = package_name,
+        internal_error_report_link = internal_error_report_link
     )
     if( ! (base::all(base::typeof(x = out$fun_names) == "list", na.rm = TRUE) & base::all(base::typeof(x = out$fun_names_pos) == "list", na.rm = TRUE))){
         tempo.cat <- base::paste0("INTERNAL ERROR 1 IN ", function_name, " OF THE ", package_name, " PACKAGE\nout$fun_names AND out$fun_names_pos MUST BE TYPE list\nout$fun_names:\n", out$fun_names, "\nout$fun_names_pos:\n", out$fun_names_pos, base::ifelse(test = base::is.null(x = internal_error_report_link), yes = "", no = base::paste0("\n\nPLEASE, REPORT THIS ERROR HERE: ", internal_error_report_link, collapse = NULL, recycle0 = FALSE)), collapse = NULL, recycle0 = FALSE)
@@ -227,6 +229,7 @@ colons_check <- function(
                 arg_user_setting = out$arg_user_setting, 
                 function_name = function_name, 
                 package_name = package_name, 
+                internal_error_report_link = internal_error_report_link, 
                 text = "BASIC", 
                 internal_fun_names = out$internal_fun_names
             )
