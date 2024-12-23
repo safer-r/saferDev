@@ -20,9 +20,12 @@ An error message if at least one of the checked packages is missing in lib_path,
 Check if required functions are present in installed packages. This controls modifications in of function names package versions.
 }
 \examples{
-# is_function_here(fun = "ggplot2::notgood") # commented because this example returns an error
-# is_function_here(fun = c("ggplot2::geom_point", "grid::gpar"))
-# is_function_here(fun = "c")
+\dontrun{ # Example that return an error
+is_function_here(fun = "ggplot2::notgood") # commented because this example returns an error
+is_function_here(fun = c("ggplot2::geom_point", "grid::gpar"))
+is_function_here(fun = "c")
+}
+is_function_here(fun = "base::c")
 }
 \seealso{
 \code{\link{exists}} et \code{\link[methods]{findFunction}}

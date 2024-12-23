@@ -1,4 +1,4 @@
-test_that("env_check()", {
+testthat::test_that("env_check()", {
     mean <- 2
     result <- saferDev::env_check(
         pos = 1,

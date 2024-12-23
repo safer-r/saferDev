@@ -1,4 +1,4 @@
-test_that("arg_check()", {
+testthat::test_that("arg_check()", {
     vec1 <- -1:3 # vector of integers
     vec3 <- base::c(1, 2, 3)
     vec4 <- "pearson"

@@ -1,4 +1,4 @@
-test_that("report()", {
+testthat::test_that("report()", {
     # Example datasets
     vec1 <- 1:6
     vec2 <- letters[1:6]

@@ -1,4 +1,4 @@
-test_that("test .internal_function.R", {
+testthat::test_that("test .internal_function.R", {
 
     # .pack_and_function_check()
     fun_wrong1 <- "geom_point"  # incorrect input

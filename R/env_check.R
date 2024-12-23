@@ -65,7 +65,6 @@
 #'     fun8()
 #' }
 #' fun7()
-#' @importFrom saferDev arg_check
 #' @export
 env_check <- function(
         pos = 1, 

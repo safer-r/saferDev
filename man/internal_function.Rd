@@ -18,7 +18,8 @@
   fun,
   lib_path,
   external_function_name,
-  external_package_name
+  external_package_name,
+  internal_error_report_link
 )
 
 .base_op_check(external_function_name, external_package_name)
@@ -34,7 +35,8 @@
   replacement,
   perl,
   function_name,
-  package_name
+  package_name,
+  internal_error_report_link
 )
 
 .in_parenthesis_replacement(
@@ -46,14 +48,27 @@
   open_pos,
   close_pos,
   function_name,
-  package_name
+  package_name,
+  internal_error_report_link
 )
 
 .noclean_functions(col1, col2, col3, ini)
 
-.fun_args_pos(text, pattern, function_name, package_name)
+.fun_args_pos(
+  text,
+  pattern,
+  function_name,
+  package_name,
+  internal_error_report_link
+)
 
-.functions_detect(x, arg_user_setting, function_name, package_name)
+.functions_detect(
+  x,
+  arg_user_setting,
+  function_name,
+  package_name,
+  internal_error_report_link
+)
 
 .colons_check_message(
   list.fun,
@@ -64,6 +79,7 @@
   arg_user_setting,
   function_name,
   package_name,
+  internal_error_report_link,
   text,
   internal_fun_names
 )
@@ -79,6 +95,7 @@
   arg_user_setting_x,
   function_name,
   package_name,
+  internal_error_report_link,
   warn,
   warn_count
 )
@@ -91,6 +108,8 @@
 \item{external_function_name}{Name of the function using the .pack_and_function_check() function.}
 
 \item{external_package_name}{Name of the package of the function using the .pack_and_function_check() function.}
+
+\item{internal_error_report_link}{String of the report link for internal error messages.}
 
 \item{input_string}{Single string.}
 
@@ -106,9 +125,9 @@
 
 \item{perl}{Single logical value. Use Perl regex in pattern ?}
 
-\item{function_name}{function name.}
+\item{function_name}{Name of the function using this internal function.}
 
-\item{package_name}{package name.}
+\item{package_name}{Name of the package of the function using this internal function.}
 
 \item{open_pos}{single integer indicating the position of the opening parenthesis.}
 

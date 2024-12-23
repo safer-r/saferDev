@@ -1,4 +1,4 @@
-test_that("is_python_package_here()", {
+testthat::test_that("is_python_package_here()", {
     lib_path <- "."
     path <- "blablabla"
     req_pkg <- "serpentine"

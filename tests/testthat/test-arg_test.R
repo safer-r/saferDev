@@ -1,4 +1,4 @@
-test_that("arg_test()", {
+testthat::test_that("arg_test()", {
     f <- "unique"
     argum <- base::c("x", "incomparables")
     value <- base::list(x = base::list(1:10, base::c(1,1,2,8), NA), incomparable = base::c(TRUE, FALSE, NA))

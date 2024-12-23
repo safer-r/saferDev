@@ -80,15 +80,15 @@ Limited to 43 arguments with at least 2 values each. The total number of argumen
 }
 \examples{
 arg_test(fun = "unique", arg = c("x", "incomparables"), 
-val = list(x = list(1:10, c(1,1,2,8), NA), incomparable = c(TRUE, FALSE, NA)))
+val = list(x = list(x = list(1:10, c(1,1,2,8), NA), incomparable = c(TRUE, FALSE, NA)))
 
 arg_test(fun = "unique", arg = c("x", "incomparables"), 
-val = list(x = list(1:10, c(1,1,2,8), NA), 
+val = list(x = list(x = list(1:10, c(1,1,2,8), NA), 
 incomparable = c(TRUE, FALSE, NA)), expect.error = list(x = list(FALSE, FALSE, TRUE), 
 incomparable = c(FALSE, FALSE, TRUE)))
 
 arg_test(fun = "unique", arg = c("x", "incomparables"), 
-val = list(x = list(1:10, c(1,1,2,8), NA), incomparable = c(TRUE, FALSE, NA)), 
+val = list(x = list(x = list(1:10, c(1,1,2,8), NA), incomparable = c(TRUE, FALSE, NA)), 
 expect.error = list(x = list(FALSE, FALSE, TRUE), incomparable = c(FALSE, FALSE, TRUE)), 
 export = TRUE, res.path = getwd())
 

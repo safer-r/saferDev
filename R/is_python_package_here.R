@@ -14,7 +14,6 @@
 #' @importFrom reticulate py_run_string
 #' @importFrom reticulate use_python
 #' @importFrom reticulate import_from_path
-#' @importFrom saferDev arg_check
 #' @author Gael Millot <gael.millot@pasteur.fr>
 #' @author Yushi Han <yushi.han2000@gmail.com>
 #' @author Haiding Wang <wanghaiding442@gmail.com>

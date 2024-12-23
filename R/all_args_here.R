@@ -50,8 +50,6 @@
 #' all_args_here(FUN2)
 #' source("https://raw.githubusercontent.com/safer-r/.github/refs/heads/main/profile/backbone.R")
 #' all_args_here(BACKBONE, export = TRUE)
-#' @importFrom saferDev arg_check
-#' @importFrom saferDev is_function_here
 #' @export
 all_args_here <- function(
     x, 

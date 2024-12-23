@@ -1,4 +1,4 @@
-test_that("all_args_here()", {
+testthat::test_that("all_args_here()", {
     base::source("https://raw.githubusercontent.com/safer-r/saferDev/main/dev/other/test2.R")
     # expected3 <- read.table("https://raw.githubusercontent.com/safer-r/saferDev/main/dev/other/all_args_here_on_all_args_here_res.tsv", sep = "\t", header = TRUE) # too complicate to get the same
     FUN1 <- function(x, y){
