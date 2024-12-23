@@ -100,7 +100,8 @@ Others functions of the R scope can be overwritten because safer functions alway
 <span>  <span class="va">fun</span>,</span>
 <span>  <span class="va">lib_path</span>,</span>
 <span>  <span class="va">external_function_name</span>,</span>
-<span>  <span class="va">external_package_name</span></span>
+<span>  <span class="va">external_package_name</span>,</span>
+<span>  <span class="va">internal_error_report_link</span></span>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">.base_op_check</span><span class="op">(</span><span class="va">external_function_name</span>, <span class="va">external_package_name</span><span class="op">)</span></span>
@@ -116,7 +117,8 @@ Others functions of the R scope can be overwritten because safer functions alway
 <span>  <span class="va">replacement</span>,</span>
 <span>  <span class="va">perl</span>,</span>
 <span>  <span class="va">function_name</span>,</span>
-<span>  <span class="va">package_name</span></span>
+<span>  <span class="va">package_name</span>,</span>
+<span>  <span class="va">internal_error_report_link</span></span>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">.in_parenthesis_replacement</span><span class="op">(</span></span>
@@ -128,14 +130,27 @@ Others functions of the R scope can be overwritten because safer functions alway
 <span>  <span class="va">open_pos</span>,</span>
 <span>  <span class="va">close_pos</span>,</span>
 <span>  <span class="va">function_name</span>,</span>
-<span>  <span class="va">package_name</span></span>
+<span>  <span class="va">package_name</span>,</span>
+<span>  <span class="va">internal_error_report_link</span></span>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">.noclean_functions</span><span class="op">(</span><span class="va">col1</span>, <span class="va">col2</span>, <span class="va">col3</span>, <span class="va">ini</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">.fun_args_pos</span><span class="op">(</span><span class="va">text</span>, <span class="va">pattern</span>, <span class="va">function_name</span>, <span class="va">package_name</span><span class="op">)</span></span>
+<span><span class="fu">.fun_args_pos</span><span class="op">(</span></span>
+<span>  <span class="va">text</span>,</span>
+<span>  <span class="va">pattern</span>,</span>
+<span>  <span class="va">function_name</span>,</span>
+<span>  <span class="va">package_name</span>,</span>
+<span>  <span class="va">internal_error_report_link</span></span>
+<span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">.functions_detect</span><span class="op">(</span><span class="va">x</span>, <span class="va">arg_user_setting</span>, <span class="va">function_name</span>, <span class="va">package_name</span><span class="op">)</span></span>
+<span><span class="fu">.functions_detect</span><span class="op">(</span></span>
+<span>  <span class="va">x</span>,</span>
+<span>  <span class="va">arg_user_setting</span>,</span>
+<span>  <span class="va">function_name</span>,</span>
+<span>  <span class="va">package_name</span>,</span>
+<span>  <span class="va">internal_error_report_link</span></span>
+<span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">.colons_check_message</span><span class="op">(</span></span>
 <span>  <span class="va">list.fun</span>,</span>
@@ -146,6 +161,7 @@ Others functions of the R scope can be overwritten because safer functions alway
 <span>  <span class="va">arg_user_setting</span>,</span>
 <span>  <span class="va">function_name</span>,</span>
 <span>  <span class="va">package_name</span>,</span>
+<span>  <span class="va">internal_error_report_link</span>,</span>
 <span>  <span class="va">text</span>,</span>
 <span>  <span class="va">internal_fun_names</span></span>
 <span><span class="op">)</span></span>
@@ -161,6 +177,7 @@ Others functions of the R scope can be overwritten because safer functions alway
 <span>  <span class="va">arg_user_setting_x</span>,</span>
 <span>  <span class="va">function_name</span>,</span>
 <span>  <span class="va">package_name</span>,</span>
+<span>  <span class="va">internal_error_report_link</span>,</span>
 <span>  <span class="va">warn</span>,</span>
 <span>  <span class="va">warn_count</span></span>
 <span><span class="op">)</span></span></code></pre></div>
@@ -182,6 +199,10 @@ Others functions of the R scope can be overwritten because safer functions alway
 
 <dt>external_package_name</dt>
 <dd><p>Name of the package of the function using the .pack_and_function_check() function.</p></dd>
+
+
+<dt>internal_error_report_link</dt>
+<dd><p>String of the report link for internal error messages.</p></dd>
 
 
 <dt>input_string</dt>
@@ -213,11 +234,11 @@ Others functions of the R scope can be overwritten because safer functions alway
 
 
 <dt>function_name</dt>
-<dd><p>function name.</p></dd>
+<dd><p>Name of the function using this internal function.</p></dd>
 
 
 <dt>package_name</dt>
-<dd><p>package name.</p></dd>
+<dd><p>Name of the package of the function using this internal function.</p></dd>
 
 
 <dt>open_pos</dt>

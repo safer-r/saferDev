@@ -348,7 +348,7 @@
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu">arg_test</span><span class="op">(</span>fun <span class="op">=</span> <span class="st">"unique"</span>, arg <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"x"</span>, <span class="st">"incomparables"</span><span class="op">)</span>, </span></span>
 <span class="r-in"><span>val <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">10</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">1</span>,<span class="fl">2</span>,<span class="fl">8</span><span class="op">)</span>, <span class="cn">NA</span><span class="op">)</span>, incomparable <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="cn">TRUE</span>, <span class="cn">FALSE</span>, <span class="cn">NA</span><span class="op">)</span><span class="op">)</span>, </span></span>
-<span class="r-in"><span>expect.error <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="cn">FALSE</span>, <span class="cn">FALSE</span>, <span class="cn">TRUE</span><span class="op">)</span>, incomparable <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="cn">FALSE</span>, <span class="cn">FALSE</span>, <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span>, </span></span>
+<span class="r-in"><span>expect.error <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="cn">FALSE</span>, <span class="cn">FALSE</span>, <span class="cn">TRUE</span><span class="op">)</span>, incomparable <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="cn">FALSE</span>, <span class="cn">FALSE</span>, <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span>, </span></span>
 <span class="r-in"><span>export <span class="op">=</span> <span class="cn">TRUE</span>, res.path <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/getwd.html" class="external-link">getwd</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> test JOB IGNITION</span>
@@ -361,7 +361,7 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> test JOB END</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> TIME: 2024-12-05 17:10:58.479426</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> TIME: 2024-12-23 19:32:11.040979</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> TOTAL TIME LAPSE: 0S</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
@@ -370,8 +370,21 @@
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> (1) THE FIRST FOR &amp; WHILE LOOP STEPS HAVE BEEN TOO FAR AND SUBSEQUENT LOOP STEPS WILL NOT RUN</span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># Return an error if you run this example</span></span></span>
-<span class="r-in"><span><span class="co"># arg_test(fun = "round", arg = c("data", "dec.nb", "after.lead.zero"), val = list(L1 = list(c(1, 1.0002256, 1.23568), "a", NA), L2 = list(2, c(1,3), NA), L3 = c(TRUE, FALSE, NA)))</span></span></span>
+<span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span>  <span class="co"># Example that return an error</span></span></span>
+<span class="r-in"><span><span class="fu">arg_test</span><span class="op">(</span>fun <span class="op">=</span> <span class="st">"unique"</span>, arg <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"x"</span>, <span class="st">"incomparables"</span><span class="op">)</span>, val <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">10</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">1</span>,<span class="fl">2</span>,<span class="fl">8</span><span class="op">)</span>, <span class="cn">NA</span><span class="op">)</span>, incomparable <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="cn">TRUE</span>, <span class="cn">FALSE</span>, <span class="cn">NA</span><span class="op">)</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">arg_test</span><span class="op">(</span>fun <span class="op">=</span> <span class="st">"round"</span>, arg <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"data"</span>, <span class="st">"dec.nb"</span>, <span class="st">"after.lead.zero"</span><span class="op">)</span>, val <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>L1 <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">1.0002256</span>, <span class="fl">1.23568</span><span class="op">)</span>, <span class="st">"a"</span>, <span class="cn">NA</span><span class="op">)</span>, L2 <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="fl">2</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">3</span><span class="op">)</span>, <span class="cn">NA</span><span class="op">)</span>, L3 <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="cn">TRUE</span>, <span class="cn">FALSE</span>, <span class="cn">NA</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error:</span> </span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> ================</span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> ERROR IN arg_test() OF THE saferDev PACKAGE</span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> SOME OF THE STRINGS IN arg ARE NOT ARGUMENTS OF fun</span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> fun ARGUMENTS: </span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> PROBLEMATIC STRINGS IN arg: data dec.nb after.lead.zero</span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> ================</span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-in"><span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu">arg_test</span><span class="op">(</span>fun <span class="op">=</span> <span class="st">"plot"</span>, arg <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"x"</span>, <span class="st">"y"</span><span class="op">)</span>, val <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">10</span>, <span class="fl">12</span><span class="op">:</span><span class="fl">13</span>, <span class="cn">NA</span>, <span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">10</span><span class="op">)</span><span class="op">^</span><span class="fl">2</span><span class="op">)</span>, </span></span>
 <span class="r-in"><span>y <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">10</span>, <span class="cn">NA</span>, <span class="cn">NA</span><span class="op">)</span><span class="op">)</span>,  expect.error <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="cn">FALSE</span>, <span class="cn">TRUE</span>, <span class="cn">TRUE</span>, <span class="cn">FALSE</span><span class="op">)</span>, </span></span>
@@ -382,7 +395,7 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> TOTAL NUMBER OF TESTS: 12</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> LOOP 10 / 12 | TIME SPENT: 0S | EXPECTED END: 2024-12-05 17:10:58.773544</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> LOOP 10 / 12 | TIME SPENT: 0S | EXPECTED END: 2024-12-23 19:32:11.406023</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> LOOP PROCESS ENDED | LOOP 12 / 12 | TIME SPENT: 0S</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> NO DISCREPANCY BETWEEN EXPECTED AND OBSERVED ERRORS</span>
@@ -482,8 +495,8 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span> [61] xfun_0.43          xml2_1.3.6         yaml_2.3.8        </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="fu">arg_test</span><span class="op">(</span>fun <span class="op">=</span> <span class="st">"plot"</span>, arg <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"x"</span>, <span class="st">"y"</span><span class="op">)</span>, val <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">10</span>, <span class="fl">12</span><span class="op">:</span><span class="fl">13</span>, <span class="cn">NA</span>, </span></span>
-<span class="r-in"><span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">10</span><span class="op">)</span><span class="op">^</span><span class="fl">2</span><span class="op">)</span>, y <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">10</span>, <span class="cn">NA</span>, <span class="cn">NA</span><span class="op">)</span><span class="op">)</span>, parall <span class="op">=</span> <span class="cn">FALSE</span>, thread.nb <span class="op">=</span> <span class="fl">4</span>, </span></span>
+<span class="r-in"><span><span class="fu">arg_test</span><span class="op">(</span>fun <span class="op">=</span> <span class="st">"plot"</span>, arg <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"x"</span>, <span class="st">"y"</span><span class="op">)</span>, val <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">10</span>, <span class="fl">12</span><span class="op">:</span><span class="fl">13</span>, <span class="cn">NA</span>, <span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">10</span><span class="op">)</span><span class="op">^</span><span class="fl">2</span><span class="op">)</span>, </span></span>
+<span class="r-in"><span>y <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">10</span>, <span class="cn">NA</span>, <span class="cn">NA</span><span class="op">)</span><span class="op">)</span>, parall <span class="op">=</span> <span class="cn">FALSE</span>, thread.nb <span class="op">=</span> <span class="fl">4</span>, </span></span>
 <span class="r-in"><span>plot.fun <span class="op">=</span> <span class="cn">TRUE</span>, res.path <span class="op">=</span> <span class="st">"."</span>, </span></span>
 <span class="r-in"><span>lib_path <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
@@ -491,7 +504,7 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> TOTAL NUMBER OF TESTS: 12</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> LOOP 10 / 12 | TIME SPENT: 0S | EXPECTED END: 2024-12-05 17:10:59.080642</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> LOOP 10 / 12 | TIME SPENT: 0S | EXPECTED END: 2024-12-23 19:32:11.704846</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> LOOP PROCESS ENDED | LOOP 12 / 12 | TIME SPENT: 0S</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $fun</span>
@@ -574,25 +587,6 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span> [57] utf8_1.2.4         vctrs_0.6.5        whisker_0.4.1      withr_3.0.0       </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [61] xfun_0.43          xml2_1.3.6         yaml_2.3.8        </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># set.seed(1) ; </span></span></span>
-<span class="r-in"><span><span class="co"># obs1 &lt;- data.frame(Time = c(rnorm(10), rnorm(10) + 2), Group1 = rep(c("G", "H"), each = 10), </span></span></span>
-<span class="r-in"><span><span class="co"># stringsAsFactors = TRUE) ; arg_test(fun = "ggbox", arg = c("data1", "y", "categ"), </span></span></span>
-<span class="r-in"><span><span class="co"># val = list(L1 = list(L1 = obs1), L2 = list(L1 = "Time"), L3 = list(L1 = "Group1")))</span></span></span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># set.seed(1) ; </span></span></span>
-<span class="r-in"><span><span class="co"># obs1 &lt;- data.frame(Time = c(rnorm(10), rnorm(10) + 2), Group1 = rep(c("G", "H"), each = 10), </span></span></span>
-<span class="r-in"><span><span class="co"># stringsAsFactors = TRUE) ; </span></span></span>
-<span class="r-in"><span><span class="co"># arg_test(fun = "ggbox", arg = c("data1", "y", "categ"), val = list(L1 = list(obs1), </span></span></span>
-<span class="r-in"><span><span class="co"># L2 = "Time", L3 = "Group1"), parall = FALSE, thread.nb = NULL, plot.fun = TRUE, </span></span></span>
-<span class="r-in"><span><span class="co"># res.path = "C:\Users\yhan\Desktop\", lib_path = "C:\Program Files\R\R-4.3.1\library\")</span></span></span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># library(ggplot2) ; arg_test(fun = "geom_histogram", arg = c("data", "mapping"), </span></span></span>
-<span class="r-in"><span><span class="co"># val = list(x = list(data.frame(X = "a", stringsAsFactors = TRUE)), </span></span></span>
-<span class="r-in"><span><span class="co"># y = list(ggplot2::aes(x = X))), parall = FALSE, thread.nb = NULL, </span></span></span>
-<span class="r-in"><span><span class="co"># plot.fun = TRUE, res.path = "C:\Users\yhan\Desktop\", </span></span></span>
-<span class="r-in"><span><span class="co"># lib_path = "C:\Program Files\R\R-4.3.1\library\") </span></span></span>
-<span class="r-in"><span><span class="co"># BEWARE: ggplot2::geom_histogram does not work</span></span></span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
