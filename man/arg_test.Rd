@@ -80,49 +80,32 @@ Limited to 43 arguments with at least 2 values each. The total number of argumen
 }
 \examples{
 arg_test(fun = "unique", arg = c("x", "incomparables"), 
-val = list(x = list(x = list(1:10, c(1,1,2,8), NA), incomparable = c(TRUE, FALSE, NA)))
+val = list(x = list(1:10, c(1,1,2,8), NA), incomparable = c(TRUE, FALSE, NA)))
 
 arg_test(fun = "unique", arg = c("x", "incomparables"), 
-val = list(x = list(x = list(1:10, c(1,1,2,8), NA), 
+val = list(x = list(1:10, c(1,1,2,8), NA), 
 incomparable = c(TRUE, FALSE, NA)), expect.error = list(x = list(FALSE, FALSE, TRUE), 
 incomparable = c(FALSE, FALSE, TRUE)))
 
 arg_test(fun = "unique", arg = c("x", "incomparables"), 
-val = list(x = list(x = list(1:10, c(1,1,2,8), NA), incomparable = c(TRUE, FALSE, NA)), 
-expect.error = list(x = list(FALSE, FALSE, TRUE), incomparable = c(FALSE, FALSE, TRUE)), 
+val = list(x = list(1:10, c(1,1,2,8), NA), incomparable = c(TRUE, FALSE, NA)), 
+expect.error = list(x = c(FALSE, FALSE, TRUE), incomparable = c(FALSE, FALSE, TRUE)), 
 export = TRUE, res.path = getwd())
 
-# Return an error if you run this example
-# arg_test(fun = "round", arg = c("data", "dec.nb", "after.lead.zero"), val = list(L1 = list(c(1, 1.0002256, 1.23568), "a", NA), L2 = list(2, c(1,3), NA), L3 = c(TRUE, FALSE, NA)))
+\dontrun{ # Example that return an error
+arg_test(fun = "unique", arg = c("x", "incomparables"), val = list(x = list(x = list(1:10, c(1,1,2,8), NA), incomparable = c(TRUE, FALSE, NA))))
+arg_test(fun = "round", arg = c("data", "dec.nb", "after.lead.zero"), val = list(L1 = list(c(1, 1.0002256, 1.23568), "a", NA), L2 = list(2, c(1,3), NA), L3 = c(TRUE, FALSE, NA)))
+}
 
 arg_test(fun = "plot", arg = c("x", "y"), val = list(x = list(1:10, 12:13, NA, (1:10)^2), 
 y = list(1:10, NA, NA)),  expect.error = list(x = list(FALSE, TRUE, TRUE, FALSE), 
 y = list(FALSE, TRUE, TRUE)), parall = FALSE, thread.nb = NULL, plot.fun = TRUE, 
 res.path = ".", lib_path = NULL)
 
-arg_test(fun = "plot", arg = c("x", "y"), val = list(x = list(1:10, 12:13, NA, 
-(1:10)^2), y = list(1:10, NA, NA)), parall = FALSE, thread.nb = 4, 
+arg_test(fun = "plot", arg = c("x", "y"), val = list(x = list(1:10, 12:13, NA, (1:10)^2), 
+y = list(1:10, NA, NA)), parall = FALSE, thread.nb = 4, 
 plot.fun = TRUE, res.path = ".", 
 lib_path = NULL)
-
-# set.seed(1) ; 
-# obs1 <- data.frame(Time = c(rnorm(10), rnorm(10) + 2), Group1 = rep(c("G", "H"), each = 10), 
-# stringsAsFactors = TRUE) ; arg_test(fun = "ggbox", arg = c("data1", "y", "categ"), 
-# val = list(L1 = list(L1 = obs1), L2 = list(L1 = "Time"), L3 = list(L1 = "Group1")))
-
-# set.seed(1) ; 
-# obs1 <- data.frame(Time = c(rnorm(10), rnorm(10) + 2), Group1 = rep(c("G", "H"), each = 10), 
-# stringsAsFactors = TRUE) ; 
-# arg_test(fun = "ggbox", arg = c("data1", "y", "categ"), val = list(L1 = list(obs1), 
-# L2 = "Time", L3 = "Group1"), parall = FALSE, thread.nb = NULL, plot.fun = TRUE, 
-# res.path = "C:\\Users\\yhan\\Desktop\\", lib_path = "C:\\Program Files\\R\\R-4.3.1\\library\\")
-
-# library(ggplot2) ; arg_test(fun = "geom_histogram", arg = c("data", "mapping"), 
-# val = list(x = list(data.frame(X = "a", stringsAsFactors = TRUE)), 
-# y = list(ggplot2::aes(x = X))), parall = FALSE, thread.nb = NULL, 
-# plot.fun = TRUE, res.path = "C:\\Users\\yhan\\Desktop\\", 
-# lib_path = "C:\\Program Files\\R\\R-4.3.1\\library\\") 
-# BEWARE: ggplot2::geom_histogram does not work
 }
 \seealso{
 \code{\link{arg_check}}.

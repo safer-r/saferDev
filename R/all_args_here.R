@@ -79,7 +79,7 @@ all_args_here <- function(
     # function_name <- "all_args_here" ; arg_user_setting = base::list(x = as.name(x = "all_args_here"), export = FALSE,  path_out = ".",  df_name = "res.tsv",  overwrite = FALSE,  lib_path = NULL,  safer_check = TRUE) ; arg_names <- c("x", "export",  "path_out",  "df_name",  "overwrite", "lib_path", "safer_check")
 
     #### package name
-    package_name <- "saferDev"# write NULL if the function developed is not in a package
+    package_name <- "saferDev" # write NULL if the function developed is not in a package
     #### end package name
 
     #### internal error report link
