@@ -951,6 +951,7 @@
         tempo_log2 <- base::sapply(X = list.fun, FUN = function(x){base::length(x = x) == 0}) # test if empty compartment
         list.fun <- list.fun[ ! tempo_log2]
         list.fun.pos <- list.fun.pos[ ! tempo_log2]
+        line.nb <- line.nb[ ! tempo_log2]
         # end remove empty compartment
         output.cat <- base::paste0(
             "INSIDE ", arg_user_setting$x, "(), ", base::ifelse(base::length(x = list.fun) == 0, "ONLY", ""), "INTERNAL FUNCTION", base::ifelse(base::length(internal_fun_names) == 1, "", "S"), " DETECTED:\n", 

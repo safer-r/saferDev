@@ -67,7 +67,7 @@ The different *saferDev* releases are tagged [here](https://github.com/safer-r/s
 *saferDev* can be currently be installed from GitHub:
 
 ```r
-install.packages("remotes")
+# install.packages("remotes")
 remotes::install_github("https://github.com/safer-r/saferDev") # or open R as admin and remotes::install_github("https://github.com/safer-r/saferDev", lib = "C:/Program Files/R/R-4.3.1/library")
 ```
 
