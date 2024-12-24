@@ -72,7 +72,6 @@
 
 .colons_check_message(
   list.fun,
-  fun.uni,
   list.fun.pos,
   line.nb,
   ini,
@@ -146,8 +145,6 @@
 \item{arg_user_setting}{list of arg user settings.}
 
 \item{list.fun}{list of names of all the functions.}
-
-\item{fun.uni}{vector of all the unique function names.}
 
 \item{list.fun.pos}{list of position of first character of names of all the functions in ini.}
 
