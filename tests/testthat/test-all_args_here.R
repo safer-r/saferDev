@@ -50,7 +50,7 @@ testthat::test_that("all_args_here()", {
         df_name = "a.tsv", # name of the exported data frame file
         overwrite = TRUE, # Overwrite potential df_name file already existing in path_out?
         lib_path = NULL, # absolute pathways of the directories containing the required packages if not in the default directories
-        safer_check = FALSE # perform some "safer" checks? Warning : always set this argument to FALSE if all_args_here() is used inside another safer function.
+        safer_check = TRUE # perform some "safer" checks? Warning : always set this argument to FALSE if all_args_here() is used inside another safer function.
     ))
 
     result3 <- saferDev::all_args_here(

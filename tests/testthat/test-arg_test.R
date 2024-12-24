@@ -32,7 +32,7 @@ testthat::test_that("arg_test()", {
 
 
        
-    result18 <- saferDev::arg_test(
+    result18 <- arg_test( # do not add saferDev:: here. Otherwise, does not work below
         fun = f, 
         arg = argum, 
         val = value, 
@@ -94,7 +94,7 @@ testthat::test_that("arg_test()", {
     )
     testthat::expect_equal(result18[1:3], expected18) # [1:3] to do not compare system parameters
 
-    result19 <- saferDev::arg_test(
+    result19 <- arg_test( # do not add saferDev:: here. Otherwise, does not work below
         fun = f2, 
         arg = argum2, 
         val = value2, 
@@ -165,6 +165,7 @@ testthat::test_that("arg_test()", {
             row.names = c("arg_test_01", "arg_test_02", "arg_test_03", "arg_test_04", "arg_test_05", "arg_test_06", "arg_test_07", "arg_test_08", "arg_test_09", "arg_test_10", "arg_test_11", "arg_test_12")
         ))
     testthat::expect_equal(result19[1:3], expected19) # [1:3] to do not compare system parameters
+
 
     testthat::expect_error(saferDev::arg_test(fun = 1, arg = argum, val = value, expect.error = error, parall = FALSE, thread.nb = NULL, print.count = 10, plot.fun = FALSE, export = FALSE, res.path = NULL, lib_path = NULL, safer_check = FALSE))
     testthat::expect_error(saferDev::arg_test(fun = f2, arg = argum2, val = value2, expect.error = error2, parall = FALSE, thread.nb = NULL, print.count = 10, plot.fun = TRUE, export = FALSE, res.path = NULL, lib_path = 1, safer_check = FALSE))  
