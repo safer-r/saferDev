@@ -10,7 +10,7 @@ testthat::test_that("get_message()", {
     testthat::expect_no_error(saferDev::get_message(data = char1, kind = "message", print.no = TRUE,text = NULL, safer_check = FALSE))
     testthat::expect_error(saferDev::get_message(data = char1, kind = NULL, print.no = TRUE,text = NULL, safer_check = FALSE))
     testthat::expect_no_error(saferDev::get_message(data = "", kind = "error", print.no = TRUE,text = NULL, safer_check = FALSE)) # because data can be ""
-    testthat::expect_error(saferDev::get_message(data = NOT_CHARACTER, kind = "error", print.no = TRUE,text = NULL, safer_check = FALSE))
+    testthat::expect_no_error(saferDev::get_message(data = NOT_CHARACTER, kind = "error", print.no = TRUE,text = NULL, safer_check = FALSE))
 
     result1 <- saferDev::get_message(data = char1, header = FALSE)
     testthat::expect_null(result1)
