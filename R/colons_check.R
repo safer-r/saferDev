@@ -221,7 +221,6 @@ colons_check <- function(
         if(base::length(x = in_basic_fun_uni) > 0){
             tempo <- saferDev:::.colons_check_message(
                 list.fun = in_basic_fun, 
-                fun.uni = in_basic_fun_uni, 
                 list.fun.pos = in_basic_fun_names_pos, 
                 line.nb = in_basic_code_line_nb, 
                 ini = out$code, 
@@ -266,7 +265,6 @@ colons_check <- function(
         if(base::length(x = in_other_fun_uni) > 0){
             tempo <- saferDev:::.colons_check_message(
                 list.fun = in_other_fun, 
-                fun.uni = in_other_fun_uni, 
                 list.fun.pos = in_other_fun_names_pos, 
                 line.nb = in_other_code_line_nb, 
                 ini = out$code, 

@@ -64,7 +64,7 @@ testthat::test_that("colons_check()", {
         "22\treturn\t\t", 
         "", 
         "INSIDE test(), INTERNAL FUNCTION DETECTED:", 
-        "F", 
+        "FUN1", 
         "", 
         "INSIDE test(), SOME :: OR ::: ARE MISSING AT OTHER FUNCTION POSITIONS:", 
         "", 
