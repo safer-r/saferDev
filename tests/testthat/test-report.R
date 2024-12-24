@@ -37,7 +37,7 @@ testthat::test_that("report()", {
         data = string1, 
         path = ".",
         vector.cat = FALSE, 
-        safer_check = TRUE 
+        safer_check = FALSE 
         ))
     testthat::expect_no_error(saferDev::report(
         data = string1, 
@@ -127,7 +127,7 @@ testthat::test_that("report()", {
           vector.cat = TRUE, 
           noquote = FALSE, 
           sep = 4,
-          safer_check = TRUE 
+          safer_check = FALSE 
     ))
 
 })
