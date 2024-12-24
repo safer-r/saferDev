@@ -779,7 +779,7 @@
     # end removal of comments
     # catch the internal function name created inside the tested function
     internal_fun_names <- base::unlist(base::lapply(X = code, FUN = function(x){
-        output <- base::sub(pattern = "^\\s*([a-zA-Z]|\\.[a-zA-Z._])[a-zA-Z0-9._]*\\s*<-[\\s\\r\\n]*function[\\s\\r\\n]*\\(.*", replacement = "\\1", x = x, perl = TRUE)
+        output <- base::sub(pattern = "^\\s*(([a-zA-Z]|\\.[a-zA-Z._])[a-zA-Z0-9._]*)\\s*<-[\\s\\r\\n]*function[\\s\\r\\n]*\\(.*", replacement = "\\1", x = x, perl = TRUE)
         # ^\\s* means in perl: 0 or any spaces at the begining of the string
         # ([a-zA-Z]|\\.[a-zA-Z._]) is for the begining of R function name: either any single alphabet character or a dot and any single alphabet character or dot (because .. is ok for function name) or underscore (because ._ is ok for function name). Starting "dot and num" or underscore is not authorized for function name
         # [a-zA-Z0-9._]* is The rest of the function name: any several of these characters or nothing
