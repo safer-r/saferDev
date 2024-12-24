@@ -70,7 +70,8 @@ get_message <- function(
     # data = "message('ahah')" ; kind = "error" ; header = TRUE ; print.no = TRUE ; text = "IN A" ; env = NULL ; safer_check = TRUE 
     # data = 'ggplot2::ggplot(data = data.frame(X = "a", stringsAsFactors = TRUE), mapping = ggplot2::aes(x = X)) + ggplot2::geom_histogram()' ; kind = "message" ; header = TRUE ; print.no = FALSE ; text = NULL ; safer_check = TRUE # for function debugging
     # data = 'ggplot2::ggplot(data = data.frame(X = "a", stringsAsFactors = TRUE), mapping = ggplot2::aes(x = X)) + ggplot2::geom_histogram()' ; kind = "warning" ; header = TRUE ; print.no = FALSE ; text = NULL ; safer_check = TRUE # for function debugging
-    # data = "emmeans::emmeans(object = emm.rg, specs = contrast.var)" ; kind = "message" ; header = TRUE ; print.no = FALSE ; text = NULL ; env = NULL ; safer_check = TRUE# for function debugging
+    # data = "emmeans::emmeans(object = emm.rg, specs = contrast.var)" ; kind = "message" ; header = TRUE ; print.no = FALSE ; text = NULL ; env = NULL ; safer_check = TRUE # for function debugging
+    # data = sum("a") ; kind = "message" ; header = TRUE ; print.no = FALSE ; text = NULL ; env = NULL ; safer_check = TRUE # for function debugging
 
     #### package name
     package_name <- "saferDev"# write NULL if the function developed is not in a package
@@ -148,7 +149,7 @@ get_message <- function(
     checked_arg_names <- NULL # for function debbuging: used by r_debugging_tools
     ee <- base::expression(argum_check <- base::c(argum_check, tempo$problem) , text_check <- base::c(text_check, tempo$text) , checked_arg_names <- base::c(checked_arg_names, tempo$object.name))
     # add as many lines as below, for each of your arguments of your function in development
-    tempo <- saferDev::arg_check(data = data, class = "vector", typeof = "character", mode = NULL, length = 1, prop = FALSE, double_as_integer_allowed = FALSE, options = NULL, all_options_in_data = FALSE, na_contain = TRUE, neg_values = TRUE, inf_values = TRUE, print = FALSE, data_name = NULL, fun_name = function_name, pack_name = package_name, safer_check = FALSE) ; base::eval(expr = ee, envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL))
+    # tempo <- saferDev::arg_check(data = data, class = "vector", typeof = "character", mode = NULL, length = 1, prop = FALSE, double_as_integer_allowed = FALSE, options = NULL, all_options_in_data = FALSE, na_contain = TRUE, neg_values = TRUE, inf_values = TRUE, print = FALSE, data_name = NULL, fun_name = function_name, pack_name = package_name, safer_check = FALSE) ; base::eval(expr = ee, envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL)) # cannot be evaluated now because has to be tested thenafter
     tempo <- saferDev::arg_check(data = kind, class = NULL, typeof = NULL, mode = NULL, length = 1, prop = FALSE, double_as_integer_allowed = FALSE, options = base::c("error", "warning", "message"), all_options_in_data = FALSE, na_contain = FALSE, neg_values = TRUE, inf_values = TRUE, print = FALSE, data_name = NULL, fun_name = function_name, pack_name = package_name, safer_check = FALSE) ; base::eval(expr = ee, envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL))
     tempo <- saferDev::arg_check(data = header, class = "vector", typeof = "logical", mode = NULL, length = 1, prop = FALSE, double_as_integer_allowed = FALSE, options = NULL, all_options_in_data = FALSE, na_contain = FALSE, neg_values = TRUE, inf_values = TRUE, print = FALSE, data_name = NULL, fun_name = function_name, pack_name = package_name, safer_check = FALSE) ; base::eval(expr = ee, envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL))
     tempo <- saferDev::arg_check(data = print.no, class = "vector", typeof = "logical", mode = NULL, length = 1, prop = FALSE, double_as_integer_allowed = FALSE, options = NULL, all_options_in_data = FALSE, na_contain = FALSE, neg_values = TRUE, inf_values = TRUE, print = FALSE, data_name = NULL, fun_name = function_name, pack_name = package_name, safer_check = FALSE) ; base::eval(expr = ee, envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL))
@@ -182,7 +183,7 @@ get_message <- function(
 
     ######## management of NULL arguments
     tempo_arg <- base::c(
-        "data", 
+        # "data", # cannot be evaluated now because has to be tested thenafter
         "kind", 
         "header", 
         "print.no",
@@ -199,7 +200,7 @@ get_message <- function(
 
     ######## management of "" in arguments of mode character
     tempo_arg <-base::c(
-        "data", 
+        # "data", # cannot be evaluated now because has to be tested thenafter
         "kind"
         # "text" # inactivated because can be ""
     )
