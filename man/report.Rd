@@ -6,7 +6,7 @@
 \usage{
 report(
   data,
-  output = "results.txt",
+  output = "log.txt",
   path,
   overwrite = FALSE,
   rownames.kept = FALSE,
@@ -21,7 +21,7 @@ report(
 
 \item{output}{Single character string. Name of the output file.}
 
-\item{path}{Location of the output file.}
+\item{path}{Single character string indicating the path where to write the output file.}
 
 \item{overwrite}{Single logical value. If output file already exists, defines if the printing is appended (default FALSE) or if the output file content is erased before printing (TRUE).}
 
@@ -33,7 +33,7 @@ report(
 
 \item{sep}{Single non null and positive integer representing the number of empty lines after printed data.}
 
-\item{safer_check}{Single logical value. Perform some "safer" checks (see https://github.com/safer-r)? If TRUE, checkings are performed before main code running: 1) R classical operators (like "<-") not overwritten by another package because of the R scope and 2) required functions and related packages effectively present in local R lybraries. Must be set to FALSE if this fonction is used inside another "safer" function to avoid pointless multiple checkings.}
+\item{safer_check}{Single logical value. Perform some "safer" checks? If TRUE, checkings are performed before main code running (see https://github.com/safer-r): 1) R classical operators (like "<-") not overwritten by another package because of the R scope and 2) required functions and related packages effectively present in local R lybraries. Must be set to FALSE if this fonction is used inside another "safer" function to avoid pointless multiple checkings.}
 }
 \value{
 Nothing.
@@ -42,7 +42,6 @@ Nothing.
 Log file function: print a character string or a data object into a same output file.
 }
 \examples{
-#report()
 report(data = 1:3, output = "results.txt", path = ".", overwrite = TRUE, 
 rownames.kept = FALSE, vector.cat = FALSE, noquote = FALSE, sep = 2)
 }
