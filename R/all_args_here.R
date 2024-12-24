@@ -7,7 +7,7 @@
 #' @param df_name Single character string indicating the name of the exported data frame file. Ignored if export is FALSE.
 #' @param overwrite Single logical value. Overwrite potential df_name file already existing in path_out? Ignored if export is FALSE.
 #' @param lib_path Vector of characters specifying the absolute pathways of the directories containing the required packages if not in the default directories. If NULL, the pathway specified by .libPaths() is used.
-#' @param safer_check Single logical value. Perform some "safer" checks (see https://github.com/safer-r)? If TRUE, checkings are performed before main code running: 1) R classical operators (like "<-") not overwritten by another package because of the R scope and 2) required functions and related packages effectively present in local R lybraries. Must be set to FALSE if all_args_here() fonction is used inside another "safer" function to avoid pointless multiple checkings.
+#' @param safer_check Single logical value. Perform some "safer" checks? If TRUE, checkings are performed before main code running (see https://github.com/safer-r): 1) R classical operators (like "<-") not overwritten by another package because of the R scope and 2) required functions and related packages effectively present in local R lybraries. Must be set to FALSE if all_args_here() fonction is used inside another "safer" function to avoid pointless multiple checkings.
 #' @returns 
 #' A data frame indicating the missing arguments or a message saying that everything seems fine.
 #' If export argument is TRUE, then the data frame is exported as res.tsv instead of being returned.

@@ -3,27 +3,26 @@
 #' Log file function: print a character string or a data object into a same output file.
 #' @param data Object to print in the output file. If NULL, nothing is done, with no warning.
 #' @param output Single character string. Name of the output file.
-#' @param path Location of the output file.
+#' @param path Single character string indicating the path where to write the output file.
 #' @param overwrite Single logical value. If output file already exists, defines if the printing is appended (default FALSE) or if the output file content is erased before printing (TRUE).
 #' @param rownames.kept Single logical value. Defines whether row names have to be removed or in 2D objects. Warning: in 1D tables, names over the values are taken as row names, and are thus removed if rownames.kept is FALSE.
 #' @param vector.cat Single logical value. If TRUE print a vector of length > 1 using cat() instead of capture.output(). Otherwise (default FALSE) the opposite. Names of values are not printed when TRUE
 #' @param noquote Single logical value. If TRUE no quote are present for the characters.
 #' @param sep Single non null and positive integer representing the number of empty lines after printed data.
-#' @param safer_check Single logical value. Perform some "safer" checks (see https://github.com/safer-r)? If TRUE, checkings are performed before main code running: 1) R classical operators (like "<-") not overwritten by another package because of the R scope and 2) required functions and related packages effectively present in local R lybraries. Must be set to FALSE if this fonction is used inside another "safer" function to avoid pointless multiple checkings.
+#' @param safer_check Single logical value. Perform some "safer" checks? If TRUE, checkings are performed before main code running (see https://github.com/safer-r): 1) R classical operators (like "<-") not overwritten by another package because of the R scope and 2) required functions and related packages effectively present in local R lybraries. Must be set to FALSE if this fonction is used inside another "safer" function to avoid pointless multiple checkings.
 #' @returns Nothing.
 #' @seealso \code{\link{capture.output}}.
 #' @author Gael Millot <gael.millot@pasteur.fr>
 #' @author Yushi Han <yushi.han2000@gmail.com>
 #' @author Haiding Wang <wanghaiding442@gmail.com>
 #' @examples
-#' #report()
 #' report(data = 1:3, output = "results.txt", path = ".", overwrite = TRUE, 
 #' rownames.kept = FALSE, vector.cat = FALSE, noquote = FALSE, sep = 2)
 #' @export
 report <- function(
         data, 
-        output = "results.txt", 
-        path, 
+        output = "log.txt", 
+        path, # no value to do not create unwanted files anywhere
         overwrite = FALSE, 
         rownames.kept = FALSE, 
         vector.cat = FALSE, 
@@ -32,7 +31,7 @@ report <- function(
         safer_check = TRUE
 ){
     # DEBUGGING
-    # vec1 = letters[1:9] ;  data = table(vec1, vec1) ; output = "results.txt" ; path = "C:/Users/gmillot/Desktop" ; overwrite = TRUE ; rownames.kept = TRUE ; vector.cat = FALSE ; noquote = FALSE ; sep = 2 ; safer_check = TRUE # for function debugging
+    # vec1 = letters[1:9] ;  data = table(vec1, vec1) ; output = "log.txt" ; path = "C:/Users/gmillot/Desktop" ; overwrite = TRUE ; rownames.kept = TRUE ; vector.cat = FALSE ; noquote = FALSE ; sep = 2 ; safer_check = TRUE # for function debugging
     
     #### package name
     package_name <- "saferDev"# write NULL if the function developed is not in a package

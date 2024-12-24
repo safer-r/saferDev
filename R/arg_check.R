@@ -17,7 +17,7 @@
 #' @param data_name Single character string indicating the name of the object to test. If NULL, use what is assigned to the data argument for the returned message.
 #' @param fun_name Single character string indicating the name of the function checked (i.e., when arg_check() is used to check the arguments of this function). If non-null, the value of fun_name will be added into the message returned by arg_check().
 #' @param pack_name Single character string indicating the name of the package of fun_name. If non-null, the value of pack_name will be added into the message returned by arg_check().
-#' @param safer_check Single logical value. Perform some "safer" checks (see https://github.com/safer-r)? If TRUE, checkings are performed before main code running: 1) R classical operators (like "<-") not overwritten by another package because of the R scope and 2) required functions and related packages effectively present in local R lybraries. Must be set to FALSE if this fonction is used inside another "safer" function to avoid pointless multiple checkings.
+#' @param safer_check Single logical value. Perform some "safer" checks? If TRUE, checkings are performed before main code running (see https://github.com/safer-r): 1) R classical operators (like "<-") not overwritten by another package because of the R scope and 2) required functions and related packages effectively present in local R lybraries. Must be set to FALSE if this fonction is used inside another "safer" function to avoid pointless multiple checkings.
 #' @returns 
 #' A list containing:
 #' 

@@ -35,6 +35,7 @@ testthat::test_that("colons_check()", {
 
   # Test cases
   # Simple examples
+    testthat::expect_error(saferDev::colons_check(caca = "a")) # not a correct argument
     testthat::expect_no_error(saferDev::colons_check(x = fun1))
     testthat::expect_no_error(saferDev::colons_check(x = fun2))
     testthat::expect_no_error(saferDev::colons_check(x = fun2, safer_check = TRUE))

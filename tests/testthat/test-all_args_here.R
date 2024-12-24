@@ -22,6 +22,7 @@ testthat::test_that("all_args_here()", {
     expected2 <- "ERROR MESSAGE REPORTED:\nError : \n\n================\n\nERROR IN all_args_here() OF THE saferDev PACKAGE\nCANNOT GET THE ARGUMENTS OF A FUNCTION THAT IS NOT ASSOCIATED TO ITS PACKAGE IN LINE 2:\n\nUseMethod(\"mean\")\n\nPLEASE, RUN saferDev::colons_check(mean) FIRST,\nADD THE MISSING <PACKAGE>::<FUNCTION> (OR <PACKAGE>:::<FUNCTION> FOR FUNCTION STARTING BY A DOT)\nAND RERUN saferDev::all_args_here(mean)\n\n================\n\n\n"
     testthat::expect_equal(result2, expected2)
 
+    testthat::expect_error(saferDev::all_args_here(caca = "a")) # not a correct argument
     testthat::expect_error(saferDev::all_args_here(x = "a"))
     testthat::expect_error(saferDev::all_args_here(x = test2, export = "a"))
     testthat::expect_error(saferDev::all_args_here(x = test2, path_out = 1))
