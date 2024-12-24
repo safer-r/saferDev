@@ -37,86 +37,86 @@ testthat::test_that("report()", {
         data = string1, 
         path = ".",
         vector.cat = FALSE, 
-        safer_check = FALSE # do not set to TRUE because test_that() in CI does not like the package presence checking
+        safer_check = TRUE 
         ))
     testthat::expect_no_error(saferDev::report(
         data = string1, 
         path = ".",
         vector.cat = TRUE, 
-        safer_check = FALSE # do not set to TRUE because test_that() in CI does not like the package presence checking
+        safer_check = FALSE 
         ))
     testthat::expect_no_error(saferDev::report(
         data = vec1, 
         path = ".",
-        safer_check = FALSE # do not set to TRUE because test_that() in CI does not like the package presence checking
+        safer_check = FALSE 
         ))
     testthat::expect_no_error(saferDev::report(
         data = vec2, 
         path = ".",
-        safer_check = FALSE # do not set to TRUE because test_that() in CI does not like the package presence checking
+        safer_check = FALSE 
         ))
     testthat::expect_no_error(saferDev::report(
         data = vec3, 
         path = ".",
-        safer_check = FALSE # do not set to TRUE because test_that() in CI does not like the package presence checking
+        safer_check = FALSE 
         ))
     testthat::expect_no_error(saferDev::report(
         data = vec3, 
         path = ".", 
         rownames.kept = TRUE,
-        safer_check = FALSE # do not set to TRUE because test_that() in CI does not like the package presence checking
+        safer_check = FALSE 
         ))
     testthat::expect_no_error(saferDev::report(
         data = mat1, 
         path = ".",
-        safer_check = FALSE # do not set to TRUE because test_that() in CI does not like the package presence checking
+        safer_check = FALSE 
         ))
     testthat::expect_no_error(saferDev::report(
         data = mat1, 
         path = ".", 
         rownames.kept = TRUE,
         noquote = TRUE, 
-        safer_check = FALSE # do not set to TRUE because test_that() in CI does not like the package presence checking
+        safer_check = FALSE 
         ))
     testthat::expect_no_error(saferDev::report(
         data = mat1, 
         path = ".", 
         rownames.kept = TRUE,
         noquote = FALSE, 
-        safer_check = FALSE # do not set to TRUE because test_that() in CI does not like the package presence checking
+        safer_check = FALSE 
         ))
     testthat::expect_no_error(saferDev::report(
         data = mat2, 
         path = ".", 
         rownames.kept = TRUE,
-        safer_check = FALSE # do not set to TRUE because test_that() in CI does not like the package presence checking
+        safer_check = FALSE 
         ))
     testthat::expect_no_error(saferDev::report(
         data = t1, 
         path = ".",
-        safer_check = FALSE # do not set to TRUE because test_that() in CI does not like the package presence checking
+        safer_check = FALSE 
         ))
     testthat::expect_no_error(saferDev::report(
         data = t1, 
         path = ".", 
         rownames.kept = TRUE,
-        safer_check = FALSE # do not set to TRUE because test_that() in CI does not like the package presence checking
+        safer_check = FALSE 
         ))
     testthat::expect_no_error(saferDev::report(
         data = t2, 
         path = ".",
-        safer_check = FALSE # do not set to TRUE because test_that() in CI does not like the package presence checking
+        safer_check = FALSE 
         ))
     testthat::expect_no_error(saferDev::report(
         data = t2, 
         path = ".", 
         rownames.kept = TRUE,
-        safer_check = FALSE # do not set to TRUE because test_that() in CI does not like the package presence checking
+        safer_check = FALSE 
         ))
     testthat::expect_no_error(saferDev::report(
         data = l1, 
         path = ".",
-        safer_check = FALSE # do not set to TRUE because test_that() in CI does not like the package presence checking
+        safer_check = FALSE 
         ))
     testthat::expect_no_error(saferDev::report(
           data = mat1, 
@@ -127,7 +127,7 @@ testthat::test_that("report()", {
           vector.cat = TRUE, 
           noquote = FALSE, 
           sep = 4,
-          safer_check = FALSE # do not set to TRUE because test_that() in CI does not like the package presence checking
+          safer_check = TRUE 
     ))
 
 })
