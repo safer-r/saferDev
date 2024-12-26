@@ -56,11 +56,11 @@ colons_check <- function(
     # function_name <- "colons_check" ; arg_user_setting = base::list(x = as.name(x = "FUN1"), safer_check = TRUE)
 
     #### package name
-    package_name <- "saferDev"# write NULL if the function developed is not in a package
+    package_name <- "saferDev" # write NULL if the function developed is not in a package
     #### end package name
 
     #### internal error report link
-    internal_error_report_link <- base::paste0("https://github.com/safer-r/", package_name, "/issues/new", collapse = NULL, recycle0 = FALSE) # link where to post an issue indicated in a internal error message. Write NULL if no link to propose or no internal error message
+    internal_error_report_link <- base::paste0("https://github.com/safer-r/", package_name, "/issues/new", collapse = NULL, recycle0 = FALSE) # link where to post an issue indicated in an internal error message. Write NULL if no link to propose, or no internal error message
     #### end internal error report link
 
     #### function name
