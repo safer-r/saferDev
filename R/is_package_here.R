@@ -181,6 +181,9 @@ is_package_here <- function(
     ######## warning initiation
     ######## end warning initiation
     
+    ######## graphic device checking
+    ######## end graphic device checking
+
     ######## other checkings
     ######## end other checkings
 

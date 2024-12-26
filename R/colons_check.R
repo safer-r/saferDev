@@ -181,6 +181,9 @@ colons_check <- function(
     ######## warning initiation
     ######## end warning initiation
 
+    ######## graphic device checking
+    ######## end graphic device checking
+
     ######## other checkings
     ######## end other checkings
 
@@ -285,10 +288,31 @@ colons_check <- function(
         cat_other <- NULL
     }
     # end analyse of :: before basic functions in x
-    if(( ! base::any(log_basic, na.rm = TRUE)) & ! base::any(log_other, na.rm = TRUE)){
-        tempo.cat <- base::paste0("AFTER RUNNING ", function_name, " OF THE ", package_name, " PACKAGE:\nINSIDE ", base::as.character(x = out$arg_user_setting$x), ", EVERYTHING SEEMS CLEAN", collapse = NULL, recycle0 = FALSE)
+    tempo.cat <- base::paste0("AFTER RUNNING ", function_name, " OF THE ", package_name, " PACKAGE.\nINSIDE ", base::as.character(x = out$arg_user_setting$x), collapse = NULL, recycle0 = FALSE)
+    if( ! (base::all(log_basic, na.rm = TRUE) & base::all(log_other, na.rm = TRUE))){
+        tempo.cat <- base::paste0(tempo.cat, ", EVERYTHING SEEMS CLEAN.", collapse = NULL, recycle0 = FALSE)
     }else{
-        tempo.cat <- base::paste0(base::ifelse(test = base::is.null(x = cat_basic), yes = base::paste0("AFTER RUNNING ", function_name, " OF THE ", package_name, " PACKAGE\n\nINSIDE ", out$arg_user_setting$x, ", EVERYTHING SEEMS CLEAN FOR R BASIC FUNCTIONS\n\n", collapse = NULL, recycle0 = FALSE), no = base::paste0(cat_basic, base::ifelse(test = base::is.null(x = cat_other), yes =  "", no =  "\n\n"), collapse = NULL, recycle0 = FALSE)), cat_other, collapse = NULL, recycle0 = FALSE)
+        tempo.cat <- base::paste0(
+            base::ifelse(
+                test = base::is.null(x = cat_basic), 
+                yes = base::paste0(
+                    tempo.cat, 
+                    ", EVERYTHING SEEMS CLEAN",
+                    base::ifelse(test = base::is.null(x = cat_other), yes =  ".", no =  "FOR R BASIC FUNCTIONS.\n\n"), 
+                    collapse = NULL, 
+                    recycle0 = FALSE
+                ), 
+                no = base::paste0(
+                    cat_basic, 
+                    base::ifelse(test = base::is.null(x = cat_other), yes =  "", no =  "\n\n"), 
+                    collapse = NULL, 
+                    recycle0 = FALSE
+                )
+            ), 
+            cat_other, 
+            collapse = NULL, 
+            recycle0 = FALSE
+        )
     }
     base::cat(base::paste0("\n\n", tempo.cat, "\n\n", collapse = NULL, recycle0 = FALSE), file = "", sep = " ", fill = FALSE, labels = NULL, append = FALSE)
     #### end main code

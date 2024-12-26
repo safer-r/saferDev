@@ -199,6 +199,9 @@ report <- function(
     ######## warning initiation
     ######## end warning initiation
 
+    ######## graphic device checking
+    ######## end graphic device checking
+
     ######## other checkings
     if( ! base::all(base::dir.exists(path), na.rm = TRUE)){
         tempo.cat <- base::paste0("ERROR IN ", function_name, " OF THE ", package_name, " PACKAGE\npath ARGUMENT DOES NOT CORRESPOND TO EXISTING DIRECTORY\n", base::paste(path, collapse = "\n"))
