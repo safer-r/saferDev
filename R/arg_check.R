@@ -16,7 +16,7 @@
 #' @param print Single logical value. Print the message if $problem is TRUE? Warning: set by default to FALSE, which facilitates the control of the checking message output when using arg_check() inside functions. See the example section.
 #' @param data_name Single character string indicating the name of the object to test. If NULL, use what is assigned to the data argument for the returned message.
 #' @param safer_check Single logical value. Perform some "safer" checks? If TRUE, checkings are performed before main code running (see https://github.com/safer-r): 1) R classical operators (like "<-") not overwritten by another package because of the R scope and 2) required functions and related packages effectively present in local R lybraries. Must be set to FALSE if this fonction is used inside another "safer" function to avoid pointless multiple checkings.
-#'  @param error_text Single character string used to add information in error messages returned by the function, notably if the function is inside other functions, which is practical for debugging. Example: error_text = "INSIDE <PACKAGE_1>::<FUNCTION_1> INSIDE <PACKAGE_2>::<FUNCTION_2>".
+#' @param error_text Single character string used to add information in error messages returned by the function, notably if the function is inside other functions, which is practical for debugging. Example: error_text = "INSIDE <PACKAGE_1>::<FUNCTION_1> INSIDE <PACKAGE_2>::<FUNCTION_2>".
 #' @returns 
 #' A list containing:
 #' 
@@ -43,7 +43,11 @@
 #' @author Haiding Wang <wanghaiding442@gmail.com>
 #' @examples
 #' test <- matrix(1:3)
-#' # arg_check(data = test, print = TRUE, class = "vector", mode = "numeric")  # commented because this example returns an error
+#' \dontrun{ # Example that return an error
+#' arg_check(data = test, print = TRUE, class = "vector", mode = "numeric")  # commented because this example returns an error
+#' }
+#' arg_check(data = test, print = TRUE, class = "matrix", mode = "numeric")
+#' arg_check(data = test, print = TRUE, class = "matrix", mode = "numeric", error_text = "BY saferDev::arg_check()")
 #' @export
 arg_check <- function(
     data, 
@@ -644,7 +648,7 @@ arg_check <- function(
         "NO PROBLEM DETECTED FOR THE ", 
         data_name, 
         " OBJECT",
-        base::ifelse(test = error_text == "", yes = ".", no = error_text)
+        base::ifelse(test = error_text == "", yes = ".", no = base::paste0(" ", error_text, collapse = NULL, recycle0 = FALSE))
     )
     if(( ! base::is.null(options)) & (base::all(base::typeof(data) == "character") | base::all(base::typeof(data) == "integer") | base::all(base::typeof(data) == "double"))){ # base::all() without na.rm -> ok because base::typeof() never returns NA
         test.log <- TRUE
@@ -696,7 +700,7 @@ arg_check <- function(
                     "NO PROBLEM DETECTED FOR THE ", 
                     data_name, 
                     " OBJECT",
-                    base::ifelse(test = error_text == "", yes = ".", no = error_text)
+                    base::ifelse(test = error_text == "", yes = ".", no = base::paste0(" ", error_text, collapse = NULL, recycle0 = FALSE))
                 )
             }
         }
@@ -718,7 +722,7 @@ arg_check <- function(
                 # script to execute
                 tempo.script <- '
                     problem <- TRUE ;
-                    if(base::identical(text, base::paste0("NO PROBLEM DETECTED FOR THE ", data_name, " OBJECT", base::ifelse(test = error_text == "", yes = ".", no = error_text)))){
+                    if(base::identical(text, base::paste0("NO PROBLEM DETECTED FOR THE ", data_name, " OBJECT", base::ifelse(test = error_text == "", yes = ".", no = base::paste0(" ", error_text, collapse = NULL, recycle0 = FALSE))))){
                         text <- base::paste0("ERROR", base::ifelse(test = error_text == "", yes = "", no = base::paste0(" ", error_text)), "\nTHE ", data_name, " OBJECT MUST BE ") ;
                     }else{
                         text <- base::paste0(text, " AND ") ; 
@@ -743,7 +747,7 @@ arg_check <- function(
     if(prop == TRUE & base::all(base::typeof(data) == "double")){ # base::all() without na.rm -> ok because base::typeof(NA) is "logical"
         if(base::is.null(data) | base::any(data < 0 | data > 1, na.rm = TRUE)){ # works if data base::is.null # Warning: na.rm = TRUE required here for base::any() # base::typeof(data) == "double" means no factor allowed
             problem <- TRUE
-            if(base::identical(text, base::paste0("NO PROBLEM DETECTED FOR THE ", data_name, " OBJECT", base::ifelse(test = error_text == "", yes = ".", no = error_text)))){
+            if(base::identical(text, base::paste0("NO PROBLEM DETECTED FOR THE ", data_name, " OBJECT", base::ifelse(test = error_text == "", yes = ".", no = base::paste0(" ", error_text, collapse = NULL, recycle0 = FALSE))))){
                 text <- base::paste0("ERROR", base::ifelse(test = error_text == "", yes = "", no = base::paste0(" ", error_text)), "\n")
             }else{
                 text <- base::paste0(text, " AND ")
@@ -752,7 +756,7 @@ arg_check <- function(
         }
     }else if(prop == TRUE){
         problem <- TRUE
-        if(base::identical(text, base::paste0("NO PROBLEM DETECTED FOR THE ", data_name, " OBJECT", base::ifelse(test = error_text == "", yes = ".", no = error_text)))){
+        if(base::identical(text, base::paste0("NO PROBLEM DETECTED FOR THE ", data_name, " OBJECT", base::ifelse(test = error_text == "", yes = ".", no = base::paste0(" ", error_text, collapse = NULL, recycle0 = FALSE))))){
             text <- base::paste0("ERROR", base::ifelse(test = error_text == "", yes = "", no = base::paste0(" ", error_text)), "\n")
         }else{
             text <- base::paste0(text, " AND ")
@@ -765,7 +769,7 @@ arg_check <- function(
     if(na_contain == FALSE & (base::mode(data) %in% base::c("logical", "numeric", "complex", "character", "list"))){ # before it was ! (base::class(data) %in% base::c("function", "environment"))
         if(base::any(base::is.na(data)) == TRUE){ # not on the same line because when data is class envir or function , do not like that # normally no NA with base::is.na()
             problem <- TRUE
-            if(base::identical(text, base::paste0("NO PROBLEM DETECTED FOR THE ", data_name, " OBJECT", base::ifelse(test = error_text == "", yes = ".", no = error_text)))){
+            if(base::identical(text, base::paste0("NO PROBLEM DETECTED FOR THE ", data_name, " OBJECT", base::ifelse(test = error_text == "", yes = ".", no = base::paste0(" ", error_text, collapse = NULL, recycle0 = FALSE))))){
                 text <- base::paste0("ERROR", base::ifelse(test = error_text == "", yes = "", no = base::paste0(" ", error_text)), "\n")
             }else{
                 text <- base::paste0(text, " AND ")
@@ -776,7 +780,7 @@ arg_check <- function(
     if(neg_values == FALSE & base::all(base::mode(data) %in% "numeric") & ! base::any(base::class(data) %in% "factor")){ # no need of na.rm = TRUE for base::all() because %in% does not output NA
         if(base::any(data < 0, na.rm = TRUE)){ # Warning: na.rm = TRUE required here for base::any()
             problem <- TRUE
-            if(base::identical(text, base::paste0("NO PROBLEM DETECTED FOR THE ", data_name, " OBJECT", base::ifelse(test = error_text == "", yes = ".", no = error_text)))){
+            if(base::identical(text, base::paste0("NO PROBLEM DETECTED FOR THE ", data_name, " OBJECT", base::ifelse(test = error_text == "", yes = ".", no = base::paste0(" ", error_text, collapse = NULL, recycle0 = FALSE))))){
                 text <- base::paste0("ERROR", base::ifelse(test = error_text == "", yes = "", no = base::paste0(" ", error_text)), "\n")
             }else{
                 text <- base::paste0(text, " AND ")
@@ -785,7 +789,7 @@ arg_check <- function(
         }
     }else if(neg_values == FALSE){
         problem <- TRUE
-        if(base::identical(text, base::paste0("NO PROBLEM DETECTED FOR THE ", data_name, " OBJECT", base::ifelse(test = error_text == "", yes = ".", no = error_text)))){
+        if(base::identical(text, base::paste0("NO PROBLEM DETECTED FOR THE ", data_name, " OBJECT", base::ifelse(test = error_text == "", yes = ".", no = base::paste0(" ", error_text, collapse = NULL, recycle0 = FALSE))))){
             text <- base::paste0("ERROR", base::ifelse(test = error_text == "", yes = "", no = base::paste0(" ", error_text)), "\n")
         }else{
             text <- base::paste0(text, " AND ")
@@ -795,7 +799,7 @@ arg_check <- function(
     if(inf_values == FALSE & base::all(base::typeof(data) %in% "double") & ! base::any(base::class(data) %in% "factor")){ # no need of na.rm = TRUE for base::all() because %in% does not output NA
         if(base::any(base::is.infinite(data), na.rm = TRUE)){ # Warning: na.rm = TRUE required here for base::any()
             problem <- TRUE
-            if(base::identical(text, base::paste0("NO PROBLEM DETECTED FOR THE ", data_name, " OBJECT", base::ifelse(test = error_text == "", yes = ".", no = error_text)))){
+            if(base::identical(text, base::paste0("NO PROBLEM DETECTED FOR THE ", data_name, " OBJECT", base::ifelse(test = error_text == "", yes = ".", no = base::paste0(" ", error_text, collapse = NULL, recycle0 = FALSE))))){
                 text <- base::paste0("ERROR", base::ifelse(test = error_text == "", yes = "", no = base::paste0(" ", error_text)), "\n")
             }else{
                 text <- base::paste0(text, " AND ")
@@ -804,7 +808,7 @@ arg_check <- function(
         }
     }else if(inf_values == FALSE){
         problem <- TRUE
-        if(base::identical(text, base::paste0("NO PROBLEM DETECTED FOR THE ", data_name, " OBJECT", base::ifelse(test = error_text == "", yes = ".", no = error_text)))){
+        if(base::identical(text, base::paste0("NO PROBLEM DETECTED FOR THE ", data_name, " OBJECT", base::ifelse(test = error_text == "", yes = ".", no = base::paste0(" ", error_text, collapse = NULL, recycle0 = FALSE))))){
             text <- base::paste0("ERROR", base::ifelse(test = error_text == "", yes = "", no = base::paste0(" ", error_text)), "\n")
         }else{
             text <- base::paste0(text, " AND ")
