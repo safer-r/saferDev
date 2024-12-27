@@ -57,7 +57,7 @@
     # basic error text start
     error_text_start <- base::paste0(
         "ERROR IN ", 
-        base::ifelse(test = base::is.null(x = package_name), yes = "", no = base::paste0(package_name, base::ifelse(test = grepl(x = function_name, pattern = "^\\."), yes = ":::", no = "::"), collapse = NULL, recycle0 = FALSE)), 
+        base::ifelse(test = base::is.null(x = package_name), yes = "", no = base::paste0(package_name, base::ifelse(test = base::grepl(x = function_name, pattern = "^\\.", ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE), yes = ":::", no = "::"), collapse = NULL, recycle0 = FALSE)), 
         function_name, 
         collapse = NULL, 
         recycle0 = FALSE
@@ -86,7 +86,7 @@
     # end basic error text start updated
     # internal error text
     intern_error_text_start <- base::paste0(
-        base::ifelse(test = base::is.null(x = package_name), yes = "", no = base::paste0(package_name, base::ifelse(test = grepl(x = function_name, pattern = "^\\."), yes = ":::", no = "::"), collapse = NULL, recycle0 = FALSE)), 
+        base::ifelse(test = base::is.null(x = package_name), yes = "", no = base::paste0(package_name, base::ifelse(test = base::grepl(x = function_name, pattern = "^\\.", ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE), yes = ":::", no = "::"), collapse = NULL, recycle0 = FALSE)), 
         function_name, 
         base::ifelse(test = error_text == "", yes = ".", no = error_text), 
         "\n\n", 

@@ -158,7 +158,7 @@ all_args_here <- function(
         base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL) # == in base::stop() to be able to add several messages between ==
     }
     if(safer_check == TRUE){
-        .base_op_check(
+        saferDev:::.base_op_check(
             error_text = base::sub(pattern = "^ERROR IN ", replacement = " INSIDE ", x = error_text_start, ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE)
         )
     }
@@ -209,8 +209,8 @@ all_args_here <- function(
                 "saferDev:::.all_args_here_fill"
             ),
             lib_path = lib_path, # write NULL if your function does not have any lib_path argument
-            external_function_name = function_name,
-            external_package_name = package_name, 
+            safer_check = FALSE, # TRUE only when .pack_and_function_check() is not used inside safer function
+            error_text = base::sub(pattern = "^ERROR IN ", replacement = " INSIDE ", x = error_text_start, ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE), 
             internal_error_report_link = internal_error_report_link
         )
     }
