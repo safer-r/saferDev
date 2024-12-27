@@ -255,62 +255,62 @@
     #### main code
     # check of lib_path
     # full check already done in the main function
-    if(base::is.null(lib_path)){
+    if(base::is.null(x = lib_path)){
         lib_path <- base:::.libPaths(new = , include.site = TRUE) # base::.libPaths(new = lib_path) # or base::.libPaths(new = c(base::.libPaths(), lib_path))
     }
     # end check of lib_path
-    tempo.log <- base::grepl(x = fun, pattern = "^[a-zA-Z][a-zA-Z0-9.]*(:{2}[a-zA-Z]|:{3}\\.[a-zA-Z._])[a-zA-Z0-9._]*$")
+    tempo.log <- base::grepl(x = fun, pattern = "^[a-zA-Z][a-zA-Z0-9.]*(:{2}[a-zA-Z]|:{3}\\.[a-zA-Z._])[a-zA-Z0-9._]*$", ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE)
     # [a-zA-Z][a-zA-Z0-9.]+ means any single alphabet character (package name cannot start by dot or underscore or num), then any alphanum and dots
     # (:{2}[a-zA-Z]|:{3}\\.[a-zA-Z._]) means either double colon and any single alphabet character or triple colon followed by a dot and any single alphabet character or dot (because .. is ok for function name) or underscore (because ._ is ok for function name). Starting "dot and num" or underscore is not authorized for function name
     # [a-zA-Z0-9._]* means any several of these characters or nothing
-    if( ! base::all(tempo.log)){
+    if( ! base::all(tempo.log, na.rm = TRUE)){
         tempo.cat <- base::paste0(
             "INTERNAL ERROR 1 IN ", 
             intern_error_text_start, 
             " OF THE ", external_package_name, 
             "THE STRING IN fun ARGUMENT MUST CONTAIN \"::\" OR \":::.\":\n", 
-            base::paste(fun[ ! tempo.log], collapse = "\n"), 
+            base::paste0(fun[ ! tempo.log], collapse = "\n", recycle0 = FALSE), 
             intern_error_text_end, 
             collapse = NULL, 
             recycle0 = FALSE
         )
-        base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
+        base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL) # == in base::stop() to be able to add several messages between ==
     }
-    pkg.fun.name.list <- base::strsplit(x = fun, split = ":{2,3}") # package in 1 and function in 2
-    pkg.name <- base::sapply(X = pkg.fun.name.list, FUN = function(x){x[1]})
-    pkg.log <- pkg.name %in% base::rownames(utils::installed.packages(lib.loc = lib_path))
-    if( ! base::all(pkg.log)){
+    pkg.fun.name.list <- base::strsplit(x = fun, split = ":{2,3}", fixed = FALSE, perl = FALSE, useBytes = FALSE) # package in 1 and function in 2
+    pkg.name <- base::sapply(X = pkg.fun.name.list, FUN = function(x){x[1]}, simplify = TRUE, USE.NAMES = TRUE)
+    pkg.log <- pkg.name %in% base::rownames(x = utils::installed.packages(lib.loc = lib_path, priority = NULL, noCache = FALSE, fields = NULL, subarch =  base::.Platform$r_arch), do.NULL = TRUE, prefix = "row")
+    if( ! base::all(pkg.log, na.rm = TRUE)){
         tempo <- pkg.name[ ! pkg.log]
         tempo.cat <- base::paste0(
             error_text_start,
             "REQUIRED PACKAGE", 
-            base::ifelse(base::length(tempo) == 1L, base::paste0(":\n", tempo), base::paste0("S:\n", base::paste(tempo, collapse = "\n"))), 
+            base::ifelse(test = base::length(x = tempo) == 1L, yes = base::paste0(":\n", tempo, collapse = NULL, recycle0 = FALSE), no = base::paste0("S:\n", base::paste0(tempo, collapse = "\n", recycle0 = FALSE), collapse = NULL, recycle0 = FALSE)), 
             "\nMUST BE INSTALLED IN", 
-            base::ifelse(base::length(lib_path) == 1L, "", " ONE OF THESE FOLDERS"), 
+            base::ifelse(test = base::length(x = lib_path) == 1L, yes = "", no = " ONE OF THESE FOLDERS"), 
             ":\n", 
             base::paste0(lib_path, collapse = "\n", recycle0 = FALSE),
             collapse = NULL, 
             recycle0 = FALSE
         )
-        base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
+        base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL) # == in base::stop() to be able to add several messages between ==
     }
-    fun.log <- base::sapply(X = pkg.fun.name.list, FUN = function(x){base::exists(x[2], envir = base::getNamespace(x[1]), inherits = FALSE)})
-    if( ! base::all(fun.log)){
+    fun.log <- base::sapply(X = pkg.fun.name.list, FUN = function(x){base::exists(x = x[2], envir = base::getNamespace(name = x[1]), where = -1, frame = NULL, mode = "any", inherits = FALSE)}, simplify = TRUE, USE.NAMES = TRUE)
+    if( ! base::all(fun.log, na.rm = TRUE)){
         tempo <- fun[ ! fun.log]
         tempo.cat <- base::paste0(
             error_text_start,
             "REQUIRED FUNCTION",
-            base::ifelse(base::length(tempo) == 1L, " IS ", "S ARE "), 
+            base::ifelse(test = base::length(x = tempo) == 1L, yes = " IS ", no = "S ARE "), 
             "MISSING IN THE INSTALLED PACKAGE", 
-            base::ifelse(base::length(tempo) == 1L, base::paste0(":\n", tempo), base::paste0("S:\n", base::paste(tempo, collapse = "\n"))),
+            base::ifelse(test = base::length(x = tempo) == 1L, yes = base::paste0(":\n", tempo, collapse = NULL, recycle0 = FALSE), no = base::paste0("S:\n", base::paste0(tempo, collapse = "\n", recycle0 = FALSE), collapse = NULL, recycle0 = FALSE)),
             "\n\nIN", 
-            base::ifelse(base::length(lib_path) == 1L, "", " ONE OF THESE FOLDERS"), 
+            base::ifelse(test = base::length(x = lib_path) == 1L, yes = "", no = " ONE OF THESE FOLDERS"), 
             ":\n", 
             base::paste0(lib_path, collapse = "\n", recycle0 = FALSE),
             collapse = NULL, 
             recycle0 = FALSE
         )
-        base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
+        base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL) # == in base::stop() to be able to add several messages between ==
     }
     #### end main code
 }
