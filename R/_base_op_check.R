@@ -10,7 +10,8 @@
 #' @examples
 #' \dontrun{
 #' # Example that shouldn't be run because this is an internal function
-#' assign("!", 1) ; .base_op_check(external_function_name = "fun1") # commented because this example returns an error
+#' assign("!", 1) ; assign("+", 2) ; .base_op_check(error_text = " INSIDE fun1.")
+#' rm("!") ; rm("+") # commented because this example returns an error
 #' }
 #' @keywords internal
 #' @rdname internal_function
@@ -43,8 +44,8 @@
     # basic error text start
     error_text_start <- base::paste0(
         "ERROR IN ", 
+        base::ifelse(test = base::is.null(x = package_name), yes = "", no = base::paste0(package_name, base::ifelse(test = base::grepl(x = function_name, pattern = "^\\.", ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE), yes = ":::", no = "::"), collapse = NULL, recycle0 = FALSE)), 
         function_name, 
-        base::ifelse(test = base::is.null(x = package_name), yes = "", no = base::paste0(" OF THE ", package_name, " PACKAGE", collapse = NULL, recycle0 = FALSE)), 
         collapse = NULL, 
         recycle0 = FALSE
     )
@@ -205,23 +206,24 @@
         "repeat"
     )
     tempo.log <- base::sapply(X = reserved.objects, FUN = function(x){ 
-        if( ! base::all(utils::find(x) == "package:base")){
+        if( ! base::all(utils::find(what = x, mode = "any", numeric = FALSE, simple.words = TRUE) == "package:base", na.rm = TRUE)){
             base::return(TRUE)
         }else{
             base::return(FALSE)
         }
-    })
-    if(base::any(tempo.log)){
+    }, simplify = TRUE, USE.NAMES = TRUE)
+    if(base::any(tempo.log, na.rm = TRUE)){
         tempo.name <-  reserved.objects[tempo.log]
-        tempo.pos <- base::sapply(X = tempo.name, FUN = function(x){base::paste(utils::find(x), collapse = " ")})
+        tempo.pos <- base::sapply(X = tempo.name, FUN = function(x){base::paste(utils::find(what = x, mode = "any", numeric = FALSE, simple.words = TRUE), collapse = " ",  sep =  " ", recycle0 = FALSE)}, simplify = TRUE, USE.NAMES = TRUE)
         tempo.cat <- base::paste0(
             error_text_start,
             "CRITICAL R OBJECT",
-            base::ifelse(base::length(tempo.log) == 1L, " ", "S "), 
-            "CANNOT BE PRESENT SOMEWHERE ELSE IN THE R SCOPE THAN IN \"package::base\":\n", 
-            base::paste(base::paste(tempo.name, tempo.pos, sep = "\t"), collapse = "\n")
+            base::ifelse(test = base::length(x = tempo.log) == 1L, yes = " ", no = "S "), 
+            "CANNOT BE PRESENT SOMEWHERE ELSE IN THE R SCOPE THAN IN \"package::base\".\nPROBLEM WITH:\n", 
+            base::paste0(base::paste(tempo.name, tempo.pos, sep = "\t", collapse = NULL, recycle0 = FALSE), collapse = "\n", recycle0 = FALSE),
+            collapse = NULL, recycle0 = FALSE
         )
-        base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
+        base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL) # == in base::stop() to be able to add several messages between ==
     }
     # end main code
 }

@@ -102,12 +102,20 @@ all_args_here <- function(
     arg_names <- base::names(x = base::formals(fun = base::sys.function(which = base::sys.parent(n = 2)), envir = base::parent.frame(n = 1))) # names of all the arguments
     #### end arguments settings
 
-    ######## check of error_text
+    #### error_text initiation
+    # basic error text start
+    error_text_start <- base::paste0(
+        "ERROR IN ", 
+        function_name, 
+        base::ifelse(test = base::is.null(x = package_name), yes = "", no = base::paste0(" OF THE ", package_name, " PACKAGE", collapse = NULL, recycle0 = FALSE)), 
+        collapse = NULL, 
+        recycle0 = FALSE
+    )
+    # end basic error text start
+    # check of the error_text argument
     if( ! (base::all(base::typeof(x = error_text) == "character", na.rm = TRUE) & base::length(x = error_text) == 1)){ # no need to test is.null(error_text) because typeof(x = NULL) == "character" returns FALSE
         tempo_cat <- base::paste0(
-            "ERROR IN ", 
-            function_name, 
-            base::ifelse(test = base::is.null(x = package_name), yes = "", no = base::paste0(" OF THE ", package_name, " PACKAGE", collapse = NULL, recycle0 = FALSE)), 
+            error_text_start, 
             "\nTHE error_text ARGUMENT MUST BE A SINGLE CHARACTER STRING (CAN BE \"\").\nHERE IT IS:\n", 
             base::paste0(error_text, collapse = "\n", recycle0 = FALSE), 
             collapse = NULL, 
@@ -115,16 +123,34 @@ all_args_here <- function(
         )
         base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL) # == in base::stop() to be able to add several messages between ==
     }
-    ######## end check of error_text
+    # end check of the error_text argument
+    # basic error text start updated
+    error_text_start <- base::paste0(
+        error_text_start, 
+        base::ifelse(test = error_text == "", yes = ".", no = error_text), 
+        "\n\n", 
+        collapse = NULL, 
+        recycle0 = FALSE
+    )
+    # end basic error text start updated
+    # internal error text
+    intern_error_text_start <- base::paste0(
+        function_name, 
+        base::ifelse(test = base::is.null(x = package_name), yes = "", no = base::paste0(" OF THE ", package_name, " PACKAGE", collapse = NULL, recycle0 = FALSE)), 
+        base::ifelse(test = error_text == "", yes = ".", no = error_text), 
+        "\n\n", 
+        collapse = NULL, 
+        recycle0 = FALSE
+    )
+    intern_error_text_end <- base::ifelse(test = base::is.null(x = internal_error_report_link), yes = "", no = base::paste0("\n\nPLEASE, REPORT THIS ERROR HERE: ", internal_error_report_link, ".", collapse = NULL, recycle0 = FALSE))
+    # end internal error text
+    #### end error_text initiation
 
     #### critical operator checking
     if( ! (base::all(safer_check %in% base::c(TRUE, FALSE), na.rm = FALSE) & base::length(x = safer_check) == 1 & base::all(base::is.logical(x = safer_check), na.rm = TRUE))){
         tempo_cat <- base::paste0(
-            "ERROR IN ", 
-            function_name, 
-            base::ifelse(test = base::is.null(x = package_name), yes = "", no = base::paste0(" OF THE ", package_name, " PACKAGE", collapse = NULL, recycle0 = FALSE)), 
-            base::ifelse(test = error_text == "", yes = ".", no = error_text), 
-            "\nsafer_check ARGUMENT MUST BE EITHER TRUE OR FALSE.\nHER IT IS:\n", 
+            error_text_start, 
+            "safer_check ARGUMENT MUST BE EITHER TRUE OR FALSE.\nHER IT IS:\n", 
             base::paste0(safer_check, collapse = "\n", recycle0 = FALSE), 
             collapse = NULL, 
             recycle0 = FALSE
@@ -132,9 +158,8 @@ all_args_here <- function(
         base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL) # == in base::stop() to be able to add several messages between ==
     }
     if(safer_check == TRUE){
-        saferDev:::.base_op_check(
-            external_function_name = function_name, 
-            external_package_name = package_name
+        .base_op_check(
+            error_text = base::sub(pattern = "^ERROR IN ", replacement = " INSIDE ", x = error_text_start, ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE)
         )
     }
     #### end critical operator checking
@@ -145,11 +170,8 @@ all_args_here <- function(
     if( ! base::is.null(x = lib_path)){
         if( ! base::all(base::typeof(x = lib_path) == "character", na.rm = FALSE)){ # no na.rm = TRUE with typeof
             tempo_cat <- base::paste0(
-                "ERROR IN ", 
-                function_name, 
-                base::ifelse(test = base::is.null(x = package_name), yes = "", no = base::paste0(" OF THE ", package_name, " PACKAGE", collapse = NULL, recycle0 = FALSE)), 
-                base::ifelse(test = error_text == "", yes = ".", no = error_text), 
-                "\nDIRECTORY PATH INDICATED IN THE lib_path ARGUMENT MUST BE A VECTOR OF CHARACTERS.\nHERE IT IS:\n", 
+                error_text_start, 
+                "DIRECTORY PATH INDICATED IN THE lib_path ARGUMENT MUST BE A VECTOR OF CHARACTERS.\nHERE IT IS:\n", 
                 base::paste0(lib_path, collapse = "\n", recycle0 = FALSE), 
                 collapse = NULL, 
                 recycle0 = FALSE
@@ -157,11 +179,8 @@ all_args_here <- function(
             base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL) # == in base::stop() to be able to add several messages between ==
         }else if( ! base::all(base::dir.exists(paths = lib_path), na.rm = TRUE)){ # separation to avoid the problem of tempo$problem == FALSE and lib_path == NA
             tempo_cat <- base::paste0(
-                "ERROR IN ", 
-                function_name, 
-                base::ifelse(test = base::is.null(x = package_name), yes = "", no = base::paste0(" OF THE ", package_name, " PACKAGE", collapse = NULL, recycle0 = FALSE)), 
-                base::ifelse(test = error_text == "", yes = ".", no = error_text), 
-                "\nDIRECTORY PATH INDICATED IN THE lib_path ARGUMENT DOES NOT EXISTS:\n", 
+                error_text_start, 
+                "DIRECTORY PATH INDICATED IN THE lib_path ARGUMENT DOES NOT EXISTS:\n", 
                 base::paste0(lib_path, collapse = "\n", recycle0 = FALSE), 
                 collapse = NULL, 
                 recycle0 = FALSE

@@ -13,7 +13,7 @@
 #' @author Haiding Wang <wanghaiding442@gmail.com>
 #' @examples
 #' \dontrun{ # Example that shouldn't be run because this is an internal function
-#' .pack_and_function_check(fun = 1) # this example returns an error
+#' .pack_and_function_check(fun = 1, error_text = " INSIDE F1.", internal_error_report_link = "") # this example returns an error
 #' .pack_and_function_check(fun = "ggplot2::notgood", lib_path = base::.libPaths(), safer_check = FALSE, error_text = " INSIDE P1::F1", internal_error_report_link = "test") # this example returns an error
 #' .pack_and_function_check(fun = c("ggplot2::geom_point", "grid::gpar"), lib_path = base::.libPaths(), safer_check = TRUE, error_text = " INSIDE P1::F1", internal_error_report_link = "test")
 #' }
@@ -30,7 +30,6 @@
     # DEBUGGING
     # fun = "ggplot2::geom_point" ; lib_path = "C:/Program Files/R/R-4.3.1/library" ; safer_check = TRUE ; error_text = "" ; internal_error_report_link = "test"
     # fun = "saferDev:::.colons_check_message" ; lib_path = "C:/Program Files/R/R-4.3.1/library" ;  ; safer_check = TRUE ; error_text = "" ; internal_error_report_link = "test"
-
 
     #### package name
     package_name <- "saferDev" # write NULL if the function developed is not in a package
@@ -58,8 +57,8 @@
     # basic error text start
     error_text_start <- base::paste0(
         "ERROR IN ", 
+        base::ifelse(test = base::is.null(x = package_name), yes = "", no = base::paste0(package_name, base::ifelse(test = grepl(x = function_name, pattern = "^\\."), yes = ":::", no = "::"), collapse = NULL, recycle0 = FALSE)), 
         function_name, 
-        base::ifelse(test = base::is.null(x = package_name), yes = "", no = base::paste0(" OF THE ", package_name, " PACKAGE", collapse = NULL, recycle0 = FALSE)), 
         collapse = NULL, 
         recycle0 = FALSE
     )
@@ -87,8 +86,8 @@
     # end basic error text start updated
     # internal error text
     intern_error_text_start <- base::paste0(
+        base::ifelse(test = base::is.null(x = package_name), yes = "", no = base::paste0(package_name, base::ifelse(test = grepl(x = function_name, pattern = "^\\."), yes = ":::", no = "::"), collapse = NULL, recycle0 = FALSE)), 
         function_name, 
-        base::ifelse(test = base::is.null(x = package_name), yes = "", no = base::paste0(" OF THE ", package_name, " PACKAGE", collapse = NULL, recycle0 = FALSE)), 
         base::ifelse(test = error_text == "", yes = ".", no = error_text), 
         "\n\n", 
         collapse = NULL, 
@@ -144,7 +143,7 @@
     checked_arg_names <- NULL # for function debbuging: used by r_debugging_tools
     ee <- base::expression(argum_check <- base::c(argum_check, tempo$problem) , text_check <- base::c(text_check, tempo$text) , checked_arg_names <- base::c(checked_arg_names, tempo$object.name))
     # add as many lines as below, for each of your arguments of your function in development
-    tempo <- saferDev::arg_check(data = fun, class = NULL, typeof = "character", mode = NULL, length = 1, prop = FALSE, double_as_integer_allowed = FALSE, options = NULL, all_options_in_data = FALSE, na_contain = TRUE, neg_values = TRUE, inf_values = TRUE, print = FALSE, data_name = NULL, safer_check = FALSE, error_text = paste0("INSIDE ", function_name, " OF THE ", package_name, " PACKAGE", collapse = NULL, recycle0 = FALSE)) ; base::eval(expr = ee, envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL)) # copy - paste this line as much as necessary
+    tempo <- saferDev::arg_check(data = fun, class = NULL, typeof = "character", mode = NULL, length = NULL, prop = FALSE, double_as_integer_allowed = FALSE, options = NULL, all_options_in_data = FALSE, na_contain = TRUE, neg_values = TRUE, inf_values = TRUE, print = FALSE, data_name = NULL, safer_check = FALSE, error_text = paste0("INSIDE ", function_name, " OF THE ", package_name, " PACKAGE", collapse = NULL, recycle0 = FALSE)) ; base::eval(expr = ee, envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL)) # copy - paste this line as much as necessary
     # lib_path already checked above
     # safer_check already checked above
     # error_text already checked above
