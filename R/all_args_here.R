@@ -45,12 +45,12 @@
 #' @examples
 #' \dontrun{ # Example that return an error
 #' all_args_here(mean)
+#' }
 #' source("https://raw.githubusercontent.com/safer-r/saferDev/main/dev/other/test2.R") ; all_args_here(test2, export = TRUE)
 #' FUN2 <- function(x, y){middle_bracket2 <- base::do.call(what = base::c, args = code_for_col, quote = FALSE, envir = base::parent.frame())}
 #' all_args_here(FUN2)
 #' source("https://raw.githubusercontent.com/safer-r/.github/refs/heads/main/profile/backbone.R")
 #' all_args_here(BACKBONE, export = TRUE)
-#' }
 #' @export
 all_args_here <- function(
     x, 
@@ -367,13 +367,31 @@ all_args_here <- function(
     ######## other checkings
     if( ! base::is.null(x = lib_path)){
         if( ! base::all(base::dir.exists(paths = lib_path), na.rm = TRUE)){
-            tempo.cat <- base::paste0("ERROR IN ", function_name, base::ifelse(test = base::is.null(x = package_name), yes = "", no = base::paste0(" OF THE ", package_name, " PACKAGE", collapse = NULL, recycle0 = FALSE)), "\nDIRECTORY PATH INDICATED IN THE lib_path ARGUMENT DOES NOT EXISTS:\n", base::paste(lib_path, sep = " ", collapse = "\n", recycle0 = FALSE), collapse = NULL, recycle0 = FALSE)
+            tempo.cat <- base::paste0(
+                "ERROR IN ", 
+                function_name, 
+                base::ifelse(test = base::is.null(x = package_name), yes = "", no = base::paste0(" OF THE ", package_name, " PACKAGE", collapse = NULL, recycle0 = FALSE)), 
+                base::ifelse(test = error_text == "", yes = ".", no = error_text), 
+                "\nDIRECTORY PATH INDICATED IN THE lib_path ARGUMENT DOES NOT EXISTS:\n", 
+                base::paste(lib_path, sep = " ", collapse = "\n", recycle0 = FALSE), 
+                collapse = NULL, 
+                recycle0 = FALSE
+            )
             base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL)
         }
     }
     if(export == TRUE){
         if( ! base::all(base::dir.exists(paths = path_out), na.rm = TRUE)){
-            tempo.cat <- base::paste0("ERROR IN ", function_name, base::ifelse(test = base::is.null(x = package_name), yes = "", no = base::paste0(" OF THE ", package_name, " PACKAGE", collapse = NULL, recycle0 = FALSE)), "\nDIRECTORY PATH INDICATED IN THE path_out ARGUMENT DOES NOT EXISTS:\n", base::paste(path_out, sep = " ", collapse = "\n", recycle0 = FALSE), collapse = NULL, recycle0 = FALSE)
+            tempo.cat <- base::paste0(
+                "ERROR IN ", 
+                function_name, 
+                base::ifelse(test = base::is.null(x = package_name), yes = "", no = base::paste0(" OF THE ", package_name, " PACKAGE", collapse = NULL, recycle0 = FALSE)),
+                base::ifelse(test = error_text == "", yes = ".", no = error_text),  
+                "\nDIRECTORY PATH INDICATED IN THE path_out ARGUMENT DOES NOT EXISTS:\n", 
+                base::paste(path_out, sep = " ", collapse = "\n", recycle0 = FALSE), 
+                collapse = NULL, 
+                recycle0 = FALSE
+            )
             base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL)
         }
         # removal of trailing / or \\ in the path
@@ -384,12 +402,30 @@ all_args_here <- function(
         }
         # end removal of trailing / or \\ in the path
         if( ! base::dir.exists(paths = path_out)){
-            tempo.cat <- base::paste0("ERROR IN ", function_name, base::ifelse(test = base::is.null(x = package_name), yes = "", no = base::paste0(" OF THE ", package_name, " PACKAGE", collapse = NULL, recycle0 = FALSE)), "\nDIRECTORY PATH INDICATED IN THE path_out ARGUMENT DOES NOT EXISTS:\n", path_out, collapse = NULL, recycle0 = FALSE)
+            tempo.cat <- base::paste0(
+                "ERROR IN ", 
+                function_name, 
+                base::ifelse(test = base::is.null(x = package_name), yes = "", no = base::paste0(" OF THE ", package_name, " PACKAGE", collapse = NULL, recycle0 = FALSE)), 
+                base::ifelse(test = error_text == "", yes = ".", no = error_text), 
+                "\nDIRECTORY PATH INDICATED IN THE path_out ARGUMENT DOES NOT EXISTS:\n", 
+                path_out, 
+                collapse = NULL, 
+                recycle0 = FALSE
+            )
             base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL)
         }
         if(overwrite == FALSE){
             if(base::file.exists(base::paste0(path_out, "/", df_name, collapse = NULL, recycle0 = FALSE))){
-                tempo.cat <- base::paste0("ERROR IN ", function_name, base::ifelse(test = base::is.null(x = package_name), yes = "", no = base::paste0(" OF THE ", package_name, " PACKAGE", collapse = NULL, recycle0 = FALSE)), "\nFILE NAME ALREADY EXISTS AT THE INDICATED PATH:\n", base::paste0(path_out, "/", df_name, collapse = NULL, recycle0 = FALSE), collapse = NULL, recycle0 = FALSE)
+                tempo.cat <- base::paste0(
+                    "ERROR IN ", 
+                    function_name, 
+                    base::ifelse(test = base::is.null(x = package_name), yes = "", no = base::paste0(" OF THE ", package_name, " PACKAGE", collapse = NULL, recycle0 = FALSE)), 
+                    base::ifelse(test = error_text == "", yes = ".", no = error_text), 
+                    "\nFILE NAME ALREADY EXISTS AT THE INDICATED PATH:\n", 
+                    base::paste0(path_out, "/", df_name, collapse = NULL, recycle0 = FALSE), 
+                    collapse = NULL, 
+                    recycle0 = FALSE
+                )
                 base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL)
             }
         }
