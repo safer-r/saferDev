@@ -123,7 +123,7 @@ arg_check <- function(
     }
     if(safer_check == TRUE){
         saferDev:::.base_op_check(
-            error_text = error_text
+            error_text = base::sub(pattern = "^ERROR IN ", replacement = " INSIDE ", x = error_text_start, ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE)
         )
     }
     #### end critical operator checking
