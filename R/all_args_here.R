@@ -638,7 +638,7 @@ all_args_here <- function(
                 }
                 tempo_string <- base::substr(x = code_for_col[i2], start = 1, stop = col4[i2] - 1)
                 tempo_package_name_colons <- saferDev:::.extract_all_fun_names(text = tempo_string, pattern = "[a-zA-Z][a-zA-Z0-9.]*:{2,3}$")$string # before 
-                saferDev::is_function_here(fun = base::paste0(tempo_package_name_colons, col2[i2], collapse = NULL, recycle0 = FALSE), lib_path = NULL, safer_check = FALSE, error_text = paste0("INSIDE saferDev::is_function_here() INSIDE ", function_name, " OF THE ", package_name, " PACKAGE", collapse = NULL, recycle0 = FALSE)) # check that exists
+                saferDev::is_function_here(fun = base::paste0(tempo_package_name_colons, col2[i2], collapse = NULL, recycle0 = FALSE), lib_path = lib_path, safer_check = FALSE, error_text = paste0("INSIDE saferDev::is_function_here() INSIDE ", function_name, " OF THE ", package_name, " PACKAGE", collapse = NULL, recycle0 = FALSE)) # check that exists
                 tempo_package_name <- base::sub(pattern =  ":+$", replacement = "", x = tempo_package_name_colons, ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE)
                 # end check if the function exists
                 # recovering default args of the function
