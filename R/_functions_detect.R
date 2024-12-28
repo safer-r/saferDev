@@ -63,7 +63,8 @@
     #### end arguments settings
 
     #### error_text initiation
-    # basic error text start
+
+    ######## basic error text start
     error_text_start <- base::paste0(
         "ERROR IN ", 
         base::ifelse(test = base::is.null(x = package_name), yes = "", no = base::paste0(package_name, base::ifelse(test = base::grepl(x = function_name, pattern = "^\\.", ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE), yes = ":::", no = "::"), collapse = NULL, recycle0 = FALSE)), 
@@ -71,8 +72,9 @@
         collapse = NULL, 
         recycle0 = FALSE
     )
-    # end basic error text start
-    # check of the error_text argument
+    ######## end basic error text start
+
+    ######## check of the error_text argument
     if( ! (base::all(base::typeof(x = error_text) == "character", na.rm = TRUE) & base::length(x = error_text) == 1)){ # no need to test is.null(error_text) because typeof(x = NULL) == "character" returns FALSE
         tempo_cat <- base::paste0(
             error_text_start, 
@@ -83,8 +85,9 @@
         )
         base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL) # == in base::stop() to be able to add several messages between ==
     }
-    # end check of the error_text argument
-    # basic error text start updated
+    ######## end check of the error_text argument
+
+    ######## basic error text start updated
     error_text_start <- base::paste0(
         error_text_start, 
         base::ifelse(test = error_text == "", yes = ".", no = error_text), 
@@ -92,8 +95,9 @@
         collapse = NULL, 
         recycle0 = FALSE
     )
-    # end basic error text start updated
-    # internal error text
+    ######## end basic error text start updated
+
+    ######## internal error text
     intern_error_text_start <- base::paste0(
         base::ifelse(test = base::is.null(x = package_name), yes = "", no = base::paste0(package_name, base::ifelse(test = base::grepl(x = function_name, pattern = "^\\.", ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE), yes = ":::", no = "::"), collapse = NULL, recycle0 = FALSE)), 
         function_name, 
@@ -103,23 +107,29 @@
         recycle0 = FALSE
     )
     intern_error_text_end <- base::ifelse(test = base::is.null(x = internal_error_report_link), yes = "", no = base::paste0("\n\nPLEASE, REPORT THIS ERROR HERE: ", internal_error_report_link, ".", collapse = NULL, recycle0 = FALSE))
-    # end internal error text
+    ######## end internal error text
+
     #### end error_text initiation
 
-    #### critical operator checking
-    # safer_check not argument here
-    # saferDev:::.base_op_check() already done in the main function
-    #### end critical operator checking
-
-    #### package checking
+    #### environment checking
 
     ######## check of lib_path
+    # already done in the main function
     ######## end check of lib_path
 
+    ######## safer_check argument checking
+    # not required
+    ######## end safer_check argument checking
+
     ######## check of the required functions from the required packages
+    # already done in the main function
     ######## end check of the required functions from the required packages
 
-    #### end package checking
+    ######## critical operator checking
+    # already done in the main function
+    ######## end critical operator checking
+
+    #### end environment checking
 
     #### argument primary checking
 
@@ -155,7 +165,7 @@
     tempo <- saferDev::arg_check(data = arg_user_setting, class = NULL, typeof = NULL, mode = "list", length = NULL, prop = FALSE, double_as_integer_allowed = FALSE, options = NULL, all_options_in_data = FALSE, na_contain = TRUE, neg_values = TRUE, inf_values = TRUE, print = FALSE, data_name = NULL, safer_check = FALSE, error_text = base::sub(pattern = "^ERROR IN ", replacement = " INSIDE ", x = error_text_start, ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE)) ; base::eval(expr = ee, envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL)) # copy - paste this line as much as necessary
     # error_text already checked above
     if( ! base::is.null(x = internal_error_report_link)){ # for all arguments that can be NULL, write like this:
-        tempo <- saferDev::arg_check(data = internal_error_report_link, class = NULL, typeof = "character", mode = NULL, length = 1, prop = FALSE, double_as_integer_allowed = FALSE, options = NULL, all_options_in_data = FALSE, na_contain = TRUE, neg_values = TRUE, inf_values = TRUE, print = FALSE, data_name = NULL, safer_check = FALSE, error_text = base::paste0("INSIDE ", package_name, ":::", function_name, ".", collapse = NULL, recycle0 = FALSE)) ; base::eval(expr = ee, envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL)) # copy - paste this line as much as necessary
+        tempo <- saferDev::arg_check(data = internal_error_report_link, class = NULL, typeof = "character", mode = NULL, length = 1, prop = FALSE, double_as_integer_allowed = FALSE, options = NULL, all_options_in_data = FALSE, na_contain = TRUE, neg_values = TRUE, inf_values = TRUE, print = FALSE, data_name = NULL, safer_check = FALSE,  error_text = base::sub(pattern = "^ERROR IN ", replacement = " INSIDE ", x = error_text_start, ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE)) ; base::eval(expr = ee, envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL)) # copy - paste this line as much as necessary
     }
     if( ! base::is.null(x = argum_check)){
         if(base::any(argum_check, na.rm = TRUE)){

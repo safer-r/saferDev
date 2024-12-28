@@ -41,7 +41,8 @@
     #### end arguments settings
 
     #### error_text initiation
-    # basic error text start
+
+    ######## basic error text start
     error_text_start <- base::paste0(
         "ERROR IN ", 
         base::ifelse(test = base::is.null(x = package_name), yes = "", no = base::paste0(package_name, base::ifelse(test = base::grepl(x = function_name, pattern = "^\\.", ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE), yes = ":::", no = "::"), collapse = NULL, recycle0 = FALSE)), 
@@ -49,8 +50,9 @@
         collapse = NULL, 
         recycle0 = FALSE
     )
-    # end basic error text start
-    # check of the error_text argument
+    ######## end basic error text start
+
+    ######## check of the error_text argument
     if( ! (base::all(base::typeof(x = error_text) == "character", na.rm = TRUE) & base::length(x = error_text) == 1)){ # no need to test is.null(error_text) because typeof(x = NULL) == "character" returns FALSE
         tempo_cat <- base::paste0(
             error_text_start, 
@@ -61,8 +63,9 @@
         )
         base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL) # == in base::stop() to be able to add several messages between ==
     }
-    # end check of the error_text argument
-    # basic error text start updated
+    ######## end check of the error_text argument
+
+    ######## basic error text start updated
     error_text_start <- base::paste0(
         error_text_start, 
         base::ifelse(test = error_text == "", yes = ".", no = error_text), 
@@ -70,32 +73,53 @@
         collapse = NULL, 
         recycle0 = FALSE
     )
-    # end basic error text start updated
-    # internal error text
+    ######## end basic error text start updated
+
+    ######## internal error text
     # not required
-    # end internal error text
+    ######## end internal error text
+
     #### end error_text initiation
 
-    #### critical operator checking
-    # already done in the main function
-    #### end critical operator checking
-
-    #### package checking
+    #### environment checking
 
     ######## check of lib_path
     # not required
     ######## end check of lib_path
 
+    ######## safer_check argument checking
+    # not required
+    ######## end safer_check argument checking
+
     ######## check of the required functions from the required packages
     # not required
     ######## end check of the required functions from the required packages
 
-    #### end package checking
+    ######## critical operator checking
+    # already checked in the main function
+    ######## end critical operator checking
+
+    #### end environment checking
 
     #### argument primary checking
 
     ######## arg with no default values
-    # not required
+    mandat_args <- base::c(
+        "error_text"
+    )
+    tempo <- base::eval(expr = base::parse(text = base::paste0("base::c(base::missing(", base::paste0(mandat_args, collapse = "),base::missing(", recycle0 = FALSE), "))", collapse = NULL, recycle0 = FALSE), file = "", n = NULL, prompt = "?", keep.source = base::getOption(x = "keep.source", default = NULL), srcfile = NULL, encoding = "unknown"), envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL))
+    if(base::any(tempo, na.rm = FALSE)){
+        tempo_cat <- base::paste0(
+            error_text_start, 
+            "FOLLOWING ARGUMENT", 
+            base::ifelse(test = base::sum(tempo, na.rm = TRUE) > 1, yes = "S HAVE", no = " HAS"), 
+            " NO DEFAULT VALUE AND REQUIRE ONE:\n", 
+            base::paste0(mandat_args[tempo], collapse = "\n", recycle0 = FALSE), 
+            collapse = NULL, 
+            recycle0 = FALSE
+        )
+        base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL) # == in base::stop() to be able to add several messages between ==
+    }
     ######## end arg with no default values
 
     ######## argument checking with arg_check()
