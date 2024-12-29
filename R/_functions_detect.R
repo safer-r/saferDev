@@ -35,10 +35,10 @@
 ){
     # DEBUGGING
     # x = x ; arg_user_setting = arg_user_setting ; error_text = "" ; internal_error_report_link = "test"
-    # source("C:\\Users\\gmillot\\Documents\\Git_projects\\safer-r\\saferDev\\dev\\other\\test2.R") ; x = test2 ; arg_user_setting = base::list(x = as.name(x = "test2"), export = TRUE) ; error_text = " INSIDE P1::F1" ; internal_error_report_link = "test"
-    # source("C:\\Users\\gmillot\\Documents\\Git_projects\\safer-r\\.github\\profile\\backbone.R") ; x = BACKBONE ; arg_user_setting = base::list(x = as.name(x = "BACKBONE"), export = FALSE,  path_out = ".",  df_name = "res.tsv",  overwrite = FALSE,  lib_path = NULL) ; error_text = " INSIDE P1::F1" ; internal_error_report_link = "test"
-    # FUN1 <- function(x, y){middle_bracket2 <- base::do.call(what = base::c, args = code_for_col, quote = FALSE, envir = base::parent.frame())} ; x = FUN1 ; arg_user_setting = base::list(x = as.name(x = "FUN1"), export = FALSE,  path_out = ".",  df_name = "res.tsv",  overwrite = FALSE,  lib_path = NULL) ; error_text = " INSIDE P1::F1" ; internal_error_report_link = "test"
-    # FUN1 <- function(x, y){FUN2 <- function(x){x = 1}} ; x = FUN1 ; arg_user_setting = base::list(x = as.name(x = "FUN1"), export = FALSE,  path_out = ".",  df_name = "res.tsv",  overwrite = FALSE,  lib_path = NULL) ; error_text = " INSIDE P1::F1" ; internal_error_report_link = "test"
+    # source("C:\\Users\\gmillot\\Documents\\Git_projects\\safer-r\\saferDev\\dev\\other\\test2.R") ; x = test2 ; arg_user_setting = base::list(x = as.name(x = "test2"), error_text = " INSIDE P1::F1", internal_error_report_link = "test") ; error_text = " INSIDE P1::F1" ; internal_error_report_link = "test"
+    # source("C:\\Users\\gmillot\\Documents\\Git_projects\\safer-r\\.github\\profile\\backbone.R") ; x = BACKBONE ; arg_user_setting = base::list(x = as.name(x = "BACKBONE"), error_text = " INSIDE P1::F1", internal_error_report_link = "test") ; error_text = " INSIDE P1::F1" ; internal_error_report_link = "test"
+    # FUN1 <- function(x, y){middle_bracket2 <- base::do.call(what = base::c, args = code_for_col, quote = FALSE, envir = base::parent.frame())} ; x = FUN1 ; arg_user_setting = base::list(x = as.name(x = "FUN1"), error_text = " INSIDE P1::F1", internal_error_report_link = "test") ; error_text = " INSIDE P1::F1" ; internal_error_report_link = "test"
+    # FUN1 <- function(x, y){FUN2 <- function(x){x = 1}} ; x = FUN1 ; arg_user_setting = base::list(x = as.name(x = "FUN1"), error_text = " INSIDE P1::F1", internal_error_report_link = "test") ; error_text = " INSIDE P1::F1" ; internal_error_report_link = "test"
 
     #### package name
     package_name <- "saferDev" # write NULL if the function developed is not in a package
@@ -114,7 +114,6 @@
     #### environment checking
 
     ######## check of lib_path
-    # already done in the main function
     ######## end check of lib_path
 
     ######## safer_check argument checking

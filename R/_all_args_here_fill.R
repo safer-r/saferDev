@@ -9,7 +9,6 @@
 #' @param col1_i2 code line number of the checked function
 #' @param col2_i2 name of the checked sub function
 #' @param arg_user_setting_x name of the checked function
-#' @param lib_path Vector of characters specifying the absolute pathways of the directories containing the required packages for the function, if not in the default directories. Useful to overcome R execution using system with non admin rights for R package installation in the default directories. Ignored if NULL (default): only the pathways specified by .libPaths() are used for package calling. Specify the right path if the function returns a package path error.
 #' @param error_text Single character string used to add information in error messages returned by the function, notably if the function is inside other functions, which is practical for debugging. Example: error_text = "INSIDE <PACKAGE_1>::<FUNCTION_1> INSIDE <PACKAGE_2>::<FUNCTION_2>".
 #' @param internal_error_report_link String of the link where to post an issue indicated in an internal error message. Write NULL if no link to propose, or no internal error message.
 #' @param warn warning string.
@@ -31,18 +30,17 @@
     col1_i2, 
     col2_i2,
     arg_user_setting_x, 
-    lib_path, 
     error_text,
     internal_error_report_link, 
     warn,
     warn_count
 ){
     # DEBUGGING
-    # arg_full = arg_full ; arg_full_names = arg_full_names ; tempo_split = tempo_split ; three_dots_log = three_dots_log ; i2 = i2 ; col1_i2 = col1[i2] ; col2_i2 = col2[i2] ; arg_user_setting_x = "FUN1" ; lib_path = base::.libPaths(), error_text = " INSIDE P1::F1", internal_error_report_link = "test" ; warn = "WARNING" ; warn_count = 1  
-    #  arg_full = list(definition = "sys.function(sys.parent())", call = "sys.call(sys.parent())", expand.dots = TRUE, envir = "parent.frame(2L)") ; arg_full_names = c("definition", "call", "expand.dots", "envir") ; tempo_split = "expand.dots = FALSE" ;  three_dots_log = c(FALSE, FALSE, FALSE, FALSE) ; col2_i2 = "match.call" ; col3_i2 = "match.call(expand.dots = FALSE)" ; arg_user_setting_x = "FUN1" ; lib_path = base::.libPaths(), error_text = " INSIDE P1::F1", internal_error_report_link = "test" ; warn = "WARNING" ; warn_count = 1 
-    #  arg_full = list(definition = sys.function(sys.parent()), call = sys.call(sys.parent()), expand.dots = TRUE, envir = parent.frame(2L)) ; arg_full_names = c("definition", "call", "expand.dots", "envir") ; tempo_split = c("sys.function(sys.parent())", "expand.dots = FALSE", "sys.call(sys.parent())") ;  three_dots_log = c(FALSE, FALSE, FALSE, FALSE) ; col2_i2 = "match.call" ; col3_i2 = "match.call(sys.function(sys.parent()), expand.dots = FALSE, sys.call(sys.parent()))" ; arg_user_setting_x = "FUN1" ; lib_path = base::.libPaths(), error_text = " INSIDE P1::F1", internal_error_report_link = "test" ; warn = "WARNING" ; warn_count = 1 
-    #  arg_full = list(... = "", collapse = " ", recycle0 = FALSE) ; arg_full_names = c("...", "collapse", "recycle0") ; tempo_split = c("AA", "collapse = \" \"", "BB", "recycle0 = FALSE") ; three_dots_log = c(TRUE, FALSE, FALSE) ; col2_i2 = "paste0" ; col3_i2 = 'paste0("AA", collapse = " ", "BB", recycle0 = FALSE)' ; arg_user_setting_x = "FUN1" ; lib_path = base::.libPaths(), error_text = " INSIDE P1::F1", internal_error_report_link = "test" ; warn = "WARNING" ; warn_count = 1 
-    #  arg_full = list(... = "", collapse = " ", recycle0 = FALSE) ; arg_full_names = c("...", "collapse", "recycle0") ; tempo_split = c("AA", "collapse = \" \"", "BB") ; three_dots_log = c(TRUE, FALSE, FALSE) ; col2_i2 = "paste0" ; col3_i2 = 'paste0("AA", collapse = " ", "BB")' ; arg_user_setting_x = "FUN1" ; lib_path = base::.libPaths(), error_text = " INSIDE P1::F1", internal_error_report_link = "test" ; warn = "WARNING" ; warn_count = 1 
+    # arg_full = arg_full ; arg_full_names = arg_full_names ; tempo_split = tempo_split ; three_dots_log = three_dots_log ; i2 = i2 ; col1_i2 = col1[i2] ; col2_i2 = col2[i2] ; arg_user_setting_x = "FUN1" ; error_text = " INSIDE P1::F1" ; internal_error_report_link = "test" ; warn = "WARNING" ; warn_count = 1  
+    #  arg_full = list(definition = "sys.function(sys.parent())", call = "sys.call(sys.parent())", expand.dots = TRUE, envir = "parent.frame(2L)") ; arg_full_names = c("definition", "call", "expand.dots", "envir") ; tempo_split = "expand.dots = FALSE" ;  three_dots_log = c(FALSE, FALSE, FALSE, FALSE) ; col2_i2 = "match.call" ; col3_i2 = "match.call(expand.dots = FALSE)" ; arg_user_setting_x = "FUN1" ; error_text = " INSIDE P1::F1" ; internal_error_report_link = "test" ; warn = "WARNING" ; warn_count = 1 
+    #  arg_full = list(definition = sys.function(sys.parent()), call = sys.call(sys.parent()), expand.dots = TRUE, envir = parent.frame(2L)) ; arg_full_names = c("definition", "call", "expand.dots", "envir") ; tempo_split = c("sys.function(sys.parent())", "expand.dots = FALSE", "sys.call(sys.parent())") ;  three_dots_log = c(FALSE, FALSE, FALSE, FALSE) ; col2_i2 = "match.call" ; col3_i2 = "match.call(sys.function(sys.parent()), expand.dots = FALSE, sys.call(sys.parent()))" ; arg_user_setting_x = "FUN1" ; error_text = " INSIDE P1::F1" ; internal_error_report_link = "test" ; warn = "WARNING" ; warn_count = 1 
+    #  arg_full = list(... = "", collapse = " ", recycle0 = FALSE) ; arg_full_names = c("...", "collapse", "recycle0") ; tempo_split = c("AA", "collapse = \" \"", "BB", "recycle0 = FALSE") ; three_dots_log = c(TRUE, FALSE, FALSE) ; col2_i2 = "paste0" ; col3_i2 = 'paste0("AA", collapse = " ", "BB", recycle0 = FALSE)' ; arg_user_setting_x = "FUN1" ;error_text = " INSIDE P1::F1" ; internal_error_report_link = "test" ; warn = "WARNING" ; warn_count = 1 
+    #  arg_full = list(... = "", collapse = " ", recycle0 = FALSE) ; arg_full_names = c("...", "collapse", "recycle0") ; tempo_split = c("AA", "collapse = \" \"", "BB") ; three_dots_log = c(TRUE, FALSE, FALSE) ; col2_i2 = "paste0" ; col3_i2 = 'paste0("AA", collapse = " ", "BB")' ; arg_user_setting_x = "FUN1" ;error_text = " INSIDE P1::F1" ; internal_error_report_link = "test" ; warn = "WARNING" ; warn_count = 1 
 
     #### package name
     package_name <- "saferDev" # write NULL if the function developed is not in a package
@@ -118,7 +116,6 @@
     #### environment checking
 
     ######## check of lib_path
-    # already done in the main function
     ######## end check of lib_path
 
     ######## safer_check argument checking
@@ -147,7 +144,6 @@
         "col1_i2", 
         "col2_i2",
         "arg_user_setting_x", 
-        "lib_path", 
         "error_text",
         "internal_error_report_link", 
         "warn",
@@ -182,7 +178,6 @@
     tempo <- saferDev::arg_check(data = col1_i2, class = "vector", typeof = "integer", mode = NULL, length = NULL, prop = FALSE, double_as_integer_allowed = TRUE, options = NULL, all_options_in_data = FALSE, na_contain = TRUE, neg_values = TRUE, inf_values = TRUE, print = FALSE, data_name = NULL, safer_check = FALSE, error_text = base::sub(pattern = "^ERROR IN ", replacement = " INSIDE ", x = error_text_start, ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE)) ; base::eval(expr = ee, envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL)) # copy - paste this line as much as necessary
     tempo <- saferDev::arg_check(data = col2_i2, class = "vector", typeof = "character", mode = NULL, length = NULL, prop = FALSE, double_as_integer_allowed = FALSE, options = NULL, all_options_in_data = FALSE, na_contain = TRUE, neg_values = TRUE, inf_values = TRUE, print = FALSE, data_name = NULL, safer_check = FALSE, error_text = base::sub(pattern = "^ERROR IN ", replacement = " INSIDE ", x = error_text_start, ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE)) ; base::eval(expr = ee, envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL)) # copy - paste this line as much as necessary
     tempo <- saferDev::arg_check(data = arg_user_setting_x, class = "vector", typeof = "character", mode = NULL, length = NULL, prop = FALSE, double_as_integer_allowed = FALSE, options = NULL, all_options_in_data = FALSE, na_contain = TRUE, neg_values = TRUE, inf_values = TRUE, print = FALSE, data_name = NULL, safer_check = FALSE, error_text = base::sub(pattern = "^ERROR IN ", replacement = " INSIDE ", x = error_text_start, ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE)) ; base::eval(expr = ee, envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL)) # copy - paste this line as much as necessary
-    # lib_path already checked above
     # error_text already checked above
     if( ! base::is.null(x = internal_error_report_link)){ # for all arguments that can be NULL, write like this:
         tempo <- saferDev::arg_check(data = internal_error_report_link, class = NULL, typeof = "character", mode = NULL, length = 1, prop = FALSE, double_as_integer_allowed = FALSE, options = NULL, all_options_in_data = FALSE, na_contain = TRUE, neg_values = TRUE, inf_values = TRUE, print = FALSE, data_name = NULL, safer_check = FALSE, error_text = base::sub(pattern = "^ERROR IN ", replacement = " INSIDE ", x = error_text_start, ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE)) ; base::eval(expr = ee, envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL)) # copy - paste this line as much as necessary
@@ -226,7 +221,6 @@
         "col1_i2", 
         "col2_i2",
         "arg_user_setting_x", 
-        # "lib_path", # inactivated because can be NULL
         "error_text",
         # "internal_error_report_link" # inactivated because can be NULL
         "warn",
@@ -249,7 +243,6 @@
     ######## management of "" in arguments of mode character
     tempo_arg <- base::c(
         "arg_full_names", 
-        "lib_path",
         "tempo_split",
         "col2_i2",
         "arg_user_setting_x",
@@ -398,7 +391,7 @@
                 col1_i2, 
                 " AND FUNCTION ", 
                 col2_i2, 
-                ".\nPLEASE, RUN THE TESTED FUNCTION FIRST."
+                ".\nPLEASE, RUN THE TESTED FUNCTION FIRST.", 
                 collapse = NULL, 
                 recycle0 = FALSE
             )
