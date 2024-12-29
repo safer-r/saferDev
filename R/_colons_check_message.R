@@ -2,15 +2,15 @@
 #' @title .colons_check_message
 #' @description
 #' Create the message for the colons_check() function.
-#' @param list.fun list of names of all the functions.
-#' @param list.fun.pos list of position of first character of names of all the functions in ini.
-#' @param line.nb vector of corresponding line number.
-#' @param ini vector of string of the initial function code analyzed.
-#' @param arg_user_setting list of arg user settings.
+#' @param list.fun List of names of all the functions.
+#' @param list.fun.pos List of positions of first character of names of all the functions in ini.
+#' @param line.nb Vector of integers of corresponding line numbers.
+#' @param ini Vector of strings of the initial function code analyzed.
+#' @param arg_user_setting List of arg user settings.
 #' @param error_text Single character string used to add information in error messages returned by the function, notably if the function is inside other functions, which is practical for debugging. Example: error_text = "INSIDE <PACKAGE_1>::<FUNCTION_1> INSIDE <PACKAGE_2>::<FUNCTION_2>".
-#' @param internal_error_report_link String of the link where to post an issue indicated in an internal error message. Write NULL if no link to propose, or no internal error message.
-#' @param text either "BASIC" or "OTHER".
-#' @param internal_fun_names vector of string of names of internal functions in the function code analyzed.
+#' @param internal_error_report_link Single string of the link where to post an issue indicated in an internal error message. Write NULL if no link to propose, or no internal error message.
+#' @param text Either "BASIC" or "OTHER".
+#' @param internal_fun_names Vector of strings of names of internal functions in the function code analyzed.
 #' @returns
 #'  A list:
 #'  $output.cat: the message (string).

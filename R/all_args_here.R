@@ -1,7 +1,7 @@
 #' @title all_args_here
 #' @description
 #' Verify that all the functions used inside a function are written with all their arguments. For instance: base::paste0(letters[1:2], collapse = NULL, recycle0 = FALSE) and not paste0(letters[1:2]).
-#' @param x a function name, written without quotes and brackets.
+#' @param x Function name, written without quotes and brackets.
 #' @param export Single logical value. Export the data frame into a .tsv file? If TRUE, the data frame is not returned by the function but only exported.
 #' @param path_out Single character string indicating the absolute pathway of the folder where to export the data frame. path_out = "." means the R working directory set by the user. Ignored if export is FALSE
 #' @param df_name Single character string indicating the name of the exported data frame file. Ignored if export is FALSE.
@@ -637,7 +637,12 @@ all_args_here <- function(
                     base::stop(base::paste0("\n\n================\n\n", tempo_cat_fun_exists, "\n\n================\n\n", base::ifelse(test = base::is.null(x = warn), yes = "", no = base::paste0("IN ADDITION\nWARNING", base::ifelse(test = warn_count > 1, yes = "S", no = ""), ":\n\n", warn, collapse = NULL, recycle0 = FALSE)), collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL)
                 }
                 tempo_string <- base::substr(x = code_for_col[i2], start = 1, stop = col4[i2] - 1)
-                tempo_package_name_colons <- saferDev:::.extract_all_fun_names(text = tempo_string, pattern = "[a-zA-Z][a-zA-Z0-9.]*:{2,3}$")$string # before 
+                tempo_package_name_colons <- saferDev:::.extract_all_fun_names(
+                        text = tempo_string, 
+                        pattern = "[a-zA-Z][a-zA-Z0-9.]*:{2,3}$",
+                        error_text = error_text,
+                        internal_error_report_link = internal_error_report_link
+                    )$string # before 
                 saferDev::is_function_here(fun = base::paste0(tempo_package_name_colons, col2[i2], collapse = NULL, recycle0 = FALSE), lib_path = lib_path, safer_check = FALSE, error_text = paste0("INSIDE saferDev::is_function_here() INSIDE ", function_name, " OF THE ", package_name, " PACKAGE", collapse = NULL, recycle0 = FALSE)) # check that exists
                 tempo_package_name <- base::sub(pattern =  ":+$", replacement = "", x = tempo_package_name_colons, ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE)
                 # end check if the function exists
@@ -824,8 +829,7 @@ all_args_here <- function(
                         col1_i2 = col1[i2],
                         col2_i2 = col2[i2],
                         arg_user_setting_x = arg_user_setting$x, 
-                        function_name = function_name, 
-                        package_name = package_name, 
+                        error_text = error_text, 
                         internal_error_report_link = internal_error_report_link, 
                         warn = warn,
                         warn_count = warn_count

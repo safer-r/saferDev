@@ -1,10 +1,10 @@
 #' @title .functions_detect
 #' @description
 #' Detect all the functions names used inside a function.
-#' @param x a function name, written without quotes and brackets.
+#' @param x Function name, written without quotes and brackets.
 #' @param arg_user_setting Argument user settings list.
 #' @param error_text Single character string used to add information in error messages returned by the function, notably if the function is inside other functions, which is practical for debugging. Example: error_text = "INSIDE <PACKAGE_1>::<FUNCTION_1> INSIDE <PACKAGE_2>::<FUNCTION_2>".
-#' @param internal_error_report_link String of the link where to post an issue indicated in an internal error message. Write NULL if no link to propose, or no internal error message.
+#' @param internal_error_report_link Single string of the link where to post an issue indicated in an internal error message. Write NULL if no link to propose, or no internal error message.
 #' @returns 
 #'  A list:
 #' $code: vector of strings of the code of the tested function.
@@ -355,7 +355,12 @@
     fun_name <- base::list()
     fun_name_pos <- base::list()
     for(i1 in 1:base::length(code)){
-        tempo <- saferDev:::.extract_all_fun_names(text = code[i1], pattern = pattern1) # recover all the function names, followed by "(", present in code, using a perl pattern
+        tempo <- saferDev:::.extract_all_fun_names(
+            text = code[i1], 
+            pattern = pattern1,
+            error_text = error_text,
+            internal_error_report_link = internal_error_report_link
+        ) # recover all the function names, followed by "(", present in code, using a perl pattern
         fun_name <- base::c(fun_name, base::list(tempo$string))
         fun_name_pos <- base::c(fun_name_pos, base::list(tempo$pos))
     }

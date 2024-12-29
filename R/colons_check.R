@@ -366,8 +366,7 @@ colons_check <- function(
                 line.nb = in_basic_code_line_nb, 
                 ini = out$code, 
                 arg_user_setting = out$arg_user_setting, 
-                function_name = function_name, 
-                package_name = package_name, 
+                error_text = error_text, 
                 internal_error_report_link = internal_error_report_link, 
                 text = "BASIC", 
                 internal_fun_names = out$internal_fun_names
@@ -410,8 +409,7 @@ colons_check <- function(
                 line.nb = in_other_code_line_nb, 
                 ini = out$code, 
                 arg_user_setting = out$arg_user_setting, 
-                function_name = function_name, 
-                package_name = package_name, 
+                error_text = error_text, 
                 text = "OTHER", 
                 internal_fun_names = out$internal_fun_names
             )
