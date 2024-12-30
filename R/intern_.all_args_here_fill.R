@@ -1,17 +1,17 @@
 #' @title .all_args_here_fill
 #' @description
-#' Get the $MISSING_ARG_NAMES, $MISSING_ARGS and $NEW of all_args_here()
-#' @param arg_full List of all arguments of the function with default value
-#' @param arg_full_names Vector of strings of the names of the arguments of the function
+#' Get the $MISSING_ARG_NAMES, $MISSING_ARGS and $NEW of all_args_here().
+#' @param arg_full List of all arguments of the function with default value.
+#' @param arg_full_names Vector of strings of the names of the arguments of the function. Can be NULL.
 #' @param tempo_split Vector of strings of the observed argument writting of the function.
-#' @param three_dots_log Vector of logical. Is ... present among arg_full_names 
-#' @param i2 Single integer value indicating the loop number
-#' @param col1_i2 Single integer value indicating the code line number of the checked function
-#' @param col2_i2 Single string indicating the name of the checked sub function
-#' @param arg_user_setting_x Single string indicating the name of the checked function
+#' @param three_dots_log Vector of logical. Is ... present among arg_full_names.
+#' @param i2 Single integer value indicating the loop number.
+#' @param col1_i2 Single integer value indicating the code line number of the checked function.
+#' @param col2_i2 Single string indicating the name of the checked sub function.
+#' @param arg_user_setting_x Single string indicating the name of the checked function.
 #' @param error_text Single character string used to add information in error messages returned by the function, notably if the function is inside other functions, which is practical for debugging. Example: error_text = "INSIDE <PACKAGE_1>::<FUNCTION_1> INSIDE <PACKAGE_2>::<FUNCTION_2>".
 #' @param internal_error_report_link Single string of the link where to post an issue indicated in an internal error message. Write NULL if no link to propose, or no internal error message.
-#' @param warn warning string. Can be NULL
+#' @param warn warning string. Can be NULL.
 #' @param warn_count warning count.
 #' @returns
 #'  A list:
@@ -186,7 +186,7 @@
     ######## management of NULL arguments
     tempo_arg <-base::c(
         "arg_full",
-        "arg_full_names", 
+        # "arg_full_names", # inactivated because can be NULL
         "tempo_split", 
         "three_dots_log", 
         "i2", 
