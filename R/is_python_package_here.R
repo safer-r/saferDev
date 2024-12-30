@@ -165,6 +165,7 @@ is_python_package_here <- function(
                 "reticulate::py_run_string", 
                 "reticulate::use_python",
                 "reticulate::import_from_path",
+                "saferDev:::.base_op_check", 
                 "saferDev::arg_check"
             ),
             lib_path = lib_path, # write NULL if your function does not have any lib_path argument

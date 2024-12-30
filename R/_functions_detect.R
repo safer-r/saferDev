@@ -18,7 +18,7 @@
 #' - Does not check if the functions inside the code exist.
 #' - Use the regex pattern "([a-zA-Z]|\\.[a-zA-Z._])[a-zA-Z0-9._]*\\s*\\(" to detect a function in the code.
 #' - $all_basic_funs are all the functions in base::c("package:stats", "package:graphics",  "package:grDevices", "package:utils", "package:datasets", "package:methods", "Autoloads", "package:base")
-#' 
+#' - Warning: when checking for saferDev:::.functions_detect presence in the saferDev R library, also check for saferDev:::.extract_all_fun_names
 #' @examples
 #' \dontrun{ # Example that shouldn't be run because this is an internal function
 #' source("C:\\Users\\gmillot\\Documents\\Git_projects\\safer-r\\saferDev\\dev\\other\\test.R") ; .functions_detect(x = test, arg_user_setting = base::list(x =  as.name(x = "test")), error_text = " INSIDE P1::F1", internal_error_report_link = "test")
@@ -121,7 +121,7 @@
     ######## end safer_check argument checking
 
     ######## check of the required functions from the required packages
-    # already done in the main function
+    # already done in the main function.
     ######## end check of the required functions from the required packages
 
     ######## critical operator checking
@@ -160,11 +160,11 @@
     checked_arg_names <- NULL # for function debbuging: used by r_debugging_tools
     ee <- base::expression(argum_check <- base::c(argum_check, tempo$problem) , text_check <- base::c(text_check, tempo$text) , checked_arg_names <- base::c(checked_arg_names, tempo$object.name))
     # add as many lines as below, for each of your arguments of your function in development
-    tempo <- saferDev::arg_check(data = x, class = NULL, typeof = NULL, mode = "function", length = 1, prop = FALSE, double_as_integer_allowed = FALSE, options = NULL, all_options_in_data = FALSE, na_contain = TRUE, neg_values = TRUE, inf_values = TRUE, print = FALSE, data_name = NULL, safer_check = FALSE, error_text = base::sub(pattern = "^ERROR IN ", replacement = " INSIDE ", x = error_text_start, ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE)) ; base::eval(expr = ee, envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL)) # copy - paste this line as much as necessary
-    tempo <- saferDev::arg_check(data = arg_user_setting, class = NULL, typeof = NULL, mode = "list", length = NULL, prop = FALSE, double_as_integer_allowed = FALSE, options = NULL, all_options_in_data = FALSE, na_contain = TRUE, neg_values = TRUE, inf_values = TRUE, print = FALSE, data_name = NULL, safer_check = FALSE, error_text = base::sub(pattern = "^ERROR IN ", replacement = " INSIDE ", x = error_text_start, ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE)) ; base::eval(expr = ee, envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL)) # copy - paste this line as much as necessary
+    tempo <- saferDev::arg_check(data = x, class = NULL, typeof = NULL, mode = "function", length = 1, prop = FALSE, double_as_integer_allowed = FALSE, options = NULL, all_options_in_data = FALSE, na_contain = TRUE, neg_values = TRUE, inf_values = TRUE, print = FALSE, data_name = NULL, lib_path = NULL, safer_check = FALSE, error_text = base::sub(pattern = "^ERROR IN ", replacement = " INSIDE ", x = error_text_start, ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE)) ; base::eval(expr = ee, envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL)) # copy - paste this line as much as necessary
+    tempo <- saferDev::arg_check(data = arg_user_setting, class = NULL, typeof = NULL, mode = "list", length = NULL, prop = FALSE, double_as_integer_allowed = FALSE, options = NULL, all_options_in_data = FALSE, na_contain = TRUE, neg_values = TRUE, inf_values = TRUE, print = FALSE, data_name = NULL, lib_path = NULL, safer_check = FALSE, error_text = base::sub(pattern = "^ERROR IN ", replacement = " INSIDE ", x = error_text_start, ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE)) ; base::eval(expr = ee, envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL)) # copy - paste this line as much as necessary
     # error_text already checked above
     if( ! base::is.null(x = internal_error_report_link)){ # for all arguments that can be NULL, write like this:
-        tempo <- saferDev::arg_check(data = internal_error_report_link, class = NULL, typeof = "character", mode = NULL, length = 1, prop = FALSE, double_as_integer_allowed = FALSE, options = NULL, all_options_in_data = FALSE, na_contain = TRUE, neg_values = TRUE, inf_values = TRUE, print = FALSE, data_name = NULL, safer_check = FALSE,  error_text = base::sub(pattern = "^ERROR IN ", replacement = " INSIDE ", x = error_text_start, ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE)) ; base::eval(expr = ee, envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL)) # copy - paste this line as much as necessary
+        tempo <- saferDev::arg_check(data = internal_error_report_link, class = NULL, typeof = "character", mode = NULL, length = 1, prop = FALSE, double_as_integer_allowed = FALSE, options = NULL, all_options_in_data = FALSE, na_contain = TRUE, neg_values = TRUE, inf_values = TRUE, print = FALSE, data_name = NULL, lib_path = NULL, safer_check = FALSE,  error_text = base::sub(pattern = "^ERROR IN ", replacement = " INSIDE ", x = error_text_start, ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE)) ; base::eval(expr = ee, envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL)) # copy - paste this line as much as necessary
     }
     if( ! base::is.null(x = argum_check)){
         if(base::any(argum_check, na.rm = TRUE)){
@@ -298,8 +298,18 @@
             while.loop <- TRUE
             while(while.loop == TRUE & count < base::length(lines.split)){
                 # if odds number of quotes, it means that # has broken the string in the middle of a quoted part
-                double.quote.test <- saferDev:::.has_odd_number_of_quotes(input_string = tempo.line, pattern = '"') # here FALSE means even number of quotes, thus that # is not between quotes, thus has to be removed. TRUE means that # is between quotes, thus has to be kept
-                simple.quote.test <- saferDev:::.has_odd_number_of_quotes(input_string = tempo.line, pattern = "'") # idem
+                double.quote.test <- saferDev:::.has_odd_number_of_quotes(
+                    input_string = tempo.line, 
+                    pattern = '"', 
+                    error_text = base::sub(pattern = "^ERROR IN ", replacement = " INSIDE ", x = error_text_start, ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE), 
+                    internal_error_report_link = internal_error_report_link
+                ) # here FALSE means even number of quotes, thus that # is not between quotes, thus has to be removed. TRUE means that # is between quotes, thus has to be kept
+                simple.quote.test <- saferDev:::.has_odd_number_of_quotes(
+                    input_string = tempo.line, 
+                    pattern = "'", 
+                    error_text = base::sub(pattern = "^ERROR IN ", replacement = " INSIDE ", x = error_text_start, ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE), 
+                    internal_error_report_link = internal_error_report_link
+                ) # idem
                 odds.quotes.log <- double.quote.test |  simple.quote.test # lines to keep among commented lines
                 if(odds.quotes.log == TRUE){
                     count <- count + 1
@@ -358,7 +368,7 @@
         tempo <- saferDev:::.extract_all_fun_names(
             text = code[i1], 
             pattern = pattern1,
-            error_text = error_text,
+            error_text = base::sub(pattern = "^ERROR IN ", replacement = " INSIDE ", x = error_text_start, ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE),
             internal_error_report_link = internal_error_report_link
         ) # recover all the function names, followed by "(", present in code, using a perl pattern
         fun_name <- base::c(fun_name, base::list(tempo$string))

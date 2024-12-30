@@ -200,6 +200,7 @@ all_args_here <- function(
                 "saferDev::arg_check",
                 "saferDev::is_function_here", 
                 "saferDev:::.functions_detect", 
+                "saferDev:::.base_op_check", 
                 "saferDev:::.in_quotes_replacement", 
                 "saferDev:::.fun_args_pos", 
                 "saferDev:::.extract_all_fun_names", 
@@ -447,12 +448,28 @@ all_args_here <- function(
     cum_nchar_code_line <- cum_nchar_code_line[code_line_nb]
     # end cumulative nchar of each non empty lines of code 
     # replacement of all the ) between quotes
-    tempo <- saferDev:::.in_quotes_replacement(string = fun_1_line, pattern = "\\)", no_regex_pattern = ")", replacement = " ", perl = TRUE, function_name = function_name, package_name = package_name, internal_error_report_link = internal_error_report_link)
+    tempo <- saferDev:::.in_quotes_replacement(
+        string = fun_1_line, 
+        pattern = "\\)", 
+        no_regex_pattern = ")", 
+        replacement = " ", 
+        perl = TRUE, 
+        error_text = base::sub(pattern = "^ERROR IN ", replacement = " INSIDE ", x = error_text_start, ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE), 
+        internal_error_report_link = internal_error_report_link
+    )
     fun_1_line_replace <- tempo$string # code of the tested function that will serve to better detect functions in it
     pos_rep <- tempo$pos # replaced positions in fun_1_line
     # end replacement of all the ) between quotes
     # replacement of all the ( between quotes
-    tempo <- saferDev:::.in_quotes_replacement(string = fun_1_line_replace, pattern = "\\(", no_regex_pattern = "(", replacement = " ", perl = TRUE, function_name = function_name, package_name = package_name, internal_error_report_link = internal_error_report_link)
+    tempo <- saferDev:::.in_quotes_replacement(
+        string = fun_1_line_replace, 
+        pattern = "\\(", 
+        no_regex_pattern = "(", 
+        replacement = " ", 
+        perl = TRUE, 
+        error_text = base::sub(pattern = "^ERROR IN ", replacement = " INSIDE ", x = error_text_start, ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE), 
+        internal_error_report_link = internal_error_report_link
+    )
     fun_1_line_replace <- tempo$string
     pos_rep <- base::sort(x = base::c(pos_rep, tempo$pos), decreasing = FALSE)
     # end replacement of all the ( between quotes
@@ -488,7 +505,11 @@ all_args_here <- function(
             }
             tempo_str_after <- base::substr(x = fun_1_line_replace, start = fun_pos_stop + 1, stop = base::nchar(x = fun_1_line_replace, type = "chars", allowNA = FALSE, keepNA = NA))
             if(base::grepl(x = tempo_str_after, pattern = "^[\\s\\r\\n]*\\(", ignore.case = FALSE, perl = TRUE, fixed = FALSE, useBytes = FALSE)){ # detection that it is a function of interest because ( after function name not removed
-                tempo_pos <- saferDev:::.fun_args_pos(text = fun_1_line_replace, pattern = base::paste0(fun_names[[i1]][i2], "[\\s\\r\\n]*\\(", collapse = NULL, recycle0 = FALSE), function_name = function_name, package_name = package_name, internal_error_report_link = internal_error_report_link) # positions of 1st letter of the function name and opening and closing brackets # Warning: fun_1_line_replace used because the input string must be cleaned form brackets between quotes
+                tempo_pos <- saferDev:::.fun_args_pos(
+                    text = fun_1_line_replace, 
+                    pattern = base::paste0(fun_names[[i1]][i2], "[\\s\\r\\n]*\\(", collapse = NULL, recycle0 = FALSE), 
+                    error_text = base::sub(pattern = "^ERROR IN ", replacement = " INSIDE ", x = error_text_start, ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE), 
+                    internal_error_report_link = internal_error_report_link) # positions of 1st letter of the function name and opening and closing brackets # Warning: fun_1_line_replace used because the input string must be cleaned form brackets between quotes
                 tempo_str_before <- base::substr(x = fun_1_line_replace, start = 1, stop = fun_pos_start - 1)
                 tempo_log <- base::grepl(x = tempo_str_before, pattern = "\\$ *$", ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE)
                 if(tempo_log){ # remove functions preceeded by $, like a$fun()
@@ -519,9 +540,29 @@ all_args_here <- function(
             # pattern2 <- paste0("[a-zA-Z.][a-zA-Z0-9._]* *\\$ *", fun_names[[i1]][i2], "[\\s\\r\\n]*\\(") # function like a$fun()
             if(base::grepl(x = arg_string_for_col3[[i1]][i2], pattern = pattern2, ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE)){ # because of "NOT_CONSIDERED" in some cases
                 # detection of inside () between quotes
-                tempo1 <- saferDev:::.in_quotes_replacement(string = arg_string_for_col3[[i1]][i2], pattern = "\\(", no_regex_pattern = "(", replacement = " ", perl = TRUE, function_name = function_name, package_name = package_name, internal_error_report_link = internal_error_report_link)
-                tempo2 <- saferDev:::.in_quotes_replacement(string =tempo1$string, pattern = "\\)", no_regex_pattern = ")", replacement = " ", perl = TRUE, function_name = function_name, package_name = package_name, internal_error_report_link = internal_error_report_link)
-                tempo_pos <- saferDev:::.fun_args_pos(text = tempo2$string, pattern = pattern2,     function_name = function_name, package_name = package_name, internal_error_report_link = internal_error_report_link) # positions of 1st letter of the function name and opening and closing brackets # Warning: fun_1_line_replace used because the input string must be cleaned form brackets between quotes
+                tempo1 <- saferDev:::.in_quotes_replacement(
+                    string = arg_string_for_col3[[i1]][i2], 
+                    pattern = "\\(", 
+                    no_regex_pattern = "(", 
+                    replacement = " ", 
+                    perl = TRUE, 
+                    error_text = base::sub(pattern = "^ERROR IN ", replacement = " INSIDE ", x = error_text_start, ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE), 
+                    internal_error_report_link = internal_error_report_link
+                )
+                tempo2 <- saferDev:::.in_quotes_replacement(
+                    string =tempo1$string, 
+                    pattern = "\\)", 
+                    no_regex_pattern = ")", 
+                    replacement = " ", 
+                    perl = TRUE, 
+                    error_text = base::sub(pattern = "^ERROR IN ", replacement = " INSIDE ", x = error_text_start, ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE), 
+                    internal_error_report_link = internal_error_report_link
+                )
+                tempo_pos <- saferDev:::.fun_args_pos(
+                    text = tempo2$string, 
+                    pattern = pattern2,     
+                    error_text = base::sub(pattern = "^ERROR IN ", replacement = " INSIDE ", x = error_text_start, ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE), 
+                    internal_error_report_link = internal_error_report_link) # positions of 1st letter of the function name and opening and closing brackets # Warning: fun_1_line_replace used because the input string must be cleaned form brackets between quotes
                 if( ! base::is.null(x = tempo_pos$middle_bracket_pos)){ # I have to use if(){}, otherwise mid_bracket_pos_in_fun_1_line[[i1]][[i2]] disappears
                     mid_bracket_pos_in_col3[[i1]][[i2]] <- base::unlist(x = tempo_pos$middle_bracket_pos, recursive = TRUE, use.names = TRUE) # positions of the () inside a function
                 }
@@ -640,10 +681,15 @@ all_args_here <- function(
                 tempo_package_name_colons <- saferDev:::.extract_all_fun_names(
                         text = tempo_string, 
                         pattern = "[a-zA-Z][a-zA-Z0-9.]*:{2,3}$",
-                        error_text = error_text,
+                        error_text = base::sub(pattern = "^ERROR IN ", replacement = " INSIDE ", x = error_text_start, ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE),
                         internal_error_report_link = internal_error_report_link
                     )$string # before 
-                saferDev::is_function_here(fun = base::paste0(tempo_package_name_colons, col2[i2], collapse = NULL, recycle0 = FALSE), lib_path = lib_path, safer_check = FALSE, error_text = paste0("INSIDE saferDev::is_function_here() INSIDE ", function_name, " OF THE ", package_name, " PACKAGE", collapse = NULL, recycle0 = FALSE)) # check that exists
+                saferDev::is_function_here(
+                    fun = base::paste0(tempo_package_name_colons, col2[i2], collapse = NULL, recycle0 = FALSE), 
+                    lib_path = lib_path, 
+                    safer_check = FALSE, 
+                    error_text = paste0("INSIDE saferDev::is_function_here() INSIDE ", function_name, " OF THE ", package_name, " PACKAGE", collapse = NULL, recycle0 = FALSE)
+                ) # check that exists
                 tempo_package_name <- base::sub(pattern =  ":+$", replacement = "", x = tempo_package_name_colons, ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE)
                 # end check if the function exists
                 # recovering default args of the function
@@ -701,7 +747,15 @@ all_args_here <- function(
                     # end all arguments of the function with default value in col5
                     # arguments: replacement of all the commas between quotes
                     tempo_col3 <- col3[i2]
-                    tempo <- saferDev:::.in_quotes_replacement(string = tempo_col3, pattern = ",", no_regex_pattern = ",", replacement = " ", perl = TRUE, function_name = function_name, package_name = package_name, internal_error_report_link = internal_error_report_link)
+                    tempo <- saferDev:::.in_quotes_replacement(
+                        string = tempo_col3, 
+                        pattern = ",", 
+                        no_regex_pattern = ",", 
+                        replacement = " ", 
+                        perl = TRUE, 
+                        error_text = base::sub(pattern = "^ERROR IN ", replacement = " INSIDE ", x = error_text_start, ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE), 
+                        internal_error_report_link = internal_error_report_link
+                    )
                     tempo_col3 <- tempo$string
                     pos_rep2 <- tempo$pos # replaced positions in obs_args
                     # end arguments: replacement of all the commas between quotes
@@ -730,7 +784,16 @@ all_args_here <- function(
                             base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n", base::ifelse(test = base::is.null(x = warn), yes = "", no = base::paste0("IN ADDITION\nWARNING", base::ifelse(test = warn_count > 1, yes = "S", no = ""), ":\n\n", warn, collapse = NULL, recycle0 = FALSE)), collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL)
                         }
                         for(i6 in 1:base::length(x = middle_bracket_open_in_col3[[i2]])){
-                            tempo <- saferDev:::.in_parenthesis_replacement(string = tempo_col3, pattern = ",", no_regex_pattern = ",", replacement = " ", perl = TRUE, open_pos = middle_bracket_open_in_col3[[i2]][i6], close_pos = middle_bracket_close_in_col3[[i2]][i6], function_name = function_name, package_name = package_name, internal_error_report_link = internal_error_report_link)
+                            tempo <- saferDev:::.in_parenthesis_replacement(
+                                string = tempo_col3, 
+                                pattern = ",", 
+                                no_regex_pattern = ",", 
+                                replacement = " ", 
+                                perl = TRUE, 
+                                open_pos = middle_bracket_open_in_col3[[i2]][i6], 
+                                close_pos = middle_bracket_close_in_col3[[i2]][i6], 
+                                error_text = base::sub(pattern = "^ERROR IN ", replacement = " INSIDE ", x = error_text_start, ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE), 
+                                internal_error_report_link = internal_error_report_link)
                             tempo_col3 <- tempo$string
                             pos_rep2 <- base::c(pos_rep2, tempo$pos) # replaced positions in obs_args
                         }
@@ -829,7 +892,7 @@ all_args_here <- function(
                         col1_i2 = col1[i2],
                         col2_i2 = col2[i2],
                         arg_user_setting_x = arg_user_setting$x, 
-                        error_text = error_text, 
+                        error_text = base::sub(pattern = "^ERROR IN ", replacement = " INSIDE ", x = error_text_start, ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE)), 
                         internal_error_report_link = internal_error_report_link, 
                         warn = warn,
                         warn_count = warn_count

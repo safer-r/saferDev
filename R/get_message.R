@@ -192,6 +192,7 @@ get_message <- function(
     if(safer_check == TRUE){
         saferDev:::.pack_and_function_check(
             fun = base::c(
+                "saferDev:::.base_op_check", 
                 "saferDev::arg_check",
                 "ggplot2::ggplot_build"
             ),

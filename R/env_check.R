@@ -193,6 +193,7 @@ env_check <- function(
     if(safer_check == TRUE){
         saferDev:::.pack_and_function_check(
             fun = base::c(
+                "saferDev:::.base_op_check", 
                 "saferDev::arg_check"
             ),
             lib_path = lib_path, # write NULL if your function does not have any lib_path argument

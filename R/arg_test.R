@@ -224,6 +224,7 @@ arg_test <- function(
                 "parallel::clusterSplit",
                 "parallel::clusterApply",
                 "parallel::stopCluster",
+                "saferDev:::.base_op_check", 
                 "saferDev::arg_check"
             ),
             lib_path = lib_path, # write NULL if your function does not have any lib_path argument
@@ -695,14 +696,44 @@ arg_test <- function(
             print.count.loop <- print.count.loop + 1
             arg.values.print <- base::eval(base::parse(text = arg.values)) # recover the list of the i1 compartment
             for(j3 in 1:base::length(arg.values.print)){ # WARNING: do not use i1, i2 etc., here because already in loop.string
-                tempo.capt <- utils::capture.output(tempo.error <- saferDev::get_message(data =  base::paste0("base::paste(arg.values.print[[", j3, "]])"), kind = "error", header = FALSE, print.no = FALSE, env = base::get(env.name, envir = base::sys.nframe(), inherits = FALSE), lib_path = lib_path, safer_check = FALSE, error_text = paste0("INSIDE saferDev::get_message() INSIDE ", function_name, " OF THE ", package_name, " PACKAGE", collapse = NULL, recycle0 = FALSE))) # collapsing arg.values sometimes does not work (with function for instance)
+                tempo.capt <- utils::capture.output(tempo.error <- saferDev::get_message(
+                    data =  base::paste0("base::paste(arg.values.print[[", j3, "]])"), 
+                    kind = "error", 
+                    header = FALSE, 
+                    print.no = FALSE, 
+                    text = NULL, 
+                    env = base::get(env.name, envir = base::sys.nframe(), inherits = FALSE), 
+                    lib_path = lib_path, 
+                    safer_check = FALSE, 
+                    error_text = base::sub(pattern = "^ERROR IN ", replacement = " INSIDE ", x = error_text_start, ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE)
+                )) # collapsing arg.values sometimes does not work (with function for instance)
                 if( ! base::is.null(tempo.error)){
                     arg.values.print[[j3]] <- base::paste0("SPECIAL VALUE OF CLASS ", base::class(arg.values.print[[j3]]), " AND TYPE ", base::typeof(arg.values.print[[j3]]))
                 }
             }
             data <- base::rbind(data, base::as.character(base::sapply(arg.values.print, FUN = "paste", collapse = " ")), stringsAsFactors = FALSE) # each colum is a test
-            tempo.capt <- utils::capture.output(tempo.try.error <- saferDev::get_message(data = base::eval(base::parse(text = fun.test2)), kind = "error", header = FALSE, print.no = FALSE, env = base::get(env.name, envir = base::sys.nframe(), inherits = FALSE), lib_path = lib_path, safer_check = FALSE, error_text = paste0("INSIDE saferDev::get_message() INSIDE ", function_name, " OF THE ", package_name, " PACKAGE", collapse = NULL, recycle0 = FALSE))) # data argument needs a character string but base::eval(base::parse(text = fun.test2)) provides it (base::eval base::parse replace the i1, i2, etc., by the correct values, meaning that only val is required in the env.name environment)
-            tempo.capt <- utils::capture.output(tempo.try.warning <- saferDev::get_message(data = base::eval(base::parse(text = fun.test2)), kind = "warning", header = FALSE, env = base::get(env.name, envir = base::sys.nframe(), inherits = FALSE), print.no = FALSE, lib_path = lib_path, safer_check = FALSE, error_text = paste0("INSIDE saferDev::get_message() INSIDE ", function_name, " OF THE ", package_name, " PACKAGE", collapse = NULL, recycle0 = FALSE))) # data argument needs a character string but base::eval(base::parse(text = fun.test2)) provides it (base::eval base::parse replace the i1, i2, etc., by the correct values, meaning that only val is required in the env.name environment)
+            tempo.capt <- utils::capture.output(tempo.try.error <- saferDev::get_message(
+                data = base::eval(base::parse(text = fun.test2)), 
+                kind = "error", 
+                header = FALSE, 
+                print.no = FALSE, 
+                text = NULL, 
+                env = base::get(env.name, envir = base::sys.nframe(), inherits = FALSE), 
+                lib_path = lib_path, 
+                safer_check = FALSE, 
+                error_text = base::sub(pattern = "^ERROR IN ", replacement = " INSIDE ", x = error_text_start, ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE)
+            ) # data argument needs a character string but base::eval(base::parse(text = fun.test2)) provides it (base::eval base::parse replace the i1, i2, etc., by the correct values, meaning that only val is required in the env.name environment)
+            tempo.capt <- utils::capture.output(tempo.try.warning <- saferDev::get_message(
+                data = base::eval(base::parse(text = fun.test2)), 
+                kind = "warning", 
+                header = FALSE, 
+                print.no = FALSE, 
+                text = NULL, 
+                env = base::get(env.name, envir = base::sys.nframe(), inherits = FALSE), 
+                lib_path = lib_path, 
+                safer_check = FALSE, 
+                error_text = base::sub(pattern = "^ERROR IN ", replacement = " INSIDE ", x = error_text_start, ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE)
+            ) # data argument needs a character string but base::eval(base::parse(text = fun.test2)) provides it (base::eval base::parse replace the i1, i2, etc., by the correct values, meaning that only val is required in the env.name environment)
             if( ! base::is.null(expect.error)){
                 expected.error <- base::c(expected.error, base::eval(base::parse(text = error.values)))
             }
