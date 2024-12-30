@@ -82,7 +82,6 @@
 #' y = list(1:10, NA, NA)), parall = FALSE, thread.nb = 4, 
 #' plot.fun = TRUE, res.path = ".", 
 #' lib_path = NULL)
-
 #' @export
 arg_test <- function(
         fun, 
@@ -723,7 +722,7 @@ arg_test <- function(
                 lib_path = lib_path, 
                 safer_check = FALSE, 
                 error_text = base::sub(pattern = "^ERROR IN ", replacement = " INSIDE ", x = error_text_start, ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE)
-            ) # data argument needs a character string but base::eval(base::parse(text = fun.test2)) provides it (base::eval base::parse replace the i1, i2, etc., by the correct values, meaning that only val is required in the env.name environment)
+            )) # data argument needs a character string but base::eval(base::parse(text = fun.test2)) provides it (base::eval base::parse replace the i1, i2, etc., by the correct values, meaning that only val is required in the env.name environment)
             tempo.capt <- utils::capture.output(tempo.try.warning <- get_message(
                 data = base::eval(base::parse(text = fun.test2)), 
                 kind = "warning", 
@@ -734,7 +733,7 @@ arg_test <- function(
                 lib_path = lib_path, 
                 safer_check = FALSE, 
                 error_text = base::sub(pattern = "^ERROR IN ", replacement = " INSIDE ", x = error_text_start, ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE)
-            ) # data argument needs a character string but base::eval(base::parse(text = fun.test2)) provides it (base::eval base::parse replace the i1, i2, etc., by the correct values, meaning that only val is required in the env.name environment)
+            )) # data argument needs a character string but base::eval(base::parse(text = fun.test2)) provides it (base::eval base::parse replace the i1, i2, etc., by the correct values, meaning that only val is required in the env.name environment)
             if( ! base::is.null(expect.error)){
                 expected.error <- base::c(expected.error, base::eval(base::parse(text = error.values)))
             }

@@ -53,7 +53,6 @@
 #' Group1 = rep(c("G", "H"), each = 10), stringsAsFactors = TRUE) ; 
 #' get_message(data = 'gg_boxplot(data = obs1, y = "Time", categ = "Group1")', 
 #' kind = "message", print.no = TRUE, text = "IN INSTRUCTION 1")
-#' 
 #' @importFrom ggplot2 ggplot_build
 #' @export
 get_message <- function(

@@ -342,7 +342,18 @@ colons_check <- function(
         internal_error_report_link = internal_error_report_link
     )
     if( ! (base::all(base::typeof(x = out$fun_names) == "list", na.rm = TRUE) & base::all(base::typeof(x = out$fun_names_pos) == "list", na.rm = TRUE))){
-        tempo.cat <- base::paste0("INTERNAL ERROR 1 IN ", function_name, " OF THE ", package_name, " PACKAGE\nout$fun_names AND out$fun_names_pos MUST BE TYPE list\nout$fun_names:\n", out$fun_names, "\nout$fun_names_pos:\n", out$fun_names_pos, base::ifelse(test = base::is.null(x = internal_error_report_link), yes = "", no = base::paste0("\n\nPLEASE, REPORT THIS ERROR HERE: ", internal_error_report_link, collapse = NULL, recycle0 = FALSE)), collapse = NULL, recycle0 = FALSE)
+        tempo.cat <- base::paste0(
+            "INTERNAL ERROR 1 IN ", 
+            base::ifelse(test = base::is.null(x = package_name), yes = "", no = base::paste0(package_name, base::ifelse(test = base::grepl(x = function_name, pattern = "^\\.", ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE), yes = ":::", no = "::"))), 
+            function_name, 
+            ".\nout$fun_names AND out$fun_names_pos MUST BE TYPE list\nout$fun_names:\n", 
+            out$fun_names, 
+            "\nout$fun_names_pos:\n", 
+            out$fun_names_pos, 
+            base::ifelse(test = base::is.null(x = internal_error_report_link), yes = "", no = base::paste0("\n\nPLEASE, REPORT THIS ERROR HERE: ", internal_error_report_link, collapse = NULL, recycle0 = FALSE)), 
+            collapse = NULL, 
+            recycle0 = FALSE
+        )
         base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL) # == in base::stop() to be able to add several messages between ==
     }
     # basic function names in x
@@ -358,7 +369,20 @@ colons_check <- function(
         in_basic_fun_names_pos <- in_basic_fun_names_pos[ ! tempo.log]
         in_basic_code_line_nb <- out$code_line_nb[ ! tempo.log]
         if( ! (base::length(x = in_basic_fun) == base::length(x = in_basic_fun_names_pos) & base::length(x = in_basic_fun) == base::length(x = in_basic_code_line_nb))){
-            tempo.cat <- base::paste0("INTERNAL ERROR 2 IN ", function_name, " OF THE ", package_name, " PACKAGE\nLENGTHS SHOULD BE IDENTICAL\nin_basic_fun: ", base::length(x = in_basic_fun), "\nin_basic_fun_names_pos: ", base::length(x = in_basic_fun_names_pos), "\nin_basic_code_line_nb: ", base::length(x = in_basic_code_line_nb), base::ifelse(test = base::is.null(x = internal_error_report_link), yes = "", no = base::paste0("\n\nPLEASE, REPORT THIS ERROR HERE: ", internal_error_report_link, collapse = NULL, recycle0 = FALSE)), collapse = NULL, recycle0 = FALSE)
+            tempo.cat <- base::paste0(
+                "INTERNAL ERROR 2 IN ", 
+                base::ifelse(test = base::is.null(x = package_name), yes = "", no = base::paste0(package_name, base::ifelse(test = base::grepl(x = function_name, pattern = "^\\.", ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE), yes = ":::", no = "::"))), 
+                function_name, 
+                ".\nLENGTHS SHOULD BE IDENTICAL\nin_basic_fun: ", 
+                base::length(x = in_basic_fun), 
+                "\nin_basic_fun_names_pos: ", 
+                base::length(x = in_basic_fun_names_pos), 
+                "\nin_basic_code_line_nb: ", 
+                base::length(x = in_basic_code_line_nb), 
+                base::ifelse(test = base::is.null(x = internal_error_report_link), yes = "", no = base::paste0("\n\nPLEASE, REPORT THIS ERROR HERE: ", internal_error_report_link, collapse = NULL, recycle0 = FALSE)), 
+                collapse = NULL, 
+                recycle0 = FALSE
+            )
             base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL) # == in base::stop() to be able to add several messages between ==
         }
         # end removal of string with empty function names
@@ -401,7 +425,19 @@ colons_check <- function(
         in_other_fun_names_pos <- in_other_fun_names_pos[ ! tempo.log]
         in_other_code_line_nb <- out$code_line_nb[ ! tempo.log]
         if( ! (base::length(x = in_other_fun) == base::length(x = in_other_fun_names_pos) & base::length(x = in_other_fun) == base::length(x = in_other_code_line_nb))){
-            tempo.cat <- base::paste0("INTERNAL ERROR 3 IN ", function_name, " OF THE ", package_name, " PACKAGE\nLENGTHS SHOULD BE IDENTICAL\nin_other_fun: ", base::length(x = in_other_fun), "\nin_other_fun_names_pos: ", base::length(x = in_other_fun_names_pos), "\nin_other_code_line_nb: ", base::length(x = in_other_code_line_nb), collapse = NULL, recycle0 = FALSE)
+            tempo.cat <- base::paste0(
+                "INTERNAL ERROR 3 IN ", 
+                base::ifelse(test = base::is.null(x = package_name), yes = "", no = base::paste0(package_name, base::ifelse(test = base::grepl(x = function_name, pattern = "^\\.", ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE), yes = ":::", no = "::"))), 
+                function_name, 
+                ".\nLENGTHS SHOULD BE IDENTICAL\nin_other_fun: ", 
+                base::length(x = in_other_fun), 
+                "\nin_other_fun_names_pos: ", 
+                base::length(x = in_other_fun_names_pos), 
+                "\nin_other_code_line_nb: ", 
+                base::length(x = in_other_code_line_nb), 
+                collapse = NULL, 
+                recycle0 = FALSE
+            )
             base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL) # == in base::stop() to be able to add several messages between ==
         }
         # end removal of string with empty function names
@@ -416,6 +452,7 @@ colons_check <- function(
                 ini = out$code, 
                 arg_user_setting = out$arg_user_setting, 
                 error_text = base::sub(pattern = "^ERROR IN ", replacement = " INSIDE ", x = error_text_start, ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE), 
+                internal_error_report_link = internal_error_report_link, 
                 text = "OTHER", 
                 internal_fun_names = out$internal_fun_names
             )
@@ -430,7 +467,7 @@ colons_check <- function(
         cat_other <- NULL
     }
     # end analyse of :: before basic functions in x
-    tempo.cat <- base::paste0("AFTER RUNNING ", function_name, " OF THE ", package_name, " PACKAGE.\nINSIDE ", base::as.character(x = out$arg_user_setting$x), collapse = NULL, recycle0 = FALSE)
+    tempo.cat <- base::paste0("AFTER RUNNING ", base::ifelse(test = base::is.null(x = package_name), yes = "", no = base::paste0(package_name, base::ifelse(test = base::grepl(x = function_name, pattern = "^\\.", ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE), yes = ":::", no = "::"))), function_name, ".\nINSIDE ", base::as.character(x = arg_user_setting$x), collapse = NULL, recycle0 = FALSE)
     if( ! (base::all(log_basic, na.rm = TRUE) & base::all(log_other, na.rm = TRUE))){
         tempo.cat <- base::paste0(tempo.cat, ", EVERYTHING SEEMS CLEAN.", collapse = NULL, recycle0 = FALSE)
     }else{

@@ -19,21 +19,14 @@
 #' @author Yushi Han <yushi.han2000@gmail.com>
 #' @author Haiding Wang <wanghaiding442@gmail.com>
 #' @examples
-#' # example of error message
-#' 
-#' # is_python_package_here(req_package = "nopackage")
-#' 
-#' 
-#' # commented because this example returns an error if the python package is not installed on the computer
+#' \dontrun{ # Example that return an error
+#' is_python_package_here(req_package = "nopackage")
+#' # this example returns an error if the python package is not installed on the computer
 #' # (require the installation of the python serpentine package 
 #' # from https://github.com/koszullab/serpentine
-#' 
-#' # is_python_package_here(req_package = "serpentine")
-#' 
-#' 
-#' # another example of error message
-#' 
-#' # is_python_package_here(req_package = "serpentine", python_lib_path = "blablabla")
+#' is_python_package_here(req_package = "serpentine")
+#' is_python_package_here(req_package = "serpentine", python_lib_path = "blablabla")
+#' }
 #' @export
 is_python_package_here <- function(
     req_package, 
