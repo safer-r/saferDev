@@ -225,7 +225,8 @@ arg_test <- function(
                 "parallel::clusterApply",
                 "parallel::stopCluster",
                 "saferDev:::.base_op_check", 
-                "saferDev::arg_check"
+                "saferDev::arg_check",
+                "saferDev::get_message"
             ),
             lib_path = lib_path, # write NULL if your function does not have any lib_path argument
             error_text = base::sub(pattern = "^ERROR IN ", replacement = " INSIDE ", x = error_text_start, ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE), 

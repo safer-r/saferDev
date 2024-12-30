@@ -12,7 +12,9 @@
 #' $string: The input string with all pattern replaced by the replacement pattern.
 #' $pos: vector of the positions of the 1rst character of the replaced pattern. NULL if no replaced pattern. In that case, $string is identical to the input string.
 #' @details
-#' Warning : must be very simple pattern, like "\\(".
+#' - Warning : must be very simple pattern, like "\\(".
+#' - Warning: requires saferDev::arg_check, saferDev:::.has_odd_number_of_quotes. In the safer Backbone section "######## check of the required functions from the required packages" add these functions when checking for the presence of saferDev:::.in_quotes_replacement.
+
 #' @author Gael Millot <gael.millot@pasteur.fr>
 #' @examples
 #' \dontrun{ # Example that shouldn't be run because this is an internal function

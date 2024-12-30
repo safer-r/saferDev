@@ -197,13 +197,14 @@ all_args_here <- function(
     if(safer_check == TRUE){
         saferDev:::.pack_and_function_check(
             fun = base::c(
-                "saferDev::arg_check",
-                "saferDev::is_function_here", 
-                "saferDev:::.functions_detect", 
                 "saferDev:::.base_op_check", 
-                "saferDev:::.in_quotes_replacement", 
+                "saferDev::arg_check",
+                "saferDev:::.functions_detect", # requires saferDev::arg_check, saferDev:::.extract_all_fun_names, saferDev:::.has_odd_number_of_quotes
+                "saferDev:::.in_quotes_replacement", # requires saferDev::arg_check, saferDev:::.has_odd_number_of_quotes
+                "saferDev:::.has_odd_number_of_quotes", # from saferDev:::.functions_detect, saferDev:::.in_quotes_replacement
                 "saferDev:::.fun_args_pos", 
-                "saferDev:::.extract_all_fun_names", 
+                "saferDev:::.extract_all_fun_names", # from this function and from saferDev:::.functions_detect
+                "saferDev::is_function_here", 
                 "saferDev:::.in_parenthesis_replacement", 
                 "saferDev:::.all_args_here_fill"
             ),

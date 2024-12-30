@@ -175,9 +175,13 @@ colons_check <- function(
         saferDev:::.pack_and_function_check(
             fun = base::c(
                 "saferDev:::.base_op_check", 
-                "saferDev:::.functions_detect",
-                "saferDev:::.colons_check_message", 
-                "saferDev::arg_check", # write each function preceeded by their package name
+                "saferDev::arg_check", 
+                "saferDev:::.functions_detect", # requires saferDev::arg_check, saferDev:::.extract_all_fun_names, saferDev:::.has_odd_number_of_quotes
+                "saferDev:::.extract_all_fun_names", # from this function and from saferDev:::.functions_detect
+                "saferDev:::.has_odd_number_of_quotes", # from saferDev:::.functions_detect
+                "saferDev:::.colons_check_message", # requires saferDev::arg_check, .noclean_functions
+                "saferDev:::.noclean_functions", # requires saferDev::arg_check, saferDev:::.has_odd_number_of_quotes
+                "saferDev:::.has_odd_number_of_quotes"
             ),
             lib_path = lib_path, # write NULL if your function does not have any lib_path argument
             error_text = base::sub(pattern = "^ERROR IN ", replacement = " INSIDE ", x = error_text_start, ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE), 

@@ -11,8 +11,9 @@
 #' $end: position of the closing ")" of the function.
 #' $middle_bracket_pos: list of positions of the couple of brackets in the middle of the begin and end positions. In each compartment, the first number is the position of ( and the second the position of ). NULL if no inside brackets.
 #' @details
-#' Warning: the string must be cleaned form brackets between quotes. Use .in_quotes_replacement() for that.
-#' Warning: quotes in strings are escaped, so that position of ( in \"a( is 3, not 4.
+#' - Warning: the string must be cleaned form brackets between quotes. Use .in_quotes_replacement() for that.
+#' - Warning: quotes in strings are escaped, so that position of ( in \"a( is 3, not 4.
+#' - Warning: requires saferDev::arg_check. In the safer Backbone section "######## check of the required functions from the required packages" add this function when checking for the presence of saferDev:::.all_args_here_fill.
 #' @author Gael Millot <gael.millot@pasteur.fr>
 #' @examples
 #' \dontrun{ # Example that shouldn't be run because this is an internal function

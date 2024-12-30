@@ -15,6 +15,8 @@
 #'  A list:
 #'  $output.cat: the message (string).
 #'  $colon_not_here: logical vector. Does list.fun contain function names without :: or ::: ?
+#' @details
+#' - Warning: requires saferDev::arg_check, .noclean_functions. In the safer Backbone section "######## check of the required functions from the required packages" add this function when checking for the presence of saferDev:::.colons_check_message.
 #' @author Gael Millot <gael.millot@pasteur.fr>
 #' @keywords internal
 #' @rdname internal_function
