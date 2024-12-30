@@ -122,10 +122,6 @@
     }
     ######## end arg with no default values
 
-    ######## argument checking with arg_check()
-    # error_text already checked above
-    ######## end argument checking with arg_check()
-
     ######## management of NA arguments
     if(base::length(x = arg_user_setting) != 0){
         tempo_log <- base::suppressWarnings(expr = base::sapply(X = base::lapply(X = arg_user_setting, FUN = function(x){base::is.na(x = x)}), FUN = function(x){base::any(x = x, na.rm = TRUE)}, simplify = TRUE, USE.NAMES = TRUE), classes = "warning") & base::lapply(X = arg_user_setting, FUN = function(x){base::length(x = x)}) == 1L # no argument provided by the user can be just NA
@@ -160,6 +156,10 @@
         base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL) # == in base::stop() to be able to add several messages between ==
     }
     ######## end management of NULL arguments
+
+    ######## argument checking with arg_check()
+    # error_text already checked above
+    ######## end argument checking with arg_check()
 
     ######## management of "" in arguments of mode character
     # not required
