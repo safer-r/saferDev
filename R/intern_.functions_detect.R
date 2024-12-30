@@ -19,6 +19,10 @@
 #' - Use the regex pattern "([a-zA-Z]|\\.[a-zA-Z._])[a-zA-Z0-9._]*\\s*\\(" to detect a function in the code.
 #' - $all_basic_funs are all the functions in base::c("package:stats", "package:graphics",  "package:grDevices", "package:utils", "package:datasets", "package:methods", "Autoloads", "package:base")
 #' - Warning: when checking for saferDev:::.functions_detect presence in the saferDev R library, also check for saferDev:::.extract_all_fun_names
+#' @examples
+#' \dontrun{ # Example that shouldn't be run because this is an internal function
+#' source("C:\\Users\\gmillot\\Documents\\Git_projects\\safer-r\\saferDev\\dev\\other\\test.R") ; .functions_detect(x = test, arg_user_setting = base::list(x =  as.name(x = "test")), error_text = " INSIDE P1::F1", internal_error_report_link = "test")
+#' }
 #' @author Gael Millot <gael.millot@pasteur.fr>
 #' @keywords internal
 #' @rdname internal_function

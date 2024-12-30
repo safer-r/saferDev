@@ -16,6 +16,10 @@
 #' @details
 #' Warning : must be very simple pattern, like "\\(".
 #' @author Gael Millot <gael.millot@pasteur.fr>
+#' @examples
+#' \dontrun{ # Example that shouldn't be run because this is an internal function
+#' .in_parenthesis_replacement(string = "pattern = base::paste0(pattern, \"\\\\(#\"), text = text", pattern = ",", no_regex_pattern = ",", replacement = " ", perl = TRUE, open_pos = 23, close_pos = 39,  error_text = " INSIDE P1::F1", internal_error_report_link = "test")
+#' }
 #' @keywords internal
 #' @rdname internal_function
 .in_parenthesis_replacement <- function(

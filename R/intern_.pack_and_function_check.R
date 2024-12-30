@@ -10,6 +10,12 @@
 #' @author Gael Millot <gael.millot@pasteur.fr>
 #' @author Yushi Han <yushi.han2000@gmail.com>
 #' @author Haiding Wang <wanghaiding442@gmail.com>
+#' @examples
+#' \dontrun{ # Example that shouldn't be run because this is an internal function
+#' .pack_and_function_check(fun = 1, error_text = " INSIDE F1.", internal_error_report_link = "") # this example returns an error
+#' .pack_and_function_check(fun = "ggplot2::notgood", lib_path = base::.libPaths(), error_text = " INSIDE P1::F1", internal_error_report_link = "test") # this example returns an error
+#' .pack_and_function_check(fun = c("ggplot2::geom_point", "grid::gpar"), lib_path = base::.libPaths(), error_text = " INSIDE P1::F1", internal_error_report_link = "test")
+#' }
 #' @author Gael Millot <gael.millot@pasteur.fr>
 #' @keywords internal
 #' @rdname internal_function

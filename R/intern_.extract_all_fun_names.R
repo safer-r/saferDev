@@ -9,6 +9,10 @@
 #' @param error_text Single character string used to add information in error messages returned by the function, notably if the function is inside other functions, which is practical for debugging. Example: error_text = "INSIDE <PACKAGE_1>::<FUNCTION_1> INSIDE <PACKAGE_2>::<FUNCTION_2>".
 #' @param internal_error_report_link Single string of the link where to post an issue indicated in an internal error message. Write NULL if no link to propose, or no internal error message.
 #' @author Gael Millot <gael.millot@pasteur.fr>
+#' @examples
+#' \dontrun{ # Example that shouldn't be run because this is an internal function
+#' .extract_all_fun_names(text = 'This is a test string with sum()', pattern = "[a-zA-Z.][a-zA-Z0-9._]*\\s*\\(", error_text = " INSIDE P1::F1", internal_error_report_link = "test")
+#' }
 #' @keywords internal
 #' @rdname internal_function
 .extract_all_fun_names <- function(

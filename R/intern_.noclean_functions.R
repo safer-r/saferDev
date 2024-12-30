@@ -9,6 +9,11 @@
 #' @param internal_error_report_link Single string of the link where to post an issue indicated in an internal error message. Write NULL if no link to propose, or no internal error message.
 #' @returns A logical vector indicating if function names of col2 are inside quotes or after $ (TRUE) in ini or not (FALSE). Can be length 0
 #' @author Gael Millot <gael.millot@pasteur.fr>
+#' @examples
+#' \dontrun{ # Example that shouldn't be run because this is an internal function
+#' source("https://raw.githubusercontent.com/safer-r/saferDev/main/dev/other/test.R")
+#' .noclean_functions(col1 =  c(15, 17), col2 = c("gregexpr", "regmatches"), col3 = c("matches <- ",  "matched_strings <- " ), ini = utils::capture.output(test), error_text = " INSIDE P1::F1", internal_error_report_link = "test")
+#' }
 #' @keywords internal
 #' @rdname internal_function
 .noclean_functions <- function(

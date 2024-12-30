@@ -25,6 +25,34 @@
 #' @author Gael Millot <gael.millot@pasteur.fr>
 #' @author Yushi Han <yushi.han2000@gmail.com>
 #' @author Haiding Wang <wanghaiding442@gmail.com>
+#' @examples
+#' get_message(data = "wilcox.test(c(1,1,3), c(1, 2, 4), paired = TRUE)", kind = "error", print.no = TRUE, text = "IN A")
+#' 
+#' get_message(data = "wilcox.test(c(1,1,3), c(1, 2, 4), paired = TRUE)", kind = "warning", 
+#' print.no = TRUE, text = "IN A")
+#' 
+#' get_message(data = "wilcox.test(c(1,1,3), c(1, 2, 4), paired = TRUE)", kind = "message", 
+#' print.no = TRUE, text = "IN A")
+#' 
+#' get_message(data = "wilcox.test()", kind = "message", print.no = TRUE, text = "IN A")
+
+#' get_message(data = "wilcox.test()", kind = "error", print.no = TRUE, text = "IN A")
+#' 
+#' get_message(data = "sum(1)", kind = "error", print.no = TRUE, text = "IN A")
+#' 
+#' get_message(data = "message('ahah')", kind = "error", print.no = TRUE, text = "IN A")
+#' 
+#' get_message(data = "message('ahah')", kind = "message", print.no = TRUE, text = "IN A")
+#' 
+#' get_message(data = "ggplot2::ggplot(data = data.frame(X = 1:10, stringsAsFactors = TRUE), 
+#' mapping = ggplot2::aes(x = X)) + ggplot2::geom_histogram()", kind = "message", print.no = TRUE, 
+#' text = "IN INSTRUCTION 1")
+#' 
+#' set.seed(1) ; 
+#' obs1 <- data.frame(Time = c(rnorm(10), rnorm(10) + 2), 
+#' Group1 = rep(c("G", "H"), each = 10), stringsAsFactors = TRUE) ; 
+#' get_message(data = 'gg_boxplot(data = obs1, y = "Time", categ = "Group1")', 
+#' kind = "message", print.no = TRUE, text = "IN INSTRUCTION 1")
 #' 
 #' @importFrom ggplot2 ggplot_build
 #' @export

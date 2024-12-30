@@ -12,6 +12,61 @@
 #' @author Gael Millot <gael.millot@pasteur.fr>
 #' @author Yushi Han <yushi.han2000@gmail.com>
 #' @author Haiding Wang <wanghaiding442@gmail.com>
+#' @examples
+#' # Examples in the working environment
+#' # creation of the object mean with value 1 in the .GlobalEnv environment, 
+#' # knowing that the mean() function also exists in the environment base, above .GlobalEnv:
+#' mean <- 1 
+#' # creation of the object t.test with value 1 in the .GlobalEnv environment, 
+#' # knowing that the t.test() function also exists in the environment stats, above .GlobalEnv:
+#' t.test <- 1 
+#' search() # current R scope (order of the successive R environments).
+#' utils::find("mean") # where the objects with the name "mean" are present.
+#' utils::find("t.test") # where the objects with the name "mean" are present.
+#' a <- env_check(pos = 1) # test if any object name of the global environment are above environments 
+#' a # output string.
+#' cat(a)
+#' # test if any object of the stats environment (one step above .GlobalEnv) 
+#' # are in upper environments of stats. Returns NULL since no object names of stats are in upper environments:
+#' env_check(pos = 2) 
+#' rm(mean) ; rm (t.test)
+#' 
+#' # Examples inside a function
+#' # env_check() checks if the object names inside the fun1 function 
+#' # exist in the .GlobalEnv environment and above:
+#' fun1 <- function(){t.test <- 0 ; mean <- 5 ; env_check(pos = 1)} 
+#' fun1()
+#' cat(fun1())
+#' # env_check() checks if the object names inside the environment one step above fun2(), 
+#' # here .GlobalEnv, exist in the upper environments of .GlobalEnv:
+#' fun2 <- function(){sum <- 0 ; env_check(pos = 2)} 
+#' fun2()
+#' # Warning: cat(fun2()) does not return NULL, because the environement tested is not anymore .GlobalEnv but inside cat().
+#' # With the name of the function fun3 indicated in the message:
+#' fun3 <- function(){t.test <- 0 ; mean <- 5 ; env_check(pos = 1, name = "fun3")}
+#' fun3()
+#' # Alternative way:
+#' fun4 <- function(){t.test <- 0 ; mean <- 5 ; env_check(pos = 1, name = as.character(sys.calls()[[length(sys.calls())]]))}
+#' fun4()
+#' # sys.calls() gives the name of the imbricated functions, 
+#' # sys.calls()[[length(sys.calls())]] the name of the function one step above.
+#' fun5 <- function(){fun6 <- function(){print(sys.calls())} ; fun6()}
+#' fun5()
+#' # A way to have the name of the tested environment according to test.pos value:
+#' fun7 <- function(){
+#'     min <- "a"
+#'     fun8 <- function(){
+#'         test.pos <- 1 # value 1 tests the fun8 env, 2 tests the fun7 env.
+#'         range <- "a"
+#'         env_check(pos = test.pos, name = if(length(sys.calls()) >= test.pos){
+#'             as.character(sys.calls()[[length(sys.calls()) + 1 - test.pos]])
+#'         }else{
+#'             search()[(1:length(search()))[test.pos - length(sys.calls())]]
+#'         }) 
+#'     }
+#'     fun8()
+#' }
+#' fun7()
 #' @export
 env_check <- function(
     pos = 1, 

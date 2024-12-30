@@ -7,6 +7,10 @@
 #' @param internal_error_report_link Single string of the link where to post an issue indicated in an internal error message. Write NULL if no link to propose, or no internal error message.
 #' @returns TRUE or FALSE.
 #' @author Gael Millot <gael.millot@pasteur.fr>
+#' @examples
+#' \dontrun{ # Example that shouldn't be run because this is an internal function
+#' .has_odd_number_of_quotes(input_string = 'This is a "test" string with "even" quotes', pattern = '"')
+#' }
 #' @keywords internal
 #' @rdname internal_function
 .has_odd_number_of_quotes <- function(

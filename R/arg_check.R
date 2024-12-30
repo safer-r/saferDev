@@ -42,6 +42,13 @@
 #' @author Gael Millot <gael.millot@pasteur.fr>
 #' @author Yushi Han <yushi.han2000@gmail.com>
 #' @author Haiding Wang <wanghaiding442@gmail.com>
+#' @examples
+#' test <- matrix(1:3)
+#' \dontrun{ # Example that return an error
+#' arg_check(data = test, print = TRUE, class = "vector", mode = "numeric")  # commented because this example returns an error
+#' }
+#' arg_check(data = test, print = TRUE, class = "matrix", mode = "numeric")
+#' arg_check(data = test, print = TRUE, class = "matrix", mode = "numeric", error_text = "BY saferDev::arg_check()")
 #' @export
 arg_check <- function(
     data, 
