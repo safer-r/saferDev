@@ -7,12 +7,6 @@
 #' @author Gael Millot <gael.millot@pasteur.fr>
 #' @author Yushi Han <yushi.han2000@gmail.com>
 #' @author Haiding Wang <wanghaiding442@gmail.com>
-#' @examples
-#' \dontrun{
-#' # Example that shouldn't be run because this is an internal function
-#' assign("!", 1) ; assign("+", 2) ; .base_op_check(error_text = " INSIDE fun1.")
-#' rm("!") ; rm("+") # commented because this example returns an error
-#' }
 #' @keywords internal
 #' @rdname internal_function
 .base_op_check <- function(

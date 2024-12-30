@@ -42,15 +42,6 @@
 #' 2) Proposals in the STATUS column are only suggestions, as it is difficult to anticipate all the exceptions with arguments writting.
 #' 
 #' @author Gael Millot <gael.millot@pasteur.fr>
-#' @examples
-#' \dontrun{ # Example that return an error
-#' all_args_here(mean)
-#' }
-#' source("https://raw.githubusercontent.com/safer-r/saferDev/main/dev/other/test2.R") ; all_args_here(test2, export = TRUE)
-#' FUN2 <- function(x, y){middle_bracket2 <- base::do.call(what = base::c, args = code_for_col, quote = FALSE, envir = base::parent.frame())}
-#' all_args_here(FUN2)
-#' source("https://raw.githubusercontent.com/safer-r/.github/refs/heads/main/profile/backbone.R")
-#' all_args_here(BACKBONE, export = TRUE)
 #' @export
 all_args_here <- function(
     x, 
@@ -892,7 +883,7 @@ all_args_here <- function(
                         col1_i2 = col1[i2],
                         col2_i2 = col2[i2],
                         arg_user_setting_x = arg_user_setting$x, 
-                        error_text = base::sub(pattern = "^ERROR IN ", replacement = " INSIDE ", x = error_text_start, ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE)), 
+                        error_text = base::sub(pattern = "^ERROR IN ", replacement = " INSIDE ", x = error_text_start, ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE), 
                         internal_error_report_link = internal_error_report_link, 
                         warn = warn,
                         warn_count = warn_count

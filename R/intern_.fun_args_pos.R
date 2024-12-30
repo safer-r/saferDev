@@ -14,12 +14,6 @@
 #' Warning: the string must be cleaned form brackets between quotes. Use .in_quotes_replacement() for that.
 #' Warning: quotes in strings are escaped, so that position of ( in \"a( is 3, not 4.
 #' @author Gael Millot <gael.millot@pasteur.fr>
-#' @examples
-#' \dontrun{ # Example that shouldn't be run because this is an internal function
-#' # Warning : examples only with strings that must be cleaned form brackets between quotes
-#' .fun_args_pos(text = "a$regmatches(x = text, m = matches)[[1]]", pattern = paste0("regmatches", "[\\s\\r\\n]*\\("), function_name = "F1", package_name = "P1")
-#' .fun_args_pos(text = ' "a" ; paste0("I", paste0(sum(1:3), collapse = " "), min(1) ) ; range(2)', pattern = paste0("paste0", "[\\s\\r\\n]*\\("), function_name = "F1", package_name = "P1")
-#' }
 #' @keywords internal
 #' @rdname internal_function
 .fun_args_pos <- function(
@@ -30,9 +24,11 @@
 ){
     # DEBUGGING
     # source("https://raw.githubusercontent.com/safer-r/saferDev/main/dev/other/test.R")
-    # text = ' "a" ; paste0("I", paste0(sum(1:3), collapse = " "), min(1) ) ; range(2)' ; pattern = paste0("paste0", "[\\s\\r\\n]*\\(") ; function_name = "F1" ; package_name = "P1"
-    # text = 'base::gregexpr(pattern = base::paste0(pattern, "\\(#"), text = text)' ; pattern = 'gregexpr[\\s\\r\\n]*\\(' ; function_name = "F1" ; package_name = "P1"
-
+    # text = ' "a" ; paste0("I", paste0(sum(1:3), collapse = " "), min(1) ) ; range(2)' ; pattern = paste0("paste0", "[\\s\\r\\n]*\\(") ; error_text = " INSIDE P1::F1" ; internal_error_report_link = "test"
+    # function_name <- ".fun_args_pos" ; arg_user_setting = base::list(text = "a", pattern = paste0("paste0", "[\\s\\r\\n]*\\("), error_text = "INSIDE P1::F1", internal_error_report_link = "test") ; arg_names <- c("text", "pattern", "error_text", "internal_error_report_link")
+    # text = 'base::gregexpr(pattern = base::paste0(pattern, "\\(#"), text = text)' ; pattern = 'gregexpr[\\s\\r\\n]*\\(' ; error_text = " INSIDE P1::F1" ; internal_error_report_link = "test"
+    # function_name <- ".fun_args_pos" ; arg_user_setting = base::list(text = 'base::gregexpr(pattern = base::paste0(pattern, "\\(#"), text = text)', pattern = 'gregexpr[\\s\\r\\n]*\\(', error_text = "INSIDE P1::F1", internal_error_report_link = "test") ; arg_names <- c("text", "pattern", "error_text", "internal_error_report_link")
+    # text = ' "a" ; paste0("I", paste0(sum(1:3), collapse = " "), min(1) ) ; range(2)', pattern = paste0("paste0", "[\\s\\r\\n]*\\("), , error_text = " INSIDE P1::F1", internal_error_report_link = "test")
 
     #### package name
     package_name <- "saferDev" # write NULL if the function developed is not in a package

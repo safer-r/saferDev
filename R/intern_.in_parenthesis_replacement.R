@@ -1,27 +1,37 @@
-#' @title .has_odd_number_of_quotes
+#' @title .in_parenthesis_replacement
 #' @description
-#' Determine if a string has a odd number of quotes.
-#' @param input_string Single string.
-#' @param pattern: Either '"' or "'".
+#' Replace any pattern inside () by another replacement pattern
+#' @param string Single string.
+#' @param pattern Single string indicating the pattern to detect. Warning : must be very simple pattern, like ",".
+#' @param no_regex_pattern Single string of the pattern to detect but without escape characters or list, etc.
+#' @param replacement Single string for pattern replacement. Is not regex.
+#' @param perl Single logical value. Use Perl regex in pattern ?
+#' @param open_pos Single integer indicating the position of the opening parenthesis.
+#' @param close_pos Single integer indicating the position of the closing parenthesis.
 #' @param error_text Single character string used to add information in error messages returned by the function, notably if the function is inside other functions, which is practical for debugging. Example: error_text = "INSIDE <PACKAGE_1>::<FUNCTION_1> INSIDE <PACKAGE_2>::<FUNCTION_2>".
 #' @param internal_error_report_link Single string of the link where to post an issue indicated in an internal error message. Write NULL if no link to propose, or no internal error message.
-#' @returns TRUE or FALSE.
+#' @returns A list containing:
+#' $string: The input string with all pattern replaced by the replacement pattern.
+#' $pos: the positions of the 1rst character of the replaced pattern. NULL if no replaced pattern. In that case, $string is identical to the input string
+#' @details
+#' Warning : must be very simple pattern, like "\\(".
 #' @author Gael Millot <gael.millot@pasteur.fr>
-#' @examples
-#' \dontrun{ # Example that shouldn't be run because this is an internal function
-#' .has_odd_number_of_quotes(input_string = 'This is a "test" string with "even" quotes', pattern = '"')
-#' }
 #' @keywords internal
 #' @rdname internal_function
-.has_odd_number_of_quotes <- function(
-    input_string, 
-    pattern,
+.in_parenthesis_replacement <- function(
+    string, 
+    pattern, 
+    no_regex_pattern, 
+    replacement, 
+    perl,
+    open_pos,
+    close_pos,
     error_text,
     internal_error_report_link
 ){
     # DEBUGGING
-    # input_string = 'This is a "test" string with "even" quotes' ; pattern = '"' ; error_text = " INSIDE P1::F1" ; internal_error_report_link = "test"
-    # input_string = "This is a 'test' string with 'even' quotes" ; pattern = "'" ; error_text = " INSIDE P1::F1" ; internal_error_report_link = "test"
+    # string = "pattern = base::paste0(pattern, \"\\\\(#\"), text = text" ; pattern = "," ; no_regex_pattern = "," ; replacement = " " ; perl = TRUE ; open_pos = 23 ; close_pos = 39 ; error_text = " INSIDE P1::F1" ; internal_error_report_link = "test"
+
 
     #### package name
     package_name <- "saferDev" # write NULL if the function developed is not in a package
@@ -117,8 +127,13 @@
 
     ######## arg with no default values
     mandat_args <- base::c(
-        "input_string", 
+        "string", 
         "pattern", 
+        "no_regex_pattern", 
+        "replacement", 
+        "perl",
+        "open_pos",
+        "close_pos",
         "error_text",
         "internal_error_report_link"
     )
@@ -143,8 +158,13 @@
     checked_arg_names <- NULL # for function debbuging: used by r_debugging_tools
     ee <- base::expression(argum_check <- base::c(argum_check, tempo$problem) , text_check <- base::c(text_check, tempo$text) , checked_arg_names <- base::c(checked_arg_names, tempo$object.name))
     # add as many lines as below, for each of your arguments of your function in development
-    tempo <- saferDev::arg_check(data = input_string, class = "vector", typeof = "character", mode = NULL, length = 1, prop = FALSE, double_as_integer_allowed = FALSE, options = NULL, all_options_in_data = FALSE, na_contain = TRUE, neg_values = TRUE, inf_values = TRUE, print = FALSE, data_name = NULL, lib_path = NULL, safer_check = FALSE, error_text = base::sub(pattern = "^ERROR IN ", replacement = " INSIDE ", x = error_text_start, ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE)) ; base::eval(expr = ee, envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL)) # copy - paste this line as much as necessary
-    tempo <- saferDev::arg_check(data = pattern, class = NULL, typeof = NULL, mode = NULL, length = 1, prop = FALSE, double_as_integer_allowed = FALSE, options = c('"', "'"), all_options_in_data = FALSE, na_contain = TRUE, neg_values = TRUE, inf_values = TRUE, print = FALSE, data_name = NULL, lib_path = NULL, safer_check = FALSE, error_text = base::sub(pattern = "^ERROR IN ", replacement = " INSIDE ", x = error_text_start, ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE)) ; base::eval(expr = ee, envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL)) # copy - paste this line as much as necessary
+    tempo <- saferDev::arg_check(data = string, class = "vector", typeof = "character", mode = NULL, length = 1, prop = FALSE, double_as_integer_allowed = FALSE, options = NULL, all_options_in_data = FALSE, na_contain = TRUE, neg_values = TRUE, inf_values = TRUE, print = FALSE, data_name = NULL, lib_path = NULL, safer_check = FALSE, error_text = base::sub(pattern = "^ERROR IN ", replacement = " INSIDE ", x = error_text_start, ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE)) ; base::eval(expr = ee, envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL)) # copy - paste this line as much as necessary
+    tempo <- saferDev::arg_check(data = pattern, class = "vector", typeof = "character", mode = NULL, length = 1, prop = FALSE, double_as_integer_allowed = FALSE, options = NULL, all_options_in_data = FALSE, na_contain = TRUE, neg_values = TRUE, inf_values = TRUE, print = FALSE, data_name = NULL, lib_path = NULL, safer_check = FALSE, error_text = base::sub(pattern = "^ERROR IN ", replacement = " INSIDE ", x = error_text_start, ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE)) ; base::eval(expr = ee, envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL)) # copy - paste this line as much as necessary
+    tempo <- saferDev::arg_check(data = no_regex_pattern, class = "vector", typeof = "character", mode = NULL, length = 1, prop = FALSE, double_as_integer_allowed = FALSE, options = NULL, all_options_in_data = FALSE, na_contain = TRUE, neg_values = TRUE, inf_values = TRUE, print = FALSE, data_name = NULL, lib_path = NULL, safer_check = FALSE, error_text = base::sub(pattern = "^ERROR IN ", replacement = " INSIDE ", x = error_text_start, ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE)) ; base::eval(expr = ee, envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL)) # copy - paste this line as much as necessary
+    tempo <- saferDev::arg_check(data = replacement, class = "vector", typeof = "character", mode = NULL, length = 1, prop = FALSE, double_as_integer_allowed = FALSE, options = NULL, all_options_in_data = FALSE, na_contain = TRUE, neg_values = TRUE, inf_values = TRUE, print = FALSE, data_name = NULL, lib_path = NULL, safer_check = FALSE, error_text = base::sub(pattern = "^ERROR IN ", replacement = " INSIDE ", x = error_text_start, ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE)) ; base::eval(expr = ee, envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL)) # copy - paste this line as much as necessary
+    tempo <- saferDev::arg_check(data = perl, class = "vector", typeof = "logical", mode = NULL, length = 1, prop = FALSE, double_as_integer_allowed = FALSE, options = NULL, all_options_in_data = FALSE, na_contain = TRUE, neg_values = TRUE, inf_values = TRUE, print = FALSE, data_name = NULL, lib_path = NULL, safer_check = FALSE, error_text = base::sub(pattern = "^ERROR IN ", replacement = " INSIDE ", x = error_text_start, ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE)) ; base::eval(expr = ee, envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL)) # copy - paste this line as much as necessary
+    tempo <- saferDev::arg_check(data = open_pos, class = "vector", typeof = "integer", mode = NULL, length = 1, prop = FALSE, double_as_integer_allowed = TRUE, options = NULL, all_options_in_data = FALSE, na_contain = TRUE, neg_values = TRUE, inf_values = TRUE, print = FALSE, data_name = NULL, lib_path = NULL, safer_check = FALSE, error_text = base::sub(pattern = "^ERROR IN ", replacement = " INSIDE ", x = error_text_start, ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE)) ; base::eval(expr = ee, envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL)) # copy - paste this line as much as necessary
+    tempo <- saferDev::arg_check(data = close_pos, class = "vector", typeof = "integer", mode = NULL, length = 1, prop = FALSE, double_as_integer_allowed = TRUE, options = NULL, all_options_in_data = FALSE, na_contain = TRUE, neg_values = TRUE, inf_values = TRUE, print = FALSE, data_name = NULL, lib_path = NULL, safer_check = FALSE, error_text = base::sub(pattern = "^ERROR IN ", replacement = " INSIDE ", x = error_text_start, ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE)) ; base::eval(expr = ee, envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL)) # copy - paste this line as much as necessary
     # error_text already checked above
     if( ! base::is.null(x = internal_error_report_link)){ # for all arguments that can be NULL, write like this:
         tempo <- saferDev::arg_check(data = internal_error_report_link, class = NULL, typeof = "character", mode = NULL, length = 1, prop = FALSE, double_as_integer_allowed = FALSE, options = NULL, all_options_in_data = FALSE, na_contain = TRUE, neg_values = TRUE, inf_values = TRUE, print = FALSE, data_name = NULL, lib_path = NULL, safer_check = FALSE, error_text = base::sub(pattern = "^ERROR IN ", replacement = " INSIDE ", x = error_text_start, ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE)) ; base::eval(expr = ee, envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL)) # copy - paste this line as much as necessary
@@ -178,8 +198,13 @@
 
     ######## management of NULL arguments
     tempo_arg <-base::c(
-        "input_string", 
+        "string", 
         "pattern", 
+        "no_regex_pattern", 
+        "replacement", 
+        "perl",
+        "open_pos",
+        "close_pos",
         "error_text"
         # "internal_error_report_link" # inactivated because can be NULL
     )
@@ -199,8 +224,10 @@
 
     ######## management of "" in arguments of mode character
     tempo_arg <- base::c(
-        "input_string", 
-        "pattern"
+        "string", 
+        "pattern", 
+        "no_regex_pattern", 
+        "replacement"
         # "error_text" # inactivated because can be ""
         # "internal_error_report_link" # inactivated because can be ""
     )
@@ -255,16 +282,74 @@
     #### end second round of checking and data preparation
 
     #### main code
-    # Count the number of quote characters
-    quote_count <- base::gregexpr(pattern, input_string)[[1]]
-    if (quote_count[1] == -1) {
-        quote_count <- 0
-    } else {
-        # Length of the vector gives the count of quotes
-        quote_count <- base::length(quote_count)
+    if(base::substr(string, open_pos, open_pos) != "("){
+        tempo.cat <- base::paste0(
+            "INTERNAL ERROR 1 IN ", 
+            intern_error_text_start, 
+            "ARGUMENT open_pos DOES NOT REFER TO A POSITION OF OPENING PARENTHESIS\nopen_pos:\n", 
+            base::paste0(open_pos, collapse = "\n", recycle0 = FALSE), 
+            "\nstring:\n", 
+            base::paste0(string, collapse = "\n", recycle0 = FALSE), 
+            "\nsubstr(string, open_pos, open_pos):\n", 
+            base::paste0(base::substr(string, open_pos, open_pos), collapse = "\n", recycle0 = FALSE), 
+            intern_error_text_end, 
+            collapse = NULL, 
+            recycle0 = FALSE
+        )
+        base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
     }
-    # Check if the count of quotes is odd
-    output <- quote_count %% 2 == 1
-    base::return(output)
+    if(base::substr(string, close_pos, close_pos) != ")"){
+        tempo.cat <- base::paste0(
+            "INTERNAL ERROR 2 IN ", 
+            intern_error_text_start, 
+            "ARGUMENT close_pos DOES NOT REFER TO A POSITION OF CLOSING PARENTHESIS\nclose_pos:\n", 
+            base::paste0(close_pos, collapse = "\n", recycle0 = FALSE), 
+            "\nstring:\n", 
+            base::paste0(string, collapse = "\n", recycle0 = FALSE), 
+            "\nsubstr(string, close_pos, close_pos):\n", 
+            base::paste0(base::substr(string, close_pos, close_pos), collapse = "\n", recycle0 = FALSE), 
+            intern_error_text_end, 
+            collapse = NULL, 
+            recycle0 = FALSE
+        )
+        base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
+    }
+    string_out <- string
+    # Extract the substring between the given open and close parentheses
+    substring_in_parentheses <- base::substr(string_out, open_pos, close_pos)
+    # Find the position of comma within that substring
+    comma_position_in_substring <- base::gregexpr(pattern, substring_in_parentheses)[[1]]
+    # Initialize a vector to store global positions of the replaced commas
+    pos <- NULL
+    if (comma_position_in_substring[1] != -1) {
+        for (relative_comma_position in comma_position_in_substring) {
+            # Calculate the global position of the comma in the original string
+            global_comma_position <- open_pos + relative_comma_position - 1
+            # Replace that comma using substring or substr
+            base::substring(string_out, global_comma_position, global_comma_position) <- replacement
+            # Store the global position
+            pos <- base::c(pos, global_comma_position)
+        }
+    }
+    if( ! base::is.null(pos)){
+        tempo <- base::substring(string, pos, pos)
+        if( ! base::all(base::unique(tempo) == no_regex_pattern, na.rm = TRUE)){
+            tempo.cat <- base::paste0(
+                "INTERNAL ERROR 3 IN ", 
+                intern_error_text_start, 
+                "ARGUMENT no_regex_pattern NOT CORRECTLY DETECTED\nno_regex_pattern: \"", 
+                no_regex_pattern, 
+                "\"\nREPLACED CHARACTERS IN string ARGUMENT:\n", 
+                base::paste0(tempo, collapse = "\n", recycle0 = FALSE), 
+                intern_error_text_end, 
+                collapse = NULL, 
+                recycle0 = FALSE
+            )
+            base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
+        }
+    }
+    # Return both the modified string and positions of replaced commas
+    base::return(base::list(string = string_out, pos = pos))
     #### end main code
 }
+

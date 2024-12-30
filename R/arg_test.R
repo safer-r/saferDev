@@ -54,35 +54,7 @@
 #' @author Gael Millot <gael.millot@pasteur.fr>
 #' @author Yushi Han <yushi.han2000@gmail.com>
 #' @author Haiding Wang <wanghaiding442@gmail.com>
-#' @examples
-#' arg_test(fun = "unique", arg = c("x", "incomparables"), 
-#' val = list(x = list(1:10, c(1,1,2,8), NA), incomparable = c(TRUE, FALSE, NA)))
 #' 
-#' arg_test(fun = "unique", arg = c("x", "incomparables"), 
-#' val = list(x = list(1:10, c(1,1,2,8), NA), 
-#' incomparable = c(TRUE, FALSE, NA)), expect.error = list(x = list(FALSE, FALSE, TRUE), 
-#' incomparable = c(FALSE, FALSE, TRUE)))
-#' 
-#' arg_test(fun = "unique", arg = c("x", "incomparables"), 
-#' val = list(x = list(1:10, c(1,1,2,8), NA), incomparable = c(TRUE, FALSE, NA)), 
-#' expect.error = list(x = c(FALSE, FALSE, TRUE), incomparable = c(FALSE, FALSE, TRUE)), 
-#' export = TRUE, res.path = getwd())
-#' 
-#' \dontrun{ # Example that return an error
-#' arg_test(fun = "unique", arg = c("x", "incomparables"), val = list(x = list(x = list(1:10, c(1,1,2,8), NA), incomparable = c(TRUE, FALSE, NA))))
-#' arg_test(fun = "round", arg = c("data", "dec.nb", "after.lead.zero"), val = list(L1 = list(c(1, 1.0002256, 1.23568), "a", NA), L2 = list(2, c(1,3), NA), L3 = c(TRUE, FALSE, NA)))
-#' }
-#' 
-#' arg_test(fun = "plot", arg = c("x", "y"), val = list(x = list(1:10, 12:13, NA, (1:10)^2), 
-#' y = list(1:10, NA, NA)),  expect.error = list(x = list(FALSE, TRUE, TRUE, FALSE), 
-#' y = list(FALSE, TRUE, TRUE)), parall = FALSE, thread.nb = NULL, plot.fun = TRUE, 
-#' res.path = ".", lib_path = NULL)
-#' 
-#' arg_test(fun = "plot", arg = c("x", "y"), val = list(x = list(1:10, 12:13, NA, (1:10)^2), 
-#' y = list(1:10, NA, NA)), parall = FALSE, thread.nb = 4, 
-#' plot.fun = TRUE, res.path = ".", 
-#' lib_path = NULL)
-
 #' @export
 arg_test <- function(
         fun, 

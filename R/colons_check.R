@@ -36,10 +36,7 @@
 #' @author Gael Millot <gael.millot@pasteur.fr>
 #' @author Yushi Han <yushi.han2000@gmail.com>
 #' @author Haiding Wang <wanghaiding442@gmail.com>  
-#' @examples
-#' colons_check(mean)
-#' colons_check(colons_check)
-#' source("https://raw.githubusercontent.com/safer-r/saferDev/main/dev/other/test.R") ; colons_check(test)
+#' 
 #' @export
 colons_check <- function(
     x, 
