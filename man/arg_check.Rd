@@ -19,9 +19,9 @@ arg_check(
   inf_values = TRUE,
   print = FALSE,
   data_name = NULL,
-  fun_name = NULL,
-  pack_name = NULL,
-  safer_check = TRUE
+  lib_path = NULL,
+  safer_check = TRUE,
+  error_text = ""
 )
 }
 \arguments{
@@ -53,11 +53,11 @@ arg_check(
 
 \item{data_name}{Single character string indicating the name of the object to test. If NULL, use what is assigned to the data argument for the returned message.}
 
-\item{fun_name}{Single character string indicating the name of the function checked (i.e., when arg_check() is used to check the arguments of this function). If non-null, the value of fun_name will be added into the message returned by arg_check().}
-
-\item{pack_name}{Single character string indicating the name of the package of fun_name. If non-null, the value of pack_name will be added into the message returned by arg_check().}
+\item{lib_path}{Vector of characters specifying the absolute pathways of the directories containing the required packages for the function, if not in the default directories. Useful to overcome R execution using system with non admin rights for R package installation in the default directories. Ignored if NULL (default): only the pathways specified by .libPaths() are used for package calling. Specify the right path if the function returns a package path error.}
 
 \item{safer_check}{Single logical value. Perform some "safer" checks? If TRUE, checkings are performed before main code running (see https://github.com/safer-r): 1) R classical operators (like "<-") not overwritten by another package because of the R scope and 2) required functions and related packages effectively present in local R lybraries. Must be set to FALSE if this fonction is used inside another "safer" function to avoid pointless multiple checkings.}
+
+\item{error_text}{Single character string used to add information in error messages returned by the function, notably if the function is inside other functions, which is practical for debugging. Example: error_text = "INSIDE <PACKAGE_1>::<FUNCTION_1> INSIDE <PACKAGE_2>::<FUNCTION_2>".}
 }
 \value{
 A list containing:
@@ -86,7 +86,11 @@ Check expected values of an argument of functions: class, type, mode, length, re
 }
 \examples{
 test <- matrix(1:3)
-# arg_check(data = test, print = TRUE, class = "vector", mode = "numeric")  # commented because this example returns an error
+\dontrun{ # Example that return an error
+arg_check(data = test, print = TRUE, class = "vector", mode = "numeric")  # commented because this example returns an error
+}
+arg_check(data = test, print = TRUE, class = "matrix", mode = "numeric")
+arg_check(data = test, print = TRUE, class = "matrix", mode = "numeric", error_text = "BY saferDev::arg_check()")
 }
 \seealso{
 \code{\link{match.arg}} et \code{\link{arg_test}}.

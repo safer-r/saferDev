@@ -696,7 +696,7 @@ arg_test <- function(
             print.count.loop <- print.count.loop + 1
             arg.values.print <- base::eval(base::parse(text = arg.values)) # recover the list of the i1 compartment
             for(j3 in 1:base::length(arg.values.print)){ # WARNING: do not use i1, i2 etc., here because already in loop.string
-                tempo.capt <- utils::capture.output(tempo.error <- get_message(
+                tempo.capt <- utils::capture.output(tempo.error <- saferDev::get_message(
                     data =  base::paste0("base::paste(arg.values.print[[", j3, "]])"), 
                     kind = "error", 
                     header = FALSE, 
@@ -712,7 +712,7 @@ arg_test <- function(
                 }
             }
             data <- base::rbind(data, base::as.character(base::sapply(arg.values.print, FUN = "paste", collapse = " ")), stringsAsFactors = FALSE) # each colum is a test
-            tempo.capt <- utils::capture.output(tempo.try.error <- get_message(
+            tempo.capt <- utils::capture.output(tempo.try.error <- saferDev::get_message(
                 data = base::eval(base::parse(text = fun.test2)), 
                 kind = "error", 
                 header = FALSE, 
@@ -723,7 +723,7 @@ arg_test <- function(
                 safer_check = FALSE, 
                 error_text = base::sub(pattern = "^ERROR IN ", replacement = " INSIDE ", x = error_text_start, ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE)
             )) # data argument needs a character string but base::eval(base::parse(text = fun.test2)) provides it (base::eval base::parse replace the i1, i2, etc., by the correct values, meaning that only val is required in the env.name environment)
-            tempo.capt <- utils::capture.output(tempo.try.warning <- get_message(
+            tempo.capt <- utils::capture.output(tempo.try.warning <- saferDev::get_message(
                 data = base::eval(base::parse(text = fun.test2)), 
                 kind = "warning", 
                 header = FALSE, 
@@ -846,6 +846,8 @@ arg_test <- function(
             plot.fun = plot.fun, 
             res.path = res.path, 
             lib_path = lib_path, 
+            error_text_start = error_text_start,
+            internal_error_report_link = internal_error_report_link, 
             fun = function(
         x, 
         function_name, 
@@ -869,18 +871,19 @@ arg_test <- function(
         code, 
         plot.fun, 
         res.path, 
-        lib_path
+        lib_path,
+        error_text_start,
+        internal_error_report_link
             ){
                 # check again: very important because another R
                 process.id <- base::Sys.getpid()
                 base::cat(base::paste0("\nPROCESS ID ", process.id, " -> TESTS ", x[1], " TO ", x[base::length(x)], "\n"))
-                .pack_and_function_check(
+                saferDev:::.pack_and_function_check(
                     fun = base::c(
                         "lubridate::seconds_to_period"
                     ),
                     lib_path = lib_path,
-                    external_function_name = function_name, 
-                    external_package_name = package_name,
+                    error_text = base::sub(pattern = "^ERROR IN ", replacement = " INSIDE ", x = error_text_start, ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE),
                     internal_error_report_link = internal_error_report_link
                 )
                 # end check again: very important because another R

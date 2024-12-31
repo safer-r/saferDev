@@ -11,11 +11,12 @@ all_args_here(
   df_name = "res.tsv",
   overwrite = FALSE,
   lib_path = NULL,
-  safer_check = TRUE
+  safer_check = TRUE,
+  error_text = ""
 )
 }
 \arguments{
-\item{x}{a function name, written without quotes and brackets.}
+\item{x}{Function name, written without quotes and brackets.}
 
 \item{export}{Single logical value. Export the data frame into a .tsv file? If TRUE, the data frame is not returned by the function but only exported.}
 
@@ -25,9 +26,11 @@ all_args_here(
 
 \item{overwrite}{Single logical value. Overwrite potential df_name file already existing in path_out? Ignored if export is FALSE.}
 
-\item{lib_path}{Vector of characters specifying the absolute pathways of the directories containing the required packages if not in the default directories. If NULL, the pathway specified by .libPaths() is used.}
+\item{lib_path}{Vector of characters specifying the absolute pathways of the directories containing the required packages for the function, if not in the default directories. Useful to overcome R execution using system with non admin rights for R package installation in the default directories. Ignored if NULL (default): only the pathways specified by .libPaths() are used for package calling. Specify the right path if the function returns a package path error.}
 
 \item{safer_check}{Single logical value. Perform some "safer" checks? If TRUE, checkings are performed before main code running (see https://github.com/safer-r): 1) R classical operators (like "<-") not overwritten by another package because of the R scope and 2) required functions and related packages effectively present in local R lybraries. Must be set to FALSE if all_args_here() fonction is used inside another "safer" function to avoid pointless multiple checkings.}
+
+\item{error_text}{Single character string used to add information in error messages returned by the function, notably if the function is inside other functions, which is practical for debugging. Example: error_text = "INSIDE <PACKAGE_1>::<FUNCTION_1> INSIDE <PACKAGE_2>::<FUNCTION_2>".}
 }
 \value{
 A data frame indicating the missing arguments or a message saying that everything seems fine.
@@ -71,9 +74,9 @@ all_args_here(mean)
 source("https://raw.githubusercontent.com/safer-r/saferDev/main/dev/other/test2.R") ; all_args_here(test2, export = TRUE)
 }
 FUN2 <- function(x, y){middle_bracket2 <- base::do.call(what = base::c, args = code_for_col, quote = FALSE, envir = base::parent.frame())}
-all_args_here(FUN2)
+all_args_here(FUN2, safer_check = FALSE)
 source("https://raw.githubusercontent.com/safer-r/.github/refs/heads/main/profile/backbone.R")
-all_args_here(BACKBONE, export = TRUE)
+all_args_here(BACKBONE, export = TRUE, safer_check = FALSE)
 }
 \author{
 Gael Millot <gael.millot@pasteur.fr>

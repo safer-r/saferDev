@@ -4,14 +4,21 @@
 \alias{is_package_here}
 \title{is_package_here}
 \usage{
-is_package_here(req_package, lib_path = NULL, safer_check = TRUE)
+is_package_here(
+  req_package,
+  lib_path = NULL,
+  safer_check = TRUE,
+  error_text = ""
+)
 }
 \arguments{
 \item{req_package}{Character vector of package names to check.}
 
-\item{lib_path}{Character vector specifying the absolute pathways of the directories containing the listed packages in the req_package argument, if not in the default directories. If NULL, the function checks only in the .libPaths() default R library folders.}
+\item{lib_path}{Vector of characters specifying the absolute pathways of the directories containing the required packages for the function, if not in the default directories. Useful to overcome R execution using system with non admin rights for R package installation in the default directories. Ignored if NULL (default): only the pathways specified by .libPaths() are used for package calling. Specify the right path if the function returns a package path error.}
 
 \item{safer_check}{Single logical value. Perform some "safer" checks? If TRUE, checkings are performed before main code running (see https://github.com/safer-r): 1) R classical operators (like "<-") not overwritten by another package because of the R scope and 2) required functions and related packages effectively present in local R lybraries. Must be set to FALSE if this fonction is used inside another "safer" function to avoid pointless multiple checkings.}
+
+\item{error_text}{Single character string used to add information in error messages returned by the function, notably if the function is inside other functions, which is practical for debugging. Example: error_text = "INSIDE <PACKAGE_1>::<FUNCTION_1> INSIDE <PACKAGE_2>::<FUNCTION_2>".}
 }
 \value{
 An error message if at least one of the checked packages is missing in lib_path, nothing otherwise.
@@ -20,12 +27,11 @@ An error message if at least one of the checked packages is missing in lib_path,
 Check if required packages are installed locally.
 }
 \examples{
-# is_package_here(req_package = "nopackage") # commented because this example returns an error
-
+\dontrun{ # Example that return an error
+is_package_here(req_package = "nopackage")
+is_package_here(req_package = "ggplot2", lib_path = "C:/Users/yhan/AppData/Local/R/win-library/4.3") # commented because this example returns an error if the lib_path argument is not an existing directory
+}
 is_package_here(req_package = "ggplot2")
-
-#' # is_package_here(req_package = "ggplot2", lib_path = "C:/Users/yhan/AppData/Local/R/win-library/4.3") # commented because this example returns an error if the lib_path argument is not an existing directory
-
 }
 \seealso{
 \code{\link{require}}.

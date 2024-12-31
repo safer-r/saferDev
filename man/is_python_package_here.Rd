@@ -9,7 +9,8 @@ is_python_package_here(
   python_exec_path = NULL,
   python_lib_path = NULL,
   lib_path = NULL,
-  safer_check = TRUE
+  safer_check = TRUE,
+  error_text = ""
 )
 }
 \arguments{
@@ -19,9 +20,11 @@ is_python_package_here(
 
 \item{python_lib_path}{Optional character vector specifying the absolute pathways of the directories containing some of the listed packages in the req_package argument, if not in the default directories.}
 
-\item{lib_path}{Absolute path of the reticulate packages, if not in the default folders.}
+\item{lib_path}{Vector of characters specifying the absolute pathways of the directories containing the required packages for the function, if not in the default directories. Useful to overcome R execution using system with non admin rights for R package installation in the default directories. Ignored if NULL (default): only the pathways specified by .libPaths() are used for package calling. Specify the right path if the function returns a package path error.}
 
 \item{safer_check}{Single logical value. Perform some "safer" checks (see https://github.com/safer-r)? If TRUE, checkings are performed before main code running: 1) R classical operators (like "<-") not overwritten by another package because of the R scope and 2) required functions and related packages effectively present in local R lybraries. Must be set to FALSE if this fonction is used inside another "safer" function to avoid pointless multiple checkings.}
+
+\item{error_text}{Single character string used to add information in error messages returned by the function, notably if the function is inside other functions, which is practical for debugging. Example: error_text = "INSIDE <PACKAGE_1>::<FUNCTION_1> INSIDE <PACKAGE_2>::<FUNCTION_2>".}
 }
 \value{
 An error message if at least one of the checked packages is missing in python_lib_path, nothing otherwise.
@@ -35,21 +38,14 @@ WARNINGS
 for python 3.7. Previous versions return an error "Error in sys$stdout$flush() : attempt to apply non-function"
 }
 \examples{
-# example of error message
-
-# is_python_package_here(req_package = "nopackage")
-
-
-# commented because this example returns an error if the python package is not installed on the computer
+\dontrun{ # Example that return an error
+is_python_package_here(req_package = "nopackage")
+# this example returns an error if the python package is not installed on the computer
 # (require the installation of the python serpentine package 
 # from https://github.com/koszullab/serpentine
-
-# is_python_package_here(req_package = "serpentine")
-
-
-# another example of error message
-
-# is_python_package_here(req_package = "serpentine", python_lib_path = "blablabla")
+is_python_package_here(req_package = "serpentine")
+is_python_package_here(req_package = "serpentine", python_lib_path = "blablabla")
+}
 }
 \author{
 Gael Millot <gael.millot@pasteur.fr>
