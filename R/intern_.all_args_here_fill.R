@@ -20,6 +20,10 @@
 #'    $col8: the $STATUS.
 #' @details
 #' - Warning: requires saferDev::arg_check. In the safer Backbone section "######## check of the required functions from the required packages" add this function when checking for the presence of saferDev:::.all_args_here_fill.
+#' @examples
+#' \dontrun{ # Example that shouldn't be run because this is an internal function
+#' .all_args_here_fill(arg_full = list(x = pairlist(x = quote(expr = ))), arg_full_names = "x", tempo_split = "x", three_dots_log = FALSE, i2 = 1, col1_i2 = 1, col2_i2 =  "length", arg_user_setting_x = "\"FUN1\"", error_text = "", internal_error_report_link = "https://github.com/safer-r/saferDev/issues/new", warn = NULL, warn_count = 0)
+#' }
 #' @author Gael Millot <gael.millot@pasteur.fr>
 #' @keywords internal
 #' @rdname internal_function
@@ -43,6 +47,7 @@
     #  arg_full = list(definition = sys.function(sys.parent()), call = sys.call(sys.parent()), expand.dots = TRUE, envir = parent.frame(2L)) ; arg_full_names = c("definition", "call", "expand.dots", "envir") ; tempo_split = c("sys.function(sys.parent())", "expand.dots = FALSE", "sys.call(sys.parent())") ;  three_dots_log = c(FALSE, FALSE, FALSE, FALSE) ; col2_i2 = "match.call" ; col3_i2 = "match.call(sys.function(sys.parent()), expand.dots = FALSE, sys.call(sys.parent()))" ; arg_user_setting_x = "FUN1" ; error_text = " INSIDE P1::F1" ; internal_error_report_link = "test" ; warn = "WARNING" ; warn_count = 1 
     #  arg_full = list(... = "", collapse = " ", recycle0 = FALSE) ; arg_full_names = c("...", "collapse", "recycle0") ; tempo_split = c("AA", "collapse = \" \"", "BB", "recycle0 = FALSE") ; three_dots_log = c(TRUE, FALSE, FALSE) ; col2_i2 = "paste0" ; col3_i2 = 'paste0("AA", collapse = " ", "BB", recycle0 = FALSE)' ; arg_user_setting_x = "FUN1" ;error_text = " INSIDE P1::F1" ; internal_error_report_link = "test" ; warn = "WARNING" ; warn_count = 1 
     #  arg_full = list(... = "", collapse = " ", recycle0 = FALSE) ; arg_full_names = c("...", "collapse", "recycle0") ; tempo_split = c("AA", "collapse = \" \"", "BB") ; three_dots_log = c(TRUE, FALSE, FALSE) ; col2_i2 = "paste0" ; col3_i2 = 'paste0("AA", collapse = " ", "BB")' ; arg_user_setting_x = "FUN1" ; error_text = " INSIDE P1::F1" ; internal_error_report_link = "test" ; warn = "WARNING" ; warn_count = 1 
+    # arg_full = list(x = "", ... = "") ; arg_full_names = c("x", "...") ; tempo_split = "x" ; three_dots_log = c(FALSE, TRUE) ; i2 = 1 ; col1_i2 = 1 ; col2_i2 =  "mean" ; arg_user_setting_x = "\"FUN1\"" ; error_text = "" ; internal_error_report_link = "https://github.com/safer-r/saferDev/issues/new" ; warn = NULL ; warn_count = 0
 
     #### package name
     package_name <- "saferDev" # write NULL if the function developed is not in a package

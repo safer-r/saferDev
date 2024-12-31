@@ -17,6 +17,10 @@
 #'  $colon_not_here: logical vector. Does list.fun contain function names without :: or ::: ?
 #' @details
 #' - Warning: requires saferDev::arg_check, .noclean_functions. In the safer Backbone section "######## check of the required functions from the required packages" add this function when checking for the presence of saferDev:::.colons_check_message.
+#' @examples
+#' \dontrun{ # Example that shouldn't be run because this is an internal function
+#' .colons_check_message(list.fun = list(c2 = "UseMethod"), list.fun.pos = list(c2 = 1), line.nb = 2, ini = c("function (x, ...) ", "UseMethod(\"mean\")", "<bytecode: 0x000001969e09e580>", "<environment: namespace:base>"), arg_user_setting = list(x = x, arg_user_setting = arg_user_setting, error_text = "P1::F1", internal_error_report_link = "" ), error_text = " INSIDE P1::F1", internal_error_report_link = "test", text = "BASIC", internal_fun_names = NULL)
+#' }
 #' @author Gael Millot <gael.millot@pasteur.fr>
 #' @keywords internal
 #' @rdname internal_function

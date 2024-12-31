@@ -48,16 +48,17 @@ colons_check <- function(
     error_text = ""
 ){
     # DEBUGGING
-    # x = mean ; safer_check = TRUE ; error_text = " INSIDE A"
-    # x = .expand_R_libs_env_var ; safer_check = TRUE ; error_text = " INSIDE A"
-    # library(saferGraph) ; x = close2 ; safer_check = TRUE ; error_text = " INSIDE A" 
-    # source("C:\\Users\\gmillot\\Documents\\Git_projects\\safer-r\\saferDev\\R\\get_message.R") ; x = get_message ; safer_check = TRUE ; error_text = " INSIDE A" # Warning: x = saferDev::get_message does not return the same number of code lines
-    # library(saferDev) ; x = get_message ; safer_check = TRUE ; error_text = " INSIDE A" # Warning: does not return the same number of code lines than the previsou example
-    # source("C:\\Users\\gmillot\\Documents\\Git_projects\\safer-r\\saferDev\\R\\colons_check.R") ; x = colons_check ; safer_check = TRUE ; error_text = " INSIDE A" # Warning: x = saferDev::get_message does not return the same number of code lines
-    # source("https://raw.githubusercontent.com/safer-r/saferDev/main/dev/other/test.R") ; x = test ; safer_check = TRUE ; error_text = " INSIDE A" # Warning: x = saferDev::get_message does not return the same number of code lines
-    # function_name <- "colons_check" ; arg_user_setting = base::list(x = as.name(x = "test"), safer_check = TRUE ; error_text = " INSIDE A")
-    # FUN1 <- function(x, y){ifelse(base::is.null(x = warn), "", base::paste0("IN ADDITION\nWARNING", base::ifelse(test = warn_count > 1, yes = "S", no = ""), ":\n\n", warn, collapse = NULL, recycle0 = FALSE))} ; x = FUN1 ; safer_check = TRUE ; error_text = " INSIDE A"
-    # function_name <- "colons_check" ; arg_user_setting = base::list(x = as.name(x = "FUN1"), safer_check = TRUE ; error_text = " INSIDE A")
+    # x = mean ; lib_path = NULL ; safer_check = TRUE ; error_text = " INSIDE A"
+    # function_name <- "mean" ; arg_user_setting = base::list(x = as.name(x = "mean"), lib_path = NULL , safer_check = TRUE, error_text = " INSIDE A")
+    # x = .expand_R_libs_env_var ; lib_path = NULL ; safer_check = TRUE ; error_text = " INSIDE A"
+    # library(saferGraph) ; x = close2 ; lib_path = NULL ; safer_check = TRUE ; error_text = " INSIDE A" 
+    # source("C:\\Users\\gmillot\\Documents\\Git_projects\\safer-r\\saferDev\\R\\get_message.R") ; x = get_message ; lib_path = NULL ; safer_check = TRUE ; error_text = " INSIDE A" # Warning: x = saferDev::get_message does not return the same number of code lines
+    # library(saferDev) ; x = get_message ; lib_path = NULL ; safer_check = TRUE ; error_text = " INSIDE A" # Warning: does not return the same number of code lines than the previsou example
+    # source("C:\\Users\\gmillot\\Documents\\Git_projects\\safer-r\\saferDev\\R\\colons_check.R") ; x = colons_check ; lib_path = NULL ; safer_check = TRUE ; error_text = " INSIDE A" # Warning: x = saferDev::get_message does not return the same number of code lines
+    # source("https://raw.githubusercontent.com/safer-r/saferDev/main/dev/other/test.R") ; x = test ; lib_path = NULL ; safer_check = TRUE ; error_text = " INSIDE A" # Warning: x = saferDev::get_message does not return the same number of code lines
+    # function_name <- "colons_check" ; arg_user_setting = base::list(x = as.name(x = "test"), lib_path = NULL , safer_check = TRUE , error_text = " INSIDE A")
+    # FUN1 <- function(x, y){ifelse(base::is.null(x = warn), "", base::paste0("IN ADDITION\nWARNING", base::ifelse(test = warn_count > 1, yes = "S", no = ""), ":\n\n", warn, collapse = NULL, recycle0 = FALSE))} ; x = FUN1 ; lib_path = NULL ; safer_check = TRUE ; error_text = " INSIDE A"
+    # function_name <- "colons_check" ; arg_user_setting = base::list(x = as.name(x = "FUN1"), lib_path = NULL , safer_check = TRUE , error_text = " INSIDE A")
 
     #### package name
     package_name <- "saferDev" # write NULL if the function developed is not in a package

@@ -17,7 +17,7 @@
 #' @author Gael Millot <gael.millot@pasteur.fr>
 #' @examples
 #' \dontrun{ # Example that shouldn't be run because this is an internal function
-#' # Warning : examples only with strings that must be cleaned form brackets between quotes
+#' # Warning : examples only with strings that must be cleaned from brackets between quotes
 #' .fun_args_pos(text = ' "a" ; paste0("I", paste0(sum(1:3), collapse = " "), min(1) ) ; range(2)', pattern = paste0("paste0", "[\\s\\r\\n]*\\("),  error_text = " INSIDE P1::F1", internal_error_report_link = "test")
 #' }
 #' @keywords internal
