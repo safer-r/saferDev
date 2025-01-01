@@ -17,7 +17,7 @@
 #' @param data_name Single character string indicating the name of the object to test. If NULL, use what is assigned to the data argument for the returned message.
 #' @param lib_path Vector of characters specifying the absolute pathways of the directories containing the required packages for the function, if not in the default directories. Useful to overcome R execution using system with non admin rights for R package installation in the default directories. Ignored if NULL (default): only the pathways specified by .libPaths() are used for package calling. Specify the right path if the function returns a package path error.
 #' @param safer_check Single logical value. Perform some "safer" checks? If TRUE, checkings are performed before main code running (see https://github.com/safer-r): 1) R classical operators (like "<-") not overwritten by another package because of the R scope and 2) required functions and related packages effectively present in local R lybraries. Must be set to FALSE if this fonction is used inside another "safer" function to avoid pointless multiple checkings.
-#' @param error_text Single character string used to add information in error messages returned by the function, notably if the function is inside other functions, which is practical for debugging. Example: error_text = "INSIDE <PACKAGE_1>::<FUNCTION_1> INSIDE <PACKAGE_2>::<FUNCTION_2>".
+#' @param error_text Single character string used to add information in error messages returned by the function, notably if the function is inside other functions, which is practical for debugging. Example: error_text = " INSIDE <PACKAGE_1>::<FUNCTION_1> INSIDE <PACKAGE_2>::<FUNCTION_2>.". Of note, error_text is also used at the end of the string returned when no problem is detected.
 #' @returns 
 #' A list containing:
 #' 
@@ -48,7 +48,7 @@
 #' arg_check(data = test, print = TRUE, class = "vector", mode = "numeric")  # commented because this example returns an error
 #' }
 #' arg_check(data = test, print = TRUE, class = "matrix", mode = "numeric")
-#' arg_check(data = test, print = TRUE, class = "matrix", mode = "numeric", error_text = "BY saferDev::arg_check()")
+#' arg_check(data = test, print = TRUE, class = "matrix", mode = "numeric", error_text = " BY saferDev::arg_check()")
 #' @export
 arg_check <- function(
     data, 
@@ -674,7 +674,7 @@ arg_check <- function(
         }
     }else if( ! base::is.null(options)){
         problem <- TRUE
-        text <- base::paste0("ERROR", base::ifelse(test = error_text == "", yes = "", no = error_text), "\n\nTHE ", data_name, " OBJECT MUST BE SOME OF THESE OPTIONS: ", base::paste(options, collapse = " "), "\nBUT IS NOT EVEN TYPE CHARACTER OR INTEGER")
+        text <- base::paste0("ERROR", base::ifelse(test = error_text == "", yes = "", no = error_text), "\n\nTHE ", data_name, " OBJECT MUST BE SOME OF THESE OPTIONS: ", base::paste(options, collapse = " "), "\nBUT IS NOT EVEN TYPE CHARACTER OR INTEGER.")
     }
     arg.names <- base::c("class", "typeof", "mode", "length")
     if( ! base::is.null(class)){
@@ -720,7 +720,7 @@ arg_check <- function(
             }else{
                 text <- base::paste0(text, " AND ")
             }
-            text <- base::paste0(text, "THE ", data_name, " OBJECT MUST BE DECIMAL VALUES BETWEEN 0 AND 1")
+            text <- base::paste0(text, "THE ", data_name, " OBJECT MUST BE DECIMAL VALUES BETWEEN 0 AND 1.")
         }
     }else if(prop == TRUE){
         problem <- TRUE
@@ -729,7 +729,7 @@ arg_check <- function(
         }else{
             text <- base::paste0(text, " AND ")
         }
-        text <- base::paste0(text, "THE ", data_name, " OBJECT MUST BE DECIMAL VALUES BETWEEN 0 AND 1")
+        text <- base::paste0(text, "THE ", data_name, " OBJECT MUST BE DECIMAL VALUES BETWEEN 0 AND 1.")
     }
     if(base::all(base::class(data) %in% "expression")){ # no need of na.rm = TRUE for base::all() because %in% does not output NA
         data <- base::as.character(data) # to evaluate the presence of NA
@@ -742,7 +742,7 @@ arg_check <- function(
             }else{
                 text <- base::paste0(text, " AND ")
             }
-            text <- base::paste0(text, "THE ", data_name, " OBJECT CONTAINS NA WHILE NOT AUTHORIZED")
+            text <- base::paste0(text, "THE ", data_name, " OBJECT CONTAINS NA WHILE NOT AUTHORIZED.")
         }
     }
     if(neg_values == FALSE & base::all(base::mode(data) %in% "numeric") & ! base::any(base::class(data) %in% "factor")){ # no need of na.rm = TRUE for base::all() because %in% does not output NA
@@ -753,7 +753,7 @@ arg_check <- function(
             }else{
                 text <- base::paste0(text, " AND ")
             }
-            text <- base::paste0(text, "THE ", data_name, " OBJECT MUST BE MADE OF NON NEGATIVE NUMERIC VALUES")
+            text <- base::paste0(text, "THE ", data_name, " OBJECT MUST BE MADE OF NON NEGATIVE NUMERIC VALUES.")
         }
     }else if(neg_values == FALSE){
         problem <- TRUE
@@ -762,7 +762,7 @@ arg_check <- function(
         }else{
             text <- base::paste0(text, " AND ")
         }
-        text <- base::paste0(text, "THE ", data_name, " OBJECT MUST BE MADE OF NON NEGATIVE VALUES BUT IS ", base::ifelse(base::any(base::class(data) %in% "factor"), "A FACTOR", "NOT EVEN MODE NUMERIC")) # no need of na.rm = TRUE
+        text <- base::paste0(text, "THE ", data_name, " OBJECT MUST BE MADE OF NON NEGATIVE VALUES BUT IS ", base::ifelse(base::any(base::class(data) %in% "factor"), "A FACTOR", "NOT EVEN MODE NUMERIC.")) # no need of na.rm = TRUE
     }
     if(inf_values == FALSE & base::all(base::typeof(data) %in% "double") & ! base::any(base::class(data) %in% "factor")){ # no need of na.rm = TRUE for base::all() because %in% does not output NA
         if(base::any(base::is.infinite(data), na.rm = TRUE)){ # Warning: na.rm = TRUE required here for base::any()
@@ -772,7 +772,7 @@ arg_check <- function(
             }else{
                 text <- base::paste0(text, " AND ")
             }
-            text <- base::paste0(text, "THE ", data_name, " OBJECT MUST BE MADE OF NON INFINITE NUMERIC VALUES")
+            text <- base::paste0(text, "THE ", data_name, " OBJECT MUST BE MADE OF NON INFINITE NUMERIC VALUES.")
         }
     }else if(inf_values == FALSE){
         problem <- TRUE
@@ -781,7 +781,7 @@ arg_check <- function(
         }else{
             text <- base::paste0(text, " AND ")
         }
-        text <- base::paste0(text, "THE ", data_name, " OBJECT MUST BE MADE OF NON INFINITE VALUES BUT IS ", base::ifelse(base::any(base::class(data) %in% "factor"), "A FACTOR", "NOT EVEN TYPE DOUBLE")) # no need of na.rm = TRUE
+        text <- base::paste0(text, "THE ", data_name, " OBJECT MUST BE MADE OF NON INFINITE VALUES BUT IS ", base::ifelse(base::any(base::class(data) %in% "factor"), "A FACTOR", "NOT EVEN TYPE DOUBLE.")) # no need of na.rm = TRUE
     }
     if(print == TRUE & problem == TRUE){
         base::cat(base::paste0("\n\n================\n\n", text, "\n\n================\n\n"))
