@@ -14,15 +14,15 @@ testthat::test_that("arg_check()", {
 
     ######## error_text argument
     error_text_e1 <- NULL
-    error_text_e2 <- 1
-    error_text_e3 <- NA
+    error_text_e2 <- NA
+    error_text_e3 <- 1
     error_text_e4 <- c("ERROR1", "ERROR2")
     error_text_g1 <- " IN P1::F1."
     ######## end error_text argument
 
     ######## lib_path argument
-    lib_path_e1 <- 1
-    lib_path_e2 <- NA
+    lib_path_e1 <- NA
+    lib_path_e2 <- 1
     lib_path_e3 <- "PATH_NOT_GOOD"
     lib_path_g1 <- NULL
     lib_path_g2 <- base::.libPaths()
@@ -30,8 +30,8 @@ testthat::test_that("arg_check()", {
 
     ######## safer_check argument
     safer_check_e1 <- NULL
-    safer_check_e2 <- 1
-    safer_check_e3 <- NA
+    safer_check_e2 <- NA
+    safer_check_e3 <- 1
     safer_check_e4 <- c(TRUE, FALSE)
     safer_check_g1 <- TRUE
     safer_check_g2 <- FALSE
@@ -78,6 +78,53 @@ testthat::test_that("arg_check()", {
     expect <- list(problem = TRUE, text = "ERROR\n\nTHE vec1 OBJECT MUST BE CLASS numeric", object.name = "vec1")
     testthat::expect_equal(result, expect)
     ######## end safer_check argument
+
+    ########  argument with no default values
+    # data
+    testthat::expect_error(arg_check())
+    ########  end argument with no default values
+
+    ######## management of NA arguments
+    testthat::expect_error(arg_check(data = NA))
+    testthat::expect_error(arg_check(data = vec1, class = NA))
+    testthat::expect_error(arg_check(data = vec1, typeof = NA))
+    testthat::expect_error(arg_check(data = vec1, mode = NA))
+    testthat::expect_error(arg_check(data = vec1, length = NA))
+    testthat::expect_error(arg_check(data = vec1, prop = NA))
+    testthat::expect_error(arg_check(data = vec1, double_as_integer_allowed = NA))
+    testthat::expect_error(arg_check(data = vec1, options = NA))
+    testthat::expect_error(arg_check(data = vec1, all_options_in_data = NA))
+    testthat::expect_error(arg_check(data = vec1, na_contain = NA))
+    testthat::expect_error(arg_check(data = vec1, neg_values = NA))
+    testthat::expect_error(arg_check(data = vec1, inf_values = NA))
+    testthat::expect_error(arg_check(data = vec1, print = NA))
+    testthat::expect_error(arg_check(data = vec1, data_name = NA))
+    testthat::expect_error(arg_check(data = vec1, lib_path = NA))
+    testthat::expect_error(arg_check(data = vec1, safer_check = NA))
+    testthat::expect_error(arg_check(data = vec1, error_text = NA))
+    ######## end management of NA arguments
+
+    ######## management of NULL arguments
+    testthat::expect_error(arg_check(data = vec1, prop = NULL))
+    testthat::expect_error(arg_check(data = vec1, double_as_integer_allowed = NULL))
+    testthat::expect_error(arg_check(data = vec1, all_options_in_data = NULL))
+    testthat::expect_error(arg_check(data = vec1, na_contain = NULL))
+    testthat::expect_error(arg_check(data = vec1, neg_values = NULL))
+    testthat::expect_error(arg_check(data = vec1, inf_values = NULL))
+    testthat::expect_error(arg_check(data = vec1, print = NULL))
+    testthat::expect_error(arg_check(data = vec1, safer_check = NULL))
+    testthat::expect_error(arg_check(data = vec1, error_text = NULL))
+    ######## end management of NULL arguments
+
+    ######## management of "" in arguments of mode character
+    testthat::expect_error(arg_check(data = vec1, class = ""))
+    testthat::expect_error(arg_check(data = vec1, typeof = ""))
+    testthat::expect_error(arg_check(data = vec1, mode = ""))
+    testthat::expect_error(arg_check(data = vec1, data_name = ""))
+    testthat::expect_error(arg_check(data = vec1, lib_path = ""))
+    ######## end management of "" in arguments of mode character
+    
+
 
 
 

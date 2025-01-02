@@ -249,13 +249,20 @@ arg_check <- function(
 
     ######## management of NULL arguments
     tempo_arg <- base::c(
+        # "data", # because can be NULL
+        # "class", # because can be NULL
+        # "typeof", # because can be NULL 
+        # "mode", # because can be NULL
+        # "length", # because can be NULL
         "prop", 
         "double_as_integer_allowed", 
+        # "options", # because can be NULL
         "all_options_in_data", 
         "na_contain",
         "neg_values",
         "inf_values",
         "print",
+        # "data_name", # because can be NULL
         # "lib_path", # because can be NULL
         "safer_check",
         "error_text"
@@ -404,7 +411,7 @@ arg_check <- function(
         )
         base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
     }
-    ######## end management of special classes
+    # end management of special classes
     
     if( ! base::is.null(data_name)){
         if( ! (base::length(data_name) == 1L & base::all(base::class(data_name) == "character"))){ # base::all() without na.rm -> ok because base::class(NA) is "logical"
@@ -604,7 +611,6 @@ arg_check <- function(
         base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
     }
     # data_name and error_text tested at the beginning
-    # end management of special classes
     ######## end other checkings
     
     #### end second round of checking and data preparation
