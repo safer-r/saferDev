@@ -1,7 +1,6 @@
 testthat::test_that("arg_check()", {
-    #### values
 
-    ######## data argument
+    #### data argument values
     vec1 <- -1:3 # vector of integers
     vec3 <- base::c(1, 2, 3)
     vec4 <- "pearson"
@@ -10,71 +9,44 @@ testthat::test_that("arg_check()", {
     mat1 <- base::matrix(vec1)
     mat2 <- base::matrix(base::c(1:3 / 3, NA))
     number <- 1
-    ######## end data argument
+    #### end data argument values
 
-    ######## error_text argument
-    error_text_e1 <- NULL
-    error_text_e2 <- NA
-    error_text_e3 <- 1
-    error_text_e4 <- c("ERROR1", "ERROR2")
-    error_text_g1 <- " IN P1::F1."
-    ######## end error_text argument
-
-    ######## lib_path argument
-    lib_path_e1 <- NA
-    lib_path_e2 <- 1
-    lib_path_e3 <- "PATH_NOT_GOOD"
-    lib_path_g1 <- NULL
-    lib_path_g2 <- base::.libPaths()
-    ######## end lib_path argument
-
-    ######## safer_check argument
-    safer_check_e1 <- NULL
-    safer_check_e2 <- NA
-    safer_check_e3 <- 1
-    safer_check_e4 <- c(TRUE, FALSE)
-    safer_check_g1 <- TRUE
-    safer_check_g2 <- FALSE
-    ######## end safer_check argument
-
-    #### end values
-
-    #### argument test
+    #### tests (ordered by arg appearance and conditions in the code) 
 
     ######## error_text argument
     # warning: use other argument values that do not return an error
-    testthat::expect_error(arg_check(data = vec1, class = "numeric", error_text = error_text_e1))
-    testthat::expect_error(arg_check(data = vec1, class = "numeric", error_text = error_text_e2))
-    testthat::expect_error(arg_check(data = vec1, class = "numeric", error_text = error_text_e3))
-    testthat::expect_error(arg_check(data = vec1, class = "numeric", error_text = error_text_e4))
-    result <- arg_check(data = vec1, class = "numeric", error_text = error_text_g1)
+    testthat::expect_error(arg_check(data = vec1, class = "numeric", error_text = NULL))
+    testthat::expect_error(arg_check(data = vec1, class = "numeric", error_text = NA))
+    testthat::expect_error(arg_check(data = vec1, class = "numeric", error_text = 1))
+    testthat::expect_error(arg_check(data = vec1, class = "numeric", error_text = c("ERROR1", "ERROR2")))
+    result <- arg_check(data = vec1, class = "numeric", error_text = " IN P1::F1.")
     expect <- list(problem = TRUE, text = "ERROR IN P1::F1.\n\nTHE vec1 OBJECT MUST BE CLASS numeric", object.name = "vec1")
     testthat::expect_equal(result,expect)
     ######## end error_text argument
 
     ######## lib_path argument
     # warning: use other argument values that do not return an error
-    testthat::expect_error(arg_check(data = vec1, class = "numeric", lib_path = lib_path_e1))
-    testthat::expect_error(arg_check(data = vec1, class = "numeric", lib_path = lib_path_e2))
-    testthat::expect_error(arg_check(data = vec1, class = "numeric", lib_path = lib_path_e3))
-    result <- arg_check(data = vec1, class = "numeric", lib_path = lib_path_g1)
+    testthat::expect_error(arg_check(data = vec1, class = "numeric", lib_path = NA))
+    testthat::expect_error(arg_check(data = vec1, class = "numeric", lib_path = 1))
+    testthat::expect_error(arg_check(data = vec1, class = "numeric", lib_path = "PATH_NOT_GOOD"))
+    result <- arg_check(data = vec1, class = "numeric", lib_path = NULL)
     expect <- list(problem = TRUE, text = "ERROR\n\nTHE vec1 OBJECT MUST BE CLASS numeric", object.name = "vec1")
     testthat::expect_equal(result, expect)
-    result <- arg_check(data = vec1, class = "numeric", lib_path = lib_path_g2)
+    result <- arg_check(data = vec1, class = "numeric", lib_path = base::.libPaths())
     expect <- list(problem = TRUE, text = "ERROR\n\nTHE vec1 OBJECT MUST BE CLASS numeric", object.name = "vec1")
     testthat::expect_equal(result, expect)
     ######## end lib_path argument
 
     ######## safer_check argument
     # warning: use other argument values that do not return an error
-    testthat::expect_error(arg_check(data = vec1, class = "numeric", safer_check = safer_check_e1))
-    testthat::expect_error(arg_check(data = vec1, class = "numeric", safer_check = safer_check_e2))
-    testthat::expect_error(arg_check(data = vec1, class = "numeric", safer_check = safer_check_e3))
-    testthat::expect_error(arg_check(data = vec1, class = "numeric", safer_check = safer_check_e4))
-    result <- arg_check(data = vec1, class = "numeric", safer_check = safer_check_g1)
+    testthat::expect_error(arg_check(data = vec1, class = "numeric", safer_check = NULL))
+    testthat::expect_error(arg_check(data = vec1, class = "numeric", safer_check = NA))
+    testthat::expect_error(arg_check(data = vec1, class = "numeric", safer_check = 1))
+    testthat::expect_error(arg_check(data = vec1, class = "numeric", safer_check = c(TRUE, FALSE)))
+    result <- arg_check(data = vec1, class = "numeric", safer_check = TRUE)
     expect <- list(problem = TRUE, text = "ERROR\n\nTHE vec1 OBJECT MUST BE CLASS numeric", object.name = "vec1")
     testthat::expect_equal(result, expect)
-    result <- arg_check(data = vec1, class = "numeric", safer_check = safer_check_g2)
+    result <- arg_check(data = vec1, class = "numeric", safer_check = FALSE)
     expect <- list(problem = TRUE, text = "ERROR\n\nTHE vec1 OBJECT MUST BE CLASS numeric", object.name = "vec1")
     testthat::expect_equal(result, expect)
     ######## end safer_check argument
@@ -123,11 +95,27 @@ testthat::test_that("arg_check()", {
     testthat::expect_error(arg_check(data = vec1, data_name = ""))
     testthat::expect_error(arg_check(data = vec1, lib_path = ""))
     ######## end management of "" in arguments of mode character
-    
+
+    ######## other checkings
+
+    testthat::expect_error(arg_check(data = vec1, class = mat1))
+    testthat::expect_error(arg_check(data = vec1, typeof = mat1))
+    testthat::expect_error(arg_check(data = vec1, mode = mat1))
+    testthat::expect_error(arg_check(data = vec1, length = mat1))
+    testthat::expect_error(arg_check(data = vec1, prop = mat1))
+    testthat::expect_error(arg_check(data = vec1, double_as_integer_allowed = mat1))
+    testthat::expect_error(arg_check(data = vec1, options = mat1))
+    testthat::expect_error(arg_check(data = vec1, all_options_in_data = mat1))
+    testthat::expect_error(arg_check(data = vec1, na_contain = mat1))
+    testthat::expect_error(arg_check(data = vec1, neg_values = mat1))
+    testthat::expect_error(arg_check(data = vec1, inf_values = mat1))
+    testthat::expect_error(arg_check(data = vec1, print = mat1))
+    testthat::expect_error(arg_check(data = vec1, data_name = mat1))
+
+    ######## end other checkings
 
 
-
-
+    #### end tests (ordered by arg appearance and conditions in the code) 
 
 
     # Test cases
