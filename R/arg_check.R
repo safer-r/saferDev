@@ -167,7 +167,7 @@ arg_check <- function(
         "safer_check",
         "error_text"
     )
-    tempo_log <- base::sapply( X = base::lapply(X = tempo_arg, FUN = function(x){base::get(x = x, pos = -1L, envir = base::parent.frame(n = 2), mode = "any", inherits = FALSE)}), FUN = function(x){base::is.null(x = x)}, simplify = TRUE, USE.NAMES = TRUE) # parent.frame(n = 2) because sapply(lapply())
+    tempo_log <- base::sapply(X = base::lapply(X = tempo_arg, FUN = function(x){base::get(x = x, pos = -1L, envir = base::parent.frame(n = 2), mode = "any", inherits = FALSE)}), FUN = function(x){base::is.null(x = x)}, simplify = TRUE, USE.NAMES = TRUE) # parent.frame(n = 2) because sapply(lapply())
     if(base::any(tempo_log, na.rm = TRUE)){ # normally no NA with base::is.null()
         tempo_cat <- base::paste0(
             error_text_start, 
@@ -282,7 +282,7 @@ arg_check <- function(
 
     ######## management of "" in arguments of mode character
     # this part is specifically changed for arg_check because arg not checked with arg_check above. See below where exactly
-    if( ! (base::length(x = error_text) == 1 & base::all(base::typeof(error_text) == "character", na.rm = TRUE))){
+    if( ! (base::length(x = error_text) == 1 & base::all(base::typeof(x = error_text) == "character", na.rm = TRUE))){
         tempo_cat <- base::paste0(
             error_text_start,
             "THE error_text ARGUMENT MUST BE A SINGLE CHARACTER STRING.",  
@@ -387,232 +387,284 @@ arg_check <- function(
         # "error_text" # already checked above
     )
     tempo.class <-base::list( # no base::get() used to be sure to deal with the correct environment
-        base::class(class), 
-        base::class(typeof), 
-        base::class(mode), 
-        base::class(length), 
-        base::class(prop), 
-        base::class(double_as_integer_allowed), 
-        base::class(options), 
-        base::class(all_options_in_data), 
-        base::class(na_contain), 
-        base::class(neg_values), 
-        base::class(inf_values), 
-        base::class(print), 
-        base::class(data_name),
-        base::class(safer_check),
-        base::class(error_text)
+        base::class(x = class), 
+        base::class(x = typeof), 
+        base::class(x = mode), 
+        base::class(x = length), 
+        base::class(x = prop), 
+        base::class(x = double_as_integer_allowed), 
+        base::class(x = options), 
+        base::class(x = all_options_in_data), 
+        base::class(x = na_contain), 
+        base::class(x = neg_values), 
+        base::class(x = inf_values), 
+        base::class(x = print), 
+        base::class(x = data_name),
+        base::class(x = safer_check),
+        base::class(x = error_text)
     )
-    tempo <- ! base::sapply(base::lapply(tempo.class, FUN = "%in%", basic.class), FUN = base::all)
-    if(base::any(tempo)){
+    tempo <- ! base::sapply(X = base::lapply(X = tempo.class, FUN = function(x){x %in% basic.class}), FUN = function(x){base::all(x, na.rm = TRUE)}, simplify = TRUE, USE.NAMES = TRUE)
+    if(base::any(tempo, na.rm = TRUE)){
         tempo.cat1 <- tempo.arg.base[tempo]
-        tempo.cat2 <- base::sapply(tempo.class[tempo], FUN = base::paste0, collapse = " ")
-        tempo.sep <- base::sapply(base::mapply(" ", base::max(base::nchar(tempo.cat1)) - base::nchar(tempo.cat1) + 3, FUN = base::rep, SIMPLIFY = FALSE), FUN = base::paste0, collapse = "")
+        tempo.cat2 <- base::sapply(X = tempo.class[tempo], FUN = function(x){base::paste0(x, collapse = " ", recycle0 = FALSE)}, simplify = TRUE, USE.NAMES = TRUE)
+        tempo.sep <- base::sapply(X = base::mapply(x = " ", y = base::max(base::nchar(x = tempo.cat1, type = "chars", allowNA = FALSE, keepNA = NA), na.rm = TRUE) - base::nchar(x = tempo.cat1, type = "chars", allowNA = FALSE, keepNA = NA) + 3, FUN = function(x){base::rep(x = x)}, MoreArgs = NULL, SIMPLIFY = FALSE, USE.NAMES = TRUE), FUN = function(x){base::paste0(x, collapse = "", recycle0 = FALSE)}, simplify = TRUE, USE.NAMES = TRUE)
         tempo.cat <- base::paste0(
             error_text_start, 
             "ANY ARGUMENT EXCEPT data MUST BE CLASS \"logical\", \"integer\", \"numeric\", \"character\" OR NULL.\nPROBLEMATIC ARGUMENT", 
-            base::ifelse(base::length(tempo.cat1) > 1, "S", ""), 
+            base::ifelse(test = base::length(x = tempo.cat1) > 1, yes = "S", no = ""), 
             " AND ASSOCIATED CLASS", 
-            base::ifelse(base::length(tempo.cat1) > 1, "ES ARE", " IS"), 
+            base::ifelse(test = base::length(x = tempo.cat1) > 1, yes = "ES ARE", no = " IS"), 
             ":\n", 
-            base::paste0(tempo.cat1, tempo.sep, tempo.cat2, collapse = "\n")
+            base::paste0(tempo.cat1, tempo.sep, tempo.cat2, collapse = "\n", recycle0 = FALSE),
+            collapse = NULL, 
+            recycle0 = FALSE
         )
-        base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
+        base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL) # == in base::stop() to be able to add several messages between ==
     }
     # end management of special classes
     
-    if( ! base::is.null(data_name)){
-        if( ! (base::length(data_name) == 1L & base::all(base::class(data_name) == "character"))){ # base::all() without na.rm -> ok because base::class(NA) is "logical"
+    if( ! base::is.null(x = data_name)){
+        if( ! (base::length(x = data_name) == 1L & base::all(base::class(x = data_name) == "character", na.rm = TRUE))){ # base::all() without na.rm -> ok because base::class(NA) is "logical"
             tempo.cat <- base::paste0(
                 error_text_start, 
                 "THE data_name ARGUMENT MUST BE A SINGLE CHARACTER ELEMENT AND NOT:\n", 
-                base::paste(data_name, collapse = "\n")
+                base::paste0(data_name, collapse = "\n", recycle0 = FALSE),
+                collapse = NULL, 
+                recycle0 = FALSE
             )
-            base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
+            base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL) # == in base::stop() to be able to add several messages between ==
         }
     }
-    if(base::is.null(options) & base::is.null(class) & base::is.null(typeof) & base::is.null(mode) &  base::all(prop == FALSE, na.rm = TRUE) & base::is.null(length)){
+    if(base::is.null(x = options) & base::is.null(x = class) & base::is.null(x = typeof) & base::is.null(x = mode) &  base::all(prop == FALSE, na.rm = TRUE) & base::is.null(x = length)){
         tempo.cat <- base::paste0(
             error_text_start, 
-            "AT LEAST ONE OF THE options, class, typeof, mode, prop, OR length ARGUMENT MUST BE SPECIFIED (I.E, TRUE FOR prop)."
+            "AT LEAST ONE OF THE options, class, typeof, mode, prop, OR length ARGUMENT MUST BE SPECIFIED (I.E, TRUE FOR prop).",
+            collapse = NULL, 
+            recycle0 = FALSE
         )
-        base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
+        base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL) # == in base::stop() to be able to add several messages between ==
     }
-    if( ! base::is.null(options) & ( ! base::is.null(class) | ! base::is.null(typeof) | ! base::is.null(mode) | base::all(prop == TRUE, na.rm = TRUE))){
+    if( ! base::is.null(x = options) & ( ! base::is.null(x = class) | ! base::is.null(x = typeof) | ! base::is.null(x = mode) | base::all(prop == TRUE, na.rm = TRUE))){
         tempo.cat <- base::paste0(
             error_text_start, 
-            "THE class, typeof, mode ARGUMENTS MUST BE NULL, AND prop FALSE, IF THE options ARGUMENT IS SPECIFIED\nTHE options ARGUMENT MUST BE NULL IF THE class AND/OR typeof AND/OR mode AND/OR prop ARGUMENT IS SPECIFIED."
+            "THE class, typeof, mode ARGUMENTS MUST BE NULL, AND prop FALSE, IF THE options ARGUMENT IS SPECIFIED\nTHE options ARGUMENT MUST BE NULL IF THE class AND/OR typeof AND/OR mode AND/OR prop ARGUMENT IS SPECIFIED.",
+            collapse = NULL, 
+            recycle0 = FALSE
         )
-        base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
+        base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL) # == in base::stop() to be able to add several messages between ==
     }
-    if( ! (base::all(base::class(neg_values) == "logical") & base::length(neg_values) == 1L)){ # base::all() without na.rm -> ok because base::class(NA) is "logical" 
+    if( ! (base::all(base::class(x = neg_values) == "logical", na.rm = TRUE) & base::length(x = neg_values) == 1L)){ # base::all() without na.rm -> ok because base::class(NA) is "logical" 
         tempo.cat <- base::paste0(
             error_text_start, 
-            "THE neg_values ARGUMENT MUST BE A SINGLE LOGICAL VALUE (TRUE OR FALSE ONLY)."
+            "THE neg_values ARGUMENT MUST BE A SINGLE LOGICAL VALUE (TRUE OR FALSE ONLY).",
+            collapse = NULL, 
+            recycle0 = FALSE
         )
-        base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
+        base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL) # == in base::stop() to be able to add several messages between ==
     }
-    if(neg_values == FALSE & base::is.null(class) & base::is.null(typeof) & base::is.null(mode)){
+    if(neg_values == FALSE & base::is.null(x = class) & base::is.null(x = typeof) & base::is.null(x = mode)){
         tempo.cat <- base::paste0(
             error_text_start, 
-            "THE neg_values ARGUMENT CANNOT BE SWITCHED FROM TRUE (DEFAULT VALUE) TO FALSE IF class, typeof AND mode ARGUMENTS ARE NULL."
+            "THE neg_values ARGUMENT CANNOT BE SWITCHED FROM TRUE (DEFAULT VALUE) TO FALSE IF class, typeof AND mode ARGUMENTS ARE NULL.",
+            collapse = NULL, 
+            recycle0 = FALSE
         )
-        base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
+        base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL) # == in base::stop() to be able to add several messages between ==
     }
-    if( ! (base::all(base::class(inf_values) == "logical") & base::length(inf_values) == 1L)){ # base::all() without na.rm -> ok because base::class(NA) is "logical" 
+    if( ! (base::all(base::class(x = inf_values) == "logical", na.rm = TRUE) & base::length(x = inf_values) == 1L)){ # base::all() without na.rm -> ok because base::class(NA) is "logical" 
         tempo.cat <- base::paste0(
             error_text_start, 
-            "THE inf_values ARGUMENT MUST BE A SINGLE LOGICAL VALUE (TRUE OR FALSE ONLY)."
+            "THE inf_values ARGUMENT MUST BE A SINGLE LOGICAL VALUE (TRUE OR FALSE ONLY).",
+            collapse = NULL, 
+            recycle0 = FALSE
         )
-        base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
+        base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL) # == in base::stop() to be able to add several messages between ==
     }
-    if(inf_values == FALSE & base::is.null(class) & base::is.null(typeof) & base::is.null(mode)){
+    if(inf_values == FALSE & base::is.null(x = class) & base::is.null(x = typeof) & base::is.null(x = mode)){
         tempo.cat <- base::paste0(
             error_text_start, 
-            "THE inf_values ARGUMENT CANNOT BE SWITCHED FROM TRUE (DEFAULT VALUE) TO FALSE IF class, typeof AND mode ARGUMENTS ARE NULL."
+            "THE inf_values ARGUMENT CANNOT BE SWITCHED FROM TRUE (DEFAULT VALUE) TO FALSE IF class, typeof AND mode ARGUMENTS ARE NULL.",
+            collapse = NULL, 
+            recycle0 = FALSE
         )
-        base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
+        base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL) # == in base::stop() to be able to add several messages between ==
     }
-    if( ! base::is.null(class)){ # may add "formula" and "Date" as in https://renenyffenegger.ch/notes/development/languages/R/functions/class
-        if( ! base::all(class %in% base::c("vector", "logical", "integer", "numeric", "complex", "character", "matrix", "array", "data.frame", "list", "factor", "table", "expression", "name", "symbol", "function", "uneval", "environment", "ggplot2", "ggplot_built", "call") & base::length(class) == 1L)){ # length == 1L here because of base::class(base::matrix()) since R4.0.0  # base::all() without na.rm -> ok because class cannot be NA (tested above)
+    if( ! base::is.null(x = class)){ # may add "formula" and "Date" as in https://renenyffenegger.ch/notes/development/languages/R/functions/class
+        if( ! base::all(class %in% base::c("vector", "logical", "integer", "numeric", "complex", "character", "matrix", "array", "data.frame", "list", "factor", "table", "expression", "name", "symbol", "function", "uneval", "environment", "ggplot2", "ggplot_built", "call") & base::length(x = class) == 1L, na.rm = TRUE)){ # length == 1L here because of base::class(base::matrix()) since R4.0.0  # base::all() without na.rm -> ok because class cannot be NA (tested above)
             tempo.cat <- base::paste0(
                 error_text_start, 
-                "THE class ARGUMENT MUST BE ONE OF THESE VALUE:\n\"vector\"\n\"logical\"\n\"integer\"\n\"numeric\"\n\"complex\"\n\"character\"\n\"matrix\"\n\"array\"\n\"data.frame\"\n\"list\"\n\"factor\"\n\"table\"\n\"expression\"\n\"name\"\n\"symbol\"\n\"function\"\n\"environment\"\n\"ggplot2\"\n\"ggplot_built\"\n\"call\""
+                "THE class ARGUMENT MUST BE ONE OF THESE VALUE:\n\"vector\"\n\"logical\"\n\"integer\"\n\"numeric\"\n\"complex\"\n\"character\"\n\"matrix\"\n\"array\"\n\"data.frame\"\n\"list\"\n\"factor\"\n\"table\"\n\"expression\"\n\"name\"\n\"symbol\"\n\"function\"\n\"environment\"\n\"ggplot2\"\n\"ggplot_built\"\n\"call\"",
+                collapse = NULL, 
+                recycle0 = FALSE
             )
-            base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
+            base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL) # == in base::stop() to be able to add several messages between ==
         }
-        if(neg_values == FALSE & ! base::any(class %in% base::c("vector", "numeric", "integer", "matrix", "array", "data.frame", "table"))){ # no need of na.rm = TRUE for base::any() because %in% does not output NA
+        if(neg_values == FALSE & ! base::any(class %in% base::c("vector", "numeric", "integer", "matrix", "array", "data.frame", "table"), na.rm = TRUE)){ # no need of na.rm = TRUE for base::any() because %in% does not output NA
             tempo.cat <- base::paste0(
                 error_text_start, 
-                "THE class ARGUMENT CANNOT BE OTHER THAN\n\"vector\"\n\"numeric\"\n\"integer\"\n\"matrix\"\n\"array\"\n\"data.frame\"\n\"table\"\nIF ABSENCE OF NEGATIVE VALUES IS CONTROLED BY SWITCHING THE neg_values ARGUMENT FROM TRUE (DEFAULT VALUE) TO FALSE."
+                "THE class ARGUMENT CANNOT BE OTHER THAN\n\"vector\"\n\"numeric\"\n\"integer\"\n\"matrix\"\n\"array\"\n\"data.frame\"\n\"table\"\nIF ABSENCE OF NEGATIVE VALUES IS CONTROLED BY SWITCHING THE neg_values ARGUMENT FROM TRUE (DEFAULT VALUE) TO FALSE.",
+                collapse = NULL, 
+                recycle0 = FALSE
             )
-            base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
+            base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL) # == in base::stop() to be able to add several messages between ==
         }
-        if(inf_values == FALSE & ! base::any(class %in% base::c("vector", "numeric", "matrix", "array", "data.frame", "table"))){ # no need of na.rm = TRUE for base::any() because %in% does not output NA
+        if(inf_values == FALSE & ! base::any(class %in% base::c("vector", "numeric", "matrix", "array", "data.frame", "table"), na.rm = TRUE)){ # no need of na.rm = TRUE for base::any() because %in% does not output NA
             tempo.cat <- base::paste0(
                 error_text_start, 
-                "THE class ARGUMENT CANNOT BE OTHER THAN\n\"vector\"\n\"numeric\"\n\"matrix\"\n\"array\"\n\"data.frame\"\n\"table\"\nIF ABSENCE OF INFINITE VALUE IS CONTROLED BY SWITCHING THE inf_values ARGUMENT FROM TRUE (DEFAULT VALUE) TO FALSE.\n\"integer\" IS NOT ALLOWED BECAUSE OBJECTS WITH INFINITE VALUES ARE NOT INTEGERS."
+                "THE class ARGUMENT CANNOT BE OTHER THAN\n\"vector\"\n\"numeric\"\n\"matrix\"\n\"array\"\n\"data.frame\"\n\"table\"\nIF ABSENCE OF INFINITE VALUE IS CONTROLED BY SWITCHING THE inf_values ARGUMENT FROM TRUE (DEFAULT VALUE) TO FALSE.\n\"integer\" IS NOT ALLOWED BECAUSE OBJECTS WITH INFINITE VALUES ARE NOT INTEGERS.", 
+                collapse = NULL, 
+                recycle0 = FALSE
             )
-            base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
+            base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL) # == in base::stop() to be able to add several messages between ==
         }
     }
-    if( ! base::is.null(typeof)){ # all the types are here: https://renenyffenegger.ch/notes/development/languages/R/functions/typeof
-        if( ! (base::all(typeof %in% base::c("logical", "integer", "double", "complex", "character", "list", "expression", "symbol", "closure", "special", "builtin", "environment", "S4", "language")) & base::length(typeof) == 1L)){ # "language" is the type of object of class "call" # base::all() without na.rm -> ok because typeof cannot be NA (tested above)
+    if( ! base::is.null(x = typeof)){ # all the types are here: https://renenyffenegger.ch/notes/development/languages/R/functions/typeof
+        if( ! (base::all(typeof %in% base::c("logical", "integer", "double", "complex", "character", "list", "expression", "symbol", "closure", "special", "builtin", "environment", "S4", "language"), na.rm = TRUE) & base::length(x = typeof) == 1L)){ # "language" is the type of object of class "call" # base::all() without na.rm -> ok because typeof cannot be NA (tested above)
             tempo.cat <- base::paste0(
                 error_text_start, 
-                "THE typeof ARGUMENT MUST BE ONE OF THESE VALUE:\n\"logical\"\n\"integer\"\n\"double\"\n\"complex\"\n\"character\"\n\"list\"\n\"expression\"\n\"name\"\n\"symbol\"\n\"closure\"\n\"special\"\n\"builtin\"\n\"environment\"\n\"S4\"\n\"language\""
+                "THE typeof ARGUMENT MUST BE ONE OF THESE VALUE:\n\"logical\"\n\"integer\"\n\"double\"\n\"complex\"\n\"character\"\n\"list\"\n\"expression\"\n\"name\"\n\"symbol\"\n\"closure\"\n\"special\"\n\"builtin\"\n\"environment\"\n\"S4\"\n\"language\"",
+                collapse = NULL, 
+                recycle0 = FALSE
             )
-            base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
+            base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL) # == in base::stop() to be able to add several messages between ==
         }
         if(neg_values == FALSE & ! typeof %in% base::c("double", "integer")){
             tempo.cat <- base::paste0(
                 error_text_start, 
-                "THE typeof ARGUMENT CANNOT BE OTHER THAN \"double\" OR \"integer\" IF ABSENCE OF NEGATIVE VALUES IS CONTROLED BY SWITCHING THE neg_values ARGUMENT FROM TRUE (DEFAULT VALUE) TO FALSE."
+                "THE typeof ARGUMENT CANNOT BE OTHER THAN \"double\" OR \"integer\" IF ABSENCE OF NEGATIVE VALUES IS CONTROLED BY SWITCHING THE neg_values ARGUMENT FROM TRUE (DEFAULT VALUE) TO FALSE.",
+                collapse = NULL, 
+                recycle0 = FALSE
             )
-            base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
+            base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL) # == in base::stop() to be able to add several messages between ==
         }
         if(inf_values == FALSE & typeof != "double"){
             tempo.cat <- base::paste0(
                 error_text_start, 
-                "THE typeof ARGUMENT CANNOT BE OTHER THAN \"double\" IF ABSENCE OF INFINITE VALUE ARE CONTROLED BY SWITCHING THE inf_values ARGUMENT FROM TRUE (DEFAULT VALUE) TO FALSE.\n\"integer\" IS NOT ALLOWED BECAUSE OBJECTS WITH INFINITE VALUES ARE NOT INTEGERS."
+                "THE typeof ARGUMENT CANNOT BE OTHER THAN \"double\" IF ABSENCE OF INFINITE VALUE ARE CONTROLED BY SWITCHING THE inf_values ARGUMENT FROM TRUE (DEFAULT VALUE) TO FALSE.\n\"integer\" IS NOT ALLOWED BECAUSE OBJECTS WITH INFINITE VALUES ARE NOT INTEGERS.",
+                collapse = NULL, 
+                recycle0 = FALSE
             )
-            base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
+            base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL) # == in base::stop() to be able to add several messages between ==
         }
     }
-    if( ! base::is.null(mode)){ # all the types are here: https://renenyffenegger.ch/notes/development/languages/R/functions/typeof
-        if( ! (base::all(mode %in% base::c("logical", "numeric", "complex", "character", "list", "expression", "name", "symbol", "function", "environment", "S4", "call")) & base::length(mode) == 1L)){ # base::all() without na.rm -> ok because mode cannot be NA (tested above)
+    if( ! base::is.null(x = mode)){ # all the types are here: https://renenyffenegger.ch/notes/development/languages/R/functions/typeof
+        if( ! (base::all(mode %in% base::c("logical", "numeric", "complex", "character", "list", "expression", "name", "symbol", "function", "environment", "S4", "call"), na.rm = TRUE) & base::length(x = mode) == 1L)){ # base::all() without na.rm -> ok because mode cannot be NA (tested above)
             tempo.cat <- base::paste0(
                 error_text_start, 
-                "THE mode ARGUMENT MUST BE ONE OF THESE VALUE:\n\"logical\"\n\"numeric\"\n\"complex\"\n\"character\"\n\"list\"\n\"expression\"\n\"name\"\n\"symbol\"\n\"function\"\n\"environment\"\n\"S4\"\n\"call\""
+                "THE mode ARGUMENT MUST BE ONE OF THESE VALUE:\n\"logical\"\n\"numeric\"\n\"complex\"\n\"character\"\n\"list\"\n\"expression\"\n\"name\"\n\"symbol\"\n\"function\"\n\"environment\"\n\"S4\"\n\"call\"",
+                collapse = NULL, 
+                recycle0 = FALSE
             )
-            base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
+            base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL) # == in base::stop() to be able to add several messages between ==
         }
         if(neg_values == FALSE & mode != "numeric"){
             tempo.cat <- base::paste0(
                 error_text_start, 
-                "THE mode ARGUMENT CANNOT BE OTHER THAN \"numeric\" IF ABSENCE OF NEGATIVE VALUES IS CONTROLED BY SWITCHING THE neg_values ARGUMENT FROM TRUE (DEFAULT VALUE) TO FALSE."
+                "THE mode ARGUMENT CANNOT BE OTHER THAN \"numeric\" IF ABSENCE OF NEGATIVE VALUES IS CONTROLED BY SWITCHING THE neg_values ARGUMENT FROM TRUE (DEFAULT VALUE) TO FALSE.",
+                collapse = NULL, 
+                recycle0 = FALSE
             )
-            base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
+            base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL) # == in base::stop() to be able to add several messages between ==
         }
         if(inf_values == FALSE & mode != "numeric"){
             tempo.cat <- base::paste0(
                 error_text_start, 
-                "THE mode ARGUMENT CANNOT BE OTHER THAN \"numeric\" IF ABSENCE OF INFINITE VALUE ARE CONTROLED BY SWITCHING THE inf_values ARGUMENT FROM TRUE (DEFAULT VALUE) TO FALSE.\nOTHER VALUES ARE NOT ALLOWED BECAUSE OBJECTS WITH INFINITE VALUES ARE ONLY \"numeric\"."
+                "THE mode ARGUMENT CANNOT BE OTHER THAN \"numeric\" IF ABSENCE OF INFINITE VALUE ARE CONTROLED BY SWITCHING THE inf_values ARGUMENT FROM TRUE (DEFAULT VALUE) TO FALSE.\nOTHER VALUES ARE NOT ALLOWED BECAUSE OBJECTS WITH INFINITE VALUES ARE ONLY \"numeric\".",
+                collapse = NULL, 
+                recycle0 = FALSE
             )
-            base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
+            base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL) # == in base::stop() to be able to add several messages between ==
         }
     }
-    if( ! base::is.null(length)){
-        if( ! (base::is.numeric(length) & base::length(length) == 1L & base::all( ! base::grepl(length, pattern = "\\.")))){ # base::is.na() already arg_checked for length
+    if( ! base::is.null(x = length)){
+        if( ! (base::is.numeric(x = length) & base::length(x = length) == 1L & base::all( ! base::grepl(x = length, pattern = "\\.", ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE), na.rm = TRUE))){ # base::is.na() already arg_checked for length
             tempo.cat <- base::paste0(
                 error_text_start, 
-                "THE length ARGUMENT MUST BE A SINGLE INTEGER VALUE."
+                "THE length ARGUMENT MUST BE A SINGLE INTEGER VALUE.",
+                collapse = NULL, 
+                recycle0 = FALSE
             )
-            base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
+            base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL) # == in base::stop() to be able to add several messages between ==
         }
     }
-    if( ! (base::is.logical(prop) & base::length(prop) == 1L)){ # base::is.na() already checked for prop
+    if( ! (base::is.logical(x = prop) & base::length(x = prop) == 1L)){ # base::is.na() already checked for prop
         tempo.cat <- base::paste0(
                 error_text_start, 
-                "THE prop ARGUMENT MUST BE A SINGLE LOGICAL VALUE (TRUE OR FALSE ONLY)."
+                "THE prop ARGUMENT MUST BE A SINGLE LOGICAL VALUE (TRUE OR FALSE ONLY).",
+                collapse = NULL, 
+                recycle0 = FALSE
             )
-        base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
+        base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL) # == in base::stop() to be able to add several messages between ==
     }else if(prop == TRUE){
-        if( ! base::is.null(class)){
-            if( ! base::any(class %in% base::c("vector", "numeric", "matrix", "array", "data.frame", "table"))){ # no need of na.rm = TRUE for base::any() because %in% does not output NA
+        if( ! base::is.null(x = class)){
+            if( ! base::any(class %in% base::c("vector", "numeric", "matrix", "array", "data.frame", "table"), na.rm = TRUE)){ # no need of na.rm = TRUE for base::any() because %in% does not output NA
                 tempo.cat <- base::paste0(
                     error_text_start, 
-                    "THE class ARGUMENT CANNOT BE OTHER THAN\nNULL\n\"vector\"\n\"numeric\"\n\"matrix\"\n\"array\"\n\"data.frame\"\n\"table\"\nIF prop ARGUMENT IS TRUE."
+                    "THE class ARGUMENT CANNOT BE OTHER THAN\nNULL\n\"vector\"\n\"numeric\"\n\"matrix\"\n\"array\"\n\"data.frame\"\n\"table\"\nIF prop ARGUMENT IS TRUE.",
+                    collapse = NULL, 
+                    recycle0 = FALSE
                 ) # not integer because prop
-                base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
+                base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL) # == in base::stop() to be able to add several messages between ==
             }
         }
-        if( ! base::is.null(mode)){
+        if( ! base::is.null(x = mode)){
             if(mode != "numeric"){
                 tempo.cat <- base::paste0(
                     error_text_start, 
-                    "THE mode ARGUMENT CANNOT BE OTHER THAN NULL OR \"numeric\" IF prop ARGUMENT IS TRUE."
+                    "THE mode ARGUMENT CANNOT BE OTHER THAN NULL OR \"numeric\" IF prop ARGUMENT IS TRUE.",
+                    collapse = NULL, 
+                    recycle0 = FALSE
                 )
-                base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
+                base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL) # == in base::stop() to be able to add several messages between ==
             }
         }
-        if( ! base::is.null(typeof)){
+        if( ! base::is.null(x = typeof)){
             if(typeof != "double"){
                 tempo.cat <- base::paste0(
                     error_text_start, 
-                    "THE typeof ARGUMENT CANNOT BE OTHER THAN NULL OR \"double\" IF prop ARGUMENT IS TRUE."
+                    "THE typeof ARGUMENT CANNOT BE OTHER THAN NULL OR \"double\" IF prop ARGUMENT IS TRUE.",
+                    collapse = NULL, 
+                    recycle0 = FALSE
                 )
-                base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
+                base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL) # == in base::stop() to be able to add several messages between ==
             }
         }
     }
-    if( ! (base::all(base::class(double_as_integer_allowed) == "logical") & base::length(double_as_integer_allowed) == 1L)){ # base::all() without na.rm -> ok because base::class() never returns NA
+    if( ! (base::all(base::class(x = double_as_integer_allowed) == "logical", na.rm = TRUE) & base::length(x = double_as_integer_allowed) == 1L)){ # base::all() without na.rm -> ok because base::class() never returns NA
         tempo.cat <- base::paste0(
             error_text_start, 
-            "THE double_as_integer_allowed ARGUMENT MUST BE A SINGLE LOGICAL VALUE (TRUE OR FALSE ONLY)."
+            "THE double_as_integer_allowed ARGUMENT MUST BE A SINGLE LOGICAL VALUE (TRUE OR FALSE ONLY).",
+            collapse = NULL, 
+            recycle0 = FALSE
         )
-        base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
+        base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL) # == in base::stop() to be able to add several messages between ==
     }
-    if( ! (base::is.logical(all_options_in_data) & base::length(all_options_in_data) == 1L)){
+    if( ! (base::is.logical(x = all_options_in_data) & base::length(x = all_options_in_data) == 1L)){
         tempo.cat <- base::paste0(
             error_text_start, 
-            "THE all_options_in_data ARGUMENT MUST BE A SINGLE LOGICAL VALUE (TRUE OR FALSE ONLY)."
+            "THE all_options_in_data ARGUMENT MUST BE A SINGLE LOGICAL VALUE (TRUE OR FALSE ONLY).",
+            collapse = NULL, 
+            recycle0 = FALSE
         )
-        base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
+        base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL) # == in base::stop() to be able to add several messages between ==
     }
-    if( ! (base::all(base::class(na_contain) == "logical") & base::length(na_contain) == 1L)){ # base::all() without na.rm -> ok because base::class() never returns NA
+    if( ! (base::all(base::class(x = na_contain) == "logical", na.rm = TRUE) & base::length(x = na_contain) == 1L)){ # base::all() without na.rm -> ok because base::class() never returns NA
         tempo.cat <- base::paste0(
             error_text_start, 
-            "THE na_contain ARGUMENT MUST BE A SINGLE LOGICAL VALUE (TRUE OR FALSE ONLY)."
+            "THE na_contain ARGUMENT MUST BE A SINGLE LOGICAL VALUE (TRUE OR FALSE ONLY).",
+            collapse = NULL, 
+            recycle0 = FALSE
         )
-        base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
+        base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL) # == in base::stop() to be able to add several messages between ==
     }
-    if( ! (base::all(base::class(print) == "logical") & base::length(print) == 1L)){ # base::all() without na.rm -> ok because base::class() never returns NA
+    if( ! (base::all(base::class(x = print) == "logical", na.rm = TRUE) & base::length(x = print) == 1L)){ # base::all() without na.rm -> ok because base::class() never returns NA
         tempo.cat <- base::paste0(
             error_text_start, 
-            "THE print ARGUMENT MUST BE A SINGLE LOGICAL VALUE (TRUE OR FALSE ONLY)."
+            "THE print ARGUMENT MUST BE A SINGLE LOGICAL VALUE (TRUE OR FALSE ONLY).",
+            collapse = NULL, 
+            recycle0 = FALSE
         )
-        base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
+        base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL) # == in base::stop() to be able to add several messages between ==
     }
     # data_name and error_text tested at the beginning
     ######## end other checkings
@@ -620,54 +672,58 @@ arg_check <- function(
     #### end second round of checking and data preparation
 
     #### main code
-    if(base::is.null(data_name)){
-        data_name <- base::deparse(base::substitute(data))
+    if(base::is.null(x = data_name)){
+        data_name <- base::deparse(expr = base::substitute(expr = data, env = base::environment(fun = NULL)), width.cutoff = 60L, backtick = FALSE, control = base::c("keepNA", "keepInteger", "niceNames", "showAttributes"), nlines = -1L)
     }
     problem <- FALSE
-    text_ok <- base::paste0("NO PROBLEM DETECTED FOR THE ", data_name, base::ifelse(test = base::is.null(data_name), yes = "", no = " "), "OBJECT", base::ifelse(test = error_text == "", yes = ".", no = error_text), collapse = NULL, recycle0 = FALSE)
+    text_ok <- base::paste0("NO PROBLEM DETECTED FOR THE ", data_name, base::ifelse(test = base::is.null(x = data_name), yes = "", no = " "), "OBJECT", base::ifelse(test = error_text == "", yes = ".", no = error_text), collapse = NULL, recycle0 = FALSE)
     text <- text_ok
-    if(( ! base::is.null(options)) & (base::all(base::typeof(data) == "character") | base::all(base::typeof(data) == "integer") | base::all(base::typeof(data) == "double"))){ # base::all() without na.rm -> ok because base::typeof() never returns NA
+    if(( ! base::is.null(x = options)) & (base::all(base::typeof(x = data) == "character", na.rm = TRUE) | base::all(base::typeof(x = data) == "integer", na.rm = TRUE) | base::all(base::typeof(x = data) == "double", na.rm = TRUE))){ # base::all() without na.rm -> ok because base::typeof() never returns NA
         test.log <- TRUE
-        if(base::all(base::typeof(data) == "double")){
+        if(base::all(base::typeof(x = data) == "double", na.rm = TRUE)){
             if( ! base::all(data %% 1 == 0L, na.rm = TRUE)){ # double but integer like ?
                 problem <- TRUE
-                text <- base::paste0("ERROR", base::ifelse(test = error_text == "", yes = "", no = error_text), "\n\nTHE ", data_name, " OBJECT MUST BE SOME OF THESE OPTIONS:\n", base::paste(options, collapse = "\n"), "\nBUT IS NOT EVEN TYPE CHARACTER OR INTEGER.")
+                text <- base::paste0("ERROR", base::ifelse(test = error_text == "", yes = "", no = error_text), "\n\nTHE ", data_name, " OBJECT MUST BE SOME OF THESE OPTIONS:\n", base::paste0(options, collapse = "\n", recycle0 = FALSE), "\nBUT IS NOT EVEN TYPE CHARACTER OR INTEGER.",collapse = NULL, recycle0 = FALSE)
                 test.log <- FALSE
             }
         }
         if(test.log == TRUE){
             text <- ""
-            if( ! base::all(data %in% options)){ # no need of na.rm = TRUE for base::all() because %in% does not output NA
+            if( ! base::all(data %in% options, na.rm = TRUE)){ # no need of na.rm = TRUE for base::all() because %in% does not output NA
                 problem <- TRUE
-                text <- base::paste0("ERROR", base::ifelse(test = error_text == "", yes = "", no = error_text), "\n\nTHE ", data_name, " OBJECT MUST BE SOME OF THESE OPTIONS:\n", base::paste(options, collapse = "\n"), "\nTHE PROBLEMATIC ELEMENTS OF ", data_name, " ARE:\n", base::paste(base::unique(data[ ! (data %in% options)]), collapse = "\n"))
+                text <- base::paste0("ERROR", base::ifelse(test = error_text == "", yes = "", no = error_text), "\n\nTHE ", data_name, " OBJECT MUST BE SOME OF THESE OPTIONS:\n", base::paste0(options, collapse = "\n", recycle0 = FALSE), "\nTHE PROBLEMATIC ELEMENTS OF ", data_name, " ARE:\n", base::paste0(base::unique(x = data[ ! (data %in% options)], incomparables = FALSE), collapse = "\n", recycle0 = FALSE), collapse = NULL, recycle0 = FALSE)
             }
             if(all_options_in_data == TRUE){
-                if( ! base::all(options %in% data)){ # no need of na.rm = TRUE for base::all() because %in% does not output NA
+                if( ! base::all(options %in% data, na.rm = TRUE)){ # no need of na.rm = TRUE for base::all() because %in% does not output NA
                     problem <- TRUE
                     text <- base::paste0(
-                        base::ifelse(text == "", "", base::paste0(text, "\n")), 
-                        base::ifelse(test = error_text == "", yes = "ERROR", no = base::paste0("ERROR IN ", error_text)), 
+                        base::ifelse(test = text == "", yes = "", no = base::paste0(text, "\n", collapse = NULL, recycle0 = FALSE)), 
+                        base::ifelse(test = error_text == "", yes = "ERROR", no = base::paste0("ERROR IN ", error_text, collapse = NULL, recycle0 = FALSE)), 
                         "\nTHE ", 
                         data_name, 
                         " OBJECT MUST BE MADE OF ALL THESE OPTIONS:\n", 
-                        base::paste(options, collapse = "\n"), 
+                        base::paste0(options, collapse = "\n", recycle0 = FALSE), 
                         "\nTHE MISSING ELEMENTS OF THE options ARGUMENT ARE:\n",  
-                        base::paste(base::unique(options[ ! (options %in% data)]), collapse = "\n")
+                        base::paste0(base::unique(x = options[ ! (options %in% data)], incomparables = FALSE), collapse = "\n", recycle0 = FALSE),
+                        collapse = NULL, 
+                        recycle0 = FALSE
                     )
                 }
             }
-            if( ! base::is.null(length)){
-                if(base::length(data) != length){
+            if( ! base::is.null(x = length)){
+                if(base::length(x = data) != length){
                     problem <- TRUE
                     text <- base::paste0(
-                        base::ifelse(text == "", "", base::paste0(text, "\n")), 
-                        base::ifelse(test = error_text == "", yes = "ERROR", no = base::paste0("ERROR IN ", error_text)), 
+                        base::ifelse(test = text == "", yes = "", no = base::paste0(text, "\n", collapse = NULL, recycle0 = FALSE)), 
+                        base::ifelse(test = error_text == "", yes = "ERROR", no = base::paste0("ERROR IN ", error_text, collapse = NULL, recycle0 = FALSE)), 
                         "\nTHE LENGTH OF ", 
                         data_name, 
                         " MUST BE ", 
                         length, 
                         " AND NOT ", 
-                        base::length(data)
+                        base::length(x = data),
+                        collapse = NULL, 
+                        recycle0 = FALSE
                     )
                 }
             }
@@ -682,119 +738,120 @@ arg_check <- function(
                 )
             }
         }
-    }else if( ! base::is.null(options)){
+    }else if( ! base::is.null(x = options)){
         problem <- TRUE
-        text <- base::paste0("ERROR", base::ifelse(test = error_text == "", yes = "", no = error_text), "\n\nTHE ", data_name, " OBJECT MUST BE SOME OF THESE OPTIONS:\n", base::paste(options, collapse = "\n"), "\nBUT IS NOT EVEN TYPE CHARACTER OR INTEGER.")
+        text <- base::paste0("ERROR", base::ifelse(test = error_text == "", yes = "", no = error_text), "\n\nTHE ", data_name, " OBJECT MUST BE SOME OF THESE OPTIONS:\n", base::paste0(options, collapse = "\n", recycle0 = FALSE), "\nBUT IS NOT EVEN TYPE CHARACTER OR INTEGER.", collapse = NULL, recycle0 = FALSE)
     }
     arg.names <- base::c("class", "typeof", "mode", "length")
-    if( ! base::is.null(class)){
+    if( ! base::is.null(x = class)){
         if(class == "matrix"){ # because of base::class(base::matrix()) since R4.0.0
             class <- base::c("matrix", "array")
-        }else if(class == "factor" & base::all(base::class(data) %in% base::c("factor", "ordered"))){ # to deal with ordered factors # base::all() without na.rm -> ok because base::class(NA) is "logical"
+        }else if(class == "factor" & base::all(base::class(x = data) %in% base::c("factor", "ordered"), na.rm = TRUE)){ # to deal with ordered factors # base::all() without na.rm -> ok because base::class(NA) is "logical"
             class <- base::c("factor", "ordered")
         }
     }
-    if(base::is.null(options)){
-        for(i2 in 1:base::length(arg.names)){
-            if( ! base::is.null(base::get(arg.names[i2], envir = base::sys.nframe(), inherits = FALSE))){
+    if(base::is.null(x = options)){
+        for(i2 in 1:base::length(x = arg.names)){
+            if( ! base::is.null(x = base::get(x = arg.names[i2], pos = -1L, envir = base::as.environment(-1), mode = "any", inherits = FALSE))){
                 # script to execute
                 tempo.script <- '
                     problem <- TRUE ;
-                    if(base::identical(text, text_ok)){
-                        text <- base::paste0("ERROR", base::ifelse(test = error_text == "", yes = "", no = error_text), "\n\nTHE ", data_name, " OBJECT MUST BE ") ;
+                    if(base::identical(x = text, y = text_ok, num.eq = TRUE, single.NA = TRUE, attrib.as.set = TRUE, ignore.bytecode = TRUE, ignore.environment = FALSE, ignore.srcref = TRUE, extptr.as.ref = FALSE)){
+                        text <- base::paste0("ERROR", base::ifelse(test = error_text == "", yes = "", no = error_text), "\n\nTHE ", data_name, " OBJECT MUST BE ", collapse = NULL, recycle0 = FALSE) ;
                     }else{
-                        text <- base::paste0(text, " AND ") ; 
+                        text <- base::paste0(text, " AND ", collapse = NULL, recycle0 = FALSE) ; 
                     }
-                    text <- base::paste0(text, base::toupper(arg.names[i2]), " ", if(base::all(base::get(arg.names[i2], envir = base::sys.nframe(), inherits = FALSE) %in% base::c("matrix", "array"))){"matrix"}else if(base::all(base::get(arg.names[i2], envir = base::sys.nframe(), inherits = FALSE) %in% base::c("factor", "ordered"))){"factor"}else{base::get(arg.names[i2], envir = base::sys.nframe(), inherits = FALSE)})
-                ' # no need of na.rm = TRUE for base::all() because %in% does not output NA
+                    text <- base::paste0(text, base::toupper(arg.names[i2]), " ", if(base::all(base::get(x = arg.names[i2], pos = -1L, envir = base::as.environment(-1), mode = "any", inherits = FALSE) %in% base::c("matrix", "array"), na.rm = TRUE)){"matrix"}else if(base::all(base::get(x = arg.names[i2], pos = -1L, envir = base::as.environment(-1), mode = "any", inherits = FALSE) %in% base::c("factor", "ordered"), na.rm = TRUE)){"factor"}else{base::get(x = arg.names[i2], pos = -1L, envir = base::as.environment(-1), mode = "any", inherits = FALSE)}, collapse = NULL, recycle0 = FALSE)
+                '
+                # no need of na.rm = TRUE for base::all() because %in% does not output NA
                 # end script to execute
-                if(base::typeof(data) == "double" & double_as_integer_allowed == TRUE & ((arg.names[i2] == "class" & base::all(base::get(arg.names[i2], envir = base::sys.nframe(), inherits = FALSE) == "integer")) | (arg.names[i2] == "typeof" & base::all(base::get(arg.names[i2], envir = base::sys.nframe(), inherits = FALSE) == "integer")))){ # data of type double & double_as_integer_allowed == TRUE and (class = "integer" | typeof = "integer") # no need of na.rm = TRUE for base::all() because == does not output NA if no NA in left of ==, which is the case for arg.names # base::typeof(data) == "double" means no factor allowed
+                if(base::typeof(x = data) == "double" & double_as_integer_allowed == TRUE & ((arg.names[i2] == "class" & base::all(base::get(x = arg.names[i2], pos = -1L, envir = base::as.environment(-1), mode = "any", inherits = FALSE) == "integer", na.rm = TRUE)) | (arg.names[i2] == "typeof" & base::all(base::get(x = arg.names[i2], pos = -1L, envir = base::as.environment(-1), mode = "any", inherits = FALSE) == "integer", na.rm = TRUE)))){ # data of type double & double_as_integer_allowed == TRUE and (class = "integer" | typeof = "integer") # no need of na.rm = TRUE for base::all() because == does not output NA if no NA in left of ==, which is the case for arg.names # base::typeof(data) == "double" means no factor allowed
                     if( ! base::all(data %% 1 == 0L, na.rm = TRUE)){ # to check integers (use %%, meaning the remaining of a division): see the precedent line. base::isTRUE(base::all.equal(data%%1, base::rep(0, base::length(data)))) not used because we strictly need zero as a result. Warning: na.rm = TRUE required here for base::all()
-                        base::eval(base::parse(text = tempo.script)) # execute tempo.script
+                        base::eval(expr = base::parse(text = tempo.script, file = "", n = NULL, prompt = "?", keep.source = base::getOption(x = "keep.source", default = NULL), srcfile = NULL, encoding = "unknown"), envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL)) # execute tempo.script
                     }
-                }else if( ! base::any(base::all(base::get(arg.names[i2], envir = base::sys.nframe(), inherits = FALSE) %in% base::c("vector", "ggplot2"))) & ! base::all(base::eval(base::parse(text = base::paste0(arg.names[i2], "(data)"))) %in% base::get(arg.names[i2], envir = base::sys.nframe(), inherits = FALSE))){ # test the four base::c("class", "typeof", "mode", "length") arguments with their corresponding function. No need of na.rm = TRUE for base::all() because %in% does not output NA # no need of na.rm = TRUE for base::all() because %in% does not output NA # no need of na.rm = TRUE for base::any() because get base::get(arg.names) does not contain NA
-                    base::eval(base::parse(text = tempo.script)) # execute tempo.script
-                }else if(arg.names[i2] == "class" & base::all(base::get(arg.names[i2], envir = base::sys.nframe(), inherits = FALSE) == "vector") & ! (base::all(base::class(data) %in% "numeric") | base::all(base::class(data) %in% "integer") | base::all(base::class(data) %in% "character") | base::all(base::class(data) %in% "logical") | base::all(base::class(data) %in% "complex") | base::all(base::class(data) %in% "expression"))){ # test class == "vector". base::all(base::get(arg.names[i2], envir = base::sys.nframe(), inherits = FALSE) check if user has used the argument class = "vector". If TRUE and base::length(data) > 1, the class "numeric" "integer" "character" "logical" "complex" "expression" should be returned. No need of na.rm = TRUE for base::all() because %in% does not output NA # no need of na.rm = TRUE for base::all() because == does not output NA if no NA in left of ==, which is the case for arg.names. Other classes "list", "name", "symbol", "function", "environment", "S4", "call" return a list if length of data > 1
-                    base::eval(base::parse(text = tempo.script)) # execute tempo.script
-                }else if(arg.names[i2] == "class" & base::all(base::get(arg.names[i2], envir = base::sys.nframe(), inherits = FALSE) == "ggplot2") & ! base::all(base::class(data) %in% base::c("gg", "ggplot"))){ # test ggplot object # no need of na.rm = TRUE for base::all() because == does not output NA if no NA in left of ==, which is the case for arg.names # no need of na.rm = TRUE for base::all() because %in% does not output NA
-                    base::eval(base::parse(text = tempo.script)) # execute tempo.script
+                }else if( ! base::any(base::all(base::get(x = arg.names[i2], pos = -1L, envir = base::as.environment(-1), mode = "any", inherits = FALSE) %in% base::c("vector", "ggplot2"), na.rm = TRUE), na.rm = TRUE) & ! base::all(base::eval(expr = base::parse(text = base::paste0(arg.names[i2], "(data)", collapse = NULL, recycle0 = FALSE), file = "", n = NULL, prompt = "?", keep.source = base::getOption(x = "keep.source", default = NULL), srcfile = NULL, encoding = "unknown"), envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL)) %in% base::get(x = arg.names[i2], pos = -1L, envir = base::as.environment(-1), mode = "any", inherits = FALSE), na.rm = TRUE)){ # test the four base::c("class", "typeof", "mode", "length") arguments with their corresponding function. No need of na.rm = TRUE for base::all() because %in% does not output NA # no need of na.rm = TRUE for base::all() because %in% does not output NA # no need of na.rm = TRUE for base::any() because get base::get(arg.names) does not contain NA
+                    base::eval(expr = base::parse(text = tempo.script, file = "", n = NULL, prompt = "?", keep.source = base::getOption(x = "keep.source", default = NULL), srcfile = NULL, encoding = "unknown"), envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL)) # execute tempo.script
+                }else if(arg.names[i2] == "class" & base::all(base::get(x = arg.names[i2], pos = -1L, envir = base::as.environment(-1), mode = "any", inherits = FALSE) == "vector", na.rm = TRUE) & ! (base::all(base::class(x = data) %in% "numeric", na.rm = TRUE) | base::all(base::class(x = data) %in% "integer", na.rm = TRUE) | base::all(base::class(x = data) %in% "character", na.rm = TRUE) | base::all(base::class(x = data) %in% "logical", na.rm = TRUE) | base::all(base::class(x = data) %in% "complex", na.rm = TRUE) | base::all(base::class(x = data) %in% "expression", na.rm = TRUE))){ # test class == "vector". base::all(base::get(arg.names[i2], envir = base::sys.nframe(), inherits = FALSE) check if user has used the argument class = "vector". If TRUE and base::length(data) > 1, the class "numeric" "integer" "character" "logical" "complex" "expression" should be returned. No need of na.rm = TRUE for base::all() because %in% does not output NA # no need of na.rm = TRUE for base::all() because == does not output NA if no NA in left of ==, which is the case for arg.names. Other classes "list", "name", "symbol", "function", "environment", "S4", "call" return a list if length of data > 1
+                    base::eval(expr = base::parse(text = tempo.script, file = "", n = NULL, prompt = "?", keep.source = base::getOption(x = "keep.source", default = NULL), srcfile = NULL, encoding = "unknown"), envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL)) # execute tempo.script
+                }else if(arg.names[i2] == "class" & base::all(base::get(x = arg.names[i2], pos = -1L, envir = base::as.environment(-1), mode = "any", inherits = FALSE) == "ggplot2", na.rm = TRUE) & ! base::all(base::class(x = data) %in% base::c("gg", "ggplot"), na.rm = TRUE)){ # test ggplot object # no need of na.rm = TRUE for base::all() because == does not output NA if no NA in left of ==, which is the case for arg.names # no need of na.rm = TRUE for base::all() because %in% does not output NA
+                    base::eval(expr = base::parse(text = tempo.script, file = "", n = NULL, prompt = "?", keep.source = base::getOption(x = "keep.source", default = NULL), srcfile = NULL, encoding = "unknown"), envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL)) # execute tempo.script
                 }
             }
         }
     }
-    if(prop == TRUE & base::all(base::typeof(data) == "double")){ # base::all() without na.rm -> ok because base::typeof(NA) is "logical"
-        if(base::is.null(data) | base::any(data < 0 | data > 1, na.rm = TRUE)){ # works if data base::is.null # Warning: na.rm = TRUE required here for base::any() # base::typeof(data) == "double" means no factor allowed
+    if(prop == TRUE & base::all(base::typeof(x = data) == "double", na.rm = TRUE)){ # base::all() without na.rm -> ok because base::typeof(NA) is "logical"
+        if(base::is.null(x = data) | base::any(data < 0 | data > 1, na.rm = TRUE)){ # works if data base::is.null # Warning: na.rm = TRUE required here for base::any() # base::typeof(data) == "double" means no factor allowed
             problem <- TRUE
-            if(base::identical(text, text_ok)){
-                text <- base::paste0("ERROR", base::ifelse(test = error_text == "", yes = "", no = error_text), "\n\n")
+            if(base::identical(x = text, y = text_ok, num.eq = TRUE, single.NA = TRUE, attrib.as.set = TRUE, ignore.bytecode = TRUE, ignore.environment = FALSE, ignore.srcref = TRUE, extptr.as.ref = FALSE)){
+                text <- base::paste0("ERROR", base::ifelse(test = error_text == "", yes = "", no = error_text), "\n\n", collapse = NULL, recycle0 = FALSE)
             }else{
-                text <- base::paste0(text, " AND ")
+                text <- base::paste0(text, " AND ", collapse = NULL, recycle0 = FALSE)
             }
-            text <- base::paste0(text, "THE ", data_name, " OBJECT MUST BE DECIMAL VALUES BETWEEN 0 AND 1.")
+            text <- base::paste0(text, "THE ", data_name, " OBJECT MUST BE DECIMAL VALUES BETWEEN 0 AND 1.", collapse = NULL, recycle0 = FALSE)
         }
     }else if(prop == TRUE){
         problem <- TRUE
-        if(base::identical(text, text_ok)){
-            text <- base::paste0("ERROR", base::ifelse(test = error_text == "", yes = "", no = error_text), "\n\n")
+        if(base::identical(x = text, y = text_ok, num.eq = TRUE, single.NA = TRUE, attrib.as.set = TRUE, ignore.bytecode = TRUE, ignore.environment = FALSE, ignore.srcref = TRUE, extptr.as.ref = FALSE)){
+            text <- base::paste0("ERROR", base::ifelse(test = error_text == "", yes = "", no = error_text), "\n\n", collapse = NULL, recycle0 = FALSE)
         }else{
-            text <- base::paste0(text, " AND ")
+            text <- base::paste0(text, " AND ", collapse = NULL, recycle0 = FALSE)
         }
-        text <- base::paste0(text, "THE ", data_name, " OBJECT MUST BE DECIMAL VALUES BETWEEN 0 AND 1.")
+        text <- base::paste0(text, "THE ", data_name, " OBJECT MUST BE DECIMAL VALUES BETWEEN 0 AND 1.", collapse = NULL, recycle0 = FALSE)
     }
-    if(base::all(base::class(data) %in% "expression")){ # no need of na.rm = TRUE for base::all() because %in% does not output NA
-        data <- base::as.character(data) # to evaluate the presence of NA
+    if(base::all(base::class(x = data) %in% "expression", na.rm = TRUE)){ # no need of na.rm = TRUE for base::all() because %in% does not output NA
+        data <- base::as.character(x = data) # to evaluate the presence of NA
     }
-    if(na_contain == FALSE & (base::mode(data) %in% base::c("logical", "numeric", "complex", "character", "list"))){ # before it was ! (base::class(data) %in% base::c("function", "environment"))
-        if(base::any(base::is.na(data)) == TRUE){ # not on the same line because when data is class envir or function , do not like that # normally no NA with base::is.na()
+    if(na_contain == FALSE & (base::mode(x = data) %in% base::c("logical", "numeric", "complex", "character", "list"))){ # before it was ! (base::class(data) %in% base::c("function", "environment"))
+        if(base::any(base::is.na(x = data), na.rm = TRUE) == TRUE){ # not on the same line because when data is class envir or function , do not like that # normally no NA with base::is.na()
             problem <- TRUE
-            if(base::identical(text, text_ok)){
-                text <- base::paste0("ERROR", base::ifelse(test = error_text == "", yes = "", no = error_text), "\n\n")
+            if(base::identical(x = text, y = text_ok, num.eq = TRUE, single.NA = TRUE, attrib.as.set = TRUE, ignore.bytecode = TRUE, ignore.environment = FALSE, ignore.srcref = TRUE, extptr.as.ref = FALSE)){
+                text <- base::paste0("ERROR", base::ifelse(test = error_text == "", yes = "", no = error_text), "\n\n", collapse = NULL, recycle0 = FALSE)
             }else{
-                text <- base::paste0(text, " AND ")
+                text <- base::paste0(text, " AND ", collapse = NULL, recycle0 = FALSE)
             }
-            text <- base::paste0(text, "THE ", data_name, " OBJECT CONTAINS NA WHILE NOT AUTHORIZED.")
+            text <- base::paste0(text, "THE ", data_name, " OBJECT CONTAINS NA WHILE NOT AUTHORIZED.", collapse = NULL, recycle0 = FALSE)
         }
     }
-    if(neg_values == FALSE & base::all(base::mode(data) %in% "numeric") & ! base::any(base::class(data) %in% "factor")){ # no need of na.rm = TRUE for base::all() because %in% does not output NA
+    if(neg_values == FALSE & base::all(base::mode(x = data) %in% "numeric", na.rm = TRUE) & ! base::any(base::class(x = data) %in% "factor", na.rm = TRUE)){ # no need of na.rm = TRUE for base::all() because %in% does not output NA
         if(base::any(data < 0, na.rm = TRUE)){ # Warning: na.rm = TRUE required here for base::any()
             problem <- TRUE
-            if(base::identical(text, text_ok)){
-                text <- base::paste0("ERROR", base::ifelse(test = error_text == "", yes = "", no = error_text), "\n\n")
+            if(base::identical(x = text, y = text_ok, num.eq = TRUE, single.NA = TRUE, attrib.as.set = TRUE, ignore.bytecode = TRUE, ignore.environment = FALSE, ignore.srcref = TRUE, extptr.as.ref = FALSE)){
+                text <- base::paste0("ERROR", base::ifelse(test = error_text == "", yes = "", no = error_text), "\n\n", collapse = NULL, recycle0 = FALSE)
             }else{
-                text <- base::paste0(text, " AND ")
+                text <- base::paste0(text, " AND ", collapse = NULL, recycle0 = FALSE)
             }
-            text <- base::paste0(text, "THE ", data_name, " OBJECT MUST BE MADE OF NON NEGATIVE NUMERIC VALUES.")
+            text <- base::paste0(text, "THE ", data_name, " OBJECT MUST BE MADE OF NON NEGATIVE NUMERIC VALUES.", collapse = NULL, recycle0 = FALSE)
         }
     }else if(neg_values == FALSE){
         problem <- TRUE
-        if(base::identical(text, text_ok)){
-            text <- base::paste0("ERROR", base::ifelse(test = error_text == "", yes = "", no = error_text), "\n\n")
+        if(base::identical(x = text, y = text_ok, num.eq = TRUE, single.NA = TRUE, attrib.as.set = TRUE, ignore.bytecode = TRUE, ignore.environment = FALSE, ignore.srcref = TRUE, extptr.as.ref = FALSE)){
+            text <- base::paste0("ERROR", base::ifelse(test = error_text == "", yes = "", no = error_text), "\n\n", collapse = NULL, recycle0 = FALSE)
         }else{
-            text <- base::paste0(text, " AND ")
+            text <- base::paste0(text, " AND ", collapse = NULL, recycle0 = FALSE)
         }
-        text <- base::paste0(text, "THE ", data_name, " OBJECT MUST BE MADE OF NON NEGATIVE VALUES BUT IS ", base::ifelse(base::any(base::class(data) %in% "factor"), "A FACTOR", "NOT EVEN MODE NUMERIC.")) # no need of na.rm = TRUE
+        text <- base::paste0(text, "THE ", data_name, " OBJECT MUST BE MADE OF NON NEGATIVE VALUES BUT IS ", base::ifelse(test = base::any(base::class(x = data) %in% "factor", na.rm = TRUE), yes = "A FACTOR", no = "NOT EVEN MODE NUMERIC."), collapse = NULL, recycle0 = FALSE) # no need of na.rm = TRUE
     }
-    if(inf_values == FALSE & base::all(base::typeof(data) %in% "double") & ! base::any(base::class(data) %in% "factor")){ # no need of na.rm = TRUE for base::all() because %in% does not output NA
-        if(base::any(base::is.infinite(data), na.rm = TRUE)){ # Warning: na.rm = TRUE required here for base::any()
+    if(inf_values == FALSE & base::all(base::typeof(x = data) %in% "double", na.rm = TRUE) & ! base::any(base::class(x = data) %in% "factor", na.rm = TRUE)){ # no need of na.rm = TRUE for base::all() because %in% does not output NA
+        if(base::any(base::is.infinite(x = data), na.rm = TRUE)){ # Warning: na.rm = TRUE required here for base::any()
             problem <- TRUE
-            if(base::identical(text, text_ok)){
-                text <- base::paste0("ERROR", base::ifelse(test = error_text == "", yes = "", no = error_text), "\n\n")
+            if(base::identical(x = text, y = text_ok, num.eq = TRUE, single.NA = TRUE, attrib.as.set = TRUE, ignore.bytecode = TRUE, ignore.environment = FALSE, ignore.srcref = TRUE, extptr.as.ref = FALSE)){
+                text <- base::paste0("ERROR", base::ifelse(test = error_text == "", yes = "", no = error_text), "\n\n", collapse = NULL, recycle0 = FALSE)
             }else{
-                text <- base::paste0(text, " AND ")
+                text <- base::paste0(text, " AND ", collapse = NULL, recycle0 = FALSE)
             }
-            text <- base::paste0(text, "THE ", data_name, " OBJECT MUST BE MADE OF NON INFINITE NUMERIC VALUES.")
+            text <- base::paste0(text, "THE ", data_name, " OBJECT MUST BE MADE OF NON INFINITE NUMERIC VALUES.", collapse = NULL, recycle0 = FALSE)
         }
     }else if(inf_values == FALSE){
         problem <- TRUE
-        if(base::identical(text, text_ok)){
-            text <- base::paste0("ERROR", base::ifelse(test = error_text == "", yes = "", no = error_text), "\n\n")
+        if(base::identical(x = text, y = text_ok, num.eq = TRUE, single.NA = TRUE, attrib.as.set = TRUE, ignore.bytecode = TRUE, ignore.environment = FALSE, ignore.srcref = TRUE, extptr.as.ref = FALSE)){
+            text <- base::paste0("ERROR", base::ifelse(test = error_text == "", yes = "", no = error_text), "\n\n", collapse = NULL, recycle0 = FALSE)
         }else{
-            text <- base::paste0(text, " AND ")
+            text <- base::paste0(text, " AND ", collapse = NULL, recycle0 = FALSE)
         }
-        text <- base::paste0(text, "THE ", data_name, " OBJECT MUST BE MADE OF NON INFINITE VALUES BUT IS ", base::ifelse(base::any(base::class(data) %in% "factor"), "A FACTOR", "NOT EVEN TYPE DOUBLE.")) # no need of na.rm = TRUE
+        text <- base::paste0(text, "THE ", data_name, " OBJECT MUST BE MADE OF NON INFINITE VALUES BUT IS ", base::ifelse(test = base::any(base::class(x = data) %in% "factor", na.rm = TRUE), yes = "A FACTOR", no = "NOT EVEN TYPE DOUBLE."), collapse = NULL, recycle0 = FALSE) # no need of na.rm = TRUE
     }
     if(print == TRUE & problem == TRUE){
-        base::cat(base::paste0("\n\n================\n\n", text, "\n\n================\n\n"))
+        base::cat(base::paste0("\n\n================\n\n", text, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), file = "", sep = " ", fill = FALSE, labels = NULL, append = FALSE)
     }
     #### end main code
     

@@ -481,7 +481,6 @@ all_args_here <- function(
     arg_string_for_col3 <- fun_names # like fun_names but added with all what is between ()
     arg_string <- fun_names # like arg_string_for_col3 but with only the arguments
     mid_bracket_pos_in_fun_1_line <- base::lapply(X = fun_names, FUN = function(x){base::lapply(X = x, FUN = function(y){NULL})}) # list of lists, will be used to get inside ( and ) positions, from fun_1_line
-
     for(i1 in 1:base::length(x = fun_names)){
         tempo_pos_in_code <- base::as.integer(x = base::sub(pattern = "^c", replacement = "", x = base::names(x = fun_names)[i1], ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE))
         tempo_which <- base::which(x = code_line_nb %in% tempo_pos_in_code, arr.ind = FALSE, useNames = TRUE)
