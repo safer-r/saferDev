@@ -57,7 +57,7 @@ arg_check(
 
 \item{safer_check}{Single logical value. Perform some "safer" checks? If TRUE, checkings are performed before main code running (see https://github.com/safer-r): 1) R classical operators (like "<-") not overwritten by another package because of the R scope and 2) required functions and related packages effectively present in local R lybraries. Must be set to FALSE if this fonction is used inside another "safer" function to avoid pointless multiple checkings.}
 
-\item{error_text}{Single character string used to add information in error messages returned by the function, notably if the function is inside other functions, which is practical for debugging. Example: error_text = "INSIDE <PACKAGE_1>::<FUNCTION_1> INSIDE <PACKAGE_2>::<FUNCTION_2>".}
+\item{error_text}{Single character string used to add information in error messages returned by the function, notably if the function is inside other functions, which is practical for debugging. Example: error_text = " INSIDE <PACKAGE_1>::<FUNCTION_1> INSIDE <PACKAGE_2>::<FUNCTION_2>.". Of note, error_text is also used at the end of the string returned when no problem is detected.}
 }
 \value{
 A list containing:
@@ -90,7 +90,7 @@ test <- matrix(1:3)
 arg_check(data = test, print = TRUE, class = "vector", mode = "numeric")  # commented because this example returns an error
 }
 arg_check(data = test, print = TRUE, class = "matrix", mode = "numeric")
-arg_check(data = test, print = TRUE, class = "matrix", mode = "numeric", error_text = "BY saferDev::arg_check()")
+arg_check(data = test, print = TRUE, class = "matrix", mode = "numeric", error_text = " BY saferDev::arg_check()")
 }
 \seealso{
 \code{\link{match.arg}} et \code{\link{arg_test}}.
