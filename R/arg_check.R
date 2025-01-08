@@ -188,7 +188,7 @@ arg_check <- function(
                 X = base::lapply(
                     X = arg_user_setting, 
                     FUN = function(x){
-                        if(base::all(base::class(x) %in% base::c("expression", "name", "function"), na.rm = TRUE)){
+                        if(base::all(base::class(x = x) %in% base::c("expression", "name", "function"), na.rm = TRUE)){
                             FALSE
                         }else{
                             base::is.na(x = x)
