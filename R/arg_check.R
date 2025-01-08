@@ -92,7 +92,7 @@ arg_check <- function(
     #### arguments settings
     arg_user_setting <- tempo_settings[-1] # list of the argument settings (excluding default values not provided by the user). Always a list, even if 1 argument. So ok for lapply() usage (management of NA section)
     arg_user_setting_names <- base::names(x = arg_user_setting)
-    arg_user_setting <- base::lapply(X = arg_user_setting, FUN = function(x){base::eval(expr = x, envir = base::parent.frame(n = 2L), enclos = base::environment(fun = NULL))}) # to convert elements in each compartment into their type, not expression
+    arg_user_setting <- base::lapply(X = arg_user_setting, FUN = function(x){base::eval(expr = x, envir = base::parent.frame(n = 2L), enclos = base::baseenv())}) # to convert elements in each compartment into their type, not expression
     arg_names <- base::names(x = base::formals(fun = base::sys.function(which = base::sys.parent(n = 2)), envir = base::parent.frame(n = 1))) # names of all the arguments
     #### end arguments settings
 
