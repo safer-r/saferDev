@@ -98,7 +98,7 @@ arg_check <- function(
     #### error_text initiation
 
     ######## basic error text start
-    tempo_cat <- base::paste0(base::unlist(x = error_text, recursive = TRUE, use.names = TRUE), collapse = "", recycle0 = FALSE) # if error_text is a string, changes nothing
+    tempo_cat <- base::paste0(base::unlist(x = error_text, recursive = TRUE, use.names = TRUE), collapse = "", recycle0 = FALSE) # convert to string. if error_text is a string, changes nothing. If NULL -> "" so no need to check for management of NULL
     error_text_start <- base::paste0(
         "ERROR IN ", # must not be changed, because this "ERROR IN " string is used for text replacement
         base::ifelse(test = base::is.null(x = package_name), yes = "", no = base::paste0(package_name, base::ifelse(test = base::grepl(x = function_name, pattern = "^\\.", ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE), yes = ":::", no = "::"), collapse = NULL, recycle0 = FALSE)), 
