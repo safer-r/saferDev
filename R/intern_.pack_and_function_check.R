@@ -5,7 +5,6 @@
 #' @param fun Character vector of the names of the required functions, preceded by the name of the package they belong to and a double or triple colon. Example: c("ggplot2::geom_point", "grid::gpar").
 #' @param lib_path Vector of characters specifying the absolute pathways of the directories containing the required packages for the function, if not in the default directories. Useful to overcome R execution using system with non admin rights for R package installation in the default directories. Ignored if NULL (default): only the pathways specified by .libPaths() are used for package calling. Specify the right path if the function returns a package path error.
 #' @param error_text Single character string used to add information in error messages returned by the function, notably if the function is inside other functions, which is practical for debugging. Example: error_text = "INSIDE <PACKAGE_1>::<FUNCTION_1> INSIDE <PACKAGE_2>::<FUNCTION_2>".
-#' @param internal_error_report_link Single string of the link where to post an issue indicated in an internal error message. Write NULL if no link to propose, or no internal error message.
 #' @returns An error message if at least one of the checked packages is missing in lib_path, or if at least one of the checked functions is missing in the required package, nothing otherwise.
 #' @details
 #' - Warning: requires saferDev::arg_check. In the safer Backbone section "######## check of the required functions from the required packages" add this function when checking for the presence of saferDev:::.pack_and_function_check.
@@ -14,9 +13,9 @@
 #' @author Haiding Wang <wanghaiding442@gmail.com>
 #' @examples
 #' \dontrun{ # Example that shouldn't be run because this is an internal function
-#' .pack_and_function_check(fun = 1, error_text = " INSIDE F1.", internal_error_report_link = "") # this example returns an error
-#' .pack_and_function_check(fun = "ggplot2::notgood", lib_path = base::.libPaths(), error_text = " INSIDE P1::F1", internal_error_report_link = "test") # this example returns an error
-#' .pack_and_function_check(fun = c("ggplot2::geom_point", "grid::gpar"), lib_path = base::.libPaths(), error_text = " INSIDE P1::F1", internal_error_report_link = "test")
+#' .pack_and_function_check(fun = 1, error_text = " INSIDE F1.") # this example returns an error
+#' .pack_and_function_check(fun = "ggplot2::notgood", lib_path = base::.libPaths(), error_text = " INSIDE P1::F1") # this example returns an error
+#' .pack_and_function_check(fun = c("ggplot2::geom_point", "grid::gpar"), lib_path = base::.libPaths(), error_text = " INSIDE P1::F1")
 #' }
 #' @author Gael Millot <gael.millot@pasteur.fr>
 #' @keywords internal
@@ -25,19 +24,18 @@
     # in internal functions, all arguments are without value on purpose
     fun, 
     lib_path,
-    error_text,
-    internal_error_report_link
+    error_text
 ){
     # DEBUGGING
-    # fun = "ggplot2::geom_point" ; lib_path = "C:/Program Files/R/R-4.3.1/library" ; error_text = "" ; internal_error_report_link = "test"
-    # fun = "saferDev:::.colons_check_message" ; lib_path = "C:/Program Files/R/R-4.3.1/library" ; error_text = "" ; internal_error_report_link = "test"
+    # fun = "ggplot2::geom_point" ; lib_path = "C:/Program Files/R/R-4.3.1/library" ; error_text = ""
+    # fun = "saferDev:::.colons_check_message" ; lib_path = "C:/Program Files/R/R-4.3.1/library" ; error_text = ""
 
     #### package name
     package_name <- "saferDev" # write NULL if the function developed is not in a package
     #### end package name
 
     #### internal error report link
-    # set by the internal_error_report_link argument
+    # not required
     #### end internal error report link
 
     #### function name
@@ -71,38 +69,10 @@
     ######## end basic error text start
 
     ######## internal error text
-    intern_error_text_start <- base::paste0(
-        base::ifelse(test = base::is.null(x = package_name), yes = "", no = base::paste0(package_name, base::ifelse(test = base::grepl(x = function_name, pattern = "^\\.", ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE), yes = ":::", no = "::"), collapse = NULL, recycle0 = FALSE)), 
-        function_name, 
-        base::ifelse(test = error_text == "", yes = ".", no = error_text), 
-        "\n\n", 
-        collapse = NULL, 
-        recycle0 = FALSE
-    )
-    intern_error_text_end <- base::ifelse(test = base::is.null(x = internal_error_report_link), yes = "", no = base::paste0("\n\nPLEASE, REPORT THIS ERROR HERE: ", internal_error_report_link, ".", collapse = NULL, recycle0 = FALSE))
+    # not required
     ######## end internal error text
 
     #### end error_text initiation
-
-    #### environment checking
-
-    ######## check of lib_path
-    # already done in the main function
-    ######## end check of lib_path
-
-    ######## safer_check argument checking
-    # not required because not here
-    ######## end safer_check argument checking
-
-    ######## check of the required functions from the required packages
-    # already done in the main function
-    ######## end check of the required functions from the required packages
-
-    ######## critical operator checking
-    # already done in the main function
-    ######## end critical operator checking
-
-    #### end environment checking
 
     #### argument primary checking
 
@@ -110,8 +80,7 @@
     mandat_args <- base::c(
         "fun", 
         "lib_path",
-        "error_text",
-        "internal_error_report_link"
+        "error_text"
     )
     tempo <- base::eval(expr = base::parse(text = base::paste0("base::c(base::missing(", base::paste0(mandat_args, collapse = "),base::missing(", recycle0 = FALSE), "))", collapse = NULL, recycle0 = FALSE), file = "", n = NULL, prompt = "?", keep.source = base::getOption(x = "keep.source", default = NULL), srcfile = NULL, encoding = "unknown"), envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL))
     if(base::any(tempo, na.rm = TRUE)){
@@ -134,7 +103,6 @@
         "fun"
         # "lib_path", # inactivated because can be NULL
         # "error_text" # inactivated because NULL converted to "" above
-        # "internal_error_report_link" # inactivated because can be NULL
     )
     tempo_log <- base::sapply(X = base::lapply(X = tempo_arg, FUN = function(x){base::get(x = x, pos = -1L, envir = base::parent.frame(n = 2), mode = "any", inherits = FALSE)}), FUN = function(x){base::is.null(x = x)}, simplify = TRUE, USE.NAMES = TRUE) # parent.frame(n = 2) because sapply(lapply())
     if(base::any(tempo_log, na.rm = TRUE)){ # normally no NA with base::is.null()
@@ -192,13 +160,19 @@
     #### environment checking
 
     ######## check of lib_path
-    # already checked in above function   ######## safer_check argument checking
+    # already done in the main function
+    ######## end check of lib_path
+
+    ######## safer_check argument checking
+    # not required because not here
     ######## end safer_check argument checking
 
     ######## check of the required functions from the required packages
+    # not required
     ######## end check of the required functions from the required packages
 
     ######## critical operator checking
+    # already done in the main function
     ######## end critical operator checking
 
     #### end environment checking
@@ -211,7 +185,7 @@
     checked_arg_names <- NULL # for function debbuging: used by r_debugging_tools
     ee <- base::expression(argum_check <- base::c(argum_check, tempo$problem) , text_check <- base::c(text_check, tempo$text) , checked_arg_names <- base::c(checked_arg_names, tempo$object.name))
     # add as many lines as below, for each of your arguments of your function in development
-    tempo <- saferDev::arg_check(data = fun, class = NULL, typeof = "character", mode = "numeric", length = NULL, prop = FALSE, double_as_integer_allowed = FALSE, options = NULL, all_options_in_data = FALSE, na_contain = TRUE, neg_values = TRUE, inf_values = TRUE, print = FALSE, data_name = NULL, lib_path = lib_path, safer_check = FALSE, error_text = base::sub(pattern = "^ERROR IN ", replacement = " INSIDE ", x = error_text_start, ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE)) ; base::eval(expr = ee, envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL)) # copy - paste this line as much as necessary
+    tempo <- saferDev::arg_check(data = fun, class = NULL, typeof = "character", mode = NULL, length = NULL, prop = FALSE, double_as_integer_allowed = FALSE, options = NULL, all_options_in_data = FALSE, na_contain = TRUE, neg_values = TRUE, inf_values = TRUE, print = FALSE, data_name = NULL, lib_path = lib_path, safer_check = FALSE, error_text = base::sub(pattern = "^ERROR IN ", replacement = " INSIDE ", x = error_text_start, ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE)) ; base::eval(expr = ee, envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL)) # copy - paste this line as much as necessary
     # lib_path already checked above
     # error_text already checked above
     if( ! base::is.null(x = argum_check)){
@@ -229,7 +203,6 @@
         "fun", 
         "lib_path" 
         # "error_text" # inactivated because can be ""
-        # "internal_error_report_link" # inactivated because can be ""
     )
     tempo_log <- ! base::sapply(X = base::lapply(X = tempo_arg, FUN = function(x){base::get(x = x, pos = -1L, envir = base::parent.frame(n = 2), mode = "any", inherits = FALSE)}), FUN = function(x){if(base::is.null(x = x)){base::return(TRUE)}else{base::all(base::mode(x = x) == "character", na.rm = TRUE)}}, simplify = TRUE, USE.NAMES = TRUE) # parent.frame(n = 2) because sapply(lapply())  #  need to test is.null() here
     if(base::any(tempo_log, na.rm = TRUE)){
@@ -296,12 +269,9 @@
     # [a-zA-Z0-9._]* means any several of these characters or nothing
     if( ! base::all(tempo.log, na.rm = TRUE)){
         tempo.cat <- base::paste0(
-            "INTERNAL ERROR 1 IN ", 
-            intern_error_text_start, 
-            " OF THE ", external_package_name, 
+            error_text_start, 
             "THE STRING IN fun ARGUMENT MUST CONTAIN \"::\" OR \":::.\":\n", 
             base::paste0(fun[ ! tempo.log], collapse = "\n", recycle0 = FALSE), 
-            intern_error_text_end, 
             collapse = NULL, 
             recycle0 = FALSE
         )

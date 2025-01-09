@@ -1,66 +1,127 @@
-testthat::test_that(".base_op_check()", {
+testthat::test_that(".pack_and_function_check()", {
 
-    #### data argument values
+    ## data argument values
+    char1_fun <- "saferDev::arg_check"
+    char2_fun <- "arg_check"
+    char3_fun <- "NOTGOOD::arg_check"
+    char4_fun <- "saferDev::NOTGOOD"
     mat1 <- base::matrix(-1:3)
-    #### end data argument values
+    fun1 <- function(x){x = 1}
+    ## end data argument values
 
-    #### tests (ordered by arg appearance and conditions in the code) 
-    testthat::expect_error(.base_op_check(caca = 1)) # to test for the absence of ...
+    ## initialization of tests
+    testthat::expect_error(.pack_and_function_check(caca = 1)) # to test for the absence of ...
+    testthat::expect_no_error(.pack_and_function_check(fun = char1_fun, lib_path = NULL, error_text = "")) # to test that this example works
+    ## end initialization of tests
+
+    ## tests (ordered by arg appearance and conditions in the code)
 
     #### function name
-    testthat::expect_error(saferDev:::.base_op_check()) # to test if(function_name[1] == "::()" | function_name[1] == ":::()"){
+    testthat::expect_error(saferDev:::.pack_and_function_check()) # to test if(function_name[1] == "::()" | function_name[1] == ":::()"){
     #### end function name
 
     ########  argument with no default values
-    testthat::expect_error(.base_op_check()) # all internals have no defaults values
+    testthat::expect_error(.pack_and_function_check()) # all internals have no defaults values
     ########  end argument with no default values
 
     ######## management of NULL arguments
-    testthat::expect_no_error(.base_op_check(error_text = NULL))
- 
+    testthat::expect_error(.pack_and_function_check(fun = NULL, lib_path = NULL, error_text = ""))
+    testthat::expect_no_error(.pack_and_function_check(fun = char1_fun, lib_path = NULL, error_text = "")) 
+    testthat::expect_no_error(.pack_and_function_check(fun = char1_fun, lib_path = NULL, error_text = NULL)) 
     ######## end management of NULL arguments
 
     ######## management of NA arguments
     # all the arguments must be present
-    testthat::expect_error(.base_op_check(error_text = NA))
+    testthat::expect_error(.pack_and_function_check(fun = NA, lib_path = NULL, error_text = ""))
+    testthat::expect_error(.pack_and_function_check(fun = char1_fun, lib_path = NA, error_text = ""))
+    testthat::expect_error(.pack_and_function_check(fun = char1_fun, lib_path = NULL, error_text = NA))
     ######## end management of NA arguments
 
-    ######## lib_path argument
-    ######## end lib_path argument
+    #### end argument primary checking
 
-    ######## safer_check argument
-    ######## end safer_check argument
+    #### environment checking
+
+    ######## check of lib_path
+    # already done in the main function
+    ######## end check of lib_path
+
+    ######## safer_check argument checking
+    # not required because not here
+    ######## end safer_check argument checking
 
     ######## check of the required functions from the required packages
+    # not required
     ######## end check of the required functions from the required packages
 
     ######## critical operator checking
+    # already done in the main function
     ######## end critical operator checking
 
+    #### end environment checking
+
+    #### argument secondary checking
+
+    ######## argument checking with arg_check()
+    testthat::expect_error(.pack_and_function_check(fun = 1, lib_path = NULL, error_text = "")) 
+    testthat::expect_error(.pack_and_function_check(fun = fun1, lib_path = NULL, error_text = "")) 
+    ######## end argument checking with arg_check()
+
     ######## management of "" in arguments of mode character
+    testthat::expect_error(.pack_and_function_check(fun = "", lib_path = NULL, error_text = "")) 
     ######## end management of "" in arguments of mode character
 
+    #### end argument secondary checking
+
+    #### second round of checking and data preparation
+
+    ######## reserved words
+    ######## end reserved words
+
+    ######## code that protects set.seed() in the global environment
+    ######## end code that protects set.seed() in the global environment
+
+    ######## warning initiation
+    ######## end warning initiation
+
+    ######## graphic device checking
+    ######## end graphic device checking
+
     ######## other checkings
+    # if(base::is.null(x = lib_path)){
+    testthat::expect_no_error(.pack_and_function_check(fun = char1_fun, lib_path = NULL, error_text = ""))
+    # end if(base::is.null(x = lib_path)){
     ######## end other checkings
 
     #### end second round of checking and data preparation
 
     #### main code
-    testthat::expect_no_error(.base_op_check(error_text = mat1)) # not a correct value but converted into text
-    result <- saferDev::get_message(".base_op_check(error_text = mat1)", kind = "error", print.no = TRUE, text = NULL, safer_check = FALSE) 
-    # warning LINE 13 can be LINE 22
-    expected <-"NO ERROR MESSAGE REPORTED"
-    testthat::expect_equal(result, expected)
+    # if( ! base::all(tempo.log, na.rm = TRUE)){
+    testthat::expect_error(.pack_and_function_check(fun = char2_fun, lib_path = NULL, error_text = ""))
+    # end if( ! base::all(tempo.log, na.rm = TRUE)){
+    # if( ! base::all(pkg.log, na.rm = TRUE)){
+    testthat::expect_error(.pack_and_function_check(fun = char3_fun, lib_path = NULL, error_text = ""))
+    # end if( ! base::all(pkg.log, na.rm = TRUE)){
+    # if( ! base::all(fun.log, na.rm = TRUE)){
+    testthat::expect_error(.pack_and_function_check(fun = char4_fun, lib_path = NULL, error_text = ""))
+    # end if( ! base::all(fun.log, na.rm = TRUE)){
+    #### end main code
 
-    assign("+", 1)
-    result <- saferDev::get_message(".base_op_check(error_text = '')", kind = "error", print.no = TRUE, text = NULL, safer_check = FALSE) 
+    ## end tests (ordered by arg appearance and conditions in the code)
+
+    ## other tests
+    result <- saferDev::get_message('.pack_and_function_check(fun = char2_fun, lib_path = NULL, error_text = "")', kind = "error", print.no = TRUE, text = NULL, safer_check = FALSE) 
     # warning LINE 13 can be LINE 22
-    expected <- "ERROR MESSAGE REPORTED:\nError : \n\n================\n\nERROR IN .base_op_check().\n\nCRITICAL R OBJECTS CANNOT BE PRESENT SOMEWHERE ELSE IN THE R SCOPE THAN IN \"package::base\".\nPROBLEM WITH:\n+\t.GlobalEnv package:base\n\n================\n\n\n"
+    expected <- "ERROR MESSAGE REPORTED:\nError : \n\n================\n\nERROR IN saferDev:::.pack_and_function_check().\n\nTHE STRING IN fun ARGUMENT MUST CONTAIN \"::\" OR \":::.\":\narg_check\n\n================\n\n\n"
     testthat::expect_equal(result, expected)
-    rm("+")
-print(get("+"))
-    result <- saferDev::get_message(".base_op_check(error_text = '')", kind = "error", print.no = TRUE, text = NULL, safer_check = FALSE) 
-    expected <- "NO ERROR MESSAGE REPORTED"
+    result <- saferDev::get_message('.pack_and_function_check(fun = char3_fun, lib_path = NULL, error_text = "")', kind = "error", print.no = TRUE, text = NULL, safer_check = FALSE) 
+    # warning LINE 13 can be LINE 22
+    expected <- "ERROR MESSAGE REPORTED:\nError : \n\n================\n\nERROR IN saferDev:::.pack_and_function_check().\n\nREQUIRED PACKAGE:\nNOTGOOD\nMUST BE INSTALLED IN ONE OF THESE FOLDERS:\nC:/Users/gmillot/AppData/Local/R/win-library/4.3\nC:/Program Files/R/R-4.3.1/library\n\n================\n\n\n"
     testthat::expect_equal(result, expected)
+    result <- saferDev::get_message('.pack_and_function_check(fun = char4_fun, lib_path = NULL, error_text = "")', kind = "error", print.no = TRUE, text = NULL, safer_check = FALSE) 
+    # warning LINE 13 can be LINE 22
+    expected <- "ERROR MESSAGE REPORTED:\nError : \n\n================\n\nERROR IN saferDev:::.pack_and_function_check().\n\nREQUIRED FUNCTION IS MISSING IN THE INSTALLED PACKAGE:\nsaferDev::NOTGOOD\n\nIN ONE OF THESE FOLDERS:\nC:/Users/gmillot/AppData/Local/R/win-library/4.3\nC:/Program Files/R/R-4.3.1/library\n\n================\n\n\n"
+    testthat::expect_equal(result, expected)
+    ## end other tests
+
 })
 

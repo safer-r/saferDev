@@ -1,6 +1,6 @@
 testthat::test_that("arg_check()", {
 
-    #### data argument values
+    ## data argument values
     vec1 <- -1:3 # vector of integers
     vec3 <- base::c(1, 2, 3) # vector of double
     vec4 <- "pearson"
@@ -13,10 +13,14 @@ testthat::test_that("arg_check()", {
     number <- 1
     factor1 <- base::as.factor(vec5)
     expr1 <- expression(1)
-    #### end data argument values
+    ## end data argument values
 
-    #### tests (ordered by arg appearance and conditions in the code) 
+    ## initialization of tests
     testthat::expect_error(arg_check(caca = 1)) # to test for the absence of ...
+    testthat::expect_no_error(.pack_and_function_check(fun = fun1, lib_path = NULL, error_text = "", internal_error_report_link = "")) # to test that this example works
+    ## end initialization of tests
+
+    ## tests (ordered by arg appearance and conditions in the code)
 
     #### function name
     testthat::expect_error(saferDev::arg_check()) # to test if(function_name[1] == "::()" | function_name[1] == ":::()"){
@@ -537,8 +541,11 @@ testthat::test_that("arg_check()", {
     testthat::expect_equal(result, expect)
     # end if(print == TRUE & problem == TRUE){
 
-
     #### end main code
+
+    ## end tests (ordered by arg appearance and conditions in the code)
+
+    ## other tests
 
     #### sophiticated examples
     result17 <- saferDev::get_message("arg_check(class = 'list', safer_check = FALSE)", kind = "error", print.no = TRUE, text = NULL) 
@@ -594,6 +601,8 @@ testthat::test_that("arg_check()", {
     testthat::expect_equal(result26, expect26)
 
     #### end sophiticated examples
+
+    ## end other tests
 
 })
 
