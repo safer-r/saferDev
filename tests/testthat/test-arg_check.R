@@ -16,6 +16,11 @@ testthat::test_that("arg_check()", {
     #### end data argument values
 
     #### tests (ordered by arg appearance and conditions in the code) 
+    testthat::expect_error(arg_check(caca = 1)) # to test for the absence of ...
+
+    #### function name
+    testthat::expect_error(saferDev::arg_check()) # to test if(function_name[1] == "::()" | function_name[1] == ":::()"){
+    #### end function name
 
     ########  argument with no default values
     testthat::expect_error(arg_check())
@@ -536,7 +541,7 @@ testthat::test_that("arg_check()", {
     #### end main code
 
     #### sophiticated examples
-    result17 <- saferDev::get_message("arg_check(class = 'list', safer_check = FALSE)", kind = "error", print.no = TRUE, text = NULL ) 
+    result17 <- saferDev::get_message("arg_check(class = 'list', safer_check = FALSE)", kind = "error", print.no = TRUE, text = NULL) 
     expect17 <- "ERROR MESSAGE REPORTED:\nError : \n\n================\n\nERROR IN saferDev::arg_check().\n\nFOLLOWING ARGUMENT HAS NO DEFAULT VALUE AND REQUIRE ONE:\ndata\n\n================\n\n\n"
     testthat::expect_equal(result17, expect17)
 
