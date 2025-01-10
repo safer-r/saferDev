@@ -118,8 +118,9 @@ arg_check <- function(
     ######## internal error text
     ######## end internal error text
 
-    ######## arg_check error text
-    ######## end arg_check error text
+    ######## error text when embedding
+    embed_error_text  <- base::sub(pattern = "^ERROR IN ", replacement = " INSIDE ", x = error_text_start, ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE)
+    ######## end error text when embedding
 
     #### end error_text initiation
 
@@ -277,7 +278,7 @@ arg_check <- function(
                 "saferDev:::.base_op_check"
             ),
             lib_path = lib_path, # write NULL if your function does not have any lib_path argument
-            error_text = arg_check_error_text
+            error_text = embed_error_text
         )
     }
     ######## end check of the required functions from the required packages
@@ -285,7 +286,7 @@ arg_check <- function(
     ######## critical operator checking
     if(safer_check == TRUE){
         saferDev:::.base_op_check(
-            error_text = arg_check_error_text
+            error_text = embed_error_text
         )
     }
     ######## end critical operator checking

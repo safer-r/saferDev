@@ -64,8 +64,9 @@
     ######## internal error text
     ######## end internal error text
 
-    ######## arg_check error text
-    ######## end arg_check error text
+
+    ######## error text when embedding
+    ######## end error text when embedding
 
     #### end error_text initiation
 
