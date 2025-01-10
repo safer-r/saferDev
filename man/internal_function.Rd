@@ -92,7 +92,7 @@
   internal_error_report_link
 )
 
-.pack_and_function_check(fun, lib_path, error_text, internal_error_report_link)
+.pack_and_function_check(fun, lib_path, error_text)
 }
 \arguments{
 \item{arg_full}{List of all arguments of the function with default value.}
@@ -111,7 +111,7 @@
 
 \item{arg_user_setting_x}{Single string indicating the name of the checked function.}
 
-\item{error_text}{Single character string used to add information in error messages returned by the function, notably if the function is inside other functions, which is practical for debugging. Example: error_text = "INSIDE <PACKAGE_1>::<FUNCTION_1> INSIDE <PACKAGE_2>::<FUNCTION_2>".}
+\item{error_text}{Single character string used to add information in error messages returned by the function, notably if the function is inside other functions, which is practical for debugging. Example: error_text = "INSIDE <PACKAGE_1>::<FUNCTION_1> INSIDE <PACKAGE_2>::<FUNCTION_2>". If NULL, converted into "".}
 
 \item{internal_error_report_link}{Single string of the link where to post an issue indicated in an internal error message. Write NULL if no link to propose, or no internal error message.}
 
@@ -267,8 +267,8 @@ Simplified version of saferDev::is_function_here(), used as internal function fo
 }
 \dontrun{
 # Example that shouldn't be run because this is an internal function
-assign("!", 1) ; assign("+", 2) ; .base_op_check(error_text = " INSIDE fun1.")
-rm("!") ; rm("+") # commented because this example returns an error
+assign("!", 1) ; assign("+", 2) ; .base_op_check(error_text = " INSIDE fun1.") # commented because this example returns an error
+rm("!") ; rm("+") 
 }
 \dontrun{ # Example that shouldn't be run because this is an internal function
 .colons_check_message(list.fun = list(c2 = "UseMethod"), list.fun.pos = list(c2 = 1), line.nb = 2, ini = c("function (x, ...) ", "UseMethod(\"mean\")", "<bytecode: 0x000001969e09e580>", "<environment: namespace:base>"), arg_user_setting = list(x = x, arg_user_setting = arg_user_setting, error_text = "P1::F1", internal_error_report_link = "" ), error_text = " INSIDE P1::F1", internal_error_report_link = "test", text = "BASIC", internal_fun_names = NULL)
@@ -298,9 +298,9 @@ source("https://raw.githubusercontent.com/safer-r/saferDev/main/dev/other/test.R
 .noclean_functions(col1 =  c(15, 17), col2 = c("gregexpr", "regmatches"), col3 = c("matches <- ",  "matched_strings <- " ), ini = utils::capture.output(test), error_text = " INSIDE P1::F1", internal_error_report_link = "test")
 }
 \dontrun{ # Example that shouldn't be run because this is an internal function
-.pack_and_function_check(fun = 1, error_text = " INSIDE F1.", internal_error_report_link = "") # this example returns an error
-.pack_and_function_check(fun = "ggplot2::notgood", lib_path = base::.libPaths(), error_text = " INSIDE P1::F1", internal_error_report_link = "test") # this example returns an error
-.pack_and_function_check(fun = c("ggplot2::geom_point", "grid::gpar"), lib_path = base::.libPaths(), error_text = " INSIDE P1::F1", internal_error_report_link = "test")
+.pack_and_function_check(fun = 1, error_text = " INSIDE F1.") # this example returns an error
+.pack_and_function_check(fun = "ggplot2::notgood", lib_path = base::.libPaths(), error_text = " INSIDE P1::F1") # this example returns an error
+.pack_and_function_check(fun = c("ggplot2::geom_point", "grid::gpar"), lib_path = base::.libPaths(), error_text = " INSIDE P1::F1")
 }
 }
 \author{

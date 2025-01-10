@@ -10,8 +10,8 @@
 #' @examples
 #' \dontrun{
 #' # Example that shouldn't be run because this is an internal function
-#' assign("!", 1) ; assign("+", 2) ; .base_op_check(error_text = " INSIDE fun1.")
-#' rm("!") ; rm("+") # commented because this example returns an error
+#' assign("!", 1) ; assign("+", 2) ; .base_op_check(error_text = " INSIDE fun1.") # commented because this example returns an error
+#' rm("!") ; rm("+") 
 #' }
 #' @keywords internal
 #' @rdname internal_function
