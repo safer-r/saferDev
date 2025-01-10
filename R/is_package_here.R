@@ -146,8 +146,7 @@ is_package_here <- function(
                 "saferDev::arg_check"
             ),
             lib_path = lib_path, # write NULL if your function does not have any lib_path argument
-            error_text = base::sub(pattern = "^ERROR IN ", replacement = " INSIDE ", x = error_text_start, ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE), 
-            internal_error_report_link = internal_error_report_link
+            error_text = base::sub(pattern = "^ERROR IN ", replacement = " INSIDE ", x = error_text_start, ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE)
         )
     }
     ######## end check of the required functions from the required packages

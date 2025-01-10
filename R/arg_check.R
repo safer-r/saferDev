@@ -277,8 +277,7 @@ arg_check <- function(
                 "saferDev:::.base_op_check"
             ),
             lib_path = lib_path, # write NULL if your function does not have any lib_path argument
-            error_text = arg_check_error_text, 
-            internal_error_report_link = internal_error_report_link
+            error_text = arg_check_error_text
         )
     }
     ######## end check of the required functions from the required packages
