@@ -17,7 +17,7 @@
 #' @param data_name Single character string indicating the name of the object to test. If NULL, use what is assigned to the data argument for the returned message.
 #' @param lib_path Vector of characters specifying the absolute pathways of the directories containing the required packages for the function, if not in the default directories. Useful to overcome R execution using system with non admin rights for R package installation in the default directories. Ignored if NULL (default): only the pathways specified by .libPaths() are used for package calling. Specify the right path if the function returns a package path error.
 #' @param safer_check Single logical value. Perform some "safer" checks? If TRUE, checkings are performed before main code running (see https://github.com/safer-r): 1) R classical operators (like "<-") not overwritten by another package because of the R scope and 2) required functions and related packages effectively present in local R lybraries. Must be set to FALSE if this fonction is used inside another "safer" function to avoid pointless multiple checkings.
-#' @param error_text Single character string used to add information in error messages returned by the function, notably if the function is inside other functions, which is practical for debugging. Example: error_text = " INSIDE <PACKAGE_1>::<FUNCTION_1> INSIDE <PACKAGE_2>::<FUNCTION_2>.". Of note, error_text is also used at the end of the string returned when no problem is detected.
+#' @param error_text Single character string used to add information in error messages returned by the function, notably if the function is inside other functions, which is practical for debugging. Example: error_text = " INSIDE <PACKAGE_1>::<FUNCTION_1> INSIDE <PACKAGE_2>::<FUNCTION_2>.". . If NULL, converted into "". Of note, in arg_check(), error_text is also used at the end of the string returned when no problem is detected.
 #' @returns 
 #' A list containing:
 #' 
@@ -98,12 +98,17 @@ arg_check <- function(
     #### error_text initiation
 
     ######## basic error text start
-    tempo_cat <- base::paste0(base::unlist(x = error_text, recursive = TRUE, use.names = TRUE), collapse = "", recycle0 = FALSE) # convert to string. if error_text is a string, changes nothing. If NULL -> "" so no need to check for management of NULL
+    error_text <- base::paste0(base::unlist(x = error_text, recursive = TRUE, use.names = TRUE), collapse = "", recycle0 = FALSE) # convert to string. if error_text is a string, changes nothing. If NULL -> "" so no need to check for management of NULL
+    package_function_name <- base::paste0(
+        base::ifelse(test = base::is.null(x = package_name), yes = "", no = base::paste0(package_name, base::ifelse(test = base::grepl(x = function_name, pattern = "^\\.", ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE), yes = ":::", no = "::"), collapse = NULL, recycle0 = FALSE)), 
+        function_name,
+        collapse = NULL, 
+        recycle0 = FALSE
+    )
     error_text_start <- base::paste0(
         "ERROR IN ", # must not be changed, because this "ERROR IN " string is used for text replacement
-        base::ifelse(test = base::is.null(x = package_name), yes = "", no = base::paste0(package_name, base::ifelse(test = base::grepl(x = function_name, pattern = "^\\.", ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE), yes = ":::", no = "::"), collapse = NULL, recycle0 = FALSE)), 
-        function_name, 
-        base::ifelse(test = tempo_cat == "", yes = ".", no = tempo_cat), 
+        package_function_name, 
+        base::ifelse(test = error_text == "", yes = ".", no = error_text), 
         "\n\n", 
         collapse = NULL, 
         recycle0 = FALSE
@@ -111,16 +116,10 @@ arg_check <- function(
     ######## end basic error text start
 
     ######## internal error text
-    intern_error_text_start <- base::paste0(
-        base::ifelse(test = base::is.null(x = package_name), yes = "", no = base::paste0(package_name, base::ifelse(test = base::grepl(x = function_name, pattern = "^\\.", ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE), yes = ":::", no = "::"), collapse = NULL, recycle0 = FALSE)), 
-        function_name, 
-        base::ifelse(test = error_text == "", yes = ".", no = error_text), 
-        "\n\n", 
-        collapse = NULL, 
-        recycle0 = FALSE
-    )
-    intern_error_text_end <- base::ifelse(test = base::is.null(x = internal_error_report_link), yes = "", no = base::paste0("\n\nPLEASE, REPORT THIS ERROR HERE: ", internal_error_report_link, ".", collapse = NULL, recycle0 = FALSE))
     ######## end internal error text
+
+    ######## arg_check error text
+    ######## end arg_check error text
 
     #### end error_text initiation
 
@@ -163,8 +162,8 @@ arg_check <- function(
         "print",
         # "data_name", # because can be NULL
         # "lib_path", # because can be NULL
-        "safer_check",
-        "error_text"
+        "safer_check"
+         # "error_text" # inactivated because NULL converted to "" above
     )
     tempo_log <- base::sapply(X = base::lapply(X = tempo_arg, FUN = function(x){base::get(x = x, pos = -1L, envir = base::parent.frame(n = 2), mode = "any", inherits = FALSE)}), FUN = function(x){base::is.null(x = x)}, simplify = TRUE, USE.NAMES = TRUE) # parent.frame(n = 2) because sapply(lapply())
     if(base::any(tempo_log, na.rm = TRUE)){ # normally no NA with base::is.null()
@@ -278,7 +277,7 @@ arg_check <- function(
                 "saferDev:::.base_op_check"
             ),
             lib_path = lib_path, # write NULL if your function does not have any lib_path argument
-            error_text = base::sub(pattern = "^ERROR IN ", replacement = " INSIDE ", x = error_text_start, ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE), 
+            error_text = arg_check_error_text, 
             internal_error_report_link = internal_error_report_link
         )
     }
@@ -287,7 +286,7 @@ arg_check <- function(
     ######## critical operator checking
     if(safer_check == TRUE){
         saferDev:::.base_op_check(
-            error_text = base::sub(pattern = "^ERROR IN ", replacement = " INSIDE ", x = error_text_start, ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE)
+            error_text = arg_check_error_text
         )
     }
     ######## end critical operator checking
@@ -301,15 +300,6 @@ arg_check <- function(
 
     ######## management of "" in arguments of mode character
     # this part is specifically changed for arg_check because arg not checked with arg_check above. See below where exactly
-    if( ! (base::length(x = error_text) == 1 & base::all(base::typeof(x = error_text) == "character", na.rm = TRUE))){
-        tempo_cat <- base::paste0(
-            error_text_start,
-            "THE error_text ARGUMENT MUST BE A SINGLE CHARACTER STRING.",  
-            collapse = NULL, 
-            recycle0 = FALSE
-        )
-        base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL) # == in base::stop() to be able to add several messages between ==
-    }
     tempo_arg <-base::c(
         "class",
         "typeof",
