@@ -13,7 +13,7 @@
 #' @author Haiding Wang <wanghaiding442@gmail.com>
 #' @examples
 #' \dontrun{ # Example that shouldn't be run because this is an internal function
-#' .pack_and_function_check(fun = 1, error_text = " INSIDE F1.") # this example returns an error
+#' .pack_and_function_check(fun = 1, lib_path = NULL, error_text = " INSIDE F1.") # this example returns an error
 #' .pack_and_function_check(fun = "ggplot2::notgood", lib_path = base::.libPaths(), error_text = " INSIDE P1::F1") # this example returns an error
 #' .pack_and_function_check(fun = c("ggplot2::geom_point", "grid::gpar"), lib_path = base::.libPaths(), error_text = " INSIDE P1::F1")
 #' }
@@ -196,41 +196,23 @@
     #### argument secondary checking
 
     ######## argument checking with arg_check()
-    argum_check <- NULL
-    text_check <- NULL
-    checked_arg_names <- NULL # for function debbuging: used by r_debugging_tools
-    ee <- base::expression(argum_check <- base::c(argum_check, tempo$problem) , text_check <- base::c(text_check, tempo$text) , checked_arg_names <- base::c(checked_arg_names, tempo$object.name))
-    # add as many lines as below, for each of your arguments of your function in development
-    tempo <- saferDev::arg_check(data = fun, class = NULL, typeof = "character", mode = NULL, length = NULL, prop = FALSE, double_as_integer_allowed = FALSE, options = NULL, all_options_in_data = FALSE, na_contain = TRUE, neg_values = TRUE, inf_values = TRUE, print = FALSE, data_name = NULL, lib_path = lib_path, safer_check = FALSE, error_text = embed_error_text) ; base::eval(expr = ee, envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL)) # copy - paste this line as much as necessary
-    # lib_path already checked above
-    # error_text already checked above
-    if( ! base::is.null(x = argum_check)){
-        if(base::any(argum_check, na.rm = TRUE)){
-            base::stop(base::paste0("\n\n================\n\n", base::paste0(text_check[argum_check], collapse = "\n", recycle0 = FALSE), "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL)
-        }
-    }
-    # check with r_debugging_tools
-    # source("https://gitlab.pasteur.fr/gmillot/debugging_tools_for_r_dev/-/raw/v1.8/r_debugging_tools.R") ; eval(parse(text = str_basic_arg_check_dev)) ; eval(parse(text = str_arg_check_with_fun_check_dev)) # activate this line and use the function (with no arguments left as NULL) to check arguments status and if they have been checked using saferDev::arg_check()
-    # end check with r_debugging_tools
+    # saferDev::arg_check() cannot be used here because saferDev presence can be check by this developed function. Argument fun is check below
     ######## end argument checking with arg_check()
 
     ######## management of "" in arguments of mode character
-    tempo_arg <- base::c(
+    # this part is specifically changed for arg_check because arg not checked with arg_check above. See below where exactly
+    tempo_arg <-base::c(
         "fun", 
         "lib_path" 
         # "error_text" # inactivated because can be ""
     )
     tempo_log <- ! base::sapply(X = base::lapply(X = tempo_arg, FUN = function(x){base::get(x = x, pos = -1L, envir = base::parent.frame(n = 2), mode = "any", inherits = FALSE)}), FUN = function(x){if(base::is.null(x = x)){base::return(TRUE)}else{base::all(base::mode(x = x) == "character", na.rm = TRUE)}}, simplify = TRUE, USE.NAMES = TRUE) # parent.frame(n = 2) because sapply(lapply())  #  need to test is.null() here
     if(base::any(tempo_log, na.rm = TRUE)){
-        # This check is here in case the developer has not correctly fill tempo_arg
         tempo_cat <- base::paste0(
-            "INTERNAL ERROR IN THE BACKBONE PART OF ", 
-            intern_error_text_start, 
-            "IN THE SECTION \"management of \"\" in arguments of mode character\"\n", 
-            base::ifelse(test = base::sum(tempo_log, na.rm = TRUE) > 1, yes = "THESE ARGUMENTS ARE", no = "THIS ARGUMENT IS"), 
-            " NOT CLASS \"character\":\n", 
+            error_text_start,
+            base::ifelse(test = base::sum(tempo_log, na.rm = TRUE) > 1, yes = "THESE ARGUMENTS", no = "THIS ARGUMENT"), 
+            " MUST BE MADE OF CHARACTER STRINGS:\n", 
             base::paste0(tempo_arg[tempo_log], collapse = "\n", recycle0 = FALSE), 
-            intern_error_text_end, 
             collapse = NULL, 
             recycle0 = FALSE
         )

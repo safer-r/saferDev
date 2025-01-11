@@ -273,7 +273,7 @@ arg_check <- function(
 
     ######## check of the required functions from the required packages
     if(safer_check == TRUE){
-        saferDev:::.pack_and_function_check(
+        .pack_and_function_check(
             fun = base::c(
                 "saferDev:::.base_op_check"
             ),
@@ -285,7 +285,7 @@ arg_check <- function(
 
     ######## critical operator checking
     if(safer_check == TRUE){
-        saferDev:::.base_op_check(
+        .base_op_check(
             error_text = embed_error_text
         )
     }
