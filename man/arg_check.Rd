@@ -19,6 +19,7 @@ arg_check(
   inf_values = TRUE,
   print = FALSE,
   data_name = NULL,
+  data_arg = TRUE,
   lib_path = NULL,
   safer_check = TRUE,
   error_text = ""
@@ -52,6 +53,8 @@ arg_check(
 \item{print}{Single logical value. Print the message if $problem is TRUE? Warning: set by default to FALSE, which facilitates the control of the checking message output when using arg_check() inside functions. See the example section.}
 
 \item{data_name}{Single character string indicating the name of the object to test. If NULL, use what is assigned to the data argument for the returned message.}
+
+\item{data_arg}{Single logical value. Is the tested object a function argument? If TRUE (default), "ARGUMENT" is written in messages, otherwise "OBJECT".}
 
 \item{lib_path}{Vector of characters specifying the absolute pathways of the directories containing the required packages for the function, if not in the default directories. Useful to overcome R execution using system with non admin rights for R package installation in the default directories. Ignored if NULL (default): only the pathways specified by .libPaths() are used for package calling. Specify the right path if the function returns a package path error.}
 
