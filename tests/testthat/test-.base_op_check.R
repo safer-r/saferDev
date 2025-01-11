@@ -49,12 +49,11 @@ testthat::test_that(".base_op_check()", {
     #### end second round of checking and data preparation
 
     #### main code
-    assign("+", 1)
+    assign("+", 1, envir = .GlobalEnv)
     result <- saferDev::get_message(".base_op_check(error_text = '')", kind = "error", print.no = TRUE, text = NULL, safer_check = FALSE) 
-    # warning LINE 13 can be LINE 22
-    expected <- "ERROR MESSAGE REPORTED:\nError : \n\n================\n\nERROR IN .base_op_check().\n\nCRITICAL R OBJECTS CANNOT BE PRESENT SOMEWHERE ELSE IN THE R SCOPE THAN IN \"package::base\".\nPROBLEM WITH:\n+\t.GlobalEnv package:base\n\n================\n\n\n"
+    expected <- "ERROR MESSAGE REPORTED:\nError : \n\n================\n\nERROR IN saferDev:::.base_op_check().\n\nCRITICAL R OBJECTS CANNOT BE PRESENT SOMEWHERE ELSE IN THE R SCOPE THAN IN \"package::base\".\nPROBLEM WITH:\n+\t.GlobalEnv package:base\n\n================\n\n\n"
     testthat::expect_equal(result, expected)
-    rm("+")
+    rm("+", envir = .GlobalEnv)
     result <- saferDev::get_message(".base_op_check(error_text = '')", kind = "error", print.no = TRUE, text = NULL, safer_check = FALSE) 
     expected <- "NO ERROR MESSAGE REPORTED"
     testthat::expect_equal(result, expected)
@@ -65,7 +64,6 @@ testthat::test_that(".base_op_check()", {
     ## other tests
     testthat::expect_no_error(.base_op_check(error_text = mat1)) # not a correct value but converted into text
     result <- saferDev::get_message(".base_op_check(error_text = mat1)", kind = "error", print.no = TRUE, text = NULL, safer_check = FALSE) 
-    # warning LINE 13 can be LINE 22
     expected <-"NO ERROR MESSAGE REPORTED"
     testthat::expect_equal(result, expected)
     ## end other tests
