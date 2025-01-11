@@ -15,6 +15,7 @@
 #' @param inf_values Single logical value. Are infinite numeric values authorized (Inf or -Inf)? Identical remarks as for the neg_values argument.
 #' @param print Single logical value. Print the message if $problem is TRUE? Warning: set by default to FALSE, which facilitates the control of the checking message output when using arg_check() inside functions. See the example section.
 #' @param data_name Single character string indicating the name of the object to test. If NULL, use what is assigned to the data argument for the returned message.
+#' @param data_arg Single logical value. Is the tested object a function argument? If TRUE (default), "ARGUMENT" is written in messages, otherwise "OBJECT".
 #' @param lib_path Vector of characters specifying the absolute pathways of the directories containing the required packages for the function, if not in the default directories. Useful to overcome R execution using system with non admin rights for R package installation in the default directories. Ignored if NULL (default): only the pathways specified by .libPaths() are used for package calling. Specify the right path if the function returns a package path error.
 #' @param safer_check Single logical value. Perform some "safer" checks? If TRUE, checkings are performed before main code running (see https://github.com/safer-r): 1) R classical operators (like "<-") not overwritten by another package because of the R scope and 2) required functions and related packages effectively present in local R lybraries. Must be set to FALSE if this fonction is used inside another "safer" function to avoid pointless multiple checkings.
 #' @param error_text Single character string used to add information in error messages returned by the function, notably if the function is inside other functions, which is practical for debugging. Example: error_text = " INSIDE <PACKAGE_1>::<FUNCTION_1> INSIDE <PACKAGE_2>::<FUNCTION_2>.". . If NULL, converted into "". Of note, in arg_check(), error_text is also used at the end of the string returned when no problem is detected.
@@ -65,12 +66,13 @@ arg_check <- function(
     inf_values = TRUE, 
     print = FALSE, 
     data_name = NULL, 
+    data_arg = TRUE, 
     lib_path = NULL, # required because of saferDev:::.base_op_check()
     safer_check = TRUE,
     error_text = ""
 ){
     # DEBUGGING
-    # data = mean ; class = NULL ; typeof = NULL ; mode = NULL ; length = NULL ; prop = FALSE ; double_as_integer_allowed = FALSE ; options = "a" ; all_options_in_data = FALSE ; na_contain = FALSE ; neg_values = TRUE ; inf_values = TRUE ; print = TRUE ; data_name = NULL ; lib_path = NULL ; safer_check = TRUE ; error_text = " IN P1::F1."
+    # data = mean ; class = NULL ; typeof = NULL ; mode = NULL ; length = NULL ; prop = FALSE ; double_as_integer_allowed = FALSE ; options = "a" ; all_options_in_data = FALSE ; na_contain = FALSE ; neg_values = TRUE ; inf_values = TRUE ; print = TRUE ; data_name = NULL ; data_arg = TRUE ; lib_path = NULL ; safer_check = TRUE ; error_text = " IN P1::F1."
 
     #### package name
     package_name <- "saferDev" # write NULL if the function developed is not in a package
@@ -157,11 +159,12 @@ arg_check <- function(
         "double_as_integer_allowed", 
         # "options", # because can be NULL
         "all_options_in_data", 
-        "na_contain",
-        "neg_values",
-        "inf_values",
-        "print",
+        "na_contain", 
+        "neg_values", 
+        "inf_values", 
+        "print", 
         # "data_name", # because can be NULL
+        "data_arg", 
         # "lib_path", # because can be NULL
         "safer_check"
          # "error_text" # inactivated because NULL converted to "" above
@@ -377,7 +380,7 @@ arg_check <- function(
         # "ggplot_built", 
         # "call"
     )
-    tempo.arg.base <-base::c( # no base::names(base::formals(fun = base::sys.function(base::sys.parent(n = 2)))) used with arg_check() to be sure to deal with the correct environment
+    tempo.arg.base <- base::c( # no base::names(base::formals(fun = base::sys.function(base::sys.parent(n = 2)))) used with arg_check() to be sure to deal with the correct environment
         "class", 
         "typeof", 
         "mode", 
@@ -390,12 +393,13 @@ arg_check <- function(
         "neg_values", 
         "inf_values", 
         "print", 
-        "data_name"
+        "data_name",
+        "data_arg"
         # "lib_path", # already checked above
         # "safer_check", # already checked above
         # "error_text" # already checked above
     )
-    tempo.class <-base::list( # no base::get() used to be sure to deal with the correct environment
+    tempo.class <- base::list( # no base::get() used to be sure to deal with the correct environment
         base::class(x = class), 
         base::class(x = typeof), 
         base::class(x = mode), 
@@ -409,8 +413,7 @@ arg_check <- function(
         base::class(x = inf_values), 
         base::class(x = print), 
         base::class(x = data_name),
-        base::class(x = safer_check),
-        base::class(x = error_text)
+        base::class(x = data_arg)
     )
     tempo <- ! base::sapply(X = base::lapply(X = tempo.class, FUN = function(x){x %in% basic.class}), FUN = function(x){base::all(x, na.rm = TRUE)}, simplify = TRUE, USE.NAMES = TRUE)
     if(base::any(tempo, na.rm = TRUE)){
@@ -431,7 +434,56 @@ arg_check <- function(
         base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL) # == in base::stop() to be able to add several messages between ==
     }
     # end management of special classes
-    
+    # management of the logical arguments
+    log_args <- base::c(
+        "prop", 
+        "double_as_integer_allowed", 
+        "all_options_in_data", 
+        "na_contain", 
+        "neg_values", 
+        "inf_values", 
+        "print", 
+        "data_arg"
+        # "safer_check", # already checked above
+    )
+    tempo_class <- base::list( # no base::get() used to be sure to deal with the correct environment 
+        base::class(x = prop), 
+        base::class(x = double_as_integer_allowed), 
+        base::class(x = all_options_in_data), 
+        base::class(x = na_contain), 
+        base::class(x = neg_values), 
+        base::class(x = inf_values), 
+        base::class(x = print), 
+        base::class(x = data_arg)
+    )
+    tempo_length <- base::c( # no base::get() used to be sure to deal with the correct environment 
+        base::length(x = prop), 
+        base::length(x = double_as_integer_allowed), 
+        base::length(x = all_options_in_data), 
+        base::length(x = na_contain), 
+        base::length(x = neg_values), 
+        base::length(x = inf_values), 
+        base::length(x = print), 
+        base::length(x = data_arg)
+    )
+    tempo_log1 <- base::sapply(X = tempo_class, FUN = function(x){base::all(x == "logical", na.rm = TRUE)}, simplify = TRUE, USE.NAMES = TRUE)
+    tempo_log2 <- tempo_length == 1
+    tempo_log <- ! (tempo_log1 & tempo_log2)
+    if(base::any(tempo_log, na.rm = TRUE)){ 
+        tempo.cat <- base::paste0(
+            error_text_start, 
+            "THE\n", 
+            base::paste0(log_args[tempo_log], collapse = "\n", recycle0 = FALSE), 
+            "\nARGUMENT",
+            base::ifelse(test = base::sum(tempo_log, na.rm = TRUE) > 1, yes = "S", no = ""),
+            " MUST BE A SINGLE LOGICAL VALUE (TRUE OR FALSE ONLY).",
+            collapse = NULL, 
+            recycle0 = FALSE
+        )
+        base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL) # == in base::stop() to be able to add several messages between ==
+    }
+    # end management of the logical arguments
+    # other checkings of the arguments by order
     if( ! base::is.null(x = data_name)){
         if( ! (base::length(x = data_name) == 1L & base::all(base::class(x = data_name) == "character", na.rm = TRUE))){ # base::all() without na.rm -> ok because base::class(NA) is "logical"
             tempo.cat <- base::paste0(
@@ -462,28 +514,10 @@ arg_check <- function(
         )
         base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL) # == in base::stop() to be able to add several messages between ==
     }
-    if( ! (base::all(base::class(x = neg_values) == "logical", na.rm = TRUE) & base::length(x = neg_values) == 1L)){ # base::all() without na.rm -> ok because base::class(NA) is "logical" 
-        tempo.cat <- base::paste0(
-            error_text_start, 
-            "THE neg_values ARGUMENT MUST BE A SINGLE LOGICAL VALUE (TRUE OR FALSE ONLY).",
-            collapse = NULL, 
-            recycle0 = FALSE
-        )
-        base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL) # == in base::stop() to be able to add several messages between ==
-    }
     if(neg_values == FALSE & base::is.null(x = class) & base::is.null(x = typeof) & base::is.null(x = mode)){
         tempo.cat <- base::paste0(
             error_text_start, 
             "THE neg_values ARGUMENT CANNOT BE SWITCHED FROM TRUE (DEFAULT VALUE) TO FALSE IF class, typeof AND mode ARGUMENTS ARE NULL.",
-            collapse = NULL, 
-            recycle0 = FALSE
-        )
-        base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL) # == in base::stop() to be able to add several messages between ==
-    }
-    if( ! (base::all(base::class(x = inf_values) == "logical", na.rm = TRUE) & base::length(x = inf_values) == 1L)){ # base::all() without na.rm -> ok because base::class(NA) is "logical" 
-        tempo.cat <- base::paste0(
-            error_text_start, 
-            "THE inf_values ARGUMENT MUST BE A SINGLE LOGICAL VALUE (TRUE OR FALSE ONLY).",
             collapse = NULL, 
             recycle0 = FALSE
         )
@@ -596,15 +630,7 @@ arg_check <- function(
             base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL) # == in base::stop() to be able to add several messages between ==
         }
     }
-    if( ! (base::is.logical(x = prop) & base::length(x = prop) == 1L)){ # base::is.na() already checked for prop
-        tempo.cat <- base::paste0(
-                error_text_start, 
-                "THE prop ARGUMENT MUST BE A SINGLE LOGICAL VALUE (TRUE OR FALSE ONLY).",
-                collapse = NULL, 
-                recycle0 = FALSE
-            )
-        base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL) # == in base::stop() to be able to add several messages between ==
-    }else if(prop == TRUE){
+    if(prop == TRUE){
         if( ! base::is.null(x = class)){
             if( ! base::any(class %in% base::c("vector", "numeric", "matrix", "array", "data.frame", "table"), na.rm = TRUE)){ # no need of na.rm = TRUE for base::any() because %in% does not output NA
                 tempo.cat <- base::paste0(
@@ -639,43 +665,8 @@ arg_check <- function(
             }
         }
     }
-    if( ! (base::all(base::class(x = double_as_integer_allowed) == "logical", na.rm = TRUE) & base::length(x = double_as_integer_allowed) == 1L)){ # base::all() without na.rm -> ok because base::class() never returns NA
-        tempo.cat <- base::paste0(
-            error_text_start, 
-            "THE double_as_integer_allowed ARGUMENT MUST BE A SINGLE LOGICAL VALUE (TRUE OR FALSE ONLY).",
-            collapse = NULL, 
-            recycle0 = FALSE
-        )
-        base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL) # == in base::stop() to be able to add several messages between ==
-    }
-    if( ! (base::is.logical(x = all_options_in_data) & base::length(x = all_options_in_data) == 1L)){
-        tempo.cat <- base::paste0(
-            error_text_start, 
-            "THE all_options_in_data ARGUMENT MUST BE A SINGLE LOGICAL VALUE (TRUE OR FALSE ONLY).",
-            collapse = NULL, 
-            recycle0 = FALSE
-        )
-        base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL) # == in base::stop() to be able to add several messages between ==
-    }
-    if( ! (base::all(base::class(x = na_contain) == "logical", na.rm = TRUE) & base::length(x = na_contain) == 1L)){ # base::all() without na.rm -> ok because base::class() never returns NA
-        tempo.cat <- base::paste0(
-            error_text_start, 
-            "THE na_contain ARGUMENT MUST BE A SINGLE LOGICAL VALUE (TRUE OR FALSE ONLY).",
-            collapse = NULL, 
-            recycle0 = FALSE
-        )
-        base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL) # == in base::stop() to be able to add several messages between ==
-    }
-    if( ! (base::all(base::class(x = print) == "logical", na.rm = TRUE) & base::length(x = print) == 1L)){ # base::all() without na.rm -> ok because base::class() never returns NA
-        tempo.cat <- base::paste0(
-            error_text_start, 
-            "THE print ARGUMENT MUST BE A SINGLE LOGICAL VALUE (TRUE OR FALSE ONLY).",
-            collapse = NULL, 
-            recycle0 = FALSE
-        )
-        base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL) # == in base::stop() to be able to add several messages between ==
-    }
     # data_name and error_text tested at the beginning
+    # end other checkings of the arguments by order
     ######## end other checkings
     
     #### end second round of checking and data preparation
@@ -685,14 +676,14 @@ arg_check <- function(
         data_name <- base::deparse(expr = base::substitute(expr = data, env = base::environment(fun = NULL)), width.cutoff = 60L, backtick = FALSE, control = base::c("keepNA", "keepInteger", "niceNames", "showAttributes"), nlines = -1L)
     }
     problem <- FALSE
-    text_ok <- base::paste0("NO PROBLEM DETECTED FOR THE ", data_name, base::ifelse(test = base::is.null(x = data_name), yes = "", no = " "), "OBJECT", base::ifelse(test = error_text == "", yes = ".", no = error_text), collapse = NULL, recycle0 = FALSE)
+    text_ok <- base::paste0("NO PROBLEM DETECTED FOR THE ", data_name, base::ifelse(test = base::is.null(x = data_name), yes = "", no = " "), base::ifelse(test = data_arg, yes = "ARGUMENT", no = "OBJECT"), base::ifelse(test = error_text == "", yes = ".", no = error_text), collapse = NULL, recycle0 = FALSE)
     text <- text_ok
     if(( ! base::is.null(x = options)) & (base::all(base::typeof(x = data) == "character", na.rm = TRUE) | base::all(base::typeof(x = data) == "integer", na.rm = TRUE) | base::all(base::typeof(x = data) == "double", na.rm = TRUE))){ # base::all() without na.rm -> ok because base::typeof() never returns NA
         test.log <- TRUE
         if(base::all(base::typeof(x = data) == "double", na.rm = TRUE)){
             if( ! base::all(data %% 1 == 0L, na.rm = TRUE)){ # double but integer like ?
                 problem <- TRUE
-                text <- base::paste0("ERROR", base::ifelse(test = error_text == "", yes = "", no = error_text), "\n\nTHE ", data_name, " OBJECT MUST BE SOME OF THESE OPTIONS:\n", base::paste0(options, collapse = "\n", recycle0 = FALSE), "\nBUT IS NOT EVEN TYPE CHARACTER OR INTEGER.",collapse = NULL, recycle0 = FALSE)
+                text <- base::paste0("ERROR", base::ifelse(test = error_text == "", yes = "", no = error_text), "\n\nTHE ", data_name, " ", base::ifelse(test = data_arg, yes = "ARGUMENT", no = "OBJECT"), " MUST BE SOME OF THESE OPTIONS:\n", base::paste0(options, collapse = "\n", recycle0 = FALSE), "\nBUT IS NOT EVEN TYPE CHARACTER OR INTEGER.",collapse = NULL, recycle0 = FALSE)
                 test.log <- FALSE
             }
         }
@@ -700,7 +691,7 @@ arg_check <- function(
             text <- ""
             if( ! base::all(data %in% options, na.rm = TRUE)){ # no need of na.rm = TRUE for base::all() because %in% does not output NA
                 problem <- TRUE
-                text <- base::paste0("ERROR", base::ifelse(test = error_text == "", yes = "", no = error_text), "\n\nTHE ", data_name, " OBJECT MUST BE SOME OF THESE OPTIONS:\n", base::paste0(options, collapse = "\n", recycle0 = FALSE), "\nTHE PROBLEMATIC ELEMENTS OF ", data_name, " ARE:\n", base::paste0(base::unique(x = data[ ! (data %in% options)], incomparables = FALSE), collapse = "\n", recycle0 = FALSE), collapse = NULL, recycle0 = FALSE)
+                text <- base::paste0("ERROR", base::ifelse(test = error_text == "", yes = "", no = error_text), "\n\nTHE ", data_name, " ", base::ifelse(test = data_arg, yes = "ARGUMENT", no = "OBJECT"), " MUST BE SOME OF THESE OPTIONS:\n", base::paste0(options, collapse = "\n", recycle0 = FALSE), "\nTHE PROBLEMATIC ELEMENTS OF ", data_name, " ARE:\n", base::paste0(base::unique(x = data[ ! (data %in% options)], incomparables = FALSE), collapse = "\n", recycle0 = FALSE), collapse = NULL, recycle0 = FALSE)
             }
             if(all_options_in_data == TRUE){
                 if( ! base::all(options %in% data, na.rm = TRUE)){ # no need of na.rm = TRUE for base::all() because %in% does not output NA
@@ -710,7 +701,9 @@ arg_check <- function(
                         base::ifelse(test = error_text == "", yes = "ERROR", no = base::paste0("ERROR IN ", error_text, collapse = NULL, recycle0 = FALSE)), 
                         "\nTHE ", 
                         data_name, 
-                        " OBJECT MUST BE MADE OF ALL THESE OPTIONS:\n", 
+                        " ", 
+                        base::ifelse(test = data_arg, yes = "ARGUMENT", no = "OBJECT"), 
+                        " MUST BE MADE OF ALL THESE OPTIONS:\n", 
                         base::paste0(options, collapse = "\n", recycle0 = FALSE), 
                         "\nTHE MISSING ELEMENTS OF THE options ARGUMENT ARE:\n",  
                         base::paste0(base::unique(x = options[ ! (options %in% data)], incomparables = FALSE), collapse = "\n", recycle0 = FALSE),
@@ -740,7 +733,8 @@ arg_check <- function(
                 text <- base::paste0(
                     "NO PROBLEM DETECTED FOR THE ", 
                     data_name, 
-                    " OBJECT",
+                    " ", 
+                    base::ifelse(test = data_arg, yes = "ARGUMENT", no = "OBJECT"), 
                     base::ifelse(test = error_text == "", yes = ".", no = error_text), 
                     collapse = NULL, 
                     recycle0 = FALSE
@@ -749,7 +743,7 @@ arg_check <- function(
         }
     }else if( ! base::is.null(x = options)){
         problem <- TRUE
-        text <- base::paste0("ERROR", base::ifelse(test = error_text == "", yes = "", no = error_text), "\n\nTHE ", data_name, " OBJECT MUST BE SOME OF THESE OPTIONS:\n", base::paste0(options, collapse = "\n", recycle0 = FALSE), "\nBUT IS NOT EVEN TYPE CHARACTER OR INTEGER.", collapse = NULL, recycle0 = FALSE)
+        text <- base::paste0("ERROR", base::ifelse(test = error_text == "", yes = "", no = error_text), "\n\nTHE ", data_name, " ", base::ifelse(test = data_arg, yes = "ARGUMENT", no = "OBJECT"), " MUST BE SOME OF THESE OPTIONS:\n", base::paste0(options, collapse = "\n", recycle0 = FALSE), "\nBUT IS NOT EVEN TYPE CHARACTER OR INTEGER.", collapse = NULL, recycle0 = FALSE)
     }
     arg.names <- base::c("class", "typeof", "mode", "length")
     if( ! base::is.null(x = class)){
@@ -766,7 +760,7 @@ arg_check <- function(
                 tempo.script <- '
                     problem <- TRUE ;
                     if(base::identical(x = text, y = text_ok, num.eq = TRUE, single.NA = TRUE, attrib.as.set = TRUE, ignore.bytecode = TRUE, ignore.environment = FALSE, ignore.srcref = TRUE, extptr.as.ref = FALSE)){
-                        text <- base::paste0("ERROR", base::ifelse(test = error_text == "", yes = "", no = error_text), "\n\nTHE ", data_name, " OBJECT MUST BE ", collapse = NULL, recycle0 = FALSE) ;
+                        text <- base::paste0("ERROR", base::ifelse(test = error_text == "", yes = "", no = error_text), "\n\nTHE ", data_name, " ", base::ifelse(test = data_arg, yes = "ARGUMENT", no = "OBJECT"), " MUST BE ", collapse = NULL, recycle0 = FALSE) ;
                     }else{
                         text <- base::paste0(text, " AND ", collapse = NULL, recycle0 = FALSE) ; 
                     }
@@ -796,7 +790,7 @@ arg_check <- function(
             }else{
                 text <- base::paste0(text, " AND ", collapse = NULL, recycle0 = FALSE)
             }
-            text <- base::paste0(text, "THE ", data_name, " OBJECT MUST BE DECIMAL VALUES BETWEEN 0 AND 1.", collapse = NULL, recycle0 = FALSE)
+            text <- base::paste0(text, "THE ", data_name, " ", base::ifelse(test = data_arg, yes = "ARGUMENT", no = "OBJECT"), " MUST BE DECIMAL VALUES BETWEEN 0 AND 1.", collapse = NULL, recycle0 = FALSE)
         }
     }else if(prop == TRUE){
         problem <- TRUE
@@ -805,7 +799,7 @@ arg_check <- function(
         }else{
             text <- base::paste0(text, " AND ", collapse = NULL, recycle0 = FALSE)
         }
-        text <- base::paste0(text, "THE ", data_name, " OBJECT MUST BE DECIMAL VALUES BETWEEN 0 AND 1.", collapse = NULL, recycle0 = FALSE)
+        text <- base::paste0(text, "THE ", data_name, " ", base::ifelse(test = data_arg, yes = "ARGUMENT", no = "OBJECT"), " MUST BE DECIMAL VALUES BETWEEN 0 AND 1.", collapse = NULL, recycle0 = FALSE)
     }
     if(base::all(base::class(x = data) %in% "expression", na.rm = TRUE)){ # no need of na.rm = TRUE for base::all() because %in% does not output NA
         data <- base::as.character(x = data) # to evaluate the presence of NA
@@ -818,7 +812,7 @@ arg_check <- function(
             }else{
                 text <- base::paste0(text, " AND ", collapse = NULL, recycle0 = FALSE)
             }
-            text <- base::paste0(text, "THE ", data_name, " OBJECT CONTAINS NA WHILE NOT AUTHORIZED.", collapse = NULL, recycle0 = FALSE)
+            text <- base::paste0(text, "THE ", data_name, " ", base::ifelse(test = data_arg, yes = "ARGUMENT", no = "OBJECT"), " CONTAINS NA WHILE NOT AUTHORIZED.", collapse = NULL, recycle0 = FALSE)
         }
     }
     if(neg_values == FALSE & base::all(base::mode(x = data) %in% "numeric", na.rm = TRUE) & ! base::any(base::class(x = data) %in% "factor", na.rm = TRUE)){ # no need of na.rm = TRUE for base::all() because %in% does not output NA
@@ -829,7 +823,7 @@ arg_check <- function(
             }else{
                 text <- base::paste0(text, " AND ", collapse = NULL, recycle0 = FALSE)
             }
-            text <- base::paste0(text, "THE ", data_name, " OBJECT MUST BE MADE OF NON NEGATIVE NUMERIC VALUES.", collapse = NULL, recycle0 = FALSE)
+            text <- base::paste0(text, "THE ", data_name, " ", base::ifelse(test = data_arg, yes = "ARGUMENT", no = "OBJECT"), " MUST BE MADE OF NON NEGATIVE NUMERIC VALUES.", collapse = NULL, recycle0 = FALSE)
         }
     }else if(neg_values == FALSE){
         problem <- TRUE
@@ -838,7 +832,7 @@ arg_check <- function(
         }else{
             text <- base::paste0(text, " AND ", collapse = NULL, recycle0 = FALSE)
         }
-        text <- base::paste0(text, "THE ", data_name, " OBJECT MUST BE MADE OF NON NEGATIVE VALUES BUT IS ", base::ifelse(test = base::any(base::class(x = data) %in% "factor", na.rm = TRUE), yes = "A FACTOR", no = "NOT EVEN MODE NUMERIC."), collapse = NULL, recycle0 = FALSE) # no need of na.rm = TRUE
+        text <- base::paste0(text, "THE ", data_name, " ", base::ifelse(test = data_arg, yes = "ARGUMENT", no = "OBJECT"), " MUST BE MADE OF NON NEGATIVE VALUES BUT IS ", base::ifelse(test = base::any(base::class(x = data) %in% "factor", na.rm = TRUE), yes = "A FACTOR", no = "NOT EVEN MODE NUMERIC."), collapse = NULL, recycle0 = FALSE) # no need of na.rm = TRUE
     }
     if(inf_values == FALSE & base::all(base::typeof(x = data) %in% "double", na.rm = TRUE) & ! base::any(base::class(x = data) %in% "factor", na.rm = TRUE)){ # no need of na.rm = TRUE for base::all() because %in% does not output NA
         if(base::any(base::is.infinite(x = data), na.rm = TRUE)){ # Warning: na.rm = TRUE required here for base::any()
@@ -848,7 +842,7 @@ arg_check <- function(
             }else{
                 text <- base::paste0(text, " AND ", collapse = NULL, recycle0 = FALSE)
             }
-            text <- base::paste0(text, "THE ", data_name, " OBJECT MUST BE MADE OF NON INFINITE NUMERIC VALUES.", collapse = NULL, recycle0 = FALSE)
+            text <- base::paste0(text, "THE ", data_name, " ", base::ifelse(test = data_arg, yes = "ARGUMENT", no = "OBJECT"), " MUST BE MADE OF NON INFINITE NUMERIC VALUES.", collapse = NULL, recycle0 = FALSE)
         }
     }else if(inf_values == FALSE){
         problem <- TRUE
@@ -857,7 +851,7 @@ arg_check <- function(
         }else{
             text <- base::paste0(text, " AND ", collapse = NULL, recycle0 = FALSE)
         }
-        text <- base::paste0(text, "THE ", data_name, " OBJECT MUST BE MADE OF NON INFINITE VALUES BUT IS ", base::ifelse(test = base::any(base::class(x = data) %in% "factor", na.rm = TRUE), yes = "A FACTOR", no = "NOT EVEN TYPE DOUBLE."), collapse = NULL, recycle0 = FALSE) # no need of na.rm = TRUE
+        text <- base::paste0(text, "THE ", data_name, " ", base::ifelse(test = data_arg, yes = "ARGUMENT", no = "OBJECT"), " MUST BE MADE OF NON INFINITE VALUES BUT IS ", base::ifelse(test = base::any(base::class(x = data) %in% "factor", na.rm = TRUE), yes = "A FACTOR", no = "NOT EVEN TYPE DOUBLE."), collapse = NULL, recycle0 = FALSE) # no need of na.rm = TRUE
     }
     if(print == TRUE & problem == TRUE){
         base::cat(base::paste0("\n\n================\n\n", text, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), file = "", sep = " ", fill = FALSE, labels = NULL, append = FALSE)
