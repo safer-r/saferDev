@@ -123,6 +123,7 @@ arg_check <- function(
     ######## error text when embedding
     # use this in the error_text of safer functions if present below 
     embed_error_text  <- base::sub(pattern = "^ERROR IN ", replacement = " INSIDE ", x = error_text_start, ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE)
+    embed_error_text  <- base::sub(pattern = "\n*$", replacement = "", x = embed_error_text, ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE) # remove all the trailing \n, because added later
     ######## end error text when embedding
 
     #### end error_text initiation

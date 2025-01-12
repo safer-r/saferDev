@@ -85,7 +85,7 @@
     ######## end internal error text
 
     ######## error text when embedding
-    embed_error_text  <- base::sub(pattern = "^ERROR IN ", replacement = " INSIDE ", x = error_text_start, ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE)
+    # not required
     ######## end error text when embedding
 
     #### end error_text initiation
