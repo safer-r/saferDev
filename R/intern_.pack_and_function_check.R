@@ -6,8 +6,6 @@
 #' @param lib_path Vector of characters specifying the absolute pathways of the directories containing the required packages for the function, if not in the default directories. Useful to overcome R execution using system with non admin rights for R package installation in the default directories. Ignored if NULL (default): only the pathways specified by .libPaths() are used for package calling. Specify the right path if the function returns a package path error.
 #' @param error_text Single character string used to add information in error messages returned by the function, notably if the function is inside other functions, which is practical for debugging. Example: error_text = "INSIDE <PACKAGE_1>::<FUNCTION_1> INSIDE <PACKAGE_2>::<FUNCTION_2>". If NULL, converted into "".
 #' @returns An error message if at least one of the checked packages is missing in lib_path, or if at least one of the checked functions is missing in the required package, nothing otherwise.
-#' @details
-#' - Warning: requires saferDev::arg_check. In the safer Backbone section "######## check of the required functions from the required packages" add this function when checking for the presence of saferDev:::.pack_and_function_check.
 #' @author Gael Millot <gael.millot@pasteur.fr>
 #' @author Yushi Han <yushi.han2000@gmail.com>
 #' @author Haiding Wang <wanghaiding442@gmail.com>
@@ -24,7 +22,7 @@
     # in internal functions, all arguments are without value on purpose
     fun, 
     lib_path,
-    error_text
+    error_text # warning: in internal functions, can return a non safer error message because error_text without default value and is used below before checking for mandatory arg value (specific of internal functions since classical functions are error_text = "")
 ){
     # DEBUGGING
     # fun = "ggplot2::geom_point" ; lib_path = "C:/Program Files/R/R-4.3.1/library" ; error_text = ""
@@ -74,14 +72,7 @@
     ######## end basic error text start
 
     ######## internal error text
-    intern_error_text_start <- base::paste0(
-        package_function_name, 
-        base::ifelse(test = error_text == "", yes = ".", no = error_text), 
-        "\n\n", 
-        collapse = NULL, 
-        recycle0 = FALSE
-    )
-    intern_error_text_end <- base::ifelse(test = base::is.null(x = internal_error_report_link), yes = "", no = base::paste0("\n\nPLEASE, REPORT THIS ERROR HERE: ", internal_error_report_link, ".", collapse = NULL, recycle0 = FALSE))
+    # not required
     ######## end internal error text
 
     ######## error text when embedding

@@ -395,9 +395,10 @@ colons_check <- function(
                 line.nb = in_basic_code_line_nb, 
                 ini = out$code, 
                 arg_user_setting = out$arg_user_setting, 
-                error_text = base::sub(pattern = "^ERROR IN ", replacement = " INSIDE ", x = error_text_start, ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE), 
                 text = "BASIC", 
-                internal_fun_names = out$internal_fun_names
+                internal_fun_names = out$internal_fun_names,
+                lib_path = lib_path, 
+                error_text = embed_error_text
             )
             log_basic <- tempo$colon_not_here
             cat_basic <- tempo$output.cat
@@ -449,9 +450,10 @@ colons_check <- function(
                 line.nb = in_other_code_line_nb, 
                 ini = out$code, 
                 arg_user_setting = out$arg_user_setting, 
-                error_text = base::sub(pattern = "^ERROR IN ", replacement = " INSIDE ", x = error_text_start, ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE), 
                 text = "OTHER", 
-                internal_fun_names = out$internal_fun_names
+                internal_fun_names = out$internal_fun_names,
+                lib_path = lib_path, 
+                error_text = embed_error_text
             )
             log_other <- tempo$colon_not_here
             cat_other <- tempo$output.cat
