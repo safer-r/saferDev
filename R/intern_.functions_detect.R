@@ -4,7 +4,6 @@
 #' @param x Function name, written without quotes and brackets.
 #' @param arg_user_setting Argument user settings list.
 #' @param error_text Single character string used to add information in error messages returned by the function, notably if the function is inside other functions, which is practical for debugging. Example: error_text = "INSIDE <PACKAGE_1>::<FUNCTION_1> INSIDE <PACKAGE_2>::<FUNCTION_2>".
-#' @param internal_error_report_link Single string of the link where to post an issue indicated in an internal error message. Write NULL if no link to propose, or no internal error message.
 #' @returns 
 #'  A list:
 #' $code: vector of strings of the code of the tested function.
@@ -30,8 +29,7 @@
     # in internal functions, all arguments are without value on purpose
     x, 
     arg_user_setting, 
-    error_text,
-    internal_error_report_link
+    error_text
 ){
     # DEBUGGING
     # x = x ; arg_user_setting = arg_user_setting ; error_text = "" ; internal_error_report_link = "test"
@@ -45,7 +43,7 @@
     #### end package name
 
     #### internal error report link
-    # set by the internal_error_report_link argument
+    internal_error_report_link <- base::paste0("https://github.com/safer-r/", package_name, "/issues/new", collapse = NULL, recycle0 = FALSE) # link where to post an issue indicated in an internal error message. Write NULL if no link to propose, or no internal error message
     #### end internal error report link
 
     #### function name
@@ -301,14 +299,12 @@
                 double.quote.test <- .has_odd_number_of_quotes(
                     input_string = tempo.line, 
                     pattern = '"', 
-                    error_text = base::sub(pattern = "^ERROR IN ", replacement = " INSIDE ", x = error_text_start, ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE), 
-                    internal_error_report_link = internal_error_report_link
+                    error_text = base::sub(pattern = "^ERROR IN ", replacement = " INSIDE ", x = error_text_start, ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE)
                 ) # here FALSE means even number of quotes, thus that # is not between quotes, thus has to be removed. TRUE means that # is between quotes, thus has to be kept
                 simple.quote.test <- .has_odd_number_of_quotes(
                     input_string = tempo.line, 
                     pattern = "'", 
-                    error_text = base::sub(pattern = "^ERROR IN ", replacement = " INSIDE ", x = error_text_start, ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE), 
-                    internal_error_report_link = internal_error_report_link
+                    error_text = base::sub(pattern = "^ERROR IN ", replacement = " INSIDE ", x = error_text_start, ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE)
                 ) # idem
                 odds.quotes.log <- double.quote.test |  simple.quote.test # lines to keep among commented lines
                 if(odds.quotes.log == TRUE){
@@ -368,8 +364,7 @@
         tempo <- .extract_all_fun_names(
             text = code[i1], 
             pattern = pattern1,
-            error_text = base::sub(pattern = "^ERROR IN ", replacement = " INSIDE ", x = error_text_start, ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE),
-            internal_error_report_link = internal_error_report_link
+            error_text = base::sub(pattern = "^ERROR IN ", replacement = " INSIDE ", x = error_text_start, ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE)
         ) # recover all the function names, followed by "(", present in code, using a perl pattern
         fun_name <- base::c(fun_name, base::list(tempo$string))
         fun_name_pos <- base::c(fun_name_pos, base::list(tempo$pos))

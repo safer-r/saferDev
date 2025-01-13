@@ -42,23 +42,17 @@
   ini,
   arg_user_setting,
   error_text,
-  internal_error_report_link,
   text,
   internal_fun_names
 )
 
-.extract_all_fun_names(text, pattern, error_text, internal_error_report_link)
+.extract_all_fun_names(text, pattern, error_text)
 
-.fun_args_pos(text, pattern, error_text, internal_error_report_link)
+.fun_args_pos(text, pattern, error_text)
 
-.functions_detect(x, arg_user_setting, error_text, internal_error_report_link)
+.functions_detect(x, arg_user_setting, error_text)
 
-.has_odd_number_of_quotes(
-  input_string,
-  pattern,
-  error_text,
-  internal_error_report_link
-)
+.has_odd_number_of_quotes(input_string, pattern, error_text)
 
 .in_parenthesis_replacement(
   string,
@@ -68,8 +62,7 @@
   perl,
   open_pos,
   close_pos,
-  error_text,
-  internal_error_report_link
+  error_text
 )
 
 .in_quotes_replacement(
@@ -78,18 +71,10 @@
   no_regex_pattern,
   replacement,
   perl,
-  error_text,
-  internal_error_report_link
+  error_text
 )
 
-.noclean_functions(
-  col1,
-  col2,
-  col3,
-  ini,
-  error_text,
-  internal_error_report_link
-)
+.noclean_functions(col1, col2, col3, ini, error_text)
 
 .pack_and_function_check(fun, lib_path, error_text)
 }
@@ -125,8 +110,6 @@
 \item{ini}{Vector of strings of the initial function code analyzed.}
 
 \item{arg_user_setting}{Argument user settings list.}
-
-\item{internal_error_report_link}{Single string of the link where to post an issue indicated in an internal error message. Write NULL if no link to propose, or no internal error message.}
 
 \item{text}{Single string.}
 

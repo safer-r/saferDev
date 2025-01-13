@@ -846,7 +846,6 @@ arg_test <- function(
             res.path = res.path, 
             lib_path = lib_path, 
             error_text_start = error_text_start,
-            internal_error_report_link = internal_error_report_link, 
             fun = function(
         x, 
         function_name, 
@@ -882,8 +881,7 @@ arg_test <- function(
                         "lubridate::seconds_to_period"
                     ),
                     lib_path = lib_path,
-                    error_text = base::sub(pattern = "^ERROR IN ", replacement = " INSIDE ", x = error_text_start, ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE),
-                    internal_error_report_link = internal_error_report_link
+                    error_text = base::sub(pattern = "^ERROR IN ", replacement = " INSIDE ", x = error_text_start, ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE)
                 )
                 # end check again: very important because another R
                 # plot management

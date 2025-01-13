@@ -4,7 +4,6 @@
 #' @param input_string Single string.
 #' @param pattern: Either '"' or "'".
 #' @param error_text Single character string used to add information in error messages returned by the function, notably if the function is inside other functions, which is practical for debugging. Example: error_text = "INSIDE <PACKAGE_1>::<FUNCTION_1> INSIDE <PACKAGE_2>::<FUNCTION_2>".
-#' @param internal_error_report_link Single string of the link where to post an issue indicated in an internal error message. Write NULL if no link to propose, or no internal error message.
 #' @returns TRUE or FALSE.
 #' @details
 #' - Warning: requires saferDev::arg_check. In the safer Backbone section "######## check of the required functions from the required packages" add this function when checking for the presence of saferDev:::.has_odd_number_of_quotes.
@@ -18,8 +17,7 @@
 .has_odd_number_of_quotes <- function(
     input_string, 
     pattern,
-    error_text,
-    internal_error_report_link
+    error_text
 ){
     # DEBUGGING
     # input_string = 'This is a "test" string with "even" quotes' ; pattern = '"' ; error_text = " INSIDE P1::F1" ; internal_error_report_link = "test"
@@ -30,7 +28,7 @@
     #### end package name
 
     #### internal error report link
-    # set by the internal_error_report_link argument
+    internal_error_report_link <- base::paste0("https://github.com/safer-r/", package_name, "/issues/new", collapse = NULL, recycle0 = FALSE) # link where to post an issue indicated in an internal error message. Write NULL if no link to propose, or no internal error message
     #### end internal error report link
 
     #### function name
