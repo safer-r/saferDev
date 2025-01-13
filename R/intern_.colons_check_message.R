@@ -8,7 +8,6 @@
 #' @param ini Vector of strings of the initial function code analyzed.
 #' @param arg_user_setting List of arg user settings.
 #' @param error_text Single character string used to add information in error messages returned by the function, notably if the function is inside other functions, which is practical for debugging. Example: error_text = "INSIDE <PACKAGE_1>::<FUNCTION_1> INSIDE <PACKAGE_2>::<FUNCTION_2>".
-#' @param internal_error_report_link Single string of the link where to post an issue indicated in an internal error message. Write NULL if no link to propose, or no internal error message.
 #' @param text Either "BASIC" or "OTHER".
 #' @param internal_fun_names Vector of strings of names of internal functions in the function code analyzed. Can be NULL
 #' @returns
@@ -31,20 +30,19 @@
     ini, 
     arg_user_setting, 
     error_text, 
-    internal_error_report_link, 
     text,
     internal_fun_names
 ){
     # DEBUGGING
-    # list.fun = in_basic_fun ; list.fun.pos = in_basic_fun_names_pos ; line.nb = in_basic_code_line_nb ; ini = out$code ; arg_user_setting = out$arg_user_setting ; error_text = " INSIDE P1::F1" ; internal_error_report_link = "test" ; text = "BASIC" ; internal_fun_names = out$internal_fun_names
-    # list.fun = in_other_fun ; list.fun.pos = in_other_fun_names_pos ; line.nb = in_other_code_line_nb ; ini = out$code ; arg_user_setting = out$arg_user_setting ; error_text = " INSIDE P1::F1" ; internal_error_report_link = "test" ; text = "OTHER" ; internal_fun_names = out$internal_fun_names
+    # list.fun = in_basic_fun ; list.fun.pos = in_basic_fun_names_pos ; line.nb = in_basic_code_line_nb ; ini = out$code ; arg_user_setting = out$arg_user_setting ; error_text = " INSIDE P1::F1" ; text = "BASIC" ; internal_fun_names = out$internal_fun_names
+    # list.fun = in_other_fun ; list.fun.pos = in_other_fun_names_pos ; line.nb = in_other_code_line_nb ; ini = out$code ; arg_user_setting = out$arg_user_setting ; error_text = " INSIDE P1::F1" ; text = "OTHER" ; internal_fun_names = out$internal_fun_names
 
     #### package name
     package_name <- "saferDev" # write NULL if the function developed is not in a package
     #### end package name
 
     #### internal error report link
-    # set by the internal_error_report_link argument
+    internal_error_report_link <- base::paste0("https://github.com/safer-r/", package_name, "/issues/new", collapse = NULL, recycle0 = FALSE) # link where to post an issue indicated in an internal error message. Write NULL if no link to propose, or no internal error message
     #### end internal error report link
 
     #### function name

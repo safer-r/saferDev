@@ -7,7 +7,6 @@
 #' @param replacement Single string for pattern replacement. Is not regex.
 #' @param perl Single logical value. Use Perl regex in pattern ?
 #' @param error_text Single character string used to add information in error messages returned by the function, notably if the function is inside other functions, which is practical for debugging. Example: error_text = "INSIDE <PACKAGE_1>::<FUNCTION_1> INSIDE <PACKAGE_2>::<FUNCTION_2>".
-#' @param internal_error_report_link Single string of the link where to post an issue indicated in an internal error message. Write NULL if no link to propose, or no internal error message.
 #' @returns A list containing:
 #' $string: The input string with all pattern replaced by the replacement pattern.
 #' $pos: vector of the positions of the 1rst character of the replaced pattern. NULL if no replaced pattern. In that case, $string is identical to the input string.
@@ -29,8 +28,7 @@
     no_regex_pattern, 
     replacement, 
     perl,
-    error_text,
-    internal_error_report_link
+    error_text
 ){
     # DEBUGGING
     # source("https://raw.githubusercontent.com/safer-r/saferDev/main/dev/other/test.R") ; string = paste(deparse(test), collapse = "") ; pattern = "\\)" ; no_regex_pattern = ")" ; replacement = " " ; perl = FALSE ; error_text = " INSIDE P1::F1" ; internal_error_report_link = "test"
@@ -43,7 +41,7 @@
     #### end package name
 
     #### internal error report link
-    # set by the internal_error_report_link argument
+    internal_error_report_link <- base::paste0("https://github.com/safer-r/", package_name, "/issues/new", collapse = NULL, recycle0 = FALSE) # link where to post an issue indicated in an internal error message. Write NULL if no link to propose, or no internal error message
     #### end internal error report link
 
     #### function name

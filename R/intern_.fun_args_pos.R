@@ -4,7 +4,6 @@
 #' @param text Single string.
 #' @param pattern: Single string of a perl regex to extract function name and (), using generally paste0(<FUNCTION_NAME>, "[\\s\\r\\n]*\\(").
 #' @param error_text Single character string used to add information in error messages returned by the function, notably if the function is inside other functions, which is practical for debugging. Example: error_text = "INSIDE <PACKAGE_1>::<FUNCTION_1> INSIDE <PACKAGE_2>::<FUNCTION_2>".
-#' @param internal_error_report_link Single string of the link where to post an issue indicated in an internal error message. Write NULL if no link to propose, or no internal error message.
 #' @returns A list containing two positions:
 #' $begin_fun: position of 1st letter of the function name.
 #' $begin: position of the "(" of the function.
@@ -25,8 +24,7 @@
 .fun_args_pos <- function(
     text, 
     pattern, 
-    error_text,
-    internal_error_report_link
+    error_text
 ){
     # DEBUGGING
     # source("https://raw.githubusercontent.com/safer-r/saferDev/main/dev/other/test.R")
@@ -41,7 +39,7 @@
     #### end package name
 
     #### internal error report link
-    # set by the internal_error_report_link argument
+    internal_error_report_link <- base::paste0("https://github.com/safer-r/", package_name, "/issues/new", collapse = NULL, recycle0 = FALSE) # link where to post an issue indicated in an internal error message. Write NULL if no link to propose, or no internal error message
     #### end internal error report link
 
     #### function name
