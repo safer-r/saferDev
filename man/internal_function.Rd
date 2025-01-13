@@ -29,7 +29,6 @@
   col2_i2,
   arg_user_setting_x,
   error_text,
-  internal_error_report_link,
   warn,
   warn_count
 )
@@ -113,8 +112,6 @@
 
 \item{error_text}{Single character string used to add information in error messages returned by the function, notably if the function is inside other functions, which is practical for debugging. Example: error_text = "INSIDE <PACKAGE_1>::<FUNCTION_1> INSIDE <PACKAGE_2>::<FUNCTION_2>". If NULL, converted into "".}
 
-\item{internal_error_report_link}{Single string of the link where to post an issue indicated in an internal error message. Write NULL if no link to propose, or no internal error message.}
-
 \item{warn}{warning string. Can be NULL.}
 
 \item{warn_count}{warning count.}
@@ -128,6 +125,8 @@
 \item{ini}{Vector of strings of the initial function code analyzed.}
 
 \item{arg_user_setting}{Argument user settings list.}
+
+\item{internal_error_report_link}{Single string of the link where to post an issue indicated in an internal error message. Write NULL if no link to propose, or no internal error message.}
 
 \item{text}{Single string.}
 
@@ -263,7 +262,7 @@ Simplified version of saferDev::is_function_here(), used as internal function fo
 }
 \examples{
 \dontrun{ # Example that shouldn't be run because this is an internal function
-.all_args_here_fill(arg_full = list(x = pairlist(x = quote(expr = ))), arg_full_names = "x", tempo_split = "x", three_dots_log = FALSE, i2 = 1, col1_i2 = 1, col2_i2 =  "length", arg_user_setting_x = "\"FUN1\"", error_text = "", internal_error_report_link = "https://github.com/safer-r/saferDev/issues/new", warn = NULL, warn_count = 0)
+.all_args_here_fill(arg_full = list(x = pairlist(x = quote(expr = ))), arg_full_names = "x", tempo_split = "x", three_dots_log = FALSE, i2 = 1, col1_i2 = 1, col2_i2 =  "length", arg_user_setting_x = "\"FUN1\"", error_text = "", warn = NULL, warn_count = 0)
 }
 \dontrun{
 # Example that shouldn't be run because this is an internal function
