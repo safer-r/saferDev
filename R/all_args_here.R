@@ -455,8 +455,7 @@ all_args_here <- function(
     out <- saferDev:::.functions_detect(
         x = x, 
         arg_user_setting = arg_user_setting, 
-        error_text = base::sub(pattern = "^ERROR IN ", replacement = " INSIDE ", x = error_text_start, ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE), 
-        internal_error_report_link = internal_error_report_link
+        error_text = embed_error_text
     )
     code_line_nb <- out$code_line_nb # vector of line numbers in code where functions are
     fun_names <-  out$fun_names # list of function names for each line of code
@@ -481,8 +480,7 @@ all_args_here <- function(
         no_regex_pattern = ")", 
         replacement = " ", 
         perl = TRUE, 
-        error_text = base::sub(pattern = "^ERROR IN ", replacement = " INSIDE ", x = error_text_start, ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE), 
-        internal_error_report_link = internal_error_report_link
+        error_text = embed_error_text
     )
     fun_1_line_replace <- tempo$string # code of the tested function that will serve to better detect functions in it
     pos_rep <- tempo$pos # replaced positions in fun_1_line
@@ -494,8 +492,7 @@ all_args_here <- function(
         no_regex_pattern = "(", 
         replacement = " ", 
         perl = TRUE, 
-        error_text = base::sub(pattern = "^ERROR IN ", replacement = " INSIDE ", x = error_text_start, ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE), 
-        internal_error_report_link = internal_error_report_link
+        error_text = embed_error_text
     )
     fun_1_line_replace <- tempo$string
     pos_rep <- base::sort(x = base::c(pos_rep, tempo$pos), decreasing = FALSE)
@@ -534,8 +531,8 @@ all_args_here <- function(
                 tempo_pos <- saferDev:::.fun_args_pos(
                     text = fun_1_line_replace, 
                     pattern = base::paste0(fun_names[[i1]][i2], "[\\s\\r\\n]*\\(", collapse = NULL, recycle0 = FALSE), 
-                    error_text = base::sub(pattern = "^ERROR IN ", replacement = " INSIDE ", x = error_text_start, ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE), 
-                    internal_error_report_link = internal_error_report_link) # positions of 1st letter of the function name and opening and closing brackets # Warning: fun_1_line_replace used because the input string must be cleaned form brackets between quotes
+                    error_text = embed_error_text # positions of 1st letter of the function name and opening and closing brackets # Warning: fun_1_line_replace used because the input string must be cleaned form brackets between quotes
+                )
                 tempo_str_before <- base::substr(x = fun_1_line_replace, start = 1, stop = fun_pos_start - 1)
                 tempo_log <- base::grepl(x = tempo_str_before, pattern = "\\$ *$", ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE)
                 if(tempo_log){ # remove functions preceeded by $, like a$fun()
@@ -572,8 +569,7 @@ all_args_here <- function(
                     no_regex_pattern = "(", 
                     replacement = " ", 
                     perl = TRUE, 
-                    error_text = base::sub(pattern = "^ERROR IN ", replacement = " INSIDE ", x = error_text_start, ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE), 
-                    internal_error_report_link = internal_error_report_link
+                    error_text = embed_error_text
                 )
                 tempo2 <- saferDev:::.in_quotes_replacement(
                     string =tempo1$string, 
@@ -581,14 +577,13 @@ all_args_here <- function(
                     no_regex_pattern = ")", 
                     replacement = " ", 
                     perl = TRUE, 
-                    error_text = base::sub(pattern = "^ERROR IN ", replacement = " INSIDE ", x = error_text_start, ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE), 
-                    internal_error_report_link = internal_error_report_link
+                    error_text = embed_error_text
                 )
                 tempo_pos <- saferDev:::.fun_args_pos(
                     text = tempo2$string, 
                     pattern = pattern2,     
-                    error_text = base::sub(pattern = "^ERROR IN ", replacement = " INSIDE ", x = error_text_start, ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE), 
-                    internal_error_report_link = internal_error_report_link) # positions of 1st letter of the function name and opening and closing brackets # Warning: fun_1_line_replace used because the input string must be cleaned form brackets between quotes
+                    error_text = embed_error_text
+                ) # positions of 1st letter of the function name and opening and closing brackets # Warning: fun_1_line_replace used because the input string must be cleaned form brackets between quotes
                 if( ! base::is.null(x = tempo_pos$middle_bracket_pos)){ # I have to use if(){}, otherwise mid_bracket_pos_in_fun_1_line[[i1]][[i2]] disappears
                     mid_bracket_pos_in_col3[[i1]][[i2]] <- base::unlist(x = tempo_pos$middle_bracket_pos, recursive = TRUE, use.names = TRUE) # positions of the () inside a function
                 }
@@ -705,11 +700,10 @@ all_args_here <- function(
                 }
                 tempo_string <- base::substr(x = code_for_col[i2], start = 1, stop = col4[i2] - 1)
                 tempo_package_name_colons <- saferDev:::.extract_all_fun_names(
-                        text = tempo_string, 
-                        pattern = "[a-zA-Z][a-zA-Z0-9.]*:{2,3}$",
-                        error_text = base::sub(pattern = "^ERROR IN ", replacement = " INSIDE ", x = error_text_start, ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE),
-                        internal_error_report_link = internal_error_report_link
-                    )$string # before 
+                    text = tempo_string, 
+                    pattern = "[a-zA-Z][a-zA-Z0-9.]*:{2,3}$",
+                    error_text = embed_error_text
+                )$string # before 
                 saferDev::is_function_here(
                     fun = base::paste0(tempo_package_name_colons, col2[i2], collapse = NULL, recycle0 = FALSE), 
                     lib_path = lib_path, 
@@ -779,8 +773,7 @@ all_args_here <- function(
                         no_regex_pattern = ",", 
                         replacement = " ", 
                         perl = TRUE, 
-                        error_text = base::sub(pattern = "^ERROR IN ", replacement = " INSIDE ", x = error_text_start, ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE), 
-                        internal_error_report_link = internal_error_report_link
+                        error_text = embed_error_text
                     )
                     tempo_col3 <- tempo$string
                     pos_rep2 <- tempo$pos # replaced positions in obs_args
@@ -818,8 +811,8 @@ all_args_here <- function(
                                 perl = TRUE, 
                                 open_pos = middle_bracket_open_in_col3[[i2]][i6], 
                                 close_pos = middle_bracket_close_in_col3[[i2]][i6], 
-                                error_text = base::sub(pattern = "^ERROR IN ", replacement = " INSIDE ", x = error_text_start, ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE), 
-                                internal_error_report_link = internal_error_report_link)
+                                error_text = embed_error_text
+                            )
                             tempo_col3 <- tempo$string
                             pos_rep2 <- base::c(pos_rep2, tempo$pos) # replaced positions in obs_args
                         }
@@ -918,7 +911,7 @@ all_args_here <- function(
                         col1_i2 = col1[i2],
                         col2_i2 = col2[i2],
                         arg_user_setting_x = arg_user_setting$x, 
-                        error_text = base::sub(pattern = "^ERROR IN ", replacement = " INSIDE ", x = error_text_start, ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE), 
+                        error_text = embed_error_text, 
                         warn = warn,
                         warn_count = warn_count
                     )

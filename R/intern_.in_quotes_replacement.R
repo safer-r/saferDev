@@ -310,14 +310,12 @@
             double.quote.test <- .has_odd_number_of_quotes(
                 input_string = string_out, 
                 pattern = '"', 
-                error_text = base::sub(pattern = "^ERROR IN ", replacement = " INSIDE ", x = error_text_start, ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE), 
-                internal_error_report_link = internal_error_report_link
+                error_text = base::sub(pattern = "^ERROR IN ", replacement = " INSIDE ", x = error_text_start, ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE)
             ) # here FALSE means even number of quotes, thus that ")" is not between quotes, thus has to be kept. TRUE means that ")" is between quotes, thus has to be removed
             simple.quote.test <- .has_odd_number_of_quotes(
                 input_string = string_out, 
                 pattern = "'", 
-                error_text = base::sub(pattern = "^ERROR IN ", replacement = " INSIDE ", x = error_text_start, ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE), 
-                internal_error_report_link = internal_error_report_link
+                error_text = base::sub(pattern = "^ERROR IN ", replacement = " INSIDE ", x = error_text_start, ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE)
             ) # idem
             odds.quotes.log <- double.quote.test |  simple.quote.test # remove ")" ?
             if(odds.quotes.log == TRUE){
@@ -333,14 +331,12 @@
         double.quote.test <- .has_odd_number_of_quotes(
             input_string = string_out, 
             pattern = '"', 
-            error_text = base::sub(pattern = "^ERROR IN ", replacement = " INSIDE ", x = error_text_start, ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE), 
-            internal_error_report_link = internal_error_report_link
+            error_text = base::sub(pattern = "^ERROR IN ", replacement = " INSIDE ", x = error_text_start, ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE)
         ) # here FALSE means even number of quotes, thus that ")" is not between quotes, thus has to be kept. TRUE means that ")" is between quotes, thus has to be removed
         simple.quote.test <- .has_odd_number_of_quotes(
             input_string = string_out, 
             pattern = "'", 
-                error_text = base::sub(pattern = "^ERROR IN ", replacement = " INSIDE ", x = error_text_start, ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE), 
-                internal_error_report_link = internal_error_report_link
+                error_text = base::sub(pattern = "^ERROR IN ", replacement = " INSIDE ", x = error_text_start, ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE)
             ) # idem
         odds.quotes.log <- double.quote.test |  simple.quote.test # remove ")" ?
         if(odds.quotes.log == TRUE){

@@ -338,8 +338,7 @@ colons_check <- function(
     out <- .functions_detect(
         x = x, 
         arg_user_setting = arg_user_setting, 
-        error_text = base::sub(pattern = "^ERROR IN ", replacement = " INSIDE ", x = error_text_start, ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE), 
-        internal_error_report_link = internal_error_report_link
+        error_text = base::sub(pattern = "^ERROR IN ", replacement = " INSIDE ", x = error_text_start, ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE)
     )
     if( ! (base::all(base::typeof(x = out$fun_names) == "list", na.rm = TRUE) & base::all(base::typeof(x = out$fun_names_pos) == "list", na.rm = TRUE))){
         tempo.cat <- base::paste0(
@@ -397,7 +396,6 @@ colons_check <- function(
                 ini = out$code, 
                 arg_user_setting = out$arg_user_setting, 
                 error_text = base::sub(pattern = "^ERROR IN ", replacement = " INSIDE ", x = error_text_start, ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE), 
-                internal_error_report_link = internal_error_report_link, 
                 text = "BASIC", 
                 internal_fun_names = out$internal_fun_names
             )
@@ -452,7 +450,6 @@ colons_check <- function(
                 ini = out$code, 
                 arg_user_setting = out$arg_user_setting, 
                 error_text = base::sub(pattern = "^ERROR IN ", replacement = " INSIDE ", x = error_text_start, ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE), 
-                internal_error_report_link = internal_error_report_link, 
                 text = "OTHER", 
                 internal_fun_names = out$internal_fun_names
             )

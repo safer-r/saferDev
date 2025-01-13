@@ -301,14 +301,12 @@
                 double.quote.test <- .has_odd_number_of_quotes(
                     input_string = tempo.line, 
                     pattern = '"', 
-                    error_text = base::sub(pattern = "^ERROR IN ", replacement = " INSIDE ", x = error_text_start, ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE), 
-                    internal_error_report_link = internal_error_report_link
+                    error_text = base::sub(pattern = "^ERROR IN ", replacement = " INSIDE ", x = error_text_start, ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE)
                 ) # here FALSE means even number of quotes, thus that # is not between quotes, thus has to be removed. TRUE means that # is between quotes, thus has to be kept
                 simple.quote.test <- .has_odd_number_of_quotes(
                     input_string = tempo.line, 
                     pattern = "'", 
-                    error_text = base::sub(pattern = "^ERROR IN ", replacement = " INSIDE ", x = error_text_start, ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE), 
-                    internal_error_report_link = internal_error_report_link
+                    error_text = base::sub(pattern = "^ERROR IN ", replacement = " INSIDE ", x = error_text_start, ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE)
                 ) # idem
                 odds.quotes.log <- double.quote.test |  simple.quote.test # lines to keep among commented lines
                 if(odds.quotes.log == TRUE){
@@ -368,8 +366,7 @@
         tempo <- .extract_all_fun_names(
             text = code[i1], 
             pattern = pattern1,
-            error_text = base::sub(pattern = "^ERROR IN ", replacement = " INSIDE ", x = error_text_start, ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE),
-            internal_error_report_link = internal_error_report_link
+            error_text = base::sub(pattern = "^ERROR IN ", replacement = " INSIDE ", x = error_text_start, ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE)
         ) # recover all the function names, followed by "(", present in code, using a perl pattern
         fun_name <- base::c(fun_name, base::list(tempo$string))
         fun_name_pos <- base::c(fun_name_pos, base::list(tempo$pos))

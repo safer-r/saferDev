@@ -462,8 +462,7 @@
                 col2 = col2, 
                 col3 = col3, 
                 ini = ini, 
-                error_text = base::sub(pattern = "^ERROR IN ", replacement = " INSIDE ", x = error_text_start, ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE),
-                internal_error_report_link = internal_error_report_link
+                error_text = base::sub(pattern = "^ERROR IN ", replacement = " INSIDE ", x = error_text_start, ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE)
             ) # function names are inside quotes or after $ ?
             if(base::sum(tempo.log, na.rm = TRUE) > 0){
                 col1 <- col1[ ! tempo.log] # keep clean functions
