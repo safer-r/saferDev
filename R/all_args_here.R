@@ -177,7 +177,7 @@ all_args_here <- function(
         "df_name", 
         "overwrite", 
         # "lib_path", # inactivated because can be NULL
-        "safer_check",
+        "safer_check"
         # "error_text" # inactivated because NULL converted to "" above
     )
     tempo_log <- base::sapply(X = base::lapply(X = tempo_arg, FUN = function(x){base::get(x = x, pos = -1L, envir = base::parent.frame(n = 2), mode = "any", inherits = FALSE)}), FUN = function(x){base::is.null(x = x)}, simplify = TRUE, USE.NAMES = TRUE) # parent.frame(n = 2) because sapply(lapply())
@@ -346,7 +346,7 @@ all_args_here <- function(
     ######## management of "" in arguments of mode character
     tempo_arg <- base::c(
         "path_out", 
-        "df_name",
+        "df_name"
         # "lib_path" # inactivated because already checked above
         # "error_text" # inactivated because can be ""
     )

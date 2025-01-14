@@ -204,13 +204,13 @@
     ######## end check of lib_path
 
     ######## safer_check argument checking
-
+    # not required because not here
     ######## end safer_check argument checking
 
     ######## check of the required functions from the required packages
     # saferDev::arg_check is required
     # saferDev::.noclean_functions is required
-    # check already done in the main safer function
+    # but check already done in the main safer function
     ######## end check of the required functions from the required packages
 
     ######## critical operator checking
@@ -237,7 +237,7 @@
     if( ! base::is.null(x = internal_error_report_link)){ # for all arguments that can be NULL, write like this:
         tempo <- saferDev::arg_check(data = internal_error_report_link, class = "vector", typeof = "character", mode = NULL, length = 1, prop = FALSE, double_as_integer_allowed = FALSE, options = NULL, all_options_in_data = FALSE, na_contain = TRUE, neg_values = TRUE, inf_values = TRUE, print = FALSE, data_name = NULL, data_arg = TRUE, lib_path = lib_path, safer_check = FALSE,  error_text = embed_error_text) ; base::eval(expr = ee, envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL)) # copy - paste this line as much as necessary
     }
-    tempo <- saferDev::arg_check(data = text, class = NULL, typeof = NULL, mode = NULL, length = 1, prop = FALSE, double_as_integer_allowed = FALSE, options = c("BASIC", "OTHER"), all_options_in_data = FALSE, na_contain = TRUE, neg_values = TRUE, inf_values = TRUE, print = FALSE, data_name = NULL, data_arg = TRUE, lib_path = lib_path, safer_check = FALSE,  error_text = embed_error_text) ; base::eval(expr = ee, envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL)) # copy - paste this line as much as necessary
+    tempo <- saferDev::arg_check(data = text, class = NULL, typeof = NULL, mode = NULL, length = 1, prop = FALSE, double_as_integer_allowed = FALSE, options = base::c("BASIC", "OTHER"), all_options_in_data = FALSE, na_contain = TRUE, neg_values = TRUE, inf_values = TRUE, print = FALSE, data_name = NULL, data_arg = TRUE, lib_path = lib_path, safer_check = FALSE,  error_text = embed_error_text) ; base::eval(expr = ee, envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL)) # copy - paste this line as much as necessary
     if( ! base::is.null(x = internal_fun_names)){ # for all arguments that can be NULL, write like this:
         tempo <- saferDev::arg_check(data = internal_fun_names, class = "vector", typeof = "character", mode = NULL, length = NULL, prop = FALSE, double_as_integer_allowed = FALSE, options = NULL, all_options_in_data = FALSE, na_contain = TRUE, neg_values = TRUE, inf_values = TRUE, print = FALSE, data_name = NULL, data_arg = TRUE, lib_path = lib_path, safer_check = FALSE,  error_text = embed_error_text) ; base::eval(expr = ee, envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL)) # copy - paste this line as much as necessary
     }
@@ -344,7 +344,9 @@
         tempo.cat <- base::paste0("
             INTERNAL ERROR 1 IN ", 
             intern_error_text_start, 
-            "THE text ARGUMENT OF .colons_check_message() MUST BE \"BASIC\" OR \"OTHER\".\nTHE PROBLEM IS:\n",
+            "THE text ARGUMENT OF ", 
+            function_name, 
+            " MUST BE \"BASIC\" OR \"OTHER\".\nTHE PROBLEM IS:\n",
             intern_error_text_end, 
             collapse = NULL, 
             recycle0 = FALSE
@@ -486,7 +488,7 @@
                 col2 = col2, 
                 col3 = col3, 
                 ini = ini, 
-                error_text = base::sub(pattern = "^ERROR IN ", replacement = " INSIDE ", x = error_text_start, ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE)
+                error_text = embed_error_text
             ) # function names are inside quotes or after $ ?
             if(base::sum(tempo.log, na.rm = TRUE) > 0){
                 col1 <- col1[ ! tempo.log] # keep clean functions
@@ -505,5 +507,12 @@
             }
         }
     }
+    #### end main code
+
+    #### output
     base::return(base::list(output.cat = output.cat, colon_not_here = base::unlist(colon_not_here)))
+    #### end output
+
+    #### warning output
+    #### end warning output
 }
