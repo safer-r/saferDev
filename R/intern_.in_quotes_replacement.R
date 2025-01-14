@@ -28,7 +28,7 @@
     no_regex_pattern, 
     replacement, 
     perl,
-    error_text
+    error_text # warning: in internal functions, can return a non safer error message because error_text without default value and is used below before checking for mandatory arg value (specific of internal functions since classical functions are error_text = "")
 ){
     # DEBUGGING
     # source("https://raw.githubusercontent.com/safer-r/saferDev/main/dev/other/test.R") ; string = paste(deparse(test), collapse = "") ; pattern = "\\)" ; no_regex_pattern = ")" ; replacement = " " ; perl = FALSE ; error_text = " INSIDE P1::F1" ; internal_error_report_link = "test"

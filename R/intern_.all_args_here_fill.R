@@ -36,7 +36,7 @@
     col1_i2, 
     col2_i2,
     arg_user_setting_x, 
-    error_text # warning: in internal functions, can return a non safer error message because error_text without default value and is used below before checking for mandatory arg value (specific of internal functions since classical functions are error_text = "")
+    error_text, # warning: in internal functions, can return a non safer error message because error_text without default value and is used below before checking for mandatory arg value (specific of internal functions since classical functions are error_text = "")
     warn,
     warn_count
 ){

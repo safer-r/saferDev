@@ -21,7 +21,7 @@
     text, 
     pattern, 
     lib_path, # required because of saferDev::arg_check()
-    error_text
+    error_text # warning: in internal functions, can return a non safer error message because error_text without default value and is used below before checking for mandatory arg value (specific of internal functions since classical functions are error_text = "")
 ){
     # DEBUGGING
     # text = ini[20] ; pattern = pattern1 ; error_text = " INSIDE P1::F1"

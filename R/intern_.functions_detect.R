@@ -29,7 +29,7 @@
     # in internal functions, all arguments are without value on purpose
     x, 
     arg_user_setting, 
-    error_text
+    error_text # warning: in internal functions, can return a non safer error message because error_text without default value and is used below before checking for mandatory arg value (specific of internal functions since classical functions are error_text = "")
 ){
     # DEBUGGING
     # x = x ; arg_user_setting = arg_user_setting ; error_text = "" ; internal_error_report_link = "test"
