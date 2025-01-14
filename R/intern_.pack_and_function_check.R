@@ -13,7 +13,7 @@
 #' \dontrun{ # Example that shouldn't be run because this is an internal function
 #' .pack_and_function_check(fun = 1, lib_path = NULL, error_text = " INSIDE F1.") # this example returns an error
 #' .pack_and_function_check(fun = "ggplot2::notgood", lib_path = base::.libPaths(), error_text = " INSIDE P1::F1") # this example returns an error
-#' .pack_and_function_check(fun = c("ggplot2::geom_point", "grid::gpar"), lib_path = base::.libPaths(), error_text = " INSIDE P1::F1")
+#' .pack_and_function_check(fun = c("ggplot2::geom_point", "grid::gpar"), lib_path = base::.libPaths(), error_text = " INSIDE P1::F1")  # nothing should happen
 #' }
 #' @author Gael Millot <gael.millot@pasteur.fr>
 #' @keywords internal
@@ -191,10 +191,10 @@
     ######## end argument checking with arg_check()
 
     ######## management of "" in arguments of mode character
-    # this part is specifically changed for arg_check because arg not checked with arg_check above. See below where exactly
+    # this part is specifically changed because arg not checked with arg_check above. See below where exactly
     tempo_arg <-base::c(
-        "fun", 
-        "lib_path" 
+        "fun"
+        # "lib_path" # inactivated because already checked above
         # "error_text" # inactivated because can be ""
     )
     tempo_log <- ! base::sapply(X = base::lapply(X = tempo_arg, FUN = function(x){base::get(x = x, pos = -1L, envir = base::parent.frame(n = 2), mode = "any", inherits = FALSE)}), FUN = function(x){if(base::is.null(x = x)){base::return(TRUE)}else{base::all(base::mode(x = x) == "character", na.rm = TRUE)}}, simplify = TRUE, USE.NAMES = TRUE) # parent.frame(n = 2) because sapply(lapply())  #  need to test is.null() here
@@ -303,5 +303,11 @@
         base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL) # == in base::stop() to be able to add several messages between ==
     }
     #### end main code
+
+    #### output
+    #### end output
+
+    #### warning output
+    #### end warning output
 }
 
