@@ -4,7 +4,7 @@
 #' @param fun Character vector of the names of the required functions, preceded by the name of the package they belong to and a double or triple colon. Example: c("ggplot2::geom_point", "grid::gpar"). Warning: do not write "()" at the end of the function
 #' @param lib_path Vector of characters specifying the absolute pathways of the directories containing the required packages for the function, if not in the default directories. Useful to overcome R execution using system with non admin rights for R package installation in the default directories. Ignored if NULL (default): only the pathways specified by .libPaths() are used for package calling. Specify the right path if the function returns a package path error.
 #' @param safer_check Single logical value. Perform some "safer" checks? If TRUE, checkings are performed before main code running (see https://github.com/safer-r): 1) R classical operators (like "<-") not overwritten by another package because of the R scope and 2) required functions and related packages effectively present in local R lybraries. Must be set to FALSE if this fonction is used inside another "safer" function to avoid pointless multiple checkings.
-#' @param error_text Single character string used to add information in error messages returned by the function, notably if the function is inside other functions, which is practical for debugging. Example: error_text = "INSIDE <PACKAGE_1>::<FUNCTION_1> INSIDE <PACKAGE_2>::<FUNCTION_2>".
+#' @param error_text Single character string used to add information in error messages returned by the function, notably if the function is inside other functions, which is practical for debugging. Example: error_text = " INSIDE <PACKAGE_1>::<FUNCTION_1> INSIDE <PACKAGE_2>::<FUNCTION_2>.". If NULL, converted into "".
 #' @returns  An error message if at least one of the checked packages is missing in lib_path, or if at least one of the checked functions is missing in the required package, nothing otherwise.
 #' @seealso \code{\link{exists}} et \code{\link[methods]{findFunction}}
 #' @author Gael Millot <gael.millot@pasteur.fr>
@@ -16,7 +16,7 @@
 #' is_function_here(fun = c("ggplot2::geom_point", "grid::gpar"))
 #' is_function_here(fun = "c")
 #' }
-#' is_function_here(fun = "base::c")
+#' is_function_here(fun = "base::c", error_text = " INSIDE P1::F1")
 #' @export
 
 
@@ -27,8 +27,8 @@ is_function_here <- function(
     error_text = ""
 ){
     # DEBUGGING
-    # fun = "ggplot2::geom_point" ; lib_path = "C:/Program Files/R/R-4.3.1/library" ; safer_check = TRUE
-    # fun = "saferDev:::.colons_check_message" ; lib_path = "C:/Program Files/R/R-4.3.1/library" ; safer_check = TRUE
+    # fun = "ggplot2::geom_point" ; lib_path = "C:/Program Files/R/R-4.3.1/library" lib_path = NULL ; safer_check = TRUE ; error_text = ""
+    # fun = "saferDev:::.colons_check_message" ; lib_path = "C:/Program Files/R/R-4.3.1/library" ; lib_path = NULL ; safer_check = TRUE ; error_text = " INSIDE P1::F1"
 
     #### package name
     package_name <- "saferDev" # write NULL if the function developed is not in a package
@@ -274,8 +274,8 @@ is_function_here <- function(
 
     ######## management of "" in arguments of mode character
     tempo_arg <- base::c(
-        "fun",
-        "lib_path"
+        "fun"
+        # "lib_path" # inactivated because already checked above
         # "error_text" # inactivated because can be ""
     )
     tempo_log <- ! base::sapply(X = base::lapply(X = tempo_arg, FUN = function(x){base::get(x = x, pos = -1L, envir = base::parent.frame(n = 2), mode = "any", inherits = FALSE)}), FUN = function(x){if(base::is.null(x = x)){base::return(TRUE)}else{base::all(base::mode(x = x) == "character", na.rm = TRUE)}}, simplify = TRUE, USE.NAMES = TRUE) # parent.frame(n = 2) because sapply(lapply())  #  need to test is.null() here
@@ -331,58 +331,66 @@ is_function_here <- function(
     #### end second round of checking and data preparation
 
     #### main code
-    tempo.log <- base::grepl(x = fun, pattern = "^[a-zA-Z][a-zA-Z0-9.]*(:{2}[a-zA-Z]|:{3}\\.[a-zA-Z._])[a-zA-Z0-9._]*$")
+    tempo.log <- base::grepl(x = fun, pattern = "^[a-zA-Z][a-zA-Z0-9.]*(:{2}[a-zA-Z]|:{3}\\.[a-zA-Z._])[a-zA-Z0-9._]*$", ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE)
     # [a-zA-Z][a-zA-Z0-9.]+ means any single alphabet character (package name cannot start by dot or underscore or num), then any alphanum and dots
     # (:{2}[a-zA-Z]|:{3}\\.[a-zA-Z._]) means either double colon and any single alphabet character or triple colon followed by a dot and any single alphabet character or dot (because .. is ok for function name) or underscore (because ._ is ok for function name). Starting "dot and num" or underscore is not authorized for function name
-    # [a-zA-Z0-9._]* any several of these characters or nothing
-    if( ! base::all(tempo.log)){
-        tempo.cat <- base::paste0("ERROR IN ", function_name, " OF THE ", package_name, " PACKAGE\nTHE STRING IN fun ARGUMENT MUST CONTAIN \"::\" OR \":::.\":\n", base::paste(fun[ ! tempo.log], collapse = "\n"))
-        base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
-    }
-    tempo.log <- base::grepl(x = fun, pattern = "^.+\\(\\)$")
-    if(base::any(tempo.log)){
-        tempo.cat <- base::paste0("ERROR IN ", function_name, " OF THE ", package_name, " PACKAGE\nTHE STRING IN fun ARGUMENT MUST NOT FINISH BY \"()\":\n", base::paste(fun[tempo.log], collapse = "\n"))
-        base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
-    }
-    pkg.fun.name.list <- base::strsplit(x = fun, split = ":{2,3}") # package in 1 and function in 2
-    pkg.name <- base::sapply(X = pkg.fun.name.list, FUN = function(x){x[1]})
-    pkg.log <- pkg.name %in% base::rownames(utils::installed.packages(lib.loc = lib_path))
-    if( ! base::all(pkg.log)){
-        tempo <- pkg.name[ ! pkg.log]
+    # [a-zA-Z0-9._]* means any several of these characters or nothing
+    if( ! base::all(tempo.log, na.rm = TRUE)){
         tempo.cat <- base::paste0(
-            "ERROR IN ", 
-            function_name, 
-            " OF THE ",
-            package_name,
-            " PACKAGE",
-            "\nREQUIRED PACKAGE", 
-            base::ifelse(base::length(tempo) == 1L, base::paste0(":\n", tempo), base::paste0("S:\n", base::paste(tempo, collapse = "\n"))), 
-            "MUST BE INSTALLED IN", 
-            base::ifelse(base::length(lib_path) == 1L, "", " ONE OF THESE FOLDERS"), 
-            ":\n", 
-            base::paste(lib_path, collapse = "\n")
+            error_text_start, 
+            "THE STRING IN fun ARGUMENT MUST CONTAIN \"::\" OR \":::.\":\n", 
+            base::paste0(fun[ ! tempo.log], collapse = "\n", recycle0 = FALSE), 
+            collapse = NULL, 
+            recycle0 = FALSE
         )
-        base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
+        base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL) # == in base::stop() to be able to add several messages between ==
     }
-    fun.log <- base::sapply(X = pkg.fun.name.list, FUN = function(x){base::exists(x[2], envir = base::asNamespace(x[1]))})
-    if( ! base::all(fun.log)){
+    tempo.log <- base::grepl(x = fun, pattern = "^.+\\(\\)$", ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE)
+    if(base::any(tempo.log, na.rm = TRUE)){
+        tempo.cat <- base::paste0(
+            error_text_start, 
+            "THE STRING IN fun ARGUMENT MUST NOT FINISH BY \"()\":\n", 
+            base::paste0(fun[tempo.log], collapse = "\n", recycle0 = FALSE),
+            collapse = NULL, 
+            recycle0 = FALSE
+        )
+        base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL) # == in base::stop() to be able to add several messages between ==
+    }
+    pkg.fun.name.list <- base::strsplit(x = fun, split = ":{2,3}", fixed = FALSE, perl = FALSE, useBytes = FALSE) # package in 1 and function in 2
+    pkg.name <- base::sapply(X = pkg.fun.name.list, FUN = function(x){x[1]}, simplify = TRUE, USE.NAMES = TRUE)
+    pkg.log <- pkg.name %in% base::rownames(x = utils::installed.packages(lib.loc = lib_path, priority = NULL, noCache = FALSE, fields = NULL, subarch =  base::.Platform$r_arch), do.NULL = TRUE, prefix = "row")
+    if( ! base::all(pkg.log, na.rm = TRUE)){
+        tempo <- base::unique(x = pkg.name[ ! pkg.log], incomparables = FALSE)
+        tempo.cat <- base::paste0(
+            error_text_start,
+            "REQUIRED PACKAGE", 
+            base::ifelse(test = base::length(x = tempo) == 1L, yes = base::paste0(":\n", tempo, collapse = NULL, recycle0 = FALSE), no = base::paste0("S:\n", base::paste0(tempo, collapse = "\n", recycle0 = FALSE), collapse = NULL, recycle0 = FALSE)), 
+            "\nMUST BE INSTALLED IN", 
+            base::ifelse(test = base::length(x = lib_path) == 1L, yes = "", no = " ONE OF THESE FOLDERS"), 
+            ":\n", 
+            base::paste0(lib_path, collapse = "\n", recycle0 = FALSE),
+            collapse = NULL, 
+            recycle0 = FALSE
+        )
+        base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL) # == in base::stop() to be able to add several messages between ==
+    }
+    fun.log <- base::sapply(X = pkg.fun.name.list, FUN = function(x){base::exists(x = x[2], envir = base::getNamespace(name = x[1]), where = -1, frame = NULL, mode = "any", inherits = FALSE)}, simplify = TRUE, USE.NAMES = TRUE)
+    if( ! base::all(fun.log, na.rm = TRUE)){
         tempo <- fun[ ! fun.log]
         tempo.cat <- base::paste0(
-            "ERROR IN ", 
-            function_name, 
-            " OF THE ",
-            package_name,
-            " PACKAGE",
-            "\nREQUIRED FUNCTION",
-            base::ifelse(base::length(tempo) == 1L, " IS ", "S ARE "), 
+            error_text_start,
+            "REQUIRED FUNCTION",
+            base::ifelse(test = base::length(x = tempo) == 1L, yes = " IS ", no = "S ARE "), 
             "MISSING IN THE INSTALLED PACKAGE", 
-            base::ifelse(base::length(tempo) == 1L, base::paste0(":\n", tempo), base::paste0("S:\n", base::paste(tempo, collapse = "\n"))),
+            base::ifelse(test = base::length(x = tempo) == 1L, yes = base::paste0(":\n", tempo, collapse = NULL, recycle0 = FALSE), no = base::paste0("S:\n", base::paste0(tempo, collapse = "\n", recycle0 = FALSE), collapse = NULL, recycle0 = FALSE)),
             "\n\nIN", 
-            base::ifelse(base::length(lib_path) == 1L, "", " ONE OF THESE FOLDERS"), 
+            base::ifelse(test = base::length(x = lib_path) == 1L, yes = "", no = " ONE OF THESE FOLDERS"), 
             ":\n", 
-            base::paste(lib_path, collapse = "\n")
+            base::paste0(lib_path, collapse = "\n", recycle0 = FALSE),
+            collapse = NULL, 
+            recycle0 = FALSE
         )
-        base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
+        base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL) # == in base::stop() to be able to add several messages between ==
     }
     #### end main code
 

@@ -10,13 +10,14 @@
 #' @examples
 #' \dontrun{
 #' # Example that shouldn't be run because this is an internal function
-#' assign("!", 1) ; assign("+", 2) ; .base_op_check(error_text = " INSIDE fun1.") # commented because this example returns an error
+#' .base_op_check(error_text = " INSIDE fun1.") # nothing should happen
+#' assign("!", 1) ; assign("+", 2) ; .base_op_check(error_text = " INSIDE fun1.") this example returns an error
 #' rm("!") ; rm("+") 
 #' }
 #' @keywords internal
 #' @rdname internal_function
 .base_op_check <- function(
-    error_text
+    error_text # warning: in internal functions, can return a non safer error message because error_text without default value and is used below before checking for mandatory arg value (specific of internal functions since classical functions are error_text = "")
 ){
     #### package name
     package_name <- "saferDev" # write NULL if the function developed is not in a package
@@ -62,9 +63,11 @@
     ######## end basic error text start
 
     ######## internal error text
+    # not required
     ######## end internal error text
 
     ######## error text when embedding
+    # not required
     ######## end error text when embedding
 
     #### end error_text initiation
@@ -92,6 +95,7 @@
 
     ######## management of NULL arguments
     # not required
+    # "error_text" # inactivated because NULL converted to "" above
     ######## end management of NULL arguments
 
     ######## management of NA arguments
@@ -144,7 +148,7 @@
     ######## end safer_check argument checking
 
     ######## check of the required functions from the required packages
-    # not required
+    # not required (only basic R function)
     ######## end check of the required functions from the required packages
 
     ######## critical operator checking
@@ -160,8 +164,7 @@
     ######## end argument checking with arg_check()
 
     ######## management of "" in arguments of mode character
-        # "error_text" # inactivated because can be ""
-
+    # "error_text" # inactivated because can be ""
     ######## end management of "" in arguments of mode character
 
     #### end argument secondary checking
@@ -243,8 +246,13 @@
             "CRITICAL R OBJECT",
             base::ifelse(test = base::length(x = tempo.log) == 1L, yes = " ", no = "S "), 
             "CANNOT BE PRESENT SOMEWHERE ELSE IN THE R SCOPE THAN IN \"package::base\".\nPROBLEM WITH:\n", 
-            base::paste0(base::paste(tempo.name, tempo.pos, sep = "\t", collapse = NULL, recycle0 = FALSE), collapse = "\n", recycle0 = FALSE),
-            collapse = NULL, recycle0 = FALSE
+            base::paste0(base::paste(tempo.name, tempo.pos, sep = "\t", collapse = NULL, recycle0 = FALSE), collapse = "\n", recycle0 = FALSE), 
+            "\n\nSWITCH THE safer_check ARGUMENT TO FALSE IF ", 
+            base::ifelse(test = base::length(x = tempo.log) == 1L, yes = "THIS OBJECT ", no = "THESE OBJECTS "), 
+            "CANNOT BE DELETED.\n\nOF NOTE, BASIC R OBJECT PROTECTED FROM OVERWRITING FOR SAFER FUNCTION USAGE:\n",
+            base::paste0(reserved.objects, collapse = "\n", recycle0 = FALSE),
+            collapse = NULL, 
+            recycle0 = FALSE
         )
         base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL) # == in base::stop() to be able to add several messages between ==
     }

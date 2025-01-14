@@ -3,8 +3,8 @@
 #' Verify that all the functions used inside a function are all referenced by their package attribution. For instance: base::mean() and not mean(), or saferDev:::.base_op_check() and not .base_op_check().
 #' @param x a function name, written without quotes and brackets.
 #' @param lib_path Vector of characters specifying the absolute pathways of the directories containing the required packages for the function, if not in the default directories. Useful to overcome R execution using system with non admin rights for R package installation in the default directories. Ignored if NULL (default): only the pathways specified by .libPaths() are used for package calling. Specify the right path if the function returns a package path error.
-#' @param safer_check Single logical value. Perform some "safer" checks? If TRUE, checkings are performed before main code running (see https://github.com/safer-r): 1) R classical operators (like "<-") not overwritten by another package because of the R scope and 2) required functions and related packages effectively present in local R lybraries. Must be set to FALSE if this fonction is used inside another "safer" function to avoid pointless multiple checkings.
-#' @param error_text Single character string used to add information in error messages returned by the function, notably if the function is inside other functions, which is practical for debugging. Example: error_text = "INSIDE <PACKAGE_1>::<FUNCTION_1> INSIDE <PACKAGE_2>::<FUNCTION_2>".
+#' @param safer_check Single logical value. Perform some "safer" checks? If TRUE, checkings are performed before main code running (see https://github.com/safer-r): 1) R classical operators (like "<-") not overwritten by another package because of the R scope and 2) required functions and related packages effectively present in local R lybraries. Must be set to FALSE if all_args_here() fonction is used inside another "safer" function to avoid pointless multiple checkings.
+#' @param error_text Single character string used to add information in error messages returned by the function, notably if the function is inside other functions, which is practical for debugging. Example: error_text = " INSIDE <PACKAGE_1>::<FUNCTION_1> INSIDE <PACKAGE_2>::<FUNCTION_2>.". If NULL, converted into "".
 #' @returns 
 #' A table-like message indicating the missing :: or ::: or a message saying that everything seems fine.
 #' Table-like: column 1, the line number in the function code (starting at the "<- function" line, i.e., without counting the #' header lines); column 2,  the function name; column 3, the code preceeding the function name
@@ -69,7 +69,7 @@ colons_check <- function(
     #### end internal error report link
 
     #### function name
-    tempo_settings <- base::as.list(x = base::match.call(definition = base::sys.function(which = base::sys.parent(n = 0)), call = base::sys.call(which = base::sys.parent(n = 0)), expand.dots = FALSE, envir = base::parent.frame(n = 2L))) # warning: I have written n = 0 to avoid error when a safer function is inside another functions
+    tempo_settings <- base::as.list(x = base::match.call(definition = base::sys.function(which = base::sys.parent(n = 0)), call = base::sys.call(which = base::sys.parent(n = 0)), expand.dots = FALSE, envir = base::parent.frame(n = 2L))) # warning: I have written n = 0 to avoid error when a safer function is inside another functions. In addition, arguments values retrieved are not evaluated base::match.call
     function_name <- base::paste0(tempo_settings[[1]], "()", collapse = NULL, recycle0 = FALSE) 
     # function name with "()" paste, which split into a vector of three: c("::()", "package ()", "function ()") if "package::function()" is used.
     if(function_name[1] == "::()" | function_name[1] == ":::()"){
@@ -78,127 +78,49 @@ colons_check <- function(
     #### end function name
 
     #### arguments settings
-    arg_user_setting <- tempo_settings[-1] # list of the argument settings (excluding default values not provided by the user)
+    arg_user_setting <- tempo_settings[-1] # list of the argument settings (excluding default values not provided by the user). Always a list, even if 1 argument. So ok for lapply() usage (management of NA section)
+    arg_user_setting_names <- base::names(x = arg_user_setting)
     arg_names <- base::names(x = base::formals(fun = base::sys.function(which = base::sys.parent(n = 2)), envir = base::parent.frame(n = 1))) # names of all the arguments
     #### end arguments settings
 
     #### error_text initiation
-    # basic error text start
-    error_text_start <- base::paste0(
-        "ERROR IN ", 
+
+    ######## basic error text start
+    error_text <- base::paste0(base::unlist(x = error_text, recursive = TRUE, use.names = TRUE), collapse = "", recycle0 = FALSE) # convert to string. if error_text is a string, changes nothing. If NULL -> "" so no need to check for management of NULL
+    package_function_name <- base::paste0(
         base::ifelse(test = base::is.null(x = package_name), yes = "", no = base::paste0(package_name, base::ifelse(test = base::grepl(x = function_name, pattern = "^\\.", ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE), yes = ":::", no = "::"), collapse = NULL, recycle0 = FALSE)), 
-        function_name, 
+        function_name,
         collapse = NULL, 
         recycle0 = FALSE
     )
-    # end basic error text start
-    # check of the error_text argument
-    if( ! (base::all(base::typeof(x = error_text) == "character", na.rm = TRUE) & base::length(x = error_text) == 1)){ # no need to test is.null(error_text) because typeof(x = NULL) == "character" returns FALSE
-        tempo_cat <- base::paste0(
-            error_text_start, 
-            "\nTHE error_text ARGUMENT MUST BE A SINGLE CHARACTER STRING (CAN BE \"\").\nHERE IT IS:\n", 
-            base::paste0(error_text, collapse = "\n", recycle0 = FALSE), 
-            collapse = NULL, 
-            recycle0 = FALSE
-        )
-        base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL) # == in base::stop() to be able to add several messages between ==
-    }
-    # end check of the error_text argument
-    # basic error text start updated
     error_text_start <- base::paste0(
-        error_text_start, 
+        "ERROR IN ", # must not be changed, because this "ERROR IN " string is used for text replacement
+        package_function_name, 
         base::ifelse(test = error_text == "", yes = ".", no = error_text), 
         "\n\n", 
         collapse = NULL, 
         recycle0 = FALSE
     )
-    # end basic error text start updated
-    # internal error text
+    ######## end basic error text start
+
+    ######## internal error text
     intern_error_text_start <- base::paste0(
-        base::ifelse(test = base::is.null(x = package_name), yes = "", no = base::paste0(package_name, base::ifelse(test = base::grepl(x = function_name, pattern = "^\\.", ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE), yes = ":::", no = "::"), collapse = NULL, recycle0 = FALSE)), 
-        function_name, 
+        package_function_name, 
         base::ifelse(test = error_text == "", yes = ".", no = error_text), 
         "\n\n", 
         collapse = NULL, 
         recycle0 = FALSE
     )
     intern_error_text_end <- base::ifelse(test = base::is.null(x = internal_error_report_link), yes = "", no = base::paste0("\n\nPLEASE, REPORT THIS ERROR HERE: ", internal_error_report_link, ".", collapse = NULL, recycle0 = FALSE))
-    # end internal error text
+    ######## end internal error text
+
+    ######## error text when embedding
+    # use this in the error_text of safer functions if present below 
+    embed_error_text  <- base::sub(pattern = "^ERROR IN ", replacement = " INSIDE ", x = error_text_start, ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE)
+    embed_error_text  <- base::sub(pattern = "\n*$", replacement = "", x = embed_error_text, ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE) # remove all the trailing \n, because added later
+    ######## end error text when embedding
+
     #### end error_text initiation
-
-    #### environment checking
-
-    ######## check of lib_path
-    # must be before any :: or ::: non basic package calling
-    if( ! base::is.null(x = lib_path)){
-        if( ! base::all(base::typeof(x = lib_path) == "character", na.rm = FALSE)){ # no na.rm = TRUE with typeof
-            tempo_cat <- base::paste0(
-                error_text_start, 
-                "DIRECTORY PATH INDICATED IN THE lib_path ARGUMENT MUST BE A VECTOR OF CHARACTERS.\nHERE IT IS:\n", 
-                base::paste0(lib_path, collapse = "\n", recycle0 = FALSE), 
-                collapse = NULL, 
-                recycle0 = FALSE
-            )
-            base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL) # == in base::stop() to be able to add several messages between ==
-        }else if( ! base::all(base::dir.exists(paths = lib_path), na.rm = TRUE)){ # separation to avoid the problem of tempo$problem == FALSE and lib_path == NA
-            tempo_cat <- base::paste0(
-                error_text_start, 
-                "DIRECTORY PATH INDICATED IN THE lib_path ARGUMENT DOES NOT EXISTS:\n", 
-                base::paste0(lib_path, collapse = "\n", recycle0 = FALSE), 
-                collapse = NULL, 
-                recycle0 = FALSE
-            )
-            base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL) # == in base::stop() to be able to add several messages between ==
-        }else{
-            base:::.libPaths(new = base::sub(x = lib_path, pattern = "/$|\\\\$", replacement = "", ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE), include.site = TRUE) # base:::.libPaths(new = ) add path to default path. BEWARE: base:::.libPaths() does not support / at the end of a submitted path. Thus check and replace last / or \\ in path
-            lib_path <- base:::.libPaths(new = , include.site = TRUE)
-        }
-    }else{
-        lib_path <- base:::.libPaths(new = , include.site = TRUE) # base:::.libPaths(new = lib_path) # or base:::.libPaths(new = base::c(base:::.libPaths(), lib_path))
-    }
-    ######## end check of lib_path
-
-    ######## safer_check argument checking
-    if( ! (base::all(safer_check %in% base::c(TRUE, FALSE), na.rm = FALSE) & base::length(x = safer_check) == 1 & base::all(base::is.logical(x = safer_check), na.rm = TRUE))){
-        tempo_cat <- base::paste0(
-            error_text_start, 
-            "safer_check ARGUMENT MUST BE EITHER TRUE OR FALSE.\nHER IT IS:\n", 
-            base::paste0(safer_check, collapse = "\n", recycle0 = FALSE), 
-            collapse = NULL, 
-            recycle0 = FALSE
-        )
-        base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL) # == in base::stop() to be able to add several messages between ==
-    }
-    ######## end safer_check argument checking
-
-    ######## check of the required functions from the required packages
-    if(safer_check == TRUE){
-        .pack_and_function_check(
-            fun = base::c(
-                "saferDev:::.base_op_check", 
-                "saferDev::arg_check", 
-                "saferDev:::.functions_detect", # requires saferDev::arg_check, saferDev:::.extract_all_fun_names, saferDev:::.has_odd_number_of_quotes
-                "saferDev:::.extract_all_fun_names", # from this function and from saferDev:::.functions_detect
-                "saferDev:::.has_odd_number_of_quotes", # from saferDev:::.functions_detect
-                "saferDev:::.colons_check_message", # requires saferDev::arg_check, .noclean_functions
-                "saferDev:::.noclean_functions", # requires saferDev::arg_check, saferDev:::.has_odd_number_of_quotes
-                "saferDev:::.has_odd_number_of_quotes"
-            ),
-            lib_path = lib_path, # write NULL if your function does not have any lib_path argument
-            error_text = base::sub(pattern = "^ERROR IN ", replacement = " INSIDE ", x = error_text_start, ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE)
-        )
-    }
-    ######## end check of the required functions from the required packages
-
-    ######## critical operator checking
-    if(safer_check == TRUE){
-        .base_op_check(
-            error_text = base::sub(pattern = "^ERROR IN ", replacement = " INSIDE ", x = error_text_start, ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE)
-        )
-    }
-    ######## end critical operator checking
-
-    #### end environment checking
 
     #### argument primary checking
 
@@ -207,7 +129,7 @@ colons_check <- function(
         "x"
     )
     tempo <- base::eval(expr = base::parse(text = base::paste0("base::c(base::missing(", base::paste0(mandat_args, collapse = "),base::missing(", recycle0 = FALSE), "))", collapse = NULL, recycle0 = FALSE), file = "", n = NULL, prompt = "?", keep.source = base::getOption(x = "keep.source", default = NULL), srcfile = NULL, encoding = "unknown"), envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL))
-    if(base::any(tempo, na.rm = FALSE)){
+    if(base::any(tempo, na.rm = TRUE)){
         tempo_cat <- base::paste0(
             error_text_start, 
             "FOLLOWING ARGUMENT", 
@@ -221,15 +143,57 @@ colons_check <- function(
     }
     ######## end arg with no default values
 
+    ######## management of NULL arguments
+    # before NA checking because is.na(NULL) return logical(0) and all(logical(0)) is TRUE
+    tempo_arg <-base::c(
+        "x", 
+        # "lib_path", # inactivated because can be NULL
+        "safer_check"
+        # "error_text" # inactivated because NULL converted to "" above
+    )
+    tempo_log <- base::sapply(X = base::lapply(X = tempo_arg, FUN = function(x){base::get(x = x, pos = -1L, envir = base::parent.frame(n = 2), mode = "any", inherits = FALSE)}), FUN = function(x){base::is.null(x = x)}, simplify = TRUE, USE.NAMES = TRUE) # parent.frame(n = 2) because sapply(lapply())
+    if(base::any(tempo_log, na.rm = TRUE)){ # normally no NA with base::is.null()
+        tempo_cat <- base::paste0(
+            error_text_start, 
+            base::ifelse(test = base::sum(tempo_log, na.rm = TRUE) > 1, yes = "THESE ARGUMENTS", no = "THIS ARGUMENT"), 
+            " CANNOT BE NULL:\n", 
+            base::paste0(tempo_arg[tempo_log], collapse = "\n", recycle0 = FALSE), 
+            collapse = NULL, 
+            recycle0 = FALSE
+        )
+        base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL) # == in base::stop() to be able to add several messages between ==
+    }
+    ######## end management of NULL arguments
+
     ######## management of NA arguments
+    # arguments values of class "expression", "name", "function" are not evaluated
     if(base::length(x = arg_user_setting) != 0){
-        tempo_log <- base::suppressWarnings(expr = base::sapply(X = base::lapply(X = arg_user_setting, FUN = function(x){base::is.na(x = x)}), FUN = function(x){base::any(x = x, na.rm = TRUE)}, simplify = TRUE, USE.NAMES = TRUE), classes = "warning") & base::lapply(X = arg_user_setting, FUN = function(x){base::length(x = x)}) == 1L # no argument provided by the user can be just NA
-        if(base::any(tempo_log, na.rm = TRUE)){ # normally no NA because base::is.na() used here
+        tempo_log <- base::suppressWarnings(
+            expr = base::sapply(
+                X = base::lapply(
+                    X = arg_user_setting, 
+                    FUN = function(x){
+                        if(base::all(base::class(x = x) %in% base::c("expression", "name", "function"), na.rm = TRUE)){
+                            FALSE
+                        }else{
+                            base::is.na(x = x)
+                        }
+                    }
+                ), 
+                FUN = function(x){
+                    base::all(x = x, na.rm = TRUE) & base::length(x = x) > 0
+                }, 
+                simplify = TRUE, 
+                USE.NAMES = TRUE
+            ), 
+            classes = "warning"
+        ) # no argument provided by the user can be just made of NA. is.na(NULL) returns logical(0), the reason why base::length(x = x) > 0 is used # warning: all(x = x, na.rm = TRUE) but normally no NA because base::is.na() used here. Warning: would not work if arg_user_setting is a vector (because treat each element as a compartment), but ok because it is always a list, even is 0 or 1 argument in the developed function
+        if(base::any(tempo_log, na.rm = TRUE)){
             tempo_cat <- base::paste0(
                 error_text_start, 
                 base::ifelse(test = base::sum(tempo_log, na.rm = TRUE) > 1, yes = "THESE ARGUMENTS", no = "THIS ARGUMENT"), 
-                " CANNOT JUST BE NA:", 
-                base::paste0(arg_names[tempo_log], collapse = "\n", recycle0 = FALSE), 
+                " CANNOT BE MADE OF NA ONLY:\n", 
+                base::paste0(arg_user_setting_names[tempo_log], collapse = "\n", recycle0 = FALSE), 
                 collapse = NULL, 
                 recycle0 = FALSE
             )
@@ -238,40 +202,110 @@ colons_check <- function(
     }
     ######## end management of NA arguments
 
-    ######## management of NULL arguments
-    tempo_arg <-base::c(
-        "x", 
-        # "lib_path", # inactivated because can be NULL
-        "safer_check",
-        "error_text"
-    )
-    tempo_log <- base::sapply( X = base::lapply(X = tempo_arg, FUN = function(x){base::get(x = x, pos = -1L, envir = base::parent.frame(n = 2), mode = "any", inherits = FALSE)}), FUN = function(x){base::is.null(x = x)}, simplify = TRUE, USE.NAMES = TRUE) # parent.frame(n = 2) because sapply(lapply())
-    if(base::any(tempo_log, na.rm = TRUE)){ # normally no NA with base::is.null()
+    #### end argument primary checking
+
+    #### environment checking
+
+    ######## check of lib_path
+    # must be before any :: or ::: non basic package calling
+    if( ! base::is.null(x = lib_path)){ #  is.null(NA) returns FALSE so OK.
+        if( ! base::all(base::typeof(x = lib_path) == "character", na.rm = TRUE)){ # na.rm = TRUE but no NA returned with typeof (typeof(NA) == "character" returns FALSE)
+            tempo_cat <- base::paste0(
+                error_text_start, 
+                "THE DIRECTORY PATH INDICATED IN THE lib_path ARGUMENT MUST BE A VECTOR OF CHARACTERS.\nHERE IT IS:\n", 
+                base::ifelse(test = base::length(x = lib_path) == 0 | base::all(lib_path == base::quote(expr = ), na.rm = TRUE), yes = "<NULL, EMPTY OBJECT OR EMPTY NAME>", no = base::paste0(lib_path, collapse = "\n", recycle0 = FALSE)),
+                collapse = NULL, 
+                recycle0 = FALSE
+            )
+            base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL) # == in base::stop() to be able to add several messages between ==
+        }else if( ! base::all(base::dir.exists(paths = lib_path), na.rm = TRUE)){ # separation to avoid the problem of tempo$problem == FALSE and lib_path == NA. dir.exists(paths = NA) returns an error, so ok. dir.exists(paths = "") returns FALSE so ok
+            tempo_log <- ! base::dir.exists(paths = lib_path)
+            tempo_cat_b <- lib_path[tempo_log] # here lib_path is character string
+            tempo_cat_b[tempo_cat_b == ""] <- "\"\""
+            tempo_cat <- base::paste0(
+                error_text_start, 
+                "THE DIRECTORY PATH",
+                base::ifelse(test = base::sum(tempo_log, na.rm = TRUE) > 1, yes = "S", no = ""), 
+                " INDICATED IN THE lib_path ARGUMENT DO", 
+                base::ifelse(test = base::sum(tempo_log, na.rm = TRUE) > 1, yes = "", no = "ES"), 
+                " NOT EXIST:\n", 
+                base::paste0(tempo_cat_b, collapse = "\n", recycle0 = FALSE), 
+                collapse = NULL, 
+                recycle0 = FALSE
+            )
+            base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL) # == in base::stop() to be able to add several messages between ==
+        }else{
+            base:::.libPaths(new = base::sub(x = lib_path, pattern = "/$|\\\\$", replacement = "", ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE), include.site = TRUE) # base:::.libPaths(new = ) add path to default path. BEWARE: base:::.libPaths() does not support / at the end of a submitted path. The reason of the check and replacement of the last / or \\ in path
+            lib_path <- base:::.libPaths(new = , include.site = TRUE) # normal to have empty new argument
+        }
+    }else{
+        lib_path <- base:::.libPaths(new = , include.site = TRUE) # normal to have empty new argument # base:::.libPaths(new = lib_path) # or base:::.libPaths(new = base::c(base:::.libPaths(), lib_path))
+    }
+    ######## end check of lib_path
+
+    ######## safer_check argument checking
+    if( ! (base::all(base::typeof(x = safer_check) == "logical", na.rm = TRUE) & base::length(x = safer_check) == 1)){ # no need to test NA because NA only already managed above and base::length(x = safer_check) == 1)
         tempo_cat <- base::paste0(
             error_text_start, 
-            base::ifelse(test = base::sum(tempo_log, na.rm = TRUE) > 1, yes = "THESE ARGUMENTS\n", no = "THIS ARGUMENT\n"), 
-            base::paste0(tempo_arg[tempo_log], collapse = "\n", recycle0 = FALSE), 
-            "\nCANNOT BE NULL", 
+            "THE safer_check ARGUMENT VALUE MUST BE A SINGLE LOGICAL VALUE (TRUE OR FALSE ONLY).\nHERE IT IS:\n", 
+            base::ifelse(test = base::length(x = safer_check) == 0 | base::all(safer_check == base::quote(expr = ), na.rm = TRUE) | base::all(safer_check == "", na.rm = TRUE), yes = "<NULL, \"\", EMPTY OBJECT OR EMPTY NAME>", no = base::paste0(safer_check, collapse = "\n", recycle0 = FALSE)),
             collapse = NULL, 
             recycle0 = FALSE
         )
         base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL) # == in base::stop() to be able to add several messages between ==
     }
-    ######## end management of NULL arguments
+    ######## end safer_check argument checking
+
+    ######## check of the required functions from the required packages
+    if(safer_check == TRUE){
+        saferDev:::.pack_and_function_check(
+            fun = base::c(
+                # functions required in this code
+                "saferDev::arg_check",
+                # end functions required in this code
+                # internal functions required in this code
+                "saferDev:::.base_op_check", 
+                "saferDev:::.functions_detect", # requires saferDev::arg_check, saferDev:::.extract_all_fun_names, saferDev:::.has_odd_number_of_quotes
+                "saferDev:::.colons_check_message", # requires saferDev::arg_check, saferDev:::.noclean_functions
+                # end internal functions required in this code
+                # functions required in internal functions above (i.e., :::.FUNCTION_NAME), because presence not checked in internal functions
+                "saferDev:::.extract_all_fun_names", # requires saferDev::arg_check
+                "saferDev:::.has_odd_number_of_quotes", # from saferDev:::.functions_detect, saferDev:::.in_quotes_replacement
+                "saferDev:::.noclean_functions" # requires saferDev::arg_check, saferDev:::.has_odd_number_of_quotes
+                # end functions required in internal functions above (i.e., :::.FUNCTION_NAME), because presence not checked in internal functions
+            ),
+            lib_path = lib_path, # write NULL if your function does not have any lib_path argument
+            error_text = embed_error_text
+        )
+    }
+    ######## end check of the required functions from the required packages
+
+    ######## critical operator checking
+    if(safer_check == TRUE){
+        saferDev:::.base_op_check(
+            error_text = embed_error_text
+        )
+    }
+    ######## end critical operator checking
+
+    #### end environment checking
+
+    #### argument secondary checking
 
     ######## argument checking with arg_check()
     argum_check <- NULL
     text_check <- NULL
     checked_arg_names <- NULL # for function debbuging: used by r_debugging_tools
+    arg_check_error_text <- base::paste0("ERROR ", embed_error_text, "\n\n", collapse = NULL, recycle0 = FALSE) # must be used instead of error_text = embed_error_text when several arg_check are performed on the same argument (tempo1, tempo2, see below)
     ee <- base::expression(argum_check <- base::c(argum_check, tempo$problem) , text_check <- base::c(text_check, tempo$text) , checked_arg_names <- base::c(checked_arg_names, tempo$object.name))
     # add as many lines as below, for each of your arguments of your function in development
-    tempo <- saferDev::arg_check(data = x, class = "function", typeof = NULL, mode = NULL, length = NULL, prop = FALSE, double_as_integer_allowed = FALSE, options = NULL, all_options_in_data = FALSE, na_contain = FALSE, neg_values = TRUE, inf_values = TRUE, print = FALSE, data_name = NULL, data_arg = TRUE, lib_path = lib_path, safer_check = FALSE, error_text = base::sub(pattern = "^ERROR IN ", replacement = " INSIDE ", x = error_text_start, ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE)) ; base::eval(expr = ee, envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL)) # copy - paste this line as much as necessary
+    tempo <- saferDev::arg_check(data = x, class = "function", typeof = NULL, mode = NULL, length = NULL, prop = FALSE, double_as_integer_allowed = FALSE, options = NULL, all_options_in_data = FALSE, na_contain = FALSE, neg_values = TRUE, inf_values = TRUE, print = FALSE, data_name = NULL, data_arg = TRUE, lib_path = lib_path, safer_check = FALSE, error_text = embed_error_text) ; base::eval(expr = ee, envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL))
     # lib_path already checked above
     # safer_check already checked above
     # error_text already checked above
     if( ! base::is.null(x = argum_check)){
         if(base::any(argum_check, na.rm = TRUE)){
-            base::stop(base::paste0("\n\n================\n\n", base::paste0(text_check[argum_check], collapse = "\n", recycle0 = FALSE), "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL)
+            base::stop(base::paste0("\n\n================\n\n", base::paste0(text_check[argum_check], collapse = "\n\n", recycle0 = FALSE), "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL)
         }
     }
     # check with r_debugging_tools
@@ -280,40 +314,10 @@ colons_check <- function(
     ######## end argument checking with arg_check()
 
     ######## management of "" in arguments of mode character
-    tempo_arg <-base::c(
-        "lib_path"
-        # "error_text" # inactivated because can be ""
-    )
-    tempo_log <- ! base::sapply(X = base::lapply(X = tempo_arg, FUN = function(x){base::get(x = x, pos = -1L, envir = base::parent.frame(n = 2), mode = "any", inherits = FALSE)}), FUN = function(x){if(base::is.null(x = x)){base::return(TRUE)}else{base::all(base::mode(x = x) == "character", na.rm = TRUE)}}, simplify = TRUE, USE.NAMES = TRUE) # parent.frame(n = 2) because sapply(lapply())  # for character argument that can also be NULL, if NULL -> considered as character
-    if(base::any(tempo_log, na.rm = TRUE)){
-        tempo_cat <- base::paste0(
-            "INTERNAL ERROR IN THE BACKBONE PART OF ", 
-            intern_error_text_start, 
-            base::ifelse(test = base::sum(tempo_log, na.rm = TRUE) > 1, yes = "THESE ARGUMENTS ARE", no = "THIS ARGUMENT IS"), 
-            " NOT MODE \"character\":\n", 
-            base::paste0(tempo_arg[tempo_log], collapse = "\n", recycle0 = FALSE), 
-            intern_error_text_end, 
-            collapse = NULL, 
-            recycle0 = FALSE
-        )
-        base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL) # == in base::stop() to be able to add several messages between ==
-    }else{
-        tempo_log <- base::sapply(X = base::lapply(X = tempo_arg, FUN = function(x){base::get(x = x, pos = -1L, envir = base::parent.frame(n = 2), mode = "any", inherits = FALSE)}), FUN = function(x){base::any(x == "", na.rm = FALSE)}, simplify = TRUE, USE.NAMES = TRUE) # parent.frame(n = 2) because sapply(lapply())
-        if(base::any(tempo_log, na.rm = TRUE)){
-            tempo_cat <- base::paste0(
-                error_text_start, 
-                base::ifelse(test = base::sum(tempo_log, na.rm = TRUE) > 1, yes = "THESE ARGUMENTS\n", no = "THIS ARGUMENT\n"), 
-                base::paste0(tempo_arg[tempo_log], collapse = "\n", recycle0 = FALSE),
-                "\nCANNOT CONTAIN EMPTY STRING \"\".", 
-                collapse = NULL, 
-                recycle0 = FALSE
-            )
-            base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL) # == in stop() to be able to add several messages between ==
-        }
-    }
+    # not required
     ######## end management of "" in arguments of mode character
 
-    #### end argument primary checking
+    #### end argument secondary checking
 
     #### second round of checking and data preparation
 
@@ -335,21 +339,21 @@ colons_check <- function(
     #### end second round of checking and data preparation
 
     #### main code
-    out <- .functions_detect(
+    out <- saferDev:::.functions_detect(
         x = x, 
         arg_user_setting = arg_user_setting, 
-        error_text = base::sub(pattern = "^ERROR IN ", replacement = " INSIDE ", x = error_text_start, ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE)
+        lib_path = lib_path, 
+        error_text = embed_error_text
     )
     if( ! (base::all(base::typeof(x = out$fun_names) == "list", na.rm = TRUE) & base::all(base::typeof(x = out$fun_names_pos) == "list", na.rm = TRUE))){
         tempo.cat <- base::paste0(
             "INTERNAL ERROR 1 IN ", 
-            base::ifelse(test = base::is.null(x = package_name), yes = "", no = base::paste0(package_name, base::ifelse(test = base::grepl(x = function_name, pattern = "^\\.", ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE), yes = ":::", no = "::"))), 
-            function_name, 
-            ".\nout$fun_names AND out$fun_names_pos MUST BE TYPE list\nout$fun_names:\n", 
+            intern_error_text_start,
+            "out$fun_names AND out$fun_names_pos MUST BE TYPE list\nout$fun_names:\n", 
             out$fun_names, 
             "\nout$fun_names_pos:\n", 
             out$fun_names_pos, 
-            base::ifelse(test = base::is.null(x = internal_error_report_link), yes = "", no = base::paste0("\n\nPLEASE, REPORT THIS ERROR HERE: ", internal_error_report_link, collapse = NULL, recycle0 = FALSE)), 
+            intern_error_text_end, 
             collapse = NULL, 
             recycle0 = FALSE
         )
@@ -370,15 +374,14 @@ colons_check <- function(
         if( ! (base::length(x = in_basic_fun) == base::length(x = in_basic_fun_names_pos) & base::length(x = in_basic_fun) == base::length(x = in_basic_code_line_nb))){
             tempo.cat <- base::paste0(
                 "INTERNAL ERROR 2 IN ", 
-                base::ifelse(test = base::is.null(x = package_name), yes = "", no = base::paste0(package_name, base::ifelse(test = base::grepl(x = function_name, pattern = "^\\.", ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE), yes = ":::", no = "::"))), 
-                function_name, 
-                ".\nLENGTHS SHOULD BE IDENTICAL\nin_basic_fun: ", 
+                intern_error_text_start,
+                "LENGTHS SHOULD BE IDENTICAL\nin_basic_fun: ", 
                 base::length(x = in_basic_fun), 
                 "\nin_basic_fun_names_pos: ", 
                 base::length(x = in_basic_fun_names_pos), 
                 "\nin_basic_code_line_nb: ", 
                 base::length(x = in_basic_code_line_nb), 
-                base::ifelse(test = base::is.null(x = internal_error_report_link), yes = "", no = base::paste0("\n\nPLEASE, REPORT THIS ERROR HERE: ", internal_error_report_link, collapse = NULL, recycle0 = FALSE)), 
+                intern_error_text_end, 
                 collapse = NULL, 
                 recycle0 = FALSE
             )
@@ -389,15 +392,16 @@ colons_check <- function(
         # end basic function names in x
         # analyse of :: before basic functions in x
         if(base::length(x = in_basic_fun_uni) > 0){
-            tempo <- .colons_check_message(
+            tempo <- saferDev:::.colons_check_message(
                 list.fun = in_basic_fun, 
                 list.fun.pos = in_basic_fun_names_pos, 
                 line.nb = in_basic_code_line_nb, 
                 ini = out$code, 
                 arg_user_setting = out$arg_user_setting, 
-                error_text = base::sub(pattern = "^ERROR IN ", replacement = " INSIDE ", x = error_text_start, ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE), 
                 text = "BASIC", 
-                internal_fun_names = out$internal_fun_names
+                internal_fun_names = out$internal_fun_names,
+                lib_path = lib_path, 
+                error_text = embed_error_text
             )
             log_basic <- tempo$colon_not_here
             cat_basic <- tempo$output.cat
@@ -425,14 +429,14 @@ colons_check <- function(
         if( ! (base::length(x = in_other_fun) == base::length(x = in_other_fun_names_pos) & base::length(x = in_other_fun) == base::length(x = in_other_code_line_nb))){
             tempo.cat <- base::paste0(
                 "INTERNAL ERROR 3 IN ", 
-                base::ifelse(test = base::is.null(x = package_name), yes = "", no = base::paste0(package_name, base::ifelse(test = base::grepl(x = function_name, pattern = "^\\.", ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE), yes = ":::", no = "::"))), 
-                function_name, 
-                ".\nLENGTHS SHOULD BE IDENTICAL\nin_other_fun: ", 
+                intern_error_text_start,
+                "LENGTHS SHOULD BE IDENTICAL\nin_other_fun: ", 
                 base::length(x = in_other_fun), 
                 "\nin_other_fun_names_pos: ", 
                 base::length(x = in_other_fun_names_pos), 
                 "\nin_other_code_line_nb: ", 
                 base::length(x = in_other_code_line_nb), 
+                intern_error_text_end, 
                 collapse = NULL, 
                 recycle0 = FALSE
             )
@@ -443,15 +447,16 @@ colons_check <- function(
         # end other function names in x
         # analyse of :: before other functions in x
         if(base::length(x = in_other_fun_uni) > 0){
-            tempo <- .colons_check_message(
+            tempo <- saferDev:::.colons_check_message(
                 list.fun = in_other_fun, 
                 list.fun.pos = in_other_fun_names_pos, 
                 line.nb = in_other_code_line_nb, 
                 ini = out$code, 
                 arg_user_setting = out$arg_user_setting, 
-                error_text = base::sub(pattern = "^ERROR IN ", replacement = " INSIDE ", x = error_text_start, ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE), 
                 text = "OTHER", 
-                internal_fun_names = out$internal_fun_names
+                internal_fun_names = out$internal_fun_names,
+                lib_path = lib_path, 
+                error_text = embed_error_text
             )
             log_other <- tempo$colon_not_here
             cat_other <- tempo$output.cat

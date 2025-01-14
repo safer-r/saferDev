@@ -8,7 +8,7 @@
 #' @param overwrite Single logical value. Overwrite potential df_name file already existing in path_out? Ignored if export is FALSE.
 #' @param lib_path Vector of characters specifying the absolute pathways of the directories containing the required packages for the function, if not in the default directories. Useful to overcome R execution using system with non admin rights for R package installation in the default directories. Ignored if NULL (default): only the pathways specified by .libPaths() are used for package calling. Specify the right path if the function returns a package path error.
 #' @param safer_check Single logical value. Perform some "safer" checks? If TRUE, checkings are performed before main code running (see https://github.com/safer-r): 1) R classical operators (like "<-") not overwritten by another package because of the R scope and 2) required functions and related packages effectively present in local R lybraries. Must be set to FALSE if all_args_here() fonction is used inside another "safer" function to avoid pointless multiple checkings.
-#' @param error_text Single character string used to add information in error messages returned by the function, notably if the function is inside other functions, which is practical for debugging. Example: error_text = "INSIDE <PACKAGE_1>::<FUNCTION_1> INSIDE <PACKAGE_2>::<FUNCTION_2>".
+#' @param error_text Single character string used to add information in error messages returned by the function, notably if the function is inside other functions, which is practical for debugging. Example: error_text = " INSIDE <PACKAGE_1>::<FUNCTION_1> INSIDE <PACKAGE_2>::<FUNCTION_2>.". If NULL, converted into "".
 #' @returns 
 #' A data frame indicating the missing arguments or a message saying that everything seems fine.
 #' If export argument is TRUE, then the data frame is exported as res.tsv instead of being returned.
@@ -176,9 +176,9 @@ all_args_here <- function(
         "path_out", 
         "df_name", 
         "overwrite", 
-        # "lib_path", # because can be NULL
-        "safer_check",
-        "error_text"
+        # "lib_path", # inactivated because can be NULL
+        "safer_check"
+        # "error_text" # inactivated because NULL converted to "" above
     )
     tempo_log <- base::sapply(X = base::lapply(X = tempo_arg, FUN = function(x){base::get(x = x, pos = -1L, envir = base::parent.frame(n = 2), mode = "any", inherits = FALSE)}), FUN = function(x){base::is.null(x = x)}, simplify = TRUE, USE.NAMES = TRUE) # parent.frame(n = 2) because sapply(lapply())
     if(base::any(tempo_log, na.rm = TRUE)){ # normally no NA with base::is.null()
@@ -289,16 +289,22 @@ all_args_here <- function(
     if(safer_check == TRUE){
         saferDev:::.pack_and_function_check(
             fun = base::c(
-                "saferDev:::.base_op_check", 
+                # functions required in this code
                 "saferDev::arg_check",
+                "saferDev::is_function_here", 
+                # end functions required in this code
+                # internal functions required in this code
+                "saferDev:::.base_op_check", 
                 "saferDev:::.functions_detect", # requires saferDev::arg_check, saferDev:::.extract_all_fun_names, saferDev:::.has_odd_number_of_quotes
                 "saferDev:::.in_quotes_replacement", # requires saferDev::arg_check, saferDev:::.has_odd_number_of_quotes
-                "saferDev:::.has_odd_number_of_quotes", # from saferDev:::.functions_detect, saferDev:::.in_quotes_replacement
-                "saferDev:::.fun_args_pos", 
-                "saferDev:::.extract_all_fun_names", # from this function and from saferDev:::.functions_detect
-                "saferDev::is_function_here", 
-                "saferDev:::.in_parenthesis_replacement", 
-                "saferDev:::.all_args_here_fill"
+                "saferDev:::.fun_args_pos", # requires saferDev::arg_check
+                "saferDev:::.extract_all_fun_names", # requires saferDev::arg_check
+                "saferDev:::.in_parenthesis_replacement", # requires saferDev::arg_check
+                "saferDev:::.all_args_here_fill", # requires saferDev::arg_check
+                # end internal functions required in this code
+                # functions required in internal functions above (i.e., :::.FUNCTION_NAME), because presence not checked in internal functions
+                "saferDev:::.has_odd_number_of_quotes" # from saferDev:::.functions_detect, saferDev:::.in_quotes_replacement
+                # end functions required in internal functions above (i.e., :::.FUNCTION_NAME), because presence not checked in internal functions
             ),
             lib_path = lib_path, # write NULL if your function does not have any lib_path argument
             error_text = embed_error_text
@@ -346,8 +352,8 @@ all_args_here <- function(
     ######## management of "" in arguments of mode character
     tempo_arg <- base::c(
         "path_out", 
-        "df_name",
-        "lib_path"
+        "df_name"
+        # "lib_path" # inactivated because already checked above
         # "error_text" # inactivated because can be ""
     )
     tempo_log <- ! base::sapply(X = base::lapply(X = tempo_arg, FUN = function(x){base::get(x = x, pos = -1L, envir = base::parent.frame(n = 2), mode = "any", inherits = FALSE)}), FUN = function(x){if(base::is.null(x = x)){base::return(TRUE)}else{base::all(base::mode(x = x) == "character", na.rm = TRUE)}}, simplify = TRUE, USE.NAMES = TRUE) # parent.frame(n = 2) because sapply(lapply())  #  need to test is.null() here
@@ -455,6 +461,7 @@ all_args_here <- function(
     out <- saferDev:::.functions_detect(
         x = x, 
         arg_user_setting = arg_user_setting, 
+        lib_path = lib_path, 
         error_text = embed_error_text
     )
     code_line_nb <- out$code_line_nb # vector of line numbers in code where functions are
@@ -480,6 +487,7 @@ all_args_here <- function(
         no_regex_pattern = ")", 
         replacement = " ", 
         perl = TRUE, 
+        lib_path = lib_path, 
         error_text = embed_error_text
     )
     fun_1_line_replace <- tempo$string # code of the tested function that will serve to better detect functions in it
@@ -492,6 +500,7 @@ all_args_here <- function(
         no_regex_pattern = "(", 
         replacement = " ", 
         perl = TRUE, 
+        lib_path = lib_path, 
         error_text = embed_error_text
     )
     fun_1_line_replace <- tempo$string
@@ -531,8 +540,9 @@ all_args_here <- function(
                 tempo_pos <- saferDev:::.fun_args_pos(
                     text = fun_1_line_replace, 
                     pattern = base::paste0(fun_names[[i1]][i2], "[\\s\\r\\n]*\\(", collapse = NULL, recycle0 = FALSE), 
-                    error_text = embed_error_text # positions of 1st letter of the function name and opening and closing brackets # Warning: fun_1_line_replace used because the input string must be cleaned form brackets between quotes
-                )
+                    lib_path = lib_path, 
+                    error_text = embed_error_text
+                ) # positions of 1st letter of the function name and opening and closing brackets # Warning: fun_1_line_replace used because the input string must be cleaned form brackets between quotes
                 tempo_str_before <- base::substr(x = fun_1_line_replace, start = 1, stop = fun_pos_start - 1)
                 tempo_log <- base::grepl(x = tempo_str_before, pattern = "\\$ *$", ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE)
                 if(tempo_log){ # remove functions preceeded by $, like a$fun()
@@ -569,6 +579,7 @@ all_args_here <- function(
                     no_regex_pattern = "(", 
                     replacement = " ", 
                     perl = TRUE, 
+                    lib_path = lib_path, 
                     error_text = embed_error_text
                 )
                 tempo2 <- saferDev:::.in_quotes_replacement(
@@ -577,11 +588,13 @@ all_args_here <- function(
                     no_regex_pattern = ")", 
                     replacement = " ", 
                     perl = TRUE, 
+                    lib_path = lib_path, 
                     error_text = embed_error_text
                 )
                 tempo_pos <- saferDev:::.fun_args_pos(
                     text = tempo2$string, 
                     pattern = pattern2,     
+                    lib_path = lib_path, 
                     error_text = embed_error_text
                 ) # positions of 1st letter of the function name and opening and closing brackets # Warning: fun_1_line_replace used because the input string must be cleaned form brackets between quotes
                 if( ! base::is.null(x = tempo_pos$middle_bracket_pos)){ # I have to use if(){}, otherwise mid_bracket_pos_in_fun_1_line[[i1]][[i2]] disappears
@@ -702,6 +715,7 @@ all_args_here <- function(
                 tempo_package_name_colons <- saferDev:::.extract_all_fun_names(
                     text = tempo_string, 
                     pattern = "[a-zA-Z][a-zA-Z0-9.]*:{2,3}$",
+                    lib_path = lib_path, 
                     error_text = embed_error_text
                 )$string # before 
                 saferDev::is_function_here(
@@ -773,6 +787,7 @@ all_args_here <- function(
                         no_regex_pattern = ",", 
                         replacement = " ", 
                         perl = TRUE, 
+                        lib_path = lib_path, 
                         error_text = embed_error_text
                     )
                     tempo_col3 <- tempo$string
@@ -811,6 +826,7 @@ all_args_here <- function(
                                 perl = TRUE, 
                                 open_pos = middle_bracket_open_in_col3[[i2]][i6], 
                                 close_pos = middle_bracket_close_in_col3[[i2]][i6], 
+                                lib_path = lib_path, 
                                 error_text = embed_error_text
                             )
                             tempo_col3 <- tempo$string
@@ -911,9 +927,10 @@ all_args_here <- function(
                         col1_i2 = col1[i2],
                         col2_i2 = col2[i2],
                         arg_user_setting_x = arg_user_setting$x, 
-                        error_text = embed_error_text, 
                         warn = warn,
-                        warn_count = warn_count
+                        warn_count = warn_count,
+                        lib_path = lib_path, 
+                        error_text = embed_error_text
                     )
                     col6 <- base::c(col6, tempo_out$col6)
                     col7 <- base::c(col7, tempo_out$col7)
@@ -951,13 +968,17 @@ all_args_here <- function(
 
     #### warning output
     if( ! base::is.null(x = warn)){
-        base::on.exit(expr = base::warning(base::paste0(
-            base::sub(pattern = "^ERROR IN ", replacement = "FROM ", x = error_text_start, ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE), 
-            warn, 
-            collapse = NULL, 
-            recycle0 = FALSE
-        ), call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, domain = NULL), add = TRUE, after = TRUE)
+        base::on.exit(
+            expr = base::warning(
+                base::paste0(
+                    base::sub(pattern = "^ERROR IN ", replacement = "FROM ", x = error_text_start, ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE), 
+                    warn, 
+                    collapse = NULL, 
+                    recycle0 = FALSE
+                ), call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, domain = NULL
+            ), add = TRUE, after = TRUE
+        )
     }
-        base::on.exit(expr = base::options(warning.length = ini_warning_length), add = TRUE, after = TRUE)
+    base::on.exit(expr = base::options(warning.length = ini_warning_length), add = TRUE, after = TRUE)
     #### end warning output
 }
