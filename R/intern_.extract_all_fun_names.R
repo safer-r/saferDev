@@ -181,12 +181,12 @@
     ######## end check of lib_path
 
     ######## safer_check argument checking
-
+    # not used here
     ######## end safer_check argument checking
 
     ######## check of the required functions from the required packages
-    # saferDev::arg_check is required
-    # check already done in the main safer function
+    # saferDev::arg_check is required here
+    # but check already done in the main safer function
     ######## end check of the required functions from the required packages
 
     ######## critical operator checking
@@ -206,6 +206,7 @@
     # add as many lines as below, for each of your arguments of your function in development
     tempo <- saferDev::arg_check(data = text, class = "vector", typeof = "character", mode = NULL, length = 1, prop = FALSE, double_as_integer_allowed = FALSE, options = NULL, all_options_in_data = FALSE, na_contain = TRUE, neg_values = TRUE, inf_values = TRUE, print = FALSE, data_name = NULL, data_arg = TRUE, lib_path = lib_path, safer_check = FALSE, error_text = embed_error_text) ; base::eval(expr = ee, envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL))
     tempo <- saferDev::arg_check(data = pattern, class = "vector", typeof = "character", mode = NULL, length = 1, prop = FALSE, double_as_integer_allowed = FALSE, options = NULL, all_options_in_data = FALSE, na_contain = TRUE, neg_values = TRUE, inf_values = TRUE, print = FALSE, data_name = NULL, data_arg = TRUE, lib_path = lib_path, safer_check = FALSE, error_text = embed_error_text) ; base::eval(expr = ee, envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL))
+    # lib_path already checked above
     # error_text already checked above
     if( ! base::is.null(x = argum_check)){
         if(base::any(argum_check, na.rm = TRUE)){
@@ -277,12 +278,12 @@
     #### end second round of checking and data preparation
 
     #### main code
-    matches <- base::gregexpr(pattern = pattern, text = text, perl = TRUE)
-    att <- base::attributes(matches[[1]]) # attributes
-    pos <- base::as.vector(att$capture.start)
-    matched_strings <- base::regmatches(x = text, m = matches)[[1]]
+    matches <- base::gregexpr(pattern = pattern, text = text, ignore.case = FALSE, perl = TRUE, fixed = FALSE, useBytes = FALSE)
+    att <- base::attributes(x = matches[[1]]) # attributes
+    pos <- base::as.vector(x = att$capture.start, mode = "any")
+    matched_strings <- base::regmatches(x = text, m = matches, invert = FALSE)[[1]]
     # Remove trailing '(' from each match
-    string <- base::sub(pattern = "\\s*\\($", replacement = "", x = matched_strings, perl = TRUE)
+    string <- base::sub(pattern = "\\s*\\($", replacement = "", x = matched_strings, ignore.case = FALSE, perl = TRUE, fixed = FALSE, useBytes = FALSE)
     # end Remove trailing '(' from each match
     #### end main code
 
