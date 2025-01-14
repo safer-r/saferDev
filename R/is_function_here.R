@@ -4,7 +4,7 @@
 #' @param fun Character vector of the names of the required functions, preceded by the name of the package they belong to and a double or triple colon. Example: c("ggplot2::geom_point", "grid::gpar"). Warning: do not write "()" at the end of the function
 #' @param lib_path Vector of characters specifying the absolute pathways of the directories containing the required packages for the function, if not in the default directories. Useful to overcome R execution using system with non admin rights for R package installation in the default directories. Ignored if NULL (default): only the pathways specified by .libPaths() are used for package calling. Specify the right path if the function returns a package path error.
 #' @param safer_check Single logical value. Perform some "safer" checks? If TRUE, checkings are performed before main code running (see https://github.com/safer-r): 1) R classical operators (like "<-") not overwritten by another package because of the R scope and 2) required functions and related packages effectively present in local R lybraries. Must be set to FALSE if this fonction is used inside another "safer" function to avoid pointless multiple checkings.
-#' @param error_text Single character string used to add information in error messages returned by the function, notably if the function is inside other functions, which is practical for debugging. Example: error_text = "INSIDE <PACKAGE_1>::<FUNCTION_1> INSIDE <PACKAGE_2>::<FUNCTION_2>".
+#' @param error_text Single character string used to add information in error messages returned by the function, notably if the function is inside other functions, which is practical for debugging. Example: error_text = " INSIDE <PACKAGE_1>::<FUNCTION_1> INSIDE <PACKAGE_2>::<FUNCTION_2>.". If NULL, converted into "".
 #' @returns  An error message if at least one of the checked packages is missing in lib_path, or if at least one of the checked functions is missing in the required package, nothing otherwise.
 #' @seealso \code{\link{exists}} et \code{\link[methods]{findFunction}}
 #' @author Gael Millot <gael.millot@pasteur.fr>
@@ -16,7 +16,7 @@
 #' is_function_here(fun = c("ggplot2::geom_point", "grid::gpar"))
 #' is_function_here(fun = "c")
 #' }
-#' is_function_here(fun = "base::c")
+#' is_function_here(fun = "base::c", error_text = " INSIDE P1::F1")
 #' @export
 
 
@@ -27,8 +27,8 @@ is_function_here <- function(
     error_text = ""
 ){
     # DEBUGGING
-    # fun = "ggplot2::geom_point" ; lib_path = "C:/Program Files/R/R-4.3.1/library" ; safer_check = TRUE
-    # fun = "saferDev:::.colons_check_message" ; lib_path = "C:/Program Files/R/R-4.3.1/library" ; safer_check = TRUE
+    # fun = "ggplot2::geom_point" ; lib_path = "C:/Program Files/R/R-4.3.1/library" lib_path = NULL ; safer_check = TRUE ; error_text = ""
+    # fun = "saferDev:::.colons_check_message" ; lib_path = "C:/Program Files/R/R-4.3.1/library" ; lib_path = NULL ; safer_check = TRUE ; error_text = " INSIDE P1::F1"
 
     #### package name
     package_name <- "saferDev" # write NULL if the function developed is not in a package
@@ -274,8 +274,8 @@ is_function_here <- function(
 
     ######## management of "" in arguments of mode character
     tempo_arg <- base::c(
-        "fun",
-        "lib_path"
+        "fun"
+        # "lib_path" # inactivated because already checked above
         # "error_text" # inactivated because can be ""
     )
     tempo_log <- ! base::sapply(X = base::lapply(X = tempo_arg, FUN = function(x){base::get(x = x, pos = -1L, envir = base::parent.frame(n = 2), mode = "any", inherits = FALSE)}), FUN = function(x){if(base::is.null(x = x)){base::return(TRUE)}else{base::all(base::mode(x = x) == "character", na.rm = TRUE)}}, simplify = TRUE, USE.NAMES = TRUE) # parent.frame(n = 2) because sapply(lapply())  #  need to test is.null() here

@@ -118,6 +118,7 @@ arg_check <- function(
     ######## end basic error text start
 
     ######## internal error text
+    # not required
     ######## end internal error text
 
     ######## error text when embedding
@@ -685,7 +686,19 @@ arg_check <- function(
         if(base::all(base::typeof(x = data) == "double", na.rm = TRUE)){
             if( ! base::all(data %% 1 == 0L, na.rm = TRUE)){ # double but integer like ?
                 problem <- TRUE
-                text <- base::paste0("ERROR", base::ifelse(test = error_text == "", yes = "", no = error_text), "\n\nTHE ", data_name, " ", base::ifelse(test = data_arg, yes = "ARGUMENT", no = "OBJECT"), " MUST BE SOME OF THESE OPTIONS:\n", base::paste0(options, collapse = "\n", recycle0 = FALSE), "\nBUT IS NOT EVEN TYPE CHARACTER OR INTEGER.",collapse = NULL, recycle0 = FALSE)
+                text <- base::paste0(
+                    "ERROR",
+                     base::ifelse(test = error_text == "", yes = "", no = error_text), 
+                     "\n\nTHE ", 
+                    data_name, 
+                    " ", 
+                    base::ifelse(test = data_arg, yes = "ARGUMENT", no = "OBJECT"), 
+                    " MUST BE SOME OF THESE OPTIONS:\n", 
+                    base::paste0(options, collapse = "\n", recycle0 = FALSE), 
+                    "\nBUT IS NOT EVEN TYPE CHARACTER OR INTEGER.",
+                    collapse = NULL, 
+                    recycle0 = FALSE
+                )
                 test.log <- FALSE
             }
         }
@@ -693,7 +706,22 @@ arg_check <- function(
             text <- ""
             if( ! base::all(data %in% options, na.rm = TRUE)){ # no need of na.rm = TRUE for base::all() because %in% does not output NA
                 problem <- TRUE
-                text <- base::paste0("ERROR", base::ifelse(test = error_text == "", yes = "", no = error_text), "\n\nTHE ", data_name, " ", base::ifelse(test = data_arg, yes = "ARGUMENT", no = "OBJECT"), " MUST BE SOME OF THESE OPTIONS:\n", base::paste0(options, collapse = "\n", recycle0 = FALSE), "\nTHE PROBLEMATIC ELEMENTS OF ", data_name, " ARE:\n", base::paste0(base::unique(x = data[ ! (data %in% options)], incomparables = FALSE), collapse = "\n", recycle0 = FALSE), collapse = NULL, recycle0 = FALSE)
+                text <- base::paste0(
+                    "ERROR",
+                     base::ifelse(test = error_text == "", yes = "", no = error_text), 
+                     "\n\nTHE ", 
+                     data_name, 
+                     " ", 
+                     base::ifelse(test = data_arg, yes = "ARGUMENT", no = "OBJECT"), 
+                     " MUST BE SOME OF THESE OPTIONS:\n", 
+                     base::paste0(options, collapse = "\n", recycle0 = FALSE), 
+                     "\nTHE PROBLEMATIC ELEMENTS OF ", 
+                     data_name, 
+                     " ARE:\n", 
+                     base::paste0(base::unique(x = data[ ! (data %in% options)], incomparables = FALSE), collapse = "\n", recycle0 = FALSE), 
+                     collapse = NULL, 
+                     recycle0 = FALSE
+                )
             }
             if(all_options_in_data == TRUE){
                 if( ! base::all(options %in% data, na.rm = TRUE)){ # no need of na.rm = TRUE for base::all() because %in% does not output NA
