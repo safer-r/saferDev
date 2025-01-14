@@ -145,6 +145,7 @@ colons_check <- function(
 
     ######## management of NULL arguments
     # before NA checking because is.na(NULL) return logical(0) and all(logical(0)) is TRUE
+    tempo_arg <-base::c(
         "x", 
         # "lib_path", # inactivated because can be NULL
         "safer_check"

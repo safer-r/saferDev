@@ -13,7 +13,7 @@ is_function_here(fun, lib_path = NULL, safer_check = TRUE, error_text = "")
 
 \item{safer_check}{Single logical value. Perform some "safer" checks? If TRUE, checkings are performed before main code running (see https://github.com/safer-r): 1) R classical operators (like "<-") not overwritten by another package because of the R scope and 2) required functions and related packages effectively present in local R lybraries. Must be set to FALSE if this fonction is used inside another "safer" function to avoid pointless multiple checkings.}
 
-\item{error_text}{Single character string used to add information in error messages returned by the function, notably if the function is inside other functions, which is practical for debugging. Example: error_text = "INSIDE <PACKAGE_1>::<FUNCTION_1> INSIDE <PACKAGE_2>::<FUNCTION_2>".}
+\item{error_text}{Single character string used to add information in error messages returned by the function, notably if the function is inside other functions, which is practical for debugging. Example: error_text = " INSIDE <PACKAGE_1>::<FUNCTION_1> INSIDE <PACKAGE_2>::<FUNCTION_2>.". If NULL, converted into "".}
 }
 \value{
 An error message if at least one of the checked packages is missing in lib_path, or if at least one of the checked functions is missing in the required package, nothing otherwise.
@@ -27,7 +27,7 @@ is_function_here(fun = "ggplot2::notgood") # commented because this example retu
 is_function_here(fun = c("ggplot2::geom_point", "grid::gpar"))
 is_function_here(fun = "c")
 }
-is_function_here(fun = "base::c")
+is_function_here(fun = "base::c", error_text = " INSIDE P1::F1")
 }
 \seealso{
 \code{\link{exists}} et \code{\link[methods]{findFunction}}

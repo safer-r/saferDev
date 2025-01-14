@@ -28,9 +28,10 @@
   col1_i2,
   col2_i2,
   arg_user_setting_x,
-  error_text,
   warn,
-  warn_count
+  warn_count,
+  lib_path,
+  error_text
 )
 
 .base_op_check(error_text)
@@ -41,18 +42,19 @@
   line.nb,
   ini,
   arg_user_setting,
-  error_text,
   text,
-  internal_fun_names
+  internal_fun_names,
+  lib_path,
+  error_text
 )
 
-.extract_all_fun_names(text, pattern, error_text)
+.extract_all_fun_names(text, pattern, lib_path, error_text)
 
-.fun_args_pos(text, pattern, error_text)
+.fun_args_pos(text, pattern, lib_path, error_text)
 
-.functions_detect(x, arg_user_setting, error_text)
+.functions_detect(x, arg_user_setting, lib_path, error_text)
 
-.has_odd_number_of_quotes(input_string, pattern, error_text)
+.has_odd_number_of_quotes(input_string, pattern, lib_path, error_text)
 
 .in_parenthesis_replacement(
   string,
@@ -62,6 +64,7 @@
   perl,
   open_pos,
   close_pos,
+  lib_path,
   error_text
 )
 
@@ -71,10 +74,11 @@
   no_regex_pattern,
   replacement,
   perl,
+  lib_path,
   error_text
 )
 
-.noclean_functions(col1, col2, col3, ini, error_text)
+.noclean_functions(col1, col2, col3, ini, lib_path, error_text)
 
 .pack_and_function_check(fun, lib_path, error_text)
 }
@@ -95,11 +99,13 @@
 
 \item{arg_user_setting_x}{Single string indicating the name of the checked function.}
 
-\item{error_text}{Single character string used to add information in error messages returned by the function, notably if the function is inside other functions, which is practical for debugging. Example: error_text = "INSIDE <PACKAGE_1>::<FUNCTION_1> INSIDE <PACKAGE_2>::<FUNCTION_2>". If NULL, converted into "".}
-
 \item{warn}{warning string. Can be NULL.}
 
 \item{warn_count}{warning count.}
+
+\item{lib_path}{Vector of characters specifying the absolute pathways of the directories containing the required packages for the function, if not in the default directories. Useful to overcome R execution using system with non admin rights for R package installation in the default directories. Ignored if NULL (default): only the pathways specified by .libPaths() are used for package calling. Specify the right path if the function returns a package path error.}
+
+\item{error_text}{Single character string used to add information in error messages returned by the function, notably if the function is inside other functions, which is practical for debugging. Example: error_text = "INSIDE <PACKAGE_1>::<FUNCTION_1> INSIDE <PACKAGE_2>::<FUNCTION_2>". If NULL, converted into "".}
 
 \item{list.fun}{List of names of all the functions.}
 
@@ -113,7 +119,7 @@
 
 \item{text}{Single string.}
 
-\item{internal_fun_names}{Vector of strings of names of internal functions in the function code analyzed. Can be NULL}
+\item{internal_fun_names}{Vector of strings of names of internal functions in the function code analyzed. Can be NULL.}
 
 \item{pattern}{Single string indicating the pattern to detect. Warning : must be very simple pattern, like "\\(".}
 
@@ -133,15 +139,13 @@
 
 \item{close_pos}{Single integer indicating the position of the closing parenthesis.}
 
-\item{col1}{Vector of strings.}
+\item{col1}{Vector of integers.}
 
 \item{col2}{Vector of strings of the function names.}
 
 \item{col3}{Vector of strings of the code before the function name.}
 
 \item{fun}{Character vector of the names of the required functions, preceded by the name of the package they belong to and a double or triple colon. Example: c("ggplot2::geom_point", "grid::gpar").}
-
-\item{lib_path}{Vector of characters specifying the absolute pathways of the directories containing the required packages for the function, if not in the default directories. Useful to overcome R execution using system with non admin rights for R package installation in the default directories. Ignored if NULL (default): only the pathways specified by .libPaths() are used for package calling. Specify the right path if the function returns a package path error.}
 
 \item{pattern:}{Either '"' or "'".}
 }
@@ -218,71 +222,70 @@ Simplified version of saferDev::is_function_here(), used as internal function fo
 \details{
 - Warning: requires saferDev::arg_check. In the safer Backbone section "######## check of the required functions from the required packages" add this function when checking for the presence of saferDev:::.all_args_here_fill.
 
-- Warning: requires saferDev::arg_check, .noclean_functions. In the safer Backbone section "######## check of the required functions from the required packages" add this function when checking for the presence of saferDev:::.colons_check_message.
+- Warning: requires saferDev::arg_check, .noclean_functions. In main safer functions, in the section "######## check of the required functions from the required packages" add these functions when checking for the presence of saferDev:::.colons_check_message.
 
-- Warning: requires saferDev::arg_check. In the safer Backbone section "######## check of the required functions from the required packages" add this function when checking for the presence of saferDev:::.extract_all_fun_names.
+- Warning: requires saferDev::arg_check. In main safer functions, in the section "######## check of the required functions from the required packages" add these functions when checking for the presence of saferDev:::.extract_all_fun_names.
 
 - Warning: the string must be cleaned form brackets between quotes. Use .in_quotes_replacement() for that.
 - Warning: quotes in strings are escaped, so that position of ( in \"a( is 3, not 4.
-- Warning: requires saferDev::arg_check. In the safer Backbone section "######## check of the required functions from the required packages" add this function when checking for the presence of saferDev:::.all_args_here_fill.
+- Warning: requires saferDev::arg_check. In main safer functions, in the section "######## check of the required functions from the required packages" add these functions when checking for the presence of saferDev:::.fun_args_pos
 
 - Does not check if the functions inside the code exist.
 - Use the regex pattern "([a-zA-Z]|\\.[a-zA-Z._])[a-zA-Z0-9._]*\\s*\\(" to detect a function in the code.
 - $all_basic_funs are all the functions in base::c("package:stats", "package:graphics",  "package:grDevices", "package:utils", "package:datasets", "package:methods", "Autoloads", "package:base")
-- Warning: requires saferDev::arg_check, saferDev:::.extract_all_fun_names, saferDev:::.has_odd_number_of_quotes. In the safer Backbone section "######## check of the required functions from the required packages" add these functions when checking for the presence of saferDev:::.functions_detect.
+- Warning: requires saferDev::arg_check, saferDev:::.extract_all_fun_names, saferDev:::.has_odd_number_of_quotes. In main safer functions, in the section "######## check of the required functions from the required packages" add these functions when checking for the presence of saferDev:::.functions_detect.
 
-- Warning: requires saferDev::arg_check. In the safer Backbone section "######## check of the required functions from the required packages" add this function when checking for the presence of saferDev:::.has_odd_number_of_quotes.
-
-- Warning : must be very simple pattern, like "\\(".
-- Warning: requires saferDev::arg_check. In the safer Backbone section "######## check of the required functions from the required packages" add this function when checking for the presence of saferDev:::.in_parenthesis_replacement.
+- Warning: requires saferDev::arg_check. In main safer functions, in the section "######## check of the required functions from the required packages" add these functions when checking for the presence of saferDev:::.has_odd_number_of_quotes.
 
 - Warning : must be very simple pattern, like "\\(".
-- Warning: requires saferDev::arg_check, saferDev:::.has_odd_number_of_quotes. In the safer Backbone section "######## check of the required functions from the required packages" add these functions when checking for the presence of saferDev:::.in_quotes_replacement.
+- Warning: requires saferDev::arg_check. In main safer functions, in the section "######## check of the required functions from the required packages" add these functions when checking for the presence of saferDev:::.in_parenthesis_replacement.
 
-- Warning: requires saferDev::arg_check, saferDev:::.has_odd_number_of_quotes. In the safer Backbone section "######## check of the required functions from the required packages" add these functions when checking for the presence of saferDev:::.noclean_functions.
+- Warning : must be very simple pattern, like "\\(".
+- Warning: requires saferDev::arg_check, saferDev:::.has_odd_number_of_quotes. In main safer functions, in the section "######## check of the required functions from the required packages" add these functions when checking for the presence of saferDev:::.in_quotes_replacement.
 
-- Warning: requires saferDev::arg_check. In the safer Backbone section "######## check of the required functions from the required packages" add this function when checking for the presence of saferDev:::.pack_and_function_check.
+- Warning: requires saferDev::arg_check, saferDev:::.has_odd_number_of_quotes. In main safer functions, in the section "######## check of the required functions from the required packages" add these functions when checking for the presence of saferDev:::.noclean_functions.
 }
 \examples{
 \dontrun{ # Example that shouldn't be run because this is an internal function
-.all_args_here_fill(arg_full = list(x = pairlist(x = quote(expr = ))), arg_full_names = "x", tempo_split = "x", three_dots_log = FALSE, i2 = 1, col1_i2 = 1, col2_i2 =  "length", arg_user_setting_x = "\"FUN1\"", error_text = "", warn = NULL, warn_count = 0)
+.all_args_here_fill(arg_full = list(x = pairlist(x = quote(expr = ))), arg_full_names = "x", tempo_split = "x", three_dots_log = FALSE, i2 = 1, col1_i2 = 1, col2_i2 =  "length", arg_user_setting_x = "\"FUN1\"", warn = NULL, warn_count = 0, lib_path = NULL, error_text = " INSIDE P1::F1")
 }
 \dontrun{
 # Example that shouldn't be run because this is an internal function
-assign("!", 1) ; assign("+", 2) ; .base_op_check(error_text = " INSIDE fun1.") # commented because this example returns an error
+.base_op_check(error_text = " INSIDE fun1.") # nothing should happen
+assign("!", 1) ; assign("+", 2) ; .base_op_check(error_text = " INSIDE fun1.") this example returns an error
 rm("!") ; rm("+") 
 }
 \dontrun{ # Example that shouldn't be run because this is an internal function
-.colons_check_message(list.fun = list(c2 = "UseMethod"), list.fun.pos = list(c2 = 1), line.nb = 2, ini = c("function (x, ...) ", "UseMethod(\"mean\")", "<bytecode: 0x000001969e09e580>", "<environment: namespace:base>"), arg_user_setting = list(x = x, arg_user_setting = arg_user_setting, error_text = "P1::F1", internal_error_report_link = "" ), error_text = " INSIDE P1::F1", internal_error_report_link = "test", text = "BASIC", internal_fun_names = NULL)
+.colons_check_message(list.fun = list(c2 = "UseMethod"), list.fun.pos = list(c2 = 1), line.nb = 2, ini = c("function (x, ...) ", "UseMethod(\"mean\")", "<bytecode: 0x000001969e09e580>", "<environment: namespace:base>"), arg_user_setting = list(x = x, arg_user_setting = arg_user_setting, error_text = "P1::F1"), text = "BASIC", internal_fun_names = NULL, lib_path = NULL, error_text = " INSIDE P1::F1")
 }
 \dontrun{ # Example that shouldn't be run because this is an internal function
-.extract_all_fun_names(text = 'This is a test string with sum()', pattern = "[a-zA-Z.][a-zA-Z0-9._]*\\\\s*\\\\(", error_text = " INSIDE P1::F1", internal_error_report_link = "test")
+.extract_all_fun_names(text = 'This is a test string with sum()', pattern = "[a-zA-Z.][a-zA-Z0-9._]*\\\\s*\\\\(", lib_path = NULL, error_text = " INSIDE P1::F1")
 }
 \dontrun{ # Example that shouldn't be run because this is an internal function
 # Warning : examples only with strings that must be cleaned from brackets between quotes
-.fun_args_pos(text = ' "a" ; paste0("I", paste0(sum(1:3), collapse = " "), min(1) ) ; range(2)', pattern = paste0("paste0", "[\\\\s\\\\r\\\\n]*\\\\("),  error_text = " INSIDE P1::F1", internal_error_report_link = "test")
+.fun_args_pos(text = ' "a" ; paste0("I", paste0(sum(1:3), collapse = " "), min(1) ) ; range(2)', pattern = paste0("paste0", "[\\\\s\\\\r\\\\n]*\\\\("), lib_path = NULL, error_text = " INSIDE P1::F1")
 }
 \dontrun{ # Example that shouldn't be run because this is an internal function
-source("C:\\\\Users\\\\gmillot\\\\Documents\\\\Git_projects\\\\safer-r\\\\saferDev\\\\dev\\\\other\\\\test.R") ; .functions_detect(x = test, arg_user_setting = base::list(x =  as.name(x = "test")), error_text = " INSIDE P1::F1", internal_error_report_link = "test")
+source("C:\\\\Users\\\\gmillot\\\\Documents\\\\Git_projects\\\\safer-r\\\\saferDev\\\\dev\\\\other\\\\test.R") ; .functions_detect(x = test, arg_user_setting = base::list(x =  as.name(x = "test")), lib_path = NULL, error_text = " INSIDE P1::F1")
 }
 \dontrun{ # Example that shouldn't be run because this is an internal function
-.has_odd_number_of_quotes(input_string = 'This is a "test" string with "even" quotes', pattern = '"')
+.has_odd_number_of_quotes(input_string = 'This is a "test" string with "even" quotes', pattern = '"', lib_path = NULL, error_text = " INSIDE P1::F1")
 }
 \dontrun{ # Example that shouldn't be run because this is an internal function
-.in_parenthesis_replacement(string = "pattern = base::paste0(pattern, \"\\\\\\\\(#\"), text = text", pattern = ",", no_regex_pattern = ",", replacement = " ", perl = TRUE, open_pos = 23, close_pos = 39,  error_text = " INSIDE P1::F1", internal_error_report_link = "test")
+.in_parenthesis_replacement(string = "pattern = base::paste0(pattern, \"\\\\\\\\(#\"), text = text", pattern = ",", no_regex_pattern = ",", replacement = " ", perl = TRUE, open_pos = 23, close_pos = 39,  lib_path = NULL, error_text = " INSIDE P1::F1")
 }
 \dontrun{ # Example that shouldn't be run because this is an internal function
-source("https://raw.githubusercontent.com/safer-r/saferDev/main/dev/other/test.R") ; .in_quotes_replacement(string = paste(deparse(test), collapse = ""), pattern = "\\\\)", no_regex_pattern = ")", replacement = " ", perl = TRUE, error_text = " INSIDE P1::F1", internal_error_report_link = "test")
-.in_quotes_replacement(string = 'paste0("IAGE((", paste0(1:3, collapse = " "), "A)B()")', pattern = "\\\\)", no_regex_pattern = ")", replacement = " ", perl = TRUE, error_text = " INSIDE P1::F1", internal_error_report_link = "test")
+source("https://raw.githubusercontent.com/safer-r/saferDev/main/dev/other/test.R") ; .in_quotes_replacement(string = paste(deparse(test), collapse = ""), pattern = "\\\\)", no_regex_pattern = ")", replacement = " ", perl = TRUE, lib_path = NULL, error_text = " INSIDE P1::F1")
+.in_quotes_replacement(string = 'paste0("IAGE((", paste0(1:3, collapse = " "), "A)B()")', pattern = "\\\\)", no_regex_pattern = ")", replacement = " ", perl = TRUE, lib_path = NULL, error_text = " INSIDE P1::F1")
 }
 \dontrun{ # Example that shouldn't be run because this is an internal function
 source("https://raw.githubusercontent.com/safer-r/saferDev/main/dev/other/test.R")
-.noclean_functions(col1 =  c(15, 17), col2 = c("gregexpr", "regmatches"), col3 = c("matches <- ",  "matched_strings <- " ), ini = utils::capture.output(test), error_text = " INSIDE P1::F1", internal_error_report_link = "test")
+.noclean_functions(col1 =  c(15, 17), col2 = c("gregexpr", "regmatches"), col3 = c("matches <- ",  "matched_strings <- " ), ini = utils::capture.output(test), lib_path = NULL, error_text = " INSIDE P1::F1")
 }
 \dontrun{ # Example that shouldn't be run because this is an internal function
 .pack_and_function_check(fun = 1, lib_path = NULL, error_text = " INSIDE F1.") # this example returns an error
 .pack_and_function_check(fun = "ggplot2::notgood", lib_path = base::.libPaths(), error_text = " INSIDE P1::F1") # this example returns an error
-.pack_and_function_check(fun = c("ggplot2::geom_point", "grid::gpar"), lib_path = base::.libPaths(), error_text = " INSIDE P1::F1")
+.pack_and_function_check(fun = c("ggplot2::geom_point", "grid::gpar"), lib_path = base::.libPaths(), error_text = " INSIDE P1::F1")  # nothing should happen
 }
 }
 \author{
