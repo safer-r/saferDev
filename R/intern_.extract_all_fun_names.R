@@ -24,8 +24,8 @@
     error_text # warning: in internal functions, can return a non safer error message because error_text without default value and is used below before checking for mandatory arg value (specific of internal functions since classical functions are error_text = "")
 ){
     # DEBUGGING
-    # text = ini[20] ; pattern = pattern1 ; error_text = " INSIDE P1::F1"
-    # Find all matches, including trailing '(' ; error_text = " INSIDE P1::F1"
+    # text = ini[20] ; pattern = pattern1 ; lib_path = NULL ; error_text = " INSIDE P1::F1"
+    # Find all matches, including trailing '(' ; lib_path = NULL ; error_text = " INSIDE P1::F1"
 
    #### package name
     package_name <- "saferDev" # write NULL if the function developed is not in a package
