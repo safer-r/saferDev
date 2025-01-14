@@ -2,9 +2,9 @@
 #' @description
 #' Return the positions of 1st letter of the function name and opening and closing parenthesis, as well as positions of the internal parenthesis.
 #' @param text Single string.
-#' @param pattern: Single string of a perl regex to extract function name and (), using generally paste0(<FUNCTION_NAME>, "[\\s\\r\\n]*\\(").
+#' @param pattern Single string of a perl regex to extract function name and (), using generally paste0(<FUNCTION_NAME>, "[\\s\\r\\n]*\\(").
 #' @param lib_path Vector of characters specifying the absolute pathways of the directories containing the required packages for the function, if not in the default directories. Useful to overcome R execution using system with non admin rights for R package installation in the default directories. Ignored if NULL (default): only the pathways specified by .libPaths() are used for package calling. Specify the right path if the function returns a package path error.
-#' @param error_text Single character string used to add information in error messages returned by the function, notably if the function is inside other functions, which is practical for debugging. Example: error_text = "INSIDE <PACKAGE_1>::<FUNCTION_1> INSIDE <PACKAGE_2>::<FUNCTION_2>".
+#' @param error_text Single character string used to add information in error messages returned by the function, notably if the function is inside other functions, which is practical for debugging. Example: error_text = " INSIDE <PACKAGE_1>::<FUNCTION_1> INSIDE <PACKAGE_2>::<FUNCTION_2>.". . If NULL, converted into "". Of note, in arg_check(), error_text is also used at the end of the string returned when no problem is detected.
 #' @returns A list containing two positions:
 #' $begin_fun: position of 1st letter of the function name.
 #' $begin: position of the "(" of the function.
@@ -18,7 +18,7 @@
 #' @examples
 #' \dontrun{ # Example that shouldn't be run because this is an internal function
 #' # Warning : examples only with strings that must be cleaned from brackets between quotes
-#' .fun_args_pos(text = ' "a" ; paste0("I", paste0(sum(1:3), collapse = " "), min(1) ) ; range(2)', pattern = paste0("paste0", "[\\s\\r\\n]*\\("),  lib_path = NULL, error_text = " INSIDE P1::F1")
+#' .fun_args_pos(text = ' "a" ; paste0("I", paste0(sum(1:3), collapse = " "), min(1) ) ; range(2)', pattern = paste0("paste0", "[\\s\\r\\n]*\\("), lib_path = NULL, error_text = " INSIDE P1::F1")
 #' }
 #' @keywords internal
 #' @rdname internal_function
@@ -30,13 +30,13 @@
 ){
     # DEBUGGING
     # source("https://raw.githubusercontent.com/safer-r/saferDev/main/dev/other/test.R")
-    # text = ' "a" ; paste0("I", paste0(sum(1:3), collapse = " "), min(1) ) ; range(2)' ; pattern = paste0("paste0", "[\\s\\r\\n]*\\(") ; error_text = " INSIDE P1::F1" ; internal_error_report_link = "test"
-    # function_name <- ".fun_args_pos" ; arg_user_setting = base::list(text = "a", pattern = paste0("paste0", "[\\s\\r\\n]*\\("), error_text = "INSIDE P1::F1", internal_error_report_link = "test") ; arg_names <- c("text", "pattern", "error_text", "internal_error_report_link")
-    # text = 'base::gregexpr(pattern = base::paste0(pattern, "\\(#"), text = text)' ; pattern = 'gregexpr[\\s\\r\\n]*\\(' ; error_text = " INSIDE P1::F1" ; internal_error_report_link = "test"
-    # function_name <- ".fun_args_pos" ; arg_user_setting = base::list(text = 'base::gregexpr(pattern = base::paste0(pattern, "\\(#"), text = text)', pattern = 'gregexpr[\\s\\r\\n]*\\(', error_text = "INSIDE P1::F1", internal_error_report_link = "test") ; arg_names <- c("text", "pattern", "error_text", "internal_error_report_link")
-    # text = ' "a" ; paste0("I", paste0(sum(1:3), collapse = " "), min(1) ) ; range(2)', pattern = paste0("paste0", "[\\s\\r\\n]*\\("), , error_text = " INSIDE P1::F1", internal_error_report_link = "test")
+    # text = ' "a" ; paste0("I", paste0(sum(1:3), collapse = " "), min(1) ) ; range(2)' ; pattern = paste0("paste0", "[\\s\\r\\n]*\\(") ; lib_path = NULL ; error_text = " INSIDE P1::F1"
+    # function_name <- ".fun_args_pos" ; arg_user_setting = base::list(text = "a", pattern = paste0("paste0", "[\\s\\r\\n]*\\("), error_text = "INSIDE P1::F1") ; arg_names <- c("text", "pattern", "lib_path", "error_text")
+    # text = 'base::gregexpr(pattern = base::paste0(pattern, "\\(#"), text = text)' ; pattern = 'gregexpr[\\s\\r\\n]*\\(' ; lib_path = NULL ; error_text = " INSIDE P1::F1"
+    # function_name <- ".fun_args_pos" ; arg_user_setting = base::list(text = 'base::gregexpr(pattern = base::paste0(pattern, "\\(#"), text = text)', pattern = 'gregexpr[\\s\\r\\n]*\\(', error_text = "INSIDE P1::F1") ; arg_names <- c("text", "pattern", "lib_path", "error_text")
+    # text = ' "a" ; paste0("I", paste0(sum(1:3), collapse = " "), min(1) ) ; range(2)', pattern = paste0("paste0", "[\\s\\r\\n]*\\("), lib_path = NULL, error_text = " INSIDE P1::F1")
 
-   #### package name
+    #### package name
     package_name <- "saferDev" # write NULL if the function developed is not in a package
     #### end package name
 
@@ -102,7 +102,10 @@
 
     ######## arg with no default values
     mandat_args <- base::c(
-        "data"
+        "text", 
+        "pattern", 
+        "lib_path", 
+        "error_text"
     )
     tempo <- base::eval(expr = base::parse(text = base::paste0("base::c(base::missing(", base::paste0(mandat_args, collapse = "),base::missing(", recycle0 = FALSE), "))", collapse = NULL, recycle0 = FALSE), file = "", n = NULL, prompt = "?", keep.source = base::getOption(x = "keep.source", default = NULL), srcfile = NULL, encoding = "unknown"), envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL))
     if(base::any(tempo, na.rm = TRUE)){
@@ -122,10 +125,9 @@
     ######## management of NULL arguments
     # before NA checking because is.na(NULL) return logical(0) and all(logical(0)) is TRUE
     tempo_arg <-base::c(
-        "data", 
-        # "seed", # inactivated because can be NULL 
+        "text", 
+        "pattern"
         # "lib_path", # inactivated because can be NULL
-        "safer_check"
         # "error_text" # inactivated because NULL converted to "" above
     )
     tempo_log <- base::sapply(X = base::lapply(X = tempo_arg, FUN = function(x){base::get(x = x, pos = -1L, envir = base::parent.frame(n = 2), mode = "any", inherits = FALSE)}), FUN = function(x){base::is.null(x = x)}, simplify = TRUE, USE.NAMES = TRUE) # parent.frame(n = 2) because sapply(lapply())
@@ -188,13 +190,12 @@
     ######## end check of lib_path
 
     ######## safer_check argument checking
-
+    # not used here
     ######## end safer_check argument checking
 
     ######## check of the required functions from the required packages
-    # saferDev::arg_check is required
-    # saferDev::.noclean_functions is required
-    # check already done in the main safer function
+    # saferDev::arg_check is required here
+    # but check already done in the main safer function
     ######## end check of the required functions from the required packages
 
     ######## critical operator checking
@@ -214,10 +215,6 @@
     # add as many lines as below, for each of your arguments of your function in development
     tempo <- saferDev::arg_check(data = text, class = "vector", typeof = "character", mode = NULL, length = 1, prop = FALSE, double_as_integer_allowed = FALSE, options = NULL, all_options_in_data = FALSE, na_contain = TRUE, neg_values = TRUE, inf_values = TRUE, print = FALSE, data_name = NULL, data_arg = TRUE, lib_path = lib_path, safer_check = FALSE, error_text = embed_error_text) ; base::eval(expr = ee, envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL))
     tempo <- saferDev::arg_check(data = pattern, class = "vector", typeof = "character", mode = NULL, length = 1, prop = FALSE, double_as_integer_allowed = FALSE, options = NULL, all_options_in_data = FALSE, na_contain = TRUE, neg_values = TRUE, inf_values = TRUE, print = FALSE, data_name = NULL, data_arg = TRUE, lib_path = lib_path, safer_check = FALSE, error_text = embed_error_text) ; base::eval(expr = ee, envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL))
-    # error_text already checked above
-    if( ! base::is.null(x = internal_error_report_link)){ # for all arguments that can be NULL, write like this:
-        tempo <- saferDev::arg_check(data = internal_error_report_link, class = NULL, typeof = "character", mode = NULL, length = 1, prop = FALSE, double_as_integer_allowed = FALSE, options = NULL, all_options_in_data = FALSE, na_contain = TRUE, neg_values = TRUE, inf_values = TRUE, print = FALSE, data_name = NULL, data_arg = TRUE, lib_path = lib_path, safer_check = FALSE, error_text = embed_error_text) ; base::eval(expr = ee, envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL))
-    }
     # lib_path already checked above
     # error_text already checked above
     if( ! base::is.null(x = argum_check)){
@@ -232,7 +229,7 @@
 
     ######## management of "" in arguments of mode character
     tempo_arg <- base::c(
-        "text", 
+        # "text", # inactivated because can be ""
         "pattern"
         # "lib_path" # inactivated because already checked above
         # "error_text" # inactivated because can be ""
@@ -394,7 +391,6 @@
     )
     # detection of the closing ) of the function
     all_pos <- base::sort(base::c(open_paren_pos, close_paren_pos))
-    
     final_pos <- while_loop(
         intern_error_nb = 3, 
         start = fun_open_paren_pos,
@@ -420,7 +416,9 @@
             tempo.cat <- base::paste0(
                 "INTERNAL ERROR 4 IN ", 
                 intern_error_text_start, 
-                "THE .fun_args_pos() INTERNAL FUNCTION DID NOT PROPERLY DETECT THE POSITION ALL THE BRACKETS INSIDE THE FUN(    ) BRACKETS IN ", 
+                "THE ", 
+                function_name, 
+                " INTERNAL FUNCTION DID NOT PROPERLY DETECT THE POSITION ALL THE BRACKETS INSIDE THE FUN(    ) BRACKETS IN ", 
                 base::match.call(expand.dots = FALSE)$x, 
                 "\ntext: ", 
                 base::paste0(text, collapse = "\n", recycle0 = FALSE), 
