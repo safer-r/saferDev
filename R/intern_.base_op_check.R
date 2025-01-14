@@ -62,9 +62,11 @@
     ######## end basic error text start
 
     ######## internal error text
+    # not required
     ######## end internal error text
 
     ######## error text when embedding
+    # not required
     ######## end error text when embedding
 
     #### end error_text initiation
@@ -92,6 +94,7 @@
 
     ######## management of NULL arguments
     # not required
+    # "error_text" # inactivated because NULL converted to "" above
     ######## end management of NULL arguments
 
     ######## management of NA arguments
@@ -160,7 +163,7 @@
     ######## end argument checking with arg_check()
 
     ######## management of "" in arguments of mode character
-        # "error_text" # inactivated because can be ""
+    # "error_text" # inactivated because can be ""
     ######## end management of "" in arguments of mode character
 
     #### end argument secondary checking
