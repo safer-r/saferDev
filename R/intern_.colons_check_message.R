@@ -488,6 +488,7 @@
                 col2 = col2, 
                 col3 = col3, 
                 ini = ini, 
+                lib_path = lib_path, 
                 error_text = embed_error_text
             ) # function names are inside quotes or after $ ?
             if(base::sum(tempo.log, na.rm = TRUE) > 0){

@@ -317,11 +317,13 @@
             double.quote.test <- saferDev:::.has_odd_number_of_quotes(
                 input_string = lines.split, 
                 pattern = '"', 
+                lib_path = lib_path, 
                 error_text = embed_error_text
             ) # here FALSE means even number of quotes, thus that the function is not between quotes, thus has to be kept. TRUE means that the function is between quotes, thus has to be removed
             simple.quote.test <- saferDev:::.has_odd_number_of_quotes(
                 input_string = lines.split, 
                 pattern = "'", 
+                lib_path = lib_path, 
                 error_text = embed_error_text
             ) # idem
             odds.quotes.log <- double.quote.test |  simple.quote.test

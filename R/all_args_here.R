@@ -461,6 +461,7 @@ all_args_here <- function(
     out <- saferDev:::.functions_detect(
         x = x, 
         arg_user_setting = arg_user_setting, 
+        lib_path = lib_path, 
         error_text = embed_error_text
     )
     code_line_nb <- out$code_line_nb # vector of line numbers in code where functions are
@@ -486,6 +487,7 @@ all_args_here <- function(
         no_regex_pattern = ")", 
         replacement = " ", 
         perl = TRUE, 
+        lib_path = lib_path, 
         error_text = embed_error_text
     )
     fun_1_line_replace <- tempo$string # code of the tested function that will serve to better detect functions in it
@@ -498,6 +500,7 @@ all_args_here <- function(
         no_regex_pattern = "(", 
         replacement = " ", 
         perl = TRUE, 
+        lib_path = lib_path, 
         error_text = embed_error_text
     )
     fun_1_line_replace <- tempo$string
@@ -537,8 +540,9 @@ all_args_here <- function(
                 tempo_pos <- saferDev:::.fun_args_pos(
                     text = fun_1_line_replace, 
                     pattern = base::paste0(fun_names[[i1]][i2], "[\\s\\r\\n]*\\(", collapse = NULL, recycle0 = FALSE), 
-                    error_text = embed_error_text # positions of 1st letter of the function name and opening and closing brackets # Warning: fun_1_line_replace used because the input string must be cleaned form brackets between quotes
-                )
+                    lib_path = lib_path, 
+                    error_text = embed_error_text
+                ) # positions of 1st letter of the function name and opening and closing brackets # Warning: fun_1_line_replace used because the input string must be cleaned form brackets between quotes
                 tempo_str_before <- base::substr(x = fun_1_line_replace, start = 1, stop = fun_pos_start - 1)
                 tempo_log <- base::grepl(x = tempo_str_before, pattern = "\\$ *$", ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE)
                 if(tempo_log){ # remove functions preceeded by $, like a$fun()
@@ -575,6 +579,7 @@ all_args_here <- function(
                     no_regex_pattern = "(", 
                     replacement = " ", 
                     perl = TRUE, 
+                    lib_path = lib_path, 
                     error_text = embed_error_text
                 )
                 tempo2 <- saferDev:::.in_quotes_replacement(
@@ -583,11 +588,13 @@ all_args_here <- function(
                     no_regex_pattern = ")", 
                     replacement = " ", 
                     perl = TRUE, 
+                    lib_path = lib_path, 
                     error_text = embed_error_text
                 )
                 tempo_pos <- saferDev:::.fun_args_pos(
                     text = tempo2$string, 
                     pattern = pattern2,     
+                    lib_path = lib_path, 
                     error_text = embed_error_text
                 ) # positions of 1st letter of the function name and opening and closing brackets # Warning: fun_1_line_replace used because the input string must be cleaned form brackets between quotes
                 if( ! base::is.null(x = tempo_pos$middle_bracket_pos)){ # I have to use if(){}, otherwise mid_bracket_pos_in_fun_1_line[[i1]][[i2]] disappears
@@ -708,6 +715,7 @@ all_args_here <- function(
                 tempo_package_name_colons <- saferDev:::.extract_all_fun_names(
                     text = tempo_string, 
                     pattern = "[a-zA-Z][a-zA-Z0-9.]*:{2,3}$",
+                    lib_path = lib_path, 
                     error_text = embed_error_text
                 )$string # before 
                 saferDev::is_function_here(
@@ -779,6 +787,7 @@ all_args_here <- function(
                         no_regex_pattern = ",", 
                         replacement = " ", 
                         perl = TRUE, 
+                        lib_path = lib_path, 
                         error_text = embed_error_text
                     )
                     tempo_col3 <- tempo$string
@@ -817,6 +826,7 @@ all_args_here <- function(
                                 perl = TRUE, 
                                 open_pos = middle_bracket_open_in_col3[[i2]][i6], 
                                 close_pos = middle_bracket_close_in_col3[[i2]][i6], 
+                                lib_path = lib_path, 
                                 error_text = embed_error_text
                             )
                             tempo_col3 <- tempo$string
@@ -917,9 +927,10 @@ all_args_here <- function(
                         col1_i2 = col1[i2],
                         col2_i2 = col2[i2],
                         arg_user_setting_x = arg_user_setting$x, 
-                        error_text = embed_error_text, 
                         warn = warn,
-                        warn_count = warn_count
+                        warn_count = warn_count,
+                        lib_path = lib_path, 
+                        error_text = embed_error_text
                     )
                     col6 <- base::c(col6, tempo_out$col6)
                     col7 <- base::c(col7, tempo_out$col7)

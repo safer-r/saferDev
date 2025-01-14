@@ -320,11 +320,13 @@
                 double.quote.test <- saferDev:::.has_odd_number_of_quotes(
                     input_string = tempo.line, 
                     pattern = '"', 
+                    lib_path = lib_path, 
                     error_text = embed_error_text
                 ) # here FALSE means even number of quotes, thus that # is not between quotes, thus has to be removed. TRUE means that # is between quotes, thus has to be kept
                 simple.quote.test <- saferDev:::.has_odd_number_of_quotes(
                     input_string = tempo.line, 
                     pattern = "'", 
+                    lib_path = lib_path, 
                     error_text = embed_error_text
                 ) # idem
                 odds.quotes.log <- double.quote.test |  simple.quote.test # lines to keep among commented lines
@@ -384,7 +386,8 @@
     for(i1 in 1:base::length(code)){
         tempo <- saferDev:::.extract_all_fun_names(
             text = code[i1], 
-            pattern = pattern1,
+            pattern = pattern1, 
+            lib_path = lib_path, 
             error_text = embed_error_text
         ) # recover all the function names, followed by "(", present in code, using a perl pattern
         fun_name <- base::c(fun_name, base::list(tempo$string))
