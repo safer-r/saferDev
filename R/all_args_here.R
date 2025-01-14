@@ -8,7 +8,7 @@
 #' @param overwrite Single logical value. Overwrite potential df_name file already existing in path_out? Ignored if export is FALSE.
 #' @param lib_path Vector of characters specifying the absolute pathways of the directories containing the required packages for the function, if not in the default directories. Useful to overcome R execution using system with non admin rights for R package installation in the default directories. Ignored if NULL (default): only the pathways specified by .libPaths() are used for package calling. Specify the right path if the function returns a package path error.
 #' @param safer_check Single logical value. Perform some "safer" checks? If TRUE, checkings are performed before main code running (see https://github.com/safer-r): 1) R classical operators (like "<-") not overwritten by another package because of the R scope and 2) required functions and related packages effectively present in local R lybraries. Must be set to FALSE if all_args_here() fonction is used inside another "safer" function to avoid pointless multiple checkings.
-#' @param error_text Single character string used to add information in error messages returned by the function, notably if the function is inside other functions, which is practical for debugging. Example: error_text = "INSIDE <PACKAGE_1>::<FUNCTION_1> INSIDE <PACKAGE_2>::<FUNCTION_2>".
+#' @param error_text Single character string used to add information in error messages returned by the function, notably if the function is inside other functions, which is practical for debugging. Example: error_text = " INSIDE <PACKAGE_1>::<FUNCTION_1> INSIDE <PACKAGE_2>::<FUNCTION_2>.". If NULL, converted into "".
 #' @returns 
 #' A data frame indicating the missing arguments or a message saying that everything seems fine.
 #' If export argument is TRUE, then the data frame is exported as res.tsv instead of being returned.
@@ -289,16 +289,22 @@ all_args_here <- function(
     if(safer_check == TRUE){
         saferDev:::.pack_and_function_check(
             fun = base::c(
-                "saferDev:::.base_op_check", 
+                # functions required in this code
                 "saferDev::arg_check",
+                "saferDev::is_function_here", 
+                # end functions required in this code
+                # internal functions required in this code
+                "saferDev:::.base_op_check", 
                 "saferDev:::.functions_detect", # requires saferDev::arg_check, saferDev:::.extract_all_fun_names, saferDev:::.has_odd_number_of_quotes
                 "saferDev:::.in_quotes_replacement", # requires saferDev::arg_check, saferDev:::.has_odd_number_of_quotes
-                "saferDev:::.has_odd_number_of_quotes", # from saferDev:::.functions_detect, saferDev:::.in_quotes_replacement
-                "saferDev:::.fun_args_pos", 
-                "saferDev:::.extract_all_fun_names", # from this function and from saferDev:::.functions_detect
-                "saferDev::is_function_here", 
-                "saferDev:::.in_parenthesis_replacement", 
-                "saferDev:::.all_args_here_fill"
+                "saferDev:::.fun_args_pos", # requires saferDev::arg_check
+                "saferDev:::.extract_all_fun_names", # requires saferDev::arg_check
+                "saferDev:::.in_parenthesis_replacement", # requires saferDev::arg_check
+                "saferDev:::.all_args_here_fill", # requires saferDev::arg_check
+                # end internal functions required in this code
+                # functions required in internal functions above (i.e., :::.FUNCTION_NAME), because presence not checked in internal functions
+                "saferDev:::.has_odd_number_of_quotes" # from saferDev:::.functions_detect, saferDev:::.in_quotes_replacement
+                # end functions required in internal functions above (i.e., :::.FUNCTION_NAME), because presence not checked in internal functions
             ),
             lib_path = lib_path, # write NULL if your function does not have any lib_path argument
             error_text = embed_error_text
