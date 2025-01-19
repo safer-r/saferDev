@@ -3,7 +3,7 @@
 #' Check if 1) required functions are present in required packages and 2) required packages are installed locally.
 #' Simplified version of saferDev::is_function_here(), used as internal function for the other functions of the package.
 #' @param fun Character vector of the names of the required functions, preceded by the name of the package they belong to and a double or triple colon. Example: c("ggplot2::geom_point", "grid::gpar").
-#' @param lib_path Vector of characters specifying the absolute pathways of the directories containing the required packages for the function, if not in the default directories. Useful to overcome R execution using system with non admin rights for R package installation in the default directories. Ignored if NULL (default): only the pathways specified by .libPaths() are used for package calling. Specify the right path if the function returns a package path error.
+#' @param lib_path Vector of characters specifying the absolute pathways of the directories containing the required packages for the function, if not in the default directories. Useful when R package are not installed in the default directories because of lack of admin rights.  More precisely, lib_path is passed through the new argument of .libPaths() so that the new library paths are unique(c(new, .Library.site, .Library)). Warning: .libPaths() is restored to the initial paths, after function execution. Ignored if NULL (default) or if the safer_check argument is FALSE: only the pathways specified by the current .libPaths() are used for package calling.
 #' @param error_text Single character string used to add information in error messages returned by the function, notably if the function is inside other functions, which is practical for debugging. Example: error_text = "INSIDE <PACKAGE_1>::<FUNCTION_1> INSIDE <PACKAGE_2>::<FUNCTION_2>". If NULL, converted into "".
 #' @returns An error message if at least one of the checked packages is missing in lib_path, or if at least one of the checked functions is missing in the required package, nothing otherwise.
 #' @author Gael Millot <gael.millot@pasteur.fr>
@@ -125,8 +125,40 @@
     }
     ######## end management of NULL arguments
 
+    ######## management of empty non NULL arguments
+    # warning: arguments values of class "expression", "name", "function" are not checked because need to be eval, but sometimes, problem of environment
+    if(base::length(x = arg_user_setting) != 0){
+        tempo_log <- base::suppressWarnings(
+            expr = base::sapply(
+                X = arg_user_setting, 
+                FUN = function(x){
+                    if(base::all(base::class(x = x) %in% base::c("expression", "name", "function"), na.rm = TRUE)){
+                        FALSE
+                    }else{
+                        base::length(x = x) == 0 & ! base::is.null(x = x)
+                    }
+                }, 
+                simplify = TRUE, 
+                USE.NAMES = TRUE
+            ), 
+            classes = "warning"
+        ) # no argument provided by the user can be empty non NULL object. Warning: would not work if arg_user_setting is a vector (because treat each element as a compartment), but ok because it is always a list, even is 0 or 1 argument in the developed function
+        if(base::any(tempo_log, na.rm = TRUE)){
+            tempo_cat <- base::paste0(
+                error_text_start, 
+                base::ifelse(test = base::sum(tempo_log, na.rm = TRUE) > 1, yes = "THESE ARGUMENTS", no = "THIS ARGUMENT"), 
+                " CANNOT BE AN EMPTY NON NULL OBJECT:\n", 
+                base::paste0(arg_user_setting_names[tempo_log], collapse = "\n", recycle0 = FALSE), 
+                collapse = NULL, 
+                recycle0 = FALSE
+            )
+            base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL) # == in base::stop() to be able to add several messages between ==
+        }
+    }
+    ######## end management of empty non NULL arguments
+
     ######## management of NA arguments
-    # arguments values of class "expression", "name", "function" are not evaluated
+    # warning: arguments values of class "expression", "name", "function" are not checked because need to be eval, but sometimes, problem of environment
     if(base::length(x = arg_user_setting) != 0){
         tempo_log <- base::suppressWarnings(
             expr = base::sapply(
@@ -166,13 +198,13 @@
 
     #### environment checking
 
-    ######## check of lib_path
-    # already done in the main function
-    ######## end check of lib_path
-
     ######## safer_check argument checking
     # not required because not here
     ######## end safer_check argument checking
+
+    ######## check of lib_path
+    # already done in the main function
+    ######## end check of lib_path
 
     ######## check of the required functions from the required packages
     # not required

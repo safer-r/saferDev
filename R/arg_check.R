@@ -67,8 +67,8 @@ arg_check <- function(
     print = FALSE, 
     data_name = NULL, 
     data_arg = TRUE, 
-    lib_path = NULL, # required because of saferDev:::.base_op_check()
     safer_check = TRUE,
+    lib_path = NULL, # required because of saferDev:::.base_op_check()
     error_text = ""
 ){
     # DEBUGGING
@@ -168,9 +168,9 @@ arg_check <- function(
         "print", 
         # "data_name", # because can be NULL
         "data_arg", 
-        # "lib_path", # because can be NULL
         "safer_check"
-         # "error_text" # inactivated because NULL converted to "" above
+        # "lib_path", # because can be NULL
+        # "error_text" # inactivated because NULL converted to "" above
     )
     tempo_log <- base::sapply(X = base::lapply(X = tempo_arg, FUN = function(x){base::get(x = x, pos = -1L, envir = base::parent.frame(n = 2), mode = "any", inherits = FALSE)}), FUN = function(x){base::is.null(x = x)}, simplify = TRUE, USE.NAMES = TRUE) # parent.frame(n = 2) because sapply(lapply())
     if(base::any(tempo_log, na.rm = TRUE)){ # normally no NA with base::is.null()
@@ -434,8 +434,8 @@ arg_check <- function(
         "print", 
         "data_name",
         "data_arg"
-        # "lib_path", # already checked above
         # "safer_check", # already checked above
+        # "lib_path", # already checked above
         # "error_text" # already checked above
     )
     tempo.class <- base::list( # no base::get() used to be sure to deal with the correct environment

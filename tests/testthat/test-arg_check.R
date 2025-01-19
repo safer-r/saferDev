@@ -59,13 +59,13 @@ testthat::test_that("arg_check()", {
 
     ######## management of empty non NULL arguments
     # all the arguments must be present
-    testthat::expect_error(arg_check(data = character()))
-    testthat::expect_error(arg_check(data = integer()))
-    testthat::expect_error(arg_check(data = double()))
-    testthat::expect_error(arg_check(data = logical()))
-    testthat::expect_error(arg_check(data = complex()))
-    testthat::expect_error(arg_check(data = data.frame()))
-    testthat::expect_error(arg_check(data = list()))
+    testthat::expect_error(arg_check(data = character(), class = "numeric"))
+    testthat::expect_error(arg_check(data = integer(), class = "numeric"))
+    testthat::expect_error(arg_check(data = double(), class = "numeric"))
+    testthat::expect_error(arg_check(data = logical(), class = "numeric"))
+    testthat::expect_error(arg_check(data = complex(), class = "numeric"))
+    testthat::expect_error(arg_check(data = data.frame(), class = "numeric"))
+    testthat::expect_error(arg_check(data = list(), class = "numeric"))
 
     testthat::expect_error(arg_check(data = vec1, class = character()))
     testthat::expect_error(arg_check(data = vec1, typeof = character()))

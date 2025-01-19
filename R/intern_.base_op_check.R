@@ -98,6 +98,38 @@
     # "error_text" # inactivated because NULL converted to "" above
     ######## end management of NULL arguments
 
+    ######## management of empty non NULL arguments
+    # warning: arguments values of class "expression", "name", "function" are not checked because need to be eval, but sometimes, problem of environment
+    if(base::length(x = arg_user_setting) != 0){
+        tempo_log <- base::suppressWarnings(
+            expr = base::sapply(
+                X = arg_user_setting, 
+                FUN = function(x){
+                    if(base::all(base::class(x = x) %in% base::c("expression", "name", "function"), na.rm = TRUE)){
+                        FALSE
+                    }else{
+                        base::length(x = x) == 0 & ! base::is.null(x = x)
+                    }
+                }, 
+                simplify = TRUE, 
+                USE.NAMES = TRUE
+            ), 
+            classes = "warning"
+        ) # no argument provided by the user can be empty non NULL object. Warning: would not work if arg_user_setting is a vector (because treat each element as a compartment), but ok because it is always a list, even is 0 or 1 argument in the developed function
+        if(base::any(tempo_log, na.rm = TRUE)){
+            tempo_cat <- base::paste0(
+                error_text_start, 
+                base::ifelse(test = base::sum(tempo_log, na.rm = TRUE) > 1, yes = "THESE ARGUMENTS", no = "THIS ARGUMENT"), 
+                " CANNOT BE AN EMPTY NON NULL OBJECT:\n", 
+                base::paste0(arg_user_setting_names[tempo_log], collapse = "\n", recycle0 = FALSE), 
+                collapse = NULL, 
+                recycle0 = FALSE
+            )
+            base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL) # == in base::stop() to be able to add several messages between ==
+        }
+    }
+    ######## end management of empty non NULL arguments
+
     ######## management of NA arguments
     # arguments values of class "expression", "name", "function" are not evaluated
     if(base::length(x = arg_user_setting) != 0){
@@ -139,13 +171,13 @@
 
     #### environment checking
 
-    ######## check of lib_path
-    # not required
-    ######## end check of lib_path
-
     ######## safer_check argument checking
     # not required
     ######## end safer_check argument checking
+
+    ######## check of lib_path
+    # not required
+    ######## end check of lib_path
 
     ######## check of the required functions from the required packages
     # not required (only basic R function)
