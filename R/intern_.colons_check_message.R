@@ -62,13 +62,13 @@
     arg_user_setting_names <- base::names(x = arg_user_setting)
     # evaluation of values if they are espression, call, etc.
     if(base::length(x = arg_user_setting) != 0){
-        arg_user_setting <- base::lapply(
+        arg_user_setting_eval <- base::lapply(
             X = arg_user_setting_names, 
             FUN = function(x){
                 base::get(x = x, pos = -1L, envir = base::parent.frame(n = 2), mode = "any", inherits = TRUE) # n = 2 because of lapply(), inherit = TRUE to be sure to correctly evaluate
             }
         )
-        base::names(x = arg_user_setting) <- arg_user_setting_names
+        base::names(x = arg_user_setting_eval) <- arg_user_setting_names
     }
     # end evaluation of values if they are espression, call, etc.
     arg_names <- base::names(x = base::formals(fun = base::sys.function(which = base::sys.parent(n = 2)), envir = base::parent.frame(n = 1))) # names of all the arguments
@@ -170,10 +170,10 @@
     ######## end management of NULL arguments
 
     ######## management of empty non NULL arguments
-    if(base::length(x = arg_user_setting) != 0){
+    if(base::length(x = arg_user_setting_eval) != 0){
         tempo_log <- base::suppressWarnings(
             expr = base::sapply(
-                X = arg_user_setting, 
+                X = arg_user_setting_eval, 
                 FUN = function(x){
                     base::length(x = x) == 0 & ! base::is.null(x = x)
                 }, 
@@ -181,7 +181,7 @@
                 USE.NAMES = TRUE
             ), 
             classes = "warning"
-        ) # no argument provided by the user can be empty non NULL object. Warning: would not work if arg_user_setting is a vector (because treat each element as a compartment), but ok because it is always a list, even is 0 or 1 argument in the developed function
+        ) # no argument provided by the user can be empty non NULL object. Warning: would not work if arg_user_setting_eval is a vector (because treat each element as a compartment), but ok because it is always a list, even is 0 or 1 argument in the developed function
         if(base::any(tempo_log, na.rm = TRUE)){
             tempo_cat <- base::paste0(
                 error_text_start, 
@@ -197,11 +197,11 @@
     ######## end management of empty non NULL arguments
 
     ######## management of NA arguments
-    if(base::length(x = arg_user_setting) != 0){
+    if(base::length(x = arg_user_setting_eval) != 0){
         tempo_log <- base::suppressWarnings(
             expr = base::sapply(
                 X = base::lapply(
-                    X = arg_user_setting, 
+                    X = arg_user_setting_eval, 
                     FUN = function(x){
                         base::is.na(x = x)
                     }
@@ -213,7 +213,7 @@
                 USE.NAMES = TRUE
             ), 
             classes = "warning"
-        ) # no argument provided by the user can be just made of NA. is.na(NULL) returns logical(0), the reason why base::length(x = x) > 0 is used # warning: all(x = x, na.rm = TRUE) but normally no NA because base::is.na() used here. Warning: would not work if arg_user_setting is a vector (because treat each element as a compartment), but ok because it is always a list, even is 0 or 1 argument in the developed function
+        ) # no argument provided by the user can be just made of NA. is.na(NULL) returns logical(0), the reason why base::length(x = x) > 0 is used # warning: all(x = x, na.rm = TRUE) but normally no NA because base::is.na() used here. Warning: would not work if arg_user_setting_eval is a vector (because treat each element as a compartment), but ok because it is always a list, even is 0 or 1 argument in the developed function
         if(base::any(tempo_log, na.rm = TRUE)){
             tempo_cat <- base::paste0(
                 error_text_start, 
