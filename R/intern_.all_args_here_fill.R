@@ -186,10 +186,26 @@
     ######## end management of NULL arguments
 
     ######## management of empty non NULL arguments
-    if(base::length(x = arg_user_setting_eval) != 0){
+    # personalized modification here
+    tempo_arg <-base::c(
+        "arg_full",
+        "arg_full_names", 
+        # "tempo_split", # inactivated because can be empty
+        "three_dots_log", 
+        "i2", 
+        "col1_i2", 
+        "col2_i2",
+        "arg_user_setting_x", 
+        "warn",
+        "warn_count", 
+        "lib_path",
+        "error_text"
+    )
+    tempo_arg_user_setting_eval <- arg_user_setting_eval[base::names(arg_user_setting_eval) %in% tempo_arg]
+    if(base::length(x = tempo_arg_user_setting_eval) != 0){
         tempo_log <- base::suppressWarnings(
             expr = base::sapply(
-                X = arg_user_setting_eval, 
+                X = tempo_arg_user_setting_eval, 
                 FUN = function(x){
                     base::length(x = x) == 0 & ! base::is.null(x = x)
                 }, 
