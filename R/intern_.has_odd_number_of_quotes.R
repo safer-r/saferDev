@@ -33,7 +33,7 @@
     #### end internal error report link
 
     #### function name
-    tempo_settings <- base::as.list(x = base::match.call(definition = base::sys.function(which = base::sys.parent(n = 0)), call = base::sys.call(which = base::sys.parent(n = 0)), expand.dots = FALSE, envir = base::parent.frame(n = 2L))) # warning: I have written n = 0 to avoid error when a safer function is inside another functions. In addition, arguments values retrieved are not evaluated base::match.call
+    tempo_settings <- base::as.list(x = base::match.call(definition = base::sys.function(which = base::sys.parent(n = 0)), call = base::sys.call(which = base::sys.parent(n = 0)), expand.dots = FALSE, envir = base::parent.frame(n = 2L))) # warning: I have written n = 0 to avoid error when a safer function is inside another functions. In addition, arguments values retrieved are not evaluated base::match.call, but this is solved with get() below
     function_name <- base::paste0(tempo_settings[[1]], "()", collapse = NULL, recycle0 = FALSE) 
     # function name with "()" paste, which split into a vector of three: c("::()", "package ()", "function ()") if "package::function()" is used.
     if(function_name[1] == "::()" | function_name[1] == ":::()"){
@@ -44,6 +44,17 @@
     #### arguments settings
     arg_user_setting <- tempo_settings[-1] # list of the argument settings (excluding default values not provided by the user). Always a list, even if 1 argument. So ok for lapply() usage (management of NA section)
     arg_user_setting_names <- base::names(x = arg_user_setting)
+    # evaluation of values if they are espression, call, etc.
+    if(base::length(x = arg_user_setting) != 0){
+        arg_user_setting <- base::lapply(
+            X = arg_user_setting_names, 
+            FUN = function(x){
+                base::get(x = x, pos = -1L, envir = base::parent.frame(n = 2), mode = "any", inherits = TRUE) # n = 2 because of lapply(), inherit = TRUE to be sure to correctly evaluate
+            }
+        )
+        base::names(x = arg_user_setting) <- arg_user_setting_names
+    }
+    # end evaluation of values if they are espression, call, etc.
     arg_names <- base::names(x = base::formals(fun = base::sys.function(which = base::sys.parent(n = 2)), envir = base::parent.frame(n = 1))) # names of all the arguments
     #### end arguments settings
 
@@ -133,18 +144,13 @@
     ######## end management of NULL arguments
 
     ######## management of empty non NULL arguments
-    # warning: arguments values of class "expression", "name", "function" are not checked because need to be eval, but sometimes, problem of environment
     if(base::length(x = arg_user_setting) != 0){
         tempo_log <- base::suppressWarnings(
             expr = base::sapply(
                 X = arg_user_setting, 
                 FUN = function(x){
-                    if(base::all(base::class(x = x) %in% base::c("expression", "name", "function"), na.rm = TRUE)){
-                        FALSE
-                    }else{
-                        base::length(x = x) == 0 & ! base::is.null(x = x)
-                    }
-                }, 
+                    base::length(x = x) == 0 & ! base::is.null(x = x)
+                },  
                 simplify = TRUE, 
                 USE.NAMES = TRUE
             ), 
@@ -165,18 +171,13 @@
     ######## end management of empty non NULL arguments
 
     ######## management of NA arguments
-    # warning: arguments values of class "expression", "name", "function" are not checked because need to be eval, but sometimes, problem of environment
     if(base::length(x = arg_user_setting) != 0){
         tempo_log <- base::suppressWarnings(
             expr = base::sapply(
                 X = base::lapply(
                     X = arg_user_setting, 
                     FUN = function(x){
-                        if(base::all(base::class(x = x) %in% base::c("expression", "name", "function"), na.rm = TRUE)){
-                            FALSE
-                        }else{
-                            base::is.na(x = x)
-                        }
+                        base::is.na(x = x)
                     }
                 ), 
                 FUN = function(x){

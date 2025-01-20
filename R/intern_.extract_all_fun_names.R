@@ -147,7 +147,6 @@
     ######## end management of NULL arguments
 
     ######## management of empty non NULL arguments
-    # warning: arguments values of class "expression", "name", "function" are not checked because need to be eval, but sometimes, problem of environment
     if(base::length(x = arg_user_setting) != 0){
         tempo_log <- base::suppressWarnings(
             expr = base::sapply(
@@ -175,7 +174,6 @@
     ######## end management of empty non NULL arguments
 
     ######## management of NA arguments
-    # warning: arguments values of class "expression", "name", "function" are not checked because need to be eval, but sometimes, problem of environment
     if(base::length(x = arg_user_setting) != 0){
         tempo_log <- base::suppressWarnings(
             expr = base::sapply(
