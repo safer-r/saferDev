@@ -206,10 +206,22 @@ all_args_here <- function(
     ######## end management of NULL arguments
 
     ######## management of empty non NULL arguments
-    if(base::length(x = arg_user_setting_eval) != 0){
+    # # before NA checking because is.na(logical()) is logical(0) (but secured with & base::length(x = x) > 0)
+    tempo_arg <-base::c(
+        "x", 
+        "export", 
+        "path_out", 
+        "df_name", 
+        "overwrite", 
+        "safer_check", 
+        "lib_path",
+        "error_text"
+    )
+    tempo_arg_user_setting_eval <- arg_user_setting_eval[base::names(arg_user_setting_eval) %in% tempo_arg]
+    if(base::length(x = tempo_arg_user_setting_eval) != 0){
         tempo_log <- base::suppressWarnings(
             expr = base::sapply(
-                X = arg_user_setting_eval, 
+                X = tempo_arg_user_setting_eval, 
                 FUN = function(x){
                     base::length(x = x) == 0 & ! base::is.null(x = x)
                 }, 
@@ -223,7 +235,7 @@ all_args_here <- function(
                 error_text_start, 
                 base::ifelse(test = base::sum(tempo_log, na.rm = TRUE) > 1, yes = "THESE ARGUMENTS", no = "THIS ARGUMENT"), 
                 " CANNOT BE AN EMPTY NON NULL OBJECT:\n", 
-                base::paste0(arg_user_setting_names[tempo_log], collapse = "\n", recycle0 = FALSE), 
+                base::paste0(tempo_arg_user_setting_eval[tempo_log], collapse = "\n", recycle0 = FALSE), 
                 collapse = NULL, 
                 recycle0 = FALSE
             )
@@ -239,11 +251,11 @@ all_args_here <- function(
                 X = base::lapply(
                     X = arg_user_setting_eval, 
                     FUN = function(x){
-                        base::is.na(x = x)
+                        base::is.na(x = x) # if x is empty, return empty, but ok with below
                     }
                 ), 
                 FUN = function(x){
-                    base::all(x = x, na.rm = TRUE) & base::length(x = x) > 0
+                    base::all(x = x, na.rm = TRUE) & base::length(x = x) > 0 # if x is empty, return FALSE, so OK
                 }, 
                 simplify = TRUE, 
                 USE.NAMES = TRUE
@@ -929,8 +941,12 @@ all_args_here <- function(
                     }
                     # end rewriting the commas inside args
                     # working on each observed arg
-                    arg_full_names <-  base::names(x = arg_full)
-                    three_dots_log <- arg_full_names == "..."
+                    arg_full_names <-  base::names(x = arg_full) # NULL if arg_full is empty list()
+                    three_dots_log <- if(base::length(x = arg_full) > 0){
+                        arg_full_names == "..."
+                    }else{
+                        FALSE
+                    }
                     # checking 
                     if(base::length(x = tempo_split) > base::length(x = arg_full_names) & ! base::any(three_dots_log, na.rm = TRUE)){
                         tempo.cat <- base::paste0(

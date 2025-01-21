@@ -162,25 +162,25 @@ arg_check <- function(
     ######## end arg with no default values
 
     ######## management of NULL arguments
-    # before NA checking because is.na(NULL) return logical(0) and all(logical(0)) is TRUE
+    # before NA checking because is.na(NULL) return logical(0) and all(logical(0)) is TRUE (but secured with & base::length(x = x) > 0)
     tempo_arg <- base::c(
-        # "data", # because can be NULL
-        # "class", # because can be NULL
-        # "typeof", # because can be NULL 
-        # "mode", # because can be NULL
-        # "length", # because can be NULL
+        # "data", # inactivated because can be NULL
+        # "class", # inactivated because can be NULL
+        # "typeof", # inactivated because can be NULL 
+        # "mode", # inactivated because can be NULL
+        # "length", # inactivated because can be NULL
         "prop", 
         "double_as_integer_allowed", 
-        # "options", # because can be NULL
+        # "options", # inactivated because can be NULL
         "all_options_in_data", 
         "na_contain", 
         "neg_values", 
         "inf_values", 
         "print", 
-        # "data_name", # because can be NULL
+        # "data_name", # inactivated because can be NULL
         "data_arg", 
         "safer_check"
-        # "lib_path", # because can be NULL
+        # "lib_path", # inactivated because can be NULL
         # "error_text" # inactivated because NULL converted to "" above
     )
     tempo_log <- base::sapply(X = base::lapply(X = tempo_arg, FUN = function(x){base::get(x = x, pos = -1L, envir = base::parent.frame(n = 2), mode = "any", inherits = FALSE)}), FUN = function(x){base::is.null(x = x)}, simplify = TRUE, USE.NAMES = TRUE) # parent.frame(n = 2) because sapply(lapply())
@@ -198,10 +198,32 @@ arg_check <- function(
     ######## end management of NULL arguments
 
     ######## management of empty non NULL arguments
-    if(base::length(x = arg_user_setting_eval) != 0){
+    # # before NA checking because is.na(logical()) is logical(0) (but secured with & base::length(x = x) > 0)
+    tempo_arg <-base::c(
+        # "data", # inactivated because can be empty
+        "class", 
+        "typeof", 
+        "mode", 
+        "length",
+        "prop", 
+        "double_as_integer_allowed", 
+        "options", 
+        "all_options_in_data", 
+        "na_contain", 
+        "neg_values", 
+        "inf_values", 
+        "print", 
+        "data_name",
+        "data_arg", 
+        "safer_check", 
+        "lib_path", 
+        "error_text" 
+    )
+    tempo_arg_user_setting_eval <- arg_user_setting_eval[base::names(arg_user_setting_eval) %in% tempo_arg]
+    if(base::length(x = tempo_arg_user_setting_eval) != 0){
         tempo_log <- base::suppressWarnings(
             expr = base::sapply(
-                X = arg_user_setting_eval, 
+                X = tempo_arg_user_setting_eval, 
                 FUN = function(x){
                     base::length(x = x) == 0 & ! base::is.null(x = x)
                 }, 
@@ -215,7 +237,7 @@ arg_check <- function(
                 error_text_start, 
                 base::ifelse(test = base::sum(tempo_log, na.rm = TRUE) > 1, yes = "THESE ARGUMENTS", no = "THIS ARGUMENT"), 
                 " CANNOT BE AN EMPTY NON NULL OBJECT:\n", 
-                base::paste0(arg_user_setting_names[tempo_log], collapse = "\n", recycle0 = FALSE), 
+                base::paste0(tempo_arg_user_setting_eval[tempo_log], collapse = "\n", recycle0 = FALSE), 
                 collapse = NULL, 
                 recycle0 = FALSE
             )
@@ -231,11 +253,11 @@ arg_check <- function(
                 X = base::lapply(
                     X = arg_user_setting_eval, 
                     FUN = function(x){
-                        base::is.na(x = x)
+                        base::is.na(x = x) # if x is empty, return empty, but ok with below
                     }
                 ), 
                 FUN = function(x){
-                    base::all(x = x, na.rm = TRUE) & base::length(x = x) > 0
+                    base::all(x = x, na.rm = TRUE) & base::length(x = x) > 0 # if x is empty, return FALSE, so OK
                 }, 
                 simplify = TRUE, 
                 USE.NAMES = TRUE
