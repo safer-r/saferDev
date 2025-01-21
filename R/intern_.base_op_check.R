@@ -56,7 +56,7 @@
     #### error_text initiation
 
     ######## basic error text start
-    error_text <- base::paste0(base::unlist(x = error_text, recursive = TRUE, use.names = TRUE), collapse = "", recycle0 = FALSE) # convert to string. if error_text is a string, changes nothing. If NULL -> "" so no need to check for management of NULL
+    error_text <- base::paste0(base::unlist(x = error_text, recursive = TRUE, use.names = TRUE), collapse = "", recycle0 = FALSE) # convert everything to string. if error_text is a string, changes nothing. If NULL or empty (even list) -> "" so no need to check for management of NULL or empty value
     package_function_name <- base::paste0(
         base::ifelse(test = base::is.null(x = package_name), yes = "", no = base::paste0(package_name, base::ifelse(test = base::grepl(x = function_name, pattern = "^\\.", ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE), yes = ":::", no = "::"), collapse = NULL, recycle0 = FALSE)), 
         function_name,
@@ -110,30 +110,8 @@
     ######## end management of NULL arguments
 
     ######## management of empty non NULL arguments
-    if(base::length(x = arg_user_setting_eval) != 0){
-        tempo_log <- base::suppressWarnings(
-            expr = base::sapply(
-                X = arg_user_setting_eval, 
-                FUN = function(x){
-                    base::length(x = x) == 0 & ! base::is.null(x = x)
-                }, 
-                simplify = TRUE, 
-                USE.NAMES = TRUE
-            ), 
-            classes = "warning"
-        ) # no argument provided by the user can be empty non NULL object. Warning: would not work if arg_user_setting_eval is a vector (because treat each element as a compartment), but ok because it is always a list, even is 0 or 1 argument in the developed function
-        if(base::any(tempo_log, na.rm = TRUE)){
-            tempo_cat <- base::paste0(
-                error_text_start, 
-                base::ifelse(test = base::sum(tempo_log, na.rm = TRUE) > 1, yes = "THESE ARGUMENTS", no = "THIS ARGUMENT"), 
-                " CANNOT BE AN EMPTY NON NULL OBJECT:\n", 
-                base::paste0(arg_user_setting_names[tempo_log], collapse = "\n", recycle0 = FALSE), 
-                collapse = NULL, 
-                recycle0 = FALSE
-            )
-            base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL) # == in base::stop() to be able to add several messages between ==
-        }
-    }
+    # not required
+        # "error_text" # inactivated because empty value converted to "" above
     ######## end management of empty non NULL arguments
 
     ######## management of NA arguments
@@ -143,11 +121,11 @@
                 X = base::lapply(
                     X = arg_user_setting_eval, 
                     FUN = function(x){
-                        base::is.na(x = x)
+                        base::is.na(x = x) # if x is empty, return empty, but ok with below
                     }
                 ), 
                 FUN = function(x){
-                    base::all(x = x, na.rm = TRUE) & base::length(x = x) > 0
+                    base::all(x = x, na.rm = TRUE) & base::length(x = x) > 0 # if x is empty, return FALSE, so OK
                 }, 
                 simplify = TRUE, 
                 USE.NAMES = TRUE
