@@ -25,10 +25,25 @@ testthat::test_that(".pack_and_function_check()", {
     ########  end argument with no default values
 
     ######## management of NULL arguments
+    # all the arguments must be present
     testthat::expect_error(.pack_and_function_check(fun = NULL, lib_path = NULL, error_text = ""))
     testthat::expect_no_error(.pack_and_function_check(fun = char1_fun, lib_path = NULL, error_text = "")) 
     testthat::expect_no_error(.pack_and_function_check(fun = char1_fun, lib_path = NULL, error_text = NULL)) 
     ######## end management of NULL arguments
+
+    ######## management of empty non NULL arguments
+    # all the arguments must be present
+    testthat::expect_error(.pack_and_function_check(fun = character(), lib_path = NULL, error_text = ""))
+    testthat::expect_error(.pack_and_function_check(fun = integer(), lib_path = NULL, error_text = ""))
+    testthat::expect_error(.pack_and_function_check(fun = double(), lib_path = NULL, error_text = ""))
+    testthat::expect_error(.pack_and_function_check(fun = logical(), lib_path = NULL, error_text = ""))
+    testthat::expect_error(.pack_and_function_check(fun = complex(), lib_path = NULL, error_text = ""))
+    testthat::expect_error(.pack_and_function_check(fun = data.frame(), lib_path = NULL, error_text = ""))
+    testthat::expect_error(.pack_and_function_check(fun = list(), lib_path = NULL, error_text = ""))
+
+    testthat::expect_error(.pack_and_function_check(fun = char1_fun, lib_path = character(), error_text = ""))
+    testthat::expect_error(.pack_and_function_check(fun = char1_fun, lib_path = NULL, error_text = character()))
+    ######## end management of empty non NULL arguments
 
     ######## management of NA arguments
     # all the arguments must be present

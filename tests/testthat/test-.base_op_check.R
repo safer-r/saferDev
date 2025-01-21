@@ -23,16 +23,21 @@ testthat::test_that(".base_op_check()", {
     testthat::expect_no_error(.base_op_check(error_text = NULL))
     ######## end management of NULL arguments
 
+    ######## management of empty non NULL arguments
+    # all the arguments must be present
+    testthat::expect_error(.base_op_check(error_text = character()))
+    ######## end management of empty non NULL arguments
+
     ######## management of NA arguments
     # all the arguments must be present
     testthat::expect_error(.base_op_check(error_text = NA))
     ######## end management of NA arguments
 
-    ######## lib_path argument
-    ######## end lib_path argument
-
     ######## safer_check argument
     ######## end safer_check argument
+
+    ######## lib_path argument
+    ######## end lib_path argument
 
     ######## check of the required functions from the required packages
     ######## end check of the required functions from the required packages
