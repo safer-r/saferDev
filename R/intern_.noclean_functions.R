@@ -23,7 +23,7 @@
     col2, 
     col3, 
     ini, 
-    lib_path, 
+    lib_path, # required because of saferDev::arg_check()
     error_text # warning: in internal functions, can return a non safer error message because error_text without default value and is used below before checking for mandatory arg value (specific of internal functions since classical functions are error_text = "")
 ){
     # DEBUGGING

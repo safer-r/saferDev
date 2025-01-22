@@ -4,7 +4,7 @@
 #' @param req_package Character vector of package names to import.
 #' @param python_exec_path Single optional character vector specifying the absolute pathways of the executable python file to use (associated to the packages to use). If NULL, the reticulate::import_from_path() function used in is_python_package_here() seeks for an available version of python.exe, and then uses python_config(python_version, required_module, python_versions). But might not be the correct one for the python_lib_path parameter specified. Thus, it is recommanded to do not leave NULL, notably when using computing clusters.
 #' @param python_lib_path Optional character vector specifying the absolute pathways of the directories containing some of the listed packages in the req_package argument, if not in the default directories.
-#' @param safer_check Single logical value. Perform some "safer" checks? If TRUE, checkings are performed before main code running (see https://github.com/safer-r): 1) 2) R classical operators (like "<-") not overwritten by another package because of the R scope and 3) required functions and related packages effectively present in local R lybraries. Must be set to FALSE if this fonction is used inside another "safer" function to avoid pointless multiple checkings.
+#' @param safer_check Single logical value. Perform some "safer" checks? If TRUE, checkings are performed before main code running (see https://github.com/safer-r): 1) correct lib_path argument value 2) required functions and related packages effectively present in local R lybraries and 3) R classical operators (like "<-") not overwritten by another package because of the R scope. Must be set to FALSE if this fonction is used inside another "safer" function to avoid pointless multiple checkings.
 #' @param lib_path Vector of characters specifying the absolute pathways of the directories containing the required packages for the function, if not in the default directories. Useful when R package are not installed in the default directories because of lack of admin rights.  More precisely, lib_path is passed through the new argument of .libPaths() so that the new library paths are unique(c(new, .Library.site, .Library)). Warning: .libPaths() is restored to the initial paths, after function execution. Ignored if NULL (default) or if the safer_check argument is FALSE: only the pathways specified by the current .libPaths() are used for package calling.
 #' @param error_text Single character string used to add information in error messages returned by the function, notably if the function is inside other functions, which is practical for debugging. Example: error_text = " INSIDE <PACKAGE_1>::<FUNCTION_1> INSIDE <PACKAGE_2>::<FUNCTION_2>.". If NULL, converted into "".
 #' @returns An error message if at least one of the checked packages is missing in python_lib_path, nothing otherwise.
@@ -33,7 +33,7 @@ is_python_package_here <- function(
     python_exec_path = NULL, 
     python_lib_path = NULL, 
     safer_check = TRUE, 
-    lib_path = NULL,
+    lib_path = NULL, 
     error_text = ""
 ){
     # DEBUGGING
@@ -445,7 +445,7 @@ is_python_package_here <- function(
         }
         if(base::all(base::sapply(tempo.try, FUN = grepl, pattern = "[Ee]rror"), na.rm = TRUE)){
             base::print(tempo.try)
-            tempo.cat <- base::paste0(
+            tempo_cat <- base::paste0(
                 error_text_start, 
                 "PACKAGE ", 
                 req_package[i1], 
@@ -454,7 +454,7 @@ is_python_package_here <- function(
                 collapse = NULL, 
                 recycle0 = FALSE
             )
-            base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
+            base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
         } # else{
         # suppressMessages(suppressWarnings(suppressPackageStartupMessages(assign(req_package[i1], reticulate::import(req_package[i1]))))) # not required because try() already evaluates
         # }

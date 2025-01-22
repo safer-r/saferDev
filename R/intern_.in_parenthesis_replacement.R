@@ -352,7 +352,7 @@
 
     #### main code
     if(base::substr(string, open_pos, open_pos) != "("){
-        tempo.cat <- base::paste0(
+        tempo_cat <- base::paste0(
             "INTERNAL ERROR 1 IN ", 
             intern_error_text_start, 
             "ARGUMENT open_pos DOES NOT REFER TO A POSITION OF OPENING PARENTHESIS\nopen_pos:\n", 
@@ -365,10 +365,10 @@
             collapse = NULL, 
             recycle0 = FALSE
         )
-        base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
+        base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
     }
     if(base::substr(string, close_pos, close_pos) != ")"){
-        tempo.cat <- base::paste0(
+        tempo_cat <- base::paste0(
             "INTERNAL ERROR 2 IN ", 
             intern_error_text_start, 
             "ARGUMENT close_pos DOES NOT REFER TO A POSITION OF CLOSING PARENTHESIS\nclose_pos:\n", 
@@ -381,7 +381,7 @@
             collapse = NULL, 
             recycle0 = FALSE
         )
-        base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
+        base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
     }
     string_out <- string
     # Extract the substring between the given open and close parentheses
@@ -403,7 +403,7 @@
     if( ! base::is.null(pos)){
         tempo <- base::substring(string, pos, pos)
         if( ! base::all(base::unique(tempo) == no_regex_pattern, na.rm = TRUE)){
-            tempo.cat <- base::paste0(
+            tempo_cat <- base::paste0(
                 "INTERNAL ERROR 3 IN ", 
                 intern_error_text_start, 
                 "ARGUMENT no_regex_pattern NOT CORRECTLY DETECTED\nno_regex_pattern: \"", 
@@ -414,7 +414,7 @@
                 collapse = NULL, 
                 recycle0 = FALSE
             )
-            base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
+            base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
         }
     }
     # Return both the modified string and positions of replaced commas

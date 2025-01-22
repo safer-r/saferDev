@@ -308,7 +308,7 @@
     # recovering the basic functions of R
     s <- base::c("package:stats", "package:graphics",  "package:grDevices", "package:utils", "package:datasets", "package:methods", "Autoloads", "package:base") # basic base::search() scope
     if(base::any( ! s %in% base::search())){
-        tempo.cat <- base::paste0(
+        tempo_cat <- base::paste0(
             "INTERNAL ERROR 1 IN ",
             intern_error_text_start, 
             "THE base::search() SCOPE OF R HAS CHANGED.\nTHE PROBLEM IS:\n",
@@ -317,7 +317,7 @@
             collapse = NULL, 
             recycle0 = FALSE
         )
-        base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
+        base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
     }
     fun <- base::unlist(base::sapply(X = s, FUN = function(x){base::ls(x, all.names = TRUE)})) # all the basic functions of R in all the scope
     # end recovering the basic functions of R
@@ -336,7 +336,7 @@
     # removal of comments
     comment_line.log <- base::grepl(code, pattern = "^\\s*#") # removal of the lines starting by #
     if(base::length(code) == 0){
-        tempo.cat <- base::paste0(
+        tempo_cat <- base::paste0(
             error_text_start, 
             "THE TESTED FUNCTION ", 
             arg_user_setting$x, 
@@ -344,7 +344,7 @@
             collapse = NULL, 
             recycle0 = FALSE
         )
-        base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
+        base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
     }
     comment.log <- base::grepl(x = code, pattern = "#")
     if(base::any(comment.log, na.rm = TRUE)){
@@ -446,7 +446,7 @@
     fun_name_pos_wo_op <- fun_name_pos_wo_op[ ! tempo.log]
     code_line_nb <- code_line_nb[( ! tempo.log) & ( ! comment_line.log) & ( ! empty_line.log)]
     if( ! (base::length(fun_name_wo_op) == base::length(fun_name_pos_wo_op) & base::length(fun_name_wo_op) == base::length(code_line_nb))){
-        tempo.cat <- base::paste0(
+        tempo_cat <- base::paste0(
             "INTERNAL ERROR 2 IN ",
             intern_error_text_start, 
             "LENGTHS SHOULD BE IDENTICAL\nfun_name_wo_op: ", 
@@ -459,9 +459,9 @@
             collapse = NULL, 
             recycle0 = FALSE
         )
-        base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
+        base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
     }else if(base::any(base::is.na(code_line_nb))){
-        tempo.cat <- base::paste0(
+        tempo_cat <- base::paste0(
             "INTERNAL ERROR 3 IN ", 
             intern_error_text_start, 
             "code_line_nb SHOULD NOT CONTAIN NA.\ncode_line_nb:\n", 
@@ -470,7 +470,7 @@
             collapse = NULL, 
             recycle0 = FALSE
         )
-        base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
+        base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
     }else{
         # with that, now the code line of code is indicated in as compartment names
         base::names(fun_name_wo_op) <- base::paste0("c", code_line_nb)
@@ -479,17 +479,17 @@
     # end removal of empty string
     test.log <- base::mapply(FUN = function(x, y){base::length(x) != base::length(y)}, x = fun_name_wo_op, y = fun_name_pos_wo_op, SIMPLIFY = TRUE)
     if(base::any(test.log, na.rm = TRUE)){
-        tempo.cat <- base::paste0(
+        tempo_cat <- base::paste0(
             "INTERNAL ERROR 4 IN ",
             intern_error_text_start, 
             "LENGTHS SHOULD BE IDENTICAL IN COMPARTMENTS ", 
             base::paste0(base::which(test.log), collapse = ", "), 
-            " OF fun_name_wo_op AND fun_name_pos_wo_op", 
+            " OF fun_name_wo_op AND fun_name_pos_wo_op.", 
             intern_error_text_end, 
             collapse = NULL, 
             recycle0 = FALSE
         )
-        base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
+        base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
     }
     # fun_name_wo_op_uni <- base::unlist(base::unique(fun_name_wo_op)) # in case
     # end all function names in x

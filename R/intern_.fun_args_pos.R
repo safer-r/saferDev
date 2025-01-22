@@ -338,7 +338,7 @@
         intern_error_text_end
         ){
         if(base::length(x) != 1 | base::any(base::is.na(x), na.rm = TRUE) | base::is.null(x) | base::any(x < 0 , na.rm = TRUE)){
-            tempo.cat <- base::paste0(
+            tempo_cat <- base::paste0(
                 "INTERNAL ERROR ", 
                 intern_error_nb, 
                 ," IN ",
@@ -354,7 +354,7 @@
                 collapse = NULL, 
                 recycle0 = FALSE
             )
-            base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
+            base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
         }
     }
 
@@ -383,7 +383,7 @@
             loop.nb <- loop.nb + 1
         }
         if(count != 0){
-            tempo.cat <- base::paste0(
+            tempo_cat <- base::paste0(
                 "INTERNAL ERROR ", 
                 intern_error_nb, 
                 ," IN ",
@@ -400,7 +400,7 @@
                 collapse = NULL, 
                 recycle0 = FALSE
             )
-            base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
+            base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
         }else{
             base::return(final_pos)
         }
@@ -454,7 +454,7 @@
         close_paren_pos_inside <- all_pos_inside[all_pos_inside %in% close_paren_pos]
         count_close_paren_pos_inside <- base::length(open_paren_pos_inside)
         if(count_open_paren_pos_inside != count_close_paren_pos_inside | count_open_paren_pos_inside == 0){ #count_open_paren_pos_inside == 0 because tempo_log above has some TRUE
-            tempo.cat <- base::paste0(
+            tempo_cat <- base::paste0(
                 "INTERNAL ERROR 4 IN ", 
                 intern_error_text_start, 
                 "THE ", 
@@ -474,7 +474,7 @@
                 collapse = NULL, 
                 recycle0 = FALSE
             )
-            base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
+            base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
         }
         middle_bracket_pos <- base::vector(mode = "list", length = count_open_paren_pos_inside)
         for(i2 in 1:count_open_paren_pos_inside){

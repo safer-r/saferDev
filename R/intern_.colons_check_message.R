@@ -365,7 +365,7 @@
     # check the identical structure of list.fun and list.fun.pos
     ident_str <- function(list.fun, list.fun.pos, error_nb, intern_error_text_start, intern_error_text_end){
         if( ! (base::length(x = list.fun) == base::length(x = list.fun.pos) & base::all(base::sapply(X = list.fun, FUN = function(x){base::length(x = x)}) == base::sapply(X = list.fun.pos, FUN = function(x){base::length(x = x)}), na.rm = TRUE))){
-            tempo.cat <- base::paste0(
+            tempo_cat <- base::paste0(
                 "INTERNAL ERROR ", 
                 error_nb, " 
                 IN ", 
@@ -377,27 +377,28 @@
                 "\nAND NUMBER OF ELEMENT IN EACH COMPARTMENT ARE RESPECTIVELY:\n", 
                 base::paste0(base::sapply(X = list.fun, FUN = function(x){base::length(x = x)}), collapse = " ", , recycle0 = FALSE), 
                 "\n", 
-                base::paste(base::sapply(X = list.fun, FUN = function(x){base::length(x = x)}), collapse = " "), 
+                base::paste0(base::sapply(X = list.fun, FUN = function(x){base::length(x = x)}), collapse = " ", recycle0 = FALSE), 
                 intern_error_text_end, 
                 collapse = NULL, 
                 recycle0 = FALSE
             )
-            base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
+            base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
         }
     }
     # end check the identical structure of list.fun and list.fun.pos
     if(base::length(text) != 1 & base::any( ! text %in% base::c("BASIC", "OTHER"))){
-        tempo.cat <- base::paste0("
+        tempo_cat <- base::paste0("
             INTERNAL ERROR 1 IN ", 
             intern_error_text_start, 
             "THE text ARGUMENT OF ", 
             function_name, 
-            " MUST BE \"BASIC\" OR \"OTHER\".\nTHE PROBLEM IS:\n",
+            " MUST BE \"BASIC\" OR \"OTHER\".\nTHE PROBLEM IS:\n", 
+            paste0(text, collapse = "\n", recycle0 = FALSE)
             intern_error_text_end, 
             collapse = NULL, 
             recycle0 = FALSE
         )
-        base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
+        base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
     }
     ident_str(
         list.fun = list.fun, 
@@ -448,7 +449,7 @@
         # pattern3 <- base::paste(base::paste0("(?<![A-Za-z0-9._])", fun.uni, "\\s*\\($"), collapse = "|") # same as pattern2 but used to know if the seeked function is at the end of the string
         basic_ini <- ini[line.nb]
         if( ! (base::length(list.fun) == base::length(list.fun.pos) & base::length(list.fun) == base::length(line.nb) & base::length(list.fun) == base::length(basic_ini))){
-            tempo.cat <- base::paste0(
+            tempo_cat <- base::paste0(
                 "INTERNAL ERROR 4 IN ", 
                 intern_error_text_start, 
                 "LENGTHS SHOULD BE IDENTICAL\nlist.fun: ", 
@@ -463,7 +464,7 @@
                 collapse = NULL, 
                 recycle0 = FALSE
             )
-            base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
+            base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
         }
         res <- list.fun.pos
         for(i1 in 1:base::length(basic_ini)){
@@ -479,7 +480,7 @@
         res2 <- base::lapply(X = res, FUN = function(x){base::substr(x, base::nchar(x)-1, base::nchar(x))}) # base::nchar(x)-1 takes only :: if the strings ends by :::
         base::names(res2) <- NULL
         if( ! base::all(base::sapply(X = res2, FUN = function(x){base::length(x)}) == base::sapply(X = res, FUN = function(x){base::length(x)}))){
-            tempo.cat <- base::paste0(
+            tempo_cat <- base::paste0(
                 "INTERNAL ERROR 5 IN ", 
                 intern_error_text_start, 
                 "LENGTHS SHOULD BE IDENTICAL\nres2: ", 
@@ -490,11 +491,11 @@
                 collapse = NULL, 
                 recycle0 = FALSE
             )
-            base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
+            base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
         }
         colon_not_here <- base::lapply(X = res2, FUN = function(x){ ! x %in% "::"}) # no need to check for ":::" because base::nchar(x)-1 takes only :: if the strings ends by :::
         if( ! base::all(base::sapply(X = res2, FUN = function(x){base::length(x)}) == base::sapply(X = colon_not_here, FUN = function(x){base::length(x)}))){
-            tempo.cat <- base::paste0(
+            tempo_cat <- base::paste0(
                 "INTERNAL ERROR 6 IN ", 
                 intern_error_text_start, 
                 "LENGTHS SHOULD BE IDENTICAL\nres2: ", 
@@ -505,14 +506,14 @@
                 collapse = NULL, 
                 recycle0 = FALSE
             )
-            base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
+            base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
         }
         if(base::any(base::unlist(colon_not_here))){
             col1 <- base::as.vector(base::unlist(base::mapply(FUN = function(x, y){base::rep(y, base::sum(x))}, x = colon_not_here, y = line.nb, SIMPLIFY = TRUE)))
             col2 <- base::as.vector(base::unlist(base::mapply(FUN = function(x, y){y[x]}, x = colon_not_here, y = list.fun, SIMPLIFY = TRUE)))
             col3 <- base::as.vector(base::unlist(base::mapply(FUN = function(x, y){y[x]}, x = colon_not_here, y = res, SIMPLIFY = TRUE)))
             if( ! (base::length(col1) == base::length(col2) & base::length(col1) == base::length(col3) & base::length(col2) == base::length(col3))){
-                tempo.cat <- base::paste0(
+                tempo_cat <- base::paste0(
                     "INTERNAL ERROR 7 IN ", 
                     intern_error_text_start, 
                     "LENGTHS OF col1 (", 
@@ -521,12 +522,12 @@
                     base::length(col2), 
                     "), AND col3 (", 
                     base::length(col3), 
-                    "), SHOULD BE EQUAL\n", 
-                    collapse = NULL, 
+                    "), SHOULD BE EQUAL.", 
                     intern_error_text_end, 
+                    collapse = NULL, 
                     recycle0 = FALSE
                 )
-                base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
+                base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
             }
             # removal of functions between quotes and after $
             tempo.log <- saferDev:::.noclean_functions(

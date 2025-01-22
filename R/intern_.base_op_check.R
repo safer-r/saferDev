@@ -2,7 +2,7 @@
 #' @description
 #' Check if critical operators of R are not present in other packages or in the global env.
 #' Others functions of the R scope can be overwritten because safer functions always use :: when using any function.
-#' @param error_text Single character string used to add information in error messages returned by the function, notably if the function is inside other functions, which is practical for debugging. Example: error_text = "INSIDE <PACKAGE_1>::<FUNCTION_1> INSIDE <PACKAGE_2>::<FUNCTION_2>". If NULL, converted into "".
+#' @param error_text Single character string used to add information in error messages returned by the function, notably if the function is inside other functions, which is practical for debugging. Example: error_text = " INSIDE <PACKAGE_1>::<FUNCTION_1> INSIDE <PACKAGE_2>::<FUNCTION_2>.". If NULL, converted into "".
 #' @returns An error message if at least one of the checked operator is present in the R scope, nothing otherwise.
 #' @author Gael Millot <gael.millot@pasteur.fr>
 #' @author Yushi Han <yushi.han2000@gmail.com>
@@ -252,7 +252,7 @@
     if(base::any(tempo.log, na.rm = TRUE)){
         tempo.name <-  reserved.objects[tempo.log]
         tempo.pos <- base::sapply(X = tempo.name, FUN = function(x){base::paste(utils::find(what = x, mode = "any", numeric = FALSE, simple.words = TRUE), collapse = " ",  sep =  " ", recycle0 = FALSE)}, simplify = TRUE, USE.NAMES = TRUE)
-        tempo.cat <- base::paste0(
+        tempo_cat <- base::paste0(
             error_text_start,
             "CRITICAL R OBJECT",
             base::ifelse(test = base::length(x = tempo.log) == 1L, yes = " ", no = "S "), 
@@ -265,7 +265,7 @@
             collapse = NULL, 
             recycle0 = FALSE
         )
-        base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL) # == in base::stop() to be able to add several messages between ==
+        base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL) # == in base::stop() to be able to add several messages between ==
     }
     # end main code
 }

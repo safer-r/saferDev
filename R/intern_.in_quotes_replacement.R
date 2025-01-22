@@ -346,7 +346,7 @@
 
     #### main code
     if(base::nchar(no_regex_pattern) != base::nchar(replacement)){
-        tempo.cat <- base::paste0(
+        tempo_cat <- base::paste0(
             "INTERNAL ERROR 1 IN ", 
             intern_error_text_start, 
             "ARGUMENTS no_regex_pattern AND replacement MUST HAVE THE SAME NUMBER OF CHARACTERS\nno_regex_pattern (", 
@@ -361,7 +361,7 @@
             collapse = NULL, 
             recycle0 = FALSE
         )
-        base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
+        base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
     }
     string_split <- base::strsplit(string, split = pattern, perl = perl)[[1]]
     string_out <- string_split[1]
@@ -423,7 +423,7 @@
     if( ! base::is.null(pos)){
         tempo <- base::substring(string, pos, pos)
         if( ! base::all(base::unique(tempo) == no_regex_pattern, na.rm = TRUE)){
-            tempo.cat <- base::paste0(
+            tempo_cat <- base::paste0(
                 "INTERNAL ERROR 2 IN ", 
                 intern_error_text_start, 
                 "ARGUMENT no_regex_pattern NOT CORRECTLY DETECTED\nno_regex_pattern: \"", 
@@ -434,7 +434,7 @@
                 collapse = NULL, 
                 recycle0 = FALSE
             )
-            base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
+            base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
         }
     }
     base::return(base::list(string = string_out, pos = pos))

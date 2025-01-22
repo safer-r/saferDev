@@ -2,8 +2,8 @@
 #' @description
 #' Verify that all the functions used inside a function are all referenced by their package attribution. For instance: base::mean() and not mean(), or saferDev:::.base_op_check() and not .base_op_check().
 #' @param x a function name, written without quotes and brackets.
-#' @param lib_path Vector of characters specifying the absolute pathways of the directories containing the required packages for the function, if not in the default directories. Useful to overcome R execution using system with non admin rights for R package installation in the default directories. Ignored if NULL (default): only the pathways specified by .libPaths() are used for package calling. Specify the right path if the function returns a package path error.
-#' @param safer_check Single logical value. Perform some "safer" checks? If TRUE, checkings are performed before main code running (see https://github.com/safer-r): 1) R classical operators (like "<-") not overwritten by another package because of the R scope and 2) required functions and related packages effectively present in local R lybraries. Must be set to FALSE if all_args_here() fonction is used inside another "safer" function to avoid pointless multiple checkings.
+#' @param safer_check Single logical value. Perform some "safer" checks? If TRUE, checkings are performed before main code running (see https://github.com/safer-r): 1) correct lib_path argument value 2) required functions and related packages effectively present in local R lybraries and 3) R classical operators (like "<-") not overwritten by another package because of the R scope. Must be set to FALSE if this fonction is used inside another "safer" function to avoid pointless multiple checkings.
+#' @param lib_path Vector of characters specifying the absolute pathways of the directories containing the required packages for the function, if not in the default directories. Useful when R package are not installed in the default directories because of lack of admin rights.  More precisely, lib_path is passed through the new argument of .libPaths() so that the new library paths are unique(c(new, .Library.site, .Library)). Warning: .libPaths() is restored to the initial paths, after function execution. Ignored if NULL (default) or if the safer_check argument is FALSE: only the pathways specified by the current .libPaths() are used for package calling.
 #' @param error_text Single character string used to add information in error messages returned by the function, notably if the function is inside other functions, which is practical for debugging. Example: error_text = " INSIDE <PACKAGE_1>::<FUNCTION_1> INSIDE <PACKAGE_2>::<FUNCTION_2>.". If NULL, converted into "".
 #' @returns 
 #' A table-like message indicating the missing :: or ::: or a message saying that everything seems fine.
@@ -43,8 +43,8 @@
 #' @export
 colons_check <- function(
     x, 
+    safer_check = TRUE, 
     lib_path = NULL, 
-    safer_check = TRUE,
     error_text = ""
 ){
     # DEBUGGING
@@ -391,7 +391,7 @@ colons_check <- function(
         error_text = embed_error_text
     )
     if( ! (base::all(base::typeof(x = out$fun_names) == "list", na.rm = TRUE) & base::all(base::typeof(x = out$fun_names_pos) == "list", na.rm = TRUE))){
-        tempo.cat <- base::paste0(
+        tempo_cat <- base::paste0(
             "INTERNAL ERROR 1 IN ", 
             intern_error_text_start,
             "out$fun_names AND out$fun_names_pos MUST BE TYPE list\nout$fun_names:\n", 
@@ -402,7 +402,7 @@ colons_check <- function(
             collapse = NULL, 
             recycle0 = FALSE
         )
-        base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL) # == in base::stop() to be able to add several messages between ==
+        base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL) # == in base::stop() to be able to add several messages between ==
     }
     # basic function names in x
     # selection of basic functions
@@ -417,7 +417,7 @@ colons_check <- function(
         in_basic_fun_names_pos <- in_basic_fun_names_pos[ ! tempo.log]
         in_basic_code_line_nb <- out$code_line_nb[ ! tempo.log]
         if( ! (base::length(x = in_basic_fun) == base::length(x = in_basic_fun_names_pos) & base::length(x = in_basic_fun) == base::length(x = in_basic_code_line_nb))){
-            tempo.cat <- base::paste0(
+            tempo_cat <- base::paste0(
                 "INTERNAL ERROR 2 IN ", 
                 intern_error_text_start,
                 "LENGTHS SHOULD BE IDENTICAL\nin_basic_fun: ", 
@@ -430,7 +430,7 @@ colons_check <- function(
                 collapse = NULL, 
                 recycle0 = FALSE
             )
-            base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL) # == in base::stop() to be able to add several messages between ==
+            base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL) # == in base::stop() to be able to add several messages between ==
         }
         # end removal of string with empty function names
         in_basic_fun_uni <- base::unlist(x = base::unique(x = in_basic_fun, incomparables = FALSE), recursive = TRUE, use.names = TRUE) #  names of unique basic functions used in x
@@ -472,7 +472,7 @@ colons_check <- function(
         in_other_fun_names_pos <- in_other_fun_names_pos[ ! tempo.log]
         in_other_code_line_nb <- out$code_line_nb[ ! tempo.log]
         if( ! (base::length(x = in_other_fun) == base::length(x = in_other_fun_names_pos) & base::length(x = in_other_fun) == base::length(x = in_other_code_line_nb))){
-            tempo.cat <- base::paste0(
+            tempo_cat <- base::paste0(
                 "INTERNAL ERROR 3 IN ", 
                 intern_error_text_start,
                 "LENGTHS SHOULD BE IDENTICAL\nin_other_fun: ", 
@@ -485,7 +485,7 @@ colons_check <- function(
                 collapse = NULL, 
                 recycle0 = FALSE
             )
-            base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL) # == in base::stop() to be able to add several messages between ==
+            base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL) # == in base::stop() to be able to add several messages between ==
         }
         # end removal of string with empty function names
         in_other_fun_uni <- base::unlist(x = base::unique(x = in_other_fun, incomparables = FALSE), recursive = TRUE, use.names = TRUE) #  names of unique other functions used in x
@@ -514,17 +514,17 @@ colons_check <- function(
         cat_other <- NULL
     }
     # end analyse of :: before basic functions in x
-    tempo.cat <- base::paste0("AFTER RUNNING ", base::ifelse(test = base::is.null(x = package_name), yes = "", no = base::paste0(package_name, base::ifelse(test = base::grepl(x = function_name, pattern = "^\\.", ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE), yes = ":::", no = "::"))), function_name, ".\nINSIDE ", base::as.character(x = arg_user_setting$x), collapse = NULL, recycle0 = FALSE)
+    tempo_cat <- base::paste0("AFTER RUNNING ", base::ifelse(test = base::is.null(x = package_name), yes = "", no = base::paste0(package_name, base::ifelse(test = base::grepl(x = function_name, pattern = "^\\.", ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE), yes = ":::", no = "::"))), function_name, ".\nINSIDE ", base::as.character(x = arg_user_setting$x), collapse = NULL, recycle0 = FALSE)
     if( ! (base::all(log_basic, na.rm = TRUE) & base::all(log_other, na.rm = TRUE))){
-        tempo.cat <- base::paste0(tempo.cat, ", EVERYTHING SEEMS CLEAN.", collapse = NULL, recycle0 = FALSE)
+        tempo_cat <- base::paste0(tempo_cat, ", EVERYTHING SEEMS CLEAN.", collapse = NULL, recycle0 = FALSE)
     }else{
-        tempo.cat <- base::paste0(
+        tempo_cat <- base::paste0(
             base::ifelse(
                 test = base::is.null(x = cat_basic), 
                 yes = base::paste0(
-                    tempo.cat, 
+                    tempo_cat, 
                     ", EVERYTHING SEEMS CLEAN",
-                    base::ifelse(test = base::is.null(x = cat_other), yes =  ".", no =  "FOR R BASIC FUNCTIONS.\n\n"), 
+                    base::ifelse(test = base::is.null(x = cat_other), yes =  ".", no =  " FOR R BASIC FUNCTIONS.\n\n"), 
                     collapse = NULL, 
                     recycle0 = FALSE
                 ), 
@@ -540,7 +540,7 @@ colons_check <- function(
             recycle0 = FALSE
         )
     }
-    base::cat(base::paste0("\n\n", tempo.cat, "\n\n", collapse = NULL, recycle0 = FALSE), file = "", sep = " ", fill = FALSE, labels = NULL, append = FALSE)
+    base::cat(base::paste0("\n\n", tempo_cat, "\n\n", collapse = NULL, recycle0 = FALSE), file = "", sep = " ", fill = FALSE, labels = NULL, append = FALSE)
     #### end main code
 
     #### output
