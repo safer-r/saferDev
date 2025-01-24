@@ -18,8 +18,6 @@
 #' }
 #' is_function_here(fun = "base::c", error_text = " INSIDE P1::F1")
 #' @export
-
-
 is_function_here <- function(
     fun, 
     safer_check = TRUE, 

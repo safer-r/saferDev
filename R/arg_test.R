@@ -544,7 +544,7 @@ arg_test <- function(
             collapse = NULL, 
             recycle0 = FALSE
         )
-        base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", base::ifelse(base::is.null(warn), "", base::paste0("IN ADDITION\nWARNING", base::ifelse(warn.count > 1, "S", ""), ":\n\n", warn))), call. = FALSE)
+        base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", base::ifelse(base::is.null(warn), "", base::paste0("IN ADDITION\nWARNING", base::ifelse(warn_count > 1, "S", ""), ":\n\n", warn))), call. = FALSE)
     }else if( ! base::all(base::class(base::get(fun)) == "function")){ # here no env = base::sys.nframe(), inherit = FALSE for base::get() because fun is a function in the classical scope
         tempo_cat <- base::paste0(
              error_text_start, 
@@ -554,7 +554,7 @@ arg_test <- function(
             collapse = NULL, 
             recycle0 = FALSE
         )
-        base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", base::ifelse(base::is.null(warn), "", base::paste0("IN ADDITION\nWARNING", base::ifelse(warn.count > 1, "S", ""), ":\n\n", warn))), call. = FALSE)
+        base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", base::ifelse(base::is.null(warn), "", base::paste0("IN ADDITION\nWARNING", base::ifelse(warn_count > 1, "S", ""), ":\n\n", warn))), call. = FALSE)
     }
     if(tempo$problem == FALSE & base::length(arg) == 0L){
         tempo_cat <- base::paste0(
@@ -563,7 +563,7 @@ arg_test <- function(
             collapse = NULL, 
             recycle0 = FALSE
         )
-        base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", base::ifelse(base::is.null(warn), "", base::paste0("IN ADDITION\nWARNING", base::ifelse(warn.count > 1, "S", ""), ":\n\n", warn))), call. = FALSE)
+        base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", base::ifelse(base::is.null(warn), "", base::paste0("IN ADDITION\nWARNING", base::ifelse(warn_count > 1, "S", ""), ":\n\n", warn))), call. = FALSE)
     }
     for(i2 in 1:base::length(val)){ # base::length(val) must be aequal to nb of arguments
         tempo1 <- saferDev::arg_check(data = val[[i2]], class = "vector", na_contain = TRUE, safer_check = FALSE, lib_path = lib_path, error_text = embed_error_text)
@@ -577,7 +577,7 @@ arg_test <- function(
                 collapse = NULL, 
                 recycle0 = FALSE
             )
-            base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", base::ifelse(base::is.null(warn), "", base::paste0("IN ADDITION\nWARNING", base::ifelse(warn.count > 1, "S", ""), ":\n\n", warn))), call. = FALSE)
+            base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", base::ifelse(base::is.null(warn), "", base::paste0("IN ADDITION\nWARNING", base::ifelse(warn_count > 1, "S", ""), ":\n\n", warn))), call. = FALSE)
         }else if(tempo1$problem == FALSE){ # vector split into list compartments
             val[[i2]] <- base::split(x = val[[i2]], f = 1:base::length(val[[i2]])) # convert a vector into list, with each value of the vector in a compartment
         }
@@ -592,7 +592,7 @@ arg_test <- function(
             collapse = NULL, 
             recycle0 = FALSE
         )
-        base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", base::ifelse(base::is.null(warn), "", base::paste0("IN ADDITION\nWARNING", base::ifelse(warn.count > 1, "S", ""), ":\n\n", warn))), call. = FALSE)
+        base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", base::ifelse(base::is.null(warn), "", base::paste0("IN ADDITION\nWARNING", base::ifelse(warn_count > 1, "S", ""), ":\n\n", warn))), call. = FALSE)
     }
     args <- base::names(base::formals(base::get(fun))) # here no env = base::sys.nframe(), inherit = FALSE for base::get() because fun is a function in the classical scope
     if( ! base::all(arg %in% args)){
@@ -605,7 +605,7 @@ arg_test <- function(
             collapse = NULL, 
             recycle0 = FALSE
         )
-        base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", base::ifelse(base::is.null(warn), "", base::paste0("IN ADDITION\nWARNING", base::ifelse(warn.count > 1, "S", ""), ":\n\n", warn))), call. = FALSE)
+        base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", base::ifelse(base::is.null(warn), "", base::paste0("IN ADDITION\nWARNING", base::ifelse(warn_count > 1, "S", ""), ":\n\n", warn))), call. = FALSE)
     }
     if(base::sum(base::sapply(val, FUN = base::length) > 1) > 43){
         tempo_cat <- base::paste0(
@@ -615,7 +615,7 @@ arg_test <- function(
             collapse = NULL, 
             recycle0 = FALSE
         )
-        base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", base::ifelse(base::is.null(warn), "",base::paste0("IN ADDITION\nWARNING", base::ifelse(warn.count > 1, "S", ""), ":\n\n", warn))), call. = FALSE)
+        base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", base::ifelse(base::is.null(warn), "",base::paste0("IN ADDITION\nWARNING", base::ifelse(warn_count > 1, "S", ""), ":\n\n", warn))), call. = FALSE)
     }
     if( ! base::is.null(expect.error)){
         if(base::length(val) != base::length(expect.error)){
@@ -628,7 +628,7 @@ arg_test <- function(
                 collapse = NULL, 
                 recycle0 = FALSE
             )
-            base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", base::ifelse(base::is.null(warn), "", base::paste0("IN ADDITION\nWARNING", base::ifelse(warn.count > 1, "S", ""), ":\n\n", warn))), call. = FALSE)
+            base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", base::ifelse(base::is.null(warn), "", base::paste0("IN ADDITION\nWARNING", base::ifelse(warn_count > 1, "S", ""), ":\n\n", warn))), call. = FALSE)
         }
         for(i3 in 1:base::length(expect.error)){
             tempo1 <- saferDev::arg_check(data = expect.error[[i3]], class = "vector",  mode = "logical", safer_check = FALSE, lib_path = lib_path, error_text = embed_error_text)
@@ -642,7 +642,7 @@ arg_test <- function(
                 collapse = NULL, 
                 recycle0 = FALSE
                 )
-                base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", base::ifelse(base::is.null(warn), "", base::paste0("IN ADDITION\nWARNING", base::ifelse(warn.count > 1, "S", ""), ":\n\n", warn))), call. = FALSE)
+                base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", base::ifelse(base::is.null(warn), "", base::paste0("IN ADDITION\nWARNING", base::ifelse(warn_count > 1, "S", ""), ":\n\n", warn))), call. = FALSE)
             }else if(tempo1$problem == FALSE){ # vector split into list compartments
                 expect.error[[i3]] <- base::split(x = expect.error[[i3]], f = 1:base::length(expect.error[[i3]])) # convert a vector into list, with each value of the vector in a compartment
             }
@@ -663,7 +663,7 @@ arg_test <- function(
                         collapse = NULL, 
                         recycle0 = FALSE
                     )
-                    base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", base::ifelse(base::is.null(warn), "", base::paste0("IN ADDITION\nWARNING", base::ifelse(warn.count > 1, "S", ""), ":\n\n", warn))), call. = FALSE)
+                    base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", base::ifelse(base::is.null(warn), "", base::paste0("IN ADDITION\nWARNING", base::ifelse(warn_count > 1, "S", ""), ":\n\n", warn))), call. = FALSE)
                 }else if(base::length(val[[i2]]) != base::length(expect.error[[i2]])){
                     tempo_cat <- base::paste0(
                         error_text_start, 
@@ -678,7 +678,7 @@ arg_test <- function(
                         collapse = NULL, 
                         recycle0 = FALSE
                     )
-                    base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", base::ifelse(base::is.null(warn), "", base::paste0("IN ADDITION\nWARNING", base::ifelse(warn.count > 1, "S", ""), ":\n\n", warn))), call. = FALSE)
+                    base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", base::ifelse(base::is.null(warn), "", base::paste0("IN ADDITION\nWARNING", base::ifelse(warn_count > 1, "S", ""), ":\n\n", warn))), call. = FALSE)
                 }
             }
         }
@@ -690,7 +690,7 @@ arg_test <- function(
                 "DIRECTORY PATH INDICATED IN THE res.path ARGUMENT DOES NOT EXISTS:\n", 
                 base::paste(res.path, collapse = "\n", recycle0 = FALSE)
             )
-            base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", base::ifelse(base::is.null(warn), "", base::paste0("IN ADDITION\nWARNING", base::ifelse(warn.count > 1, "S", ""), ":\n\n", warn))), call. = FALSE)
+            base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", base::ifelse(base::is.null(warn), "", base::paste0("IN ADDITION\nWARNING", base::ifelse(warn_count > 1, "S", ""), ":\n\n", warn))), call. = FALSE)
         }
     }
     if(parall == TRUE & base::is.null(res.path)){
@@ -700,7 +700,7 @@ arg_test <- function(
             collapse = NULL, 
             recycle0 = FALSE
         )
-        base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", base::ifelse(base::is.null(warn), "", base::paste0("IN ADDITION\nWARNING", base::ifelse(warn.count > 1, "S", ""), ":\n\n", warn))), call. = FALSE)
+        base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", base::ifelse(base::is.null(warn), "", base::paste0("IN ADDITION\nWARNING", base::ifelse(warn_count > 1, "S", ""), ":\n\n", warn))), call. = FALSE)
     }
     if(base::is.null(res.path) & export == TRUE){
         tempo_cat <- base::paste0(
@@ -709,7 +709,7 @@ arg_test <- function(
             collapse = NULL, 
             recycle0 = FALSE
         )
-        base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", base::ifelse(base::is.null(warn), "", base::paste0("IN ADDITION\nWARNING", base::ifelse(warn.count > 1, "S", ""), ":\n\n", warn))), call. = FALSE)
+        base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", base::ifelse(base::is.null(warn), "", base::paste0("IN ADDITION\nWARNING", base::ifelse(warn_count > 1, "S", ""), ":\n\n", warn))), call. = FALSE)
     }
     if(parall == TRUE & export == FALSE){
         export <- TRUE
@@ -730,7 +730,7 @@ arg_test <- function(
                 collapse = NULL, 
                 recycle0 = FALSE
             )
-            base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", base::ifelse(base::is.null(warn), "", base::paste0("IN ADDITION\nWARNING", base::ifelse(warn.count > 1, "S", ""), ":\n\n", warn))), call. = FALSE)
+            base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", base::ifelse(base::is.null(warn), "", base::paste0("IN ADDITION\nWARNING", base::ifelse(warn_count > 1, "S", ""), ":\n\n", warn))), call. = FALSE)
         }
     }
     ######## end other checkings
@@ -776,7 +776,7 @@ arg_test <- function(
                 collapse = NULL, 
                 recycle0 = FALSE
             )
-            base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", base::ifelse(base::is.null(warn), "", base::paste0("IN ADDITION\nWARNING", base::ifelse(warn.count > 1, "S", ""), ":\n\n", warn))), call. = FALSE)
+            base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", base::ifelse(base::is.null(warn), "", base::paste0("IN ADDITION\nWARNING", base::ifelse(warn_count > 1, "S", ""), ":\n\n", warn))), call. = FALSE)
         }else{
             base::dir.create(res.path)
         }
@@ -1110,7 +1110,7 @@ arg_test <- function(
                         collapse = NULL, 
                         recycle0 = FALSE
                     )
-                    base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", base::ifelse(base::is.null(warn), "", base::paste0("IN ADDITION\nWARNING", base::ifelse(warn.count > 1, "S", ""), ":\n\n", warn))), call. = FALSE)
+                    base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", base::ifelse(base::is.null(warn), "", base::paste0("IN ADDITION\nWARNING", base::ifelse(warn_count > 1, "S", ""), ":\n\n", warn))), call. = FALSE)
                 }else{
                     base::assign(env.name, base::new.env())
                     base::assign("val", val, envir = base::get(env.name, envir = base::sys.nframe(), inherits = FALSE)) # var replaced by val
@@ -1134,7 +1134,7 @@ arg_test <- function(
                 base::save(output, file = base::paste0(res.path, "/arg_test_", x[1], base::ifelse(base::length(x) == 1L, ".RData", base::paste0("-", x[base::length(x)], ".RData"))))
                 if(plot.fun == TRUE & plot.count == 0L){
                     warn_count <- warn_count + 1
-                    tempo_warn <- base::paste0("(", warn.count,") IN PROCESS ", process.id, ": NO PDF PLOT BECAUSE ONLY ERRORS REPORTED.", collapse = NULL, recycle0 = FALSE)
+                    tempo_warn <- base::paste0("(", warn_count,") IN PROCESS ", process.id, ": NO PDF PLOT BECAUSE ONLY ERRORS REPORTED.", collapse = NULL, recycle0 = FALSE)
                     warn <- base::paste0(base::ifelse(test = base::is.null(x = warn), yes = tempo_warn, no = base::paste0(warn, "\n\n", tempo_warn, collapse = NULL, recycle0 = FALSE)), collapse = NULL, recycle0 = FALSE)
                     base::file.remove(base::paste0(res.path, "/plots_from_arg_test_", x[1], base::ifelse(base::length(x) == 1L, ".pdf", base::paste0("-", x[base::length(x)], ".pdf"))))
                 }
@@ -1169,7 +1169,7 @@ arg_test <- function(
                             collapse = NULL, 
                             recycle0 = FALSE
                         )
-                        base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", base::ifelse(base::is.null(warn), "", base::paste0("IN ADDITION\nWARNING", base::ifelse(warn.count > 1, "S", ""), ":\n\n", warn))), call. = FALSE)
+                        base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", base::ifelse(base::is.null(warn), "", base::paste0("IN ADDITION\nWARNING", base::ifelse(warn_count > 1, "S", ""), ":\n\n", warn))), call. = FALSE)
                         # end new env for RData combining
                     }else{
                         base::assign(env.name, base::new.env())
@@ -1191,7 +1191,7 @@ arg_test <- function(
                             collapse = NULL, 
                             recycle0 = FALSE
                         )
-                        base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", base::ifelse(base::is.null(warn), "", base::paste0("IN ADDITION\nWARNING", base::ifelse(warn.count > 1, "S", ""), ":\n\n", warn))), call. = FALSE)
+                        base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", base::ifelse(base::is.null(warn), "", base::paste0("IN ADDITION\nWARNING", base::ifelse(warn_count > 1, "S", ""), ":\n\n", warn))), call. = FALSE)
                     }else{
                         # add the differences in RData $sysinfo into final.output
                         tempo.base1 <- base::sort(base::get("final.output", envir = base::get(env.name))$sys.info$basePkgs)
@@ -1267,7 +1267,7 @@ arg_test <- function(
                 collapse = NULL, 
                 recycle0 = FALSE
             )
-            base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", base::ifelse(base::is.null(warn), "", base::paste0("IN ADDITION\nWARNING", base::ifelse(warn.count > 1, "S", ""), ":\n\n", warn))), call. = FALSE)
+            base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", base::ifelse(base::is.null(warn), "", base::paste0("IN ADDITION\nWARNING", base::ifelse(warn_count > 1, "S", ""), ":\n\n", warn))), call. = FALSE)
         }else{
             base::assign(env.name, base::new.env())
             base::assign("val", val, envir = base::get(env.name, envir = base::sys.nframe(), inherits = FALSE)) # var replaced by val
@@ -1288,7 +1288,7 @@ arg_test <- function(
         base::rm(env.name) # optional, because should disappear at the end of the function execution
         if(plot.fun == TRUE & plot.count == 0L){
             warn_count <- warn_count + 1
-            tempo_warn <- base::paste0("(", warn.count,") NO PDF PLOT BECAUSE ONLY ERRORS REPORTED.", collapse = NULL, recycle0 = FALSE)
+            tempo_warn <- base::paste0("(", warn_count,") NO PDF PLOT BECAUSE ONLY ERRORS REPORTED.", collapse = NULL, recycle0 = FALSE)
             warn <- base::paste0(base::ifelse(test = base::is.null(x = warn), yes = tempo_warn, no = base::paste0(warn, "\n\n", tempo_warn, collapse = NULL, recycle0 = FALSE)), collapse = NULL, recycle0 = FALSE)
             base::file.remove(base::paste0(res.path, "/plots_from_arg_test_1", base::ifelse(total.comp.nb == 1L, ".pdf", base::paste0("-", total.comp.nb, ".pdf"))))
         }
@@ -1320,9 +1320,18 @@ arg_test <- function(
     }
     #### warning output
     if( ! base::is.null(x = warn)){
-        base::on.exit(expr = base::warning(base::paste0("FROM ", function_name, base::ifelse(test = base::is.null(x = package_name), yes = "", no = base::paste0(" OF THE ", package_name, " PACKAGE", collapse = NULL, recycle0 = FALSE)), "\n\n", warn, collapse = NULL, recycle0 = FALSE), call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, domain = NULL), add = TRUE, after = TRUE)
-        }
-        base::on.exit(expr = base::options(warning.length = ini_warning_length), add = TRUE, after = TRUE)
+        base::on.exit(
+            expr = base::warning(
+                base::paste0(
+                    base::sub(pattern = "^ERROR IN ", replacement = "FROM ", x = error_text_start, ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE), 
+                    warn, 
+                    collapse = NULL, 
+                    recycle0 = FALSE
+                ), call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, domain = NULL
+            ), add = TRUE, after = TRUE
+        )
+    }
+    base::on.exit(expr = base::options(warning.length = ini_warning_length), add = TRUE, after = TRUE)
     #### end warning output
 
     end.date <- base::Sys.time()
