@@ -414,7 +414,7 @@
     )
     # remove internal functions in other functions (list_fun and list_fun_pos)
     if(text == "OTHER" & base::length(internal_fun_names) > 0){
-        empty_compart_log <- ! logical(length = base::length(x = list_fun)) # all TRUE at the beginning
+        empty_compart_log <- ! base::logical(length = base::length(x = list_fun)) # all TRUE at the beginning
         for(i2 in 1:base::length(internal_fun_names)){
             tempo_log <- base::lapply(X = list_fun, FUN = function(x){
                 x == internal_fun_names[i2]
