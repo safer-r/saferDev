@@ -6,7 +6,7 @@
 #' @param list_fun_pos List of positions of first character of names of all the functions in ini.
 #' @param line_nb Vector of integers of corresponding line numbers.
 #' @param ini Vector of strings of the initial function code analyzed.
-#' @param arg_user_setting List of arg user settings.
+#' @param arg_user_setting2 List of arg user settings.
 #' @param text Either "BASIC" or "OTHER".
 #' @param internal_fun_names Vector of strings of names of internal functions in the function code analyzed. Can be NULL.
 #' @param lib_path Vector of characters specifying the absolute pathways of the directories containing the required packages for the function, if not in the default directories. Useful when R package are not installed in the default directories because of lack of admin rights.  More precisely, lib_path is passed through the new argument of .libPaths() so that the new library paths are unique(c(new, .Library.site, .Library)). Warning: .libPaths() is restored to the initial paths, after function execution. Ignored if NULL (default) or if the safer_check argument is FALSE: only the pathways specified by the current .libPaths() are used for package calling.
@@ -19,7 +19,7 @@
 #' - Warning: requires saferDev::arg_check, saferDev:::.noclean_functions. In main safer functions, in the section "######## check of the required functions from the required packages" add these functions when checking for the presence of saferDev:::.colons_check_message.
 #' @examples
 #' \dontrun{ # Example that shouldn't be run because this is an internal function
-#' .colons_check_message(list_fun = list(c2 = "UseMethod"), list_fun_pos = list(c2 = 1), line_nb = 2, ini = c("function (x, ...) ", "UseMethod(\"mean\")", "<bytecode: 0x000001969e09e580>", "<environment: namespace:base>"), arg_user_setting = list(x = x, arg_user_setting = arg_user_setting, error_text = "P1::F1"), text = "BASIC", internal_fun_names = NULL, lib_path = NULL, error_text = " INSIDE P1::F1")
+#' .colons_check_message(list_fun = list(c2 = "UseMethod"), list_fun_pos = list(c2 = 1), line_nb = 2, ini = c("function (x, ...) ", "UseMethod(\"mean\")", "<bytecode: 0x000001969e09e580>", "<environment: namespace:base>"), arg_user_setting2 = list(x = x, arg_user_setting2 = arg_user_setting, error_text = "P1::F1"), text = "BASIC", internal_fun_names = NULL, lib_path = NULL, error_text = " INSIDE P1::F1")
 #' }
 #' @author Gael Millot <gael.millot@pasteur.fr>
 #' @keywords internal
@@ -30,15 +30,15 @@
     list_fun_pos, 
     line_nb, 
     ini, 
-    arg_user_setting, 
+    arg_user_setting2, 
     text,
     internal_fun_names,
     lib_path, # required because of saferDev::arg_check()
     error_text # warning: in internal functions, error_text without default value returns a R classical non traced error message (specific of internal functions since classical functions are error_text = "")
 ){
     # DEBUGGING
-    # list_fun = in_basic_fun ; list_fun_pos = in_basic_fun_names_pos ; line_nb = in_basic_code_line_nb ; ini = out$code ; arg_user_setting = out$arg_user_setting ; text = "BASIC" ; internal_fun_names = out$internal_fun_names ; lib_path = lib_path ; error_text = " INSIDE P1::F1" 
-    # list_fun = in_other_fun ; list_fun_pos = in_other_fun_names_pos ; line_nb = in_other_code_line_nb ; ini = out$code ; arg_user_setting = out$arg_user_setting ;  text = "OTHER" ; internal_fun_names = out$internal_fun_names ; lib_path = lib_path ; error_text = " INSIDE P1::F1" 
+    # list_fun = in_basic_fun ; list_fun_pos = in_basic_fun_names_pos ; line_nb = in_basic_code_line_nb ; ini = out$code ; arg_user_setting2 = out$arg_user_setting ; text = "BASIC" ; internal_fun_names = out$internal_fun_names ; lib_path = lib_path ; error_text = " INSIDE P1::F1" 
+    # list_fun = in_other_fun ; list_fun_pos = in_other_fun_names_pos ; line_nb = in_other_code_line_nb ; ini = out$code ; arg_user_setting2 = out$arg_user_setting ;  text = "OTHER" ; internal_fun_names = out$internal_fun_names ; lib_path = lib_path ; error_text = " INSIDE P1::F1" 
 
    #### package name
     package_name <- "saferDev" # write NULL if the function developed is not in a package
@@ -121,7 +121,7 @@
         "list_fun_pos", 
         "line_nb", 
         "ini", 
-        "arg_user_setting", 
+        "arg_user_setting2", 
         "text",
         "internal_fun_names",
         "lib_path"
@@ -149,7 +149,7 @@
         "list_fun_pos", 
         "line_nb", 
         "ini", 
-        "arg_user_setting", 
+        "arg_user_setting2", 
         "text"
         # "internal_fun_names" # inactivated because can be NULL
         # "lib_path", # inactivated because can be NULL
@@ -176,7 +176,7 @@
         "list_fun_pos", 
         "line_nb", 
         "ini", 
-        "arg_user_setting", 
+        "arg_user_setting2", 
         "text", 
         "internal_fun_names", 
         "lib_path"
@@ -278,7 +278,7 @@
     tempo <- saferDev::arg_check(data = list_fun_pos, class = "list", typeof = NULL, mode = NULL, length = NULL, prop = FALSE, double_as_integer_allowed = FALSE, options = NULL, all_options_in_data = FALSE, na_contain = TRUE, neg_values = TRUE, inf_values = TRUE, print = FALSE, data_name = NULL, data_arg = TRUE, safer_check = FALSE, lib_path = lib_path,  error_text = embed_error_text) ; base::eval(expr = ee, envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL)) # copy - paste this line as much as necessary
     tempo <- saferDev::arg_check(data = line_nb, class = "vector", typeof = "integer", mode = NULL, length = NULL, prop = FALSE, double_as_integer_allowed = TRUE, options = NULL, all_options_in_data = FALSE, na_contain = TRUE, neg_values = TRUE, inf_values = TRUE, print = FALSE, data_name = NULL, data_arg = TRUE, safer_check = FALSE, lib_path = lib_path, error_text = embed_error_text) ; base::eval(expr = ee, envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL)) # copy - paste this line as much as necessary
     tempo <- saferDev::arg_check(data = ini, class = "vector", typeof = "character", mode = NULL, length = NULL, prop = FALSE, double_as_integer_allowed = FALSE, options = NULL, all_options_in_data = FALSE, na_contain = TRUE, neg_values = TRUE, inf_values = TRUE, print = FALSE, data_name = NULL, data_arg = TRUE, safer_check = FALSE, lib_path = lib_path,  error_text = embed_error_text) ; base::eval(expr = ee, envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL)) # copy - paste this line as much as necessary
-    tempo <- saferDev::arg_check(data = arg_user_setting, class = "list", typeof = NULL, mode = NULL, length = NULL, prop = FALSE, double_as_integer_allowed = FALSE, options = NULL, all_options_in_data = FALSE, na_contain = TRUE, neg_values = TRUE, inf_values = TRUE, print = FALSE, data_name = NULL, data_arg = TRUE, safer_check = FALSE, lib_path = lib_path,  error_text = embed_error_text) ; base::eval(expr = ee, envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL)) # copy - paste this line as much as necessary
+    tempo <- saferDev::arg_check(data = arg_user_setting2, class = "list", typeof = NULL, mode = NULL, length = NULL, prop = FALSE, double_as_integer_allowed = FALSE, options = NULL, all_options_in_data = FALSE, na_contain = TRUE, neg_values = TRUE, inf_values = TRUE, print = FALSE, data_name = NULL, data_arg = TRUE, safer_check = FALSE, lib_path = lib_path,  error_text = embed_error_text) ; base::eval(expr = ee, envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL)) # copy - paste this line as much as necessary
     # error_text already checked above
     if( ! base::is.null(x = internal_error_report_link)){ # for all arguments that can be NULL, write like this:
         tempo <- saferDev::arg_check(data = internal_error_report_link, class = "vector", typeof = "character", mode = NULL, length = 1, prop = FALSE, double_as_integer_allowed = FALSE, options = NULL, all_options_in_data = FALSE, na_contain = TRUE, neg_values = TRUE, inf_values = TRUE, print = FALSE, data_name = NULL, data_arg = TRUE, safer_check = FALSE, lib_path = lib_path,  error_text = embed_error_text) ; base::eval(expr = ee, envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL)) # copy - paste this line as much as necessary
@@ -360,6 +360,11 @@
     #### end second round of checking and data preparation
 
     #### main code
+    # modification of arg_user_setting2$x for clean messages
+    if(base::as.character(x = arg_user_setting2$x)[1] == "::" | base::as.character(x = arg_user_setting2$x)[1] == ":::"){
+        arg_user_setting2$x <- base::paste0(base::as.character(x = arg_user_setting2$x)[2], base::as.character(x = arg_user_setting2$x)[1], base::as.character(x = arg_user_setting2$x)[3], "()")
+    }
+    # end modification of arg_user_setting2$x for clean messages
     output.cat <- NULL
     colon_not_here <- FALSE # reminder: no colon problem with internal functions
     # check the identical structure of list_fun and list_fun_pos
@@ -438,7 +443,7 @@
         line_nb <- line_nb[ ! tempo_log2]
         # end remove empty compartment
         output.cat <- base::paste0(
-            "INSIDE ", arg_user_setting$x, "(), ", base::ifelse(base::length(x = list_fun) == 0, "ONLY", ""), "INTERNAL FUNCTION", base::ifelse(base::length(internal_fun_names) == 1, "", "S"), " DETECTED:\n", 
+            "INSIDE ", arg_user_setting2$x, ", ", base::ifelse(base::length(x = list_fun) == 0, "ONLY", ""), "INTERNAL FUNCTION", base::ifelse(base::length(internal_fun_names) == 1, "", "S"), " DETECTED:\n", 
             base::paste(internal_fun_names, collapse = "\n")
         )
         # reminder: no colon problem with internal functions
@@ -548,7 +553,7 @@
                 tempo.pos <- base::paste0(col1, "\t", col2, "\t\t", col3)
                 output.cat <- base::paste0(
                     base::ifelse(test = base::is.null(output.cat), yes = "", no = base::paste0(output.cat, "\n\n")),
-                    "INSIDE ", arg_user_setting$x, "(), SOME :: OR ::: ARE MISSING AT ", text, " FUNCTION POSITIONS:\n\n", 
+                    "INSIDE ", arg_user_setting2$x, ", SOME :: OR ::: ARE MISSING AT ", text, " FUNCTION POSITIONS:\n\n", 
                     "LINE\tFUN\t\tSTRING_BEFORE\n",
                     base::paste(tempo.pos, collapse = "\n")
                 )

@@ -2,7 +2,7 @@
 #' @description
 #' Detect all the functions names used inside a function.
 #' @param x Function name, written without quotes and brackets.
-#' @param arg_user_setting Argument user settings list.
+#' @param arg_user_setting2 Argument user settings list.
 #' @param lib_path Vector of characters specifying the absolute pathways of the directories containing the required packages for the function, if not in the default directories. Useful when R package are not installed in the default directories because of lack of admin rights.  More precisely, lib_path is passed through the new argument of .libPaths() so that the new library paths are unique(c(new, .Library.site, .Library)). Warning: .libPaths() is restored to the initial paths, after function execution. Ignored if NULL (default) or if the safer_check argument is FALSE: only the pathways specified by the current .libPaths() are used for package calling.
 #' @param error_text Single character string used to add information in error messages returned by the function, notably if the function is inside other functions, which is practical for debugging. Example: error_text = " INSIDE <PACKAGE_1>::<FUNCTION_1> INSIDE <PACKAGE_2>::<FUNCTION_2>.". If NULL, converted into "".
 #' @returns 
@@ -29,7 +29,7 @@
 .functions_detect <- function(
     # in internal functions, all arguments are without value on purpose
     x, 
-    arg_user_setting, 
+    arg_user_setting2, 
     lib_path, # required because of saferDev::arg_check()
     error_text # warning: in internal functions, error_text without default value returns a R classical non traced error message (specific of internal functions since classical functions are error_text = "")
 ){
@@ -118,7 +118,7 @@
     ######## arg with no default values
     mandat_args <- base::c(
         "x", 
-        "arg_user_setting", 
+        "arg_user_setting2", 
         "lib_path"
         # "error_text" # inactivated because error_text already used above. Specific of my internal functions that error_text has no default value
     )
@@ -141,7 +141,7 @@
     # before NA checking because is.na(NULL) return logical(0) and all(logical(0)) is TRUE (but secured with & base::length(x = x) > 0)
     tempo_arg <-base::c(
         "x", 
-        "arg_user_setting"
+        "arg_user_setting2"
         # "lib_path", # inactivated because can be NULL
         # "error_text" # inactivated because NULL converted to "" above
     )
@@ -163,7 +163,7 @@
     # # before NA checking because is.na(logical()) is logical(0) (but secured with & base::length(x = x) > 0)
     tempo_arg <-base::c(
         "x", 
-        "arg_user_setting", 
+        "arg_user_setting2", 
         "lib_path"
         # "error_text" # inactivated because empty value converted to "" above
     )
@@ -261,7 +261,7 @@
     ee <- base::expression(argum_check <- base::c(argum_check, tempo$problem) , text_check <- base::c(text_check, tempo$text) , checked_arg_names <- base::c(checked_arg_names, tempo$object.name))
     # add as many lines as below, for each of your arguments of your function in development
     tempo <- saferDev::arg_check(data = x, class = NULL, typeof = NULL, mode = "function", length = 1, prop = FALSE, double_as_integer_allowed = FALSE, options = NULL, all_options_in_data = FALSE, na_contain = TRUE, neg_values = TRUE, inf_values = TRUE, print = FALSE, data_name = NULL, data_arg = TRUE, safer_check = FALSE, lib_path = lib_path, error_text = embed_error_text) ; base::eval(expr = ee, envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL))
-    tempo <- saferDev::arg_check(data = arg_user_setting, class = NULL, typeof = NULL, mode = "list", length = NULL, prop = FALSE, double_as_integer_allowed = FALSE, options = NULL, all_options_in_data = FALSE, na_contain = TRUE, neg_values = TRUE, inf_values = TRUE, print = FALSE, data_name = NULL, data_arg = TRUE, safer_check = FALSE, lib_path = lib_path, error_text = embed_error_text) ; base::eval(expr = ee, envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL))
+    tempo <- saferDev::arg_check(data = arg_user_setting2, class = NULL, typeof = NULL, mode = "list", length = NULL, prop = FALSE, double_as_integer_allowed = FALSE, options = NULL, all_options_in_data = FALSE, na_contain = TRUE, neg_values = TRUE, inf_values = TRUE, print = FALSE, data_name = NULL, data_arg = TRUE, safer_check = FALSE, lib_path = lib_path, error_text = embed_error_text) ; base::eval(expr = ee, envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL))
     # lib_path already checked above
     # error_text already checked above
     if( ! base::is.null(x = argum_check)){
@@ -300,11 +300,11 @@
     #### end second round of checking and data preparation
 
     #### main code
-    # modification of arg_user_setting$x for clean messages
-    if(base::as.character(x = arg_user_setting$x)[1] == "::" | base::as.character(x = arg_user_setting$x)[1] == ":::"){
-        arg_user_setting$x <- base::paste0(base::as.character(x = arg_user_setting$x)[3], "()")
+    # modification of arg_user_setting2$x for clean messages
+    if(base::as.character(x = arg_user_setting2$x)[1] == "::" | base::as.character(x = arg_user_setting2$x)[1] == ":::"){
+        arg_user_setting2$x <- base::paste0(base::as.character(x = arg_user_setting2$x)[2], base::as.character(x = arg_user_setting2$x)[1], base::as.character(x = arg_user_setting2$x)[3], "()")
     }
-    # end modification of arg_user_setting$x for clean messages
+    # end modification of arg_user_setting2$x for clean messages
     # recovering the basic functions of R
     s <- base::c("package:stats", "package:graphics",  "package:grDevices", "package:utils", "package:datasets", "package:methods", "Autoloads", "package:base") # basic base::search() scope
     if(base::any( ! s %in% base::search())){
@@ -339,7 +339,7 @@
         tempo_cat <- base::paste0(
             error_text_start, 
             "THE TESTED FUNCTION ", 
-            arg_user_setting$x, 
+            arg_user_setting2$x, 
             " IS EMPTY OR ONLY MADE OF COMMENTS.", 
             collapse = NULL, 
             recycle0 = FALSE
@@ -505,7 +505,7 @@
         fun_names_pos = fun_name_pos_wo_op, 
         code_line_nb = code_line_nb, 
         internal_fun_names = internal_fun_names,
-        arg_user_setting = arg_user_setting
+        arg_user_setting = arg_user_setting2
     )
     base::return(output)
     #### end output

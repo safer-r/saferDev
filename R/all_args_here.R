@@ -509,7 +509,7 @@ all_args_here <- function(
     path_out <- base::paste0(path_out, "/", df_name, collapse = NULL, recycle0 = FALSE)
     out <- saferDev:::.functions_detect(
         x = x, 
-        arg_user_setting = arg_user_setting, 
+        arg_user_setting2 = arg_user_setting, 
         lib_path = lib_path, 
         error_text = embed_error_text
     )
