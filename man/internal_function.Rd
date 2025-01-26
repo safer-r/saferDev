@@ -41,7 +41,7 @@
   list_fun_pos,
   line_nb,
   ini,
-  arg_user_setting,
+  arg_user_setting2,
   text,
   internal_fun_names,
   lib_path,
@@ -52,7 +52,7 @@
 
 .fun_args_pos(text, pattern, lib_path, error_text)
 
-.functions_detect(x, arg_user_setting, lib_path, error_text)
+.functions_detect(x, arg_user_setting2, lib_path, error_text)
 
 .has_odd_number_of_quotes(input_string, pattern, lib_path, error_text)
 
@@ -115,7 +115,7 @@
 
 \item{ini}{Vector of strings of the initial function code analyzed.}
 
-\item{arg_user_setting}{Argument user settings list.}
+\item{arg_user_setting2}{Argument user settings list.}
 
 \item{text}{Single string.}
 
@@ -256,7 +256,7 @@ assign("!", 1) ; assign("+", 2) ; .base_op_check(error_text = " INSIDE fun1.") t
 rm("!") ; rm("+") 
 }
 \dontrun{ # Example that shouldn't be run because this is an internal function
-.colons_check_message(list_fun = list(c2 = "UseMethod"), list_fun_pos = list(c2 = 1), line_nb = 2, ini = c("function (x, ...) ", "UseMethod(\"mean\")", "<bytecode: 0x000001969e09e580>", "<environment: namespace:base>"), arg_user_setting = list(x = x, arg_user_setting = arg_user_setting, error_text = "P1::F1"), text = "BASIC", internal_fun_names = NULL, lib_path = NULL, error_text = " INSIDE P1::F1")
+.colons_check_message(list_fun = list(c2 = "UseMethod"), list_fun_pos = list(c2 = 1), line_nb = 2, ini = c("function (x, ...) ", "UseMethod(\"mean\")", "<bytecode: 0x000001969e09e580>", "<environment: namespace:base>"), arg_user_setting2 = list(x = x, arg_user_setting2 = arg_user_setting, error_text = "P1::F1"), text = "BASIC", internal_fun_names = NULL, lib_path = NULL, error_text = " INSIDE P1::F1")
 }
 \dontrun{ # Example that shouldn't be run because this is an internal function
 .extract_all_fun_names(text = 'This is a test string with sum()', pattern = "[a-zA-Z.][a-zA-Z0-9._]*\\\\s*\\\\(", lib_path = NULL, error_text = " INSIDE P1::F1")

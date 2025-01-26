@@ -384,9 +384,14 @@ colons_check <- function(
     #### end second round of checking and data preparation
 
     #### main code
+    # modification of arg_user_setting$x for clean messages
+    if(base::as.character(x = arg_user_setting$x)[1] == "::" | base::as.character(x = arg_user_setting$x)[1] == ":::"){
+        arg_user_setting$x <- base::paste0(base::as.character(x = arg_user_setting$x)[2], base::as.character(x = arg_user_setting$x)[1], base::as.character(x = arg_user_setting$x)[3], "()")
+    }
+    # end modification of arg_user_setting$x for clean messages
     out <- saferDev:::.functions_detect(
         x = x, 
-        arg_user_setting = arg_user_setting, 
+        arg_user_setting2 = arg_user_setting, 
         lib_path = lib_path, 
         error_text = embed_error_text
     )
@@ -442,7 +447,7 @@ colons_check <- function(
                 list_fun_pos = in_basic_fun_names_pos, 
                 line_nb = in_basic_code_line_nb, 
                 ini = out$code, 
-                arg_user_setting = out$arg_user_setting, 
+                arg_user_setting2 = out$arg_user_setting, 
                 text = "BASIC", 
                 internal_fun_names = out$internal_fun_names,
                 lib_path = lib_path, 
@@ -497,7 +502,7 @@ colons_check <- function(
                 list_fun_pos = in_other_fun_names_pos, 
                 line_nb = in_other_code_line_nb, 
                 ini = out$code, 
-                arg_user_setting = out$arg_user_setting, 
+                arg_user_setting2 = out$arg_user_setting, 
                 text = "OTHER", 
                 internal_fun_names = out$internal_fun_names,
                 lib_path = lib_path, 
