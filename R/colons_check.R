@@ -515,7 +515,7 @@ colons_check <- function(
     }
     # end analyse of :: before basic functions in x
     tempo_cat <- base::paste0("AFTER RUNNING ", base::ifelse(test = base::is.null(x = package_name), yes = "", no = base::paste0(package_name, base::ifelse(test = base::grepl(x = function_name, pattern = "^\\.", ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE), yes = ":::", no = "::"))), function_name, ".\nINSIDE ", base::as.character(x = arg_user_setting$x), collapse = NULL, recycle0 = FALSE)
-    if( ! (base::all(log_basic, na.rm = TRUE) & base::all(log_other, na.rm = TRUE))){
+    if(base::all( ! log_basic, na.rm = TRUE) & base::all( ! log_other, na.rm = TRUE)){ # log_basic TRUE means a problem, ! log_basic means all(FALSE) becomes TRUE. Idem for log_other
         tempo_cat <- base::paste0(tempo_cat, ", EVERYTHING SEEMS CLEAN.", collapse = NULL, recycle0 = FALSE)
     }else{
         tempo_cat <- base::paste0(
