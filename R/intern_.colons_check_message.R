@@ -179,7 +179,7 @@
         "arg_user_setting", 
         "text", 
         "internal_fun_names", 
-        "lib_path", 
+        "lib_path"
         # "error_text" # inactivated because empty value converted to "" above
     )
     tempo_arg_user_setting_eval <- arg_user_setting_eval[base::names(arg_user_setting_eval) %in% tempo_arg]
@@ -393,7 +393,7 @@
             "THE text ARGUMENT OF ", 
             function_name, 
             " MUST BE \"BASIC\" OR \"OTHER\".\nTHE PROBLEM IS:\n", 
-            paste0(text, collapse = "\n", recycle0 = FALSE)
+            paste0(text, collapse = "\n", recycle0 = FALSE), 
             intern_error_text_end, 
             collapse = NULL, 
             recycle0 = FALSE

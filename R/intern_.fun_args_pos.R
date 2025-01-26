@@ -160,7 +160,7 @@
     tempo_arg <-base::c(
         "text", 
         "pattern", 
-        "lib_path", 
+        "lib_path"
         # "error_text" # inactivated because empty value converted to "" above
     )
     tempo_arg_user_setting_eval <- arg_user_setting_eval[base::names(arg_user_setting_eval) %in% tempo_arg]

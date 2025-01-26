@@ -37,9 +37,9 @@
 .base_op_check(error_text)
 
 .colons_check_message(
-  list.fun,
-  list.fun.pos,
-  line.nb,
+  list_fun,
+  list_fun_pos,
+  line_nb,
   ini,
   arg_user_setting,
   text,
@@ -105,13 +105,13 @@
 
 \item{lib_path}{Vector of characters specifying the absolute pathways of the directories containing the required packages for the function, if not in the default directories. Useful when R package are not installed in the default directories because of lack of admin rights.  More precisely, lib_path is passed through the new argument of .libPaths() so that the new library paths are unique(c(new, .Library.site, .Library)). Warning: .libPaths() is restored to the initial paths, after function execution. Ignored if NULL (default) or if the safer_check argument is FALSE: only the pathways specified by the current .libPaths() are used for package calling.}
 
-\item{error_text}{Single character string used to add information in error messages returned by the function, notably if the function is inside other functions, which is practical for debugging. Example: error_text = "INSIDE <PACKAGE_1>::<FUNCTION_1> INSIDE <PACKAGE_2>::<FUNCTION_2>". If NULL, converted into "".}
+\item{error_text}{Single character string used to add information in error messages returned by the function, notably if the function is inside other functions, which is practical for debugging. Example: error_text = " INSIDE <PACKAGE_1>::<FUNCTION_1> INSIDE <PACKAGE_2>::<FUNCTION_2>.". If NULL, converted into "".}
 
-\item{list.fun}{List of names of all the functions.}
+\item{list_fun}{List of names of all the functions.}
 
-\item{list.fun.pos}{List of positions of first character of names of all the functions in ini.}
+\item{list_fun_pos}{List of positions of first character of names of all the functions in ini.}
 
-\item{line.nb}{Vector of integers of corresponding line numbers.}
+\item{line_nb}{Vector of integers of corresponding line numbers.}
 
 \item{ini}{Vector of strings of the initial function code analyzed.}
 
@@ -159,7 +159,7 @@ An error message if at least one of the checked operator is present in the R sco
 
 A list:
  $output.cat: the message (string).
- $colon_not_here: logical vector. Does list.fun contain function names without :: or ::: ?
+ $colon_not_here: logical vector. Does list_fun contain function names without :: or ::: ?
 
 List containing:
 $string: the function names without parenthesis.
@@ -222,7 +222,7 @@ Simplified version of saferDev::is_function_here(), used as internal function fo
 \details{
 - Warning: requires saferDev::arg_check. In the safer Backbone section "######## check of the required functions from the required packages" add this function when checking for the presence of saferDev:::.all_args_here_fill.
 
-- Warning: requires saferDev::arg_check, .noclean_functions. In main safer functions, in the section "######## check of the required functions from the required packages" add these functions when checking for the presence of saferDev:::.colons_check_message.
+- Warning: requires saferDev::arg_check, saferDev:::.noclean_functions. In main safer functions, in the section "######## check of the required functions from the required packages" add these functions when checking for the presence of saferDev:::.colons_check_message.
 
 - Warning: requires saferDev::arg_check. In main safer functions, in the section "######## check of the required functions from the required packages" add these functions when checking for the presence of saferDev:::.extract_all_fun_names.
 
@@ -256,7 +256,7 @@ assign("!", 1) ; assign("+", 2) ; .base_op_check(error_text = " INSIDE fun1.") t
 rm("!") ; rm("+") 
 }
 \dontrun{ # Example that shouldn't be run because this is an internal function
-.colons_check_message(list.fun = list(c2 = "UseMethod"), list.fun.pos = list(c2 = 1), line.nb = 2, ini = c("function (x, ...) ", "UseMethod(\"mean\")", "<bytecode: 0x000001969e09e580>", "<environment: namespace:base>"), arg_user_setting = list(x = x, arg_user_setting = arg_user_setting, error_text = "P1::F1"), text = "BASIC", internal_fun_names = NULL, lib_path = NULL, error_text = " INSIDE P1::F1")
+.colons_check_message(list_fun = list(c2 = "UseMethod"), list_fun_pos = list(c2 = 1), line_nb = 2, ini = c("function (x, ...) ", "UseMethod(\"mean\")", "<bytecode: 0x000001969e09e580>", "<environment: namespace:base>"), arg_user_setting = list(x = x, arg_user_setting = arg_user_setting, error_text = "P1::F1"), text = "BASIC", internal_fun_names = NULL, lib_path = NULL, error_text = " INSIDE P1::F1")
 }
 \dontrun{ # Example that shouldn't be run because this is an internal function
 .extract_all_fun_names(text = 'This is a test string with sum()', pattern = "[a-zA-Z.][a-zA-Z0-9._]*\\\\s*\\\\(", lib_path = NULL, error_text = " INSIDE P1::F1")

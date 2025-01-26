@@ -46,7 +46,7 @@
 #' fun3 <- function(){t.test <- 0 ; mean <- 5 ; env_check(pos = 1, name = "fun3")}
 #' fun3()
 #' # Alternative way:
-#' fun4 <- function(){t.test <- 0 ; mean <- 5 ; env_check(pos = 1, name = as.character(sys.calls()[[length(sys.calls())]]))}
+#' fun4 <- function(){t.test <- 0 ; mean <- 5 ; env_check(pos = 1, name = "as.character(sys.calls()[[length(sys.calls())]])")}
 #' fun4()
 #' # sys.calls() gives the name of the imbricated functions, 
 #' # sys.calls()[[length(sys.calls())]] the name of the function one step above.
@@ -58,11 +58,11 @@
 #'     fun8 <- function(){
 #'         test.pos <- 1 # value 1 tests the fun8 env, 2 tests the fun7 env.
 #'         range <- "a"
-#'         env_check(pos = test.pos, name = if(length(sys.calls()) >= test.pos){
+#'         env_check(pos = test.pos, name = "if(length(sys.calls()) >= test.pos){
 #'             as.character(sys.calls()[[length(sys.calls()) + 1 - test.pos]])
 #'         }else{
 #'             search()[(1:length(search()))[test.pos - length(sys.calls())]]
-#'         }) 
+#'         }") 
 #'     }
 #'     fun8()
 #' }
@@ -339,7 +339,9 @@ env_check <- function(
     ee <- base::expression(argum_check <- base::c(argum_check, tempo$problem) , text_check <- base::c(text_check, tempo$text) , checked_arg_names <- base::c(checked_arg_names, tempo$object.name))
     # add as many lines as below, for each of your arguments of your function in development
     tempo <- saferDev::arg_check(data = pos, class = "vector", typeof = "integer", mode = NULL, length = 1, prop = FALSE, double_as_integer_allowed = TRUE, options = NULL, all_options_in_data = FALSE, na_contain = FALSE, neg_values = FALSE, inf_values = TRUE, print = FALSE, data_name = NULL, data_arg = TRUE, safer_check = FALSE, lib_path = lib_path, error_text = embed_error_text) ; base::eval(expr = ee, envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL)) # copy - paste this line as much as necessary
-    tempo <- saferDev::arg_check(data = name, class = "vector", typeof = "character", mode = NULL, length = NULL, prop = FALSE, double_as_integer_allowed = FALSE, options = NULL, all_options_in_data = FALSE, na_contain = FALSE, neg_values = TRUE, inf_values = TRUE, print = FALSE, data_name = NULL, data_arg = TRUE, safer_check = FALSE, lib_path = lib_path, error_text = embed_error_text) ; base::eval(expr = ee, envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL)) # copy - paste this line as much as necessary
+    if( ! base::is.null(x = name)){
+        tempo <- saferDev::arg_check(data = name, class = "vector", typeof = "character", mode = NULL, length = NULL, prop = FALSE, double_as_integer_allowed = FALSE, options = NULL, all_options_in_data = FALSE, na_contain = FALSE, neg_values = TRUE, inf_values = TRUE, print = FALSE, data_name = NULL, data_arg = TRUE, safer_check = FALSE, lib_path = lib_path, error_text = embed_error_text) ; base::eval(expr = ee, envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL)) # copy - paste this line as much as necessary
+    }
     # lib_path already checked above
     # safer_check already checked above
     # error_text already checked above
