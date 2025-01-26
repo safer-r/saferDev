@@ -1,6 +1,6 @@
 #' @title colons_check
 #' @description
-#' Verify that all the functions used inside a function are all referenced by their package attribution. For instance: base::mean() and not mean(), or saferDev:::.base_op_check() and not .base_op_check().
+#' Verify that all the functions used inside a function are preceeded by a package attribution. For instance: base::mean() and not mean(), or saferDev:::.base_op_check() and not .base_op_check(). Warning: does not check that the package is the good one. Use all_args_here() for that.
 #' @param x a function name, written without quotes and brackets.
 #' @param safer_check Single logical value. Perform some "safer" checks? If TRUE, checkings are performed before main code running (see https://github.com/safer-r): 1) correct lib_path argument value 2) required functions and related packages effectively present in local R lybraries and 3) R classical operators (like "<-") not overwritten by another package because of the R scope. Must be set to FALSE if this fonction is used inside another "safer" function to avoid pointless multiple checkings.
 #' @param lib_path Vector of characters specifying the absolute pathways of the directories containing the required packages for the function, if not in the default directories. Useful when R package are not installed in the default directories because of lack of admin rights.  More precisely, lib_path is passed through the new argument of .libPaths() so that the new library paths are unique(c(new, .Library.site, .Library)). Warning: .libPaths() is restored to the initial paths, after function execution. Ignored if NULL (default) or if the safer_check argument is FALSE: only the pathways specified by the current .libPaths() are used for package calling.
@@ -515,7 +515,7 @@ colons_check <- function(
     }
     # end analyse of :: before basic functions in x
     tempo_cat <- base::paste0("AFTER RUNNING ", base::ifelse(test = base::is.null(x = package_name), yes = "", no = base::paste0(package_name, base::ifelse(test = base::grepl(x = function_name, pattern = "^\\.", ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE), yes = ":::", no = "::"))), function_name, ".\nINSIDE ", base::as.character(x = arg_user_setting$x), collapse = NULL, recycle0 = FALSE)
-    if( ! (base::all(log_basic, na.rm = TRUE) & base::all(log_other, na.rm = TRUE))){
+    if(base::all( ! log_basic, na.rm = TRUE) & base::all( ! log_other, na.rm = TRUE)){ # log_basic TRUE means a problem, ! log_basic means all(FALSE) becomes TRUE. Idem for log_other
         tempo_cat <- base::paste0(tempo_cat, ", EVERYTHING SEEMS CLEAN.", collapse = NULL, recycle0 = FALSE)
     }else{
         tempo_cat <- base::paste0(
