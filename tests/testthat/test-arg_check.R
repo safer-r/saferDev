@@ -28,6 +28,11 @@ testthat::test_that("arg_check()", {
 
     ########  argument with no default values
     testthat::expect_error(arg_check())
+    data <- vec1
+    testthat::expect_error(arg_check()) # safer error message of arg with no default values (even if the same objects exist in the R scope)
+    rm(
+        data
+    )
     ########  end argument with no default values
 
     ######## management of NULL arguments

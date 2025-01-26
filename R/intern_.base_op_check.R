@@ -2,7 +2,7 @@
 #' @description
 #' Check if critical operators of R are not present in other packages or in the global env.
 #' Others functions of the R scope can be overwritten because safer functions always use :: when using any function.
-#' @param error_text Single character string used to add information in error messages returned by the function, notably if the function is inside other functions, which is practical for debugging. Example: error_text = "INSIDE <PACKAGE_1>::<FUNCTION_1> INSIDE <PACKAGE_2>::<FUNCTION_2>". If NULL, converted into "".
+#' @param error_text Single character string used to add information in error messages returned by the function, notably if the function is inside other functions, which is practical for debugging. Example: error_text = " INSIDE <PACKAGE_1>::<FUNCTION_1> INSIDE <PACKAGE_2>::<FUNCTION_2>.". If NULL, converted into "".
 #' @returns An error message if at least one of the checked operator is present in the R scope, nothing otherwise.
 #' @author Gael Millot <gael.millot@pasteur.fr>
 #' @author Yushi Han <yushi.han2000@gmail.com>
@@ -17,7 +17,7 @@
 #' @keywords internal
 #' @rdname internal_function
 .base_op_check <- function(
-    error_text # warning: in internal functions, can return a non safer error message because error_text without default value and is used below before checking for mandatory arg value (specific of internal functions since classical functions are error_text = "")
+    error_text # warning: in internal functions, error_text without default value returns a R classical non traced error message (specific of internal functions since classical functions are error_text = "")
 ){
     #### package name
     package_name <- "saferDev" # write NULL if the function developed is not in a package
@@ -56,7 +56,7 @@
     #### error_text initiation
 
     ######## basic error text start
-    error_text <- base::paste0(base::unlist(x = error_text, recursive = TRUE, use.names = TRUE), collapse = "", recycle0 = FALSE) # convert to string. if error_text is a string, changes nothing. If NULL -> "" so no need to check for management of NULL
+    error_text <- base::paste0(base::unlist(x = error_text, recursive = TRUE, use.names = TRUE), collapse = "", recycle0 = FALSE) # convert everything to string. if error_text is a string, changes nothing. If NULL or empty (even list) -> "" so no need to check for management of NULL or empty value
     package_function_name <- base::paste0(
         base::ifelse(test = base::is.null(x = package_name), yes = "", no = base::paste0(package_name, base::ifelse(test = base::grepl(x = function_name, pattern = "^\\.", ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE), yes = ":::", no = "::"), collapse = NULL, recycle0 = FALSE)), 
         function_name,
@@ -86,22 +86,7 @@
     #### argument primary checking
 
     ######## arg with no default values
-    mandat_args <- base::c(
-        "error_text"
-    )
-    tempo <- base::eval(expr = base::parse(text = base::paste0("base::c(base::missing(", base::paste0(mandat_args, collapse = "),base::missing(", recycle0 = FALSE), "))", collapse = NULL, recycle0 = FALSE), file = "", n = NULL, prompt = "?", keep.source = base::getOption(x = "keep.source", default = NULL), srcfile = NULL, encoding = "unknown"), envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL))
-    if(base::any(tempo, na.rm = TRUE)){
-        tempo_cat <- base::paste0(
-            error_text_start, 
-            "FOLLOWING ARGUMENT", 
-            base::ifelse(test = base::sum(tempo, na.rm = TRUE) > 1, yes = "S HAVE", no = " HAS"), 
-            " NO DEFAULT VALUE AND REQUIRE ONE:\n", 
-            base::paste0(mandat_args[tempo], collapse = "\n", recycle0 = FALSE), 
-            collapse = NULL, 
-            recycle0 = FALSE
-        )
-        base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL) # == in base::stop() to be able to add several messages between ==
-    }
+    # no rrequired because error_text already used above. Specific of my internal functions that error_text has no default value
     ######## end arg with no default values
 
     ######## management of NULL arguments
@@ -110,30 +95,8 @@
     ######## end management of NULL arguments
 
     ######## management of empty non NULL arguments
-    if(base::length(x = arg_user_setting_eval) != 0){
-        tempo_log <- base::suppressWarnings(
-            expr = base::sapply(
-                X = arg_user_setting_eval, 
-                FUN = function(x){
-                    base::length(x = x) == 0 & ! base::is.null(x = x)
-                }, 
-                simplify = TRUE, 
-                USE.NAMES = TRUE
-            ), 
-            classes = "warning"
-        ) # no argument provided by the user can be empty non NULL object. Warning: would not work if arg_user_setting_eval is a vector (because treat each element as a compartment), but ok because it is always a list, even is 0 or 1 argument in the developed function
-        if(base::any(tempo_log, na.rm = TRUE)){
-            tempo_cat <- base::paste0(
-                error_text_start, 
-                base::ifelse(test = base::sum(tempo_log, na.rm = TRUE) > 1, yes = "THESE ARGUMENTS", no = "THIS ARGUMENT"), 
-                " CANNOT BE AN EMPTY NON NULL OBJECT:\n", 
-                base::paste0(arg_user_setting_names[tempo_log], collapse = "\n", recycle0 = FALSE), 
-                collapse = NULL, 
-                recycle0 = FALSE
-            )
-            base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL) # == in base::stop() to be able to add several messages between ==
-        }
-    }
+    # not required
+        # "error_text" # inactivated because empty value converted to "" above
     ######## end management of empty non NULL arguments
 
     ######## management of NA arguments
@@ -143,11 +106,11 @@
                 X = base::lapply(
                     X = arg_user_setting_eval, 
                     FUN = function(x){
-                        base::is.na(x = x)
+                        base::is.na(x = x) # if x is empty, return empty, but ok with below
                     }
                 ), 
                 FUN = function(x){
-                    base::all(x = x, na.rm = TRUE) & base::length(x = x) > 0
+                    base::all(x = x, na.rm = TRUE) & base::length(x = x) > 0 # if x is empty, return FALSE, so OK
                 }, 
                 simplify = TRUE, 
                 USE.NAMES = TRUE
@@ -274,7 +237,7 @@
     if(base::any(tempo.log, na.rm = TRUE)){
         tempo.name <-  reserved.objects[tempo.log]
         tempo.pos <- base::sapply(X = tempo.name, FUN = function(x){base::paste(utils::find(what = x, mode = "any", numeric = FALSE, simple.words = TRUE), collapse = " ",  sep =  " ", recycle0 = FALSE)}, simplify = TRUE, USE.NAMES = TRUE)
-        tempo.cat <- base::paste0(
+        tempo_cat <- base::paste0(
             error_text_start,
             "CRITICAL R OBJECT",
             base::ifelse(test = base::length(x = tempo.log) == 1L, yes = " ", no = "S "), 
@@ -287,7 +250,13 @@
             collapse = NULL, 
             recycle0 = FALSE
         )
-        base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL) # == in base::stop() to be able to add several messages between ==
+        base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL) # == in base::stop() to be able to add several messages between ==
     }
     # end main code
+
+    #### warning output
+    #### end warning output
+
+    #### output
+    #### end output
 }

@@ -19,7 +19,7 @@
     input_string, 
     pattern,
     lib_path, # required because of saferDev::arg_check()
-    error_text # warning: in internal functions, can return a non safer error message because error_text without default value and is used below before checking for mandatory arg value (specific of internal functions since classical functions are error_text = "")
+    error_text # warning: in internal functions, error_text without default value returns a R classical non traced error message (specific of internal functions since classical functions are error_text = "")
 ){
     # DEBUGGING
     # input_string = 'This is a "test" string with "even" quotes' ; pattern = '"' ; lib_path = NULL ; error_text = " INSIDE P1::F1"
@@ -61,7 +61,7 @@
     #### error_text initiation
 
     ######## basic error text start
-    error_text <- base::paste0(base::unlist(x = error_text, recursive = TRUE, use.names = TRUE), collapse = "", recycle0 = FALSE) # convert to string. if error_text is a string, changes nothing. If NULL -> "" so no need to check for management of NULL
+    error_text <- base::paste0(base::unlist(x = error_text, recursive = TRUE, use.names = TRUE), collapse = "", recycle0 = FALSE) # convert everything to string. if error_text is a string, changes nothing. If NULL or empty (even list) -> "" so no need to check for management of NULL or empty value
     package_function_name <- base::paste0(
         base::ifelse(test = base::is.null(x = package_name), yes = "", no = base::paste0(package_name, base::ifelse(test = base::grepl(x = function_name, pattern = "^\\.", ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE), yes = ":::", no = "::"), collapse = NULL, recycle0 = FALSE)), 
         function_name,
@@ -103,8 +103,8 @@
     mandat_args <- base::c(
         "input_string", 
         "pattern", 
-        "lib_path", 
-        "error_text"
+        "lib_path"
+        # "error_text" # inactivated because error_text already used above. Specific of my internal functions that error_text has no default value
     )
     tempo <- base::eval(expr = base::parse(text = base::paste0("base::c(base::missing(", base::paste0(mandat_args, collapse = "),base::missing(", recycle0 = FALSE), "))", collapse = NULL, recycle0 = FALSE), file = "", n = NULL, prompt = "?", keep.source = base::getOption(x = "keep.source", default = NULL), srcfile = NULL, encoding = "unknown"), envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL))
     if(base::any(tempo, na.rm = TRUE)){
@@ -122,7 +122,7 @@
     ######## end arg with no default values
 
     ######## management of NULL arguments
-    # before NA checking because is.na(NULL) return logical(0) and all(logical(0)) is TRUE
+    # before NA checking because is.na(NULL) return logical(0) and all(logical(0)) is TRUE (but secured with & base::length(x = x) > 0)
     tempo_arg <-base::c(
         "input_string", 
         "pattern"
@@ -144,10 +144,18 @@
     ######## end management of NULL arguments
 
     ######## management of empty non NULL arguments
-    if(base::length(x = arg_user_setting_eval) != 0){
+    # # before NA checking because is.na(logical()) is logical(0) (but secured with & base::length(x = x) > 0)
+    tempo_arg <-base::c(
+        "input_string", 
+        "pattern", 
+        "lib_path"
+        # "error_text" # inactivated because empty value converted to "" above
+    )
+    tempo_arg_user_setting_eval <- arg_user_setting_eval[base::names(arg_user_setting_eval) %in% tempo_arg]
+    if(base::length(x = tempo_arg_user_setting_eval) != 0){
         tempo_log <- base::suppressWarnings(
             expr = base::sapply(
-                X = arg_user_setting_eval, 
+                X = tempo_arg_user_setting_eval, 
                 FUN = function(x){
                     base::length(x = x) == 0 & ! base::is.null(x = x)
                 }, 
@@ -161,7 +169,7 @@
                 error_text_start, 
                 base::ifelse(test = base::sum(tempo_log, na.rm = TRUE) > 1, yes = "THESE ARGUMENTS", no = "THIS ARGUMENT"), 
                 " CANNOT BE AN EMPTY NON NULL OBJECT:\n", 
-                base::paste0(arg_user_setting_names[tempo_log], collapse = "\n", recycle0 = FALSE), 
+                base::paste0(tempo_arg_user_setting_eval[tempo_log], collapse = "\n", recycle0 = FALSE), 
                 collapse = NULL, 
                 recycle0 = FALSE
             )
@@ -177,11 +185,11 @@
                 X = base::lapply(
                     X = arg_user_setting_eval, 
                     FUN = function(x){
-                        base::is.na(x = x)
+                        base::is.na(x = x) # if x is empty, return empty, but ok with below
                     }
                 ), 
                 FUN = function(x){
-                    base::all(x = x, na.rm = TRUE) & base::length(x = x) > 0
+                    base::all(x = x, na.rm = TRUE) & base::length(x = x) > 0 # if x is empty, return FALSE, so OK
                 }, 
                 simplify = TRUE, 
                 USE.NAMES = TRUE
@@ -319,5 +327,12 @@
     output <- quote_count %% 2 == 1
     base::return(output)
     #### end main code
+
+    #### warning output
+    #### end warning output
+
+    #### output
+    #### end output
+
 }
 

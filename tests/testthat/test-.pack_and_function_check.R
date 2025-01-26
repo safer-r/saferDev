@@ -21,7 +21,18 @@ testthat::test_that(".pack_and_function_check()", {
     #### end function name
 
     ########  argument with no default values
-    testthat::expect_error(.pack_and_function_check()) # all internals have no defaults values
+    # all internals have no defaults values
+    testthat::expect_error(.pack_and_function_check()) 
+    fun <- fun1
+    lib_path <- NULL 
+    error_text <- ""
+    testthat::expect_error(.pack_and_function_check()) # R classical non traced error message due to error_text without default value (specific of my internal functions)
+    testthat::expect_error(.pack_and_function_check(error_text = "")) # safer error message of arg with no default values (even if the same objects exist in the R scope)
+    rm(
+        fun,
+        lib_path,
+        error_text
+    )
     ########  end argument with no default values
 
     ######## management of NULL arguments
