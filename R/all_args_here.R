@@ -339,11 +339,11 @@ all_args_here <- function(
         saferDev:::.pack_and_function_check(
             fun = base::c(
                 # functions required in this code
-                "saferDev::arg_check",
+                "saferDev::arg_check", # also in internal functions
                 "saferDev::is_function_here", 
                 # end functions required in this code
                 # internal functions required in this code
-                "saferDev:::.base_op_check", 
+                "saferDev:::.base_op_check", # also in internal functions
                 "saferDev:::.functions_detect", # requires saferDev::arg_check, saferDev:::.extract_all_fun_names, saferDev:::.has_odd_number_of_quotes
                 "saferDev:::.in_quotes_replacement", # requires saferDev::arg_check, saferDev:::.has_odd_number_of_quotes
                 "saferDev:::.fun_args_pos", # requires saferDev::arg_check
@@ -1000,9 +1000,7 @@ all_args_here <- function(
         }
     }
     # end two new columns for arg proposal
-    #### end main code
 
-    #### output
     if(base::all(col8 %in%base::c("", "GOOD"), na.rm = FALSE)){
         tempo_cat <- base::paste0("INSIDE ", base::as.character(x = out$arg_user_setting$x), "(), EVERYTHING SEEMS CLEAN.", collapse = NULL, recycle0 = FALSE)
         if(export == TRUE){
@@ -1011,15 +1009,10 @@ all_args_here <- function(
         tempo_cat <- base::paste0("AFTER RUNNING ", function_name, " OF THE ", package_name, " PACKAGE:\n", tempo_cat, collapse = NULL, recycle0 = FALSE)
         base::on.exit(expr = base::cat(base::paste0("\n\n", tempo_cat, "\n\n", collapse = NULL, recycle0 = FALSE), file = "", sep = " ", fill = FALSE, labels = NULL, append = FALSE), add = TRUE, after = TRUE)
     }
-    output <- base::data.frame(LINE_NB = col1, FUN_NAME = col2, FUN_ARGS = col3, FUN_POS = col4, DEF_ARGS = col5, MISSING_ARG_NAMES = col6, MISSING_ARGS = col7, STATUS = col8, row.names = NULL, check.rows = FALSE, check.names = TRUE, fix.empty.names = TRUE, stringsAsFactors = FALSE)
-    if(export == TRUE){
-        utils::write.table(x = output, file = path_out, row.names = FALSE, col.names = TRUE, append = FALSE, quote = FALSE, sep = "\t", eol = "\n", na = "", dec = ".", qmethod = base::c("escape", "double"), fileEncoding = "")
-    }else{
-        base::return(output)
-    }
-    #### end output
+    #### end main code
 
     #### warning output
+    # must be before return()
     if( ! base::is.null(x = warn)){
         base::on.exit(
             expr = base::warning(
@@ -1034,4 +1027,13 @@ all_args_here <- function(
     }
     base::on.exit(expr = base::options(warning.length = ini_warning_length), add = TRUE, after = TRUE)
     #### end warning output
+
+    #### output
+    output <- base::data.frame(LINE_NB = col1, FUN_NAME = col2, FUN_ARGS = col3, FUN_POS = col4, DEF_ARGS = col5, MISSING_ARG_NAMES = col6, MISSING_ARGS = col7, STATUS = col8, row.names = NULL, check.rows = FALSE, check.names = TRUE, fix.empty.names = TRUE, stringsAsFactors = FALSE)
+    if(export == TRUE){
+        utils::write.table(x = output, file = path_out, row.names = FALSE, col.names = TRUE, append = FALSE, quote = FALSE, sep = "\t", eol = "\n", na = "", dec = ".", qmethod = base::c("escape", "double"), fileEncoding = "")
+    }else{
+        base::return(output)
+    }
+    #### end output
 }

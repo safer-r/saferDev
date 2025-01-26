@@ -17,6 +17,12 @@ testthat::test_that(".base_op_check()", {
 
     ########  argument with no default values
     testthat::expect_error(.base_op_check()) # all internals have no defaults values
+    error_text <- ""
+    testthat::expect_error(.base_op_check()) # R classical non traced error message due to error_text without default value (specific of my internal functions)
+    # testthat::expect_error(.base_op_check(error_text = "")) # inactivated because no other arg with default values # safer error message of arg with no default values (even if the same objects exist in the R scope)
+    rm(
+        error_text
+    )
     ########  end argument with no default values
 
     ######## management of NULL arguments

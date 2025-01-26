@@ -306,16 +306,16 @@ colons_check <- function(
         saferDev:::.pack_and_function_check(
             fun = base::c(
                 # functions required in this code
-                "saferDev::arg_check",
+                "saferDev::arg_check", # also in internal functions
                 # end functions required in this code
                 # internal functions required in this code
-                "saferDev:::.base_op_check", 
+                "saferDev:::.base_op_check", # also in internal functions
                 "saferDev:::.functions_detect", # requires saferDev::arg_check, saferDev:::.extract_all_fun_names, saferDev:::.has_odd_number_of_quotes
                 "saferDev:::.colons_check_message", # requires saferDev::arg_check, saferDev:::.noclean_functions
                 # end internal functions required in this code
                 # functions required in internal functions above (i.e., :::.FUNCTION_NAME), because presence not checked in internal functions
                 "saferDev:::.extract_all_fun_names", # requires saferDev::arg_check
-                "saferDev:::.has_odd_number_of_quotes", # from saferDev:::.functions_detect, saferDev:::.in_quotes_replacement
+                "saferDev:::.has_odd_number_of_quotes", # from saferDev:::.functions_detect
                 "saferDev:::.noclean_functions" # requires saferDev::arg_check, saferDev:::.has_odd_number_of_quotes
                 # end functions required in internal functions above (i.e., :::.FUNCTION_NAME), because presence not checked in internal functions
             ),
@@ -438,9 +438,9 @@ colons_check <- function(
         # analyse of :: before basic functions in x
         if(base::length(x = in_basic_fun_uni) > 0){
             tempo <- saferDev:::.colons_check_message(
-                list.fun = in_basic_fun, 
-                list.fun.pos = in_basic_fun_names_pos, 
-                line.nb = in_basic_code_line_nb, 
+                list_fun = in_basic_fun, 
+                list_fun_pos = in_basic_fun_names_pos, 
+                line_nb = in_basic_code_line_nb, 
                 ini = out$code, 
                 arg_user_setting = out$arg_user_setting, 
                 text = "BASIC", 
@@ -493,9 +493,9 @@ colons_check <- function(
         # analyse of :: before other functions in x
         if(base::length(x = in_other_fun_uni) > 0){
             tempo <- saferDev:::.colons_check_message(
-                list.fun = in_other_fun, 
-                list.fun.pos = in_other_fun_names_pos, 
-                line.nb = in_other_code_line_nb, 
+                list_fun = in_other_fun, 
+                list_fun_pos = in_other_fun_names_pos, 
+                line_nb = in_other_code_line_nb, 
                 ini = out$code, 
                 arg_user_setting = out$arg_user_setting, 
                 text = "OTHER", 

@@ -550,7 +550,7 @@ arg_test <- function(
              error_text_start, 
             "fun ARGUMENT IS NOT CLASS \"function\" BUT:\n", 
             base::paste0(base::class(base::get(fun)), collapse = "\n", , recycle0 = FALSE), 
-            "\nCHECK IF ANY CREATED OBJECT WOULD HAVE THE NAME OF THE TESTED FUNCTION."
+            "\nCHECK IF ANY CREATED OBJECT WOULD HAVE THE NAME OF THE TESTED FUNCTION.", 
             collapse = NULL, 
             recycle0 = FALSE
         )
@@ -1053,7 +1053,9 @@ arg_test <- function(
             res.path = res.path, 
             lib_path = lib_path, 
             error_text_start = error_text_start,
-            embed_error_text = embed_error_text
+            embed_error_text = embed_error_text,
+            intern_error_text_start = intern_error_text_start, 
+            intern_error_text_end = intern_error_text_end, 
             fun = function(
         x, 
         ini, 
@@ -1077,7 +1079,9 @@ arg_test <- function(
         res.path, 
         lib_path,
         error_text_start,
-        embed_error_text
+        embed_error_text,
+        intern_error_text_start, 
+        intern_error_text_end
             ){
                 # check again: very important because another R
                 process.id <- base::Sys.getpid()
@@ -1245,9 +1249,11 @@ arg_test <- function(
                     utils::write.table(final.file, file = base::paste0(res.path, "/discrepancy_table_from_arg_test_1-", total.comp.nb, ".tsv"), row.names = TRUE, col.names = NA, append = FALSE, quote = FALSE, sep = "\t", eol = "\n", na = "")
                 }
             }
+        }else{
+            tempo_cat <- base::paste0("INTERNAL ERROR 2 IN ", intern_error_text_start, "WEIRD THAT base::length(cluster.list) IN NOT > 1.", intern_error_text_end, collapse = NULL, recycle0 = FALSE)
+            base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
         }
         # end files assembly
-
     }else{
         # plot management
         if(plot.fun == TRUE){
@@ -1292,8 +1298,7 @@ arg_test <- function(
             warn <- base::paste0(base::ifelse(test = base::is.null(x = warn), yes = tempo_warn, no = base::paste0(warn, "\n\n", tempo_warn, collapse = NULL, recycle0 = FALSE)), collapse = NULL, recycle0 = FALSE)
             base::file.remove(base::paste0(res.path, "/plots_from_arg_test_1", base::ifelse(total.comp.nb == 1L, ".pdf", base::paste0("-", total.comp.nb, ".pdf"))))
         }
-
-        #### output
+        # output
         output <- base::list(fun = fun, ini = ini, data = data, sys.info = sys.info)
         if( ! base::is.null(expect.error)){
             expect.data <- output$data[ ! output$data$problem == output$data$expected.error, ]
@@ -1313,12 +1318,17 @@ arg_test <- function(
             table.out <- base::as.matrix(output$data)
             table.out <- base::gsub(table.out, pattern = "\n", replacement = "  ")
             utils::write.table(table.out, file = base::paste0(res.path, "/table_from_arg_test_1", base::ifelse(total.comp.nb == 1L, ".tsv", base::paste0("-", total.comp.nb, ".tsv"))), row.names = TRUE, col.names = NA, append = FALSE, quote = FALSE, sep = "\t", eol = "\n", na = "")
-        }else{
-            base::return(output)
         }
-        #### end output
+        # end output
     }
+    end.date <- base::Sys.time()
+    end.time <- base::as.numeric(end.date)
+    total.lapse <- base::round(lubridate::seconds_to_period(end.time - ini.time))
+    base::cat(base::paste0("test JOB END\n\nTIME: ", end.date, "\n\nTOTAL TIME LAPSE: ", total.lapse, "\n\n\n"))
+    #### end main code
+
     #### warning output
+    # must be before return()
     if( ! base::is.null(x = warn)){
         base::on.exit(
             expr = base::warning(
@@ -1334,9 +1344,11 @@ arg_test <- function(
     base::on.exit(expr = base::options(warning.length = ini_warning_length), add = TRUE, after = TRUE)
     #### end warning output
 
-    end.date <- base::Sys.time()
-    end.time <- base::as.numeric(end.date)
-    total.lapse <- base::round(lubridate::seconds_to_period(end.time - ini.time))
-    base::cat(base::paste0("test JOB END\n\nTIME: ", end.date, "\n\nTOTAL TIME LAPSE: ", total.lapse, "\n\n\n"))
-    #### end main code
+    #### output
+    if(parall == FALSE & export == FALSE){
+        base::return(output)
+    }
+    #### end output
+
 }
+

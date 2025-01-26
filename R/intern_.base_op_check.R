@@ -17,7 +17,7 @@
 #' @keywords internal
 #' @rdname internal_function
 .base_op_check <- function(
-    error_text # warning: in internal functions, can return a non safer error message because error_text without default value and is used below before checking for mandatory arg value (specific of internal functions since classical functions are error_text = "")
+    error_text # warning: in internal functions, error_text without default value returns a R classical non traced error message (specific of internal functions since classical functions are error_text = "")
 ){
     #### package name
     package_name <- "saferDev" # write NULL if the function developed is not in a package
@@ -86,22 +86,7 @@
     #### argument primary checking
 
     ######## arg with no default values
-    mandat_args <- base::c(
-        "error_text"
-    )
-    tempo <- base::eval(expr = base::parse(text = base::paste0("base::c(base::missing(", base::paste0(mandat_args, collapse = "),base::missing(", recycle0 = FALSE), "))", collapse = NULL, recycle0 = FALSE), file = "", n = NULL, prompt = "?", keep.source = base::getOption(x = "keep.source", default = NULL), srcfile = NULL, encoding = "unknown"), envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL))
-    if(base::any(tempo, na.rm = TRUE)){
-        tempo_cat <- base::paste0(
-            error_text_start, 
-            "FOLLOWING ARGUMENT", 
-            base::ifelse(test = base::sum(tempo, na.rm = TRUE) > 1, yes = "S HAVE", no = " HAS"), 
-            " NO DEFAULT VALUE AND REQUIRE ONE:\n", 
-            base::paste0(mandat_args[tempo], collapse = "\n", recycle0 = FALSE), 
-            collapse = NULL, 
-            recycle0 = FALSE
-        )
-        base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL) # == in base::stop() to be able to add several messages between ==
-    }
+    # no rrequired because error_text already used above. Specific of my internal functions that error_text has no default value
     ######## end arg with no default values
 
     ######## management of NULL arguments
@@ -268,4 +253,10 @@
         base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL) # == in base::stop() to be able to add several messages between ==
     }
     # end main code
+
+    #### warning output
+    #### end warning output
+
+    #### output
+    #### end output
 }

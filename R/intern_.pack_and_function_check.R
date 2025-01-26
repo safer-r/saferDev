@@ -22,7 +22,7 @@
     # in internal functions, all arguments are without value on purpose
     fun, 
     lib_path,
-    error_text # warning: in internal functions, can return a non safer error message because error_text without default value and is used below before checking for mandatory arg value (specific of internal functions since classical functions are error_text = "")
+    error_text # warning: in internal functions, error_text without default value returns a R classical non traced error message (specific of internal functions since classical functions are error_text = "")
 ){
     # DEBUGGING
     # fun = "ggplot2::geom_point" ; lib_path = "C:/Program Files/R/R-4.3.1/library" ; error_text = ""
@@ -97,8 +97,8 @@
     ######## arg with no default values
     mandat_args <- base::c(
         "fun", 
-        "lib_path",
-        "error_text"
+        "lib_path"
+        # "error_text" # inactivated because error_text already used above. Specific of my internal functions that error_text has no default value
     )
     tempo <- base::eval(expr = base::parse(text = base::paste0("base::c(base::missing(", base::paste0(mandat_args, collapse = "),base::missing(", recycle0 = FALSE), "))", collapse = NULL, recycle0 = FALSE), file = "", n = NULL, prompt = "?", keep.source = base::getOption(x = "keep.source", default = NULL), srcfile = NULL, encoding = "unknown"), envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL))
     if(base::any(tempo, na.rm = TRUE)){
@@ -344,10 +344,11 @@
     }
     #### end main code
 
+    #### warning output
+    #### end warning output
+
     #### output
     #### end output
 
-    #### warning output
-    #### end warning output
 }
 

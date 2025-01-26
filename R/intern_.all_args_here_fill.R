@@ -40,7 +40,7 @@
     warn,
     warn_count,
     lib_path, # required because of saferDev::arg_check()
-    error_text # warning: in internal functions, can return a non safer error message because error_text without default value and is used below before checking for mandatory arg value (specific of internal functions since classical functions are error_text = "")
+    error_text # warning: in internal functions, error_text without default value returns a R classical non traced error message (specific of internal functions since classical functions are error_text = "")
 ){
     # DEBUGGING
     # arg_full = arg_full ; arg_full_names = arg_full_names ; tempo_split = tempo_split ; three_dots_log = three_dots_log ; i2 = i2 ; col1_i2 = col1[i2] ; col2_i2 = col2[i2] ; arg_user_setting_x = "FUN1" ; warn = "WARNING" ; warn_count = 1 ; lib_path = NULL ; error_text = " INSIDE P1::F1" 
@@ -628,12 +628,13 @@
     }
     #### end main code
 
+    #### warning output
+    # not required even if warnings. Because warn are just added in error messages.
+    #### end warning output
+
     #### output
     base::return(base::list(col6 = col6, col7 = col7, col8 = col8))
     #### end output
 
-    #### warning output
-    #not required even if warnings. Because warn are just added in error messages.
-    #### end warning output
 }
 

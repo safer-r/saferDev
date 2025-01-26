@@ -576,6 +576,9 @@ get_message <- function(
     base::invisible(grDevices::dev.off(window.nb)) # end send plots into a NULL file
     #### end main code
 
+    #### warning output
+    #### end warning output
+
     #### output
     base::return(output) # do not use base::cat() because the idea is to reuse the message
     #### end output

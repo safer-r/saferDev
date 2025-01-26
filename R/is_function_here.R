@@ -437,9 +437,10 @@ is_function_here <- function(
     }
     #### end main code
 
+    #### warning output
+    #### end warning output
+
     #### output
     #### end output
 
-    #### warning output
-    #### end warning output
 }

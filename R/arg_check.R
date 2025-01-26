@@ -946,12 +946,13 @@ arg_check <- function(
         base::cat(base::paste0("\n\n================\n\n", text, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), file = "", sep = " ", fill = FALSE, labels = NULL, append = FALSE)
     }
     #### end main code
-    
+
+    #### warning output
+    #### end warning output
+
     #### output
     output <- base::list(problem = problem, text = text, object.name = data_name)
     base::return(output)
     # end output
 
-    #### warning output
-    #### end warning output
 }

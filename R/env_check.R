@@ -439,6 +439,10 @@ env_check <- function(
             match.list[i1] <- base::list(base::ls(name = ls.input[[i1]], all.names = TRUE)[base::ls(name = ls.input[[i1]], all.names = TRUE) %in% base::ls(name = ls.tested, all.names = TRUE)])
         }
     }
+    #### end main code
+
+    #### warning output
+    #### end warning output
 
     ######## output
     if( ! base::all(base::sapply(match.list, FUN = is.null), na.rm = TRUE)){
@@ -448,6 +452,6 @@ env_check <- function(
     }
     base::return(output)
     ######## end output
-    #### end main code
+
 }
 

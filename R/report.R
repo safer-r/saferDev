@@ -477,9 +477,9 @@ report <- function(
     }
     #### end main code
 
-    #### output
-    #### end warning output
-
     #### warning output
     #### end warning output
+
+    #### output
+    #### end output
 }
