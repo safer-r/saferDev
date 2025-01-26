@@ -393,7 +393,7 @@
             "THE text ARGUMENT OF ", 
             function_name, 
             " MUST BE \"BASIC\" OR \"OTHER\".\nTHE PROBLEM IS:\n", 
-            paste0(text, collapse = "\n", recycle0 = FALSE), 
+            base::paste0(text, collapse = "\n", recycle0 = FALSE), 
             intern_error_text_end, 
             collapse = NULL, 
             recycle0 = FALSE
