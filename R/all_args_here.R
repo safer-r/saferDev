@@ -40,7 +40,6 @@
 #' 1) The function could not properly work if any comma is present in default argument values. Please, report here https://github.com/safer-r/saferDev/issues if it is the case.
 #' 
 #' 2) Proposals in the STATUS column are only suggestions, as it is difficult to anticipate all the exceptions with arguments writting.
-#' 
 #' @author Gael Millot <gael.millot@pasteur.fr>
 #' @examples
 #' \dontrun{ # Example that return an error
@@ -51,6 +50,7 @@
 #' all_args_here(FUN2, safer_check = FALSE)
 #' source("https://raw.githubusercontent.com/safer-r/.github/refs/heads/main/profile/backbone.R")
 #' all_args_here(BACKBONE, export = TRUE, safer_check = FALSE)
+#' # importFrom none
 #' @export
 all_args_here <- function(
     x, 
@@ -84,6 +84,8 @@ all_args_here <- function(
     # function_name <- "all_args_here" ; arg_user_setting = base::list(x = as.name(x = "all_args_here"), export = FALSE,  path_out = ".",  df_name = "res.tsv",  overwrite = FALSE,  lib_path = NULL,  safer_check = TRUE, error_text = "") ; arg_names <- c("x", "export",  "path_out",  "df_name",  "overwrite", "lib_path", "safer_check")
     # x = .functions_detect ; export = FALSE ; path_out = "." ; df_name = "res.tsv" ; overwrite = FALSE ; lib_path = NULL ; safer_check = TRUE ; error_text = ""
     # function_name <- ".functions_detect" ; arg_user_setting = base::list(x = as.name(x = ".functions_detect"), export = FALSE,  path_out = ".",  df_name = "res.tsv",  overwrite = FALSE,  lib_path = NULL,  safer_check = TRUE, error_text = "") ; arg_names <- c("x", "export",  "path_out",  "df_name",  "overwrite", "lib_path", "safer_check")
+    # fun1 <- function(){utils::installed.packages(lib.loc = lib_path)} ; x = fun1 ; export = FALSE ; path_out = "." ; df_name = "res.tsv" ; overwrite = FALSE ; lib_path = NULL ; safer_check = TRUE ; error_text = ""
+    # function_name <- "fun1" ; arg_user_setting = base::list(x = as.name(x = "fun1"), export = FALSE,  path_out = ".",  df_name = "res.tsv",  overwrite = FALSE,  lib_path = NULL,  safer_check = TRUE, error_text = "") ; arg_names <- c("x", "export",  "path_out",  "df_name",  "overwrite", "lib_path", "safer_check")
 
     #### package name
     package_name <- "saferDev" # write NULL if the function developed is not in a package

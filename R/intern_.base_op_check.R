@@ -14,6 +14,7 @@
 #' assign("!", 1) ; assign("+", 2) ; .base_op_check(error_text = " INSIDE fun1.") this example returns an error
 #' rm("!") ; rm("+") 
 #' }
+#' # importFrom none
 #' @keywords internal
 #' @rdname internal_function
 .base_op_check <- function(

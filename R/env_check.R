@@ -9,6 +9,7 @@
 #' @returns
 #' A character string indicating the object names of the tested environment that match object names in the above environments, following the R scope, or NULL if no match.
 #' @seealso \code{\link{exists}}.
+#' # importFrom none
 #' @author Gael Millot <gael.millot@pasteur.fr>
 #' @author Yushi Han <yushi.han2000@gmail.com>
 #' @author Haiding Wang <wanghaiding442@gmail.com>

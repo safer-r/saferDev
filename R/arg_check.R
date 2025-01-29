@@ -50,6 +50,7 @@
 #' }
 #' arg_check(data = test, print = TRUE, class = "matrix", mode = "numeric")
 #' arg_check(data = test, print = TRUE, class = "matrix", mode = "numeric", error_text = " BY saferDev::arg_check()")
+#' # importFrom none
 #' @export
 arg_check <- function(
     data, 

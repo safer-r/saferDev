@@ -20,6 +20,7 @@
 #' @examples
 #' report(data = 1:3, output = "results.txt", path = ".", overwrite = TRUE, 
 #' rownames.kept = FALSE, vector.cat = FALSE, noquote = FALSE, sep = 2)
+#' # importFrom none
 #' @export
 report <- function(
     data, 
