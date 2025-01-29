@@ -12,9 +12,6 @@
 #' WARNINGS
 #' 
 #' for python 3.7. Previous versions return an error "Error in sys$stdout$flush() : attempt to apply non-function"
-#' @importFrom reticulate py_run_string
-#' @importFrom reticulate use_python
-#' @importFrom reticulate import_from_path
 #' @author Gael Millot <gael.millot@pasteur.fr>
 #' @author Yushi Han <yushi.han2000@gmail.com>
 #' @author Haiding Wang <wanghaiding442@gmail.com>
@@ -27,6 +24,9 @@
 #' is_python_package_here(req_package = "serpentine")
 #' is_python_package_here(req_package = "serpentine", python_lib_path = "blablabla")
 #' }
+#' @importFrom reticulate py_run_string
+#' @importFrom reticulate use_python
+#' @importFrom reticulate import_from_path
 #' @export
 is_python_package_here <- function(
     req_package, 

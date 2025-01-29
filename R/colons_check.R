@@ -40,6 +40,7 @@
 #' colons_check(mean)
 #' colons_check(colons_check)
 #' source("https://raw.githubusercontent.com/safer-r/saferDev/main/dev/other/test.R") ; colons_check(test)
+#' # importFrom none
 #' @export
 colons_check <- function(
     x, 

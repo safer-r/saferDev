@@ -43,13 +43,6 @@
 #' - if expect.error is non NULL and if any discrepancy, the $data data frame into a .tsv file but containing only the rows with discrepancies between expected and observed errors.
 #' @details 
 #' Limited to 43 arguments with at least 2 values each. The total number of arguments tested can be more if the additional arguments have a single value. The limit is due to nested "for" loops (https://stat.ethz.ch/pipermail/r-help/2008-March/157341.html), but this limitation is away from the number of tests performed that would be 2^43.
-#' @importFrom lubridate seconds_to_period
-#' @importFrom qpdf pdf_combine
-#' @importFrom parallel detectCores
-#' @importFrom parallel makeCluster
-#' @importFrom parallel clusterSplit
-#' @importFrom parallel clusterApply
-#' @importFrom parallel stopCluster
 #' @seealso \code{\link{arg_check}}.
 #' @author Gael Millot <gael.millot@pasteur.fr>
 #' @author Yushi Han <yushi.han2000@gmail.com>
@@ -82,6 +75,13 @@
 #' y = list(1:10, NA, NA)), parall = FALSE, thread.nb = 4, 
 #' plot.fun = TRUE, res.path = ".", 
 #' lib_path = NULL)
+#' @importFrom lubridate seconds_to_period
+#' @importFrom qpdf pdf_combine
+#' @importFrom parallel detectCores
+#' @importFrom parallel makeCluster
+#' @importFrom parallel clusterSplit
+#' @importFrom parallel clusterApply
+#' @importFrom parallel stopCluster
 #' @export
 arg_test <- function(
     fun, 
