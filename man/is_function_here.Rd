@@ -28,6 +28,7 @@ is_function_here(fun = c("ggplot2::geom_point", "grid::gpar"))
 is_function_here(fun = "c")
 }
 is_function_here(fun = "base::c", error_text = " INSIDE P1::F1")
+# importFrom none
 }
 \seealso{
 \code{\link{exists}} et \code{\link[methods]{findFunction}}

@@ -22,7 +22,7 @@
 #' 
 #' - Function names preceeded by $ and any space are not considered (pattern "\\$ *[a-zA-Z.]{1}[a-zA-Z0-9._]* *\\(")
 #'  
-#' - The following R functions using bracket are not considered: "function", "if", "for", "while" and "repeat".
+#' - The following R functions are skipped: "function", "if", "for", "while", "repeat" and "else".
 #' 
 #' - Most of the time, colons_check() does not check inside comments, but some unexpected writting could dupe colons_check().
 #' 
@@ -185,7 +185,7 @@ colons_check <- function(
         "lib_path"
         # "error_text" # inactivated because empty value converted to "" above
     )
-    tempo_arg_user_setting_eval <- arg_user_setting_eval[base::names(arg_user_setting_eval) %in% tempo_arg]
+    tempo_arg_user_setting_eval <- arg_user_setting_eval[base::names(x = arg_user_setting_eval) %in% tempo_arg]
     if(base::length(x = tempo_arg_user_setting_eval) != 0){
         tempo_log <- base::suppressWarnings(
             expr = base::sapply(
@@ -385,13 +385,23 @@ colons_check <- function(
     #### end second round of checking and data preparation
 
     #### main code
+    skipped_base <- base::c("function", "if", "for", "while", "repeat", "else") # skipped function
+
     # modification of arg_user_setting$x for clean messages
     if(base::as.character(x = arg_user_setting$x)[1] == "::" | base::as.character(x = arg_user_setting$x)[1] == ":::"){
-        arg_user_setting$x <- base::paste0(base::as.character(x = arg_user_setting$x)[2], base::as.character(x = arg_user_setting$x)[1], base::as.character(x = arg_user_setting$x)[3], "()")
+        arg_user_setting$x <- base::paste0(
+            base::as.character(x = arg_user_setting$x)[2], 
+            base::as.character(x = arg_user_setting$x)[1], 
+            base::as.character(x = arg_user_setting$x)[3], 
+            "()",
+            collapse = NULL, 
+            recycle0 = FALSE
+        )
     }
     # end modification of arg_user_setting$x for clean messages
     out <- saferDev:::.functions_detect(
         x = x, 
+        skipped_base = skipped_base, 
         arg_user_setting2 = arg_user_setting, 
         lib_path = lib_path, 
         error_text = embed_error_text
@@ -416,7 +426,7 @@ colons_check <- function(
     in_basic_fun <- base::mapply(FUN = function(x, y){x[y]}, x = out$fun_names, y = tempo.log, MoreArgs = NULL, SIMPLIFY = FALSE, USE.NAMES = TRUE)
     in_basic_fun_names_pos <-  base::mapply(FUN = function(x, y){x[y]}, x = out$fun_names_pos, y = tempo.log, MoreArgs = NULL, SIMPLIFY = FALSE, USE.NAMES = TRUE)
     # end selection of basic functions
-    if(base::length(x = base::unlist(in_basic_fun, recursive = TRUE, use.names = TRUE)) != 0){ # check if basic fun present
+    if(base::length(x = base::unlist(x = in_basic_fun, recursive = TRUE, use.names = TRUE)) != 0){ # check if basic fun present
         # removal of string with empty function names
         tempo.log <- base::sapply(X = in_basic_fun, FUN = function(x){base::length(x = x) == 0}, simplify = TRUE, USE.NAMES = TRUE) # detection of string with empty function names
         in_basic_fun <- in_basic_fun[ ! tempo.log] # removal of empty string
@@ -471,7 +481,7 @@ colons_check <- function(
     in_other_fun <- base::mapply(FUN = function(x, y){x[y]}, x = out$fun_names, y = tempo.log, MoreArgs = NULL, SIMPLIFY = FALSE, USE.NAMES = TRUE)
     in_other_fun_names_pos <-  base::mapply(FUN = function(x, y){x[y]}, x = out$fun_names_pos, y = tempo.log, MoreArgs = NULL, SIMPLIFY = FALSE, USE.NAMES = TRUE)
     # end selection of other functions
-    if(base::length(x = base::unlist(in_other_fun, recursive = TRUE, use.names = TRUE)) != 0){ # check if other fun present
+    if(base::length(x = base::unlist(x = in_other_fun, recursive = TRUE, use.names = TRUE)) != 0){ # check if other fun present
         # removal of string with empty function names
         tempo.log <- base::sapply(X = in_other_fun, FUN = function(x){base::length(x = x) == 0}, simplify = TRUE, USE.NAMES = TRUE) # detection of string with empty function names
         in_other_fun <- in_other_fun[ ! tempo.log] # removal of empty string
@@ -520,7 +530,24 @@ colons_check <- function(
         cat_other <- NULL
     }
     # end analyse of :: before basic functions in x
-    tempo_cat <- base::paste0("AFTER RUNNING ", base::ifelse(test = base::is.null(x = package_name), yes = "", no = base::paste0(package_name, base::ifelse(test = base::grepl(x = function_name, pattern = "^\\.", ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE), yes = ":::", no = "::"))), function_name, ".\nINSIDE ", base::as.character(x = arg_user_setting$x), collapse = NULL, recycle0 = FALSE)
+    tempo_cat <- base::paste0(
+        "AFTER RUNNING ", 
+        base::ifelse(
+            test = base::is.null(x = package_name), 
+            yes = "", 
+            no = base::paste0(
+                package_name, 
+                base::ifelse(test = base::grepl(x = function_name, pattern = "^\\.", ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE), yes = ":::", no = "::"),
+                collapse = NULL, 
+                recycle0 = FALSE
+            )
+        ), 
+        function_name, 
+        ".\nINSIDE ", 
+        base::as.character(x = arg_user_setting$x), 
+        collapse = NULL, 
+        recycle0 = FALSE
+    )
     if(base::all( ! log_basic, na.rm = TRUE) & base::all( ! log_other, na.rm = TRUE)){ # log_basic TRUE means a problem, ! log_basic means all(FALSE) becomes TRUE. Idem for log_other
         tempo_cat <- base::paste0(tempo_cat, ", EVERYTHING SEEMS CLEAN.", collapse = NULL, recycle0 = FALSE)
     }else{

@@ -94,6 +94,7 @@ arg_check(data = test, print = TRUE, class = "vector", mode = "numeric")  # comm
 }
 arg_check(data = test, print = TRUE, class = "matrix", mode = "numeric")
 arg_check(data = test, print = TRUE, class = "matrix", mode = "numeric", error_text = " BY saferDev::arg_check()")
+# importFrom none
 }
 \seealso{
 \code{\link{match.arg}} et \code{\link{arg_test}}.

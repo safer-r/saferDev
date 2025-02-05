@@ -87,6 +87,7 @@ fun7()
 }
 \seealso{
 \code{\link{exists}}.
+# importFrom none
 }
 \author{
 Gael Millot <gael.millot@pasteur.fr>

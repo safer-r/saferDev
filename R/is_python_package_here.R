@@ -167,7 +167,7 @@ is_python_package_here <- function(
         "lib_path"
         # "error_text" # inactivated because empty value converted to "" above
     )
-    tempo_arg_user_setting_eval <- arg_user_setting_eval[base::names(arg_user_setting_eval) %in% tempo_arg]
+    tempo_arg_user_setting_eval <- arg_user_setting_eval[base::names(x = arg_user_setting_eval) %in% tempo_arg]
     if(base::length(x = tempo_arg_user_setting_eval) != 0){
         tempo_log <- base::suppressWarnings(
             expr = base::sapply(
