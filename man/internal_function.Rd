@@ -52,7 +52,7 @@
 
 .fun_args_pos(text, pattern, lib_path, error_text)
 
-.functions_detect(x, arg_user_setting2, lib_path, error_text)
+.functions_detect(x, skipped_base, arg_user_setting2, lib_path, error_text)
 
 .has_odd_number_of_quotes(input_string, pattern, lib_path, error_text)
 
@@ -124,6 +124,8 @@
 \item{pattern}{Single string indicating the pattern to detect. Warning : must be very simple pattern, like "\\(".}
 
 \item{x}{Function name, written without quotes and brackets.}
+
+\item{skipped_base}{Vector of strings specifying the basic functions skipped from detection.}
 
 \item{input_string}{Single string.}
 
@@ -255,33 +257,40 @@ Simplified version of saferDev::is_function_here(), used as internal function fo
 assign("!", 1) ; assign("+", 2) ; .base_op_check(error_text = " INSIDE fun1.") this example returns an error
 rm("!") ; rm("+") 
 }
+# importFrom none
 \dontrun{ # Example that shouldn't be run because this is an internal function
 .colons_check_message(list_fun = list(c2 = "UseMethod"), list_fun_pos = list(c2 = 1), line_nb = 2, ini = c("function (x, ...) ", "UseMethod(\"mean\")", "<bytecode: 0x000001969e09e580>", "<environment: namespace:base>"), arg_user_setting2 = list(x = x, arg_user_setting2 = arg_user_setting, error_text = "P1::F1"), text = "BASIC", internal_fun_names = NULL, lib_path = NULL, error_text = " INSIDE P1::F1")
 }
 \dontrun{ # Example that shouldn't be run because this is an internal function
 .extract_all_fun_names(text = 'This is a test string with sum()', pattern = "[a-zA-Z.][a-zA-Z0-9._]*\\\\s*\\\\(", lib_path = NULL, error_text = " INSIDE P1::F1")
 }
+# importFrom none
 \dontrun{ # Example that shouldn't be run because this is an internal function
 # Warning : examples only with strings that must be cleaned from brackets between quotes
 .fun_args_pos(text = ' "a" ; paste0("I", paste0(sum(1:3), collapse = " "), min(1) ) ; range(2)', pattern = paste0("paste0", "[\\\\s\\\\r\\\\n]*\\\\("), lib_path = NULL, error_text = " INSIDE P1::F1")
 }
+# importFrom none
 \dontrun{ # Example that shouldn't be run because this is an internal function
 source("C:\\\\Users\\\\gmillot\\\\Documents\\\\Git_projects\\\\safer-r\\\\saferDev\\\\dev\\\\other\\\\test.R") ; .functions_detect(x = test, arg_user_setting = base::list(x =  as.name(x = "test")), lib_path = NULL, error_text = " INSIDE P1::F1")
 }
 \dontrun{ # Example that shouldn't be run because this is an internal function
 .has_odd_number_of_quotes(input_string = 'This is a "test" string with "even" quotes', pattern = '"', lib_path = NULL, error_text = " INSIDE P1::F1")
 }
+# importFrom none
 \dontrun{ # Example that shouldn't be run because this is an internal function
 .in_parenthesis_replacement(string = "pattern = base::paste0(pattern, \"\\\\\\\\(#\"), text = text", pattern = ",", no_regex_pattern = ",", replacement = " ", perl = TRUE, open_pos = 23, close_pos = 39,  lib_path = NULL, error_text = " INSIDE P1::F1")
 }
+# importFrom none
 \dontrun{ # Example that shouldn't be run because this is an internal function
 source("https://raw.githubusercontent.com/safer-r/saferDev/main/dev/other/test.R") ; .in_quotes_replacement(string = paste(deparse(test), collapse = ""), pattern = "\\\\)", no_regex_pattern = ")", replacement = " ", perl = TRUE, lib_path = NULL, error_text = " INSIDE P1::F1")
 .in_quotes_replacement(string = 'paste0("IAGE((", paste0(1:3, collapse = " "), "A)B()")', pattern = "\\\\)", no_regex_pattern = ")", replacement = " ", perl = TRUE, lib_path = NULL, error_text = " INSIDE P1::F1")
 }
+# importFrom none
 \dontrun{ # Example that shouldn't be run because this is an internal function
 source("https://raw.githubusercontent.com/safer-r/saferDev/main/dev/other/test.R")
 .noclean_functions(col1 =  c(15, 17), col2 = c("gregexpr", "regmatches"), col3 = c("matches <- ",  "matched_strings <- " ), ini = utils::capture.output(test), lib_path = NULL, error_text = " INSIDE P1::F1")
 }
+# importFrom none
 \dontrun{ # Example that shouldn't be run because this is an internal function
 .pack_and_function_check(fun = 1, lib_path = NULL, error_text = " INSIDE F1.") # this example returns an error
 .pack_and_function_check(fun = "ggplot2::notgood", lib_path = base::.libPaths(), error_text = " INSIDE P1::F1") # this example returns an error
@@ -289,6 +298,9 @@ source("https://raw.githubusercontent.com/safer-r/saferDev/main/dev/other/test.R
 }
 }
 \author{
+Gael Millot <gael.millot@pasteur.fr>
+# importFrom none
+
 Gael Millot <gael.millot@pasteur.fr>
 
 Yushi Han <yushi.han2000@gmail.com>

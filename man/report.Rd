@@ -50,6 +50,7 @@ Log file function: print a character string or a data object into a same output 
 \examples{
 report(data = 1:3, output = "results.txt", path = ".", overwrite = TRUE, 
 rownames.kept = FALSE, vector.cat = FALSE, noquote = FALSE, sep = 2)
+# importFrom none
 }
 \seealso{
 \code{\link{capture.output}}.

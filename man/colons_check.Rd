@@ -36,7 +36,7 @@ Verify that all the functions used inside a function are preceeded by a package 
 
 - Function names preceeded by $ and any space are not considered (pattern "\\$ *[a-zA-Z.]{1}[a-zA-Z0-9._]* *\\(")
  
-- The following R functions using bracket are not considered: "function", "if", "for", "while" and "repeat".
+- The following R functions are skipped: "function", "if", "for", "while", "repeat" and "else".
 
 - Most of the time, colons_check() does not check inside comments, but some unexpected writting could dupe colons_check().
 
@@ -52,6 +52,7 @@ Verify that all the functions used inside a function are preceeded by a package 
 colons_check(mean)
 colons_check(colons_check)
 source("https://raw.githubusercontent.com/safer-r/saferDev/main/dev/other/test.R") ; colons_check(test)
+# importFrom none
 }
 \author{
 Gael Millot <gael.millot@pasteur.fr>

@@ -40,7 +40,7 @@ Data frame:
  $FUN_NAME: the function name.
  $FUN_ARGS: the written arguments of $FUN_NAME. "NOT_CONSIDERED" means that the function is between quotes or after $
  $FUN_POS: the position of the first character of the function name in the $LINE_NB line of the code.
- $DEF_ARGS: the defaults arguments of $FUN_NAME. "NO_ARGS" means that the function has no arguments
+ $DEF_ARGS: the defaults arguments of $FUN_NAME. "NO_ARGS" means that the function has no arguments. "INTERNAL_FUNCTION" means that the function has been created inside the checked function. "SKIPPED" means that the function is not analyzed for the reason indicated in the "details" section below.
  $MISSING_ARG_NAMES: the missing argument names in $FUN_ARGS.
  $MISSING_ARGS: the missing arguments with their values in $FUN_ARGS.
  $STATUS: either "GOOD", meaning that all the arguments are already written, or a new proposal of arguments writting, or indicates if some arguments are not fully written (abbreviation is discouraged), or nothing.
@@ -57,9 +57,11 @@ The perl regex used to detect a function name is: "[a-zA-Z.]{1}[a-zA-Z0-9._]*\\s
 
 Function names preceeded by $ and any space are not considered (pattern "\\$ *[a-zA-Z.]{1}[a-zA-Z0-9._]* *\\(")
  
-The following R functions using bracket are not considered: "function", "if", "for", "while" and "repeat".
+The following R functions are skipped: "function", "if", "for", "while", "repeat" and "else".
 
-Most of the time, all_args_here() does not check inside comments, but some unexpected writting could dupe all_args_here().
+Warning: the following R functions are also skipped (as indicated by "SKIPPED" in the $DEF_ARGS column of the returned data frame) for the indicated reason: "as.environment" (https://bugs.r-project.org/show_bug.cgi?id=18849).
+
+Most of the time, all_args_here() does not check inside comments, but some unexpected writting could dupe all_args_here(). Please, report here https://github.com/safer-r/saferDev/issues if it is the case.
 
 The returned line numbers are indicative, depending on which source is checked. For instance, saferDev::report (compiled) has not the same line numbers as its source file (https://github.com/safer-r/saferDev/blob/main/R/report.R). Notably, compiled functions do not have comments anymore, compared to the same source function sourced into the working environment. In addition, the counting starts at the "<- function" line, i.e., without counting the #' header lines potentially present in source files.
 
@@ -77,6 +79,7 @@ FUN2 <- function(x, y){middle_bracket2 <- base::do.call(what = base::c, args = c
 all_args_here(FUN2, safer_check = FALSE)
 source("https://raw.githubusercontent.com/safer-r/.github/refs/heads/main/profile/backbone.R")
 all_args_here(BACKBONE, export = TRUE, safer_check = FALSE)
+# importFrom none
 }
 \author{
 Gael Millot <gael.millot@pasteur.fr>
