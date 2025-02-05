@@ -363,14 +363,14 @@
     #### main code
     # modification of arg_user_setting2$x for clean messages
     if(base::as.character(x = arg_user_setting2$x)[1] == "::" | base::as.character(x = arg_user_setting2$x)[1] == ":::"){
-        arg_user_setting2$x <- base::paste0(base::as.character(x = arg_user_setting2$x)[2], base::as.character(x = arg_user_setting2$x)[1], base::as.character(x = arg_user_setting2$x)[3], "()")
+        arg_user_setting2$x <- base::paste0(base::as.character(x = arg_user_setting2$x)[2], base::as.character(x = arg_user_setting2$x)[1], base::as.character(x = arg_user_setting2$x)[3], "()", collapse = NULL, recycle0 = FALSE)
     }
     # end modification of arg_user_setting2$x for clean messages
     output.cat <- NULL
     colon_not_here <- FALSE # reminder: no colon problem with internal functions
     # check the identical structure of list_fun and list_fun_pos
     ident_str <- function(list_fun, list_fun_pos, error_nb, intern_error_text_start, intern_error_text_end){
-        if( ! (base::length(x = list_fun) == base::length(x = list_fun_pos) & base::all(base::sapply(X = list_fun, FUN = function(x){base::length(x = x)}) == base::sapply(X = list_fun_pos, FUN = function(x){base::length(x = x)}), na.rm = TRUE))){
+        if( ! (base::length(x = list_fun) == base::length(x = list_fun_pos) & base::all(base::sapply(X = list_fun, FUN = function(x){base::length(x = x)}, simplify = TRUE, USE.NAMES = TRUE) == base::sapply(X = list_fun_pos, FUN = function(x){base::length(x = x)}, simplify = TRUE, USE.NAMES = TRUE), na.rm = TRUE))){
             tempo_cat <- base::paste0(
                 "INTERNAL ERROR ", 
                 error_nb, " 
@@ -381,18 +381,18 @@
                 "\n", 
                 base::length(x = list_fun_pos), 
                 "\nAND NUMBER OF ELEMENT IN EACH COMPARTMENT ARE RESPECTIVELY:\n", 
-                base::paste0(base::sapply(X = list_fun, FUN = function(x){base::length(x = x)}), collapse = " ", , recycle0 = FALSE), 
+                base::paste0(base::sapply(X = list_fun, FUN = function(x){base::length(x = x)}, simplify = TRUE, USE.NAMES = TRUE), collapse = " ", , recycle0 = FALSE), 
                 "\n", 
-                base::paste0(base::sapply(X = list_fun, FUN = function(x){base::length(x = x)}), collapse = " ", recycle0 = FALSE), 
+                base::paste0(base::sapply(X = list_fun, FUN = function(x){base::length(x = x)}, simplify = TRUE, USE.NAMES = TRUE), collapse = " ", recycle0 = FALSE), 
                 intern_error_text_end, 
                 collapse = NULL, 
                 recycle0 = FALSE
             )
-            base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
+            base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL) # == in base::stop() to be able to add several messages between ==
         }
     }
     # end check the identical structure of list_fun and list_fun_pos
-    if(base::length(text) != 1 & base::any( ! text %in% base::c("BASIC", "OTHER"))){
+    if(base::length(x = text) != 1 & base::any( ! text %in% base::c("BASIC", "OTHER"), na.rm = TRUE)){
         tempo_cat <- base::paste0("
             INTERNAL ERROR 1 IN ", 
             intern_error_text_start, 
@@ -404,7 +404,7 @@
             collapse = NULL, 
             recycle0 = FALSE
         )
-        base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
+        base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL) # == in base::stop() to be able to add several messages between ==
     }
     ident_str(
         list_fun = list_fun, 
@@ -414,21 +414,21 @@
         intern_error_text_end = intern_error_text_end
     )
     # remove internal functions in other functions (list_fun and list_fun_pos)
-    if(text == "OTHER" & base::length(internal_fun_names) > 0){
+    if(text == "OTHER" & base::length(x = internal_fun_names) > 0){
         empty_compart_log <- ! base::logical(length = base::length(x = list_fun)) # all TRUE at the beginning
-        for(i2 in 1:base::length(internal_fun_names)){
+        for(i2 in 1:base::length(x = internal_fun_names)){
             tempo_log <- base::lapply(X = list_fun, FUN = function(x){
                 x == internal_fun_names[i2]
             })
             if(i2 == 1){
                 intern_fun_log <- tempo_log
             }else{
-                intern_fun_log <- base::mapply(FUN = function(x, y){x | y}, x = tempo_log, y = intern_fun_log, SIMPLIFY = FALSE)
+                intern_fun_log <- base::mapply(FUN = function(x, y){x | y}, x = tempo_log, y = intern_fun_log, SIMPLIFY = FALSE, MoreArgs = NULL, USE.NAMES = TRUE)
             }
         }
         # remove internal functions elements
-        list_fun <- base::mapply(FUN = function(x, y){y[ ! x]}, x = intern_fun_log, y = list_fun, SIMPLIFY = FALSE)
-        list_fun_pos <- base::mapply(FUN = function(x, y){y[ ! x]}, x = intern_fun_log, y = list_fun_pos, SIMPLIFY = FALSE)
+        list_fun <- base::mapply(FUN = function(x, y){y[ ! x]}, x = intern_fun_log, y = list_fun, SIMPLIFY = FALSE, MoreArgs = NULL, USE.NAMES = TRUE)
+        list_fun_pos <- base::mapply(FUN = function(x, y){y[ ! x]}, x = intern_fun_log, y = list_fun_pos, SIMPLIFY = FALSE, MoreArgs = NULL, USE.NAMES = TRUE)
         # end remove internal functions elements
         ident_str(
             list_fun = list_fun, 
@@ -438,14 +438,15 @@
             intern_error_text_end = intern_error_text_end
         )
         # remove empty compartment
-        tempo_log2 <- base::sapply(X = list_fun, FUN = function(x){base::length(x = x) == 0}) # test if empty compartment
+        tempo_log2 <- base::sapply(X = list_fun, FUN = function(x){base::length(x = x) == 0}, simplify = TRUE, USE.NAMES = TRUE) # test if empty compartment
         list_fun <- list_fun[ ! tempo_log2]
         list_fun_pos <- list_fun_pos[ ! tempo_log2]
         line_nb <- line_nb[ ! tempo_log2]
         # end remove empty compartment
         output.cat <- base::paste0(
-            "INSIDE ", arg_user_setting2$x, ", ", base::ifelse(base::length(x = list_fun) == 0, "ONLY", ""), "INTERNAL FUNCTION", base::ifelse(base::length(internal_fun_names) == 1, "", "S"), " DETECTED:\n", 
-            base::paste(internal_fun_names, collapse = "\n")
+            "INSIDE ", arg_user_setting2$x, ", ", base::ifelse(test = base::length(x = list_fun) == 0, yes = "ONLY", no = ""), "INTERNAL FUNCTION", base::ifelse(test = base::length(x = internal_fun_names) == 1, yes = "", no = "S"), " DETECTED:\n", 
+            base::paste0(internal_fun_names, collapse = "\n", recycle0 = FALSE),
+            collapse = "\n", recycle0 = FALSE
         )
         # reminder: no colon problem with internal functions
     }
@@ -454,86 +455,86 @@
         # pattern2 <- base::paste(base::paste0("(?<![A-Za-z0-9._])", fun.uni, "\\s*\\("), collapse = "|") # to split string according to function name as splitter. Pattern (?<![A-Za-z0-9._]) means "must not be preceeded by any alphanum or .or _
         # pattern3 <- base::paste(base::paste0("(?<![A-Za-z0-9._])", fun.uni, "\\s*\\($"), collapse = "|") # same as pattern2 but used to know if the seeked function is at the end of the string
         basic_ini <- ini[line_nb]
-        if( ! (base::length(list_fun) == base::length(list_fun_pos) & base::length(list_fun) == base::length(line_nb) & base::length(list_fun) == base::length(basic_ini))){
+        if( ! (base::length(x = list_fun) == base::length(x = list_fun_pos) & base::length(x = list_fun) == base::length(x = line_nb) & base::length(x = list_fun) == base::length(x = basic_ini))){
             tempo_cat <- base::paste0(
                 "INTERNAL ERROR 4 IN ", 
                 intern_error_text_start, 
                 "LENGTHS SHOULD BE IDENTICAL\nlist_fun: ", 
-                base::length(list_fun), 
+                base::length(x = list_fun), 
                 "\nlist_fun_pos: ", 
-                base::length(list_fun_pos), 
+                base::length(x = list_fun_pos), 
                 "\nline_nb: ", 
-                base::length(line_nb), 
+                base::length(x = line_nb), 
                 "\nbasic_ini: ", 
-                base::length(basic_ini), 
+                base::length(x = basic_ini), 
                 intern_error_text_end, 
                 collapse = NULL, 
                 recycle0 = FALSE
             )
-            base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
+            base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL) # == in base::stop() to be able to add several messages between ==
         }
         res <- list_fun_pos
-        for(i1 in 1:base::length(basic_ini)){
-            res[[i1]] <- base::mapply(FUN = function(x , y){z <- base::substr(x = x, start = 1, stop = y - 1)}, x = basic_ini[i1], y = list_fun_pos[[i1]], SIMPLIFY = TRUE, USE.NAMES = FALSE)
+        for(i1 in 1:base::length(x = basic_ini)){
+            res[[i1]] <- base::mapply(FUN = function(x , y){z <- base::substr(x = x, start = 1, stop = y - 1)}, x = basic_ini[i1], y = list_fun_pos[[i1]], SIMPLIFY = TRUE, USE.NAMES = FALSE, MoreArgs = NULL)
         }
         # res <- base::strsplit(x = basic_ini, split = pattern2, perl = TRUE) # in res, all the strings should finish by ::
         # tempo.log <- ! base::grepl(x = basic_ini, pattern = pattern3, perl = TRUE) # strings of basic_ini that does not finish by the function name
         # in each compartment of res, the last split section is removed because nothing to test at the end (end of code)
         # if(base::sum(tempo.log, na.rm = TRUE) > 0){
-        #     res[tempo.log] <- base::lapply(X = res[tempo.log], FUN = function(x){x[-base::length(x)]})
+        #     res[tempo.log] <- base::lapply(X = res[tempo.log], FUN = function(x){x[-base::length(x = x)]})
         # }
         # end in each compartment of res, the last split section is removed because nothing to test at the end (end of code)
-        res2 <- base::lapply(X = res, FUN = function(x){base::substr(x, base::nchar(x)-1, base::nchar(x))}) # base::nchar(x)-1 takes only :: if the strings ends by :::
-        base::names(res2) <- NULL
-        if( ! base::all(base::sapply(X = res2, FUN = function(x){base::length(x)}) == base::sapply(X = res, FUN = function(x){base::length(x)}))){
+        res2 <- base::lapply(X = res, FUN = function(x){base::substr(x = x, start = base::nchar(x = x, type = "chars", allowNA = FALSE, keepNA = NA)-1, stop = base::nchar(x = x, type = "chars", allowNA = FALSE, keepNA = NA))}) # base::nchar(x)-1 takes only :: if the strings ends by :::
+        base::names(x = res2) <- NULL
+        if( ! base::all(base::sapply(X = res2, FUN = function(x){base::length(x = x)}, simplify = TRUE, USE.NAMES = TRUE) == base::sapply(X = res, FUN = function(x){base::length(x = x)}, simplify = TRUE, USE.NAMES = TRUE), na.rm = TRUE)){
             tempo_cat <- base::paste0(
                 "INTERNAL ERROR 5 IN ", 
                 intern_error_text_start, 
                 "LENGTHS SHOULD BE IDENTICAL\nres2: ", 
-                base::paste0(base::sapply(X = res2, FUN = function(x){base::length(x)}), collapse = " ", recycle0 = FALSE), 
+                base::paste0(base::sapply(X = res2, FUN = function(x){base::length(x = x)}, simplify = TRUE, USE.NAMES = TRUE), collapse = " ", recycle0 = FALSE), 
                 "\nres: ", 
-                base::paste0(base::sapply(X = res, FUN = function(x){base::length(x)}), collapse = " ", recycle0 = FALSE), 
+                base::paste0(base::sapply(X = res, FUN = function(x){base::length(x = x)}, simplify = TRUE, USE.NAMES = TRUE), collapse = " ", recycle0 = FALSE), 
                 intern_error_text_end, 
                 collapse = NULL, 
                 recycle0 = FALSE
             )
-            base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
+            base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL) # == in base::stop() to be able to add several messages between ==
         }
         colon_not_here <- base::lapply(X = res2, FUN = function(x){ ! x %in% "::"}) # no need to check for ":::" because base::nchar(x)-1 takes only :: if the strings ends by :::
-        if( ! base::all(base::sapply(X = res2, FUN = function(x){base::length(x)}) == base::sapply(X = colon_not_here, FUN = function(x){base::length(x)}))){
+        if( ! base::all(base::sapply(X = res2, FUN = function(x){base::length(x = x)}, simplify = TRUE, USE.NAMES = TRUE) == base::sapply(X = colon_not_here, FUN = function(x){base::length(x = x)}, simplify = TRUE, USE.NAMES = TRUE), na.rm = TRUE)){
             tempo_cat <- base::paste0(
                 "INTERNAL ERROR 6 IN ", 
                 intern_error_text_start, 
                 "LENGTHS SHOULD BE IDENTICAL\nres2: ", 
-                base::paste0(base::sapply(X = res2, FUN = function(x){base::length(x)}), collapse = " ", recycle0 = FALSE), 
+                base::paste0(base::sapply(X = res2, FUN = function(x){base::length(x = x)}, simplify = TRUE, USE.NAMES = TRUE), collapse = " ", recycle0 = FALSE), 
                 "\ncolon_not_here: ", 
-                base::paste0(base::sapply(X = colon_not_here, FUN = function(x){base::length(x)}), collapse = " ", recycle0 = FALSE), 
+                base::paste0(base::sapply(X = colon_not_here, FUN = function(x){base::length(x = x)}, simplify = TRUE, USE.NAMES = TRUE), collapse = " ", recycle0 = FALSE), 
                 intern_error_text_end, 
                 collapse = NULL, 
                 recycle0 = FALSE
             )
-            base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
+            base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL) # == in base::stop() to be able to add several messages between ==
         }
-        if(base::any(base::unlist(colon_not_here))){
-            col1 <- base::as.vector(base::unlist(base::mapply(FUN = function(x, y){base::rep(y, base::sum(x))}, x = colon_not_here, y = line_nb, SIMPLIFY = TRUE)))
-            col2 <- base::as.vector(base::unlist(base::mapply(FUN = function(x, y){y[x]}, x = colon_not_here, y = list_fun, SIMPLIFY = TRUE)))
-            col3 <- base::as.vector(base::unlist(base::mapply(FUN = function(x, y){y[x]}, x = colon_not_here, y = res, SIMPLIFY = TRUE)))
-            if( ! (base::length(col1) == base::length(col2) & base::length(col1) == base::length(col3) & base::length(col2) == base::length(col3))){
+        if(base::any(base::unlist(x = colon_not_here, recursive = TRUE, use.names = TRUE), na.rm = TRUE)){
+            col1 <- base::as.vector(x = base::unlist(x = base::mapply(FUN = function(x, y){base::rep(x = y, base::sum(x, na.rm = TRUE))}, x = colon_not_here, y = line_nb, SIMPLIFY = TRUE, MoreArgs = NULL, USE.NAMES = TRUE), recursive = TRUE, use.names = TRUE), mode = "any")
+            col2 <- base::as.vector(x = base::unlist(x = base::mapply(FUN = function(x, y){y[x]}, x = colon_not_here, y = list_fun, SIMPLIFY = TRUE, MoreArgs = NULL, USE.NAMES = TRUE), recursive = TRUE, use.names = TRUE), mode = "any")
+            col3 <- base::as.vector(x = base::unlist(x = base::mapply(FUN = function(x, y){y[x]}, x = colon_not_here, y = res, SIMPLIFY = TRUE, MoreArgs = NULL, USE.NAMES = TRUE), recursive = TRUE, use.names = TRUE), mode = "any")
+            if( ! (base::length(x = col1) == base::length(x = col2) & base::length(x = col1) == base::length(x = col3) & base::length(x = col2) == base::length(x = col3))){
                 tempo_cat <- base::paste0(
                     "INTERNAL ERROR 7 IN ", 
                     intern_error_text_start, 
                     "LENGTHS OF col1 (", 
-                    base::length(col1), 
+                    base::length(x = col1), 
                     "), col2 (", 
-                    base::length(col2), 
+                    base::length(x = col2), 
                     "), AND col3 (", 
-                    base::length(col3), 
+                    base::length(x = col3), 
                     "), SHOULD BE EQUAL.", 
                     intern_error_text_end, 
                     collapse = NULL, 
                     recycle0 = FALSE
                 )
-                base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
+                base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL) # == in base::stop() to be able to add several messages between ==
             }
             # removal of functions between quotes and after $
             tempo.log <- saferDev:::.noclean_functions(
@@ -550,13 +551,15 @@
                 col3 <- col3[ ! tempo.log] # keep clean functions 
             }
             # end removal of functions between quotes and after $
-            if(base::length(col1) > 0){
-                tempo.pos <- base::paste0(col1, "\t", col2, "\t\t", col3)
+            if(base::length(x = col1) > 0){
+                tempo.pos <- base::paste0(col1, "\t", col2, "\t\t", col3, collapse = NULL, recycle0 = FALSE)
                 output.cat <- base::paste0(
-                    base::ifelse(test = base::is.null(output.cat), yes = "", no = base::paste0(output.cat, "\n\n")),
+                    base::ifelse(test = base::is.null(x = output.cat), yes = "", no = base::paste0(output.cat, "\n\n", collapse = NULL, recycle0 = FALSE)),
                     "INSIDE ", arg_user_setting2$x, ", SOME :: OR ::: ARE MISSING AT ", text, " FUNCTION POSITIONS:\n\n", 
                     "LINE\tFUN\t\tSTRING_BEFORE\n",
-                    base::paste(tempo.pos, collapse = "\n")
+                    base::paste0(tempo.pos, collapse = "\n", recycle0 = FALSE), 
+                    collapse = NULL, 
+                    recycle0 = FALSE
                 )
             }
         }
@@ -567,6 +570,6 @@
     #### end warning output
 
     #### output
-    base::return(base::list(output.cat = output.cat, colon_not_here = base::unlist(colon_not_here)))
+    base::return(base::list(output.cat = output.cat, colon_not_here = base::unlist(x = colon_not_here, recursive = TRUE, use.names = TRUE)))
     #### end output
 }

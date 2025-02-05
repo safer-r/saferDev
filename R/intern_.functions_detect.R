@@ -2,6 +2,7 @@
 #' @description
 #' Detect all the functions names used inside a function.
 #' @param x Function name, written without quotes and brackets.
+#' @param skipped_base Vector of strings specifying the basic functions skipped from detection.
 #' @param arg_user_setting2 Argument user settings list.
 #' @param lib_path Vector of characters specifying the absolute pathways of the directories containing the required packages for the function, if not in the default directories. Useful when R package are not installed in the default directories because of lack of admin rights.  More precisely, lib_path is passed through the new argument of .libPaths() so that the new library paths are unique(c(new, .Library.site, .Library)). Warning: .libPaths() is restored to the initial paths, after function execution. Ignored if NULL (default) or if the safer_check argument is FALSE: only the pathways specified by the current .libPaths() are used for package calling.
 #' @param error_text Single character string used to add information in error messages returned by the function, notably if the function is inside other functions, which is practical for debugging. Example: error_text = " INSIDE <PACKAGE_1>::<FUNCTION_1> INSIDE <PACKAGE_2>::<FUNCTION_2>.". If NULL, converted into "".
@@ -30,16 +31,17 @@
 .functions_detect <- function(
     # in internal functions, all arguments are without value on purpose
     x, 
+    skipped_base, 
     arg_user_setting2, 
     lib_path, # required because of saferDev::arg_check()
     error_text # warning: in internal functions, error_text without default value returns a R classical non traced error message (specific of internal functions since classical functions are error_text = "")
 ){
     # DEBUGGING
-    # x = x ; arg_user_setting = arg_user_setting ; error_text = ""
-    # source("C:\\Users\\gmillot\\Documents\\Git_projects\\safer-r\\saferDev\\dev\\other\\test2.R") ; x = test2 ; arg_user_setting = base::list(x = as.name(x = "test2")lib_path = NULL, error_text = " INSIDE P1::F1") ; lib_path = NULL ; error_text = " INSIDE P1::F1"
-    # source("C:\\Users\\gmillot\\Documents\\Git_projects\\safer-r\\.github\\profile\\backbone.R") ; x = BACKBONE ; arg_user_setting = base::list(x = as.name(x = "BACKBONE")lib_path = NULL, error_text = " INSIDE P1::F1") ; lib_path = NULL ; error_text = " INSIDE P1::F1"
-    # FUN1 <- function(x, y){middle_bracket2 <- base::do.call(what = base::c, args = code_for_col, quote = FALSE, envir = base::parent.frame())} ; x = FUN1 ; arg_user_setting = base::list(x = as.name(x = "FUN1")lib_path = NULL, error_text = " INSIDE P1::F1") ; lib_path = NULL ; error_text = " INSIDE P1::F1"
-    # FUN1 <- function(x, y){FUN2 <- function(x){x = 1}} ; x = FUN1 ; arg_user_setting = base::list(x = as.name(x = "FUN1")lib_path = NULL, error_text = " INSIDE P1::F1") ; lib_path = NULL ; error_text = " INSIDE P1::F1"
+    # x = x ; skipped_base = base::c("function", "if", "for", "while", "repeat", "else") ; arg_user_setting = arg_user_setting ; error_text = ""
+    # source("C:\\Users\\gmillot\\Documents\\Git_projects\\safer-r\\saferDev\\dev\\other\\test2.R") ; x = test2 ; skipped_base = base::c("function", "if", "for", "while", "repeat", "else") ; arg_user_setting = base::list(x = as.name(x = "test2"), skipped_base = base::c("function", "if", "for", "while", "repeat", "else"), lib_path = NULL, error_text = " INSIDE P1::F1") ; lib_path = NULL ; error_text = " INSIDE P1::F1"
+    # source("C:\\Users\\gmillot\\Documents\\Git_projects\\safer-r\\.github\\profile\\backbone.R") ; x = BACKBONE ; skipped_base = base::c("function", "if", "for", "while", "repeat", "else") ; arg_user_setting = base::list(x = as.name(x = "BACKBONE"), skipped_base = base::c("function", "if", "for", "while", "repeat", "else"), lib_path = NULL, error_text = " INSIDE P1::F1") ; lib_path = NULL ; error_text = " INSIDE P1::F1"
+    # FUN1 <- function(x, y){middle_bracket2 <- base::do.call(what = base::c, args = code_for_col, quote = FALSE, envir = base::parent.frame())} ; x = FUN1 ; skipped_base = base::c("function", "if", "for", "while", "repeat", "else") ; arg_user_setting = base::list(x = as.name(x = "FUN1"), skipped_base = base::c("function", "if", "for", "while", "repeat", "else"), lib_path = NULL, error_text = " INSIDE P1::F1") ; lib_path = NULL ; error_text = " INSIDE P1::F1"
+    # FUN1 <- function(x, y){FUN2 <- function(x){x = 1}} ; x = FUN1 ; skipped_base = base::c("function", "if", "for", "while", "repeat", "else") ; arg_user_setting = base::list(x = as.name(x = "FUN1"), skipped_base = base::c("function", "if", "for", "while", "repeat", "else"), lib_path = NULL, error_text = " INSIDE P1::F1") ; lib_path = NULL ; error_text = " INSIDE P1::F1"
 
     #### package name
     package_name <- "saferDev" # write NULL if the function developed is not in a package
@@ -119,6 +121,7 @@
     ######## arg with no default values
     mandat_args <- base::c(
         "x", 
+        "skipped_base", 
         "arg_user_setting2", 
         "lib_path"
         # "error_text" # inactivated because error_text already used above. Specific of my internal functions that error_text has no default value
@@ -142,6 +145,7 @@
     # before NA checking because is.na(NULL) return logical(0) and all(logical(0)) is TRUE (but secured with & base::length(x = x) > 0)
     tempo_arg <-base::c(
         "x", 
+        "skipped_base", 
         "arg_user_setting2"
         # "lib_path", # inactivated because can be NULL
         # "error_text" # inactivated because NULL converted to "" above
@@ -164,6 +168,7 @@
     # # before NA checking because is.na(logical()) is logical(0) (but secured with & base::length(x = x) > 0)
     tempo_arg <-base::c(
         "x", 
+        "skipped_base", 
         "arg_user_setting2", 
         "lib_path"
         # "error_text" # inactivated because empty value converted to "" above
@@ -262,6 +267,7 @@
     ee <- base::expression(argum_check <- base::c(argum_check, tempo$problem) , text_check <- base::c(text_check, tempo$text) , checked_arg_names <- base::c(checked_arg_names, tempo$object.name))
     # add as many lines as below, for each of your arguments of your function in development
     tempo <- saferDev::arg_check(data = x, class = NULL, typeof = NULL, mode = "function", length = 1, prop = FALSE, double_as_integer_allowed = FALSE, options = NULL, all_options_in_data = FALSE, na_contain = TRUE, neg_values = TRUE, inf_values = TRUE, print = FALSE, data_name = NULL, data_arg = TRUE, safer_check = FALSE, lib_path = lib_path, error_text = embed_error_text) ; base::eval(expr = ee, envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL))
+    tempo <- saferDev::arg_check(data = skipped_base, class = "vector", typeof = "character", mode = NULL, length = NULL, prop = FALSE, double_as_integer_allowed = FALSE, options = NULL, all_options_in_data = FALSE, na_contain = TRUE, neg_values = TRUE, inf_values = TRUE, print = FALSE, data_name = NULL, data_arg = TRUE, safer_check = FALSE, lib_path = lib_path, error_text = embed_error_text) ; base::eval(expr = ee, envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL))
     tempo <- saferDev::arg_check(data = arg_user_setting2, class = NULL, typeof = NULL, mode = "list", length = NULL, prop = FALSE, double_as_integer_allowed = FALSE, options = NULL, all_options_in_data = FALSE, na_contain = TRUE, neg_values = TRUE, inf_values = TRUE, print = FALSE, data_name = NULL, data_arg = TRUE, safer_check = FALSE, lib_path = lib_path, error_text = embed_error_text) ; base::eval(expr = ee, envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL))
     # lib_path already checked above
     # error_text already checked above
@@ -437,7 +443,7 @@
     }
     # tempo <- base::lapply(code, FUN = function(x){saferDev:::.extract_all_fun_names(text = x, pattern = pattern1)})
     # removal of special functions
-    tempo_log <- base::lapply(fun_name, FUN = function(x){ ! x %in% base::c("function", "if", "for", "while", "repeat", "else")})
+    tempo_log <- base::lapply(fun_name, FUN = function(x){ ! x %in% skipped_base})
     fun_name_wo_op <- base::mapply(FUN = function(x, y){x[y]}, x = fun_name, y = tempo_log, SIMPLIFY = FALSE)
     fun_name_pos_wo_op <- base::mapply(FUN = function(x, y){x[y]}, x = fun_name_pos, y = tempo_log, SIMPLIFY = FALSE)
     # end removal of special functions

@@ -17,7 +17,7 @@
 #'  $FUN_NAME: the function name.
 #'  $FUN_ARGS: the written arguments of $FUN_NAME. "NOT_CONSIDERED" means that the function is between quotes or after $
 #'  $FUN_POS: the position of the first character of the function name in the $LINE_NB line of the code.
-#'  $DEF_ARGS: the defaults arguments of $FUN_NAME. "NO_ARGS" means that the function has no arguments. "INTERNAL_FUNCTION" means that the function has been created inside the checked function.
+#'  $DEF_ARGS: the defaults arguments of $FUN_NAME. "NO_ARGS" means that the function has no arguments. "INTERNAL_FUNCTION" means that the function has been created inside the checked function. "SKIPPED" means that the function is not analyzed for the reason indicated in the "details" section below.
 #'  $MISSING_ARG_NAMES: the missing argument names in $FUN_ARGS.
 #'  $MISSING_ARGS: the missing arguments with their values in $FUN_ARGS.
 #'  $STATUS: either "GOOD", meaning that all the arguments are already written, or a new proposal of arguments writting, or indicates if some arguments are not fully written (abbreviation is discouraged), or nothing.
@@ -30,9 +30,11 @@
 #' 
 #' Function names preceeded by $ and any space are not considered (pattern "\\$ *[a-zA-Z.]{1}[a-zA-Z0-9._]* *\\(")
 #'  
-#' The following R functions using bracket are not considered: "function", "if", "for", "while" and "repeat".
+#' The following R functions are skipped: "function", "if", "for", "while", "repeat" and "else".
 #' 
-#' Most of the time, all_args_here() does not check inside comments, but some unexpected writting could dupe all_args_here().
+#' Warning: the following R functions are also skipped (as indicated by "SKIPPED" in the $DEF_ARGS column of the returned data frame) for the indicated reason: "as.environment" (https://bugs.r-project.org/show_bug.cgi?id=18849).
+#' 
+#' Most of the time, all_args_here() does not check inside comments, but some unexpected writting could dupe all_args_here(). Please, report here https://github.com/safer-r/saferDev/issues if it is the case.
 #' 
 #' The returned line numbers are indicative, depending on which source is checked. For instance, saferDev::report (compiled) has not the same line numbers as its source file (https://github.com/safer-r/saferDev/blob/main/R/report.R). Notably, compiled functions do not have comments anymore, compared to the same source function sourced into the working environment. In addition, the counting starts at the "<- function" line, i.e., without counting the #' header lines potentially present in source files.
 #' 
@@ -509,11 +511,15 @@ all_args_here <- function(
     #### end second round of checking and data preparation
 
     #### main code
+    skipped_base <- base::c("function", "if", "for", "while", "repeat", "else") # skipped function
+    skipped_other <- base::c("as.environment") # skipped function. Write "" if no function to skip 
+
     # arg_user_setting$x <- base::as.character(arg_user_setting$x)
     arg_user_setting$x <- base::deparse(expr = arg_user_setting$x, width.cutoff = 60L, backtick = FALSE, control = base::c("keepNA", "keepInteger", "niceNames", "showAttributes"), nlines = -1L) # because arg_user_setting$x is str(arg_user_setting$x) "language saferDev::colons_check". When I use it as string, like as.character(arg_user_setting$x), it splits  "::"           "saferDev"     "colons_check"
     path_out <- base::paste0(path_out, "/", df_name, collapse = NULL, recycle0 = FALSE)
     out <- saferDev:::.functions_detect(
         x = x, 
+        skipped_base = skipped_base, 
         arg_user_setting2 = arg_user_setting, 
         lib_path = lib_path, 
         error_text = embed_error_text
@@ -831,7 +837,12 @@ all_args_here <- function(
                         arg_full <- base::as.list(x = base::formals(fun = col2[i2], envir = base::asNamespace(ns = tempo_package_name, base.OK = TRUE))) # all the argument of the function in col2[i2] with default values # convert pairlist into list
                     }
                     # end recovering default args of the function
-                    if(base::is.null(x = arg_full)){
+                    if(col2[i2] %in% skipped_other){
+                        col5 <- base::c(col5, "SKIPPED")
+                        col6 <- base::c(col6, "")
+                        col7 <- base::c(col7, "")
+                        col8 <- base::c(col8, "")
+                    }else if(base::is.null(x = arg_full)){
                         col5 <- base::c(col5, "NO_ARGS")
                         col6 <- base::c(col6, "")
                         col7 <- base::c(col7, "")
@@ -1022,7 +1033,13 @@ all_args_here <- function(
             tempo_cat <- base::paste0("RESULT EXPORTED IN:\n", path_out, "\nBUT ", tempo_cat, collapse = NULL, recycle0 = FALSE)
         }
         tempo_cat <- base::paste0("AFTER RUNNING ", function_name, " OF THE ", package_name, " PACKAGE:\n", tempo_cat, collapse = NULL, recycle0 = FALSE)
-        base::on.exit(expr = base::cat(base::paste0("\n\n", tempo_cat, "\n\n", collapse = NULL, recycle0 = FALSE), file = "", sep = " ", fill = FALSE, labels = NULL, append = FALSE), add = TRUE, after = TRUE)
+        base::on.exit(expr = base::cat(base::paste0("\n", tempo_cat, "\n\n", collapse = NULL, recycle0 = FALSE), file = "", sep = " ", fill = FALSE, labels = NULL, append = FALSE), add = TRUE, after = TRUE)
+    }else{
+        tempo_cat <- base::paste0("INSIDE ", base::as.character(x = out$arg_user_setting$x), "(), ARGUMENTS ARE MISSING.", collapse = NULL, recycle0 = FALSE)
+        if(export == TRUE){
+            tempo_cat <- base::paste0(tempo_cat, "\nRESULT EXPORTED IN:\n", path_out, collapse = NULL, recycle0 = FALSE)
+        }
+        base::on.exit(expr = base::cat(base::paste0("\n", tempo_cat, "\n\n", collapse = NULL, recycle0 = FALSE), file = "", sep = " ", fill = FALSE, labels = NULL, append = FALSE), add = TRUE, after = TRUE)
     }
     #### end main code
 
