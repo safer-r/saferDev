@@ -31,6 +31,7 @@ Verify that object names in the environment defined by the pos parameter are ide
 }
 \examples{
 # Examples in the working environment
+rm(q)
 # creation of the object mean with value 1 in the .GlobalEnv environment, 
 # knowing that the mean() function also exists in the environment base, above .GlobalEnv:
 mean <- 1 
@@ -52,38 +53,46 @@ rm(mean) ; rm (t.test)
 # env_check() checks if the object names inside the fun1 function 
 # exist in the .GlobalEnv environment and above:
 fun1 <- function(){t.test <- 0 ; mean <- 5 ; env_check(pos = 1)} 
-fun1()
-cat(fun1())
+a <- fun1()
+cat(a) # Warning: cat(fun1()) create a additional layer of environment.
 # env_check() checks if the object names inside the environment one step above fun2(), 
 # here .GlobalEnv, exist in the upper environments of .GlobalEnv:
 fun2 <- function(){sum <- 0 ; env_check(pos = 2)} 
-fun2()
-# Warning: cat(fun2()) does not return NULL, because the environement tested is not anymore .GlobalEnv but inside cat().
+fun2() # Warning: cat(fun2()) does not return NULL, because the environement tested is not anymore .GlobalEnv but inside cat().
+a <- fun2() 
+cat(a) # nothing displayed bacause fun2() returns NULL
 # With the name of the function fun3 indicated in the message:
 fun3 <- function(){t.test <- 0 ; mean <- 5 ; env_check(pos = 1, name = "fun3")}
-fun3()
+a <- fun3() 
+cat(a)
 # Alternative way:
-fun4 <- function(){t.test <- 0 ; mean <- 5 ; env_check(pos = 1, name = "as.character(sys.calls()[[length(sys.calls())]])")}
-fun4()
-# sys.calls() gives the name of the imbricated functions, 
+# sys.calls() gives the name of the imbricated functions and 
 # sys.calls()[[length(sys.calls())]] the name of the function one step above.
-fun5 <- function(){fun6 <- function(){print(sys.calls())} ; fun6()}
-fun5()
+fun4 <- function(){
+    t.test <- 0 ; 
+    mean <- 5 ; 
+    name <- as.character(sys.calls()[[length(sys.calls())]]) ; 
+    env_check(pos = 1, name = name)
+}
+a <- fun4() 
+cat(a)
 # A way to have the name of the tested environment according to test.pos value:
 fun7 <- function(){
-    min <- "a"
+    min <- "VALUE"
     fun8 <- function(){
         test.pos <- 1 # value 1 tests the fun8 env, 2 tests the fun7 env.
-        range <- "a"
-        env_check(pos = test.pos, name = "if(length(sys.calls()) >= test.pos){
+        range <- "VALUE"
+        name <- if(length(sys.calls()) >= test.pos){
             as.character(sys.calls()[[length(sys.calls()) + 1 - test.pos]])
         }else{
             search()[(1:length(search()))[test.pos - length(sys.calls())]]
-        }") 
+        }
+        env_check(pos = test.pos, name = name) 
     }
     fun8()
 }
-fun7()
+a <- fun7() 
+cat(a)
 }
 \seealso{
 \code{\link{exists}}.

@@ -977,7 +977,7 @@ all_args_here <- function(
                             tempo_cat <- base::paste0(
                                 "INTERNAL ERROR 7 IN ", 
                                 intern_error_text_start, 
-                                "LENGTH OF tempo_split MUST LOWER OR EQUAL TO LENGTH OF arg_full_names IF saferDev:::... IS NOT AN ARGUMENT OF THE FUNCTION\n\nFUNCTION: ", 
+                                "LENGTH OF tempo_split MUST LOWER OR EQUAL TO LENGTH OF arg_full_names IF ... IS NOT AN ARGUMENT OF THE FUNCTION\n\nFUNCTION: ", 
                                 col2[i2], 
                                 "\n\ntempo_split (", 
                                 base::length(x = tempo_split), 
@@ -986,7 +986,7 @@ all_args_here <- function(
                                 "\n\narg_full_names (", 
                                 base::length(x = arg_full_names), 
                                 "):\n", 
-                                base::paste0(arg_full_names, collapse = "\n", , recycle0 = FALSE), 
+                                base::paste0(arg_full_names, collapse = "\n", recycle0 = FALSE), 
                                 "\n\ni2:\n", 
                                 i2, 
                                 intern_error_text_end, 

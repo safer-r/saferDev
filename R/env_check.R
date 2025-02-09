@@ -15,6 +15,7 @@
 #' @author Haiding Wang <wanghaiding442@gmail.com>
 #' @examples
 #' # Examples in the working environment
+#' rm(q)
 #' # creation of the object mean with value 1 in the .GlobalEnv environment, 
 #' # knowing that the mean() function also exists in the environment base, above .GlobalEnv:
 #' mean <- 1 
@@ -36,38 +37,46 @@
 #' # env_check() checks if the object names inside the fun1 function 
 #' # exist in the .GlobalEnv environment and above:
 #' fun1 <- function(){t.test <- 0 ; mean <- 5 ; env_check(pos = 1)} 
-#' fun1()
-#' cat(fun1())
+#' a <- fun1()
+#' cat(a) # Warning: cat(fun1()) create a additional layer of environment.
 #' # env_check() checks if the object names inside the environment one step above fun2(), 
 #' # here .GlobalEnv, exist in the upper environments of .GlobalEnv:
 #' fun2 <- function(){sum <- 0 ; env_check(pos = 2)} 
-#' fun2()
-#' # Warning: cat(fun2()) does not return NULL, because the environement tested is not anymore .GlobalEnv but inside cat().
+#' fun2() # Warning: cat(fun2()) does not return NULL, because the environement tested is not anymore .GlobalEnv but inside cat().
+#' a <- fun2() 
+#' cat(a) # nothing displayed bacause fun2() returns NULL
 #' # With the name of the function fun3 indicated in the message:
 #' fun3 <- function(){t.test <- 0 ; mean <- 5 ; env_check(pos = 1, name = "fun3")}
-#' fun3()
+#' a <- fun3() 
+#' cat(a)
 #' # Alternative way:
-#' fun4 <- function(){t.test <- 0 ; mean <- 5 ; env_check(pos = 1, name = "as.character(sys.calls()[[length(sys.calls())]])")}
-#' fun4()
-#' # sys.calls() gives the name of the imbricated functions, 
+#' # sys.calls() gives the name of the imbricated functions and 
 #' # sys.calls()[[length(sys.calls())]] the name of the function one step above.
-#' fun5 <- function(){fun6 <- function(){print(sys.calls())} ; fun6()}
-#' fun5()
+#' fun4 <- function(){
+#'     t.test <- 0 ; 
+#'     mean <- 5 ; 
+#'     name <- as.character(sys.calls()[[length(sys.calls())]]) ; 
+#'     env_check(pos = 1, name = name)
+#' }
+#' a <- fun4() 
+#' cat(a)
 #' # A way to have the name of the tested environment according to test.pos value:
 #' fun7 <- function(){
-#'     min <- "a"
+#'     min <- "VALUE"
 #'     fun8 <- function(){
 #'         test.pos <- 1 # value 1 tests the fun8 env, 2 tests the fun7 env.
-#'         range <- "a"
-#'         env_check(pos = test.pos, name = "if(length(sys.calls()) >= test.pos){
+#'         range <- "VALUE"
+#'         name <- if(length(sys.calls()) >= test.pos){
 #'             as.character(sys.calls()[[length(sys.calls()) + 1 - test.pos]])
 #'         }else{
 #'             search()[(1:length(search()))[test.pos - length(sys.calls())]]
-#'         }") 
+#'         }
+#'         env_check(pos = test.pos, name = name) 
 #'     }
 #'     fun8()
 #' }
-#' fun7()
+#' a <- fun7() 
+#' cat(a)
 #' @export
 env_check <- function(
     pos = 1, 
@@ -416,30 +425,30 @@ env_check <- function(
 
     #### main code
     # match.list <- base::vector("list", length = (base::length(base::sys.calls()) - 1 + base::length(base::search()) + base::ifelse(base::length(base::sys.calls()) == 1L, -1, 0))) # match.list is a list of all the environment tested (local of functions and R envs), base::length(base::sys.calls()) - 1 to remove the level of the ebase::nv_check() function, base::sys.calls() giving all the names of the imbricated functions, including env_check, base::ifelse(base::length(sys.calls()) == 1L, -1, 0) to remove Global env if this one is tested
-    tempo.name <- base::rev(base::as.character(base::unlist(base::sys.calls()))) # get names of frames (i.e., enclosed env)
-    tempo.frame <- base::rev(base::sys.frames())  # get frames (i.e., enclosed env)
+    tempo.name <- base::rev(x = base::as.character(x = base::unlist(x = base::sys.calls(), recursive = TRUE, use.names = TRUE))) # get names of frames (i.e., enclosed env)
+    tempo.frame <- base::rev(x = base::sys.frames())  # get frames (i.e., enclosed env)
 
     ######## dealing with source()
     # source() used in the Global env creates three frames above the Global env, which should be removed because not very interesting for variable duplications. Add a <<-(sys.frames()) in this code and source anova_contrasts code to see this. With ls(a[[4]]), we can see the content of each env, which are probably elements of source()
-    if(base::any(base::sapply(tempo.frame, FUN = base::environmentName) %in% "R_GlobalEnv")){
-        global.pos <- base::which(base::sapply(tempo.frame, FUN = base::environmentName) %in% "R_GlobalEnv")
+    if(base::any(base::sapply(X = tempo.frame, FUN = base::environmentName, simplify = TRUE, USE.NAMES = TRUE) %in% "R_GlobalEnv", na.rm = TRUE)){
+        global.pos <- base::which(x = base::sapply(X = tempo.frame, FUN = base::environmentName, simplify = TRUE, USE.NAMES = TRUE) %in% "R_GlobalEnv", arr.ind = FALSE, useNames = TRUE)
         # remove the global env (because already in base::search(), and all the oabove env
-        tempo.name <- tempo.name[-base::c(global.pos:base::length(tempo.frame))]
-        tempo.frame <- tempo.frame[-base::c(global.pos:base::length(tempo.frame))]
+        tempo.name <- tempo.name[-base::c(global.pos:base::length(x = tempo.frame))]
+        tempo.frame <- tempo.frame[-base::c(global.pos:base::length(x = tempo.frame))]
     }
     ######## end dealing with source()
 
-    # might have a problem if(length(tempo.name) == 0L){
-    match.list <- base::vector("list", length = base::length(tempo.name) + base::length(base::search())) # match.list is a list of all the environment tested (local of functions and R envs), base::length(base::sys.calls()) - 1 to remove the level of the env_check() function, base::sys.calls() giving all the names of the imbricated functions, including env_check, base::ifelse(base::length(base::sys.calls()) == 1L, -1, 0) to remove Global env if this one is tested
+    # might have a problem if(length(x = tempo.name) == 0L){
+    match.list <- base::vector(mode = "list", length = base::length(x = tempo.name) + base::length(x = base::search())) # match.list is a list of all the environment tested (local of functions and R envs), base::length(x = base::sys.calls()) - 1 to remove the level of the env_check() function, base::sys.calls() giving all the names of the imbricated functions, including env_check, base::ifelse(base::length(x = base::sys.calls()) == 1L, -1, 0) to remove Global env if this one is tested
     ls.names <- base::c(tempo.name, base::search()) # names of the functions + names of the base::search() environments
-    ls.input <- base::c(tempo.frame, base::as.list(base::search())) # environements of the functions + names of the base::search() environments
-    base::names(match.list) <- ls.names # 
+    ls.input <- base::c(tempo.frame, base::as.list(x = base::search())) # environements of the functions + names of the base::search() environments
+    base::names(x = match.list) <- ls.names # 
     match.list <- match.list[-base::c(1:(pos + 1))] # because we check only above pos
     ls.tested <- ls.input[[pos + 1]]
     ls.input <- ls.input[-base::c(1:(pos + 1))]
-    for(i1 in 1:base::length(match.list)){
-        if(base::any(base::ls(name = ls.input[[i1]], all.names = TRUE) %in% base::ls(name = ls.tested, all.names = TRUE))){
-            match.list[i1] <- base::list(base::ls(name = ls.input[[i1]], all.names = TRUE)[base::ls(name = ls.input[[i1]], all.names = TRUE) %in% base::ls(name = ls.tested, all.names = TRUE)])
+    for(i1 in 1:base::length(x = match.list)){
+        if(base::any(base::ls(name = ls.input[[i1]], pos = , envir = , all.names = TRUE, pattern = , sorted = TRUE) %in% base::ls(name = ls.tested, pos = , envir = , all.names = TRUE, pattern = , sorted = TRUE), na.rm = TRUE)){
+            match.list[i1] <- base::list(base::ls(name = ls.input[[i1]], pos = , envir = , all.names = TRUE, pattern = , sorted = TRUE)[base::ls(name = ls.input[[i1]], pos = , envir = , all.names = TRUE, pattern = , sorted = TRUE) %in% base::ls(name = ls.tested, pos = , envir = , all.names = TRUE, pattern = , sorted = TRUE)])
         }
     }
     #### end main code
@@ -448,8 +457,26 @@ env_check <- function(
     #### end warning output
 
     ######## output
-    if( ! base::all(base::sapply(match.list, FUN = is.null), na.rm = TRUE)){
-        output <- base::paste0("SOME VARIABLES ", base::ifelse(base::is.null(name), "OF THE CHECKED ENVIRONMENT", base::paste0("OF ", name)), " ARE ALSO PRESENT IN :\n", base::paste0(base::names(match.list[ ! base::sapply(match.list, FUN = base::is.null)]), ": ", base::sapply(match.list[ ! base::sapply(match.list, FUN = base::is.null)], FUN = base::paste0, collapse = " "), collapse = "\n"), "\n")
+    if( ! base::all(base::sapply(X = match.list, FUN = is.null, simplify = TRUE, USE.NAMES = TRUE), na.rm = TRUE)){
+        output <- base::paste0(
+            "SOME VARIABLES ", 
+            base::ifelse(
+                test = base::is.null(x = name), 
+                yes = "OF THE CHECKED ENVIRONMENT", 
+                no = base::paste0("OF ", name, collapse = NULL, recycle0 = FALSE)
+            ), 
+            " ARE ALSO PRESENT IN :\n", 
+            base::paste0(
+                base::names(x = match.list[ ! base::sapply(X = match.list, FUN = base::is.null, simplify = TRUE, USE.NAMES = TRUE)]), 
+                ": ", 
+                base::sapply(X = match.list[ ! base::sapply(X = match.list, FUN = base::is.null, simplify = TRUE, USE.NAMES = TRUE)], FUN = function(x){base::paste0(x, collapse = " ", recycle0 = FALSE)}, simplify = TRUE, USE.NAMES = TRUE), 
+                collapse = "\n",
+                recycle0 = FALSE
+            ), 
+            "\n", 
+            collapse = NULL, 
+            recycle0 = FALSE
+        )
     }else{
         output <- NULL
     }
