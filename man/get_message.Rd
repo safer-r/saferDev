@@ -39,7 +39,7 @@ get_message(
 The message or NULL if no message and print.no is FALSE.
 }
 \description{
-Evaluate an instruction written between "" and return the first of the error, or warning or standard (non error non warning) messages if ever exist.
+Evaluate an instruction written between "" and return the first of the error message, or the last of the warning or standard (non error non warning) messages if ever exist.
 
 Using argument print.no = FALSE, return NULL if no message, which is convenient in some cases.
 }
@@ -73,12 +73,6 @@ get_message(data = "message('ahah')", kind = "message", print.no = TRUE, text = 
 get_message(data = "ggplot2::ggplot(data = data.frame(X = 1:10, stringsAsFactors = TRUE), 
 mapping = ggplot2::aes(x = X)) + ggplot2::geom_histogram()", kind = "message", print.no = TRUE, 
 text = "IN INSTRUCTION 1")
-
-set.seed(1) ; 
-obs1 <- data.frame(Time = c(rnorm(10), rnorm(10) + 2), 
-Group1 = rep(c("G", "H"), each = 10), stringsAsFactors = TRUE) ; 
-get_message(data = 'gg_boxplot(data = obs1, y = "Time", categ = "Group1")', 
-kind = "message", print.no = TRUE, text = "IN INSTRUCTION 1")
 }
 \seealso{
 \code{\link{try}}.

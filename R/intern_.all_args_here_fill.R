@@ -27,7 +27,6 @@
 #' @author Gael Millot <gael.millot@pasteur.fr>
 #' # importFrom none
 #' @keywords internal
-#' @rdname internal_function
 .all_args_here_fill <- function(
     # in internal functions, all arguments are without value on purpose
     arg_full,

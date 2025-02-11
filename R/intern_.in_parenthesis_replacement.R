@@ -23,7 +23,6 @@
 #' }
 #' # importFrom none
 #' @keywords internal
-#' @rdname internal_function
 .in_parenthesis_replacement <- function(
     string, 
     pattern, 

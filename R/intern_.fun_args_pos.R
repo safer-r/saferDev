@@ -22,7 +22,6 @@
 #' }
 #' # importFrom none
 #' @keywords internal
-#' @rdname internal_function
 .fun_args_pos <- function(
     text, 
     pattern, 

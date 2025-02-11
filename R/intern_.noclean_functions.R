@@ -18,7 +18,6 @@
 #' }
 #' # importFrom none
 #' @keywords internal
-#' @rdname internal_function
 .noclean_functions <- function(
     col1, 
     col2, 

@@ -27,7 +27,6 @@
 #' @author Gael Millot <gael.millot@pasteur.fr>
 #' # importFrom none
 #' @keywords internal
-#' @rdname internal_function
 .functions_detect <- function(
     # in internal functions, all arguments are without value on purpose
     x, 

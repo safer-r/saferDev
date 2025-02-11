@@ -16,7 +16,6 @@
 #' }
 #' # importFrom none
 #' @keywords internal
-#' @rdname internal_function
 .base_op_check <- function(
     error_text # warning: in internal functions, error_text without default value returns a R classical non traced error message (specific of internal functions since classical functions are error_text = "")
 ){

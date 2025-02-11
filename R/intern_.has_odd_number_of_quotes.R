@@ -15,7 +15,6 @@
 #' }
 #' # importFrom none
 #' @keywords internal
-#' @rdname internal_function
 .has_odd_number_of_quotes <- function(
     input_string, 
     pattern,
