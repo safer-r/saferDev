@@ -17,7 +17,6 @@
 #' }
 #' # importFrom none
 #' @keywords internal
-#' @rdname internal_function
 .extract_all_fun_names <- function(
     text, 
     pattern, 
