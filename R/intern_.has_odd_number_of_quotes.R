@@ -13,6 +13,7 @@
 #' \dontrun{ # Example that shouldn't be run because this is an internal function
 #' .has_odd_number_of_quotes(input_string = 'This is a "test" string with "even" quotes', pattern = '"', lib_path = NULL, error_text = " INSIDE P1::F1")
 #' }
+#' 
 #' # importFrom none
 #' @keywords internal
 .has_odd_number_of_quotes <- function(

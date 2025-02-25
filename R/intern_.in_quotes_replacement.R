@@ -21,6 +21,7 @@
 #' source("https://raw.githubusercontent.com/safer-r/saferDev/main/dev/other/test.R") ; .in_quotes_replacement(string = paste(deparse(test), collapse = ""), pattern = "\\)", no_regex_pattern = ")", replacement = " ", perl = TRUE, lib_path = NULL, error_text = " INSIDE P1::F1")
 #' .in_quotes_replacement(string = 'paste0("IAGE((", paste0(1:3, collapse = " "), "A)B()")', pattern = "\\)", no_regex_pattern = ")", replacement = " ", perl = TRUE, lib_path = NULL, error_text = " INSIDE P1::F1")
 #' }
+#' 
 #' # importFrom none
 #' @keywords internal
 .in_quotes_replacement <- function(

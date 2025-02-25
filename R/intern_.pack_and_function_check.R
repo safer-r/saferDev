@@ -16,6 +16,7 @@
 #' .pack_and_function_check(fun = c("ggplot2::geom_point", "grid::gpar"), lib_path = base::.libPaths(), error_text = " INSIDE P1::F1")  # nothing should happen
 #' }
 #' @author Gael Millot <gael.millot@pasteur.fr>
+#' 
 #' # importFrom none
 #' @keywords internal
 .pack_and_function_check <- function(
