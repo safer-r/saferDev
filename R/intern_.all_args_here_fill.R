@@ -25,6 +25,7 @@
 #' .all_args_here_fill(arg_full = list(x = pairlist(x = quote(expr = ))), arg_full_names = "x", tempo_split = "x", three_dots_log = FALSE, i2 = 1, col1_i2 = 1, col2_i2 =  "length", arg_user_setting_x = "\"FUN1\"", warn = NULL, warn_count = 0, lib_path = NULL, error_text = " INSIDE P1::F1")
 #' }
 #' @author Gael Millot <gael.millot@pasteur.fr>
+
 #' # importFrom none
 #' @keywords internal
 .all_args_here_fill <- function(
@@ -531,13 +532,15 @@
             # Of note, when ... is present, argument values must be preceeded by their arg name. This means that values without arg names of the scanned function are ...
             # Otherwise, the first value without names must take the first arg name not already used, the second value without names must take the second, etc., then finish by the none used arg names with their default values
         missing_arg_log <- arg_full_names %in% missing_args_names
-        if(base::any(three_dots_log, na.rm = TRUE) & base::all( ! arg_full_symbol_type, na.rm =TRUE)){ # ... present but no mandatory args with value to set 
-            missing_args <-  paste0(arg_full_names[missing_arg_log], " = ", arg_full[missing_arg_log], collapse = NULL, recycle0 = FALSE) # missing arg values with names
-            good_args <- base::c(
-                tempo_split[ ! tempo_split %in% good_args], # arg values without names
-                good_args, # obs arg values with names
-                base::paste0(" ", missing_args) # missing arg values with names #a space added to finally have  comma followed by a space
-            )
+        if(base::any(three_dots_log, na.rm = TRUE) & base::all( ! arg_full_symbol_type, na.rm =TRUE)){ # ... present but no mandatory args with value to set
+            if(base::sum(missing_arg_log, na.rm = TRUE) > 0){ # if = 0, then missing_args remains NULL
+                missing_args <-  paste0(arg_full_names[missing_arg_log], " = ", arg_full[missing_arg_log], collapse = NULL, recycle0 = FALSE) # missing arg values with names
+                good_args <- base::c(
+                    tempo_split[ ! tempo_split %in% good_args], # arg values without names
+                    good_args, # obs arg values with names
+                    base::paste0(" ", missing_args) # missing arg values with names #a space added to finally have comma followed by a space
+                )
+            }
         }else{
             count_good_args <- 0
             final <- NULL
