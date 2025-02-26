@@ -43,6 +43,7 @@ source("C:\\\\Users\\\\gmillot\\\\Documents\\\\Git_projects\\\\safer-r\\\\saferD
 }
 \author{
 Gael Millot <gael.millot@pasteur.fr>
+
 # importFrom none
 }
 \keyword{internal}

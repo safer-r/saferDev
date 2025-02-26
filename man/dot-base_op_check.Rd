@@ -23,6 +23,7 @@ Others functions of the R scope can be overwritten because safer functions alway
 assign("!", 1) ; assign("+", 2) ; .base_op_check(error_text = " INSIDE fun1.") this example returns an error
 rm("!") ; rm("+") 
 }
+
 # importFrom none
 }
 \author{

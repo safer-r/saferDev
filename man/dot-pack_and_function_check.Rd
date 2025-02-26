@@ -35,6 +35,7 @@ Yushi Han <yushi.han2000@gmail.com>
 Haiding Wang <wanghaiding442@gmail.com>
 
 Gael Millot <gael.millot@pasteur.fr>
+
 # importFrom none
 }
 \keyword{internal}

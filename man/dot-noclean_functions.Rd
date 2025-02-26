@@ -33,6 +33,7 @@ Indicate if function names are inside quotes or after $
 source("https://raw.githubusercontent.com/safer-r/saferDev/main/dev/other/test.R")
 .noclean_functions(col1 =  c(15, 17), col2 = c("gregexpr", "regmatches"), col3 = c("matches <- ",  "matched_strings <- " ), ini = utils::capture.output(test), lib_path = NULL, error_text = " INSIDE P1::F1")
 }
+
 # importFrom none
 }
 \author{
