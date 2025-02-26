@@ -12,8 +12,8 @@
 #' @author Haiding Wang <wanghaiding442@gmail.com>
 #' @examples
 #' \dontrun{ # Example that return an error
-#' is_package_here(req_package = "nopackage")
-#' is_package_here(req_package = "ggplot2", lib_path = "C:/Users/yhan/AppData/Local/R/win-library/4.3") # commented because this example returns an error if the lib_path argument is not an existing directory
+#' is_package_here(req_package = "nopackage", error_text = " INSIDE P1::F1")
+#' is_package_here(req_package = "ggplot2", lib_path = "C:/Users/gmillot/AppData/Local/R/win-library/4.4") # commented because this example returns an error if the lib_path argument is not an existing directory
 #' }
 #' is_package_here(req_package = "ggplot2")
 #' # importFrom none
@@ -374,19 +374,21 @@ is_package_here <- function(
     #### end second round of checking and data preparation
 
     #### main code
-    pkg.log <- req_package %in% base::rownames(utils::installed.packages(lib.loc = lib_path))
-    if( ! base::all(pkg.log)){
+    pkg.log <- req_package %in% base::rownames(x = utils::installed.packages(lib.loc = lib_path, priority = NULL, noCache = FALSE, fields = NULL, subarch = .Platform$r_arch), do.NULL = TRUE, prefix = "row")
+    if( ! base::all(pkg.log, na.rm = TRUE)){
         tempo <- req_package[ ! pkg.log]
         tempo_cat <- base::paste0(
             error_text_start, 
             "REQUIRED PACKAGE", 
-            base::ifelse(test = base::length(tempo) == 1L, yes = base::paste0(":\n", tempo, "\n\n", collapse = "\n", recycle0 = FALSE), no = base::paste0("S:\n", base::paste0(tempo, collapse = "\n", recycle0 = FALSE), "\n\n", collapse = "\n", recycle0 = FALSE)), 
+            base::ifelse(test = base::length(x = tempo) == 1L, yes = base::paste0(":\n", tempo, "\n\n", collapse = "\n", recycle0 = FALSE), no = base::paste0("S:\n", base::paste0(tempo, collapse = "\n", recycle0 = FALSE), "\n\n", collapse = "\n", recycle0 = FALSE)), 
             "MUST BE INSTALLED IN", 
-            base::ifelse(base::length(lib_path) == 1L, "", " ONE OF THESE FOLDERS"), 
+            base::ifelse(test = base::length(x = lib_path) == 1L, yes = "", no = " ONE OF THESE FOLDERS"), 
             ":\n", 
-            base::paste0(lib_path, collapse = "\n", recycle0 = FALSE)
+            base::paste0(lib_path, collapse = "\n", recycle0 = FALSE),
+            collapse = NULL, 
+            recycle0 = FALSE
         )
-        base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
+        base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL) # == in base::stop() to be able to add several messages between ==
     }
     #### end main code
 

@@ -37,7 +37,7 @@ is_python_package_here <- function(
     error_text = ""
 ){
     # DEBUGGING
-    # req_package = "serpentine" ; python_exec_path = "C:/ProgramData/Anaconda3/python.exe" ; python_lib_path = "c:/programdata/anaconda3/lib/site-packages/" ; lib_path = NULL ; safer_check = TRUE
+    # req_package = "serpentine" ; python_exec_path = "C:/ProgramData/Anaconda3/python.exe" ; python_lib_path = "C:/ProgramData/Anaconda3/Lib/site-packages/" ; lib_path = NULL ; safer_check = TRUE ; error_text = ""
     # req_package = "bad" ; python_lib_path = NULL ; lib_path = NULL ; safer_check = TRUE
     #### package name
     package_name <- "saferDev" # write NULL if the function developed is not in a package
@@ -428,33 +428,33 @@ is_python_package_here <- function(
     #### end second round of checking and data preparation
 
     #### main code
-    if(base::is.null(python_exec_path)){
-        python_exec_path <- reticulate::py_run_string("import sys ; path_lib = sys.path") # python string, do not add indentations
+    if(base::is.null(x = python_exec_path)){
+        python_exec_path <- reticulate::py_run_string(code = "import sys ; path_lib = sys.path", local = FALSE, convert = TRUE) # python string, do not add indentations
         python_exec_path <- python_exec_path$path_lib
     }
-    if(base::is.null(python_lib_path)){
-        python_lib_path <- reticulate::py_run_string("import sys ; path_lib = sys.path") # python string, do not add indentations
+    if(base::is.null(x = python_lib_path)){
+        python_lib_path <- reticulate::py_run_string(code = "import sys ; path_lib = sys.path", local = FALSE, convert = TRUE) # python string, do not add indentations
         python_lib_path <- python_lib_path$path_lib
     }
-    reticulate::use_python(base::Sys.which(python_exec_path), required = TRUE) # required to avoid the use of erratic python exec by reticulate::import_from_path()
-    for(i1 in 1:base::length(req_package)){
-        tempo.try <- base::vector("list", length = base::length(python_lib_path))
-        for(i2 in 1:base::length(python_lib_path)){
-            tempo.try[[i2]] <- base::suppressWarnings(base::try(reticulate::import_from_path(req_package[i1], path = python_lib_path[i2]), silent = TRUE))
-            tempo.try[[i2]] <- base::suppressWarnings(base::try(reticulate::import_from_path(req_package[i1], path = python_lib_path[i2]), silent = TRUE)) # done twice to avoid the error message  about flushing present the first time but not the second time. see https://stackoverflow.com/questions/57357001/reticulate-1-13-error-in-sysstdoutflush-attempt-to-apply-non-function
+    reticulate::use_python(python = base::Sys.which(names = python_exec_path), required = TRUE) # required to avoid the use of erratic python exec by reticulate::import_from_path()
+    for(i1 in 1:base::length(x = req_package)){
+        tempo.try <- base::vector(mode = "list", length = base::length(x = python_lib_path))
+        for(i2 in 1:base::length(x = python_lib_path)){
+            tempo.try[[i2]] <- base::suppressWarnings(expr = base::try(expr = reticulate::import_from_path(module = req_package[i1], path = python_lib_path[i2], convert = TRUE, delay_load = FALSE), silent = TRUE, outFile = base::getOption(x = "try.outFile", default = base::stderr())), classes = "warning")
+            tempo.try[[i2]] <- base::suppressWarnings(expr = base::try(expr = reticulate::import_from_path(module = req_package[i1], path = python_lib_path[i2], convert = TRUE, delay_load = FALSE), silent = TRUE, outFile = base::getOption(x = "try.outFile", default = base::stderr())), classes = "warning") # done twice to avoid the error message  about flushing present the first time but not the second time. see https://stackoverflow.com/questions/57357001/reticulate-1-13-error-in-sysstdoutflush-attempt-to-apply-non-function
         }
-        if(base::all(base::sapply(tempo.try, FUN = grepl, pattern = "[Ee]rror"), na.rm = TRUE)){
-            base::print(tempo.try)
+        if(base::all(base::sapply(X = tempo.try, FUN = function(x){base::grepl(x = x, pattern = "[Ee]rror", ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE)}, simplify = TRUE, USE.NAMES = TRUE), na.rm = TRUE)){
+            base::print(x = tempo.try)
             tempo_cat <- base::paste0(
                 error_text_start, 
                 "PACKAGE ", 
                 req_package[i1], 
                 " MUST BE INSTALLED IN THE MENTIONNED DIRECTORY:\n", 
-                base::paste(python_lib_path, collapse = "\n", recycle0 = FALSE),
+                base::paste0(python_lib_path, collapse = "\n", recycle0 = FALSE),
                 collapse = NULL, 
                 recycle0 = FALSE
             )
-            base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
+            base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL) # == in base::stop() to be able to add several messages between ==
         } # else{
         # suppressMessages(suppressWarnings(suppressPackageStartupMessages(assign(req_package[i1], reticulate::import(req_package[i1]))))) # not required because try() already evaluates
         # }
