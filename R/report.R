@@ -4,7 +4,7 @@
 #' @param data Object to print in the output file. If NULL, nothing is done, with no warning.
 #' @param output Single character string. Name of the output file.
 #' @param path Single character string indicating the path where to write the output file.
-#' @param overwrite Single logical value. If output file already exists, defines if the printing is appended (default FALSE) or if the output file content is erased before printing (TRUE).
+#' @param overwrite Single logical value. If output file already exists and overwrite is TRUE, an error message is returned (no overwrite of existing file possible). Otherwise, the printing is appended (and the output file is created if it does not exist yet).
 #' @param rownames.kept Single logical value. Defines whether row names have to be removed or in 2D objects. Warning: in 1D tables, names over the values are taken as row names, and are thus removed if rownames.kept is FALSE.
 #' @param vector.cat Single logical value. If TRUE print a vector of length > 1 using cat() instead of capture.output(). Otherwise (default FALSE) the opposite. Names of values are not printed when TRUE
 #' @param noquote Single logical value. If TRUE no quote are present for the characters.
@@ -18,8 +18,12 @@
 #' @author Yushi Han <yushi.han2000@gmail.com>
 #' @author Haiding Wang <wanghaiding442@gmail.com>
 #' @examples
-#' report(data = 1:3, output = "results.txt", path = ".", overwrite = TRUE, 
-#' rownames.kept = FALSE, vector.cat = FALSE, noquote = FALSE, sep = 2)
+#' report(data = "THE FOLLOWING VECTOR IS:\n", output = "results.txt", path = ".", overwrite = TRUE, sep = 1)
+#' report(data = 1:3, output = "results.txt", path = ".", overwrite = FALSE, rownames.kept = FALSE, vector.cat = FALSE, noquote = FALSE, sep = 2)
+#' report(data = "THE FOLLOWING MATRIX IS:\n", output = "results.txt", path = ".", overwrite = FALSE, sep = 1)
+#' report(data = matrix(1:5), output = "results.txt", path = ".", overwrite = FALSE, rownames.kept = FALSE, vector.cat = FALSE, noquote = FALSE, sep = 5)
+#' report(data = "THE FOLLOWING DATA FRAME IS:\n", output = "results.txt", path = ".", overwrite = FALSE, sep = 1)
+#' report(data = data.frame(A = 1:8, B = letters[1:8]), output = "results.txt", path = ".", overwrite = FALSE, rownames.kept = FALSE, vector.cat = FALSE, noquote = FALSE, sep = 1)
 #' # importFrom none
 #' @export
 report <- function(
@@ -326,12 +330,12 @@ report <- function(
     ee <- base::expression(argum_check <- base::c(argum_check, tempo$problem) , text_check <- base::c(text_check, tempo$text) , checked_arg_names <- base::c(checked_arg_names, tempo$object.name))
     # add as many lines as below, for each of your arguments of your function in development
     tempo <- saferDev::arg_check(data = output, class = "character", typeof = NULL, mode ="character", length = 1, prop = FALSE, double_as_integer_allowed = TRUE, options = NULL, all_options_in_data = FALSE, na_contain = FALSE, neg_values = TRUE, inf_values = TRUE, print = FALSE, data_name = NULL, data_arg = TRUE, safer_check = FALSE, lib_path = lib_path, error_text = embed_error_text) ; base::eval(expr = ee, envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL))
-    tempo <- saferDev::arg_check(data = path, class = "vector", typeof = NULL, mode = "character", length = NULL, prop = FALSE, double_as_integer_allowed = TRUE, options = NULL, all_options_in_data = FALSE, na_contain = FALSE, neg_values = TRUE, inf_values = TRUE, print = FALSE, data_name = NULL, data_arg = TRUE, safer_check = FALSE, lib_path = lib_path, error_text = embed_error_text) ; base::eval(expr = ee, envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL))
+    tempo <- saferDev::arg_check(data = path, class = "vector", typeof = NULL, mode = "character", length = 1, prop = FALSE, double_as_integer_allowed = TRUE, options = NULL, all_options_in_data = FALSE, na_contain = FALSE, neg_values = TRUE, inf_values = TRUE, print = FALSE, data_name = NULL, data_arg = TRUE, safer_check = FALSE, lib_path = lib_path, error_text = embed_error_text) ; base::eval(expr = ee, envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL))
     tempo <- saferDev::arg_check(data = overwrite, class = "logical", typeof = NULL, mode = "logical", length = 1, prop = FALSE, double_as_integer_allowed = TRUE, options = NULL, all_options_in_data = FALSE, na_contain = FALSE, neg_values = TRUE, inf_values = TRUE, print = FALSE, data_name = NULL, data_arg = TRUE, safer_check = FALSE, lib_path = lib_path, error_text = embed_error_text) ; base::eval(expr = ee, envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL))
     tempo <- saferDev::arg_check(data = rownames.kept, class = "logical", typeof = NULL, mode = "logical", length = 1, prop = FALSE, double_as_integer_allowed = TRUE, options = NULL, all_options_in_data = FALSE, na_contain = FALSE, neg_values = TRUE, inf_values = TRUE, print = FALSE, data_name = NULL, data_arg = TRUE, safer_check = FALSE, lib_path = lib_path, error_text = embed_error_text) ; base::eval(expr = ee, envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL))
     tempo <- saferDev::arg_check(data = vector.cat, class = "logical", typeof = NULL, mode = "logical", length = 1, prop = FALSE, double_as_integer_allowed = TRUE, options = NULL, all_options_in_data = FALSE, na_contain = FALSE, neg_values = TRUE, inf_values = TRUE, print = FALSE, data_name = NULL, data_arg = TRUE, safer_check = FALSE, lib_path = lib_path, error_text = embed_error_text) ; base::eval(expr = ee, envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL))
     tempo <- saferDev::arg_check(data = noquote, class = "logical", typeof = NULL, mode = "logical", length = 1, prop = FALSE, double_as_integer_allowed = TRUE, options = NULL, all_options_in_data = FALSE, na_contain = FALSE, neg_values = TRUE, inf_values = TRUE, print = FALSE, data_name = NULL, data_arg = TRUE, safer_check = FALSE, lib_path = lib_path, error_text = embed_error_text) ; base::eval(expr = ee, envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL))
-    tempo <- saferDev::arg_check(data = sep, class = "vector", typeof = "integer", mode = NULL, length = 1, double_as_integer_allowed = TRUE, options = NULL, all_options_in_data = FALSE, na_contain = TRUE, neg_values = FALSE, inf_values = TRUE, print = FALSE, data_name = NULL, data_arg = TRUE, safer_check = FALSE, lib_path = lib_path, error_text = embed_error_text) ; base::eval(expr = ee, envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL))
+    tempo <- saferDev::arg_check(data = sep, class = "vector", typeof = "integer", mode = NULL, length = 1, prop = FALSE, double_as_integer_allowed = TRUE, options = NULL, all_options_in_data = FALSE, na_contain = TRUE, neg_values = FALSE, inf_values = TRUE, print = FALSE, data_name = NULL, data_arg = TRUE, safer_check = FALSE, lib_path = lib_path, error_text = embed_error_text) ; base::eval(expr = ee, envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL))
     # lib_path already checked above
     # safer_check already checked above
     # error_text already checked above
@@ -400,15 +404,15 @@ report <- function(
     ######## end graphic device checking
 
     ######## other checkings
-    if( ! base::all(base::dir.exists(path), na.rm = TRUE)){
+    if( ! base::dir.exists(paths = path)){
         tempo_cat <- base::paste0(
             error_text_start, 
             "path ARGUMENT DOES NOT CORRESPOND TO EXISTING DIRECTORY:\n", 
-            base::paste0(path, collapse = "\n", recycle0 = FALSE), 
+            path, 
             collapse = NULL, 
             recycle0 = FALSE
         )
-        base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
+        base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL) # == in base::stop() to be able to add several messages between ==
     }
     if(sep == 0){
         tempo_cat <- base::paste0(
@@ -417,64 +421,78 @@ report <- function(
             collapse = NULL, 
             recycle0 = FALSE
         )
-        base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
+        base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL) # == in base::stop() to be able to add several messages between ==
+    }
+    if(base::file.exists(paths = base::paste0(path, "/", output, collapse = NULL, recycle0 = FALSE)) & overwrite == TRUE){
+        tempo_cat <- base::paste0(
+            error_text_start, 
+            "FILE DEFINED BY THE path AND output ARGUMENTS\n",
+            base::paste0(path, "/", output, collapse = NULL, recycle0 = FALSE),
+            "\nALREADY EXISTS AND CANNOT BE OVERWRITTEN.\nPLEASE:\nREMOVE THE FILE\nOR CHANGE THE NAME OF THE output ARGUMENT\nOR SET THE overwrite ARGUMENT TO FALSE TO APPEND IN THE EXISTING FILE.\n", 
+            collapse = NULL, 
+            recycle0 = FALSE
+        )
+        base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL) # == in base::stop() to be able to add several messages between ==
     }
     ######## end other checkings
 
     #### end second round of checking and data preparation
 
     #### main code
-    if( ! base::is.null(data)){
-        if(base::all(base::class(data) == "expression")){
-            data <- base::as.character(data)
+    out_path <- base::paste0(path, "/", output, collapse = NULL, recycle0 = FALSE)
+    if( ! base::is.null(x = data)){
+        if(base::all(base::class(x = data) == "expression", na.rm = TRUE)){
+            data <- base::as.character(x = data)
         }
-        if(base::all(base::class(data) == "data.frame") | base::all(base::class(data) == "table") | base::all(base::class(data) %in% base::c("matrix", "array"))){ # before R4.0.0, it was  base::all(base::class(data) %in% c("matrix", "data.frame", "table")) # base::class() never returns NA
-            if(rownames.kept == FALSE & base::all(base::class(data) == "data.frame") & base::nrow(data) != 0 & base::nrow(data) <= 4){ # for data frames with nrows <= 4
+        if(base::all(base::class(x = data) == "data.frame", na.rm = TRUE) | base::all(base::class(x = data) == "table", na.rm = TRUE) | base::all(base::class(x = data) %in% base::c("matrix", "array"), na.rm = TRUE)){ # before R4.0.0, it was  base::all(base::class(data) %in% c("matrix", "data.frame", "table")) # base::class() never returns NA
+            if(rownames.kept == FALSE & base::all(base::class(x = data) == "data.frame", na.rm = TRUE) & base::nrow(x = data) != 0 & base::nrow(x = data) <= 4){ # for data frames with nrows <= 4
                 rownames.output.tables <- ""
-                length.rows <- base::nrow(data)
+                length.rows <- base::nrow(x = data)
                 for(i in 1:length.rows){ # replace the rownames of the first 4 rows by increasing number of spaces (because identical row names not allowed in data frames). This method cannot be extended to more rows as the printed data frame is shifted on the right because of "big empty rownames"
-                    rownames.output.tables <- base::c(rownames.output.tables, base::paste0(rownames.output.tables[i]," ", collapse=""))
+                    rownames.output.tables <- base::c(rownames.output.tables, base::paste0(rownames.output.tables[i]," ", collapse = "", recycle0 = FALSE))
                 }
-                base::row.names(data) <- rownames.output.tables[1:length.rows]
-            }else if(rownames.kept == FALSE & (base::all(base::class(data) == "table") | base::all(base::class(data) %in% base::c("matrix", "array")))){ # before R4.0.0, it was  & base::all(base::class(data) %in% base::c("matrix", "table"))
-                base::rownames(data) <- base::rep("", base::nrow(data)) # identical row names allowed in matrices and tables
+                base::row.names(x = data) <- rownames.output.tables[1:length.rows]
+            }else if(rownames.kept == FALSE & (base::all(base::class(x = data) == "table", na.rm = TRUE) | base::all(base::class(x = data) %in% base::c("matrix", "array"), na.rm = TRUE))){ # before R4.0.0, it was  & base::all(base::class(data) %in% base::c("matrix", "table"))
+                base::rownames(x = data) <- base::rep(x = "", times = base::nrow(x = data)) # identical row names allowed in matrices and tables
             }
             if(noquote == TRUE){
-                utils::capture.output(base::noquote(data), file=base::paste0(path, "/", output), append = ! overwrite)
+                utils::capture.output(base::noquote(obj = data, right = FALSE), file = out_path, append = ! overwrite, type = NULL, split = FALSE)
             }else{
-                utils::capture.output(data, file=base::paste0(path, "/", output), append = ! overwrite)
+                utils::capture.output(data, file=out_path, append = ! overwrite, type = NULL, split = FALSE)
             }
-        }else if(base::is.vector(data) & base::all(base::class(data) != "list") & (base::length(data) == 1L | vector.cat == TRUE)){
+        }else if(base::is.vector(x = data, mode = "any") & base::all(base::class(x = data) != "list", na.rm = TRUE) & (base::length(x = data) == 1L | vector.cat == TRUE)){
             if(noquote == TRUE){
-                base::cat(base::noquote(data), file= base::paste0(path, "/", output), append = ! overwrite)
+                base::cat(base::noquote(obj = data, right = FALSE), file= out_path, append = ! overwrite, type = NULL, sep =  , fill = FALSE, labels = NULL)
+                sep <- sep - 1 # because with cat(), R add an additionnal space
             }else{
-                base::cat(data, file= base::paste0(path, "/", output), append = ! overwrite)
+                base::cat(data, file= out_path, append = ! overwrite, type = NULL, sep =  , fill = FALSE, labels = NULL)
+                sep <- sep - 1 # because with cat(), R add an additionnal space
             }
-        }else if(base::all(base::mode(data) == "character")){ # characters (array, list, factor or vector with vector.cat = FALSE)
+        }else if(base::all(base::mode(x = data) == "character", na.rm = TRUE)){ # characters (array, list, factor or vector with vector.cat = FALSE)
             if(noquote == TRUE){
-                utils::capture.output(base::noquote(data), file=base::paste0(path, "/", output), append = ! overwrite)
+                utils::capture.output(base::noquote(obj = data, right = FALSE), file=out_path, append = ! overwrite, type = NULL, split = FALSE)
             }else{
-                utils::capture.output(data, file=base::paste0(path, "/", output), append = ! overwrite)
+                utils::capture.output(data, file=out_path, append = ! overwrite, type = NULL, split = FALSE)
             }
         }else{ # other object (S4 for instance, which do not like base::noquote()
-            utils::capture.output(data, file=base::paste0(path, "/", output), append = ! overwrite)
+            utils::capture.output(data, file=out_path, append = ! overwrite, type = NULL, split = FALSE)
         }
         # deal with sep
         if( ! (
-            base::length(data) == 1 & (
-                base::all(base::class(data) == "logical") | 
-                base::all(base::class(data) == "integer") | 
-                base::all(base::class(data) == "numeric") | 
-                base::all(base::class(data) == "character")
+            base::length(x = data) == 1 & (
+                base::all(base::class(x = data) == "logical", na.rm = TRUE) | 
+                base::all(base::class(x = data) == "integer", na.rm = TRUE) | 
+                base::all(base::class(x = data) == "numeric", na.rm = TRUE) | 
+                base::all(base::class(x = data) == "character", na.rm = TRUE)
             )
         )){
             sep <- sep - 1 # because in these cases (matrix, data frame, list, etc.), R add an additionnal space
         }
-        if(base::all(base::class(data) == "list")){
+        if(base::all(base::class(x = data) == "list", na.rm = TRUE)){
             sep <- sep - 1 # because with lists, R add another additionnal space
         }
-        sep.final <- base::paste0(base::rep("\n", sep), collapse = "")
-        base::write(sep.final, file= base::paste0(path, "/", output), append = TRUE) # add a sep
+        sep.final <- base::paste0(base::rep(x = "\n", times = sep), collapse = "", recycle0 = FALSE)
+        base::write(x = sep.final, file = out_path, ncolumns = if(base::is.character(x = sep.final)){1}else{5}, append = TRUE, sep = "") # add a sep
     }
     #### end main code
 
