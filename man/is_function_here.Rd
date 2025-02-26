@@ -23,7 +23,7 @@ Check if required functions are present in installed packages. This controls mod
 }
 \examples{
 \dontrun{ # Example that return an error
-is_function_here(fun = "ggplot2::notgood") # commented because this example returns an error
+is_function_here(fun = "ggplot2::notgood", error_text = " INSIDE P1::F1") # commented because this example returns an error
 is_function_here(fun = c("ggplot2::geom_point", "grid::gpar"))
 is_function_here(fun = "c")
 }

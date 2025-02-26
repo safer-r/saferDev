@@ -28,8 +28,8 @@ Check if required packages are installed locally.
 }
 \examples{
 \dontrun{ # Example that return an error
-is_package_here(req_package = "nopackage")
-is_package_here(req_package = "ggplot2", lib_path = "C:/Users/yhan/AppData/Local/R/win-library/4.3") # commented because this example returns an error if the lib_path argument is not an existing directory
+is_package_here(req_package = "nopackage", error_text = " INSIDE P1::F1")
+is_package_here(req_package = "ggplot2", lib_path = "C:/Users/gmillot/AppData/Local/R/win-library/4.4") # commented because this example returns an error if the lib_path argument is not an existing directory
 }
 is_package_here(req_package = "ggplot2")
 # importFrom none
