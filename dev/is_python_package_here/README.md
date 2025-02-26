@@ -47,6 +47,7 @@ Set of R functions for the development of R functions, written according to the 
 | **get_message()** | Return the error, warning or simple (non error non warning) message if ever exist of an instruction written between quotes. |
 | **is_function_here()** | Check if required functions are present in installed packages. This controls for instance modifications of function names depending on package versions. |
 | **is_package_here()** | Check if required packages are installed locally. |
+| **is_python_package_here()** | Check if required python packages are installed locally. |
 | **report()** | Print a character string or a data object into a same log file. |
 
 <br />
