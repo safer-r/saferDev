@@ -17,7 +17,7 @@
 #' $arg_user_setting: list of arg user settings of the tested function.
 #' @details
 #' - Does not check if the functions inside the code exist.
-#' - Use the regex pattern '\\"{0,1}([a-zA-Z]|\\.[a-zA-Z._])[a-zA-Z0-9._]*((<-\\"){0,1}|\\"{0,1})\\s*\\(' to detect a function in the code.
+#' - Use the regex pattern "([a-zA-Z]|\\.[a-zA-Z._])[a-zA-Z0-9._]*\\s*\\(" to detect a function in the code.
 #' - $all_basic_funs are all the functions in base::c("package:stats", "package:graphics",  "package:grDevices", "package:utils", "package:datasets", "package:methods", "Autoloads", "package:base")
 #' - Warning: requires saferDev::arg_check, saferDev:::.extract_all_fun_names, saferDev:::.has_odd_number_of_quotes. In main safer functions, in the section "######## check of the required functions from the required packages" add these functions when checking for the presence of saferDev:::.functions_detect.
 #' @examples
@@ -37,11 +37,12 @@
     error_text # warning: in internal functions, error_text without default value returns a R classical non traced error message (specific of internal functions since classical functions are error_text = "")
 ){
     # DEBUGGING
-    # x = x ; skipped_base = base::c("function", "if", "for", "while", "repeat", "else") ; arg_user_setting = arg_user_setting ; error_text = ""
-    # source("C:\\Users\\gmillot\\Documents\\Git_projects\\safer-r\\saferDev\\dev\\other\\test2.R") ; x = test2 ; skipped_base = base::c("function", "if", "for", "while", "repeat", "else") ; arg_user_setting = base::list(x = as.name(x = "test2"), skipped_base = base::c("function", "if", "for", "while", "repeat", "else"), lib_path = NULL, error_text = " INSIDE P1::F1") ; lib_path = NULL ; error_text = " INSIDE P1::F1"
+    # x = x ; skipped_base = base::c("function", "if", "for", "while", "repeat", "else") ; arg_user_setting2 = arg_user_setting ; lib_path = lib_path ; error_text = ""
+    # source("C:\\Users\\gmillot\\Documents\\Git_projects\\safer-r\\saferDev\\dev\\other\\test2.R") ; x = test2 ; skipped_base = base::c("function", "if", "for", "while", "repeat", "else") ; arg_user_setting2 = base::list(x = as.name(x = "test2"), skipped_base = base::c("function", "if", "for", "while", "repeat", "else"), lib_path = NULL, error_text = " INSIDE P1::F1") ; lib_path = NULL ; error_text = " INSIDE P1::F1"
     # source("C:\\Users\\gmillot\\Documents\\Git_projects\\safer-r\\.github\\profile\\backbone.R") ; x = BACKBONE ; skipped_base = base::c("function", "if", "for", "while", "repeat", "else") ; arg_user_setting = base::list(x = as.name(x = "BACKBONE"), skipped_base = base::c("function", "if", "for", "while", "repeat", "else"), lib_path = NULL, error_text = " INSIDE P1::F1") ; lib_path = NULL ; error_text = " INSIDE P1::F1"
     # FUN1 <- function(x, y){middle_bracket2 <- base::do.call(what = base::c, args = code_for_col, quote = FALSE, envir = base::parent.frame())} ; x = FUN1 ; skipped_base = base::c("function", "if", "for", "while", "repeat", "else") ; arg_user_setting = base::list(x = as.name(x = "FUN1"), skipped_base = base::c("function", "if", "for", "while", "repeat", "else"), lib_path = NULL, error_text = " INSIDE P1::F1") ; lib_path = NULL ; error_text = " INSIDE P1::F1"
-    # FUN1 <- function(x, y){FUN2 <- function(x){x = 1}} ; x = FUN1 ; skipped_base = base::c("function", "if", "for", "while", "repeat", "else") ; arg_user_setting = base::list(x = as.name(x = "FUN1"), skipped_base = base::c("function", "if", "for", "while", "repeat", "else"), lib_path = NULL, error_text = " INSIDE P1::F1") ; lib_path = NULL ; error_text = " INSIDE P1::F1"
+    # FUN1 <- function(x, y){FUN2 <- function(x){x = 1}} ; x = FUN1 ; skipped_base = base::c("function", "if", "for", "while", "repeat", "else") ; arg_user_setting2 = base::list(x = as.name(x = "FUN1"), skipped_base = skipped_base, lib_path = NULL, error_text = " INSIDE P1::F1") ; lib_path = NULL ; error_text = " INSIDE P1::F1"
+    # function_name <- ".functions_detect" ; arg_user_setting = base::list(x = as.name(x = "FUN1"), lib_path = NULL, error_text = "") ; arg_names <- c("x", "skipped_base", "arg_user_setting2", "lib_path", "error_text")
 
     #### package name
     package_name <- "saferDev" # write NULL if the function developed is not in a package
@@ -308,10 +309,10 @@
 
     #### main code
     # pattern to detect a function
-    pattern1 <- '\\"{0,1}([a-zA-Z]|\\.[a-zA-Z._])[a-zA-Z0-9._]*((<-\\"){0,1}|\\"{0,1})\\s*' # pattern to detect a function name, a$fun( is removed in .noclean_functions()
+    pattern1 <- "([a-zA-Z]|\\.[a-zA-Z._])[a-zA-Z0-9._]*\\s*" # pattern to detect a function name, a$fun( is removed in .noclean_functions()
     # ([a-zA-Z]|\\.[a-zA-Z._]) is for the begining of R function name: either any single alphabet character or a dot and any single alphabet character or dot (because .. is ok for function name) or underscore (because ._ is ok for function name). Starting "dot and num" or underscore is not authorized for function name
     # [a-zA-Z0-9._]* is The rest of the function name: any several of these characters or nothing
-    # \\s*\\( means 0 or any space in perl, and an opening parenthesis
+    # \\s* means 0 or any space in perl
     # I could have used [\\s\\r\\n]* meaning any space or end of line or carriage return between the name and "(" but finally, another strategy used
         # - `this does not work well, as it does not take dots: "\\b[a-zA-Z\\.\\_]{1}[a-zA-Z0-9\\.\\_]+\\b", because of `\\b`: These are word boundaries. It ensures that the pattern matches only a complete word and not a part of a word.
         # - `[a-zA-Z.]{1}`: This portion of the pattern matches any uppercase letter (`A-Z`), lowercase letter (`a-z`), or a period (`.`) a single time ({1}).

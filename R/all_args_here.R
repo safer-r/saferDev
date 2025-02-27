@@ -26,7 +26,7 @@
 #' @details
 #' More precisely, all_args_here() verifies that all the strings before an opening bracket "(" are written with all their arguments. Thus, it cannot check function names written without brackets, like in the FUN argument of some functions, e.g., sapply(1:3, FUN = as.character).
 #' 
-#' The perl regex used to detect a function name is: pattern1 <- '\\"{0,1}([a-zA-Z]|\\.[a-zA-Z._])[a-zA-Z0-9._]*((<-\\"){0,1}|\\"{0,1})\\s*\\('.
+#' The perl regex used to detect a function name is: "([a-zA-Z]|\\.[a-zA-Z._])[a-zA-Z0-9._]*\\s*\\(".
 #' 
 #' Function names preceeded by $ are not considered.
 #'  
