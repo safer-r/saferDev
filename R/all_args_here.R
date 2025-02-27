@@ -26,15 +26,15 @@
 #' @details
 #' More precisely, all_args_here() verifies that all the strings before an opening bracket "(" are written with all their arguments. Thus, it cannot check function names written without brackets, like in the FUN argument of some functions, e.g., sapply(1:3, FUN = as.character).
 #' 
-#' The perl regex used to detect a function name is: "[a-zA-Z.]{1}[a-zA-Z0-9._]*\\s*\\(".
+#' The perl regex used to detect a function name is: pattern1 <- '\\"{0,1}([a-zA-Z]|\\.[a-zA-Z._])[a-zA-Z0-9._]*((<-\\"){0,1}|\\"{0,1})\\s*\\('.
 #' 
-#' Function names preceeded by $ and any space are not considered (pattern "\\$ *[a-zA-Z.]{1}[a-zA-Z0-9._]* *\\(")
+#' Function names preceeded by $ are not considered.
 #'  
 #' The following R functions are skipped: "function", "if", "for", "while", "repeat" and "else".
 #' 
 #' Warning: the following R functions are also skipped (as indicated by "SKIPPED" in the $DEF_ARGS column of the returned data frame) for the indicated reason: "as.environment" (https://bugs.r-project.org/show_bug.cgi?id=18849).
 #' 
-#' Warning: some functions, like rownames(), have different arguments depending on whether something is assigned to it (e.g., rownames() <- "a") or not. The all_args_here() function always propose the arguments defined in the help page without assignement, meaning that is cannot detect the assignation.
+#' Warning: some functions, like rownames(), have different arguments depending on whether something is assigned to it (e.g., rownames(x) <- "a") or not. The all_args_here() function always propose the arguments defined in the help page without assignement, meaning that is cannot detect the assignation. A way to by-pass this is to use the "exact" writing of the function. For instance, base::"rownames<-"(x, "a") instead of using base::rownames(x) <- "a", and use getAnywhere("rownames<-") to see the arguments of the function.
 #' 
 #' Most of the time, all_args_here() does not check inside comments, but some unexpected writting could dupe all_args_here(). Please, report here https://github.com/safer-r/saferDev/issues if it is the case.
 #' 
@@ -519,7 +519,7 @@ all_args_here <- function(
     # arg_user_setting$x <- base::as.character(arg_user_setting$x)
     arg_user_setting$x <- base::deparse(expr = arg_user_setting$x, width.cutoff = 60L, backtick = FALSE, control = base::c("keepNA", "keepInteger", "niceNames", "showAttributes"), nlines = -1L) # because arg_user_setting$x is str(arg_user_setting$x) "language saferDev::colons_check". When I use it as string, like as.character(arg_user_setting$x), it splits  "::"           "saferDev"     "colons_check"
     path_out <- base::paste0(path_out, "/", df_name, collapse = NULL, recycle0 = FALSE)
-    out <- saferDev:::.functions_detect(
+    out <- .functions_detect(
         x = x, 
         skipped_base = skipped_base, 
         arg_user_setting2 = arg_user_setting, 
@@ -979,7 +979,7 @@ all_args_here <- function(
                             tempo_cat <- base::paste0(
                                 "INTERNAL ERROR 7 IN ", 
                                 intern_error_text_start, 
-                                "LENGTH OF tempo_split MUST LOWER OR EQUAL TO LENGTH OF arg_full_names IF ... IS NOT AN ARGUMENT OF THE FUNCTION\n\nFUNCTION: ", 
+                                "LENGTH OF tempo_split MUST LOWER OR EQUAL TO LENGTH OF arg_full_names IF ... IS NOT AN ARGUMENT OF THE FUNCTION.\n\nPLEASE, CHECK FIRST THAT ARGUMENTS ARE CORRECTLY ADDED INTO THE FUNCTION.\n\nFUNCTION: ", 
                                 col2[i2], 
                                 "\n\ntempo_split (", 
                                 base::length(x = tempo_split), 
@@ -991,6 +991,7 @@ all_args_here <- function(
                                 base::paste0(arg_full_names, collapse = "\n", recycle0 = FALSE), 
                                 "\n\ni2:\n", 
                                 i2, 
+                                "\n\nIF ARGUMENTS ARE CORRECTLY ADDED, THEN ",
                                 intern_error_text_end, 
                                 collapse = NULL, 
                                 recycle0 = FALSE

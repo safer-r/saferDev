@@ -389,12 +389,12 @@
     good_args <- NULL
     missing_args <- NULL
     missing_args_names <- NULL
-    obs_arg_log <- base::logical()
+    obs_arg_log <- base::logical(length = 0L)
     if(base::any(three_dots_log, na.rm = TRUE)){
         arg_full_names <- arg_full_names[ ! three_dots_log]
         arg_full <- arg_full[ ! three_dots_log]
     }
-    if(base::length(arg_full) == 0){
+    if(base::length(x = arg_full) == 0){
         # col5 <- base::c(col5, "...") # inactivated because already filled above
         col6 <- ""
         col7 <- ""
@@ -402,12 +402,12 @@
     }else{
         # scan for args names present in tempo_split
         good_count <- 0 # to define if all the args are written (not considering ...)
-        if(base::length(tempo_split) == 0 & base::length(arg_full_names) > 0){
+        if(base::length(x = tempo_split) == 0 & base::length(x = arg_full_names) > 0){
             missing_args_names <- arg_full_names
         }else{
-            obs_arg_log <- base::rep(TRUE, base::length(tempo_split)) # will help for counting the tempo_split args without arg name before. All the remaining TRUE will be values that need an arg name
-            for(i3 in 1:base::length(arg_full_names)){
-                pattern3 <- base::paste0("^[\\s\\r\\n]*", arg_full_names[i3], "[\\s]*=") # looking for the arg name
+            obs_arg_log <- base::rep(TRUE, base::length(x = tempo_split)) # will help for counting the tempo_split args without arg name before. All the remaining TRUE will be values that need an arg name
+            for(i3 in 1:base::length(x = arg_full_names)){
+                pattern3 <- base::paste0("^[\\s\\r\\n]*", arg_full_names[i3], "[\\s]*=", collapse = NULL, recycle0 = FALSE) # looking for the arg name
                 tempo.log <- base::grepl(x = tempo_split, pattern = pattern3, perl = TRUE)
                 if(base::sum(tempo.log, na.rm = TRUE) == 1){ # arg i3 has its names written in the args between ()
                     good_args <- base::c(good_args, tempo_split[tempo.log])
@@ -420,9 +420,9 @@
                         "INTERNAL ERROR 1 IN ",
                         intern_error_text_start, 
                         "pattern3 DETECTED SEVERAL TIMES IN ARGUMENTS:\n\npattern3:\n", 
-                        base::paste(pattern3, collapse = "\n"), 
+                        base::paste0(pattern3, collapse = "\n", recycle0 = FALSE), 
                         "\n\ntempo_split:\n", 
-                        base::paste(tempo_split[tempo.log], collapse = "\n"), 
+                        base::paste0(tempo_split[tempo.log], collapse = "\n", recycle0 = FALSE), 
                         "\n\nCHECK IF THE ARGUMENT IS PRESENT SEVERAL TIMES IN LINE ", 
                         col1_i2, 
                         ", INSIDE ", 
@@ -431,7 +431,7 @@
                         collapse = NULL, 
                         recycle0 = FALSE
                     )
-                    base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", base::ifelse(base::is.null(warn), "", base::paste0("IN ADDITION\nWARNING", base::ifelse(warn_count > 1, "S", ""), ":\n\n", warn))), call. = FALSE)
+                    base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", base::ifelse(test = base::is.null(x = warn), yes = "", no = base::paste0("IN ADDITION\nWARNING", base::ifelse(test = warn_count > 1, yes = "S", no = ""), ":\n\n", warn, collapse = NULL, recycle0 = FALSE)), collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL)
                 }
             }
         }
@@ -440,7 +440,7 @@
         supp_args_in_three_dots <- NULL
         if(base::any(three_dots_log, na.rm = TRUE)){
             if(base::length(x = obs_arg_log) != 0){ # no need to add & base::length(tempo_split) != 0 because both have the same length
-                for(i3 in 1:base::length(tempo_split)){
+                for(i3 in 1:base::length(x = tempo_split)){
                     if(base::grepl(x = tempo_split[i3], pattern = pattern1, perl = TRUE) & obs_arg_log[i3] == TRUE){ # obs_arg_log[i3] == TRUE means values that need an arg name but detection of a = with only arg name rule before
                         obs_arg_log[i3] <- FALSE # remove this arg from the args that need an arg name
                         supp_args_in_three_dots <- base::c(supp_args_in_three_dots, tempo_split[i3])
@@ -453,20 +453,20 @@
         tempo_col8_end <- NULL
         same_begin <- base::unlist(base::lapply(
             FUN = function(x){
-                tempo_log <- base::grepl(x = arg_full_names, pattern = base::paste0("^", x), perl = FALSE)
+                tempo_log <- base::grepl(x = arg_full_names, pattern = base::paste0("^", x, collapse = NULL, recycle0 = FALSE), perl = FALSE)
                 if(base::sum(tempo_log, na.rm = TRUE) > 1){ 
                     base::return(arg_full_names[tempo_log][base::which.min(base::nchar(arg_full_names[tempo_log]))])
                 }
             }, 
             X = arg_full_names
         ))
-        if( ! base::is.null(same_begin)){
-            tempo_col8_end <- base::paste0("WARNING: SEVERAL ARGUMENT NAMES OF THE FUNCTION BEGINNING WITH ", base::paste0(same_begin[ ! base::is.null(same_begin)], collapse = " ", recycle0 = FALSE), collapse = NULL, recycle0 = FALSE)
+        if( ! base::is.null(x = same_begin)){
+            tempo_col8_end <- base::paste0("WARNING: SEVERAL ARGUMENT NAMES OF THE FUNCTION BEGINNING WITH ", base::paste0(same_begin[ ! base::is.null(x = same_begin)], collapse = " ", recycle0 = FALSE), collapse = NULL, recycle0 = FALSE)
         }
         # end detection of arguments that starts by the same string in the sub function
         # checking if arg name are not fully written
         arg_full_symbol_type <- base::sapply(X = arg_full, FUN = function(x){base::all(base::typeof(x) == "symbol", na.rm =TRUE)}) # to check if any arg without optional value are completed with obs arg values
-        if(base::any(arg_full_symbol_type, na.rm =TRUE) & base::length(tempo_split) == 0){
+        if(base::any(arg_full_symbol_type, na.rm =TRUE) & base::length(x = tempo_split) == 0){
             tempo_cat <- base::paste0(
                 error_text_start,
                 "THE TESTED FUNCTION ", 
@@ -479,17 +479,17 @@
                 collapse = NULL, 
                 recycle0 = FALSE
             )
-            base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", base::ifelse(base::is.null(warn), "", base::paste0("IN ADDITION\nWARNING", base::ifelse(warn_count > 1, "S", ""), ":\n\n", warn))), call. = FALSE)
+            base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", base::ifelse(test = base::is.null(x = warn), yes = "", no = base::paste0("IN ADDITION\nWARNING", base::ifelse(test = warn_count > 1, yes = "S", no = ""), ":\n\n", warn, collapse = NULL, recycle0 = FALSE)), collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL)
         }
         tempo_col8 <- NULL
-        if(( ! base::is.null(missing_args_names)) & base::length(tempo_split) != 0){
-            for(i3 in 1:base::length(tempo_split)){
+        if(( ! base::is.null(x = missing_args_names)) & base::length(x = tempo_split) != 0){
+            for(i3 in 1:base::length(x = tempo_split)){
                 if(base::grepl(x = tempo_split[i3], pattern = pattern1, perl = TRUE)){
                     tempo_arg_name <- base::strsplit(tempo_split[i3], split = "[\\s\\r\\n]*=", perl = TRUE)[[1]][1]
                     tempo_arg_name <- base::gsub(pattern = "^[\\s]*", replacement = "", x = tempo_arg_name) # removing leading space
-                    if( ! base::is.null(same_begin)){
+                    if( ! base::is.null(x = same_begin)){
                         if( ! tempo_arg_name %in% same_begin){
-                            tempo.log <- base::grepl(x = missing_args_names, pattern = base::paste0("^", tempo_arg_name), perl = FALSE)
+                            tempo.log <- base::grepl(x = missing_args_names, pattern = base::paste0("^", tempo_arg_name, collapse = NULL, recycle0 = FALSE), perl = FALSE)
                             if(base::sum(tempo.log, na.rm = TRUE) > 1){
                                 tempo_cat <- base::paste0(
                                     "INTERNAL ERROR 2 IN ", 
@@ -501,21 +501,23 @@
                                     " FUNCTION\ntempo_arg_name DETECTS SEVERAL TIMES ARGUMENT NAMES:\n\ntempo_arg_name:\n", 
                                     tempo_arg_name, 
                                     "\n\nmissing_args_names:\n", 
-                                    base::paste(missing_args_names, collapse = "\n"), 
+                                    base::paste0(missing_args_names, collapse = "\n", recycle0 = FALSE), 
                                     "\n\nmissing_args_names[tempo.log]:\n", 
-                                    base::paste(missing_args_names[tempo.log], collapse = "\n"), 
+                                    base::paste0(missing_args_names[tempo.log], collapse = "\n", recycle0 = FALSE), 
                                     intern_error_text_end, 
                                     collapse = NULL, 
                                     recycle0 = FALSE
                                 )
-                                base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", base::ifelse(base::is.null(warn), "", base::paste0("IN ADDITION\nWARNING", base::ifelse(warn_count > 1, "S", ""), ":\n\n", warn))), call. = FALSE)
+                                base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", base::ifelse(test = base::is.null(x = warn), yes = "", no = base::paste0("IN ADDITION\nWARNING", base::ifelse(test = warn_count > 1, yes = "S", no = ""), ":\n\n", warn, collapse = NULL, recycle0 = FALSE)), collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL)
                             }
                             if(base::sum(tempo.log, na.rm = TRUE) == 1){
                                 tempo_col8 <- base::c(
                                     tempo_col8, 
                                     base::paste0(
-                                        base::ifelse(test = base::is.null(tempo_col8), yes = "", no = " ; "), 
-                                        base::paste0(tempo_arg_name, " ARG NAME HAS TO BE FULLY WRITTEN ", missing_args_names[tempo.log])
+                                        base::ifelse(test = base::is.null(x = tempo_col8), yes = "", no = " ; "), 
+                                        base::paste0(tempo_arg_name, " ARG NAME HAS TO BE FULLY WRITTEN ", missing_args_names[tempo.log], collapse = NULL, recycle0 = FALSE), 
+                                        collapse = NULL, 
+                                        recycle0 = FALSE
                                     )
                                 )
                             }
@@ -523,7 +525,7 @@
                     }
                 }
             }
-            if(( ! base::is.null(tempo_col8)) & ! base::is.null(tempo_col8_end)){
+            if(( ! base::is.null(x = tempo_col8)) & ! base::is.null(x = tempo_col8_end)){
                 tempo_col8 <- base::paste0(tempo_col8, " & ", tempo_col8_end, collapse = NULL, recycle0 = FALSE)
             }
         }
@@ -534,27 +536,27 @@
         missing_arg_log <- arg_full_names %in% missing_args_names
         if(base::any(three_dots_log, na.rm = TRUE) & base::all( ! arg_full_symbol_type, na.rm =TRUE)){ # ... present but no mandatory args with value to set
             if(base::sum(missing_arg_log, na.rm = TRUE) > 0){ # if = 0, then missing_args remains NULL
-                missing_args <-  paste0(arg_full_names[missing_arg_log], " = ", arg_full[missing_arg_log], collapse = NULL, recycle0 = FALSE) # missing arg values with names
+                missing_args <- base::paste0(arg_full_names[missing_arg_log], " = ", arg_full[missing_arg_log], collapse = NULL, recycle0 = FALSE) # missing arg values with names
                 good_args <- base::c(
                     tempo_split[ ! tempo_split %in% good_args], # arg values without names
                     good_args, # obs arg values with names
-                    base::paste0(" ", missing_args) # missing arg values with names #a space added to finally have comma followed by a space
+                    base::paste0(" ", missing_args, collapse = NULL, recycle0 = FALSE) # missing arg values with names #a space added to finally have comma followed by a space
                 )
             }
         }else{
             count_good_args <- 0
             final <- NULL
             # missing_args <-  NULL # already above
-            for(i3 in 1:base::length(arg_full_names)){ # here I cannot have more args than base::length(arg_full_names)
+            for(i3 in 1:base::length(x = arg_full_names)){ # here I cannot have more args than base::length(arg_full_names)
                 if(missing_arg_log[i3] == TRUE){
                     if(base::sum(obs_arg_log) > 0){ # this means that remains obs arg with no arg names written
-                        tempo <- base::paste0(arg_full_names[i3], " = ", tempo_split[base::which(obs_arg_log == TRUE)[1]])
+                        tempo <- base::paste0(arg_full_names[i3], " = ", tempo_split[base::which(obs_arg_log == TRUE)[1]], collapse = NULL, recycle0 = FALSE)
                         obs_arg_log[base::which(obs_arg_log == TRUE)[1]] <- FALSE
                     }else{
-                        tempo <- base::paste0(arg_full_names[i3], " = ", if(base::is.null(base::deparse(arg_full[[i3]]))){"NULL"}else{base::deparse(arg_full[[i3]])})
+                        tempo <- base::paste0(arg_full_names[i3], " = ", if(base::is.null(x = base::deparse(arg_full[[i3]]))){"NULL"}else{base::deparse(arg_full[[i3]])}, collapse = NULL, recycle0 = FALSE)
                     }
                     missing_args <- base::c(missing_args, tempo)
-                    final <- base::c(final, base::ifelse(test = i3 == 1, yes = tempo, no = base::paste0(" ", tempo))) # take the first pos always of the args with no arg names
+                    final <- base::c(final, base::ifelse(test = i3 == 1, yes = tempo, no = base::paste0(" ", tempo, collapse = NULL, recycle0 = FALSE))) # take the first pos always of the args with no arg names
                 }else{
                     count_good_args <- count_good_args + 1
                     final <- base::c(final, good_args[count_good_args])
@@ -567,67 +569,69 @@
                     "INTERNAL ERROR 3 IN ", 
                     intern_error_text_end, 
                     "ARGUMENT WITHOUT OPTIONAL VALUES (MANDATORY ARGS) CANNOT REMAIN WITHOUT VALUE:\n\narg_full_symbol_type:\n", 
-                    base::paste(arg_full_symbol_type, collapse = "\n"), 
+                    base::paste0(arg_full_symbol_type, collapse = "\n", recycle0 = FALSE), 
                     "\n\narg_full_names:\n", 
-                    base::paste(arg_full_names, collapse = "\n"), 
+                    base::paste0(arg_full_names, collapse = "\n", recycle0 = FALSE), 
                     intern_error_text_end, 
                     collapse = NULL, 
                     recycle0 = FALSE
                 )
-                base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", base::ifelse(base::is.null(warn), "", base::paste0("IN ADDITION\nWARNING", base::ifelse(warn_count > 1, "S", ""), ":\n\n", warn))), call. = FALSE)
+                base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", base::ifelse(test = base::is.null(x = warn), yes = "", no = base::paste0("IN ADDITION\nWARNING", base::ifelse(test = warn_count > 1, yes = "S", no = ""), ":\n\n", warn, collapse = NULL, recycle0 = FALSE)), collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL)
             }
             if(( ! base::any(three_dots_log, na.rm = TRUE)) & base::any(obs_arg_log, na.rm =TRUE)){
                 tempo_cat <- base::paste0(
                     "INTERNAL ERROR 4 IN ", 
                     intern_error_text_start, 
                     "CANNOT HAVE OBS ARGUMENT NOT INCORPORATED YET IF ! base::any(three_dots_log, na.rm = TRUE) IS TRUE:\n\nthree_dots_log:\n", 
-                    base::paste(three_dots_log, collapse = " "), 
+                    base::paste0(three_dots_log, collapse = " ", recycle0 = FALSE), 
                     "\n\nobs_arg_log:\n", 
-                    base::paste(obs_arg_log, collapse = " "), 
+                    base::paste0(obs_arg_log, collapse = " ", recycle0 = FALSE), 
                     intern_error_text_end, 
                     collapse = NULL, 
                     recycle0 = FALSE
                 )
-                base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", base::ifelse(base::is.null(warn), "", base::paste0("IN ADDITION\nWARNING", base::ifelse(warn_count > 1, "S", ""), ":\n\n", warn))), call. = FALSE)
+                base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", base::ifelse(test = base::is.null(x = warn), yes = "", no = base::paste0("IN ADDITION\nWARNING", base::ifelse(test = warn_count > 1, yes = "S", no = ""), ":\n\n", warn, collapse = NULL, recycle0 = FALSE)), collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL)
             }
-            if(count_good_args > base::length(tempo_split)){
+            if(count_good_args > base::length(x = tempo_split)){
                 tempo_cat <- base::paste0(
                     "INTERNAL ERROR 5 IN ", 
                     intern_error_text_start, 
                     "count_good_args + 1 CANNOT BE MORE THAN length(tempo_split):\n\nlength(tempo_split): ", 
-                    base::length(tempo_split), 
+                    base::length(x = tempo_split), 
                     "\n\ncount_good_args + 1: ", 
                     count_good_args + 1, 
                     intern_error_text_end, 
                     collapse = NULL, 
                     recycle0 = FALSE
                 )
-                base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", base::ifelse(base::is.null(warn), "", base::paste0("IN ADDITION\nWARNING", base::ifelse(warn_count > 1, "S", ""), ":\n\n", warn))), call. = FALSE)
+                base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", base::ifelse(test = base::is.null(x = warn), yes = "", no = base::paste0("IN ADDITION\nWARNING", base::ifelse(test = warn_count > 1, yes = "S", no = ""), ":\n\n", warn, collapse = NULL, recycle0 = FALSE)), collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL)
             }
             if(base::any(three_dots_log, na.rm = TRUE) & base::any(obs_arg_log, na.rm =TRUE)){ # obs values not yet in good_args
-                if(count_good_args + 1 <= base::length(tempo_split)){
+                if(count_good_args + 1 <= base::length(x = tempo_split)){
                     good_args <- base::c(good_args, tempo_split[obs_arg_log])
                 }
             }
         }
         # end when ... is present or not
         # col5 done above
-        col6 <- base::paste(missing_args_names, collapse = ", ") # if NULL return ""
-        col7 <- base::paste(missing_args, collapse = ", ")  # if NULL return ""
+        col6 <- base::paste0(missing_args_names, collapse = ", ", recycle0 = FALSE) # if NULL return ""
+        col7 <- base::paste0(missing_args, collapse = ", ", recycle0 = FALSE)  # if NULL return ""
         tempo <- base::paste0(
             col2_i2, 
             "(", 
-            base::ifelse(test = ! base::is.null(supp_args_in_three_dots), yes = base::gsub(pattern = "^[\\s]*", replacement = "", x = base::paste0(supp_args_in_three_dots, collapse = ","), perl = TRUE), no = ""), 
-            base::ifelse(test = ( ! base::is.null(supp_args_in_three_dots)) & ( ! base::is.null(good_args)) , yes = ",", no = ""), 
-            base::ifelse(test = ! base::is.null(good_args), yes = base::paste0(good_args, collapse = ","), no = ""),
-            ")"
+            base::ifelse(test = ! base::is.null(x = supp_args_in_three_dots), yes = base::gsub(pattern = "^[\\s]*", replacement = "", x = base::paste0(supp_args_in_three_dots, collapse = ","), perl = TRUE), no = ""), 
+            base::ifelse(test = ( ! base::is.null(x = supp_args_in_three_dots)) & ( ! base::is.null(x = good_args)) , yes = ",", no = ""), 
+            base::ifelse(test = ! base::is.null(x = good_args), yes = base::paste0(good_args, collapse = ",", recycle0 = FALSE), no = ""),
+            ")", 
+            collapse = NULL, 
+            recycle0 = FALSE
         )
-        if(base::length(arg_full_names) == good_count){
+        if(base::length(x = arg_full_names) == good_count){
             col8 <- "GOOD"
         }else{
             col8 <- tempo
         }
-        if( ! base::is.null(tempo_col8)){
+        if( ! base::is.null(x = tempo_col8)){
             col8 <- tempo_col8
         }
     }

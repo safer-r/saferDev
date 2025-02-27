@@ -453,7 +453,7 @@ report <- function(
                 }
                 base::row.names(x = data) <- rownames.output.tables[1:length.rows]
             }else if(rownames.kept == FALSE & (base::all(base::class(x = data) == "table", na.rm = TRUE) | base::all(base::class(x = data) %in% base::c("matrix", "array"), na.rm = TRUE))){ # before R4.0.0, it was  & base::all(base::class(data) %in% base::c("matrix", "table"))
-                base::rownames(x = data) <- base::rep(x = "", times = base::nrow(x = data)) # identical row names allowed in matrices and tables
+                base::"rownames<-"(x = data, value = base::rep(x = "", times = base::nrow(x = data))) # identical row names allowed in matrices and tables
             }
             if(noquote == TRUE){
                 utils::capture.output(base::noquote(obj = data, right = FALSE), file = out_path, append = ! overwrite, type = NULL, split = FALSE)
