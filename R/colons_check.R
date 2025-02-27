@@ -18,15 +18,17 @@
 #' 
 #' - Warning: the function cannot check function names written without brackets, like in the FUN argument of some functions, e.g., sapply(1:3, FUN = as.character).
 #' 
-#' - The perl regex used to detect a function name is: "[a-zA-Z.]{1}[a-zA-Z0-9._]*\\s*\\(".
+#' The perl regex used to detect a function name is: "([a-zA-Z]|\\.[a-zA-Z._])[a-zA-Z0-9._]*\\s*\\(".
 #' 
-#' - Function names preceeded by $ and any space are not considered (pattern "\\$ *[a-zA-Z.]{1}[a-zA-Z0-9._]* *\\(")
+#' Currently,  all_args_here() cannot detect functions written between quotes, like "+"() or "rownames<-"(x, "a").
+#' 
+#' Function names preceeded by $ are not considered.
 #'  
-#' - The following R functions are skipped: "function", "if", "for", "while", "repeat" and "else".
+#' The following R functions are skipped: "function", "if", "for", "while", "repeat" and "else".
 #' 
-#' - Most of the time, colons_check() does not check inside comments, but some unexpected writting could dupe colons_check().
+#' Most of the time, all_args_here() does not check inside comments, but some unexpected writting could dupe all_args_here(). Please, report here https://github.com/safer-r/saferDev/issues if it is the case.
 #' 
-#' - The returned line numbers are indicative, depending on which source is checked. For instance, saferDev::report (compiled) has not the same line numbers as its source file (https://github.com/safer-r/saferDev/blob/main/R/report.R). Notably, compiled functions do not have comments anymore, compared to the same source function sourced into the working environment. In addition, the counting starts at the "<- function" line, i.e., without counting the #' header lines potentially present in source files.
+#' The returned line numbers are indicative, depending on which source is checked. For instance, saferDev::report (compiled) has not the same line numbers as its source file (https://github.com/safer-r/saferDev/blob/main/R/report.R). Notably, compiled functions do not have comments anymore, compared to the same source function sourced into the working environment. In addition, the counting starts at the "<- function" line, i.e., without counting the #' header lines potentially present in source files.
 #' 
 #' - Of note, during package creation, the devtools::check() command tells which functions where wrongly attributed to package. Example: 
 #'     checking dependencies in R code ... WARNING

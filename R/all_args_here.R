@@ -28,6 +28,8 @@
 #' 
 #' The perl regex used to detect a function name is: "([a-zA-Z]|\\.[a-zA-Z._])[a-zA-Z0-9._]*\\s*\\(".
 #' 
+#' Currently,  all_args_here() cannot detect functions written between quotes, like "+"() or "rownames<-"(x, "a").
+#' 
 #' Function names preceeded by $ are not considered.
 #'  
 #' The following R functions are skipped: "function", "if", "for", "while", "repeat" and "else".
@@ -519,7 +521,7 @@ all_args_here <- function(
     # arg_user_setting$x <- base::as.character(arg_user_setting$x)
     arg_user_setting$x <- base::deparse(expr = arg_user_setting$x, width.cutoff = 60L, backtick = FALSE, control = base::c("keepNA", "keepInteger", "niceNames", "showAttributes"), nlines = -1L) # because arg_user_setting$x is str(arg_user_setting$x) "language saferDev::colons_check". When I use it as string, like as.character(arg_user_setting$x), it splits  "::"           "saferDev"     "colons_check"
     path_out <- base::paste0(path_out, "/", df_name, collapse = NULL, recycle0 = FALSE)
-    out <- .functions_detect(
+    out <- saferDev:::.functions_detect(
         x = x, 
         skipped_base = skipped_base, 
         arg_user_setting2 = arg_user_setting, 
