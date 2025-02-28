@@ -25,7 +25,7 @@ report(
 
 \item{path}{Single character string indicating the path where to write the output file.}
 
-\item{overwrite}{Single logical value. If output file already exists, defines if the printing is appended (default FALSE) or if the output file content is erased before printing (TRUE).}
+\item{overwrite}{Single logical value. If output file already exists and overwrite is TRUE, an error message is returned (no overwrite of existing file possible). Otherwise, the printing is appended (and the output file is created if it does not exist yet).}
 
 \item{rownames.kept}{Single logical value. Defines whether row names have to be removed or in 2D objects. Warning: in 1D tables, names over the values are taken as row names, and are thus removed if rownames.kept is FALSE.}
 
@@ -48,8 +48,12 @@ Nothing.
 Log file function: print a character string or a data object into a same output file.
 }
 \examples{
-report(data = 1:3, output = "results.txt", path = ".", overwrite = TRUE, 
-rownames.kept = FALSE, vector.cat = FALSE, noquote = FALSE, sep = 2)
+report(data = "THE FOLLOWING VECTOR IS:\n", output = "results.txt", path = ".", overwrite = TRUE, sep = 1)
+report(data = 1:3, output = "results.txt", path = ".", overwrite = FALSE, rownames.kept = FALSE, vector.cat = FALSE, noquote = FALSE, sep = 2)
+report(data = "THE FOLLOWING MATRIX IS:\n", output = "results.txt", path = ".", overwrite = FALSE, sep = 1)
+report(data = matrix(1:5), output = "results.txt", path = ".", overwrite = FALSE, rownames.kept = FALSE, vector.cat = FALSE, noquote = FALSE, sep = 5)
+report(data = "THE FOLLOWING DATA FRAME IS:\n", output = "results.txt", path = ".", overwrite = FALSE, sep = 1)
+report(data = data.frame(A = 1:8, B = letters[1:8]), output = "results.txt", path = ".", overwrite = FALSE, rownames.kept = FALSE, vector.cat = FALSE, noquote = FALSE, sep = 1)
 # importFrom none
 }
 \seealso{

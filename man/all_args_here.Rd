@@ -53,13 +53,17 @@ Verify that all the functions used inside a function are written with all their 
 \details{
 More precisely, all_args_here() verifies that all the strings before an opening bracket "(" are written with all their arguments. Thus, it cannot check function names written without brackets, like in the FUN argument of some functions, e.g., sapply(1:3, FUN = as.character).
 
-The perl regex used to detect a function name is: "[a-zA-Z.]{1}[a-zA-Z0-9._]*\\s*\\(".
+The perl regex used to detect a function name is: "([a-zA-Z]|\\.[a-zA-Z._])[a-zA-Z0-9._]*\\s*\\(".
 
-Function names preceeded by $ and any space are not considered (pattern "\\$ *[a-zA-Z.]{1}[a-zA-Z0-9._]* *\\(")
+Currently,  all_args_here() cannot detect functions written between quotes, like "+"() or "rownames<-"(x, "a").
+
+Function names preceeded by $ are not considered.
  
 The following R functions are skipped: "function", "if", "for", "while", "repeat" and "else".
 
 Warning: the following R functions are also skipped (as indicated by "SKIPPED" in the $DEF_ARGS column of the returned data frame) for the indicated reason: "as.environment" (https://bugs.r-project.org/show_bug.cgi?id=18849).
+
+Warning: some functions, like rownames(), have different arguments depending on whether something is assigned to it (e.g., rownames(x) <- "a") or not. The all_args_here() function always propose the arguments defined in the help page without assignement, meaning that is cannot detect the assignation. A way to by-pass this is to use the "exact" writing of the function. For instance, base::"rownames<-"(x, "a") instead of using base::rownames(x) <- "a", and use getAnywhere("rownames<-") to see the arguments of the function.
 
 Most of the time, all_args_here() does not check inside comments, but some unexpected writting could dupe all_args_here(). Please, report here https://github.com/safer-r/saferDev/issues if it is the case.
 
