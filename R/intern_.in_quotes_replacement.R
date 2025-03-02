@@ -346,30 +346,30 @@
     #### end second round of checking and data preparation
 
     #### main code
-    if(base::nchar(no_regex_pattern) != base::nchar(replacement)){
+    if(base::nchar(x = no_regex_pattern, type = "chars", allowNA = FALSE, keepNA = NA) != base::nchar(x = replacement, type = "chars", allowNA = FALSE, keepNA = NA)){
         tempo_cat <- base::paste0(
             "INTERNAL ERROR 1 IN ", 
             intern_error_text_start, 
             "ARGUMENTS no_regex_pattern AND replacement MUST HAVE THE SAME NUMBER OF CHARACTERS\nno_regex_pattern (", 
-            base::nchar(no_regex_pattern), 
+            base::nchar(x = no_regex_pattern, type = "chars", allowNA = FALSE, keepNA = NA), 
             " characters):\n", 
-            base::paste(no_regex_pattern, collapse = "\n"), 
+            base::paste0(no_regex_pattern, collapse = "\n", recycle0 = FALSE), 
             "\nreplacement (", 
-            base::nchar(replacement), 
+            base::nchar(x = replacement, type = "chars", allowNA = FALSE, keepNA = NA), 
             " characters):\n", 
-            base::paste(replacement, collapse = "\n"), 
+            base::paste0(replacement, collapse = "\n", recycle0 = FALSE), 
             intern_error_text_end, 
             collapse = NULL, 
             recycle0 = FALSE
         )
-        base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
+        base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL) # == in base::stop() to be able to add several messages between ==
     }
-    string_split <- base::strsplit(string, split = pattern, perl = perl)[[1]]
+    string_split <- base::strsplit(x = string, split = pattern, perl = perl, fixed = FALSE, useBytes = FALSE)[[1]]
     string_out <- string_split[1]
     pos <- NULL
-    if(base::length(string_split) > 1){
+    if(base::length(x = string_split) > 1){
         count <- 1
-        while(count < base::length(string_split)){
+        while(count < base::length(x = string_split)){
             count <- count + 1
             # if odds number of quotes, it means that # has broken the string in the middle of a quoted part
             double.quote.test <- saferDev:::.has_odd_number_of_quotes(
@@ -386,15 +386,15 @@
             ) # idem
             odds.quotes.log <- double.quote.test |  simple.quote.test # remove ")" ?
             if(odds.quotes.log == TRUE){
-                pos <- base::c(pos, base::nchar(string_out) + 1)
-                string_out <- base::paste0(string_out, replacement, string_split[count]) # to keep the same length of the tested function on a single string output_1_line
+                pos <- base::c(pos, base::nchar(x = string_out, type = "chars", allowNA = FALSE, keepNA = NA) + 1)
+                string_out <- base::paste0(string_out, replacement, string_split[count], collapse = NULL, recycle0 = FALSE) # to keep the same length of the tested function on a single string output_1_line
             }else{
-                string_out <- base::paste0(string_out, no_regex_pattern, string_split[count])
+                string_out <- base::paste0(string_out, no_regex_pattern, string_split[count], collapse = NULL, recycle0 = FALSE)
                 pos <- base::c(pos, NA)
             }
         }
     }
-    if(base::nchar(string) == base::nchar(string_out) + 1){ # this is when the pattern is the last character of string. strsplit("a)", split = "\\)") gives "a". Should also deal when while loop has run, i.e., when several pattern in string including the last one: "a)vb)"
+    if(base::nchar(x = string, type = "chars", allowNA = FALSE, keepNA = NA) == base::nchar(x = string_out, type = "chars", allowNA = FALSE, keepNA = NA) + 1){ # this is when the pattern is the last character of string. strsplit("a)", split = "\\)") gives "a". Should also deal when while loop has run, i.e., when several pattern in string including the last one: "a)vb)"
         double.quote.test <- saferDev:::.has_odd_number_of_quotes(
             input_string = string_out, 
             pattern = '"', 
@@ -409,21 +409,21 @@
         ) # idem
         odds.quotes.log <- double.quote.test |  simple.quote.test # remove ")" ?
         if(odds.quotes.log == TRUE){
-            pos <- base::c(pos, base::nchar(string_out) + 1)
-            string_out <- base::paste0(string_out, replacement) # to keep the same length of the tested function on a single string output_1_line
+            pos <- base::c(pos, base::nchar(x = string_out, type = "chars", allowNA = FALSE, keepNA = NA) + 1)
+            string_out <- base::paste0(string_out, replacement, collapse = NULL, recycle0 = FALSE) # to keep the same length of the tested function on a single string output_1_line
         }else{
-            string_out <- base::paste0(string_out, no_regex_pattern)
+            string_out <- base::paste0(string_out, no_regex_pattern, collapse = NULL, recycle0 = FALSE)
             pos <- base::c(pos, NA)
         }
     } # no need of else: string_out == string_split == string and pos is NULL
-    if(base::all(base::is.na(pos), na.rm = TRUE)){
+    if(base::all(base::is.na(x = pos), na.rm = TRUE)){
         pos <- NULL
-    }else if(base::any(base::is.na(pos), na.rm = TRUE)){
-        pos <- pos[ ! base::is.na(pos)]
+    }else if(base::any(base::is.na(x = pos), na.rm = TRUE)){
+        pos <- pos[ ! base::is.na(x = pos)]
     }
-    if( ! base::is.null(pos)){
-        tempo <- base::substring(string, pos, pos)
-        if( ! base::all(base::unique(tempo) == no_regex_pattern, na.rm = TRUE)){
+    if( ! base::is.null(x = pos)){
+        tempo <- base::substring(text = string, first =  pos, last =  pos)
+        if( ! base::all(base::unique(x = tempo, incomparables = FALSE) == no_regex_pattern, na.rm = TRUE)){
             tempo_cat <- base::paste0(
                 "INTERNAL ERROR 2 IN ", 
                 intern_error_text_start, 
@@ -435,7 +435,7 @@
                 collapse = NULL, 
                 recycle0 = FALSE
             )
-            base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
+            base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL) # == in base::stop() to be able to add several messages between ==
         }
     }
     #### end main code

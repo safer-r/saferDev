@@ -657,7 +657,7 @@ all_args_here <- function(
                 )
                 tempo_pos <- saferDev:::.fun_args_pos(
                     text = tempo2$string, 
-                    pattern = pattern2,     
+                    pattern = pattern2, 
                     lib_path = lib_path, 
                     error_text = embed_error_text
                 ) # positions of 1st letter of the function name and opening and closing brackets # Warning: fun_1_line_replace used because the input string must be cleaned form brackets between quotes
