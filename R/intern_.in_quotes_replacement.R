@@ -12,6 +12,7 @@
 #' $string: The input string with all pattern replaced by the replacement pattern.
 #' $pos: vector of the positions of the 1rst character of the replaced pattern. NULL if no replaced pattern. In that case, $string is identical to the input string.
 #' @details
+#' - In the analyzed string, first replace the three consecutive characters "'" or '"' by three spaces to be able to work.
 #' - Warning : must be very simple pattern, like "\\(".
 #' - Warning: requires saferDev::arg_check, saferDev:::.has_odd_number_of_quotes. In main safer functions, in the section "######## check of the required functions from the required packages" add these functions when checking for the presence of saferDev:::.in_quotes_replacement.
 
@@ -364,6 +365,10 @@
         )
         base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL) # == in base::stop() to be able to add several messages between ==
     }
+    # removal of "'" and '"'
+    string <- base::gsub( x = string, pattern = '"\'"', replacement = '   ',ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE)
+    string <- base::gsub( x = string, pattern = "'\"'", replacement = '   ',ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE)
+    # end removal of "'" and '"'
     string_split <- base::strsplit(x = string, split = pattern, perl = perl, fixed = FALSE, useBytes = FALSE)[[1]]
     string_out <- string_split[1]
     pos <- NULL
