@@ -23,7 +23,7 @@ $end: position of the closing ")" of the function.
 $middle_bracket_pos: list of positions of the couple of brackets in the middle of the begin and end positions. In each compartment, the first number is the position of ( and the second the position of ). NULL if no inside brackets.
 }
 \description{
-Return the positions of 1st letter of the function name and opening and closing parenthesis, as well as positions of the internal parenthesis.
+Return the positions of 1st letter of the first function name in a string, as well as its own opening and closing parenthesis, as well as positions of the internal parenthesis (inside the own parenthesis).
 }
 \details{
 - Warning: the string must be cleaned form brackets between quotes. Use .in_quotes_replacement() for that.
