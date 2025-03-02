@@ -601,7 +601,7 @@ all_args_here <- function(
             }
             tempo_str_after <- base::substr(x = fun_1_line_replace, start = fun_pos_stop + 1, stop = base::nchar(x = fun_1_line_replace, type = "chars", allowNA = FALSE, keepNA = NA))
             if(base::grepl(x = tempo_str_after, pattern = "^[\\s\\r\\n]*\\(", ignore.case = FALSE, perl = TRUE, fixed = FALSE, useBytes = FALSE)){ # detection that it is a function of interest because ( after function name not removed
-                tempo_pos <- .fun_args_pos(
+                tempo_pos <- saferDev:::.fun_args_pos(
                     text = fun_1_line_replace, 
                     pattern = base::paste0(fun_names[[i1]][i2], "[\\s\\r\\n]*\\(", collapse = NULL, recycle0 = FALSE), 
                     lib_path = lib_path, 
@@ -655,9 +655,9 @@ all_args_here <- function(
                     lib_path = lib_path, 
                     error_text = embed_error_text
                 )
-                tempo_pos <- .fun_args_pos(
+                tempo_pos <- saferDev:::.fun_args_pos(
                     text = tempo2$string, 
-                    pattern = pattern2,     
+                    pattern = pattern2, 
                     lib_path = lib_path, 
                     error_text = embed_error_text
                 ) # positions of 1st letter of the function name and opening and closing brackets # Warning: fun_1_line_replace used because the input string must be cleaned form brackets between quotes

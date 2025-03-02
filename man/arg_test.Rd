@@ -14,7 +14,7 @@ arg_test(
   print.count = 10,
   plot.fun = FALSE,
   export = FALSE,
-  res.path = NULL,
+  res.path = ".",
   safer_check = TRUE,
   lib_path = NULL,
   error_text = ""
@@ -39,7 +39,7 @@ arg_test(
 
 \item{export}{Single logical value. Export the results into a .RData file and into a .tsv file? If FALSE, return a list into the console (see below). BEWARE: will be automatically set to TRUE if parall is TRUE. This means that when using parallelization, the results are systematically exported, not returned into the console.}
 
-\item{res.path}{Single character string indicating the absolute pathway of the folder where the txt results and pdfs, containing all the plots, will be saved. Several txt and pdf, one per thread, if parallelization. Ignored if export is FALSE. Must be specified if parall is TRUE or if export is TRUE.}
+\item{res.path}{Single character string indicating the absolute pathway of the folder where the txt results and pdfs, containing all the plots, will be saved (by default into the working directory). Several txt and pdf, one per thread, if parallelization. Ignored if export is FALSE. Must be specified if parall is TRUE or if export is TRUE.}
 
 \item{safer_check}{Single logical value. Perform some "safer" checks? If TRUE, checkings are performed before main code running (see https://github.com/safer-r): 1) correct lib_path argument value 2) required functions and related packages effectively present in local R lybraries and 3) R classical operators (like "<-") not overwritten by another package because of the R scope. Must be set to FALSE if this fonction is used inside another "safer" function to avoid pointless multiple checkings.}
 
