@@ -352,7 +352,7 @@
     #### end second round of checking and data preparation
 
     #### main code
-    if(base::substr(string, open_pos, open_pos) != "("){
+    if(base::substr(x = string, start =  open_pos, stop =  open_pos) != "("){
         tempo_cat <- base::paste0(
             "INTERNAL ERROR 1 IN ", 
             intern_error_text_start, 
@@ -361,14 +361,14 @@
             "\nstring:\n", 
             base::paste0(string, collapse = "\n", recycle0 = FALSE), 
             "\nsubstr(string, open_pos, open_pos):\n", 
-            base::paste0(base::substr(string, open_pos, open_pos), collapse = "\n", recycle0 = FALSE), 
+            base::paste0(base::substr(x = string, start =  open_pos, stop =  open_pos), collapse = "\n", recycle0 = FALSE), 
             intern_error_text_end, 
             collapse = NULL, 
             recycle0 = FALSE
         )
-        base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
+        base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL) # == in base::stop() to be able to add several messages between ==
     }
-    if(base::substr(string, close_pos, close_pos) != ")"){
+    if(base::substr(x = string, start =  close_pos, stop =  close_pos) != ")"){
         tempo_cat <- base::paste0(
             "INTERNAL ERROR 2 IN ", 
             intern_error_text_start, 
@@ -377,18 +377,18 @@
             "\nstring:\n", 
             base::paste0(string, collapse = "\n", recycle0 = FALSE), 
             "\nsubstr(string, close_pos, close_pos):\n", 
-            base::paste0(base::substr(string, close_pos, close_pos), collapse = "\n", recycle0 = FALSE), 
+            base::paste0(base::substr(x = string, start =  close_pos, stop =  close_pos), collapse = "\n", recycle0 = FALSE), 
             intern_error_text_end, 
             collapse = NULL, 
             recycle0 = FALSE
         )
-        base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
+        base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL) # == in base::stop() to be able to add several messages between ==
     }
     string_out <- string
     # Extract the substring between the given open and close parentheses
-    substring_in_parentheses <- base::substr(string_out, open_pos, close_pos)
+    substring_in_parentheses <- base::substr(x = string_out, start =  open_pos, stop =  close_pos)
     # Find the position of comma within that substring
-    comma_position_in_substring <- base::gregexpr(pattern, substring_in_parentheses)[[1]]
+    comma_position_in_substring <- base::gregexpr(pattern = pattern, text =  substring_in_parentheses, ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE)[[1]]
     # Initialize a vector to store global positions of the replaced commas
     pos <- NULL
     if (comma_position_in_substring[1] != -1) {
@@ -396,14 +396,14 @@
             # Calculate the global position of the comma in the original string
             global_comma_position <- open_pos + relative_comma_position - 1
             # Replace that comma using substring or substr
-            base::substring(string_out, global_comma_position, global_comma_position) <- replacement
+            base::substring(text = string_out, first =  global_comma_position, last =  global_comma_position) <- replacement
             # Store the global position
             pos <- base::c(pos, global_comma_position)
         }
     }
-    if( ! base::is.null(pos)){
-        tempo <- base::substring(string, pos, pos)
-        if( ! base::all(base::unique(tempo) == no_regex_pattern, na.rm = TRUE)){
+    if( ! base::is.null(x = pos)){
+        tempo <- base::substring(text = string, first =  pos, last =  pos)
+        if( ! base::all(base::unique(x = tempo, incomparables = FALSE) == no_regex_pattern, na.rm = TRUE)){
             tempo_cat <- base::paste0(
                 "INTERNAL ERROR 3 IN ", 
                 intern_error_text_start, 
@@ -415,7 +415,7 @@
                 collapse = NULL, 
                 recycle0 = FALSE
             )
-            base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
+            base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL) # == in base::stop() to be able to add several messages between ==
         }
     }
     # Return both the modified string and positions of replaced commas
