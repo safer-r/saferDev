@@ -1,6 +1,6 @@
 #' @title .fun_args_pos
 #' @description
-#' Return the positions of 1st letter of the function name and opening and closing parenthesis, as well as positions of the internal parenthesis.
+#' Return the positions of 1st letter of the first function name in a string, as well as its own opening and closing parenthesis, as well as positions of the internal parenthesis (inside the own parenthesis).
 #' @param text Single string.
 #' @param pattern Single string of a perl regex to extract function name and (), using generally paste0(<FUNCTION_NAME>, "[\\s\\r\\n]*\\(").
 #' @param lib_path Vector of characters specifying the absolute pathways of the directories containing the required packages for the function, if not in the default directories. Useful when R package are not installed in the default directories because of lack of admin rights.  More precisely, lib_path is passed through the new argument of .libPaths() so that the new library paths are unique(c(new, .Library.site, .Library)). Warning: .libPaths() is restored to the initial paths, after function execution. Ignored if NULL (default) or if the safer_check argument is FALSE: only the pathways specified by the current .libPaths() are used for package calling.
@@ -339,14 +339,17 @@
         intern_error_text_end
         ){
         if(base::length(x = x) != 1 | base::any(base::is.na(x = x), na.rm = TRUE) | base::is.null(x = x) | base::any(x < 0 , na.rm = TRUE)){
+            tempo_name <- base::paste0("check_pos_fun_args_pos_internal_error_", intern_error_nb, ".txt")
+            base::cat(text, file = tempo_name, sep = "", fill = FALSE, labels = NULL, append = FALSE)
             tempo_cat <- base::paste0(
                 "INTERNAL ERROR ", 
                 intern_error_nb, 
                 " IN ",
                 intern_error_text_start, 
-                "INTERNAL FUNCTION DID NOT PROPERLY DETECT THE POSITION OF ", base::match.call(definition = base::sys.function(which = base::sys.parent(n = 0)), call = base::sys.call(which = base::sys.parent(n = 0)), expand.dots = FALSE, envir = base::parent.frame(n = 2L))$x, 
+                "INTERNAL FUNCTION DID NOT PROPERLY DETECT THE POSITION OF\n", 
+                x, 
                 "\ntext: ", 
-                base::paste0(text, collapse = "\n", recycle0 = FALSE), 
+                # base::paste0(text, collapse = "\n", recycle0 = FALSE), 
                 "\npattern: ", 
                 base::paste0(pattern, collapse = "\n", recycle0 = FALSE), 
                 "\nfun_pos: ", 
@@ -384,15 +387,24 @@
             loop.nb <- loop.nb + 1
         }
         if(count != 0){
+            tempo_name <- base::paste0("while_loop_fun_args_pos_internal_error_", intern_error_nb, ".txt")
+            base::cat(text, file = tempo_name, sep = "", fill = FALSE, labels = NULL, append = FALSE)
             tempo_cat <- base::paste0(
                 "INTERNAL ERROR ", 
                 intern_error_nb, 
                 " IN ",
                 intern_error_text_start, 
-                "INTERNAL FUNCTION DID NOT PROPERLY DETECT THE POSITION OF THE CLOSING BRACKET IN ", 
-                base::match.call(definition = base::sys.function(which = base::sys.parent(n = 0)), call = base::sys.call(which = base::sys.parent(n = 0)), expand.dots = FALSE, envir = base::parent.frame(n = 2L))$x, 
-                "\ntext: ", 
-                base::paste0(text, collapse = "\n", recycle0 = FALSE), 
+                "INTERNAL FUNCTION DID NOT PROPERLY DETECT THE POSITION OF THE CLOSING BRACKET.\n", 
+                "\nstart: ",
+                start, 
+                "\nall_pos: ",
+                all_pos, 
+                "\nopen_pos: ",
+                open_pos,
+                "\nclose_pos: ",
+                close_pos,
+                "\ntext:\nSEE THE FILE ",
+                tempo_name, 
                 "\npattern: ", 
                 base::paste0(pattern, collapse = "\n", recycle0 = FALSE), 
                 "\ncount: ", 
@@ -460,8 +472,7 @@
                 intern_error_text_start, 
                 "THE ", 
                 function_name, 
-                " INTERNAL FUNCTION DID NOT PROPERLY DETECT THE POSITION ALL THE BRACKETS INSIDE THE FUN(    ) BRACKETS IN ", 
-                base::match.call(definition = base::sys.function(which = base::sys.parent(n = 0)), call = base::sys.call(which = base::sys.parent(n = 0)), expand.dots = FALSE, envir = base::parent.frame(n = 2L))$x, 
+                " INTERNAL FUNCTION DID NOT PROPERLY DETECT THE POSITION OF ALL THE BRACKETS INSIDE THE FUN(    ) BRACKETS.", 
                 "\ntext: ", 
                 base::paste0(text, collapse = "\n", recycle0 = FALSE), 
                 "\npattern: ", 
