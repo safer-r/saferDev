@@ -38,7 +38,7 @@ $pos: vector of the positions of the 1rst character of the replaced pattern. NUL
 Replace any pattern inside simple ou double quotes by another replacement pattern and get the position of replacements
 }
 \details{
-- In the analyzed string, first replace the three consecutive characters "'" or '"' by three spaces to be able to work.
+- In the analyzed string, replace first the three consecutive characters "'" or '"' by three spaces to be able to work and escape quotes like \" or \' by two spaces
 - Warning : must be very simple pattern, like "\\(".
 - Warning: requires saferDev::arg_check, saferDev:::.has_odd_number_of_quotes. In main safer functions, in the section "######## check of the required functions from the required packages" add these functions when checking for the presence of saferDev:::.in_quotes_replacement.
 }
