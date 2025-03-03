@@ -7,6 +7,7 @@
 #' @param error_text Single character string used to add information in error messages returned by the function, notably if the function is inside other functions, which is practical for debugging. Example: error_text = " INSIDE <PACKAGE_1>::<FUNCTION_1> INSIDE <PACKAGE_2>::<FUNCTION_2>.". If NULL, converted into "".
 #' @returns TRUE or FALSE.
 #' @details
+#' - Consider any present ' (pattern = "'") or " (pattern = '"'). Meaning that, the function does not treat special situation, like escape quotes \", or situation like this "'". All these must be removed from the input_string if necessary, using for instance: input_string <- gsub( x = input_string, pattern = '"\'"', replacement = '   ')
 #' - Warning: requires saferDev::arg_check. In main safer functions, in the section "######## check of the required functions from the required packages" add these functions when checking for the presence of saferDev:::.has_odd_number_of_quotes.
 #' @author Gael Millot <gael.millot@pasteur.fr>
 #' @examples
