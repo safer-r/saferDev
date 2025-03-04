@@ -318,12 +318,12 @@
 
     #### main code
     # Count the number of quote characters
-    quote_count <- base::gregexpr(pattern, input_string)[[1]]
+    quote_count <- base::gregexpr(pattern = pattern, text = input_string, ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE)[[1]]
     if (quote_count[1] == -1) {
         quote_count <- 0
     } else {
         # Length of the vector gives the count of quotes
-        quote_count <- base::length(quote_count)
+        quote_count <- base::length(x = quote_count)
     }
     # Check if the count of quotes is odd
     output <- quote_count %% 2 == 1

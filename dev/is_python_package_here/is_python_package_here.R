@@ -22,6 +22,7 @@
 #' # (require the installation of the python serpentine package 
 #' # from https://github.com/koszullab/serpentine
 #' is_python_package_here(req_package = "serpentine")
+#' is_python_package_here(req_package = "serpentine", python_exec_path = "C:/Program Files/Python313/python.exe", python_lib_path = "C:/Program Files/Python313/Lib/site-packages/")
 #' is_python_package_here(req_package = "serpentine", python_lib_path = "blablabla")
 #' }
 #' @importFrom reticulate py_run_string
@@ -37,8 +38,10 @@ is_python_package_here <- function(
     error_text = ""
 ){
     # DEBUGGING
-    # req_package = "serpentine" ; python_exec_path = "C:/ProgramData/Anaconda3/python.exe" ; python_lib_path = "C:/ProgramData/Anaconda3/Lib/site-packages/" ; lib_path = NULL ; safer_check = TRUE ; error_text = ""
-    # req_package = "bad" ; python_lib_path = NULL ; lib_path = NULL ; safer_check = TRUE
+    # req_package = "bla" ; python_exec_path = "C:/Program Files/Python313/python.exe" ; python_lib_path = "C:/Program Files/Python313/Lib/site-packages/" ; lib_path = NULL ; safer_check = TRUE ; error_text = ""
+    # function_name <- "is_python_package_here" ; arg_user_setting = base::list(x = as.name(x = "is_python_package_here"), req_package = "bla", python_exec_path = "C:/Program Files/Python313/python.exe", python_lib_path = "C:/Program Files/Python313/Lib/site-packages/",  lib_path = NULL,  safer_check = TRUE, error_text = "") ; arg_names <- c("x", "req_package",  "python_exec_path",  "python_lib_path", "lib_path", "safer_check", "error_text")
+    # req_package = "serpentine" ; python_exec_path = NULL ; python_lib_path = NULL ; lib_path = NULL ; safer_check = TRUE ; error_text = ""
+    # function_name <- "is_python_package_here" ; arg_user_setting = base::list(x = as.name(x = "is_python_package_here"), req_package = "serpentine", python_exec_path = NULL, python_lib_path = NULL,  lib_path = NULL,  safer_check = TRUE, error_text = "") ; arg_names <- c("x", "req_package",  "python_exec_path",  "python_lib_path", "lib_path", "safer_check", "error_text")
     #### package name
     package_name <- "saferDev" # write NULL if the function developed is not in a package
     #### end package name
@@ -436,7 +439,7 @@ is_python_package_here <- function(
         python_lib_path <- reticulate::py_run_string(code = "import sys ; path_lib = sys.path", local = FALSE, convert = TRUE) # python string, do not add indentations
         python_lib_path <- python_lib_path$path_lib
     }
-    reticulate::use_python(python = base::Sys.which(names = python_exec_path), required = TRUE) # required to avoid the use of erratic python exec by reticulate::import_from_path()
+    reticulate::use_python(python = python_exec_path, required = TRUE) # required to avoid the use of erratic python exec by reticulate::import_from_path()
     for(i1 in 1:base::length(x = req_package)){
         tempo.try <- base::vector(mode = "list", length = base::length(x = python_lib_path))
         for(i2 in 1:base::length(x = python_lib_path)){
@@ -444,7 +447,7 @@ is_python_package_here <- function(
             tempo.try[[i2]] <- base::suppressWarnings(expr = base::try(expr = reticulate::import_from_path(module = req_package[i1], path = python_lib_path[i2], convert = TRUE, delay_load = FALSE), silent = TRUE, outFile = base::getOption(x = "try.outFile", default = base::stderr())), classes = "warning") # done twice to avoid the error message  about flushing present the first time but not the second time. see https://stackoverflow.com/questions/57357001/reticulate-1-13-error-in-sysstdoutflush-attempt-to-apply-non-function
         }
         if(base::all(base::sapply(X = tempo.try, FUN = function(x){base::grepl(x = x, pattern = "[Ee]rror", ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE)}, simplify = TRUE, USE.NAMES = TRUE), na.rm = TRUE)){
-            base::print(x = tempo.try)
+            # base::print(x = tempo.try)
             tempo_cat <- base::paste0(
                 error_text_start, 
                 "PACKAGE ", 
