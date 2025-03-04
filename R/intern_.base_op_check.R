@@ -9,7 +9,7 @@
 #' @author Haiding Wang <wanghaiding442@gmail.com>
 #' @examples
 #' \dontrun{
-#' # Example that shouldn't be run because this is an internal function
+#' \dontrun{ # Example that shouldn't be run because this is an internal function (not found by devtools::check())
 #' .base_op_check(error_text = " INSIDE fun1.") # nothing should happen
 #' assign("!", 1) ; assign("+", 2) ; .base_op_check(error_text = " INSIDE fun1.") this example returns an error
 #' rm("!") ; rm("+") 

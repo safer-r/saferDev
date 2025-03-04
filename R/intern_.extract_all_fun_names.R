@@ -12,7 +12,7 @@
 #' - Warning: requires saferDev::arg_check. In main safer functions, in the section "######## check of the required functions from the required packages" add these functions when checking for the presence of saferDev:::.extract_all_fun_names.
 #' @author Gael Millot <gael.millot@pasteur.fr>
 #' @examples
-#' \dontrun{ # Example that shouldn't be run because this is an internal function
+#' \dontrun{ # Example that shouldn't be run because this is an internal function (not found by devtools::check())
 #' .extract_all_fun_names(text = 'This is a test string with sum()', pattern = "[a-zA-Z.][a-zA-Z0-9._]*\\s*\\(", lib_path = NULL, error_text = " INSIDE P1::F1")
 #' }
 #' 

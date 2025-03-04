@@ -16,7 +16,7 @@
 #' - Warning: requires saferDev::arg_check. In main safer functions, in the section "######## check of the required functions from the required packages" add these functions when checking for the presence of saferDev:::.fun_args_pos
 #' @author Gael Millot <gael.millot@pasteur.fr>
 #' @examples
-#' \dontrun{ # Example that shouldn't be run because this is an internal function
+#' \dontrun{ # Example that shouldn't be run because this is an internal function (not found by devtools::check())
 #' # Warning : examples only with strings that must be cleaned from brackets between quotes
 #' .fun_args_pos(text = ' "a" ; paste0("I", paste0(sum(1:3), collapse = " "), min(1) ) ; range(2)', pattern = paste0("paste0", "[\\s\\r\\n]*\\("), lib_path = NULL, error_text = " INSIDE P1::F1")
 #' }

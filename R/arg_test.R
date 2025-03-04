@@ -413,11 +413,6 @@ arg_test <- function(
     if(parall == TRUE){
         if( ! base::is.null(x = thread.nb)){
             tempo <- saferDev::arg_check(data = thread.nb, class = "numeric", typeof = "double", mode = NULL, length = 1, prop = FALSE, double_as_integer_allowed = TRUE, options = NULL, all_options_in_data = FALSE, na_contain = FALSE, neg_values = FALSE, inf_values = FALSE, print = FALSE, data_name = NULL, data_arg = TRUE, safer_check = FALSE, lib_path = lib_path, error_text = embed_error_text) ; base::eval(expr = ee, envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL))
-            if(tempo$problem == FALSE & thread.nb < 1){
-                tempo_cat <- base::paste0(error_text_start, "thread.nb PARAMETER MUST EQUAL OR GREATER THAN 1.\nHERE IT IS: ", thread.nb)
-                text_check <- base::c(text_check, tempo_cat)
-                argum_check <- base::c(argum_check, TRUE)
-            }
         }
     }
     tempo <- saferDev::arg_check(data = print.count, class = "vector", typeof = "integer", mode = NULL, length = 1, prop = FALSE, double_as_integer_allowed = TRUE, options = NULL, all_options_in_data = FALSE, na_contain = FALSE, neg_values = FALSE, inf_values = TRUE, print = FALSE, data_name = NULL, data_arg = TRUE, safer_check = FALSE, lib_path = lib_path, error_text = embed_error_text) ; base::eval(expr = ee, envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL))
@@ -533,10 +528,20 @@ arg_test <- function(
     ######## end graphic device checking
 
     ######## other checkings
+    if(parall == TRUE & thread.nb < 1){
+        tempo_cat <- base::paste0(
+            error_text_start, 
+            "thread.nb PARAMETER MUST EQUAL OR GREATER THAN 1.\nHERE IT IS: ", 
+            thread.nb, 
+            collapse = NULL, 
+            recycle0 = FALSE
+        )
+        base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n", base::ifelse(test = base::is.null(x = warn), yes = "", no = base::paste0("IN ADDITION\nWARNING", base::ifelse(test = warn_count > 1, yes = "S", no = ""), ":\n\n", warn, collapse = NULL, recycle0 = FALSE)), collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL)
+    }
     if(base::grepl(x = fun, pattern = "()$")){ # remove ()
         fun <- base::sub(x = fun, pattern = "()$", replacement = "")
     }
-    if( ! base::exists(fun)){
+    if( ! base::exists(x = fun)){
         tempo_cat <- base::paste0(
             error_text_start, 
             "CHARACTER STRING IN fun ARGUMENT DOES NOT EXIST IN THE R WORKING ENVIRONMENT:\n", 
@@ -544,28 +549,28 @@ arg_test <- function(
             collapse = NULL, 
             recycle0 = FALSE
         )
-        base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", base::ifelse(base::is.null(warn), "", base::paste0("IN ADDITION\nWARNING", base::ifelse(warn_count > 1, "S", ""), ":\n\n", warn))), call. = FALSE)
-    }else if( ! base::all(base::class(base::get(fun)) == "function")){ # here no env = base::sys.nframe(), inherit = FALSE for base::get() because fun is a function in the classical scope
+        base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n", base::ifelse(test = base::is.null(x = warn), yes = "", no = base::paste0("IN ADDITION\nWARNING", base::ifelse(test = warn_count > 1, yes = "S", no = ""), ":\n\n", warn, collapse = NULL, recycle0 = FALSE)), collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL)
+    }else if( ! base::all(base::class(x = base::get(x = fun)) == "function")){ # here no env = base::sys.nframe(), inherit = FALSE for base::get() because fun is a function in the classical scope
         tempo_cat <- base::paste0(
              error_text_start, 
             "fun ARGUMENT IS NOT CLASS \"function\" BUT:\n", 
-            base::paste0(base::class(base::get(fun)), collapse = "\n", , recycle0 = FALSE), 
+            base::paste0(base::class(x = base::get(x = fun)), collapse = "\n", , recycle0 = FALSE), 
             "\nCHECK IF ANY CREATED OBJECT WOULD HAVE THE NAME OF THE TESTED FUNCTION.", 
             collapse = NULL, 
             recycle0 = FALSE
         )
-        base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", base::ifelse(base::is.null(warn), "", base::paste0("IN ADDITION\nWARNING", base::ifelse(warn_count > 1, "S", ""), ":\n\n", warn))), call. = FALSE)
+        base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n", base::ifelse(test = base::is.null(x = warn), yes = "", no = base::paste0("IN ADDITION\nWARNING", base::ifelse(test = warn_count > 1, yes = "S", no = ""), ":\n\n", warn, collapse = NULL, recycle0 = FALSE)), collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL)
     }
-    if(tempo$problem == FALSE & base::length(arg) == 0L){
+    if(tempo$problem == FALSE & base::length(x = arg) == 0L){
         tempo_cat <- base::paste0(
              error_text_start, 
             "arg ARGUMENT CANNOT BE LENGTH 0.", 
             collapse = NULL, 
             recycle0 = FALSE
         )
-        base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", base::ifelse(base::is.null(warn), "", base::paste0("IN ADDITION\nWARNING", base::ifelse(warn_count > 1, "S", ""), ":\n\n", warn))), call. = FALSE)
+        base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n", base::ifelse(test = base::is.null(x = warn), yes = "", no = base::paste0("IN ADDITION\nWARNING", base::ifelse(test = warn_count > 1, yes = "S", no = ""), ":\n\n", warn, collapse = NULL, recycle0 = FALSE)), collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL)
     }
-    for(i2 in 1:base::length(val)){ # base::length(val) must be aequal to nb of arguments
+    for(i2 in 1:base::length(x = val)){ # base::length(x = val) must be aequal to nb of arguments
         tempo1 <- saferDev::arg_check(data = val[[i2]], class = "vector", na_contain = TRUE, safer_check = FALSE, lib_path = lib_path, error_text = embed_error_text)
         tempo2 <- saferDev::arg_check(data = val[[i2]], class = "list", na_contain = TRUE, safer_check = FALSE, lib_path = lib_path, error_text = embed_error_text)
         if(tempo1$problem == TRUE & tempo2$problem == TRUE){
@@ -577,35 +582,35 @@ arg_test <- function(
                 collapse = NULL, 
                 recycle0 = FALSE
             )
-            base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", base::ifelse(base::is.null(warn), "", base::paste0("IN ADDITION\nWARNING", base::ifelse(warn_count > 1, "S", ""), ":\n\n", warn))), call. = FALSE)
+            base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n", base::ifelse(test = base::is.null(x = warn), yes = "", no = base::paste0("IN ADDITION\nWARNING", base::ifelse(test = warn_count > 1, yes = "S", no = ""), ":\n\n", warn, collapse = NULL, recycle0 = FALSE)), collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL)
         }else if(tempo1$problem == FALSE){ # vector split into list compartments
-            val[[i2]] <- base::split(x = val[[i2]], f = 1:base::length(val[[i2]])) # convert a vector into list, with each value of the vector in a compartment
+            val[[i2]] <- base::split(x = val[[i2]], f = 1:base::length(x = val[[i2]])) # convert a vector into list, with each value of the vector in a compartment
         }
     }
-    if(base::length(arg) != base::length(val)){
+    if(base::length(x = arg) != base::length(x = val)){
         tempo_cat <- base::paste0(
             error_text_start, 
             "LENGTH OF arg ARGUMENT MUST BE IDENTICAL TO LENGTH OF val ARGUMENT.\nHERE IT IS\n", 
-            base::length(arg), 
+            base::length(x = arg), 
             "\nVERSUS\n", 
-            base::length(val), 
+            base::length(x = val), 
             collapse = NULL, 
             recycle0 = FALSE
         )
-        base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", base::ifelse(base::is.null(warn), "", base::paste0("IN ADDITION\nWARNING", base::ifelse(warn_count > 1, "S", ""), ":\n\n", warn))), call. = FALSE)
+        base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n", base::ifelse(test = base::is.null(x = warn), yes = "", no = base::paste0("IN ADDITION\nWARNING", base::ifelse(test = warn_count > 1, yes = "S", no = ""), ":\n\n", warn, collapse = NULL, recycle0 = FALSE)), collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL)
     }
-    args <- base::names(base::formals(base::get(fun))) # here no env = base::sys.nframe(), inherit = FALSE for base::get() because fun is a function in the classical scope
+    args <- base::names(x = base::formals(base::get(x = fun))) # here no env = base::sys.nframe(), inherit = FALSE for base::get() because fun is a function in the classical scope
     if( ! base::all(arg %in% args)){
         tempo_cat <- base::paste0(
             error_text_start, 
             "SOME OF THE STRINGS IN arg ARE NOT ARGUMENTS OF fun.\nfun ARGUMENTS:\n", 
             base::paste0(args, collapse = " ", recycle0 = FALSE), 
             "\nPROBLEMATIC STRINGS IN arg:\n", 
-            base::paste(arg[ ! arg %in% args], collapse = " ", recycle0 = FALSE), 
+            base::paste0(arg[ ! arg %in% args], collapse = " ", recycle0 = FALSE), 
             collapse = NULL, 
             recycle0 = FALSE
         )
-        base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", base::ifelse(base::is.null(warn), "", base::paste0("IN ADDITION\nWARNING", base::ifelse(warn_count > 1, "S", ""), ":\n\n", warn))), call. = FALSE)
+        base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n", base::ifelse(test = base::is.null(x = warn), yes = "", no = base::paste0("IN ADDITION\nWARNING", base::ifelse(test = warn_count > 1, yes = "S", no = ""), ":\n\n", warn, collapse = NULL, recycle0 = FALSE)), collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL)
     }
     if(base::sum(base::sapply(val, FUN = base::length) > 1) > 43){
         tempo_cat <- base::paste0(
@@ -615,22 +620,22 @@ arg_test <- function(
             collapse = NULL, 
             recycle0 = FALSE
         )
-        base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", base::ifelse(base::is.null(warn), "",base::paste0("IN ADDITION\nWARNING", base::ifelse(warn_count > 1, "S", ""), ":\n\n", warn))), call. = FALSE)
+        base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n", base::ifelse(test = base::is.null(x = warn), yes = "", no = base::paste0("IN ADDITION\nWARNING", base::ifelse(test = warn_count > 1, yes = "S", no = ""), ":\n\n", warn, collapse = NULL, recycle0 = FALSE)), collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL)
     }
-    if( ! base::is.null(expect.error)){
-        if(base::length(val) != base::length(expect.error)){
+    if( ! base::is.null(x = expect.error)){
+        if(base::length(x = val) != base::length(x = expect.error)){
             tempo_cat <- base::paste0(
                 error_text_start, 
                 "LENGTH OF val ARGUMENT MUST BE IDENTICAL TO LENGTH OF expect.error ARGUMENT.\nHERE IT IS\n", 
-                base::length(val), 
+                base::length(x = val), 
                 "\nVERSUS\n", 
-                base::length(expect.error), 
+                base::length(x = expect.error), 
                 collapse = NULL, 
                 recycle0 = FALSE
             )
-            base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", base::ifelse(base::is.null(warn), "", base::paste0("IN ADDITION\nWARNING", base::ifelse(warn_count > 1, "S", ""), ":\n\n", warn))), call. = FALSE)
+            base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n", base::ifelse(test = base::is.null(x = warn), yes = "", no = base::paste0("IN ADDITION\nWARNING", base::ifelse(test = warn_count > 1, yes = "S", no = ""), ":\n\n", warn, collapse = NULL, recycle0 = FALSE)), collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL)
         }
-        for(i3 in 1:base::length(expect.error)){
+        for(i3 in 1:base::length(x = expect.error)){
             tempo1 <- saferDev::arg_check(data = expect.error[[i3]], class = "vector",  mode = "logical", safer_check = FALSE, lib_path = lib_path, error_text = embed_error_text)
             tempo2 <- saferDev::arg_check(data = expect.error[[i3]], class = "list", safer_check = FALSE, lib_path = lib_path, error_text = embed_error_text)
             if(tempo1$problem == TRUE & tempo2$problem == TRUE){
@@ -642,29 +647,29 @@ arg_test <- function(
                 collapse = NULL, 
                 recycle0 = FALSE
                 )
-                base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", base::ifelse(base::is.null(warn), "", base::paste0("IN ADDITION\nWARNING", base::ifelse(warn_count > 1, "S", ""), ":\n\n", warn))), call. = FALSE)
+                base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n", base::ifelse(test = base::is.null(x = warn), yes = "", no = base::paste0("IN ADDITION\nWARNING", base::ifelse(test = warn_count > 1, yes = "S", no = ""), ":\n\n", warn, collapse = NULL, recycle0 = FALSE)), collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL)
             }else if(tempo1$problem == FALSE){ # vector split into list compartments
-                expect.error[[i3]] <- base::split(x = expect.error[[i3]], f = 1:base::length(expect.error[[i3]])) # convert a vector into list, with each value of the vector in a compartment
+                expect.error[[i3]] <- base::split(x = expect.error[[i3]], f = 1:base::length(x = expect.error[[i3]])) # convert a vector into list, with each value of the vector in a compartment
             }
         }
-        for(i2 in 1:base::length(expect.error)){
-            if(base::all(base::class(expect.error[[i2]]) == "list")){
-                if( ! base::all(base::class(val[[i2]]) == "list")){
+        for(i2 in 1:base::length(x = expect.error)){
+            if(base::all(base::class(x = expect.error[[i2]]) == "list")){
+                if( ! base::all(base::class(x = val[[i2]]) == "list")){
                     tempo_cat <- base::paste0(
                         error_text_start, 
                         "expect.error ARGUMENT MUST BE A LIST OF EXACTLY THE SAME STRUCTURE AS val ARGUMENT.\nHERE COMPARTMENT ", 
                         i2, 
                         " OF expect.error IS CLASS ", 
-                        base::paste0(base::class(expect.error[[i2]]), collapse = " ", recycle0 = FALSE), 
+                        base::paste0(base::class(x = expect.error[[i2]]), collapse = " ", recycle0 = FALSE), 
                         "\nAND COMPARTMENT ", 
                         i2, 
                         " OF val IS CLASS ", 
-                        base::paste(base::class(val[[i2]]), collapse = " ", recycle0 = FALSE), 
+                        base::paste0(base::class(x = val[[i2]]), collapse = " ", recycle0 = FALSE), 
                         collapse = NULL, 
                         recycle0 = FALSE
                     )
-                    base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", base::ifelse(base::is.null(warn), "", base::paste0("IN ADDITION\nWARNING", base::ifelse(warn_count > 1, "S", ""), ":\n\n", warn))), call. = FALSE)
-                }else if(base::length(val[[i2]]) != base::length(expect.error[[i2]])){
+                    base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n", base::ifelse(test = base::is.null(x = warn), yes = "", no = base::paste0("IN ADDITION\nWARNING", base::ifelse(test = warn_count > 1, yes = "S", no = ""), ":\n\n", warn, collapse = NULL, recycle0 = FALSE)), collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL)
+                }else if(base::length(x = val[[i2]]) != base::length(x = expect.error[[i2]])){
                     tempo_cat <- base::paste0(
                         error_text_start, 
                         "LENGTH OF COMPARTMENT ", 
@@ -672,13 +677,13 @@ arg_test <- function(
                         " OF val ARGUMENT MUST BE IDENTICAL TO LENGTH OF COMPARTMENT ", 
                         i2, 
                         " OF expect.error ARGUMENT.\nHERE IT IS\n", 
-                        base::length(val[[i2]]), 
+                        base::length(x = val[[i2]]), 
                         "\nVERSUS\n", 
-                        base::length(expect.error[[i2]]), 
+                        base::length(x = expect.error[[i2]]), 
                         collapse = NULL, 
                         recycle0 = FALSE
                     )
-                    base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", base::ifelse(base::is.null(warn), "", base::paste0("IN ADDITION\nWARNING", base::ifelse(warn_count > 1, "S", ""), ":\n\n", warn))), call. = FALSE)
+                    base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n", base::ifelse(test = base::is.null(x = warn), yes = "", no = base::paste0("IN ADDITION\nWARNING", base::ifelse(test = warn_count > 1, yes = "S", no = ""), ":\n\n", warn, collapse = NULL, recycle0 = FALSE)), collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL)
                 }
             }
         }
@@ -698,21 +703,21 @@ arg_test <- function(
             tempo_cat <- base::paste0(
                 error_text_start, 
                 "DIRECTORY PATH INDICATED IN THE res.path ARGUMENT DOES NOT EXISTS:\n", 
-                base::paste(res.path, collapse = "\n", recycle0 = FALSE)
+                base::paste0(res.path, collapse = "\n", recycle0 = FALSE)
             )
-            base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", base::ifelse(base::is.null(warn), "", base::paste0("IN ADDITION\nWARNING", base::ifelse(warn_count > 1, "S", ""), ":\n\n", warn))), call. = FALSE)
+            base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n", base::ifelse(test = base::is.null(x = warn), yes = "", no = base::paste0("IN ADDITION\nWARNING", base::ifelse(test = warn_count > 1, yes = "S", no = ""), ":\n\n", warn, collapse = NULL, recycle0 = FALSE)), collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL)
         }
     }
-    if( ! base::is.null(lib_path)){
+    if( ! base::is.null(x = lib_path)){
         if( ! base::all(base::dir.exists(lib_path), na.rm = TRUE)){ # separation to avoid the problem of tempo$problem == FALSE and lib_path == NA
             tempo_cat <- base::paste0(
                 error_text_start, 
                 "DIRECTORY PATH INDICATED IN THE lib_path ARGUMENT DOES NOT EXISTS:\n", 
-                base::paste(lib_path, collapse = "\n", recycle0 = FALSE), 
+                base::paste0(lib_path, collapse = "\n", recycle0 = FALSE), 
                 collapse = NULL, 
                 recycle0 = FALSE
             )
-            base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", base::ifelse(base::is.null(warn), "", base::paste0("IN ADDITION\nWARNING", base::ifelse(warn_count > 1, "S", ""), ":\n\n", warn))), call. = FALSE)
+            base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n", base::ifelse(test = base::is.null(x = warn), yes = "", no = base::paste0("IN ADDITION\nWARNING", base::ifelse(test = warn_count > 1, yes = "S", no = ""), ":\n\n", warn, collapse = NULL, recycle0 = FALSE)), collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL)
         }
     }
     ######## end other checkings
@@ -725,27 +730,27 @@ arg_test <- function(
     # end declaration of special plot functions
 
     # new environment
-    env.name <- base::paste0("env", base::as.numeric(base::Sys.time()))
-    if(base::exists(env.name, where = -1)){ # verify if still ok when this function is inside a function
+    env.name <- base::paste0("env", base::as.numeric(x = base::Sys.time()), collapse = NULL, recycle0 = FALSE)
+    if(base::exists(x = env.name, where = -1)){ # verify if still ok when this function is inside a function
         tempo_cat <- base::paste0(
             error_text_start, 
             "ENVIRONMENT env.name ALREADY EXISTS.\nPLEASE RERUN ONCE.", 
             collapse = NULL, 
             recycle0 = FALSE
         )
-        base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
+        base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n", base::ifelse(test = base::is.null(x = warn), yes = "", no = base::paste0("IN ADDITION\nWARNING", base::ifelse(test = warn_count > 1, yes = "S", no = ""), ":\n\n", warn, collapse = NULL, recycle0 = FALSE)), collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL)
     }else{
-        base::assign(env.name, base::new.env())
-        base::assign("data", data, envir = base::get(env.name, envir = base::sys.nframe(), inherits = FALSE)) # data assigned in a new envir for test
+        base::assign(x = env.name, base::new.env())
+        base::assign(x = "data", data, envir = base::get(x = env.name, envir = base::sys.nframe(), inherits = FALSE)) # data assigned in a new envir for test
     }
     # end new environment
 
     ini <- base::match.call(expand.dots = FALSE) # initial parameters (specific of arg_test())
     base::cat("\ntest JOB IGNITION\n")
     ini.date <- base::Sys.time()
-    ini.time <- base::as.numeric(ini.date) # time of process begin, converted into seconds
+    ini.time <- base::as.numeric(x = ini.date) # time of process begin, converted into seconds
     if(export == TRUE){
-        res.path <- base::paste0(res.path, "/arg_test_res_", base::trunc(ini.time))
+        res.path <- base::paste0(res.path, "/arg_test_res_", base::trunc(ini.time), collapse = NULL, recycle0 = FALSE)
         if(base::dir.exists(res.path)){
             tempo_cat <- base::paste0(
                 error_text_start, 
@@ -755,13 +760,13 @@ arg_test <- function(
                 collapse = NULL, 
                 recycle0 = FALSE
             )
-            base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", base::ifelse(base::is.null(warn), "", base::paste0("IN ADDITION\nWARNING", base::ifelse(warn_count > 1, "S", ""), ":\n\n", warn))), call. = FALSE)
+            base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n", base::ifelse(test = base::is.null(x = warn), yes = "", no = base::paste0("IN ADDITION\nWARNING", base::ifelse(test = warn_count > 1, yes = "S", no = ""), ":\n\n", warn, collapse = NULL, recycle0 = FALSE)), collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL)
         }else{
             base::dir.create(res.path)
         }
     }
     total.comp.nb <- base::prod(base::sapply(val, FUN = "length"))
-    base::cat(base::paste0("\nTOTAL NUMBER OF TESTS: ", total.comp.nb, "\n"))
+    base::cat(base::paste0("\nTOTAL NUMBER OF TESTS: ", total.comp.nb, "\n", collapse = NULL, recycle0 = FALSE))
 
     # creation of the txt instruction that includes several loops
     loop.string <- NULL
@@ -770,11 +775,11 @@ arg_test <- function(
     fun.args2 <- NULL
     error.values <- NULL
     arg.values <- "base::list("
-    for(i1 in 1:base::length(arg)){
+    for(i1 in 1:base::length(x = arg)){
         if(parall == FALSE){
-            if(base::length(val[[i1]]) > 1){ # loop only if more than one value in base::length(val[[i1]])
-                loop.string <- base::paste0(loop.string, "for(i", i1, " in 1:", base::length(val[[i1]]), "){")
-                end.loop.string <- base::paste0(end.loop.string, "}")
+            if(base::length(x = val[[i1]]) > 1){ # loop only if more than one value in base::length(x = val[[i1]])
+                loop.string <- base::paste0(loop.string, "for(i", i1, " in 1:", base::length(x = val[[i1]]), "){", collapse = NULL, recycle0 = FALSE)
+                end.loop.string <- base::paste0(end.loop.string, "}", collapse = NULL, recycle0 = FALSE)
             }
         }else{
             loop.string <- "for(i in x){"
@@ -788,15 +793,17 @@ arg_test <- function(
             i1, 
             "]][[", 
             if(parall == FALSE){
-                if(base::length(val[[i1]]) > 1){
-                    base::paste0("i", i1)
+                if(base::length(x = val[[i1]]) > 1){
+                    base::paste0("i", i1, collapse = NULL, recycle0 = FALSE)
                 }else{
                     "1" # a unique element in val[[i1]]
                 }
             }else{
                 base::paste0("i.list[[", i1, "]][i]")
             }, 
-            "]]"
+            "]]",
+            collapse = NULL, 
+            recycle0 = FALSE
         )
         fun.args2 <- base::paste0(
             fun.args2, 
@@ -806,50 +813,56 @@ arg_test <- function(
             i1, 
             "]][[', ", 
             if(parall == FALSE){
-                if(base::length(val[[i1]]) > 1){
-                    base::paste0("i", i1)
+                if(base::length(x = val[[i1]]) > 1){
+                    base::paste0("i", i1, collapse = NULL, recycle0 = FALSE)
                 }else{
                     "1" # a unique element in val[[i1]]
                 }
             }else{
-                base::paste0("i.list[[", i1, "]][i]")
+                base::paste0("i.list[[", i1, "]][i]", collapse = NULL, recycle0 = FALSE)
             }, 
-            ", ']]"
+            ", ']]", 
+            collapse = NULL, 
+            recycle0 = FALSE
         )
         arg.values <- base::paste0(
             arg.values, 
             "val[[", i1, "]][[", 
             if(parall == FALSE){
-                if(base::length(val[[i1]]) > 1){
-                    base::paste0("i", i1)
+                if(base::length(x = val[[i1]]) > 1){
+                    base::paste0("i", i1, collapse = NULL, recycle0 = FALSE)
                 }else{
                     "1" # a unique element in val[[i1]]
                 }
             }else{
-                base::paste0("i.list[[", i1, "]][i]")
+                base::paste0("i.list[[", i1, "]][i]", collapse = NULL, recycle0 = FALSE)
             }, 
             "]]", 
-            base::ifelse(i1 == base::length(arg), "", ", ")
+            base::ifelse(i1 == base::length(x = arg), "", ", "), 
+            collapse = NULL, 
+            recycle0 = FALSE
         )
         error.values <- base::paste0(
             error.values, 
             base::ifelse(i1 == 1L, "", " | "), 
             "expect.error[[", i1, "]][[", 
             if(parall == FALSE){
-                if(base::length(expect.error[[i1]]) > 1){
-                    base::paste0("i", i1)
+                if(base::length(x = expect.error[[i1]]) > 1){
+                    base::paste0("i", i1, collapse = NULL, recycle0 = FALSE)
                 }else{
                     "1" # a unique element in expect.error[[i1]]
                 }
             }else{
-                base::paste0("i.list[[", i1, "]][i]")
+                base::paste0("i.list[[", i1, "]][i]", collapse = NULL, recycle0 = FALSE)
             }, 
-            "]]"
+            "]]", 
+            collapse = NULL, 
+            recycle0 = FALSE
         )
     }
-    arg.values <- base::paste0(arg.values, ")")
-    fun.test <- base::paste0(fun, "(", fun.args, ")")
-    fun.test2 <- base::paste0("base::paste0('", fun, "(", fun.args2, ")')")
+    arg.values <- base::paste0(arg.values, ")", collapse = NULL, recycle0 = FALSE)
+    fun.test <- base::paste0(fun, "(", fun.args, ")", collapse = NULL, recycle0 = FALSE)
+    fun.test2 <- base::paste0("base::paste0('", fun, "(", fun.args2, ")')", collapse = NULL, recycle0 = FALSE)
     # plot title for special plot functions
     if(plot.fun == TRUE){
         plot.kind <- "classic"
@@ -857,8 +870,8 @@ arg_test <- function(
             plot.kind <- "special"
             if(base::any(arg %in% "title")){ # this is for the special functions
                 tempo.match <- base::regmatches(x = fun.test, m = base::regexpr(text = fun.test, pattern = "title = .+[,)]"))
-                tempo.match <- base::substring(tempo.match , 1, base::nchar(tempo.match) - 1)
-                fun.test <- base::sub(x = fun.test, pattern = tempo.match, replacement = base::paste0(tempo.match, "\ntempo.title"))
+                tempo.match <- base::substring(tempo.match , 1, base::nchar(x = tempo.match) - 1)
+                fun.test <- base::sub(x = fun.test, pattern = tempo.match, replacement = base::paste0(tempo.match, "\ntempo.title", collapse = NULL, recycle0 = FALSE))
             }else{
                 fun.test <- base::sub(x = fun.test, pattern = ")$", replacement = ", title = tempo.title)")
             }
@@ -872,30 +885,30 @@ arg_test <- function(
     count <- 0
     print.count.loop <- 0
     plot.count <- 0
-    if(base::length(arg) == 1L){
+    if(base::length(x = arg) == 1L){
         data <- base::data.frame()
-    }else{ # base::length(arg) == 0L already tested above
-        data <- base::data.frame(base::t(base::vector("character", base::length(arg))), stringsAsFactors = FALSE)[-1, ] # -1 to remove the single row created and to have an empty data frame with base::length(arg) columns
+    }else{ # base::length(x = arg) == 0L already tested above
+        data <- base::data.frame(base::t(base::vector("character", base::length(x = arg))), stringsAsFactors = FALSE)[-1, ] # -1 to remove the single row created and to have an empty data frame with base::length(x = arg) columns
     }
-    code <- base::paste(
+    code <- base::paste0(
         loop.string, '
             count <- count + 1
             print.count.loop <- print.count.loop + 1
             arg.values.print <- base::eval(base::parse(text = arg.values)) # recover the list of the i1 compartment
-            for(j3 in 1:base::length(arg.values.print)){ # WARNING: do not use i1, i2 etc., here because already in loop.string
+            for(j3 in 1:base::length(x = arg.values.print)){ # WARNING: do not use i1, i2 etc., here because already in loop.string
                 tempo.capt <- utils::capture.output(tempo.error <- saferDev::get_message(
-                    data =  base::paste0("base::paste(arg.values.print[[", j3, "]])"), 
+                    data =  base::paste0("base::paste0(arg.values.print[[", j3, "]], collapse = NULL, recycle0 = FALSE)", collapse = NULL, recycle0 = FALSE), 
                     kind = "error", 
                     header = FALSE, 
                     print.no = FALSE, 
                     text = NULL, 
-                    env = base::get(env.name, envir = base::sys.nframe(), inherits = FALSE), 
+                    env = base::get(x = env.name, envir = base::sys.nframe(), inherits = FALSE), 
                     lib_path = lib_path, 
                     safer_check = FALSE, 
                     error_text = embed_error_text
                 )) # collapsing arg.values sometimes does not work (with function for instance)
-                if( ! base::is.null(tempo.error)){
-                    arg.values.print[[j3]] <- base::paste0("SPECIAL VALUE OF CLASS ", base::class(arg.values.print[[j3]]), " AND TYPE ", base::typeof(arg.values.print[[j3]]))
+                if( ! base::is.null(x = tempo.error)){
+                    arg.values.print[[j3]] <- base::paste0("SPECIAL VALUE OF CLASS ", base::class(x = arg.values.print[[j3]]), " AND TYPE ", base::typeof(arg.values.print[[j3]]), collapse = NULL, recycle0 = FALSE)
                 }
             }
             data <- base::rbind(data, base::as.character(base::sapply(arg.values.print, FUN = "paste", collapse = " ")), stringsAsFactors = FALSE) # each colum is a test
@@ -905,7 +918,7 @@ arg_test <- function(
                 header = FALSE, 
                 print.no = FALSE, 
                 text = NULL, 
-                env = base::get(env.name, envir = base::sys.nframe(), inherits = FALSE), 
+                env = base::get(x = env.name, envir = base::sys.nframe(), inherits = FALSE), 
                 lib_path = lib_path, 
                 safer_check = FALSE, 
                 error_text = embed_error_text
@@ -916,20 +929,20 @@ arg_test <- function(
                 header = FALSE, 
                 print.no = FALSE, 
                 text = NULL, 
-                env = base::get(env.name, envir = base::sys.nframe(), inherits = FALSE), 
+                env = base::get(x = env.name, envir = base::sys.nframe(), inherits = FALSE), 
                 lib_path = lib_path, 
                 safer_check = FALSE, 
                 error_text = embed_error_text
             )) # data argument needs a character string but base::eval(base::parse(text = fun.test2)) provides it (base::eval base::parse replace the i1, i2, etc., by the correct values, meaning that only val is required in the env.name environment)
-            if( ! base::is.null(expect.error)){
+            if( ! base::is.null(x = expect.error)){
                 expected.error <- base::c(expected.error, base::eval(base::parse(text = error.values)))
             }
-            if( ! base::is.null(tempo.try.error)){
+            if( ! base::is.null(x = tempo.try.error)){
                 kind <- base::c(kind, "ERROR")
                 problem <- base::c(problem, TRUE)
                 res <- base::c(res, tempo.try.error)
             }else{
-                if( ! base::is.null(tempo.try.warning)){
+                if( ! base::is.null(x = tempo.try.warning)){
                     kind <- base::c(kind, "WARNING")
                     problem <- base::c(problem, FALSE)
                     res <- base::c(res, tempo.try.warning)
@@ -939,9 +952,9 @@ arg_test <- function(
                     res <- base::c(res, "")
                 }
                 if(plot.fun == TRUE){
-                    base::invisible(grDevices::dev.set(window.nb))
+                    base::invisible(x = grDevices::dev.set(window.nb))
                     plot.count <- plot.count + 1
-                    tempo.title <- base::paste0("test_", base::sprintf(base::paste0("%0", base::nchar(total.comp.nb), "d"), base::ifelse(parall == FALSE, count, x[count])))
+                    tempo.title <- base::paste0("test_", base::sprintf(base::paste0("%0", base::nchar(x = total.comp.nb), "d", collapse = NULL, recycle0 = FALSE), base::ifelse(parall == FALSE, count, x[count])), collapse = NULL, recycle0 = FALSE)
                     if(plot.kind == "classic"){ # not ggplot. So title has to be added in a classical way
                         # graphics::par(ann=FALSE, xaxt="n", yaxt="n", mar = base::rep(1, 4), bty = "n", xpd = NA) # old
                         graphics::par(bty = "n", xpd = NA) # new
@@ -954,22 +967,22 @@ arg_test <- function(
                         base::eval(base::parse(text = fun.test))
                     }else{
                         tempo_cat <- base::paste0("INTERNAL ERROR 1 IN ", intern_error_text_start, "CODE HAS TO BE MODIFIED.", intern_error_text_end, collapse = NULL, recycle0 = FALSE)
-                        base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
+                        base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n", base::ifelse(test = base::is.null(x = warn), yes = "", no = base::paste0("IN ADDITION\nWARNING", base::ifelse(test = warn_count > 1, yes = "S", no = ""), ":\n\n", warn, collapse = NULL, recycle0 = FALSE)), collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL)
                     }
                 }
             }
             if(print.count.loop == print.count){
                 print.count.loop <- 0
-                tempo.time <- base::as.numeric(base::Sys.time())
-                tempo.lapse <- base::round(lubridate::seconds_to_period(tempo.time - ini.time))
-                final.loop <- (tempo.time - ini.time) / count * base::ifelse(parall == FALSE, total.comp.nb, base::length(x)) # expected duration in seconds # intra nb.compar loop lapse: time lapse / cycles done * cycles remaining
+                tempo.time <- base::as.numeric(x = base::Sys.time())
+                tempo.lapse <- base::round(x = lubridate::seconds_to_period(x = tempo.time - ini.time))
+                final.loop <- (tempo.time - ini.time) / count * base::ifelse(parall == FALSE, total.comp.nb, base::length(x = x)) # expected duration in seconds # intra nb.compar loop lapse: time lapse / cycles done * cycles remaining
                 final.exp <- base::as.POSIXct(final.loop, origin = ini.date)
-                base::cat(base::paste0(base::ifelse(parall == FALSE, "\n", base::paste0("\nIN PROCESS ", process.id, " | ")), "LOOP ", base::format(count, big.mark=","), " / ", base::format(base::ifelse(parall == FALSE, total.comp.nb, base::length(x)), big.mark=","), " | TIME SPENT: ", tempo.lapse, " | EXPECTED END: ", final.exp))
+                base::cat(base::paste0(base::ifelse(parall == FALSE, "\n", base::paste0("\nIN PROCESS ", process.id, " | ", collapse = NULL, recycle0 = FALSE)), "LOOP ", base::format(count, big.mark=","), " / ", base::format(base::ifelse(parall == FALSE, total.comp.nb, base::length(x = x)), big.mark=","), " | TIME SPENT: ", tempo.lapse, " | EXPECTED END: ", final.exp, collapse = NULL, recycle0 = FALSE))
             }
-            if(count == base::ifelse(parall == FALSE, total.comp.nb, base::length(x))){
-                tempo.time <- base::as.numeric(base::Sys.time())
-                tempo.lapse <- base::round(lubridate::seconds_to_period(tempo.time - ini.time))
-                base::cat(base::paste0(base::ifelse(parall == FALSE, "\nLOOP PROCESS ENDED | ", base::paste0("\nPROCESS ", process.id, " ENDED | ")), "LOOP ", base::format(count, big.mark=","), " / ", base::format(base::ifelse(parall == FALSE, total.comp.nb, base::length(x)), big.mark=","), " | TIME SPENT: ", tempo.lapse, "\n\n"))
+            if(count == base::ifelse(parall == FALSE, total.comp.nb, base::length(x = x))){
+                tempo.time <- base::as.numeric(x = base::Sys.time())
+                tempo.lapse <- base::round(x = lubridate::seconds_to_period(x = tempo.time - ini.time))
+                base::cat(base::paste0(base::ifelse(parall == FALSE, "\nLOOP PROCESS ENDED | ", base::paste0("\nPROCESS ", process.id, " ENDED | ", collapse = NULL, recycle0 = FALSE)), "LOOP ", base::format(count, big.mark=","), " / ", base::format(base::ifelse(parall == FALSE, total.comp.nb, base::length(x = x)), big.mark=","), " | TIME SPENT: ", tempo.lapse, "\n\n", collapse = NULL, recycle0 = FALSE))
             }
         ', 
         end.loop.string
@@ -978,16 +991,16 @@ arg_test <- function(
 
     if(parall == TRUE){
         # list of i numbers that will be split
-        i.list <- base::vector("list", base::length(val)) # positions to split in parallel jobs
-        for(i2 in 1:base::length(arg)){
+        i.list <- base::vector("list", base::length(x = val)) # positions to split in parallel jobs
+        for(i2 in 1:base::length(x = arg)){
             if(i2 == 1L){
-                tempo.divisor <- total.comp.nb / base::length(val[[i2]])
-                i.list[[i2]] <- base::rep(1:base::length(val[[i2]]), each = base::as.integer(tempo.divisor))
-                tempo.multi <- base::length(val[[i2]])
+                tempo.divisor <- total.comp.nb / base::length(x = val[[i2]])
+                i.list[[i2]] <- base::rep(1:base::length(x = val[[i2]]), each = base::as.integer(tempo.divisor))
+                tempo.multi <- base::length(x = val[[i2]])
             }else{
-                tempo.divisor <- tempo.divisor / base::length(val[[i2]])
-                i.list[[i2]] <- base::rep(base::rep(1:base::length(val[[i2]]), each = base::as.integer(tempo.divisor)), time = base::as.integer(tempo.multi))
-                tempo.multi <- tempo.multi * base::length(val[[i2]])
+                tempo.divisor <- tempo.divisor / base::length(x = val[[i2]])
+                i.list[[i2]] <- base::rep(base::rep(1:base::length(x = val[[i2]]), each = base::as.integer(tempo.divisor)), time = base::as.integer(tempo.multi))
+                tempo.multi <- tempo.multi * base::length(x = val[[i2]])
             }
         }
         # end list of i numbers that will be split
@@ -995,16 +1008,16 @@ arg_test <- function(
         tempo_cat <- base::paste0("PARALLELIZATION INITIATED AT: ", ini.date)
         base::cat(base::paste0("\n", tempo_cat, "\n"))
         tempo.thread.nb = parallel::detectCores(all.tests = FALSE, logical = TRUE) # detect the number of threads
-        if(base::is.null(thread.nb)){
+        if(base::is.null(x = thread.nb)){
             thread.nb <- tempo.thread.nb
         }else if(tempo.thread.nb < thread.nb){
             thread.nb <- tempo.thread.nb
         }
         tempo_cat <- base::paste0("NUMBER OF THREADS USED: ", thread.nb)
         base::cat(base::paste0("\n    ", tempo_cat, "\n"))
-        Clust <- parallel::makeCluster(thread.nb, outfile = base::paste0(res.path, "/test_parall_log.txt")) # outfile to print or cat during parallelization (only possible in a file, outfile = "" do not work on windows)
-        tempo_cat <- base::paste0("SPLIT OF TEST NUMBERS IN PARALLELISATION:")
-        base::cat(base::paste0("\n    ", tempo_cat, "\n"))
+        Clust <- parallel::makeCluster(thread.nb, outfile = base::paste0(res.path, "/test_parall_log.txt", collapse = NULL, recycle0 = FALSE)) # outfile to print or cat during parallelization (only possible in a file, outfile = "" do not work on windows)
+        tempo_cat <- base::paste0("SPLIT OF TEST NUMBERS IN PARALLELISATION:", collapse = NULL, recycle0 = FALSE)
+        base::cat(base::paste0("\n    ", tempo_cat, "\n", collapse = NULL, recycle0 = FALSE))
         cluster.list <- parallel::clusterSplit(Clust, 1:total.comp.nb) # split according to the number of cluster
         utils::str(cluster.list) # using base::print(utils::str()) add a NULL below the result
         base::cat("\n")
@@ -1064,7 +1077,7 @@ arg_test <- function(
             ){
                 # check again: very important because another R
                 process.id <- base::Sys.getpid()
-                base::cat(base::paste0("\nPROCESS ID ", process.id, " -> TESTS ", x[1], " TO ", x[base::length(x)], "\n"))
+                base::cat(base::paste0("\nPROCESS ID ", process.id, " -> TESTS ", x[1], " TO ", x[base::length(x = x)], "\n", collapse = NULL, recycle0 = FALSE))
                 saferDev:::.pack_and_function_check(
                     fun = base::c(
                         "lubridate::seconds_to_period"
@@ -1075,96 +1088,96 @@ arg_test <- function(
                 # end check again: very important because another R
                 # plot management
                 if(plot.fun == TRUE){
-                    grDevices::pdf(file = base::paste0(res.path, "/plots_from_test_", x[1], base::ifelse(base::length(x) == 1L, ".pdf", base::paste0("-", x[base::length(x)], ".pdf"))))
+                    grDevices::pdf(file = base::paste0(res.path, "/plots_from_test_", x[1], base::ifelse(base::length(x = x) == 1L, ".pdf", base::paste0("-", x[base::length(x = x)], ".pdf")), collapse = NULL, recycle0 = FALSE))
                 }else{
                     grDevices::pdf(file = NULL) # send plots into a NULL file, no pdf file created
                 }
                 window.nb <- grDevices::dev.cur()
-                base::invisible(grDevices::dev.set(window.nb))
+                base::invisible(x = grDevices::dev.set(window.nb))
                 # end plot management
                 # new environment
                 ini.date <- base::Sys.time()
-                ini.time <- base::as.numeric(ini.date) # time of process begin, converted into 
-                env.name <- base::paste0("env", ini.time)
-                if(base::exists(env.name, where = -1)){ # verify if still ok when arg_test() is inside a function
+                ini.time <- base::as.numeric(x = ini.date) # time of process begin, converted into 
+                env.name <- base::paste0("env", ini.time, collapse = NULL, recycle0 = FALSE)
+                if(base::exists(x = env.name, where = -1)){ # verify if still ok when arg_test() is inside a function
                     tempo_cat <- base::paste0(
                         error_text_start, 
                         "ENVIRONMENT env.name ALREADY EXISTS.\nPLEASE RERUN ONCE.", 
                         collapse = NULL, 
                         recycle0 = FALSE
                     )
-                    base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", base::ifelse(base::is.null(warn), "", base::paste0("IN ADDITION\nWARNING", base::ifelse(warn_count > 1, "S", ""), ":\n\n", warn))), call. = FALSE)
+                    base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n", base::ifelse(test = base::is.null(x = warn), yes = "", no = base::paste0("IN ADDITION\nWARNING", base::ifelse(test = warn_count > 1, yes = "S", no = ""), ":\n\n", warn, collapse = NULL, recycle0 = FALSE)), collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL)
                 }else{
-                    base::assign(env.name, base::new.env())
-                    base::assign("val", val, envir = base::get(env.name, envir = base::sys.nframe(), inherits = FALSE)) # var replaced by val
+                    base::assign(x = env.name, base::new.env())
+                    base::assign(x = "val", val, envir = base::get(x = env.name, envir = base::sys.nframe(), inherits = FALSE)) # var replaced by val
                 }
                 # end new environment
                 print.count.loop <- 0
                 base::suppressMessages(base::suppressWarnings(base::eval(base::parse(text = code))))
-                base::colnames(data) <- arg
-                if( ! base::is.null(expect.error)){
+                base::colnames(x = data) <- arg
+                if( ! base::is.null(x = expect.error)){
                     data <- base::data.frame(data, kind = kind, problem = problem, expected.error = expected.error, message = res, stringsAsFactors = FALSE)
                 }else{
                     data <- base::data.frame(data, kind = kind, problem = problem, message = res, stringsAsFactors = FALSE)
                 }
-                base::row.names(data) <- base::paste0("arg_test_", base::sprintf(base::paste0("%0", base::nchar(total.comp.nb), "d"), x))
+                base::row.names(x = data) <- base::paste0("arg_test_", base::sprintf(base::paste0("%0", base::nchar(x = total.comp.nb), "d", collapse = NULL, recycle0 = FALSE), x), collapse = NULL, recycle0 = FALSE)
                 sys.info <- utils::sessionInfo()
-                sys.info$loadedOnly <- sys.info$loadedOnly[base::order(base::names(sys.info$loadedOnly))] # sort the packages
-                base::invisible(grDevices::dev.off(window.nb))
+                sys.info$loadedOnly <- sys.info$loadedOnly[base::order(base::names(x = sys.info$loadedOnly))] # sort the packages
+                base::invisible(x = grDevices::dev.off(window.nb))
                 base::rm(env.name) # optional, because should disappear at the end of the function execution
                 # output
                 output <- base::list(fun = fun, ini = ini, data = data, sys.info = sys.info)
-                base::save(output, file = base::paste0(res.path, "/arg_test_", x[1], base::ifelse(base::length(x) == 1L, ".RData", base::paste0("-", x[base::length(x)], ".RData"))))
+                base::save(output, file = base::paste0(res.path, "/arg_test_", x[1], base::ifelse(base::length(x = x) == 1L, ".RData", base::paste0("-", x[base::length(x = x)], ".RData", collapse = NULL, recycle0 = FALSE)), collapse = NULL, recycle0 = FALSE))
                 if(plot.fun == TRUE & plot.count == 0L){
                     warn_count <- warn_count + 1
                     tempo_warn <- base::paste0("(", warn_count,") IN PROCESS ", process.id, ": NO PDF PLOT BECAUSE ONLY ERRORS REPORTED.", collapse = NULL, recycle0 = FALSE)
                     warn <- base::paste0(base::ifelse(test = base::is.null(x = warn), yes = tempo_warn, no = base::paste0(warn, "\n\n", tempo_warn, collapse = NULL, recycle0 = FALSE)), collapse = NULL, recycle0 = FALSE)
-                    base::file.remove(base::paste0(res.path, "/plots_from_arg_test_", x[1], base::ifelse(base::length(x) == 1L, ".pdf", base::paste0("-", x[base::length(x)], ".pdf"))))
+                    base::file.remove(base::paste0(res.path, "/plots_from_arg_test_", x[1], base::ifelse(base::length(x = x) == 1L, ".pdf", base::paste0("-", x[base::length(x = x)], ".pdf", collapse = NULL, recycle0 = FALSE)), collapse = NULL, recycle0 = FALSE))
                 }
-                table.out <- base::as.matrix(data)
+                table.out <- base::as.matrix(x = data)
                 # table.out[table.out == ""] <- " " # does not work # because otherwise utils::read.table() converts "" into NA
                 table.out <- base::gsub(table.out, pattern = "\n", replacement = " ")
-                utils::write.table(table.out, file = base::paste0(res.path, "/table_from_arg_test_", x[1], base::ifelse(base::length(x) == 1L, ".tsv", base::paste0("-", x[base::length(x)], ".tsv"))), row.names = TRUE, col.names = NA, append = FALSE, quote = FALSE, sep = "\t", eol = "\n", na = "")
+                utils::write.table(table.out, file = base::paste0(res.path, "/table_from_arg_test_", x[1], base::ifelse(base::length(x = x) == 1L, ".tsv", base::paste0("-", x[base::length(x = x)], ".tsv", collapse = NULL, recycle0 = FALSE)), collapse = NULL, recycle0 = FALSE), row.names = TRUE, col.names = NA, append = FALSE, quote = FALSE, sep = "\t", eol = "\n", na = "")
             }
         )
         parallel::stopCluster(Clust)
 
         # files assembly
-        if(base::length(cluster.list) > 1){
-            for(i2 in 1:base::length(cluster.list)){
-                tempo.file <- base::paste0(res.path, "/table_from_arg_test_", base::min(cluster.list[[i2]], na.rm = TRUE), base::ifelse(base::length(cluster.list[[i2]]) == 1L, ".tsv", base::paste0("-", base::max(cluster.list[[i2]], na.rm = TRUE), ".tsv"))) # txt file
+        if(base::length(x = cluster.list) > 1){
+            for(i2 in 1:base::length(x = cluster.list)){
+                tempo.file <- base::paste0(res.path, "/table_from_arg_test_", base::min(cluster.list[[i2]], na.rm = TRUE), base::ifelse(base::length(x = cluster.list[[i2]]) == 1L, ".tsv", base::paste0("-", base::max(cluster.list[[i2]], na.rm = TRUE), ".tsv", collapse = NULL, recycle0 = FALSE)), collapse = NULL, recycle0 = FALSE) # txt file
                 tempo <- utils::read.table(file = tempo.file, header = TRUE, stringsAsFactors = FALSE, sep = "\t", row.names = 1, comment.char = "", colClasses = "character") #  row.names = 1 (1st column) because now utils::read.table() adds a NA in the header if the header starts by a tabulation, comment.char = "" because colors with #, colClasses = "character" otherwise convert "" (from NULL) into NA
-                if(base::file.exists(base::paste0(res.path, "/plots_from_arg_test_", base::min(cluster.list[[i2]], na.rm = TRUE), base::ifelse(base::length(cluster.list[[i2]]) == 1L, ".pdf", base::paste0("-", base::max(cluster.list[[i2]], na.rm = TRUE), ".pdf"))))){
-                    tempo.pdf <- base::paste0(res.path, "/plots_from_arg_test_", base::min(cluster.list[[i2]], na.rm = TRUE), base::ifelse(base::length(cluster.list[[i2]]) == 1L, ".pdf", base::paste0("-", base::max(cluster.list[[i2]], na.rm = TRUE), ".pdf"))) # pdf file
+                if(base::file.exists(base::paste0(res.path, "/plots_from_arg_test_", base::min(cluster.list[[i2]], na.rm = TRUE), base::ifelse(base::length(x = cluster.list[[i2]]) == 1L, ".pdf", base::paste0("-", base::max(cluster.list[[i2]], na.rm = TRUE), ".pdf", collapse = NULL, recycle0 = FALSE)), collapse = NULL, recycle0 = FALSE))){
+                    tempo.pdf <- base::paste0(res.path, "/plots_from_arg_test_", base::min(cluster.list[[i2]], na.rm = TRUE), base::ifelse(base::length(x = cluster.list[[i2]]) == 1L, ".pdf", base::paste0("-", base::max(cluster.list[[i2]], na.rm = TRUE), ".pdf", collapse = NULL, recycle0 = FALSE)), collapse = NULL, recycle0 = FALSE) # pdf file
                 }else{
                     tempo.pdf <- NULL
                 }
-                tempo.rdata <- base::paste0(res.path, "/arg_test_", base::min(cluster.list[[i2]], na.rm = TRUE), base::ifelse(base::length(cluster.list[[i2]]) == 1L, ".RData", base::paste0("-", base::max(cluster.list[[i2]], na.rm = TRUE), ".RData"))) # RData file
+                tempo.rdata <- base::paste0(res.path, "/arg_test_", base::min(cluster.list[[i2]], na.rm = TRUE), base::ifelse(base::length(x = cluster.list[[i2]]) == 1L, ".RData", base::paste0("-", base::max(cluster.list[[i2]], na.rm = TRUE), ".RData", collapse = NULL, recycle0 = FALSE)), collapse = NULL, recycle0 = FALSE) # RData file
                 if(i2 == 1L){
                     final.file <- tempo
                     final.pdf <- tempo.pdf
                     # new env for RData combining
-                    env.name <- base::paste0("env", ini.time)
-                    if(base::exists(env.name, where = -1)){ # verify if still ok when this function is inside a function
+                    env.name <- base::paste0("env", ini.time, collapse = NULL, recycle0 = FALSE)
+                    if(base::exists(x = env.name, where = -1)){ # verify if still ok when this function is inside a function
                         tempo_cat <- base::paste0(
                             error_text_start, 
                             "ENVIRONMENT env.name ALREADY EXISTS. PLEASE RERUN ONCE.",
                             collapse = NULL, 
                             recycle0 = FALSE
                         )
-                        base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", base::ifelse(base::is.null(warn), "", base::paste0("IN ADDITION\nWARNING", base::ifelse(warn_count > 1, "S", ""), ":\n\n", warn))), call. = FALSE)
+                        base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n", base::ifelse(test = base::is.null(x = warn), yes = "", no = base::paste0("IN ADDITION\nWARNING", base::ifelse(test = warn_count > 1, yes = "S", no = ""), ":\n\n", warn, collapse = NULL, recycle0 = FALSE)), collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL)
                         # end new env for RData combining
                     }else{
-                        base::assign(env.name, base::new.env())
-                        base::load(tempo.rdata, envir = base::get(env.name))
+                        base::assign(x = env.name, base::new.env())
+                        base::load(tempo.rdata, envir = base::get(x = env.name))
                         tempo.rdata1 <- tempo.rdata
-                        base::assign("final.output", base::get("output", envir = base::get(env.name)), envir = base::get(env.name))
+                        base::assign(x = "final.output", base::get(x = "output", envir = base::get(x = env.name)), envir = base::get(x = env.name))
                     }
                 }else{
                     final.file <- base::rbind(final.file, tempo, stringsAsFactors = TRUE)
                     final.pdf <- base::c(final.pdf, tempo.pdf)
-                    base::load(tempo.rdata, envir = base::get(env.name))
-                    if( ! base::identical(base::get("final.output", envir = base::get(env.name))[base::c("R.version", "locale", "platform")], base::get("output", envir = base::get(env.name))[base::c("R.version", "locale", "platform")])){
+                    base::load(tempo.rdata, envir = base::get(x = env.name))
+                    if( ! base::identical(base::get(x = "final.output", envir = base::get(x = env.name))[base::c("R.version", "locale", "platform")], base::get(x = "output", envir = base::get(x = env.name))[base::c("R.version", "locale", "platform")])){
                         tempo_cat <- base::paste0(
                             error_text_start, 
                             "DIFFERENCE BETWEEN OUTPUTS WHILE THEY SHOULD BE IDENTICAL.\nPLEASE CHECK\n", 
@@ -1174,136 +1187,136 @@ arg_test <- function(
                             collapse = NULL, 
                             recycle0 = FALSE
                         )
-                        base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", base::ifelse(base::is.null(warn), "", base::paste0("IN ADDITION\nWARNING", base::ifelse(warn_count > 1, "S", ""), ":\n\n", warn))), call. = FALSE)
+                        base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n", base::ifelse(test = base::is.null(x = warn), yes = "", no = base::paste0("IN ADDITION\nWARNING", base::ifelse(test = warn_count > 1, yes = "S", no = ""), ":\n\n", warn, collapse = NULL, recycle0 = FALSE)), collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL)
                     }else{
                         # add the differences in RData $sysinfo into final.output
-                        tempo.base1 <- base::sort(base::get("final.output", envir = base::get(env.name))$sys.info$basePkgs)
-                        tempo.base2 <- base::sort(base::get("output", envir = base::get(env.name))$sys.info$basePkgs)
-                        tempo.other1 <- base::names(base::get("final.output", envir = base::get(env.name))$sys.info$otherPkgs)
-                        tempo.other2 <- base::names(base::get("output", envir = base::get(env.name))$sys.info$otherPkgs)
-                        tempo.loaded1 <- base::names(base::get("final.output", envir = base::get(env.name))$sys.info$loadedOnly)
-                        tempo.loaded2 <- base::names(base::get("output", envir = base::get(env.name))$sys.info$loadedOnly)
-                        base::assign("final.output", {
-                            x <- base::get("final.output", envir = base::get(env.name))
-                            y <- base::get("output", envir = base::get(env.name))
+                        tempo.base1 <- base::sort(base::get(x = "final.output", envir = base::get(x = env.name))$sys.info$basePkgs)
+                        tempo.base2 <- base::sort(base::get(x = "output", envir = base::get(x = env.name))$sys.info$basePkgs)
+                        tempo.other1 <- base::names(x = base::get(x = "final.output", envir = base::get(x = env.name))$sys.info$otherPkgs)
+                        tempo.other2 <- base::names(x = base::get(x = "output", envir = base::get(x = env.name))$sys.info$otherPkgs)
+                        tempo.loaded1 <- base::names(x = base::get(x = "final.output", envir = base::get(x = env.name))$sys.info$loadedOnly)
+                        tempo.loaded2 <- base::names(x = base::get(x = "output", envir = base::get(x = env.name))$sys.info$loadedOnly)
+                        base::assign(x = "final.output", {
+                            x <- base::get(x = "final.output", envir = base::get(x = env.name))
+                            y <- base::get(x = "output", envir = base::get(x = env.name))
                             x$sys.info$basePkgs <- base::sort(base::unique(tempo.base1, tempo.base2))
                             if( ! base::all(tempo.other2 %in% tempo.other1)){
                                 x$sys.info$otherPkgs <- base::c(x$sys.info$otherPkgs, y$sys.info$otherPkgs[ ! (tempo.other2 %in% tempo.other1)])
-                                x$sys.info$otherPkgs <- x$sys.info$otherPkgs[base::order(base::names(x$sys.info$otherPkgs))]
+                                x$sys.info$otherPkgs <- x$sys.info$otherPkgs[base::order(base::names(x = x$sys.info$otherPkgs))]
                             }
                             if( ! base::all(tempo.loaded2 %in% tempo.loaded1)){
                                 x$sys.info$loadedOnly <- base::c(x$sys.info$loadedOnly, y$sys.info$loadedOnly[ ! (tempo.loaded2 %in% tempo.loaded1)])
-                                x$sys.info$loadedOnly <- x$sys.info$loadedOnly[base::order(base::names(x$sys.info$loadedOnly))]
+                                x$sys.info$loadedOnly <- x$sys.info$loadedOnly[base::order(base::names(x = x$sys.info$loadedOnly))]
                             }
                             x
-                        }, envir = base::get(env.name))
+                        }, envir = base::get(x = env.name))
                         # add the differences in RData $sysinfo into final.output
                     }
                 }
                 base::file.remove(base::c(tempo.file, tempo.rdata))
             }
             # combine pdf and save
-            if( ! base::is.null(final.pdf)){
+            if( ! base::is.null(x = final.pdf)){
                 qpdf::pdf_combine(
                     input = final.pdf,
-                    output = base::paste0(res.path, "/plots_from_arg_test_1-", total.comp.nb, ".pdf")
+                    output = base::paste0(res.path, "/plots_from_arg_test_1-", total.comp.nb, ".pdf", collapse = NULL, recycle0 = FALSE)
                 )
                 base::file.remove(final.pdf)
             }
             # end combine pdf and save
             # save RData
-            base::assign("output", base::c(base::get("final.output", envir = base::get(env.name)), data = base::list(final.file)), envir = base::get(env.name))
-            base::save(output, file = base::paste0(res.path, "/arg_test_1-", total.comp.nb, ".RData"), envir = base::get(env.name))
+            base::assign(x = "output", base::c(base::get(x = "final.output", envir = base::get(x = env.name)), data = base::list(final.file)), envir = base::get(x = env.name))
+            base::save(output, file = base::paste0(res.path, "/arg_test_1-", total.comp.nb, ".RData", collapse = NULL, recycle0 = FALSE), envir = base::get(x = env.name))
             base::rm(env.name) # optional, because should disappear at the end of the function execution
             # end save RData
             # save txt
-            utils::write.table(final.file, file = base::paste0(res.path, "/table_from_arg_test_1-", total.comp.nb, ".tsv"), row.names = TRUE, col.names = NA, append = FALSE, quote = FALSE, sep = "\t", eol = "\n", na = "")
+            utils::write.table(final.file, file = base::paste0(res.path, "/table_from_arg_test_1-", total.comp.nb, ".tsv", collapse = NULL, recycle0 = FALSE), row.names = TRUE, col.names = NA, append = FALSE, quote = FALSE, sep = "\t", eol = "\n", na = "")
             # end save txt
-            if( ! base::is.null(expect.error)){
+            if( ! base::is.null(x = expect.error)){
                 final.file <- final.file[ ! final.file$problem == final.file$expected.error, ]
-                if(base::nrow(final.file) == 0L){
-                    base::cat(base::paste0("NO DISCREPANCY BETWEEN EXPECTED AND OBSERVED ERRORS\n\n"))
+                if(base::nrow(x = final.file) == 0L){
+                    base::cat(base::paste0("NO DISCREPANCY BETWEEN EXPECTED AND OBSERVED ERRORS\n\n", collapse = NULL, recycle0 = FALSE))
                 }else{
-                    base::cat(base::paste0("DISCREPANCIES BETWEEN EXPECTED AND OBSERVED ERRORS (SEE THE discrepancy_table_from_arg_test_1-", total.comp.nb, ".tsv FILE)\n\n"))
-                    utils::write.table(final.file, file = base::paste0(res.path, "/discrepancy_table_from_arg_test_1-", total.comp.nb, ".tsv"), row.names = TRUE, col.names = NA, append = FALSE, quote = FALSE, sep = "\t", eol = "\n", na = "")
+                    base::cat(base::paste0("DISCREPANCIES BETWEEN EXPECTED AND OBSERVED ERRORS (SEE THE discrepancy_table_from_arg_test_1-", total.comp.nb, ".tsv FILE)\n\n", collapse = NULL, recycle0 = FALSE))
+                    utils::write.table(final.file, file = base::paste0(res.path, "/discrepancy_table_from_arg_test_1-", total.comp.nb, ".tsv", collapse = NULL, recycle0 = FALSE), row.names = TRUE, col.names = NA, append = FALSE, quote = FALSE, sep = "\t", eol = "\n", na = "")
                 }
             }
         }else{
             tempo_cat <- base::paste0("INTERNAL ERROR 2 IN ", intern_error_text_start, "WEIRD THAT base::length(cluster.list) IN NOT > 1.", intern_error_text_end, collapse = NULL, recycle0 = FALSE)
-            base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
+            base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n", base::ifelse(test = base::is.null(x = warn), yes = "", no = base::paste0("IN ADDITION\nWARNING", base::ifelse(test = warn_count > 1, yes = "S", no = ""), ":\n\n", warn, collapse = NULL, recycle0 = FALSE)), collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL)
         }
         # end files assembly
     }else{
         # plot management
         if(plot.fun == TRUE){
-            grDevices::pdf(file = base::paste0(res.path, "/plots_from_arg_test_1", base::ifelse(total.comp.nb == 1L, ".pdf", base::paste0("-", total.comp.nb, ".pdf"))))
+            grDevices::pdf(file = base::paste0(res.path, "/plots_from_arg_test_1", base::ifelse(total.comp.nb == 1L, ".pdf", base::paste0("-", total.comp.nb, ".pdf", collapse = NULL, recycle0 = FALSE)), collapse = NULL, recycle0 = FALSE))
         }else{
             grDevices::pdf(file = NULL) # send plots into a NULL file, no pdf file created
         }
         window.nb <- grDevices::dev.cur()
-        base::invisible(grDevices::dev.set(window.nb))
+        base::invisible(x = grDevices::dev.set(window.nb))
         # end plot management
         # new environment
-        env.name <- base::paste0("env", ini.time)
-        if(base::exists(env.name, where = -1)){
+        env.name <- base::paste0("env", ini.time, collapse = NULL, recycle0 = FALSE)
+        if(base::exists(x = env.name, where = -1)){
             tempo_cat <- base::paste0(
                 error_text_start, 
                 "ENVIRONMENT env.name ALREADY EXISTS.\nPLEASE RERUN ONCE.", 
                 collapse = NULL, 
                 recycle0 = FALSE
             )
-            base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", base::ifelse(base::is.null(warn), "", base::paste0("IN ADDITION\nWARNING", base::ifelse(warn_count > 1, "S", ""), ":\n\n", warn))), call. = FALSE)
+            base::stop(base::paste0("\n\n================\n\n", tempo.cat, "\n\n================\n\n", base::ifelse(test = base::is.null(x = warn), yes = "", no = base::paste0("IN ADDITION\nWARNING", base::ifelse(test = warn_count > 1, yes = "S", no = ""), ":\n\n", warn, collapse = NULL, recycle0 = FALSE)), collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL)
         }else{
-            base::assign(env.name, base::new.env())
-            base::assign("val", val, envir = base::get(env.name, envir = base::sys.nframe(), inherits = FALSE)) # var replaced by val
+            base::assign(x = env.name, base::new.env())
+            base::assign(x = "val", val, envir = base::get(x = env.name, envir = base::sys.nframe(), inherits = FALSE)) # var replaced by val
         }
         # end new environment
         base::suppressMessages(base::suppressWarnings(base::eval(base::parse(text = code))))
-        base::colnames(data) <- arg
+        base::colnames(x = data) <- arg
         expect.data <- base::data.frame()
-        if( ! base::is.null(expect.error)){
+        if( ! base::is.null(x = expect.error)){
             data <- base::data.frame(data, kind = kind, problem = problem, expected.error = expected.error, message = res, stringsAsFactors = FALSE)
         }else{
             data <- base::data.frame(data, kind = kind, problem = problem, message = res, stringsAsFactors = FALSE)
         }
-        base::row.names(data) <- base::paste0("arg_test_", base::sprintf(base::paste0("%0", base::nchar(total.comp.nb), "d"), 1:total.comp.nb))
+        base::row.names(x = data) <- base::paste0("arg_test_", base::sprintf(base::paste0("%0", base::nchar(x = total.comp.nb), "d", collapse = NULL, recycle0 = FALSE), 1:total.comp.nb), collapse = NULL, recycle0 = FALSE)
         sys.info <- utils::sessionInfo()
-        sys.info$loadedOnly <- sys.info$loadedOnly[base::order(base::names(sys.info$loadedOnly))] # sort the packages
-        base::invisible(grDevices::dev.off(window.nb))
+        sys.info$loadedOnly <- sys.info$loadedOnly[base::order(base::names(x = sys.info$loadedOnly))] # sort the packages
+        base::invisible(x = grDevices::dev.off(window.nb))
         base::rm(env.name) # optional, because should disappear at the end of the function execution
         if(plot.fun == TRUE & plot.count == 0L){
             warn_count <- warn_count + 1
             tempo_warn <- base::paste0("(", warn_count,") NO PDF PLOT BECAUSE ONLY ERRORS REPORTED.", collapse = NULL, recycle0 = FALSE)
             warn <- base::paste0(base::ifelse(test = base::is.null(x = warn), yes = tempo_warn, no = base::paste0(warn, "\n\n", tempo_warn, collapse = NULL, recycle0 = FALSE)), collapse = NULL, recycle0 = FALSE)
-            base::file.remove(base::paste0(res.path, "/plots_from_arg_test_1", base::ifelse(total.comp.nb == 1L, ".pdf", base::paste0("-", total.comp.nb, ".pdf"))))
+            base::file.remove(base::paste0(res.path, "/plots_from_arg_test_1", base::ifelse(total.comp.nb == 1L, ".pdf", base::paste0("-", total.comp.nb, ".pdf", collapse = NULL, recycle0 = FALSE)), collapse = NULL, recycle0 = FALSE))
         }
         # output
         output <- base::list(fun = fun, ini = ini, data = data, sys.info = sys.info)
-        if( ! base::is.null(expect.error)){
+        if( ! base::is.null(x = expect.error)){
             expect.data <- output$data[ ! output$data$problem == output$data$expected.error, ]
-            if(base::nrow(expect.data) == 0L){
-                base::cat(base::paste0("NO DISCREPANCY BETWEEN EXPECTED AND OBSERVED ERRORS\n\n"))
+            if(base::nrow(x = expect.data) == 0L){
+                base::cat(base::paste0("NO DISCREPANCY BETWEEN EXPECTED AND OBSERVED ERRORS\n\n", collapse = NULL, recycle0 = FALSE))
             }else{
-                base::cat(base::paste0("DISCREPANCIES BETWEEN EXPECTED AND OBSERVED ERRORS (SEE THE ", if(export == TRUE){base::paste0("discrepancy_table_from_arg_test_1", base::ifelse(total.comp.nb == 1L, "", base::paste0("-", total.comp.nb)), ".tsv FILE")}else{"$data RESULT"}, ")\n\n"))
+                base::cat(base::paste0("DISCREPANCIES BETWEEN EXPECTED AND OBSERVED ERRORS (SEE THE ", if(export == TRUE){base::paste0("discrepancy_table_from_arg_test_1", base::ifelse(total.comp.nb == 1L, "", base::paste0("-", total.comp.nb, collapse = NULL, recycle0 = FALSE)), ".tsv FILE", collapse = NULL, recycle0 = FALSE)}else{"$data RESULT"}, ")\n\n"))
                 if(export == TRUE){
-                    expect.data <- base::as.matrix(expect.data)
+                    expect.data <- base::as.matrix(x = expect.data)
                     expect.data <- base::gsub(expect.data, pattern = "\n", replacement = "  ")
-                    utils::write.table(expect.data, file = base::paste0(res.path, "/discrepancy_table_from_arg_test_1", base::ifelse(total.comp.nb == 1L, ".tsv", base::paste0("-", total.comp.nb, ".tsv"))), row.names = TRUE, col.names = NA, append = FALSE, quote = FALSE, sep = "\t", eol = "\n", na = "")
+                    utils::write.table(expect.data, file = base::paste0(res.path, "/discrepancy_table_from_arg_test_1", base::ifelse(total.comp.nb == 1L, ".tsv", base::paste0("-", total.comp.nb, ".tsv", collapse = NULL, recycle0 = FALSE)), collapse = NULL, recycle0 = FALSE), row.names = TRUE, col.names = NA, append = FALSE, quote = FALSE, sep = "\t", eol = "\n", na = "")
                 }
             }
         }
         if(export == TRUE){
-            base::save(output, file = base::paste0(res.path, "/arg_test_1", base::ifelse(total.comp.nb == 1L, ".RData", base::paste0("-", total.comp.nb, ".RData"))))
-            table.out <- base::as.matrix(output$data)
+            base::save(output, file = base::paste0(res.path, "/arg_test_1", base::ifelse(total.comp.nb == 1L, ".RData", base::paste0("-", total.comp.nb, ".RData", collapse = NULL, recycle0 = FALSE)), collapse = NULL, recycle0 = FALSE))
+            table.out <- base::as.matrix(x = output$data)
             table.out <- base::gsub(table.out, pattern = "\n", replacement = "  ")
-            utils::write.table(table.out, file = base::paste0(res.path, "/table_from_arg_test_1", base::ifelse(total.comp.nb == 1L, ".tsv", base::paste0("-", total.comp.nb, ".tsv"))), row.names = TRUE, col.names = NA, append = FALSE, quote = FALSE, sep = "\t", eol = "\n", na = "")
+            utils::write.table(table.out, file = base::paste0(res.path, "/table_from_arg_test_1", base::ifelse(total.comp.nb == 1L, ".tsv", base::paste0("-", total.comp.nb, ".tsv", collapse = NULL, recycle0 = FALSE)), collapse = NULL, recycle0 = FALSE), row.names = TRUE, col.names = NA, append = FALSE, quote = FALSE, sep = "\t", eol = "\n", na = "")
         }
         # end output
     }
     end.date <- base::Sys.time()
-    end.time <- base::as.numeric(end.date)
-    total.lapse <- base::round(lubridate::seconds_to_period(end.time - ini.time))
-    base::cat(base::paste0("test JOB END\n\nTIME: ", end.date, "\n\nTOTAL TIME LAPSE: ", total.lapse, "\n\n\n"))
+    end.time <- base::as.numeric(x = end.date)
+    total.lapse <- base::round(x = lubridate::seconds_to_period(x = end.time - ini.time))
+    base::cat(base::paste0("test JOB END\n\nTIME: ", end.date, "\n\nTOTAL TIME LAPSE: ", total.lapse, "\n\n\n", collapse = NULL, recycle0 = FALSE))
     #### end main code
 
     #### warning output
