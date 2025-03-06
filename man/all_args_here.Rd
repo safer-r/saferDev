@@ -43,7 +43,7 @@ Data frame:
  $DEF_ARGS: the defaults arguments of $FUN_NAME. "NO_ARGS" means that the function has no arguments. "INTERNAL_FUNCTION" means that the function has been created inside the checked function. "SKIPPED" means that the function is not analyzed for the reason indicated in the "details" section below.
  $MISSING_ARG_NAMES: the missing argument names in $FUN_ARGS.
  $MISSING_ARGS: the missing arguments with their values in $FUN_ARGS.
- $STATUS: either "GOOD", meaning that all the arguments are already written, or a new proposal of arguments writting, or indicates if some arguments are not fully written (abbreviation is discouraged), or nothing.
+ $STATUS: either "GOOD", meaning that all the arguments are already written, or a new proposal of arguments writing, or indicates if some arguments are not fully written (abbreviation is discouraged), or nothing.
 
 An additionnal message "EVERYTHING SEEMS CLEAN" if the $STATUS column is only made of "" and "GOOD".
 }
@@ -65,14 +65,16 @@ Warning: the following R functions are also skipped (as indicated by "SKIPPED" i
 
 Warning: some functions, like rownames(), have different arguments depending on whether something is assigned to it (e.g., rownames(x) <- "a") or not. The all_args_here() function always propose the arguments defined in the help page without assignement, meaning that is cannot detect the assignation. A way to by-pass this is to use the "exact" writing of the function. For instance, base::"rownames<-"(x, "a") instead of using base::rownames(x) <- "a", and use getAnywhere("rownames<-") to see the arguments of the function.
 
-Most of the time, all_args_here() does not check inside comments, but some unexpected writting could dupe all_args_here(). Please, report here https://github.com/safer-r/saferDev/issues if it is the case.
+Most of the time, all_args_here() does not check inside comments, but some unexpected writing could dupe all_args_here(). Please, report here https://github.com/safer-r/saferDev/issues if it is the case.
 
 The returned line numbers are indicative, depending on which source is checked. For instance, saferDev::report (compiled) has not the same line numbers as its source file (https://github.com/safer-r/saferDev/blob/main/R/report.R). Notably, compiled functions do not have comments anymore, compared to the same source function sourced into the working environment. In addition, the counting starts at the "<- function" line, i.e., without counting the #' header lines potentially present in source files.
+
+The function works by notably replacing first in the code: 1) the three consecutive characters "'" or '"' by three spaces, 2) "\"'" and '\'"' by four spaces and 3) escape quotes like \" or \' by two spaces.
 
 Warnings: 
 1) The function could not properly work if any comma is present in default argument values. Please, report here https://github.com/safer-r/saferDev/issues if it is the case.
 
-2) Proposals in the STATUS column are only suggestions, as it is difficult to anticipate all the exceptions with arguments writting.
+2) Proposals in the STATUS column are only suggestions, as it is difficult to anticipate all the exceptions with arguments writing.
 }
 \examples{
 \dontrun{ # Example that return an error
@@ -86,5 +88,5 @@ all_args_here(BACKBONE, export = TRUE, safer_check = FALSE)
 
 }
 \author{
-Gael Millot <gael.millot@pasteur.fr>
+\href{gael.millot@pasteur.fr}{Gael Millot}
 }

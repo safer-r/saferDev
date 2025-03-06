@@ -100,9 +100,9 @@ arg_check(data = test, print = TRUE, class = "matrix", mode = "numeric", error_t
 \code{\link{match.arg}} et \code{\link{arg_test}}.
 }
 \author{
-Gael Millot <gael.millot@pasteur.fr>
+\href{gael.millot@pasteur.fr}{Gael Millot}
 
-Yushi Han <yushi.han2000@gmail.com>
+\href{yushi.han2000@gmail.com}{Yushi Han}
 
-Haiding Wang <wanghaiding442@gmail.com>
+\href{wanghaiding442@gmail.com}{Haiding Wang}
 }

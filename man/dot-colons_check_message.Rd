@@ -48,10 +48,10 @@ Create the message for the colons_check() function.
 }
 \examples{
 \dontrun{ # Example that shouldn't be run because this is an internal function (not found by devtools::check())
-.colons_check_message(list_fun = list(c2 = "UseMethod"), list_fun_pos = list(c2 = 1), line_nb = 2, ini = c("function (x, ...) ", "UseMethod(\"mean\")", "<bytecode: 0x000001969e09e580>", "<environment: namespace:base>"), arg_user_setting2 = list(x = x, arg_user_setting2 = arg_user_setting, error_text = "P1::F1"), text = "BASIC", internal_fun_names = NULL, lib_path = NULL, error_text = " INSIDE P1::F1")
+saferDev:::.colons_check_message(list_fun = list(c2 = "UseMethod"), list_fun_pos = list(c2 = 1), line_nb = 2, ini = c("function (x, ...) ", "UseMethod(\"mean\")"), arg_user_setting2 = list(x = "mean"), text = "BASIC", internal_fun_names = NULL, lib_path = NULL, error_text = " INSIDE P1::F1")
 }
 }
 \author{
-Gael Millot <gael.millot@pasteur.fr>
+\href{gael.millot@pasteur.fr}{Gael Millot}
 }
 \keyword{internal}

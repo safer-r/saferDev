@@ -33,12 +33,12 @@ Return the positions of 1st letter of the first function name in a string, as we
 \examples{
 \dontrun{ # Example that shouldn't be run because this is an internal function (not found by devtools::check())
 # Warning : examples only with strings that must be cleaned from brackets between quotes
-.fun_args_pos(text = ' "a" ; paste0("I", paste0(sum(1:3), collapse = " "), min(1) ) ; range(2)', pattern = paste0("paste0", "[\\\\s\\\\r\\\\n]*\\\\("), lib_path = NULL, error_text = " INSIDE P1::F1")
+saferDev:::.fun_args_pos(text = ' "a" ; paste0("I", paste0(sum(1:3), collapse = " "), min(1) ) ; range(2)', pattern = paste0("paste0", "[\\\\s\\\\r\\\\n]*\\\\("), lib_path = NULL, error_text = " INSIDE P1::F1")
 }
 
 
 }
 \author{
-Gael Millot <gael.millot@pasteur.fr>
+\href{gael.millot@pasteur.fr}{Gael Millot}
 }
 \keyword{internal}

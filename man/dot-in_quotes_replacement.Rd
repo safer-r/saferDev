@@ -38,19 +38,21 @@ $pos: vector of the positions of the 1rst character of the replaced pattern. NUL
 Replace any pattern inside simple ou double quotes by another replacement pattern and get the position of replacements
 }
 \details{
-- In the analyzed string, replace first the three consecutive characters "'" or '"' by three spaces to be able to work and escape quotes like \" or \' by two spaces
-- Warning : must be very simple pattern, like "\\(".
-- Warning: requires saferDev::arg_check, saferDev:::.has_odd_number_of_quotes. In main safer functions, in the section "######## check of the required functions from the required packages" add these functions when checking for the presence of saferDev:::.in_quotes_replacement.
+The function works by notably replacing first: 1) the three consecutive characters "'" or '"' by three spaces, 2) "\"'" and '\'"' by four spaces and 3) escape quotes like \" or \' by two spaces.
+
+Warning : must be very simple pattern, like "\\(".
+
+Warning: requires saferDev::arg_check, saferDev:::.has_odd_number_of_quotes. In main safer functions, in the section "######## check of the required functions from the required packages" add these functions when checking for the presence of saferDev:::.in_quotes_replacement.
 }
 \examples{
 \dontrun{ # Example that shouldn't be run because this is an internal function (not found by devtools::check())
-source("https://raw.githubusercontent.com/safer-r/saferDev/main/dev/other/test.R") ; .in_quotes_replacement(string = paste(deparse(test), collapse = ""), pattern = "\\\\)", no_regex_pattern = ")", replacement = " ", perl = TRUE, lib_path = NULL, error_text = " INSIDE P1::F1")
-.in_quotes_replacement(string = 'paste0("IAGE((", paste0(1:3, collapse = " "), "A)B()")', pattern = "\\\\)", no_regex_pattern = ")", replacement = " ", perl = TRUE, lib_path = NULL, error_text = " INSIDE P1::F1")
+source("https://raw.githubusercontent.com/safer-r/saferDev/main/dev/other/test.R") ; saferDev:::.in_quotes_replacement(string = paste(deparse(test), collapse = ""), pattern = "\\\\)", no_regex_pattern = ")", replacement = " ", perl = TRUE, lib_path = NULL, error_text = " INSIDE P1::F1")
+saferDev:::.in_quotes_replacement(string = 'paste0("IAGE((", paste0(1:3, collapse = " "), "A)B()")', pattern = "\\\\)", no_regex_pattern = ")", replacement = " ", perl = TRUE, lib_path = NULL, error_text = " INSIDE P1::F1")
 }
 
 
 }
 \author{
-Gael Millot <gael.millot@pasteur.fr>
+\href{gael.millot@pasteur.fr}{Gael Millot}
 }
 \keyword{internal}

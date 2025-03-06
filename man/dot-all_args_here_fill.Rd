@@ -24,7 +24,7 @@
 
 \item{arg_full_names}{Vector of strings of the names of the arguments of the function. Can be NULL.}
 
-\item{tempo_split}{Vector of strings of the observed argument writting of the function.}
+\item{tempo_split}{Vector of strings of the observed argument writing of the function.}
 
 \item{three_dots_log}{Vector of logical. Is ... present among arg_full_names.}
 
@@ -58,10 +58,10 @@ Get the $MISSING_ARG_NAMES, $MISSING_ARGS and $NEW of all_args_here().
 }
 \examples{
 \dontrun{ # Example that shouldn't be run because this is an internal function (not found by devtools::check())
-.all_args_here_fill(arg_full = list(x = pairlist(x = quote(expr = ))), arg_full_names = "x", tempo_split = "x", three_dots_log = FALSE, i2 = 1, col1_i2 = 1, col2_i2 =  "length", arg_user_setting_x = "\"FUN1\"", warn = NULL, warn_count = 0, lib_path = NULL, error_text = " INSIDE P1::F1")
+saferDev:::.all_args_here_fill(arg_full = list(x = pairlist(x = quote(expr = ))), arg_full_names = "x", tempo_split = "x", three_dots_log = FALSE, i2 = 1, col1_i2 = 1, col2_i2 =  "length", arg_user_setting_x = "\"FUN1\"", warn = NULL, warn_count = 0, lib_path = NULL, error_text = " INSIDE P1::F1")
 }
 }
 \author{
-Gael Millot <gael.millot@pasteur.fr>
+\href{gael.millot@pasteur.fr}{Gael Millot}
 }
 \keyword{internal}

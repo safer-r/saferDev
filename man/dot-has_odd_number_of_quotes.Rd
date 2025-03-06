@@ -27,12 +27,12 @@ Determine if a string has a odd number of quotes.
 }
 \examples{
 \dontrun{ # Example that shouldn't be run because this is an internal function (not found by devtools::check())
-.has_odd_number_of_quotes(input_string = 'This is a "test" string with "even" quotes', pattern = '"', lib_path = NULL, error_text = " INSIDE P1::F1")
+saferDev:::.has_odd_number_of_quotes(input_string = 'This is a "test" string with "even" quotes', pattern = '"', lib_path = NULL, error_text = " INSIDE P1::F1")
 }
 
 
 }
 \author{
-Gael Millot <gael.millot@pasteur.fr>
+\href{gael.millot@pasteur.fr}{Gael Millot}
 }
 \keyword{internal}
