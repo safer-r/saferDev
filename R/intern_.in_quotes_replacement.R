@@ -369,9 +369,9 @@
     }
     # dealing with quotes (warning: the order is important)
     # removal of "\"'" and '\'"'
-    # test with base::gsub( x = "a\"\\\"'\"a", pattern = '"\\\\"\'"', replacement = '    ')
-    string <- base::gsub( x = string, pattern = '"\\\\"\'"', replacement = '    ', ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE)
-    string <- base::gsub( x = string, pattern = "'\\\\'\"'", replacement = '    ', ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE)
+    # test with base::gsub( x = "a\"\\\"'\"a", pattern = '"\\\\"\'"', replacement = '     ')
+    string <- base::gsub( x = string, pattern = '"\\\\"\'"', replacement = '     ', ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE)
+    string <- base::gsub( x = string, pattern = "'\\\\'\"'", replacement = '     ', ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE)
     # end removal of "\"'" and '\'"'
     # removal of "'" and '"'
     string <- base::gsub( x = string, pattern = '"\'"', replacement = '   ', ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE)

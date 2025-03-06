@@ -555,7 +555,7 @@
                 tempo.pos <- base::paste0(col1, "\t", col2, "\t\t", col3, collapse = NULL, recycle0 = FALSE)
                 output.cat <- base::paste0(
                     base::ifelse(test = base::is.null(x = output.cat), yes = "", no = base::paste0(output.cat, "\n\n", collapse = NULL, recycle0 = FALSE)),
-                    "INSIDE ", arg_user_setting2$x, ", SOME :: OR ::: ARE MISSING AT ", text, " FUNCTION POSITIONS:\n\n", 
+                    "INSIDE ", arg_user_setting2$x, ", SOME :: OR ::: ARE MISSING BEFORE ", text, " FUNCTIONS:\n\n", 
                     "LINE\tFUN\t\tSTRING_BEFORE\n",
                     base::paste0(tempo.pos, collapse = "\n", recycle0 = FALSE), 
                     collapse = NULL, 

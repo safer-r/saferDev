@@ -911,7 +911,7 @@ arg_test <- function(
                     arg.values.print[[j3]] <- base::paste0("SPECIAL VALUE OF CLASS ", base::class(x = arg.values.print[[j3]]), " AND TYPE ", base::typeof(arg.values.print[[j3]]), collapse = NULL, recycle0 = FALSE)
                 }
             }
-            data <- base::rbind(data, base::as.character(x = base::sapply(X = arg.values.print, FUN = function(x){paste0(x, collapse = " ")}, simplify = TRUE, USE.NAMES = TRUE)), stringsAsFactors = FALSE, deparse.level = 1) # each colum is a test
+            data <- base::rbind(data, base::as.character(x = base::sapply(X = arg.values.print, FUN = function(x){base::paste0(x, collapse = " ")}, simplify = TRUE, USE.NAMES = TRUE)), stringsAsFactors = FALSE, deparse.level = 1) # each colum is a test
             tempo.capt <- utils::capture.output(tempo.try.error <- saferDev::get_message(
                 data = base::eval(expr = base::parse(text = fun.test2, file = "", n = NULL, prompt = "?", keep.source = base::getOption(x = "keep.source", default = NULL), srcfile = NULL, encoding = "unknown"), envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL)), 
                 kind = "error", 
@@ -1126,7 +1126,7 @@ arg_test <- function(
                 sys.info <- utils::sessionInfo(package = NULL)
                 sys.info$loadedOnly <- sys.info$loadedOnly[base::order(base::names(x = sys.info$loadedOnly), na.last = TRUE, decreasing = FALSE, method = )] # sort the packages
                 base::invisible(x = grDevices::dev.off(which = window.nb))
-                base::rm(env.name, list = character(), pos = -1, envir = , inherits = FALSE) # optional, because should disappear at the end of the function execution
+                base::rm(env.name, list = base::character(), pos = -1, envir = , inherits = FALSE) # optional, because should disappear at the end of the function execution
                 # output
                 output <- base::list(fun = fun, ini = ini, data = data, sys.info = sys.info)
                 base::save(list = output, file = base::paste0(res.path, "/arg_test_", x[1], base::ifelse(test = base::length(x = x) == 1L, yes = ".RData", no = base::paste0("-", x[base::length(x = x)], ".RData", collapse = NULL, recycle0 = FALSE)), collapse = NULL, recycle0 = FALSE), ascii = FALSE, version = NULL, envir = base::parent.frame(n = 1), compress = FALSE, compression_level = , eval.promises = TRUE, precheck = TRUE)
@@ -1139,7 +1139,7 @@ arg_test <- function(
                 table.out <- base::as.matrix(x = data)
                 # table.out[table.out == ""] <- " " # does not work # because otherwise utils::read.table() converts "" into NA
                 table.out <- base::gsub(x = table.out, pattern = "\n", replacement = " ", ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE)
-                utils::write.table(x = table.out, file = base::paste0(res.path, "/table_from_arg_test_", x[1], base::ifelse(test = base::length(x = x) == 1L, yes = ".tsv", no = base::paste0("-", x[base::length(x = x)], ".tsv", collapse = NULL, recycle0 = FALSE)), collapse = NULL, recycle0 = FALSE), row.names = TRUE, col.names = NA, append = FALSE, quote = FALSE, sep = "\t", eol = "\n", na = "", dec = ".", qmethod = c("escape", "double"), fileEncoding = "")
+                utils::write.table(x = table.out, file = base::paste0(res.path, "/table_from_arg_test_", x[1], base::ifelse(test = base::length(x = x) == 1L, yes = ".tsv", no = base::paste0("-", x[base::length(x = x)], ".tsv", collapse = NULL, recycle0 = FALSE)), collapse = NULL, recycle0 = FALSE), row.names = TRUE, col.names = NA, append = FALSE, quote = FALSE, sep = "\t", eol = "\n", na = "", dec = ".", qmethod = base::c("escape", "double"), fileEncoding = "")
             }
         )
         parallel::stopCluster(cl = Clust)
@@ -1236,7 +1236,7 @@ arg_test <- function(
             # save RData
             base::assign(x = "output", value = base::c(base::get(x = "final.output", envir = base::get(x = env.name, pos = , envir = base::sys.nframe(), mode = "any", inherits = TRUE), pos = -1L, mode = "any", inherits = TRUE), data = base::list(final.file)), envir = base::get(x = env.name, pos = , envir = base::sys.nframe(), mode = "any", inherits = TRUE), pos = -1, inherits = FALSE, immediate = TRUE)
             base::save(list = output, file = base::paste0(res.path, "/arg_test_1-", total.comp.nb, ".RData", collapse = NULL, recycle0 = FALSE), envir = base::get(x = env.name, pos = , envir = base::sys.nframe(), mode = "any", inherits = TRUE), ascii = FALSE, version = NULL, envir = base::parent.frame(n = 1), compress = FALSE, compression_level = , eval.promises = TRUE, precheck = TRUE)
-            base::rm(env.name, list = character(), pos = -1, envir = , inherits = FALSE) # optional, because should disappear at the end of the function execution
+            base::rm(env.name, list = base::character(), pos = -1, envir = , inherits = FALSE) # optional, because should disappear at the end of the function execution
             # end save RData
             # save txt
             utils::write.table(x = final.file, file = base::paste0(res.path, "/table_from_arg_test_1-", total.comp.nb, ".tsv", collapse = NULL, recycle0 = FALSE), row.names = TRUE, col.names = NA, append = FALSE, quote = FALSE, sep = "\t", eol = "\n", na = "")
@@ -1292,7 +1292,7 @@ arg_test <- function(
         sys.info <- utils::sessionInfo(package = NULL)
         sys.info$loadedOnly <- sys.info$loadedOnly[base::order(base::names(x = sys.info$loadedOnly), na.last = TRUE, decreasing = FALSE, method = )] # sort the packages
         base::invisible(x = grDevices::dev.off(which = window.nb))
-        base::rm(env.name, list = character(), pos = -1, envir = , inherits = FALSE) # optional, because should disappear at the end of the function execution
+        base::rm(env.name, list = base::character(), pos = -1, envir = , inherits = FALSE) # optional, because should disappear at the end of the function execution
         if(plot.fun == TRUE & plot.count == 0L){
             warn_count <- warn_count + 1
             tempo_warn <- base::paste0("(", warn_count,") NO PDF PLOT BECAUSE ONLY ERRORS REPORTED.", collapse = NULL, recycle0 = FALSE)
