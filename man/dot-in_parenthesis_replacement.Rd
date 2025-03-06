@@ -52,7 +52,7 @@ Replace any pattern inside () by another replacement pattern
 .in_parenthesis_replacement(string = "pattern = base::paste0(pattern, \"\\\\\\\\(#\"), text = text", pattern = ",", no_regex_pattern = ",", replacement = " ", perl = TRUE, open_pos = 23, close_pos = 39,  lib_path = NULL, error_text = " INSIDE P1::F1")
 }
 
-# importFrom none
+
 }
 \author{
 Gael Millot <gael.millot@pasteur.fr>

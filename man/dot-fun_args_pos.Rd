@@ -36,7 +36,7 @@ Return the positions of 1st letter of the first function name in a string, as we
 .fun_args_pos(text = ' "a" ; paste0("I", paste0(sum(1:3), collapse = " "), min(1) ) ; range(2)', pattern = paste0("paste0", "[\\\\s\\\\r\\\\n]*\\\\("), lib_path = NULL, error_text = " INSIDE P1::F1")
 }
 
-# importFrom none
+
 }
 \author{
 Gael Millot <gael.millot@pasteur.fr>

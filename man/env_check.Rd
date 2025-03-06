@@ -96,7 +96,6 @@ cat(a)
 }
 \seealso{
 \code{\link{exists}}.
-# importFrom none
 }
 \author{
 Gael Millot <gael.millot@pasteur.fr>

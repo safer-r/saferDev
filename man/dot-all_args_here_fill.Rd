@@ -63,6 +63,5 @@ Get the $MISSING_ARG_NAMES, $MISSING_ARGS and $NEW of all_args_here().
 }
 \author{
 Gael Millot <gael.millot@pasteur.fr>
-# importFrom none
 }
 \keyword{internal}
