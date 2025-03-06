@@ -28,17 +28,17 @@
 #' 
 #' - §object.name: value of the data_name argument (i.e., name of the checked object if provided, NULL otherwise).
 #' @details
-#' - If options == NULL, then at least class or type or mode or length argument must be non-null.
+#' If options == NULL, then at least class or type or mode or length argument must be non-null.
 #'  
-#' - If options is non-null, then class, type and mode must be NULL, and length can be NULL or specified.
+#' If options is non-null, then class, type and mode must be NULL, and length can be NULL or specified.
 #'  
-#' - The function tests what is written in its arguments, even if what is written is incoherent. For instance, arg_check(data = factor(1), class = "factor", mode = "character") will return a problem, whatever the object tested in the data argument, because no object can be class "factor" and mode "character" (factors are class "factor" and mode "numeric"). Of note, length of object of class "environment" is always 0.
+#' The function tests what is written in its arguments, even if what is written is incoherent. For instance, arg_check(data = factor(1), class = "factor", mode = "character") will return a problem, whatever the object tested in the data argument, because no object can be class "factor" and mode "character" (factors are class "factor" and mode "numeric"). Of note, length of object of class "environment" is always 0.
 #'  
-#' - If the tested object base::is.null, then the function will always return a checking problem.
+#' If the tested object base::is.null, then the function will always return a checking problem.
 #'  
-#' - Argument "class" with value "vector" means that the object is tested for class(data) returning only "numeric", "integer", "character", "logical", "complex" or "expression". Please, use another value of class (e.g., class = "call" or class = "list") for other types and class of objects
+#' Argument "class" with value "vector" means that the object is tested for class(data) returning only "numeric", "integer", "character", "logical", "complex" or "expression". Please, use another value of class (e.g., class = "call" or class = "list") for other types and class of objects
 #'  
-#' - Since R >= 4.0.0, class(matrix()) returns "matrix" "array", and not "matrix" alone as before. However, use argument class = "matrix" to check for matrix object (of class "matrix" "array" in R >= 4.0.0) and use argument class = "array" to check for array object (of class "array" in R >= 4.0.0).
+#' Since R >= 4.0.0, class(matrix()) returns "matrix" "array", and not "matrix" alone as before. However, use argument class = "matrix" to check for matrix object (of class "matrix" "array" in R >= 4.0.0) and use argument class = "array" to check for array object (of class "array" in R >= 4.0.0).
 #' @seealso \code{\link{match.arg}} et \code{\link{arg_test}}.
 #' @author Gael Millot <gael.millot@pasteur.fr>
 #' @author Yushi Han <yushi.han2000@gmail.com>
@@ -46,11 +46,11 @@
 #' @examples
 #' test <- matrix(1:3)
 #' \dontrun{ # Example that return an error
-#' arg_check(data = test, print = TRUE, class = "vector", mode = "numeric")  # commented because this example returns an error
+#' arg_check(data = test, print = TRUE, class = "vector", mode = "numeric")  # error: THE test ARGUMENT MUST BE CLASS vector
 #' }
 #' arg_check(data = test, print = TRUE, class = "matrix", mode = "numeric")
-#' arg_check(data = test, print = TRUE, class = "matrix", mode = "numeric", error_text = " BY saferDev::arg_check()")
-#' # importFrom none
+#' arg_check(data = test, print = TRUE, class = "matrix", mode = "numeric", error_text = " using saferDev::arg_check()")
+#' 
 #' @export
 arg_check <- function(
     data, 

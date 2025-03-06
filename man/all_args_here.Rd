@@ -76,8 +76,8 @@ Warnings:
 }
 \examples{
 \dontrun{ # Example that return an error
-all_args_here(mean)
-source("https://raw.githubusercontent.com/safer-r/saferDev/main/dev/other/test2.R") ; all_args_here(test2, export = TRUE)
+all_args_here(mean) # example that return an error
+source("https://raw.githubusercontent.com/safer-r/saferDev/main/dev/other/test2.R") ; all_args_here(test2) # the checked function must be executable
 }
 FUN2 <- function(x, y){middle_bracket2 <- base::do.call(what = base::c, args = code_for_col, quote = FALSE, envir = base::parent.frame())}
 all_args_here(FUN2, safer_check = FALSE)

@@ -23,7 +23,7 @@
 #' .in_quotes_replacement(string = 'paste0("IAGE((", paste0(1:3, collapse = " "), "A)B()")', pattern = "\\)", no_regex_pattern = ")", replacement = " ", perl = TRUE, lib_path = NULL, error_text = " INSIDE P1::F1")
 #' }
 #' 
-#' # importFrom none
+#' 
 #' @keywords internal
 .in_quotes_replacement <- function(
     string, 

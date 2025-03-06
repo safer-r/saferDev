@@ -26,7 +26,7 @@ Determine if a string has a odd number of quotes.
 - Warning: requires saferDev::arg_check. In main safer functions, in the section "######## check of the required functions from the required packages" add these functions when checking for the presence of saferDev:::.has_odd_number_of_quotes.
 }
 \examples{
-\dontrun{ # Example that shouldn't be run because this is an internal function
+\dontrun{ # Example that shouldn't be run because this is an internal function (not found by devtools::check())
 .has_odd_number_of_quotes(input_string = 'This is a "test" string with "even" quotes', pattern = '"', lib_path = NULL, error_text = " INSIDE P1::F1")
 }
 

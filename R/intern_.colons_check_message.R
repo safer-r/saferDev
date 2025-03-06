@@ -23,7 +23,7 @@
 #' }
 #' @author Gael Millot <gael.millot@pasteur.fr>
 #' 
-#' # importFrom none
+#' 
 #' @keywords internal
 .colons_check_message <- function(
     # in internal functions, all arguments are without value on purpose

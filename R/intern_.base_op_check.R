@@ -10,12 +10,12 @@
 #' @examples
 #' \dontrun{
 #' \dontrun{ # Example that shouldn't be run because this is an internal function (not found by devtools::check())
-#' .base_op_check(error_text = " INSIDE fun1.") # nothing should happen
-#' assign("!", 1) ; assign("+", 2) ; .base_op_check(error_text = " INSIDE fun1.") this example returns an error
+#' saferDev:::.base_op_check(error_text = " INSIDE fun1.") # nothing should happen
+#' assign("!", 1) ; assign("+", 2) ; saferDev:::.base_op_check(error_text = " INSIDE fun1.") # this example returns an error
 #' rm("!") ; rm("+") 
 #' }
 #' 
-#' # importFrom none
+#' 
 #' @keywords internal
 .base_op_check <- function(
     error_text # warning: in internal functions, error_text without default value returns a R classical non traced error message (specific of internal functions since classical functions are error_text = "")
@@ -246,7 +246,7 @@
             base::paste0(base::paste(tempo.name, tempo.pos, sep = "\t", collapse = NULL, recycle0 = FALSE), collapse = "\n", recycle0 = FALSE), 
             "\n\nSWITCH THE safer_check ARGUMENT TO FALSE IF ", 
             base::ifelse(test = base::length(x = tempo.log) == 1L, yes = "THIS OBJECT ", no = "THESE OBJECTS "), 
-            "CANNOT BE DELETED.\n\nOF NOTE, BASIC R OBJECT PROTECTED FROM OVERWRITING FOR SAFER FUNCTION USAGE:\n",
+            "CANNOT BE DELETED.\n\nOF NOTE, BASIC R OBJECT PROTECTED FROM OVERWRITING IN SAFER FUNCTIONS:\n",
             base::paste0(reserved.objects, collapse = "\n", recycle0 = FALSE),
             collapse = NULL, 
             recycle0 = FALSE

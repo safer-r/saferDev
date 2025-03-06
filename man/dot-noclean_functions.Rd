@@ -29,7 +29,7 @@ Indicate if function names are inside quotes or after $
 - Warning: requires saferDev::arg_check, saferDev:::.has_odd_number_of_quotes. In main safer functions, in the section "######## check of the required functions from the required packages" add these functions when checking for the presence of saferDev:::.noclean_functions.
 }
 \examples{
-\dontrun{ # Example that shouldn't be run because this is an internal function
+\dontrun{ # Example that shouldn't be run because this is an internal function (not found by devtools::check())
 source("https://raw.githubusercontent.com/safer-r/saferDev/main/dev/other/test.R")
 .noclean_functions(col1 =  c(15, 17), col2 = c("gregexpr", "regmatches"), col3 = c("matches <- ",  "matched_strings <- " ), ini = utils::capture.output(test), lib_path = NULL, error_text = " INSIDE P1::F1")
 }
