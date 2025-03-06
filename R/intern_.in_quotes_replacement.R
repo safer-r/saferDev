@@ -12,9 +12,11 @@
 #' $string: The input string with all pattern replaced by the replacement pattern.
 #' $pos: vector of the positions of the 1rst character of the replaced pattern. NULL if no replaced pattern. In that case, $string is identical to the input string.
 #' @details
-#' - In the analyzed string, replace first the three consecutive characters "'" or '"' by three spaces to be able to work and escape quotes like \" or \' by two spaces
-#' - Warning : must be very simple pattern, like "\\(".
-#' - Warning: requires saferDev::arg_check, saferDev:::.has_odd_number_of_quotes. In main safer functions, in the section "######## check of the required functions from the required packages" add these functions when checking for the presence of saferDev:::.in_quotes_replacement.
+#' The function works by notably replacing first: 1) the three consecutive characters "'" or '"' by three spaces, 2) "\"'" and '\'"' by four spaces and 3) escape quotes like \" or \' by two spaces.
+#' 
+#' Warning : must be very simple pattern, like "\\(".
+#' 
+#' Warning: requires saferDev::arg_check, saferDev:::.has_odd_number_of_quotes. In main safer functions, in the section "######## check of the required functions from the required packages" add these functions when checking for the presence of saferDev:::.in_quotes_replacement.
 
 #' @author \href{gael.millot@pasteur.fr}{Gael Millot}
 #' @examples
