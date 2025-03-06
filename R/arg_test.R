@@ -556,7 +556,7 @@ arg_test <- function(
         tempo_cat <- base::paste0(
              error_text_start, 
             "fun ARGUMENT IS NOT CLASS \"function\" BUT:\n", 
-            base::paste0(base::class(x = base::get(x = fun, pos = -1L, envir = base::as.environment(-1), mode = "any", inherits = TRUE)), collapse = "\n", , recycle0 = FALSE), 
+            base::paste0(base::class(x = base::get(x = fun, pos = -1L, envir = base::as.environment(-1), mode = "any", inherits = TRUE)), collapse = "\n", recycle0 = FALSE), 
             "\nCHECK IF ANY CREATED OBJECT WOULD HAVE THE NAME OF THE TESTED FUNCTION.", 
             collapse = NULL, 
             recycle0 = FALSE
@@ -954,7 +954,7 @@ arg_test <- function(
                 if(plot.fun == TRUE){
                     base::invisible(x = grDevices::dev.set(which = window.nb))
                     plot.count <- plot.count + 1
-                    tempo.title <- base::paste0("test_", base::sprintf(fmt = base::paste0("%0", base::nchar(x = total.comp.nb), "d", collapse = NULL, recycle0 = FALSE), base::ifelse(test = parall == FALSE, yes = count, no = x[count])), collapse = NULL, recycle0 = FALSE)
+                    tempo.title <- base::paste0("test_", base::sprintf(fmt = base::paste0("%0", base::nchar(x = total.comp.nb, type = "chars", allowNA = FALSE, keepNA = NA), "d", collapse = NULL, recycle0 = FALSE), base::ifelse(test = parall == FALSE, yes = count, no = x[count])), collapse = NULL, recycle0 = FALSE)
                     if(plot.kind == "classic"){ # not ggplot. So title has to be added in a classical way
                         # graphics::par(ann=FALSE, xaxt="n", yaxt="n", mar = base::rep(x = 1, times = 4), bty = "n", xpd = NA) # old
                         graphics::par(bty = "n", xpd = NA) # new
@@ -1116,17 +1116,17 @@ arg_test <- function(
                 # end new environment
                 print.count.loop <- 0
                 base::suppressMessages(expr = base::suppressWarnings(expr = base::eval(expr = base::parse(text = code, file = "", n = NULL, prompt = "?", keep.source = base::getOption(x = "keep.source", default = NULL), srcfile = NULL, encoding = "unknown"), envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL)), classes = "warning"), classes = "message")
-                base::colnames(x = data, do.NULL = TRUE, prefix = "col") <- arg
+                base::"colnames<-"(data, arg)
                 if( ! base::is.null(x = expect.error)){
                     data <- base::data.frame(data, kind = kind, problem = problem, expected.error = expected.error, message = res, row.names = NULL, check.rows = FALSE, check.names = TRUE, fix.empty.names = TRUE, stringsAsFactors = FALSE)
                 }else{
                     data <- base::data.frame(data, kind = kind, problem = problem, message = res, row.names = NULL, check.rows = FALSE, check.names = TRUE, fix.empty.names = TRUE, stringsAsFactors = FALSE)
                 }
-                base::row.names(x = data) <- base::paste0("arg_test_", base::sprintf(fmt = base::paste0("%0", base::nchar(x = total.comp.nb), "d", collapse = NULL, recycle0 = FALSE), x), collapse = NULL, recycle0 = FALSE)
+                base::row.names(x = data) <- base::paste0("arg_test_", base::sprintf(fmt = base::paste0("%0", base::nchar(x = total.comp.nb, type = "chars", allowNA = FALSE, keepNA = NA), "d", collapse = NULL, recycle0 = FALSE), x), collapse = NULL, recycle0 = FALSE)
                 sys.info <- utils::sessionInfo(package = NULL)
                 sys.info$loadedOnly <- sys.info$loadedOnly[base::order(base::names(x = sys.info$loadedOnly), na.last = TRUE, decreasing = FALSE, method = )] # sort the packages
                 base::invisible(x = grDevices::dev.off(which = window.nb))
-                base::rm(env.name, list = base::character(), pos = -1, envir = , inherits = FALSE) # optional, because should disappear at the end of the function execution
+                base::rm(env.name, list = base::character(length = 0L), pos = -1, envir = , inherits = FALSE) # optional, because should disappear at the end of the function execution
                 # output
                 output <- base::list(fun = fun, ini = ini, data = data, sys.info = sys.info)
                 base::save(list = output, file = base::paste0(res.path, "/arg_test_", x[1], base::ifelse(test = base::length(x = x) == 1L, yes = ".RData", no = base::paste0("-", x[base::length(x = x)], ".RData", collapse = NULL, recycle0 = FALSE)), collapse = NULL, recycle0 = FALSE), ascii = FALSE, version = NULL, envir = base::parent.frame(n = 1), compress = FALSE, compression_level = , eval.promises = TRUE, precheck = TRUE)
@@ -1148,7 +1148,7 @@ arg_test <- function(
         if(base::length(x = cluster.list) > 1){
             for(i2 in 1:base::length(x = cluster.list)){
                 tempo.file <- base::paste0(res.path, "/table_from_arg_test_", base::min(cluster.list[[i2]], na.rm = TRUE), base::ifelse(test = base::length(x = cluster.list[[i2]]) == 1L, yes = ".tsv", no = base::paste0("-", base::max(cluster.list[[i2]], na.rm = TRUE), ".tsv", collapse = NULL, recycle0 = FALSE)), collapse = NULL, recycle0 = FALSE) # txt file
-                tempo <- utils::read.table(file = tempo.file, header = TRUE, stringsAsFactors = FALSE, sep = "\t", row.names = 1, comment.char = "", colClasses = "character", quote = "\"'", dec = ".", numerals = c("allow.loss", "warn.loss", "no.loss"), col.names = , as.is = , tryLogical = TRUE, na.strings = "NA", nrows = -1, skip = 0, check.names = TRUE, fill = , strip.white = FALSE, blank.lines.skip = TRUE, allowEscapes = FALSE, flush = FALSE, fileEncoding = "", encoding = "unknown", text = , skipNul = FALSE) #  row.names = 1 (1st column) because now utils::read.table() adds a NA in the header if the header starts by a tabulation, comment.char = "" because colors with #, colClasses = "character" otherwise convert "" (from NULL) into NA
+                tempo <- utils::read.table(file = tempo.file, header = TRUE, stringsAsFactors = FALSE, sep = "\t", row.names = 1, comment.char = "", colClasses = "character", quote = "\"'", dec = ".", numerals = base::c("allow.loss", "warn.loss", "no.loss"), col.names = , as.is = , tryLogical = TRUE, na.strings = "NA", nrows = -1, skip = 0, check.names = TRUE, fill = , strip.white = FALSE, blank.lines.skip = TRUE, allowEscapes = FALSE, flush = FALSE, fileEncoding = "", encoding = "unknown", text = , skipNul = FALSE) # row.names = 1 (1st column) because now utils::read.table adds a NA in the header if the header starts by a tabulation, comment.char = "" because colors with #, colClasses = "character" otherwise convert "" (from NULL) into NA
                 if(base::file.exists(base::paste0(res.path, "/plots_from_arg_test_", base::min(cluster.list[[i2]], na.rm = TRUE), base::ifelse(test = base::length(x = cluster.list[[i2]]) == 1L, yes = ".pdf", no = base::paste0("-", base::max(cluster.list[[i2]], na.rm = TRUE), ".pdf", collapse = NULL, recycle0 = FALSE)), collapse = NULL, recycle0 = FALSE))){
                     tempo.pdf <- base::paste0(res.path, "/plots_from_arg_test_", base::min(cluster.list[[i2]], na.rm = TRUE), base::ifelse(test = base::length(x = cluster.list[[i2]]) == 1L, yes = ".pdf", no = base::paste0("-", base::max(cluster.list[[i2]], na.rm = TRUE), ".pdf", collapse = NULL, recycle0 = FALSE)), collapse = NULL, recycle0 = FALSE) # pdf file
                 }else{
@@ -1214,6 +1214,7 @@ arg_test <- function(
                                 }
                                 x
                             }, 
+                            pos = -1, 
                             envir = base::get(x = env.name, pos = , envir = base::sys.nframe(), mode = "any", inherits = TRUE),
                             inherits = FALSE, 
                             immediate = TRUE
@@ -1235,11 +1236,11 @@ arg_test <- function(
             # end combine pdf and save
             # save RData
             base::assign(x = "output", value = base::c(base::get(x = "final.output", envir = base::get(x = env.name, pos = , envir = base::sys.nframe(), mode = "any", inherits = TRUE), pos = -1L, mode = "any", inherits = TRUE), data = base::list(final.file)), envir = base::get(x = env.name, pos = , envir = base::sys.nframe(), mode = "any", inherits = TRUE), pos = -1, inherits = FALSE, immediate = TRUE)
-            base::save(list = output, file = base::paste0(res.path, "/arg_test_1-", total.comp.nb, ".RData", collapse = NULL, recycle0 = FALSE), envir = base::get(x = env.name, pos = , envir = base::sys.nframe(), mode = "any", inherits = TRUE), ascii = FALSE, version = NULL, envir = base::parent.frame(n = 1), compress = FALSE, compression_level = , eval.promises = TRUE, precheck = TRUE)
-            base::rm(env.name, list = base::character(), pos = -1, envir = , inherits = FALSE) # optional, because should disappear at the end of the function execution
+            base::save(list = output, file = base::paste0(res.path, "/arg_test_1-", total.comp.nb, ".RData", collapse = NULL, recycle0 = FALSE), envir = base::get(x = env.name, pos = , envir = base::sys.nframe(), mode = "any", inherits = TRUE), ascii = FALSE, version = NULL, compress = FALSE, compression_level = , eval.promises = TRUE, precheck = TRUE)
+            base::rm(env.name, list = base::character(length = 0L), pos = -1, envir = , inherits = FALSE) # optional, because should disappear at the end of the function execution
             # end save RData
             # save txt
-            utils::write.table(x = final.file, file = base::paste0(res.path, "/table_from_arg_test_1-", total.comp.nb, ".tsv", collapse = NULL, recycle0 = FALSE), row.names = TRUE, col.names = NA, append = FALSE, quote = FALSE, sep = "\t", eol = "\n", na = "")
+            utils::write.table(x = final.file, file = base::paste0(res.path, "/table_from_arg_test_1-", total.comp.nb, ".tsv", collapse = NULL, recycle0 = FALSE), row.names = TRUE, col.names = NA, append = FALSE, quote = FALSE, sep = "\t", eol = "\n", na = "", dec = ".", qmethod = base::c("escape", "double"), fileEncoding = "")
             # end save txt
             if( ! base::is.null(x = expect.error)){
                 final.file <- final.file[ ! final.file$problem == final.file$expected.error, ]
@@ -1247,7 +1248,7 @@ arg_test <- function(
                     base::cat(base::paste0("NO DISCREPANCY BETWEEN EXPECTED AND OBSERVED ERRORS\n\n", collapse = NULL, recycle0 = FALSE), file = , sep =  , fill = FALSE, labels = NULL, append = FALSE)
                 }else{
                     base::cat(base::paste0("DISCREPANCIES BETWEEN EXPECTED AND OBSERVED ERRORS (SEE THE discrepancy_table_from_arg_test_1-", total.comp.nb, ".tsv FILE)\n\n", collapse = NULL, recycle0 = FALSE), file = , sep =  , fill = FALSE, labels = NULL, append = FALSE)
-                    utils::write.table(x = final.file, file = base::paste0(res.path, "/discrepancy_table_from_arg_test_1-", total.comp.nb, ".tsv", collapse = NULL, recycle0 = FALSE), row.names = TRUE, col.names = NA, append = FALSE, quote = FALSE, sep = "\t", eol = "\n", na = "")
+                    utils::write.table(x = final.file, file = base::paste0(res.path, "/discrepancy_table_from_arg_test_1-", total.comp.nb, ".tsv", collapse = NULL, recycle0 = FALSE), row.names = TRUE, col.names = NA, append = FALSE, quote = FALSE, sep = "\t", eol = "\n", na = "", dec = ".", qmethod = base::c("escape", "double"), fileEncoding = "")
                 }
             }
         }else{
@@ -1281,7 +1282,7 @@ arg_test <- function(
         }
         # end new environment
         base::suppressMessages(expr = base::suppressWarnings(expr = base::eval(expr = base::parse(text = code, file = "", n = NULL, prompt = "?", keep.source = base::getOption(x = "keep.source", default = NULL), srcfile = NULL, encoding = "unknown"), envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL)), classes = "warning"), classes = "message")
-        base::colnames(x = data, do.NULL = TRUE, prefix = "col") <- arg
+        base::"colnames<-"(data, arg)
         expect.data <- base::data.frame(row.names = NULL, check.rows = FALSE, check.names = TRUE, fix.empty.names = TRUE, stringsAsFactors = FALSE)
         if( ! base::is.null(x = expect.error)){
             data <- base::data.frame(data, kind = kind, problem = problem, expected.error = expected.error, message = res, row.names = NULL, check.rows = FALSE, check.names = TRUE, fix.empty.names = TRUE, stringsAsFactors = FALSE)
@@ -1292,7 +1293,7 @@ arg_test <- function(
         sys.info <- utils::sessionInfo(package = NULL)
         sys.info$loadedOnly <- sys.info$loadedOnly[base::order(base::names(x = sys.info$loadedOnly), na.last = TRUE, decreasing = FALSE, method = )] # sort the packages
         base::invisible(x = grDevices::dev.off(which = window.nb))
-        base::rm(env.name, list = base::character(), pos = -1, envir = , inherits = FALSE) # optional, because should disappear at the end of the function execution
+        base::rm(env.name, list = base::character(length = 0L), pos = -1, envir = , inherits = FALSE) # optional, because should disappear at the end of the function execution
         if(plot.fun == TRUE & plot.count == 0L){
             warn_count <- warn_count + 1
             tempo_warn <- base::paste0("(", warn_count,") NO PDF PLOT BECAUSE ONLY ERRORS REPORTED.", collapse = NULL, recycle0 = FALSE)
@@ -1306,11 +1307,11 @@ arg_test <- function(
             if(base::nrow(x = expect.data) == 0L){
                 base::cat(base::paste0("NO DISCREPANCY BETWEEN EXPECTED AND OBSERVED ERRORS\n\n", collapse = NULL, recycle0 = FALSE), file = , sep =  , fill = FALSE, labels = NULL, append = FALSE)
             }else{
-                base::cat(base::paste0("DISCREPANCIES BETWEEN EXPECTED AND OBSERVED ERRORS (SEE THE ", if(export == TRUE){base::paste0("discrepancy_table_from_arg_test_1", base::ifelse(test = total.comp.nb == 1L, yes = "", no = base::paste0("-", total.comp.nb, collapse = NULL, recycle0 = FALSE)), ".tsv FILE", collapse = NULL, recycle0 = FALSE)}else{"$data RESULT"}, ")\n\n"), file = , sep =  , fill = FALSE, labels = NULL, append = FALSE)
+                base::cat(base::paste0("DISCREPANCIES BETWEEN EXPECTED AND OBSERVED ERRORS (SEE THE ", if(export == TRUE){base::paste0("discrepancy_table_from_arg_test_1", base::ifelse(test = total.comp.nb == 1L, yes = "", no = base::paste0("-", total.comp.nb, collapse = NULL, recycle0 = FALSE)), ".tsv FILE", collapse = NULL, recycle0 = FALSE)}else{"$data RESULT"}, ")\n\n", collapse = NULL, recycle0 = FALSE), file = , sep =  , fill = FALSE, labels = NULL, append = FALSE)
                 if(export == TRUE){
                     expect.data <- base::as.matrix(x = expect.data)
                     expect.data <- base::gsub(x = expect.data, pattern = "\n", replacement = "  ", ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE)
-                    utils::write.table(x = expect.data, file = base::paste0(res.path, "/discrepancy_table_from_arg_test_1", base::ifelse(test = total.comp.nb == 1L, yes = ".tsv", no = base::paste0("-", total.comp.nb, ".tsv", collapse = NULL, recycle0 = FALSE)), collapse = NULL, recycle0 = FALSE), row.names = TRUE, col.names = NA, append = FALSE, quote = FALSE, sep = "\t", eol = "\n", na = "")
+                    utils::write.table(x = expect.data, file = base::paste0(res.path, "/discrepancy_table_from_arg_test_1", base::ifelse(test = total.comp.nb == 1L, yes = ".tsv", no = base::paste0("-", total.comp.nb, ".tsv", collapse = NULL, recycle0 = FALSE)), collapse = NULL, recycle0 = FALSE), row.names = TRUE, col.names = NA, append = FALSE, quote = FALSE, sep = "\t", eol = "\n", na = "", dec = ".", qmethod = base::c("escape", "double"), fileEncoding = "")
                 }
             }
         }
@@ -1318,13 +1319,13 @@ arg_test <- function(
             base::save(list = output, file = base::paste0(res.path, "/arg_test_1", base::ifelse(test = total.comp.nb == 1L, yes = ".RData", no = base::paste0("-", total.comp.nb, ".RData", collapse = NULL, recycle0 = FALSE)), collapse = NULL, recycle0 = FALSE), ascii = FALSE, version = NULL, envir = base::parent.frame(n = 1), compress = FALSE, compression_level = , eval.promises = TRUE, precheck = TRUE)
             table.out <- base::as.matrix(x = output$data)
             table.out <- base::gsub(x = table.out, pattern = "\n", replacement = "  ", ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE)
-            utils::write.table(x = table.out, file = base::paste0(res.path, "/table_from_arg_test_1", base::ifelse(test = total.comp.nb == 1L, yes = ".tsv", no = base::paste0("-", total.comp.nb, ".tsv", collapse = NULL, recycle0 = FALSE)), collapse = NULL, recycle0 = FALSE), row.names = TRUE, col.names = NA, append = FALSE, quote = FALSE, sep = "\t", eol = "\n", na = "")
+            utils::write.table(x = table.out, file = base::paste0(res.path, "/table_from_arg_test_1", base::ifelse(test = total.comp.nb == 1L, yes = ".tsv", no = base::paste0("-", total.comp.nb, ".tsv", collapse = NULL, recycle0 = FALSE)), collapse = NULL, recycle0 = FALSE), row.names = TRUE, col.names = NA, append = FALSE, quote = FALSE, sep = "\t", eol = "\n", na = "", dec = ".", qmethod = base::c("escape", "double"), fileEncoding = "")
         }
         # end output
     }
     end.date <- base::Sys.time()
     end.time <- base::as.numeric(x = end.date)
-    total.lapse <- base::round(x = lubridate::seconds_to_period(x = end.time - ini.time))
+    total.lapse <- base::round(x = lubridate::seconds_to_period(x = end.time - ini.time), digits = 0)
     base::cat(base::paste0("test JOB END\n\nTIME: ", end.date, "\n\nTOTAL TIME LAPSE: ", total.lapse, "\n\n\n", collapse = NULL, recycle0 = FALSE), file = , sep =  , fill = FALSE, labels = NULL, append = FALSE)
     #### end main code
 
