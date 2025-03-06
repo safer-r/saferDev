@@ -16,10 +16,10 @@
 #' @details
 #' - Warning : must be very simple pattern, like "\\(".
 #' - Warning: requires saferDev::arg_check. In main safer functions, in the section "######## check of the required functions from the required packages" add these functions when checking for the presence of saferDev:::.in_parenthesis_replacement.
-#' @author Gael Millot <gael.millot@pasteur.fr>
+#' @author \href{gael.millot@pasteur.fr}{Gael Millot}
 #' @examples
 #' \dontrun{ # Example that shouldn't be run because this is an internal function (not found by devtools::check())
-#' .in_parenthesis_replacement(string = "pattern = base::paste0(pattern, \"\\\\(#\"), text = text", pattern = ",", no_regex_pattern = ",", replacement = " ", perl = TRUE, open_pos = 23, close_pos = 39,  lib_path = NULL, error_text = " INSIDE P1::F1")
+#' saferDev:::.in_parenthesis_replacement(string = "pattern = base::paste0(pattern, \"\\\\(#\"), text = text", pattern = ",", no_regex_pattern = ",", replacement = " ", perl = TRUE, open_pos = 23, close_pos = 39,  lib_path = NULL, error_text = " INSIDE P1::F1")
 #' }
 #' 
 #' 

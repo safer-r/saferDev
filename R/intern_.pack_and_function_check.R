@@ -6,14 +6,14 @@
 #' @param lib_path Vector of characters specifying the absolute pathways of the directories containing the required packages for the function, if not in the default directories. Useful when R package are not installed in the default directories because of lack of admin rights.  More precisely, lib_path is passed through the new argument of .libPaths() so that the new library paths are unique(c(new, .Library.site, .Library)). Warning: .libPaths() is restored to the initial paths, after function execution. Ignored if NULL (default) or if the safer_check argument is FALSE: only the pathways specified by the current .libPaths() are used for package calling.
 #' @param error_text Single character string used to add information in error messages returned by the function, notably if the function is inside other functions, which is practical for debugging. Example: error_text = " INSIDE <PACKAGE_1>::<FUNCTION_1> INSIDE <PACKAGE_2>::<FUNCTION_2>.". If NULL, converted into "".
 #' @returns An error message if at least one of the checked packages is missing in lib_path, or if at least one of the checked functions is missing in the required package, nothing otherwise.
-#' @author Gael Millot <gael.millot@pasteur.fr>
-#' @author Yushi Han <yushi.han2000@gmail.com>
-#' @author Haiding Wang <wanghaiding442@gmail.com>
+#' @author \href{gael.millot@pasteur.fr}{Gael Millot}
+#' @author \href{yushi.han2000@gmail.com}{Yushi Han}
+#' @author \href{wanghaiding442@gmail.com}{Haiding Wang}
 #' @examples
 #' \dontrun{ # Example that shouldn't be run because this is an internal function (not found by devtools::check())
-#' .pack_and_function_check(fun = 1, lib_path = NULL, error_text = " INSIDE F1.") # this example returns an error
-#' .pack_and_function_check(fun = "ggplot2::notgood", lib_path = base::.libPaths(), error_text = " INSIDE P1::F1") # this example returns an error
-#' .pack_and_function_check(fun = c("ggplot2::geom_point", "grid::gpar"), lib_path = base::.libPaths(), error_text = " INSIDE P1::F1")  # nothing should happen
+#' saferDev:::.pack_and_function_check(fun = 1, lib_path = NULL, error_text = " INSIDE F1.") # this example returns an error
+#' saferDev:::.pack_and_function_check(fun = "ggplot2::notgood", lib_path = base::.libPaths(), error_text = " INSIDE P1::F1") # this example returns an error
+#' saferDev:::.pack_and_function_check(fun = c("ggplot2::geom_point", "grid::gpar"), lib_path = base::.libPaths(), error_text = " INSIDE P1::F1")  # nothing should happen
 #' }
 #' @author Gael Millot <gael.millot@pasteur.fr>
 #' 

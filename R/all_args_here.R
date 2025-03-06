@@ -42,11 +42,13 @@
 #' 
 #' The returned line numbers are indicative, depending on which source is checked. For instance, saferDev::report (compiled) has not the same line numbers as its source file (https://github.com/safer-r/saferDev/blob/main/R/report.R). Notably, compiled functions do not have comments anymore, compared to the same source function sourced into the working environment. In addition, the counting starts at the "<- function" line, i.e., without counting the #' header lines potentially present in source files.
 #' 
+#' The function works by notably replacing first in the code: 1) the three consecutive characters "'" or '"' by three spaces, 2) "\"'" and '\'"' by four spaces and 3) escape quotes like \" or \' by two spaces.
+#' 
 #' Warnings: 
 #' 1) The function could not properly work if any comma is present in default argument values. Please, report here https://github.com/safer-r/saferDev/issues if it is the case.
 #' 
 #' 2) Proposals in the STATUS column are only suggestions, as it is difficult to anticipate all the exceptions with arguments writting.
-#' @author Gael Millot <gael.millot@pasteur.fr>
+#' @author \href{gael.millot@pasteur.fr}{Gael Millot}
 #' @examples
 #' \dontrun{ # Example that return an error
 #' all_args_here(mean) # example that return an error

@@ -10,9 +10,9 @@
 #' A character string indicating the object names of the tested environment that match object names in the above environments, following the R scope, or NULL if no match.
 #' @seealso \code{\link{exists}}.
 #' 
-#' @author Gael Millot <gael.millot@pasteur.fr>
-#' @author Yushi Han <yushi.han2000@gmail.com>
-#' @author Haiding Wang <wanghaiding442@gmail.com>
+#' @author \href{gael.millot@pasteur.fr}{Gael Millot}
+#' @author \href{yushi.han2000@gmail.com}{Yushi Han}
+#' @author \href{wanghaiding442@gmail.com}{Haiding Wang}
 #' @examples
 #' # Examples in the working environment
 #' rm(q)
