@@ -7,9 +7,9 @@
 #' @param error_text Single character string used to add information in error messages returned by the function, notably if the function is inside other functions, which is practical for debugging. Example: error_text = " INSIDE <PACKAGE_1>::<FUNCTION_1> INSIDE <PACKAGE_2>::<FUNCTION_2>.". If NULL, converted into "".
 #' @returns  An error message if at least one of the checked packages is missing in lib_path, or if at least one of the checked functions is missing in the required package, nothing otherwise.
 #' @seealso \code{\link{exists}} et \code{\link[methods]{findFunction}}
-#' @author Gael Millot <gael.millot@pasteur.fr>
-#' @author Yushi Han <yushi.han2000@gmail.com>
-#' @author Haiding Wang <wanghaiding442@gmail.com>
+#' @author \href{gael.millot@pasteur.fr}{Gael Millot}
+#' @author \href{yushi.han2000@gmail.com}{Yushi Han}
+#' @author \href{wanghaiding442@gmail.com}{Haiding Wang}
 #' @examples
 #' \dontrun{ # Example that return an error
 #' is_function_here(fun = "ggplot2::notgood", error_text = " INSIDE P1::F1") # commented because this example returns an error

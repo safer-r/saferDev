@@ -14,9 +14,9 @@
 #' @param error_text Single character string used to add information in error messages returned by the function, notably if the function is inside other functions, which is practical for debugging. Example: error_text = " INSIDE <PACKAGE_1>::<FUNCTION_1> INSIDE <PACKAGE_2>::<FUNCTION_2>.". If NULL, converted into "".
 #' @returns Nothing.
 #' @seealso \code{\link{capture.output}}.
-#' @author Gael Millot <gael.millot@pasteur.fr>
-#' @author Yushi Han <yushi.han2000@gmail.com>
-#' @author Haiding Wang <wanghaiding442@gmail.com>
+#' @author \href{gael.millot@pasteur.fr}{Gael Millot}
+#' @author \href{yushi.han2000@gmail.com}{Yushi Han}
+#' @author \href{wanghaiding442@gmail.com}{Haiding Wang}
 #' @examples
 #' report(data = "THE FOLLOWING VECTOR IS:\n", output = "results.txt", path = ".", overwrite = TRUE, sep = 1)
 #' report(data = 1:3, output = "results.txt", path = ".", overwrite = FALSE, rownames.kept = FALSE, vector.cat = FALSE, noquote = FALSE, sep = 2)

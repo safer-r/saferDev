@@ -46,7 +46,7 @@
 #' 1) The function could not properly work if any comma is present in default argument values. Please, report here https://github.com/safer-r/saferDev/issues if it is the case.
 #' 
 #' 2) Proposals in the STATUS column are only suggestions, as it is difficult to anticipate all the exceptions with arguments writting.
-#' @author Gael Millot <gael.millot@pasteur.fr>
+#' @author \href{gael.millot@pasteur.fr}{Gael Millot}
 #' @examples
 #' \dontrun{ # Example that return an error
 #' all_args_here(mean) # example that return an error

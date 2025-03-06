@@ -37,9 +37,9 @@
 #'       '::' or ':::' import not declared from: 'sbase'
 #'       Missing or unexported objects:
 #'         'base::dev.off' 'base::graphics.off' 'base::hcl' 'base::par' 'base::read.table' 'saferGG::report'
-#' @author Gael Millot <gael.millot@pasteur.fr>
-#' @author Yushi Han <yushi.han2000@gmail.com>
-#' @author Haiding Wang <wanghaiding442@gmail.com>  
+#' @author \href{gael.millot@pasteur.fr}{Gael Millot}
+#' @author \href{yushi.han2000@gmail.com}{Yushi Han}
+#' @author \href{wanghaiding442@gmail.com}{Haiding Wang}  
 #' @examples
 #' colons_check(mean)
 #' colons_check(colons_check)

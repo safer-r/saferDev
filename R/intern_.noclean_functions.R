@@ -10,11 +10,11 @@
 #' @returns A logical vector indicating if function names of col2 are inside quotes or after $ (TRUE) in ini or not (FALSE). Can be length 0.
 #' @details
 #' - Warning: requires saferDev::arg_check, saferDev:::.has_odd_number_of_quotes. In main safer functions, in the section "######## check of the required functions from the required packages" add these functions when checking for the presence of saferDev:::.noclean_functions.
-#' @author Gael Millot <gael.millot@pasteur.fr>
+#' @author \href{gael.millot@pasteur.fr}{Gael Millot}
 #' @examples
 #' \dontrun{ # Example that shouldn't be run because this is an internal function (not found by devtools::check())
 #' source("https://raw.githubusercontent.com/safer-r/saferDev/main/dev/other/test.R")
-#' .noclean_functions(col1 =  c(15, 17), col2 = c("gregexpr", "regmatches"), col3 = c("matches <- ",  "matched_strings <- " ), ini = utils::capture.output(test), lib_path = NULL, error_text = " INSIDE P1::F1")
+#' saferDev:::.noclean_functions(col1 =  c(15, 17), col2 = c("gregexpr", "regmatches"), col3 = c("matches <- ",  "matched_strings <- " ), ini = utils::capture.output(test), lib_path = NULL, error_text = " INSIDE P1::F1")
 #' }
 #' 
 #' 

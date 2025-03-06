@@ -16,11 +16,11 @@
 #' - Warning : must be very simple pattern, like "\\(".
 #' - Warning: requires saferDev::arg_check, saferDev:::.has_odd_number_of_quotes. In main safer functions, in the section "######## check of the required functions from the required packages" add these functions when checking for the presence of saferDev:::.in_quotes_replacement.
 
-#' @author Gael Millot <gael.millot@pasteur.fr>
+#' @author \href{gael.millot@pasteur.fr}{Gael Millot}
 #' @examples
 #' \dontrun{ # Example that shouldn't be run because this is an internal function (not found by devtools::check())
-#' source("https://raw.githubusercontent.com/safer-r/saferDev/main/dev/other/test.R") ; .in_quotes_replacement(string = paste(deparse(test), collapse = ""), pattern = "\\)", no_regex_pattern = ")", replacement = " ", perl = TRUE, lib_path = NULL, error_text = " INSIDE P1::F1")
-#' .in_quotes_replacement(string = 'paste0("IAGE((", paste0(1:3, collapse = " "), "A)B()")', pattern = "\\)", no_regex_pattern = ")", replacement = " ", perl = TRUE, lib_path = NULL, error_text = " INSIDE P1::F1")
+#' source("https://raw.githubusercontent.com/safer-r/saferDev/main/dev/other/test.R") ; saferDev:::.in_quotes_replacement(string = paste(deparse(test), collapse = ""), pattern = "\\)", no_regex_pattern = ")", replacement = " ", perl = TRUE, lib_path = NULL, error_text = " INSIDE P1::F1")
+#' saferDev:::.in_quotes_replacement(string = 'paste0("IAGE((", paste0(1:3, collapse = " "), "A)B()")', pattern = "\\)", no_regex_pattern = ")", replacement = " ", perl = TRUE, lib_path = NULL, error_text = " INSIDE P1::F1")
 #' }
 #' 
 #' 

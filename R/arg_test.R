@@ -44,9 +44,9 @@
 #' @details 
 #' Limited to 43 arguments with at least 2 values each. The total number of arguments tested can be more if the additional arguments have a single value. The limit is due to nested "for" loops (https://stat.ethz.ch/pipermail/r-help/2008-March/157341.html), but this limitation is away from the number of tests performed that would be 2^43.
 #' @seealso \code{\link{arg_check}}.
-#' @author Gael Millot <gael.millot@pasteur.fr>
-#' @author Yushi Han <yushi.han2000@gmail.com>
-#' @author Haiding Wang <wanghaiding442@gmail.com>
+#' @author \href{gael.millot@pasteur.fr}{Gael Millot}
+#' @author \href{yushi.han2000@gmail.com}{Yushi Han}
+#' @author \href{wanghaiding442@gmail.com}{Haiding Wang}
 #' @examples
 #' arg_test(fun = "unique", arg = c("x", "incomparables"), 
 #' val = list(x = list(1:10, c(1,1,2,8), NA), incomparable = c(TRUE, FALSE, NA)))

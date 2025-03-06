@@ -9,10 +9,10 @@
 #' @details
 #' - Consider any present ' (pattern = "'") or " (pattern = '"'). Meaning that, the function does not treat special situation, like escape quotes \", or situation like this "'". All these must be removed from the input_string if necessary, using for instance: input_string <- gsub( x = input_string, pattern = '"\'"', replacement = '   ')
 #' - Warning: requires saferDev::arg_check. In main safer functions, in the section "######## check of the required functions from the required packages" add these functions when checking for the presence of saferDev:::.has_odd_number_of_quotes.
-#' @author Gael Millot <gael.millot@pasteur.fr>
+#' @author \href{gael.millot@pasteur.fr}{Gael Millot}
 #' @examples
 #' \dontrun{ # Example that shouldn't be run because this is an internal function (not found by devtools::check())
-#' .has_odd_number_of_quotes(input_string = 'This is a "test" string with "even" quotes', pattern = '"', lib_path = NULL, error_text = " INSIDE P1::F1")
+#' saferDev:::.has_odd_number_of_quotes(input_string = 'This is a "test" string with "even" quotes', pattern = '"', lib_path = NULL, error_text = " INSIDE P1::F1")
 #' }
 #' 
 #' 
