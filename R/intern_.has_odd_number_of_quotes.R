@@ -11,11 +11,11 @@
 #' - Warning: requires saferDev::arg_check. In main safer functions, in the section "######## check of the required functions from the required packages" add these functions when checking for the presence of saferDev:::.has_odd_number_of_quotes.
 #' @author Gael Millot <gael.millot@pasteur.fr>
 #' @examples
-#' \dontrun{ # Example that shouldn't be run because this is an internal function
+#' \dontrun{ # Example that shouldn't be run because this is an internal function (not found by devtools::check())
 #' .has_odd_number_of_quotes(input_string = 'This is a "test" string with "even" quotes', pattern = '"', lib_path = NULL, error_text = " INSIDE P1::F1")
 #' }
 #' 
-#' # importFrom none
+#' 
 #' @keywords internal
 .has_odd_number_of_quotes <- function(
     input_string, 
@@ -318,12 +318,12 @@
 
     #### main code
     # Count the number of quote characters
-    quote_count <- base::gregexpr(pattern, input_string)[[1]]
+    quote_count <- base::gregexpr(pattern = pattern, text = input_string, ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE)[[1]]
     if (quote_count[1] == -1) {
         quote_count <- 0
     } else {
         # Length of the vector gives the count of quotes
-        quote_count <- base::length(quote_count)
+        quote_count <- base::length(x = quote_count)
     }
     # Check if the count of quotes is odd
     output <- quote_count %% 2 == 1

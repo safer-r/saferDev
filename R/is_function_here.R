@@ -17,7 +17,7 @@
 #' is_function_here(fun = "c")
 #' }
 #' is_function_here(fun = "base::c", error_text = " INSIDE P1::F1")
-#' # importFrom none
+#' 
 #' @export
 is_function_here <- function(
     fun, 

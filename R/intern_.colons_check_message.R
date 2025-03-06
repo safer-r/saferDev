@@ -18,12 +18,12 @@
 #' @details
 #' - Warning: requires saferDev::arg_check, saferDev:::.noclean_functions. In main safer functions, in the section "######## check of the required functions from the required packages" add these functions when checking for the presence of saferDev:::.colons_check_message.
 #' @examples
-#' \dontrun{ # Example that shouldn't be run because this is an internal function
+#' \dontrun{ # Example that shouldn't be run because this is an internal function (not found by devtools::check())
 #' .colons_check_message(list_fun = list(c2 = "UseMethod"), list_fun_pos = list(c2 = 1), line_nb = 2, ini = c("function (x, ...) ", "UseMethod(\"mean\")", "<bytecode: 0x000001969e09e580>", "<environment: namespace:base>"), arg_user_setting2 = list(x = x, arg_user_setting2 = arg_user_setting, error_text = "P1::F1"), text = "BASIC", internal_fun_names = NULL, lib_path = NULL, error_text = " INSIDE P1::F1")
 #' }
 #' @author Gael Millot <gael.millot@pasteur.fr>
 #' 
-#' # importFrom none
+#' 
 #' @keywords internal
 .colons_check_message <- function(
     # in internal functions, all arguments are without value on purpose

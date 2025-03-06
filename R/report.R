@@ -24,7 +24,7 @@
 #' report(data = matrix(1:5), output = "results.txt", path = ".", overwrite = FALSE, rownames.kept = FALSE, vector.cat = FALSE, noquote = FALSE, sep = 5)
 #' report(data = "THE FOLLOWING DATA FRAME IS:\n", output = "results.txt", path = ".", overwrite = FALSE, sep = 1)
 #' report(data = data.frame(A = 1:8, B = letters[1:8]), output = "results.txt", path = ".", overwrite = FALSE, rownames.kept = FALSE, vector.cat = FALSE, noquote = FALSE, sep = 1)
-#' # importFrom none
+#' 
 #' @export
 report <- function(
     data, 

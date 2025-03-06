@@ -37,8 +37,8 @@ Detect all the functions names used inside a function.
 - Warning: requires saferDev::arg_check, saferDev:::.extract_all_fun_names, saferDev:::.has_odd_number_of_quotes. In main safer functions, in the section "######## check of the required functions from the required packages" add these functions when checking for the presence of saferDev:::.functions_detect.
 }
 \examples{
-\dontrun{ # Example that shouldn't be run because this is an internal function
-source("C:\\\\Users\\\\gmillot\\\\Documents\\\\Git_projects\\\\safer-r\\\\saferDev\\\\dev\\\\other\\\\test.R") ; .functions_detect(x = test, arg_user_setting = base::list(x =  as.name(x = "test")), lib_path = NULL, error_text = " INSIDE P1::F1")
+\dontrun{ # Example that shouldn't be run because this is an internal function (not found by devtools::check())
+source("C:\\\\Users\\\\gmillot\\\\Documents\\\\Git_projects\\\\safer-r\\\\saferDev\\\\dev\\\\other\\\\test.R") ; .functions_detect(x = test, arg_user_setting2 = base::list(x =  as.name(x = "test")), skipped_base = c("function", "if", "for", "while", "repeat", "else"), lib_path = NULL, error_text = " INSIDE P1::F1")
 }
 }
 \author{

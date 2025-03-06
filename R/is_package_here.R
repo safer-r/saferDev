@@ -16,7 +16,7 @@
 #' is_package_here(req_package = "ggplot2", lib_path = "C:/Users/gmillot/AppData/Local/R/win-library/4.4") # commented because this example returns an error if the lib_path argument is not an existing directory
 #' }
 #' is_package_here(req_package = "ggplot2")
-#' # importFrom none
+#' 
 #' @export
 is_package_here <- function(
     req_package, 

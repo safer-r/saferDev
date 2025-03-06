@@ -21,12 +21,12 @@
 #' - $all_basic_funs are all the functions in base::c("package:stats", "package:graphics",  "package:grDevices", "package:utils", "package:datasets", "package:methods", "Autoloads", "package:base")
 #' - Warning: requires saferDev::arg_check, saferDev:::.extract_all_fun_names, saferDev:::.has_odd_number_of_quotes. In main safer functions, in the section "######## check of the required functions from the required packages" add these functions when checking for the presence of saferDev:::.functions_detect.
 #' @examples
-#' \dontrun{ # Example that shouldn't be run because this is an internal function
-#' source("C:\\Users\\gmillot\\Documents\\Git_projects\\safer-r\\saferDev\\dev\\other\\test.R") ; .functions_detect(x = test, arg_user_setting = base::list(x =  as.name(x = "test")), lib_path = NULL, error_text = " INSIDE P1::F1")
+#' \dontrun{ # Example that shouldn't be run because this is an internal function (not found by devtools::check())
+#' source("C:\\Users\\gmillot\\Documents\\Git_projects\\safer-r\\saferDev\\dev\\other\\test.R") ; .functions_detect(x = test, arg_user_setting2 = base::list(x =  as.name(x = "test")), skipped_base = c("function", "if", "for", "while", "repeat", "else"), lib_path = NULL, error_text = " INSIDE P1::F1")
 #' }
 #' @author Gael Millot <gael.millot@pasteur.fr>
 #' 
-#' # importFrom none
+#' 
 #' @keywords internal
 .functions_detect <- function(
     # in internal functions, all arguments are without value on purpose
@@ -310,40 +310,40 @@
     #### main code
     # modification of arg_user_setting2$x for clean messages
     if(base::as.character(x = arg_user_setting2$x)[1] == "::" | base::as.character(x = arg_user_setting2$x)[1] == ":::"){
-        arg_user_setting2$x <- base::paste0(base::as.character(x = arg_user_setting2$x)[2], base::as.character(x = arg_user_setting2$x)[1], base::as.character(x = arg_user_setting2$x)[3], "()")
+        arg_user_setting2$x <- base::paste0(base::as.character(x = arg_user_setting2$x)[2], base::as.character(x = arg_user_setting2$x)[1], base::as.character(x = arg_user_setting2$x)[3], "()", collapse = NULL, recycle0 = FALSE)
     }
     # end modification of arg_user_setting2$x for clean messages
     # recovering the basic functions of R
     s <- base::c("package:stats", "package:graphics",  "package:grDevices", "package:utils", "package:datasets", "package:methods", "Autoloads", "package:base") # basic base::search() scope
-    if(base::any( ! s %in% base::search())){
+    if(base::any( ! s %in% base::search(), na.rm = TRUE)){
         tempo_cat <- base::paste0(
             "INTERNAL ERROR 1 IN ",
             intern_error_text_start, 
             "THE base::search() SCOPE OF R HAS CHANGED.\nTHE PROBLEM IS:\n",
-            base::paste(s[ ! s %in% base::search()], collapse = "\n"), 
+            base::paste0(s[ ! s %in% base::search()], collapse = "\n", recycle0 = FALSE), 
             intern_error_text_end, 
             collapse = NULL, 
             recycle0 = FALSE
         )
-        base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
+        base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL) # == in base::stop() to be able to add several messages between ==
     }
-    fun <- base::unlist(base::sapply(X = s, FUN = function(x){base::ls(x, all.names = TRUE)})) # all the basic functions of R in all the scope
+    fun <- base::unlist(x = base::sapply(X = s, FUN = function(x){base::ls(name = x, pos = , envir = , all.names = TRUE, pattern = , sorted = TRUE)}, simplify = TRUE, USE.NAMES = TRUE), recursive = TRUE, use.names = TRUE) # all the basic functions of R in all the scope
     # end recovering the basic functions of R
     # recovering the input function string
-    code <- utils::capture.output(x) # no lines must be removed because it is to catch the lines of the full code
-    code_line_nb <- 1:base::length(code)
+    code <- utils::capture.output(x, file = NULL, append = FALSE, type = NULL, split = FALSE) # no lines must be removed because it is to catch the lines of the full code
+    code_line_nb <- 1:base::length(x = code)
     # code <- base::paste0(code, collapse = " \\n ") # recovering as single string separated by \\n (and not \n to avoid the eval(\n) when printing the error message)
-    code <- base::gsub(x = code, pattern = " +", replacement = " ") # removal of multiple spaces
-    code <- base::sub(x = code, pattern = "^ +", replacement = "") # removal of multiple spaces in the beginning od strings
+    code <- base::gsub(x = code, pattern = " +", replacement = " ", ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE) # removal of multiple spaces
+    code <- base::sub(x = code, pattern = "^ +", replacement = "", ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE) # removal of multiple spaces in the beginning od strings
     # end recovering the input function string
 
     # removal of empty lines
-    empty_line.log <- base::grepl(code, pattern = "^\\s*$")
+    empty_line.log <- base::grepl(x = code, pattern = "^\\s*$", ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE)
     # end removal of empty lines
 
     # removal of comments
-    comment_line.log <- base::grepl(code, pattern = "^\\s*#") # removal of the lines starting by #
-    if(base::length(code) == 0){
+    comment_line.log <- base::grepl(x = code, pattern = "^\\s*#", ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE) # removal of the lines starting by #
+    if(base::length(x = code) == 0){
         tempo_cat <- base::paste0(
             error_text_start, 
             "THE TESTED FUNCTION ", 
@@ -352,19 +352,19 @@
             collapse = NULL, 
             recycle0 = FALSE
         )
-        base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
+        base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL) # == in base::stop() to be able to add several messages between ==
     }
-    comment.log <- base::grepl(x = code, pattern = "#")
+    comment.log <- base::grepl(x = code, pattern = "#", ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE)
     if(base::any(comment.log, na.rm = TRUE)){
-        comment.line.to.rm <- base::which(comment.log) # elements among code that have #
+        comment.line.to.rm <- base::which(x = comment.log, arr.ind = FALSE, useNames = TRUE) # elements among code that have #
         lines <- code[comment.log]
-        for(i2 in 1:base::length(lines)){
-            lines.split <- base::strsplit(lines[i2], split = "#")[[1]]
+        for(i2 in 1:base::length(x = lines)){
+            lines.split <- base::strsplit(x = lines[i2], split = "#", fixed = FALSE, perl = FALSE, useBytes = FALSE)[[1]]
             # detection of the first left # that is not between quotes
             count <- 1
             tempo.line <- lines.split[1]
             while.loop <- TRUE
-            while(while.loop == TRUE & count < base::length(lines.split)){
+            while(while.loop == TRUE & count < base::length(x = lines.split)){
                 # if odds number of quotes, it means that # has broken the string in the middle of a quoted part
                 double.quote.test <- saferDev:::.has_odd_number_of_quotes(
                     input_string = tempo.line, 
@@ -381,7 +381,7 @@
                 odds.quotes.log <- double.quote.test |  simple.quote.test # lines to keep among commented lines
                 if(odds.quotes.log == TRUE){
                     count <- count + 1
-                    tempo.line <- base::paste0(tempo.line, "#", lines.split[count])
+                    tempo.line <- base::paste0(tempo.line, "#", lines.split[count], collapse = NULL, recycle0 = FALSE)
                 }else{
                      while.loop <- FALSE
                 }
@@ -393,8 +393,8 @@
     }
     # end removal of comments
     # catch the internal function name created inside the tested function
-    internal_fun_names <- base::unlist(base::lapply(X = code, FUN = function(x){
-        output <- base::sub(pattern = "^\\s*(([a-zA-Z]|\\.[a-zA-Z._])[a-zA-Z0-9._]*)\\s*<-[\\s\\r\\n]*function[\\s\\r\\n]*\\(.*", replacement = "\\1", x = x, perl = TRUE)
+    internal_fun_names <- base::unlist(x = base::lapply(X = code, FUN = function(x){
+        output <- base::sub(pattern = "^\\s*(([a-zA-Z]|\\.[a-zA-Z._])[a-zA-Z0-9._]*)\\s*<-[\\s\\r\\n]*function[\\s\\r\\n]*\\(.*", replacement = "\\1", x = x, perl = TRUE, ignore.case = FALSE, fixed = FALSE, useBytes = FALSE)
         # ^\\s* means in perl: 0 or any spaces at the begining of the string
         # ([a-zA-Z]|\\.[a-zA-Z._]) is for the begining of R function name: either any single alphabet character or a dot and any single alphabet character or dot (because .. is ok for function name) or underscore (because ._ is ok for function name). Starting "dot and num" or underscore is not authorized for function name
         # [a-zA-Z0-9._]* is The rest of the function name: any several of these characters or nothing
@@ -402,17 +402,17 @@
         if( ! output == x){
             base::return(output)
         }
-    })) # To achieve the extraction of the function names, you need to wrap the part of the pattern that matches the function name in parentheses () to create a capturing group
+    }), recursive = TRUE, use.names = TRUE) # To achieve the extraction of the function names, you need to wrap the part of the pattern that matches the function name in parentheses () to create a capturing group
     # end catch the internal function name created inside the tested function
     # trick to deal with end of lines between the name of the function and "("
-    if(base::length(code) > 1){
-        for (i2 in 2:base::length(code)) {
+    if(base::length(x = code) > 1){
+        for (i2 in 2:base::length(x = code)) {
             # Check if the current string starts with spaces followed by a '('
-            if (base::grepl("^\\s*\\(", code[i2])) {
+            if (base::grepl(pattern = "^\\s*\\(", x = code[i2], ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE)) {
                 # Check if the previous string ends with the specified pattern
-                if (base::grepl("([a-zA-Z]|\\.[a-zA-Z._])[a-zA-Z0-9._]*\\s*$", code[i2 - 1])) {
+                if (base::grepl(pattern = "([a-zA-Z]|\\.[a-zA-Z._])[a-zA-Z0-9._]*\\s*$", x = code[i2 - 1], ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE)) {
                 # Append a '(' to the previous string
-                code[i2 - 1] <- base::paste0(code[i2 - 1], "(")
+                code[i2 - 1] <- base::paste0(code[i2 - 1], "(", collapse = NULL, recycle0 = FALSE)
                 }
             }
         }
@@ -432,7 +432,7 @@
 
     fun_name <- base::list()
     fun_name_pos <- base::list()
-    for(i1 in 1:base::length(code)){
+    for(i1 in 1:base::length(x = code)){
         tempo <- saferDev:::.extract_all_fun_names(
             text = code[i1], 
             pattern = pattern1, 
@@ -444,60 +444,60 @@
     }
     # tempo <- base::lapply(code, FUN = function(x){saferDev:::.extract_all_fun_names(text = x, pattern = pattern1)})
     # removal of special functions
-    tempo_log <- base::lapply(fun_name, FUN = function(x){ ! x %in% skipped_base})
-    fun_name_wo_op <- base::mapply(FUN = function(x, y){x[y]}, x = fun_name, y = tempo_log, SIMPLIFY = FALSE)
-    fun_name_pos_wo_op <- base::mapply(FUN = function(x, y){x[y]}, x = fun_name_pos, y = tempo_log, SIMPLIFY = FALSE)
+    tempo_log <- base::lapply(X = fun_name, FUN = function(x){ ! x %in% skipped_base})
+    fun_name_wo_op <- base::mapply(FUN = function(x, y){x[y]}, x = fun_name, y = tempo_log, MoreArgs = NULL, SIMPLIFY = FALSE, USE.NAMES = TRUE)
+    fun_name_pos_wo_op <- base::mapply(FUN = function(x, y){x[y]}, x = fun_name_pos, y = tempo_log, MoreArgs = NULL, SIMPLIFY = FALSE, USE.NAMES = TRUE)
     # end removal of special functions
     # removal of empty string
-    tempo.log <- base::sapply(fun_name_wo_op, FUN = function(x){base::length(x) == 0}) # detection of string with empty function names
+    tempo.log <- base::sapply(X = fun_name_wo_op, FUN = function(x){base::length(x = x) == 0}, simplify = TRUE, USE.NAMES = TRUE) # detection of string with empty function names
     fun_name_wo_op <- fun_name_wo_op[ ! tempo.log]
     fun_name_pos_wo_op <- fun_name_pos_wo_op[ ! tempo.log]
     code_line_nb <- code_line_nb[( ! tempo.log) & ( ! comment_line.log) & ( ! empty_line.log)]
-    if( ! (base::length(fun_name_wo_op) == base::length(fun_name_pos_wo_op) & base::length(fun_name_wo_op) == base::length(code_line_nb))){
+    if( ! (base::length(x = fun_name_wo_op) == base::length(x = fun_name_pos_wo_op) & base::length(x = fun_name_wo_op) == base::length(x = code_line_nb))){
         tempo_cat <- base::paste0(
             "INTERNAL ERROR 2 IN ",
             intern_error_text_start, 
             "LENGTHS SHOULD BE IDENTICAL\nfun_name_wo_op: ", 
-            base::length(fun_name_wo_op), 
+            base::length(x = fun_name_wo_op), 
             "\nfun_name_pos_wo_op: ", 
-            base::length(fun_name_pos_wo_op), 
+            base::length(x = fun_name_pos_wo_op), 
             "\ncode_line_nb: ", 
-            base::length(code_line_nb), 
+            base::length(x = code_line_nb), 
             intern_error_text_end, 
             collapse = NULL, 
             recycle0 = FALSE
         )
-        base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
-    }else if(base::any(base::is.na(code_line_nb))){
+        base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL) # == in base::stop() to be able to add several messages between ==
+    }else if(base::any(base::is.na(x = code_line_nb), na.rm = TRUE)){
         tempo_cat <- base::paste0(
             "INTERNAL ERROR 3 IN ", 
             intern_error_text_start, 
             "code_line_nb SHOULD NOT CONTAIN NA.\ncode_line_nb:\n", 
-            base::paste0(code_line_nb, collapse = "\n"), 
+            base::paste0(code_line_nb, collapse = "\n", recycle0 = FALSE), 
             intern_error_text_end, 
             collapse = NULL, 
             recycle0 = FALSE
         )
-        base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
+        base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL) # == in base::stop() to be able to add several messages between ==
     }else{
         # with that, now the code line of code is indicated in as compartment names
-        base::names(fun_name_wo_op) <- base::paste0("c", code_line_nb)
-        base::names(fun_name_pos_wo_op) <- base::paste0("c", code_line_nb)
+        base::names(x = fun_name_wo_op) <- base::paste0("c", code_line_nb, collapse = NULL, recycle0 = FALSE)
+        base::names(x = fun_name_pos_wo_op) <- base::paste0("c", code_line_nb, collapse = NULL, recycle0 = FALSE)
     }
     # end removal of empty string
-    test.log <- base::mapply(FUN = function(x, y){base::length(x) != base::length(y)}, x = fun_name_wo_op, y = fun_name_pos_wo_op, SIMPLIFY = TRUE)
+    test.log <- base::mapply(FUN = function(x, y){base::length(x = x) != base::length(x = y)}, x = fun_name_wo_op, y = fun_name_pos_wo_op, MoreArgs = NULL, SIMPLIFY = TRUE, USE.NAMES = TRUE)
     if(base::any(test.log, na.rm = TRUE)){
         tempo_cat <- base::paste0(
             "INTERNAL ERROR 4 IN ",
             intern_error_text_start, 
             "LENGTHS SHOULD BE IDENTICAL IN COMPARTMENTS ", 
-            base::paste0(base::which(test.log), collapse = ", "), 
+            base::paste0(base::which(x = test.log, arr.ind = FALSE, useNames = TRUE), collapse = ", ", recycle0 = FALSE), 
             " OF fun_name_wo_op AND fun_name_pos_wo_op.", 
             intern_error_text_end, 
             collapse = NULL, 
             recycle0 = FALSE
         )
-        base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n"), call. = FALSE) # == in base::stop() to be able to add several messages between ==
+        base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL) # == in base::stop() to be able to add several messages between ==
     }
     # fun_name_wo_op_uni <- base::unlist(base::unique(fun_name_wo_op)) # in case
     # end all function names in x
