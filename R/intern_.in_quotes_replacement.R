@@ -367,14 +367,20 @@
         )
         base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL) # == in base::stop() to be able to add several messages between ==
     }
+    # dealing with quotes (warning: the order is important)
+    # removal of "\"'" and '\'"'
+    string <- base::gsub( x = string, pattern = '"\\\\"\'"', replacement = '    ', ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE)
+    string <- base::gsub( x = string, pattern = "'\\\\'\"'", replacement = '    ', ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE)
+    # end removal of "\"'" and '\'"'
     # removal of "'" and '"'
     string <- base::gsub( x = string, pattern = '"\'"', replacement = '   ', ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE)
     string <- base::gsub( x = string, pattern = "'\"'", replacement = '   ', ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE)
     # end removal of "'" and '"'
-    # removal of escape quotes
+    # removal of escape quotes \' and \"
     string <- base::gsub( x = string, pattern = "\\\\'", replacement = '  ', ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE)
     string <- base::gsub( x = string, pattern = '\\\\"', replacement = '  ', ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE)
-    # end removal of escape quotes
+    # end removal of escape  \' and \"
+    # end dealing with quotes (warning: the order is important)
     string_split <- base::strsplit(x = string, split = pattern, perl = perl, fixed = FALSE, useBytes = FALSE)[[1]]
     string_out <- string_split[1]
     pos <- NULL
