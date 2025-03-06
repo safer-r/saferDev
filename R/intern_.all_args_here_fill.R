@@ -3,7 +3,7 @@
 #' Get the $MISSING_ARG_NAMES, $MISSING_ARGS and $NEW of all_args_here().
 #' @param arg_full List of all arguments of the function with default value.
 #' @param arg_full_names Vector of strings of the names of the arguments of the function. Can be NULL.
-#' @param tempo_split Vector of strings of the observed argument writting of the function.
+#' @param tempo_split Vector of strings of the observed argument writing of the function.
 #' @param three_dots_log Vector of logical. Is ... present among arg_full_names.
 #' @param i2 Single integer value indicating the loop number.
 #' @param col1_i2 Single integer value indicating the code line number of the checked function.
@@ -475,7 +475,7 @@
                 error_text_start,
                 "THE TESTED FUNCTION ", 
                 arg_user_setting_x, 
-                " SEEMS TO HAVE A WRITTING ERROR IN LINE ",  
+                " SEEMS TO HAVE A WRITING ERROR IN LINE ",  
                 col1_i2, 
                 " AND FUNCTION ", 
                 col2_i2, 
