@@ -23,7 +23,7 @@ Table-like: column 1, the line number in the function code (starting at the "<- 
 With missing :: or :::, the message also indicates if internal functions are created inside the checked function code, since these functions cannot have :: or :::.
 }
 \description{
-Verify that all the functions used inside a function are preceeded by a package attribution. For instance: <code>base::mean()</code> and not mean(), or saferDev:::.base_op_check() and not .base_op_check(). Warning: does not check that the package is the good one. Use all_args_here() for that.
+Verify that all the functions used inside a function are preceeded by a package attribution. For instance: \code{base::mean()} and not mean(), or saferDev:::.base_op_check() and not .base_op_check(). Warning: does not check that the package is the good one. Use all_args_here() for that.
 }
 \details{
 Use the result to modify the code of the function like this: <PACKAGE>::<FUNCTION> (OR <PACKAGE>:::<FUNCTION> for function names starting by a dot)
@@ -56,7 +56,7 @@ Of note, during package creation, the devtools::check() command tells which func
 colons_check(mean)
 colons_check(colons_check)
 source("https://raw.githubusercontent.com/safer-r/saferDev/main/dev/other/test.R") ; colons_check(test)
-# importFrom none
+
 }
 \author{
 Gael Millot <gael.millot@pasteur.fr>

@@ -30,7 +30,7 @@ Determine if a string has a odd number of quotes.
 .has_odd_number_of_quotes(input_string = 'This is a "test" string with "even" quotes', pattern = '"', lib_path = NULL, error_text = " INSIDE P1::F1")
 }
 
-# importFrom none
+
 }
 \author{
 Gael Millot <gael.millot@pasteur.fr>

@@ -53,7 +53,5 @@ Create the message for the colons_check() function.
 }
 \author{
 Gael Millot <gael.millot@pasteur.fr>
-
-# importFrom none
 }
 \keyword{internal}

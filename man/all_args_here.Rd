@@ -83,7 +83,7 @@ FUN2 <- function(x, y){middle_bracket2 <- base::do.call(what = base::c, args = c
 all_args_here(FUN2, safer_check = FALSE)
 source("https://raw.githubusercontent.com/safer-r/.github/refs/heads/main/profile/backbone.R")
 all_args_here(BACKBONE, export = TRUE, safer_check = FALSE)
-# importFrom none
+
 }
 \author{
 Gael Millot <gael.millot@pasteur.fr>
