@@ -1317,7 +1317,7 @@ arg_test <- function(
             }
         }
         if(export == TRUE){
-            base::save(output, list = NULL, file = base::paste0(res_path, "/arg_test_1", base::ifelse(test = total.comp.nb == 1L, yes = ".RData", no = base::paste0("-", total.comp.nb, ".RData", collapse = NULL, recycle0 = FALSE)), collapse = NULL, recycle0 = FALSE), ascii = FALSE, version = NULL, envir = base::parent.frame(n = 1), compress = FALSE, compression_level = , eval.promises = TRUE, precheck = TRUE)
+            base::save(output, list = NULL, file = base::paste0(res_path, "/arg_test_1", base::ifelse(test = total.comp.nb == 1L, yes = ".RData", no = base::paste0("-", total.comp.nb, ".RData", collapse = NULL, recycle0 = FALSE)), collapse = NULL, recycle0 = FALSE), ascii = FALSE, version = NULL, envir = , compress = FALSE, compression_level = , eval.promises = TRUE, precheck = TRUE)
             table.out <- base::as.matrix(x = output$data)
             table.out <- base::gsub(x = table.out, pattern = "\n", replacement = "  ", ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE)
             utils::write.table(x = table.out, file = base::paste0(res_path, "/table_from_arg_test_1", base::ifelse(test = total.comp.nb == 1L, yes = ".tsv", no = base::paste0("-", total.comp.nb, ".tsv", collapse = NULL, recycle0 = FALSE)), collapse = NULL, recycle0 = FALSE), row.names = TRUE, col.names = NA, append = FALSE, quote = FALSE, sep = "\t", eol = "\n", na = "", dec = ".", qmethod = base::c("escape", "double"), fileEncoding = "")

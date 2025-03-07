@@ -8,13 +8,13 @@ arg_test(
   fun,
   arg,
   val,
-  expect.error = NULL,
+  expect_error = NULL,
   parall = FALSE,
-  thread.nb = NULL,
-  print.count = 10,
-  plot.fun = FALSE,
+  thread_nb = NULL,
+  print_count = 10,
+  plot_fun = FALSE,
   export = FALSE,
-  res.path = ".",
+  res_path = ".",
   safer_check = TRUE,
   lib_path = NULL,
   error_text = ""
@@ -27,19 +27,19 @@ arg_test(
 
 \item{val}{List with number of compartments equal to the length of arg, each compartment containing values of the corresponding argument in arg. Each different value must be in a list or in a vector. For instance, argument 3 in arg is a logical argument (values accepted TRUE, FALSE, NA). Thus, compartment 3 of val can be either list(TRUE, FALSE, NA), or c(TRUE, FALSE, NA). NULL value alone must be written list(NULL).}
 
-\item{expect.error}{List of exactly the same structure as val argument, but containing FALSE or TRUE, depending on whether error is expected (TRUE) or not (FALSE) for each corresponding value of val. A message is returned depending on discrepancies between the expected and observed errors. See the examples below. BEWARE: not always possible to write the expected errors for all the combination of argument values. Ignored if NULL.}
+\item{expect_error}{List of exactly the same structure as val argument, but containing FALSE or TRUE, depending on whether error is expected (TRUE) or not (FALSE) for each corresponding value of val. A message is returned depending on discrepancies between the expected and observed errors. See the examples below. BEWARE: not always possible to write the expected errors for all the combination of argument values. Ignored if NULL.}
 
 \item{parall}{Single logical value. Force parallelization ?}
 
-\item{thread.nb}{Single numeric integer indicating the number of threads to use if ever parallelization is required. If NULL, all the available threads will be used. Ignored if parall is FALSE.}
+\item{thread_nb}{Single numeric integer indicating the number of threads to use if ever parallelization is required. If NULL, all the available threads will be used. Ignored if parall is FALSE.}
 
-\item{print.count}{Single interger value. Print a working progress message every print.count during loops. BEWARE: can increase substentially the time to complete the process if using a small integer value, like 10 for instance. Use Inf if no loop message desired.}
+\item{print_count}{Single interger value. Print a working progress message every print_count during loops. BEWARE: can increase substentially the time to complete the process if using a small integer value, like 10 for instance. Use Inf if no loop message desired.}
 
-\item{plot.fun}{Single logical value. Plot the plotting function tested for each test? Ignored if the tested function is not a graphic function.}
+\item{plot_fun}{Single logical value. Plot the plotting function tested for each test? Ignored if the tested function is not a graphic function.}
 
 \item{export}{Single logical value. Export the results into a .RData file and into a .tsv file? If FALSE, return a list into the console (see below). BEWARE: will be automatically set to TRUE if parall is TRUE. This means that when using parallelization, the results are systematically exported, not returned into the console.}
 
-\item{res.path}{Single character string indicating the absolute pathway of the folder where the txt results and pdfs, containing all the plots, will be saved (by default into the working directory). Several txt and pdf, one per thread, if parallelization. Ignored if export is FALSE. Must be specified if parall is TRUE or if export is TRUE.}
+\item{res_path}{Single character string indicating the absolute pathway of the folder where the txt results and pdfs, containing all the plots, will be saved (by default into the working directory). Several txt and pdf, one per thread, if parallelization. Ignored if export is FALSE. Must be specified if parall is TRUE or if export is TRUE.}
 
 \item{safer_check}{Single logical value. Perform some "safer" checks? If TRUE, checkings are performed before main code running (see https://github.com/safer-r): 1) correct lib_path argument value 2) required functions and related packages effectively present in local R lybraries and 3) R classical operators (like "<-") not overwritten by another package because of the R scope. Must be set to FALSE if this fonction is used inside another "safer" function to avoid pointless multiple checkings.}
 
@@ -48,7 +48,7 @@ arg_test(
 \item{error_text}{Single character string used to add information in error messages returned by the function, notably if the function is inside other functions, which is practical for debugging. Example: error_text = " INSIDE <PACKAGE_1>::<FUNCTION_1> INSIDE <PACKAGE_2>::<FUNCTION_2>.". If NULL, converted into "".}
 }
 \value{
-One or several pdf if a plotting function is tested and if the plot.fun argument is TRUE. 
+One or several pdf if a plotting function is tested and if the plot_fun argument is TRUE. 
 
 And then, if export is FALSE a list containing:
 
@@ -62,7 +62,7 @@ And then, if export is FALSE a list containing:
      - $kind: a vector of character strings indicating the kind of test result: either "ERROR", or "WARNING", or "OK".
      - $problem: a logical vector indicating if error or not.
      
-     - $expected.error: optional logical vector indicating the expected error specified in the expect.error argument.
+     - $expected.error: optional logical vector indicating the expected error specified in the expect_error argument.
      - $message: either NULL if $kind is always "OK", or the messages.
      
 - $sys.info: system and packages info.
@@ -73,7 +73,7 @@ If export is TRUE:
 
 - also the $data data frame into a .tsv file.
 
-- if expect.error is non NULL and if any discrepancy, the $data data frame into a .tsv file but containing only the rows with discrepancies between expected and observed errors.
+- if expect_error is non NULL and if any discrepancy, the $data data frame into a .tsv file but containing only the rows with discrepancies between expected and observed errors.
 }
 \description{
 Test combinations of argument values of a function.
@@ -87,27 +87,27 @@ val = list(x = list(1:10, c(1,1,2,8), NA), incomparable = c(TRUE, FALSE, NA)))
 
 arg_test(fun = "unique", arg = c("x", "incomparables"), 
 val = list(x = list(1:10, c(1,1,2,8), NA), 
-incomparable = c(TRUE, FALSE, NA)), expect.error = list(x = list(FALSE, FALSE, TRUE), 
+incomparable = c(TRUE, FALSE, NA)), expect_error = list(x = list(FALSE, FALSE, TRUE), 
 incomparable = c(FALSE, FALSE, TRUE)))
 
 arg_test(fun = "unique", arg = c("x", "incomparables"), 
 val = list(x = list(1:10, c(1,1,2,8), NA), incomparable = c(TRUE, FALSE, NA)), 
-expect.error = list(x = c(FALSE, FALSE, TRUE), incomparable = c(FALSE, FALSE, TRUE)), 
-export = TRUE, res.path = getwd())
+expect_error = list(x = c(FALSE, FALSE, TRUE), incomparable = c(FALSE, FALSE, TRUE)), 
+export = TRUE, res_path = getwd())
 
 \dontrun{ # Example that return an error
-arg_test(fun = "unique", arg = c("x", "incomparables"), val = list(x = list(x = list(1:10, c(1,1,2,8), NA), incomparable = c(TRUE, FALSE, NA))))
+arg_test(fun = "unique", arg = c("x", "incomparables"), val = list(A = list(x = list(1:10, c(1,1,2,8), NA), incomparable = c(TRUE, FALSE, NA))))
 arg_test(fun = "round", arg = c("data", "dec.nb", "after.lead.zero"), val = list(L1 = list(c(1, 1.0002256, 1.23568), "a", NA), L2 = list(2, c(1,3), NA), L3 = c(TRUE, FALSE, NA)))
 }
 
 arg_test(fun = "plot", arg = c("x", "y"), val = list(x = list(1:10, 12:13, NA, (1:10)^2), 
-y = list(1:10, NA, NA)),  expect.error = list(x = list(FALSE, TRUE, TRUE, FALSE), 
-y = list(FALSE, TRUE, TRUE)), parall = FALSE, thread.nb = NULL, plot.fun = TRUE, 
-res.path = ".", lib_path = NULL)
+y = list(1:10, NA, NA)),  expect_error = list(x = list(FALSE, TRUE, TRUE, FALSE), 
+y = list(FALSE, TRUE, TRUE)), parall = FALSE, thread_nb = NULL, plot_fun = TRUE, 
+res_path = ".", lib_path = NULL)
 
 arg_test(fun = "plot", arg = c("x", "y"), val = list(x = list(1:10, 12:13, NA, (1:10)^2), 
-y = list(1:10, NA, NA)), parall = FALSE, thread.nb = 4, 
-plot.fun = TRUE, res.path = ".", 
+y = list(1:10, NA, NA)), parall = FALSE, thread_nb = 4, 
+plot_fun = TRUE, res_path = ".", 
 lib_path = NULL)
 }
 \seealso{
