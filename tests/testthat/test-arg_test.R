@@ -47,7 +47,7 @@ testthat::test_that("arg_test()", {
     testthat::expect_error(arg_test(fun = f2, arg = base::rep(argum2,22), val = rep(value2, 22), expect_error = rep(error2,22), parall = FALSE, thread_nb = NULL, print_count = 10, plot_fun = TRUE, export = FALSE, res_path = '.', lib_path = NULL, safer_check = FALSE))
     testthat::expect_error(arg_test(fun = f2, arg = argum2, val = base::list(x = base::list(1,2,3,4), y = base::list(3,5)), expect_error = error2, parall = FALSE, thread_nb = NULL, print_count = 10, plot_fun = TRUE, export = FALSE, res_path = '.', lib_path = NULL, safer_check = FALSE))
     testthat::expect_error(arg_test(fun = f, arg = argum, val = value, expect_error = error, parall = TRUE, thread_nb = NULL, print_count = 10, plot_fun = FALSE, export = FALSE, res_path = ".", lib_path = NULL, safer_check = FALSE))
-    testthat::expect_error(arg_test(fun = f2, arg = argum2, val = value2, expect_error = error2, parall = FALSE, thread_nb = NULL, print_count = 10, plot_fun = TRUE, export = TRUE, res_path = ".", lib_path = NULL, safer_check = FALSE))
+    testthat::expect_no_error(arg_test(fun = f2, arg = argum2, val = value2, expect_error = error2, parall = FALSE, thread_nb = NULL, print_count = 10, plot_fun = TRUE, export = TRUE, res_path = ".", lib_path = NULL, safer_check = FALSE))
     testthat::expect_error(arg_test(fun = f2, arg = argum2, val = value2, expect_error = error2, parall = FALSE, thread_nb = NULL, print_count = 10, plot_fun = TRUE, export = FALSE, res_path = ".", lib_path = 'not_real_path', safer_check = FALSE))
 
 

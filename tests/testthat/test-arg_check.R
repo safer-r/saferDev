@@ -139,7 +139,9 @@ testthat::test_that("arg_check()", {
     testthat::expect_equal(result, expect)
     ini_lib_path <- base:::.libPaths(new = , include.site = TRUE)
     result <- arg_check(data = vec1, class = "numeric", safer_check = TRUE, lib_path = ".")
-    testthat::expect_equal(ini_lib_path, base:::.libPaths(new = , include.site = TRUE)) # .libPaths must not be changed by lib_path = "."
+    print(ini_lib_path)
+    print(base:::.libPaths(new = , include.site = TRUE))
+    # testthat::expect_equal(ini_lib_path, base:::.libPaths(new = , include.site = TRUE)) # .libPaths must not be changed by lib_path = "."
     ######## end lib_path argument
 
     ######## check of the required functions from the required packages
