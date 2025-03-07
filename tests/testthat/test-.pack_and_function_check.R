@@ -53,7 +53,8 @@ testthat::test_that(".pack_and_function_check()", {
     testthat::expect_error(.pack_and_function_check(fun = list(), lib_path = NULL, error_text = ""))
 
     testthat::expect_error(.pack_and_function_check(fun = char1_fun, lib_path = character(), error_text = ""))
-    testthat::expect_error(.pack_and_function_check(fun = char1_fun, lib_path = NULL, error_text = character()))
+    testthat::expect_no_error(.pack_and_function_check(fun = char1_fun, lib_path = NULL, error_text = character())) # but error_text is converted to ""
+    testthat::expect_no_error(.pack_and_function_check(fun = char1_fun, lib_path = NULL, error_text = ""))
     ######## end management of empty non NULL arguments
 
     ######## management of NA arguments
@@ -136,16 +137,13 @@ testthat::test_that(".pack_and_function_check()", {
 
     ## other tests
     result <- saferDev::get_message('.pack_and_function_check(fun = char2_fun, lib_path = NULL, error_text = "")', kind = "error", print.no = TRUE, text = NULL, safer_check = FALSE) 
-    # warning LINE 13 can be LINE 22
     expected <- "ERROR MESSAGE REPORTED:\nError : \n\n================\n\nERROR IN saferDev:::.pack_and_function_check().\n\nTHE STRING IN fun ARGUMENT MUST CONTAIN \"::\" OR \":::.\":\narg_check\n\n================\n\n\n"
     testthat::expect_equal(result, expected)
     result <- saferDev::get_message('.pack_and_function_check(fun = char3_fun, lib_path = NULL, error_text = "")', kind = "error", print.no = TRUE, text = NULL, safer_check = FALSE) 
-    # warning LINE 13 can be LINE 22
-    expected <- "ERROR MESSAGE REPORTED:\nError : \n\n================\n\nERROR IN saferDev:::.pack_and_function_check().\n\nREQUIRED PACKAGE:\nNOTGOOD\nMUST BE INSTALLED IN ONE OF THESE FOLDERS:\nC:/Users/gmillot/AppData/Local/R/win-library/4.3\nC:/Program Files/R/R-4.3.1/library\n\n================\n\n\n"
+    expected <- base::paste0("ERROR MESSAGE REPORTED:\nError : \n\n================\n\nERROR IN saferDev:::.pack_and_function_check().\n\nREQUIRED PACKAGE:\nNOTGOOD\nMUST BE INSTALLED IN ONE OF THESE FOLDERS:\n", paste0( .libPaths(), collapse = "\n", recycle0 = FALSE), "\n\n================\n\n\n", collapse = NULL, recycle0 = FALSE)
     testthat::expect_equal(result, expected)
     result <- saferDev::get_message('.pack_and_function_check(fun = char4_fun, lib_path = NULL, error_text = "")', kind = "error", print.no = TRUE, text = NULL, safer_check = FALSE) 
-    # warning LINE 13 can be LINE 22
-    expected <- "ERROR MESSAGE REPORTED:\nError : \n\n================\n\nERROR IN saferDev:::.pack_and_function_check().\n\nREQUIRED FUNCTION IS MISSING IN THE INSTALLED PACKAGE:\nsaferDev::NOTGOOD\n\nIN ONE OF THESE FOLDERS:\nC:/Users/gmillot/AppData/Local/R/win-library/4.3\nC:/Program Files/R/R-4.3.1/library\n\n================\n\n\n"
+    expected <- base::paste0("ERROR MESSAGE REPORTED:\nError : \n\n================\n\nERROR IN saferDev:::.pack_and_function_check().\n\nREQUIRED FUNCTION IS MISSING IN THE INSTALLED PACKAGE:\nsaferDev::NOTGOOD\n\nIN ONE OF THESE FOLDERS:\n", paste0( .libPaths(), collapse = "\n", recycle0 = FALSE), "\n\n================\n\n\n", collapse = NULL, recycle0 = FALSE)
     testthat::expect_equal(result, expected)
     ## end other tests
 

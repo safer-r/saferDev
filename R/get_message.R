@@ -87,22 +87,22 @@ get_message <- function(
     }
     #### end function name
 
-    #### arguments settings
+    #### arguments settings (warning: personalized compared to backbone)
     arg_user_setting <- tempo_settings[-1] # list of the argument settings (excluding default values not provided by the user). Always a list, even if 1 argument. So ok for lapply() usage (management of NA section)
     arg_user_setting_names <- base::names(x = arg_user_setting)
-    # evaluation of values if they are espression, call, etc.
+    # evaluation of values if they are expression, call, etc.
     if(base::length(x = arg_user_setting) != 0){
         arg_user_setting_eval <- base::lapply(
-            X = arg_user_setting_names, 
+            X = arg_user_setting_names[-1], # first argument data removed because returns a bug if data is an unquote and uncorrect expression. Checked below
             FUN = function(x){
                 base::get(x = x, pos = -1L, envir = base::parent.frame(n = 2), mode = "any", inherits = TRUE) # n = 2 because of lapply(), inherit = TRUE to be sure to correctly evaluate
             }
         )
-        base::names(x = arg_user_setting_eval) <- arg_user_setting_names
+        base::names(x = arg_user_setting_eval) <- arg_user_setting_names[-1]
     }
-    # end evaluation of values if they are espression, call, etc.
+    # end evaluation of values if they are expression, call, etc.
     arg_names <- base::names(x = base::formals(fun = base::sys.function(which = base::sys.parent(n = 2)), envir = base::parent.frame(n = 1))) # names of all the arguments
-    #### end arguments settings
+    #### end arguments settings (warning: personalized compared to backbone)
 
     #### error_text initiation
 

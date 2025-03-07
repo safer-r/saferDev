@@ -35,42 +35,42 @@ testthat::test_that("colons_check()", {
 
   # Test cases
   # Simple examples
-    testthat::expect_error(saferDev::colons_check(caca = "a")) # not a correct argument
-    testthat::expect_no_error(saferDev::colons_check(x = fun1))
-    testthat::expect_no_error(saferDev::colons_check(x = fun2))
-    testthat::expect_no_error(saferDev::colons_check(x = fun2, safer_check = TRUE))
-    testthat::expect_no_error(saferDev::colons_check(x = fun3))
-    testthat::expect_no_error(saferDev::colons_check(x = fun4))
-    testthat::expect_no_error(saferDev::colons_check(x = fun4, safer_check = TRUE))
-    testthat::expect_error(saferDev::colons_check(x = fun4, safer_check = 'FALSE'))
-    testthat::expect_error(saferDev::colons_check( safer_check = FALSE))
-    testthat::expect_error(saferDev::colons_check( x = NULL, safer_check = FALSE))
+    testthat::expect_error(colons_check(caca = "a")) # not a correct argument
+    testthat::expect_no_error(colons_check(x = fun1))
+    testthat::expect_no_error(colons_check(x = fun2))
+    testthat::expect_no_error(colons_check(x = fun2, safer_check = TRUE))
+    testthat::expect_no_error(colons_check(x = fun3))
+    testthat::expect_no_error(colons_check(x = fun4))
+    testthat::expect_no_error(colons_check(x = fun4, safer_check = TRUE))
+    testthat::expect_error(colons_check(x = fun4, safer_check = 'FALSE'))
+    testthat::expect_error(colons_check( safer_check = FALSE))
+    testthat::expect_error(colons_check( x = NULL, safer_check = FALSE))
 
 
   # sophisticated example
     base::source("https://raw.githubusercontent.com/safer-r/saferDev/main/dev/other/test.R") # Warning: comments are removed by the CI and lines are changed
-    result1 <- utils::capture.output(saferDev::colons_check(x = test))
+    result1 <- utils::capture.output(colons_check(x = test))
     expected1 <- base::c(
         "", 
         "", 
-        "INSIDE test(), SOME :: OR ::: ARE MISSING AT BASIC FUNCTION POSITIONS:", 
+        "INSIDE test(), SOME :: OR ::: ARE MISSING BEFORE BASIC FUNCTIONS:", 
         "", 
         "LINE\tFUN\t\tSTRING_BEFORE", 
-        "5\tgregexpr\t\tmatches <- " , 
-        "8\tregmatches\t\tmatched_strings <- " , 
-        "11\tsum\t\t", 
-        "18\tsub\t\tresult <- " , 
-        "19\trange\t\t", 
-        "22\treturn\t\t", 
+        "16\tgregexpr\t\tmatches <- ", 
+        "18\tregmatches\t\tmatched_strings <- ", 
+        "21\tsum\t\ttempo4 <- a$regmatches(x = text, m = matches)[[1]] ; ", 
+        "24\tsub\t\tresult <- ", 
+        "24\trange\t\tresult <- sub(\"\\\\($##\", \"\", matched_strings) ; ", 
+        "26\treturn\t\t", 
         "", 
         "INSIDE test(), INTERNAL FUNCTION DETECTED:", 
         "FUN1", 
         "", 
-        "INSIDE test(), SOME :: OR ::: ARE MISSING AT OTHER FUNCTION POSITIONS:", 
+        "INSIDE test(), SOME :: OR ::: ARE MISSING BEFORE OTHER FUNCTIONS:", 
         "", 
-        "LINE\tFUN\t\tSTRING_BEFORE",  
-        "16\troc1\t\tbase::length(", 
-        "20\troc4\t\ttempo.cat <- base::paste0(\"IAGE\\nLENGTHS OF roc00() (\", base::ks.test(", 
+        "LINE\tFUN\t\tSTRING_BEFORE", 
+        "23\troc1\t\ttempo.cat <- base::paste0(\"INTERNAL ERROR 4 IN \", function.name, \" OF THE \", package.name, \" PACKAGE\\nLENGTHS OF col1 (\", base::length(", 
+        "25\troc4\t\ttempo.cat <- base::paste0(\"IAGE\\nLENGTHS OF roc00() (\", base::ks.test(", 
         ""
     )
     testthat::expect_equal(result1, expected1)

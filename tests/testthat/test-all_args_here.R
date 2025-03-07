@@ -15,11 +15,11 @@ testthat::test_that("all_args_here()", {
   # Simple examples
     result1 <- saferDev::get_message("saferDev::all_args_here(x = test2)", kind = "error", print.no = TRUE, text = NULL)
     # warning LINE 13 can be LINE 22
-    expected1 <- "ERROR MESSAGE REPORTED:\nError : \n\n================\n\nERROR IN all_args_here() OF THE saferDev PACKAGE\nTHE TESTED FUNCTION test2 SEEMS TO HAVE A WRITTING ERROR IN LINE 13 AND FUNCTION length.\nPLEASE, RUN THE TESTED FUNCTION FIRST.\n\n================\n\n\n"
+    expected1 <- "ERROR MESSAGE REPORTED:\nError : \n\n================\n\nERROR IN saferDev:::.all_args_here_fill() INSIDE saferDev::all_args_here().\n\nTHE TESTED FUNCTION test2 SEEMS TO HAVE A WRITING ERROR IN LINE 22 AND FUNCTION length.\nPLEASE, RUN THE TESTED FUNCTION FIRST.\n\n================\n\n\n"
     testthat::expect_equal(result1, expected1)
 
     result2 <- saferDev::get_message("saferDev::all_args_here(x = mean)", kind = "error", print.no = TRUE, text = NULL)
-    expected2 <- "ERROR MESSAGE REPORTED:\nError : \n\n================\n\nERROR IN all_args_here() OF THE saferDev PACKAGE\nCANNOT GET THE ARGUMENTS OF A FUNCTION THAT IS NOT ASSOCIATED TO ITS PACKAGE IN LINE 2:\n\nUseMethod(\"mean\")\n\nPLEASE, RUN saferDev::colons_check(mean) FIRST,\nADD THE MISSING <PACKAGE>::<FUNCTION> (OR <PACKAGE>:::<FUNCTION> FOR FUNCTION STARTING BY A DOT)\nAND RERUN saferDev::all_args_here(mean)\n\n================\n\n\n"
+    expected2 <- "ERROR MESSAGE REPORTED:\nError : \n\n================\n\nERROR IN saferDev::all_args_here().\n\nCANNOT GET THE ARGUMENTS OF A FUNCTION THAT IS NOT ASSOCIATED TO ITS PACKAGE IN LINE 2:\n\nUseMethod(\"mean\")\n\nPLEASE, RUN saferDev::colons_check(mean) FIRST,\nADD THE MISSING <PACKAGE>::<FUNCTION> (OR <PACKAGE>:::<FUNCTION> FOR FUNCTION STARTING BY A DOT)\nAND RERUN saferDev::all_args_here(mean).\n\n================\n\n\n"
     testthat::expect_equal(result2, expected2)
 
     testthat::expect_error(saferDev::all_args_here(caca = "a")) # not a correct argument

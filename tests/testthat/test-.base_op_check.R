@@ -31,7 +31,8 @@ testthat::test_that(".base_op_check()", {
 
     ######## management of empty non NULL arguments
     # all the arguments must be present
-    testthat::expect_error(.base_op_check(error_text = character()))
+    testthat::expect_no_error(.base_op_check(error_text = character())) # # but error_text is converted to ""
+    testthat::expect_no_error(.base_op_check(error_text = ""))
     ######## end management of empty non NULL arguments
 
     ######## management of NA arguments
@@ -62,7 +63,7 @@ testthat::test_that(".base_op_check()", {
     #### main code
     assign("+", 1, envir = .GlobalEnv)
     result <- saferDev::get_message(".base_op_check(error_text = '')", kind = "error", print.no = TRUE, text = NULL, safer_check = FALSE) 
-    expected <- "ERROR MESSAGE REPORTED:\nError : \n\n================\n\nERROR IN saferDev:::.base_op_check().\n\nCRITICAL R OBJECTS CANNOT BE PRESENT SOMEWHERE ELSE IN THE R SCOPE THAN IN \"package::base\".\nPROBLEM WITH:\n+\t.GlobalEnv package:base\n\n================\n\n\n"
+    expected <- "ERROR MESSAGE REPORTED:\nError : \n\n================\n\nERROR IN saferDev:::.base_op_check().\n\nCRITICAL R OBJECTS CANNOT BE PRESENT SOMEWHERE ELSE IN THE R SCOPE THAN IN \"package::base\".\nPROBLEM WITH:\n+\t.GlobalEnv package:base\n\nSWITCH THE safer_check ARGUMENT TO FALSE IF THESE OBJECTS CANNOT BE DELETED.\n\nOF NOTE, BASIC R OBJECT PROTECTED FROM OVERWRITING IN SAFER FUNCTIONS:\n-\n!\n!=\n$\n%%\n%*%\n%/%\n%in%\n&\n&&\n(\n*\n/\n:\n::\n:::\n@\n[\n[[\n^\n{\n|\n||\n~\n+\n<\n<-\n<<-\n<=\n=\n==\n>\n>=\n\\\nif\nelse\nfunction\nfor\nwhile\nrepeat\n\n================\n\n\n"
     testthat::expect_equal(result, expected)
     rm("+", envir = .GlobalEnv)
     result <- saferDev::get_message(".base_op_check(error_text = '')", kind = "error", print.no = TRUE, text = NULL, safer_check = FALSE) 
