@@ -15,7 +15,7 @@ testthat::test_that("all_args_here()", {
   # Simple examples
     result1 <- saferDev::get_message("saferDev::all_args_here(x = test2)", kind = "error", print.no = TRUE, text = NULL)
     # warning LINE 13 can be LINE 22
-    expected1 <- "ERROR MESSAGE REPORTED:\nError : \n\n================\n\nERROR IN saferDev:::.all_args_here_fill() INSIDE saferDev::all_args_here().\n\nTHE TESTED FUNCTION test2 SEEMS TO HAVE A WRITING ERROR IN LINE 22 AND FUNCTION length.\nPLEASE, RUN THE TESTED FUNCTION FIRST.\n\n================\n\n\n"
+    expected1 <- "ERROR MESSAGE REPORTED:\nError : \n\n================\n\nERROR IN saferDev:::.all_args_here_fill() INSIDE saferDev::all_args_here().\n\nTHE TESTED FUNCTION test2 SEEMS TO HAVE A WRITING ERROR IN LINE 13 AND FUNCTION length.\nPLEASE, RUN THE TESTED FUNCTION FIRST.\n\n================\n\n\n"
     testthat::expect_equal(result1, expected1)
 
     result2 <- saferDev::get_message("saferDev::all_args_here(x = mean)", kind = "error", print.no = TRUE, text = NULL)

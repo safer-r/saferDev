@@ -50,17 +50,18 @@ testthat::test_that("colons_check()", {
   # sophisticated example
     base::source("https://raw.githubusercontent.com/safer-r/saferDev/main/dev/other/test.R") # Warning: comments are removed by the CI and lines are changed
     result1 <- utils::capture.output(colons_check(x = test))
+    # warning: string are different in CI
     expected1 <- base::c(
         "", 
         "", 
         "INSIDE test(), SOME :: OR ::: ARE MISSING BEFORE BASIC FUNCTIONS:", 
         "", 
         "LINE\tFUN\t\tSTRING_BEFORE", 
-        "16\tgregexpr\t\tmatches <- ", 
-        "18\tregmatches\t\tmatched_strings <- ", 
-        "21\tsum\t\ttempo4 <- a$regmatches(x = text, m = matches)[[1]] ; ", 
-        "24\tsub\t\tresult <- ", 
-        "24\trange\t\tresult <- sub(\"\\\\($##\", \"\", matched_strings) ; ", 
+        "5\tgregexpr\t\tmatches <- ", 
+        "8\tregmatches\t\tmatched_strings <- ", 
+        "11\tsum\t\t", 
+        "18\tsub\t\tresult <- ", 
+        "19\trange\t\t", 
         "26\treturn\t\t", 
         "", 
         "INSIDE test(), INTERNAL FUNCTION DETECTED:", 
