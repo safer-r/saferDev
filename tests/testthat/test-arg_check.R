@@ -20,5 +20,6 @@ testthat::test_that("arg_check()", {
     testthat::expect_no_error(arg_check(data = vec1, class = "numeric")) # to test that this example works
     ## end initialization of tests
 
+
 })
 
