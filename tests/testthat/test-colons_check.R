@@ -62,7 +62,7 @@ testthat::test_that("colons_check()", {
         "11\tsum\t\t", 
         "18\tsub\t\tresult <- ", 
         "19\trange\t\t", 
-        "26\treturn\t\t", 
+        "22\treturn\t\t", 
         "", 
         "INSIDE test(), INTERNAL FUNCTION DETECTED:", 
         "FUN1", 
@@ -70,8 +70,8 @@ testthat::test_that("colons_check()", {
         "INSIDE test(), SOME :: OR ::: ARE MISSING BEFORE OTHER FUNCTIONS:", 
         "", 
         "LINE\tFUN\t\tSTRING_BEFORE", 
-        "23\troc1\t\ttempo.cat <- base::paste0(\"INTERNAL ERROR 4 IN \", function.name, \" OF THE \", package.name, \" PACKAGE\\nLENGTHS OF col1 (\", base::length(", 
-        "25\troc4\t\ttempo.cat <- base::paste0(\"IAGE\\nLENGTHS OF roc00() (\", base::ks.test(", 
+        "16\troc1\t\tbase::length(", 
+        "20\troc4\t\ttempo.cat <- base::paste0(\"IAGE\\nLENGTHS OF roc00() (\", base::ks.test(", 
         ""
     )
     testthat::expect_equal(result1, expected1)
