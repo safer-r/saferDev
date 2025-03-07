@@ -99,8 +99,9 @@ arg_test <- function(
     error_text = ""
 ){
     # DEBUGGING
-    # fun = "unique" ; arg = "x" ; val = base::list(x = base::list(1:3, mean)) ; expect.error = base::list(x = base::list(TRUE, TRUE)) ; parall = FALSE ; thread.nb = NULL ; plot.fun = FALSE ; export = FALSE ; res.path = "C:\\Users\\gmillot\\Desktop\\" ; lib_path = NULL ; print.count = 1; safer_check = TRUE # for function debugging
-    
+    # fun = "unique" ; arg = "x" ; val = base::list(x = base::list(1:3, mean)) ; expect.error = base::list(x = base::list(TRUE, TRUE)) ; parall = FALSE ; thread.nb = NULL ; plot.fun = FALSE ; export = FALSE ; res.path = "C:\\Users\\gmillot\\Desktop\\" ; lib_path = NULL ; print.count = 1; safer_check = TRUE ; error_text = "" # for function debugging
+# fun = "unique" ; arg = c("x", "incomparables") ; val = list(x = list(1:10, c(1,1,2,8), NA), incomparable = c(TRUE, FALSE, NA)) ; expect.error = list(x = c(FALSE, FALSE, TRUE), incomparable = c(FALSE, FALSE, TRUE)) ; parall = FALSE ; thread.nb = NULL ; plot.fun = FALSE ; export = FALSE ; res.path = "C:\\Users\\gmillot\\Desktop\\" ; lib_path = NULL ; print.count = 1; safer_check = TRUE ; error_text = "" # for function debugging
+# function_name <- "arg_test" ; arg_user_setting = base::list(x = as.name(x = "arg_test"), fun = "unique", arg = c("x", "incomparables"), val = list(x = list(1:10, c(1,1,2,8), NA), incomparable = c(TRUE, FALSE, NA)), expect.error = list(x = c(FALSE, FALSE, TRUE), incomparable = c(FALSE, FALSE, TRUE)), parall = FALSE, thread.nb = NULL, plot.fun = FALSE, export = FALSE, res.path = "C:\\Users\\gmillot\\Desktop\\", lib_path = NULL, print.count = 1, safer_check = TRUE, error_text = "") ; arg_names <- c("x", "fun",  "arg",  "val", "expect.error", "parall", "thread.nb", "print.count", "plot.fun", "export", "res.path", "safer_check", "lib_path", "error_text") ; ini <- arg_user_setting ; arg_user_setting_eval <- list(fun = "unique", arg = c("x", "incomparables"), val = list(x = list(1:10, c(1,1,2,8), NA), incomparable = c(TRUE, FALSE, NA)), expect.error = list(x = c(FALSE, FALSE, TRUE), incomparable = c(FALSE, FALSE, TRUE)), export = TRUE, res.path = getwd())
 
     #### package name
     package_name <- "saferDev" # write NULL if the function developed is not in a package
@@ -906,12 +907,12 @@ arg_test <- function(
                     lib_path = lib_path, 
                     safer_check = FALSE, 
                     error_text = embed_error_text
-                )) # collapsing arg.values sometimes does not work (with function for instance)
+                ), file = NULL, append = FALSE, type = base::c("output", "message"), split = FALSE) # collapsing arg.values sometimes does not work (with function for instance)
                 if( ! base::is.null(x = tempo.error)){
-                    arg.values.print[[j3]] <- base::paste0("SPECIAL VALUE OF CLASS ", base::class(x = arg.values.print[[j3]]), " AND TYPE ", base::typeof(arg.values.print[[j3]]), collapse = NULL, recycle0 = FALSE)
+                    arg.values.print[[j3]] <- base::paste0("SPECIAL VALUE OF CLASS ", base::class(x = arg.values.print[[j3]]), " AND TYPE ", base::typeof(x = arg.values.print[[j3]]), collapse = NULL, recycle0 = FALSE)
                 }
             }
-            data <- base::rbind(data, base::as.character(x = base::sapply(X = arg.values.print, FUN = function(x){base::paste0(x, collapse = " ")}, simplify = TRUE, USE.NAMES = TRUE)), stringsAsFactors = FALSE, deparse.level = 1) # each colum is a test
+            data <- base::rbind(data, base::as.character(x = base::sapply(X = arg.values.print, FUN = function(x){base::paste0(x, collapse = " ", recycle0 = FALSE)}, simplify = TRUE, USE.NAMES = TRUE)), stringsAsFactors = FALSE, deparse.level = 1) # each colum is a test
             tempo.capt <- utils::capture.output(tempo.try.error <- saferDev::get_message(
                 data = base::eval(expr = base::parse(text = fun.test2, file = "", n = NULL, prompt = "?", keep.source = base::getOption(x = "keep.source", default = NULL), srcfile = NULL, encoding = "unknown"), envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL)), 
                 kind = "error", 
@@ -922,7 +923,7 @@ arg_test <- function(
                 lib_path = lib_path, 
                 safer_check = FALSE, 
                 error_text = embed_error_text
-            )) # data argument needs a character string but base::eval(expr = base::parse(text = fun.test2, file = "", n = NULL, prompt = "?", keep.source = base::getOption(x = "keep.source", default = NULL), srcfile = NULL, encoding = "unknown"), envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL)) provides it (base::eval base::parse replace the i1, i2, etc., by the correct values, meaning that only val is required in the env.name environment)
+            ), file = NULL, append = FALSE, type = base::c("output", "message"), split = FALSE) # data argument needs a character string but base::eval(expr = base::parse(text = fun.test2, file = "", n = NULL, prompt = "?", keep.source = base::getOption(x = "keep.source", default = NULL), srcfile = NULL, encoding = "unknown"), envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL)) provides it (base::eval base::parse replace the i1, i2, etc., by the correct values, meaning that only val is required in the env.name environment)
             tempo.capt <- utils::capture.output(tempo.try.warning <- saferDev::get_message(
                 data = base::eval(expr = base::parse(text = fun.test2, file = "", n = NULL, prompt = "?", keep.source = base::getOption(x = "keep.source", default = NULL), srcfile = NULL, encoding = "unknown"), envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL)), 
                 kind = "warning", 
@@ -933,7 +934,7 @@ arg_test <- function(
                 lib_path = lib_path, 
                 safer_check = FALSE, 
                 error_text = embed_error_text
-            )) # data argument needs a character string but base::eval(expr = base::parse(text = fun.test2, file = "", n = NULL, prompt = "?", keep.source = base::getOption(x = "keep.source", default = NULL), srcfile = NULL, encoding = "unknown"), envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL)) provides it (base::eval base::parse replace the i1, i2, etc., by the correct values, meaning that only val is required in the env.name environment)
+            ), file = NULL, append = FALSE, type = base::c("output", "message"), split = FALSE) # data argument needs a character string but base::eval(expr = base::parse(text = fun.test2, file = "", n = NULL, prompt = "?", keep.source = base::getOption(x = "keep.source", default = NULL), srcfile = NULL, encoding = "unknown"), envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL)) provides it (base::eval base::parse replace the i1, i2, etc., by the correct values, meaning that only val is required in the env.name environment)
             if( ! base::is.null(x = expect.error)){
                 expected.error <- base::c(expected.error, base::eval(expr = base::parse(text = error.values, file = "", n = NULL, prompt = "?", keep.source = base::getOption(x = "keep.source", default = NULL), srcfile = NULL, encoding = "unknown"), envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL)))
             }
@@ -957,11 +958,11 @@ arg_test <- function(
                     tempo.title <- base::paste0("test_", base::sprintf(fmt = base::paste0("%0", base::nchar(x = total.comp.nb, type = "chars", allowNA = FALSE, keepNA = NA), "d", collapse = NULL, recycle0 = FALSE), base::ifelse(test = parall == FALSE, yes = count, no = x[count])), collapse = NULL, recycle0 = FALSE)
                     if(plot.kind == "classic"){ # not ggplot. So title has to be added in a classical way
                         # graphics::par(ann=FALSE, xaxt="n", yaxt="n", mar = base::rep(x = 1, times = 4), bty = "n", xpd = NA) # old
-                        graphics::par(bty = "n", xpd = NA) # new
+                        graphics::par(bty = "n", xpd = NA, no.readonly = FALSE) # new
                         base::eval(expr = base::parse(text = fun.test, file = "", n = NULL, prompt = "?", keep.source = base::getOption(x = "keep.source", default = NULL), srcfile = NULL, encoding = "unknown"), envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL))
                         # base::plot(1, 1, type = "n") # no display with type = "n"
-                        x.left.dev.region <- (graphics::par("usr")[1] - ((graphics::par("usr")[2] - graphics::par("usr")[1]) / (graphics::par("plt")[2] - graphics::par("plt")[1])) * graphics::par("plt")[1] - ((graphics::par("usr")[2] - graphics::par("usr")[1]) / ((graphics::par("omd")[2] - graphics::par("omd")[1]) * (graphics::par("plt")[2] - graphics::par("plt")[1]))) * graphics::par("omd")[1])
-                        y.top.dev.region <- (graphics::par("usr")[4] + ((graphics::par("usr")[4] - graphics::par("usr")[3]) / (graphics::par("plt")[4] - graphics::par("plt")[3])) * (1 - graphics::par("plt")[4]) + ((graphics::par("usr")[4] - graphics::par("usr")[3]) / ((graphics::par("omd")[4] - graphics::par("omd")[3]) * (graphics::par("plt")[4] - graphics::par("plt")[3]))) * (1 - graphics::par("omd")[4]))
+                        x.left.dev.region <- (graphics::par("usr", no.readonly = FALSE)[1] - ((graphics::par("usr", no.readonly = FALSE)[2] - graphics::par("usr", no.readonly = FALSE)[1]) / (graphics::par("plt", no.readonly = FALSE)[2] - graphics::par("plt", no.readonly = FALSE)[1])) * graphics::par("plt", no.readonly = FALSE)[1] - ((graphics::par("usr", no.readonly = FALSE)[2] - graphics::par("usr", no.readonly = FALSE)[1]) / ((graphics::par("omd", no.readonly = FALSE)[2] - graphics::par("omd", no.readonly = FALSE)[1]) * (graphics::par("plt", no.readonly = FALSE)[2] - graphics::par("plt", no.readonly = FALSE)[1]))) * graphics::par("omd", no.readonly = FALSE)[1])
+                        y.top.dev.region <- (graphics::par("usr", no.readonly = FALSE)[4] + ((graphics::par("usr", no.readonly = FALSE)[4] - graphics::par("usr", no.readonly = FALSE)[3]) / (graphics::par("plt", no.readonly = FALSE)[4] - graphics::par("plt", no.readonly = FALSE)[3])) * (1 - graphics::par("plt", no.readonly = FALSE)[4]) + ((graphics::par("usr", no.readonly = FALSE)[4] - graphics::par("usr", no.readonly = FALSE)[3]) / ((graphics::par("omd", no.readonly = FALSE)[4] - graphics::par("omd", no.readonly = FALSE)[3]) * (graphics::par("plt", no.readonly = FALSE)[4] - graphics::par("plt", no.readonly = FALSE)[3]))) * (1 - graphics::par("omd", no.readonly = FALSE)[4]))
                         graphics::text(x = x.left.dev.region, y = y.top.dev.region, labels = tempo.title, adj=base::c(0, 1), cex = 1.5)
                     }else if(plot.kind == "special"){ # ggplot. title has been added above
                         base::eval(expr = base::parse(text = fun.test, file = "", n = NULL, prompt = "?", keep.source = base::getOption(x = "keep.source", default = NULL), srcfile = NULL, encoding = "unknown"), envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL))
@@ -974,15 +975,15 @@ arg_test <- function(
             if(print.count.loop == print.count){
                 print.count.loop <- 0
                 tempo.time <- base::as.numeric(x = base::Sys.time())
-                tempo.lapse <- base::round(x = lubridate::seconds_to_period(x = tempo.time - ini.time))
+                tempo.lapse <- base::round(x = lubridate::seconds_to_period(x = tempo.time - ini.time), digits = 0)
                 final.loop <- (tempo.time - ini.time) / count * base::ifelse(test = parall == FALSE, yes = total.comp.nb, no = base::length(x = x)) # expected duration in seconds # intra nb.compar loop lapse: time lapse / cycles done * cycles remaining
-                final.exp <- base::as.POSIXct(final.loop, origin = ini.date)
-                base::cat(base::paste0(base::ifelse(test = parall == FALSE, yes = "\n", no = base::paste0("\nIN PROCESS ", process.id, " | ", collapse = NULL, recycle0 = FALSE)), "LOOP ", base::format(count, big.mark=","), " / ", base::format(base::ifelse(test = parall == FALSE, yes = total.comp.nb, no = base::length(x = x)), big.mark=","), " | TIME SPENT: ", tempo.lapse, " | EXPECTED END: ", final.exp, collapse = NULL, recycle0 = FALSE), file = , sep =  , fill = FALSE, labels = NULL, append = FALSE)
+                final.exp <- base::as.POSIXct(origin = ini.date,x = final.loop, tz = "")
+                base::cat(base::paste0(base::ifelse(test = parall == FALSE, yes = "\n", no = base::paste0("\nIN PROCESS ", process.id, " | ", collapse = NULL, recycle0 = FALSE)), "LOOP ", base::format(x = count, big.mark=","), " / ", base::format(x = base::ifelse(test = parall == FALSE, yes = total.comp.nb, no = base::length(x = x)), big.mark=","), " | TIME SPENT: ", tempo.lapse, " | EXPECTED END: ", final.exp, collapse = NULL, recycle0 = FALSE), file = , sep =  , fill = FALSE, labels = NULL, append = FALSE)
             }
             if(count == base::ifelse(test = parall == FALSE, yes = total.comp.nb, no = base::length(x = x))){
                 tempo.time <- base::as.numeric(x = base::Sys.time())
-                tempo.lapse <- base::round(x = lubridate::seconds_to_period(x = tempo.time - ini.time))
-                base::cat(base::paste0(base::ifelse(test = parall == FALSE, yes = "\nLOOP PROCESS ENDED | ", no = base::paste0("\nPROCESS ", process.id, " ENDED | ", collapse = NULL, recycle0 = FALSE)), "LOOP ", base::format(count, big.mark=","), " / ", base::format(base::ifelse(test = parall == FALSE, yes = total.comp.nb, no = base::length(x = x)), big.mark=","), " | TIME SPENT: ", tempo.lapse, "\n\n", collapse = NULL, recycle0 = FALSE), file = , sep =  , fill = FALSE, labels = NULL, append = FALSE)
+                tempo.lapse <- base::round(x = lubridate::seconds_to_period(x = tempo.time - ini.time), digits = 0)
+                base::cat(base::paste0(base::ifelse(test = parall == FALSE, yes = "\nLOOP PROCESS ENDED | ", no = base::paste0("\nPROCESS ", process.id, " ENDED | ", collapse = NULL, recycle0 = FALSE)), "LOOP ", base::format(x = count, big.mark=","), " / ", base::format(x = base::ifelse(test = parall == FALSE, yes = total.comp.nb, no = base::length(x = x)), big.mark=","), " | TIME SPENT: ", tempo.lapse, "\n\n", collapse = NULL, recycle0 = FALSE), file = , sep =  , fill = FALSE, labels = NULL, append = FALSE)
             }
         ', 
         end.loop.string,
@@ -1316,7 +1317,7 @@ arg_test <- function(
             }
         }
         if(export == TRUE){
-            base::save(list = output, file = base::paste0(res.path, "/arg_test_1", base::ifelse(test = total.comp.nb == 1L, yes = ".RData", no = base::paste0("-", total.comp.nb, ".RData", collapse = NULL, recycle0 = FALSE)), collapse = NULL, recycle0 = FALSE), ascii = FALSE, version = NULL, envir = base::parent.frame(n = 1), compress = FALSE, compression_level = , eval.promises = TRUE, precheck = TRUE)
+            base::save(output, list = NULL, file = base::paste0(res.path, "/arg_test_1", base::ifelse(test = total.comp.nb == 1L, yes = ".RData", no = base::paste0("-", total.comp.nb, ".RData", collapse = NULL, recycle0 = FALSE)), collapse = NULL, recycle0 = FALSE), ascii = FALSE, version = NULL, envir = base::parent.frame(n = 1), compress = FALSE, compression_level = , eval.promises = TRUE, precheck = TRUE)
             table.out <- base::as.matrix(x = output$data)
             table.out <- base::gsub(x = table.out, pattern = "\n", replacement = "  ", ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE)
             utils::write.table(x = table.out, file = base::paste0(res.path, "/table_from_arg_test_1", base::ifelse(test = total.comp.nb == 1L, yes = ".tsv", no = base::paste0("-", total.comp.nb, ".tsv", collapse = NULL, recycle0 = FALSE)), collapse = NULL, recycle0 = FALSE), row.names = TRUE, col.names = NA, append = FALSE, quote = FALSE, sep = "\t", eol = "\n", na = "", dec = ".", qmethod = base::c("escape", "double"), fileEncoding = "")
