@@ -8,7 +8,6 @@ articles:
   get_message: get_message.html
   is_function_here: is_function_here.html
   is_package_here: is_package_here.html
-  is_python_package_here: is_python_package_here.html
   report: report.html
   saferDev: saferDev.html
 last_built: 2024-01-29T15:15Z

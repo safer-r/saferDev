@@ -193,15 +193,13 @@ res <- arg_check(
 ```
 <br>
 
-### Arguments data_name, fun_name and pack_name
+### Arguments data_name
 ```{r}
 # Example
 tempo <- arg_check(
     data = vec1, 
     class = "integer", 
-    data_name = "OBSERVATION_1", 
-    fun_name = "FUNCTION_1", 
-    pack_name = "PACKAGE_2"
+    data_name = "OBSERVATION_1"
 )
 tempo$text
 # In fact, these two arguments are interesting when check() is used inside functions
@@ -209,30 +207,13 @@ fun1 <- function(arg1){
     tempo <- arg_check(
                 data = arg1, 
                 class = "integer", 
-                data_name = NULL, # if NULL, the name displayed is arg1
-                fun_name = NULL, # if NULL, no name displayed
-                pack_name = NULL # if NULL, no name displayed
+                data_name = NULL # if NULL, the name displayed is arg1
     )
     if(tempo$problem == TRUE){
         cat(paste0("\n\n================\n\n", tempo$text, "\n\n================\n\n"))
     }
 }
 fun1(arg1 = vec4) # error message because arg1 requires a vector of integers
-fun2 <- function(arg1){
-    tempo <- arg_check(
-                data = arg1, 
-                class = "integer", 
-                data_name = NULL, # if NULL, the name displayed is arg1
-                fun_name = "FUNCTION_2",
-                pack_name = "PACKAGE_3"
-    )
-    if(tempo$problem == TRUE){
-        cat(paste0("\n\n================\n\n", tempo$text, "\n\n================\n\n"))
-    }
-}
-fun2(arg1 = vec1) # error message with the name of the function, because arg1 requires a vector of integers
-
-
 ```
 <br>
 
@@ -270,8 +251,9 @@ arg_check(
     inf_values = TRUE, 
     print = FALSE, 
     data_name = NULL, 
-    fun_name = NULL,
-    pack_name = NULL,
-    safer_check = TRUE
+    data_arg = TRUE, 
+    safer_check = TRUE, 
+    lib_path = NULL, 
+    error_text = ""
 )
 ```
