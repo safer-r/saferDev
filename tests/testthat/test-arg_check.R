@@ -606,34 +606,34 @@ testthat::test_that("arg_check()", {
     ## other tests
 
     #### sophiticated examples
-    result17 <- saferDev::get_message("arg_check(class = 'list', safer_check = FALSE)", kind = "error", print.no = TRUE, text = NULL) 
+    result17 <- saferDev::get_message("arg_check(class = 'list', safer_check = FALSE)", kind = "error", print_no = TRUE, text = NULL) 
     expect17 <- "ERROR MESSAGE REPORTED:\nError : \n\n================\n\nERROR IN saferDev::arg_check().\n\nFOLLOWING ARGUMENT HAS NO DEFAULT VALUE AND REQUIRE ONE:\ndata\n\n================\n\n\n"
     testthat::expect_equal(result17, expect17)
 
-    result18 <- saferDev::get_message("arg_check(data = vec6, class = NA, typeof = 'integer', safer_check = FALSE)", kind = "error", print.no = TRUE, text = NULL)
+    result18 <- saferDev::get_message("arg_check(data = vec6, class = NA, typeof = 'integer', safer_check = FALSE)", kind = "error", print_no = TRUE, text = NULL)
     expect18 <- "ERROR MESSAGE REPORTED:\nError : \n\n================\n\nERROR IN saferDev::arg_check().\n\nTHIS ARGUMENT CANNOT BE MADE OF NA ONLY:\nclass\n\n================\n\n\n"
     testthat::expect_equal(result18, expect18)
 
-    result19 <- saferDev::get_message("arg_check(data = vec6, class = 'list', typeof = 'integer', prop = NULL, safer_check = FALSE)", kind = "error", print.no = TRUE, text = NULL)
+    result19 <- saferDev::get_message("arg_check(data = vec6, class = 'list', typeof = 'integer', prop = NULL, safer_check = FALSE)", kind = "error", print_no = TRUE, text = NULL)
     expect19 <- "ERROR MESSAGE REPORTED:\nError : \n\n================\n\nERROR IN saferDev::arg_check().\n\nTHIS ARGUMENT CANNOT BE NULL:\nprop\n\n================\n\n\n"
     testthat::expect_equal(result19, expect19)
     testthat::expect_error(arg_check(data = vec6, class = "list", typeof = "integer", prop = 'FALSE', safer_check = FALSE))
-    result20 <- saferDev::get_message("arg_check(data = vec6, class = list, typeof = 'integer', prop = FALSE, double_as_integer_allowed = FALSE, safer_check = FALSE)", kind = "error", print.no = TRUE, text = NULL)
+    result20 <- saferDev::get_message("arg_check(data = vec6, class = list, typeof = 'integer', prop = FALSE, double_as_integer_allowed = FALSE, safer_check = FALSE)", kind = "error", print_no = TRUE, text = NULL)
     expect20 <- "ERROR MESSAGE REPORTED:\nError : \n\n================\n\nERROR IN saferDev::arg_check().\n\nTHIS ARGUMENT MUST BE MADE OF CHARACTER STRINGS:\nclass\n\n================\n\n\n"
     testthat::expect_equal(result20, expect20)
-    result21 <- saferDev::get_message("arg_check(data = vec6, class = 'list', typeof = 'integer', prop = FALSE, data_name = base::c('first', 'second'), safer_check = FALSE)", kind = "error", print.no = TRUE, text = NULL)
+    result21 <- saferDev::get_message("arg_check(data = vec6, class = 'list', typeof = 'integer', prop = FALSE, data_name = base::c('first', 'second'), safer_check = FALSE)", kind = "error", print_no = TRUE, text = NULL)
     expect21 <- "ERROR MESSAGE REPORTED:\nError : \n\n================\n\nERROR IN saferDev::arg_check().\n\nTHE data_name ARGUMENT MUST BE A SINGLE CHARACTER ELEMENT AND NOT:\nfirst\nsecond\n\n================\n\n\n"
     testthat::expect_equal(result21, expect21)
-    result22 <- saferDev::get_message("arg_check(data = vec6)", kind = "error", print.no = TRUE, text = NULL)
+    result22 <- saferDev::get_message("arg_check(data = vec6)", kind = "error", print_no = TRUE, text = NULL)
     expect22 <-  "ERROR MESSAGE REPORTED:\nError : \n\n================\n\nERROR IN saferDev::arg_check().\n\nAT LEAST ONE OF THE options, class, typeof, mode, prop, OR length ARGUMENT MUST BE SPECIFIED (I.E, TRUE FOR prop).\n\n================\n\n\n"
     testthat::expect_equal(result22, expect22)
-    result23 <- saferDev::get_message("arg_check(data = vec5, class = 'character', options = base::c('a', 'b', 'c'), all_options_in_data = TRUE)", kind = "error", print.no = TRUE, text = NULL)
+    result23 <- saferDev::get_message("arg_check(data = vec5, class = 'character', options = base::c('a', 'b', 'c'), all_options_in_data = TRUE)", kind = "error", print_no = TRUE, text = NULL)
     expect23 <- "ERROR MESSAGE REPORTED:\nError : \n\n================\n\nERROR IN saferDev::arg_check().\n\nTHE class, typeof, mode ARGUMENTS MUST BE NULL, AND prop FALSE, IF THE options ARGUMENT IS SPECIFIED\nTHE options ARGUMENT MUST BE NULL IF THE class AND/OR typeof AND/OR mode AND/OR prop ARGUMENT IS SPECIFIED.\n\n================\n\n\n"
     testthat::expect_equal(result23, expect23)
-    result24 <- saferDev::get_message("arg_check(data = base::list(x = 'a', y = '2'), length = 2, options = NULL, prop = FALSE, all_options_in_data = FALSE, neg_values = FALSE, safer_check = FALSE)", kind = "error", print.no = TRUE, text = NULL)
+    result24 <- saferDev::get_message("arg_check(data = base::list(x = 'a', y = '2'), length = 2, options = NULL, prop = FALSE, all_options_in_data = FALSE, neg_values = FALSE, safer_check = FALSE)", kind = "error", print_no = TRUE, text = NULL)
     expect24 <- "ERROR MESSAGE REPORTED:\nError : \n\n================\n\nERROR IN saferDev::arg_check().\n\nTHE neg_values ARGUMENT CANNOT BE SWITCHED FROM TRUE (DEFAULT VALUE) TO FALSE IF class, typeof AND mode ARGUMENTS ARE NULL.\n\n================\n\n\n"
     testthat::expect_equal(result24, expect24)
-    result25 <- saferDev::get_message("arg_check(data = base::list(x = 'a', y = '2'), length = 2, options = NULL, prop = FALSE, all_options_in_data = FALSE, inf_values = FALSE, safer_check = FALSE)", kind = "error", print.no = TRUE, text = NULL)
+    result25 <- saferDev::get_message("arg_check(data = base::list(x = 'a', y = '2'), length = 2, options = NULL, prop = FALSE, all_options_in_data = FALSE, inf_values = FALSE, safer_check = FALSE)", kind = "error", print_no = TRUE, text = NULL)
     expect25 <- "ERROR MESSAGE REPORTED:\nError : \n\n================\n\nERROR IN saferDev::arg_check().\n\nTHE inf_values ARGUMENT CANNOT BE SWITCHED FROM TRUE (DEFAULT VALUE) TO FALSE IF class, typeof AND mode ARGUMENTS ARE NULL.\n\n================\n\n\n"
     testthat::expect_equal(result25, expect25)
     result26 <- arg_check(
