@@ -222,14 +222,19 @@ fun1(arg1 = vec4) # error message because arg1 requires a vector of integers
 arg_check(
     data = mat1, 
     class = "matrix", 
-    safer_check = TRUE
-) # safer_check = TRUE, checkings are performed before main code running
+    safer_check = TRUE, # perform some "safer" checks? Warning : always set this argument to FALSE if all_args_here() is used inside another safer function.
+)
+```
+<br>
 
+### Argument lib_path and error_text
+```{r}
 arg_check(
-    data = vec4, 
-    options = c("pearson", "spearman", "kendall"), 
-    safer_check = FALSE
-) # safer_check = TRUE, checkings are performed before main code running
+    data = mat1, 
+    class = "matrix", 
+    lib_path = ".", # absolute pathways of the directories containing the required packages if not in the default directories.
+    error_text = "TEXT ADDED" # add information in error messages returned by the function.
+)
 ```
 <br>
 
@@ -253,7 +258,7 @@ arg_check(
     data_name = NULL, 
     data_arg = TRUE, 
     safer_check = TRUE, 
-    lib_path = NULL, 
-    error_text = ""
+    lib_path = NULL,
+    error_text = "" 
 )
 ```

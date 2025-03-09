@@ -54,12 +54,22 @@ env_check(safer_check = TRUE) # with TRUE, checkings are performed before main c
 ```
 <br>
 
+### Argument lib_path and error_text
+```{r}
+env_check(
+    lib_path = ".", # absolute pathways of the directories containing the required packages if not in the default directories.
+    error_text = "TEXT ADDED" # add information in error messages returned by the function.
+)
+```
+
 ### All the arguments
 ```{r}
 mean <- 2
 env_check(
     pos = 1,
     name = "mean",
-    safer_check = TRUE
+    safer_check = TRUE, # perform some "safer" checks? Warning : always set this argument to FALSE if all_args_here() is used inside another safer function.
+    lib_path = NULL, # absolute pathways of the directories containing the required packages if not in the default directories.
+    error_text = "" # add information in error messages returned by the function.
 ) # check if the object "mean" is in the environment one step above the env_check() environment, and if yes, returns if the same name exists in above environments
 ```

@@ -8,7 +8,7 @@ get_message(
   data,
   kind = "error",
   header = TRUE,
-  print.no = FALSE,
+  print_no = FALSE,
   text = NULL,
   env = NULL,
   safer_check = TRUE,
@@ -23,9 +23,9 @@ get_message(
 
 \item{header}{Single logical value. Add a header in the returned message?}
 
-\item{print.no}{Single logical value. Print a message saying that no message reported?}
+\item{print_no}{Single logical value. Print a message saying that no message reported?}
 
-\item{text}{Single character string added to the output message (even if no message exists and print.no is TRUE). Inactivated if the header argument is FALSE. Write NULL if not required.}
+\item{text}{Single character string added to the output message (even if no message exists and print_no is TRUE). Inactivated if the header argument is FALSE. Write NULL if not required.}
 
 \item{env}{The name of an existing environment. Write NULL if not required.}
 
@@ -36,12 +36,12 @@ get_message(
 \item{error_text}{Single character string used to add information in error messages returned by the function, notably if the function is inside other functions, which is practical for debugging. Example: error_text = " INSIDE <PACKAGE_1>::<FUNCTION_1> INSIDE <PACKAGE_2>::<FUNCTION_2>.". If NULL, converted into "".}
 }
 \value{
-The message or NULL if no message and print.no is FALSE.
+The message or NULL if no message and print_no is FALSE.
 }
 \description{
 Evaluate an instruction written between "" and return the first of the error message, or the last of the warning or standard (non error non warning) messages if ever exist.
 
-Using argument print.no = FALSE, return NULL if no message, which is convenient in some cases.
+Using argument print_no = FALSE, return NULL if no message, which is convenient in some cases.
 }
 \details{
 WARNINGS
@@ -53,25 +53,25 @@ Always use the env argument when get_message() is used inside functions.
 The function does not prevent printing if print() is used inside the instruction tested. To prevent that, use tempo <- utils::capture.output(error <- get_message(data = "arg_check(data = 'a', class = mean, neg_values = FALSE, print = TRUE)")). The return of get_message() is assigned into error and the printed messages are captured by utils::capture.output() and assigned into tempo. See the examples.
 }
 \examples{
-get_message(data = "wilcox.test(c(1,1,3), c(1, 2, 4), paired = TRUE)", kind = "error", print.no = TRUE, text = "IN A")
+get_message(data = "wilcox.test(c(1,1,3), c(1, 2, 4), paired = TRUE)", kind = "error", print_no = TRUE, text = "IN A")
 
 get_message(data = "wilcox.test(c(1,1,3), c(1, 2, 4), paired = TRUE)", kind = "warning", 
-print.no = TRUE, text = "IN A")
+print_no = TRUE, text = "IN A")
 
 get_message(data = "wilcox.test(c(1,1,3), c(1, 2, 4), paired = TRUE)", kind = "message", 
-print.no = TRUE, text = "IN A")
+print_no = TRUE, text = "IN A")
 
-get_message(data = "wilcox.test()", kind = "message", print.no = TRUE, text = "IN A")
-get_message(data = "wilcox.test()", kind = "error", print.no = TRUE, text = "IN A")
+get_message(data = "wilcox.test()", kind = "message", print_no = TRUE, text = "IN A")
+get_message(data = "wilcox.test()", kind = "error", print_no = TRUE, text = "IN A")
 
-get_message(data = "sum(1)", kind = "error", print.no = TRUE, text = "IN A")
+get_message(data = "sum(1)", kind = "error", print_no = TRUE, text = "IN A")
 
-get_message(data = "message('ahah')", kind = "error", print.no = TRUE, text = "IN A")
+get_message(data = "message('ahah')", kind = "error", print_no = TRUE, text = "IN A")
 
-get_message(data = "message('ahah')", kind = "message", print.no = TRUE, text = "IN A")
+get_message(data = "message('ahah')", kind = "message", print_no = TRUE, text = "IN A")
 
 get_message(data = "ggplot2::ggplot(data = data.frame(X = 1:10, stringsAsFactors = TRUE), 
-mapping = ggplot2::aes(x = X)) + ggplot2::geom_histogram()", kind = "message", print.no = TRUE, 
+mapping = ggplot2::aes(x = X)) + ggplot2::geom_histogram()", kind = "message", print_no = TRUE, 
 text = "IN INSTRUCTION 1")
 }
 \seealso{

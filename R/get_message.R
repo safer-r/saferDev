@@ -2,17 +2,17 @@
 #' @description
 #' Evaluate an instruction written between "" and return the first of the error message, or the last of the warning or standard (non error non warning) messages if ever exist.
 #' 
-#' Using argument print.no = FALSE, return NULL if no message, which is convenient in some cases.
+#' Using argument print_no = FALSE, return NULL if no message, which is convenient in some cases.
 #' @param data Single character string to evaluate.
 #' @param kind Single character string. Either "error" to get error messages, or "warning" to get warning messages, or "message" to get non error and non warning messages.
 #' @param header Single logical value. Add a header in the returned message?
-#' @param print.no Single logical value. Print a message saying that no message reported?
-#' @param text Single character string added to the output message (even if no message exists and print.no is TRUE). Inactivated if the header argument is FALSE. Write NULL if not required.
+#' @param print_no Single logical value. Print a message saying that no message reported?
+#' @param text Single character string added to the output message (even if no message exists and print_no is TRUE). Inactivated if the header argument is FALSE. Write NULL if not required.
 #' @param env The name of an existing environment. Write NULL if not required.
 #' @param safer_check Single logical value. Perform some "safer" checks? If TRUE, checkings are performed before main code running (see https://github.com/safer-r): 1) correct lib_path argument value 2) required functions and related packages effectively present in local R lybraries and 3) R classical operators (like "<-") not overwritten by another package because of the R scope. Must be set to FALSE if this fonction is used inside another "safer" function to avoid pointless multiple checkings.
 #' @param lib_path Vector of characters specifying the absolute pathways of the directories containing the required packages for the function, if not in the default directories. Useful when R package are not installed in the default directories because of lack of admin rights.  More precisely, lib_path is passed through the new argument of .libPaths() so that the new library paths are unique(c(new, .Library.site, .Library)). Warning: .libPaths() is restored to the initial paths, after function execution. Ignored if NULL (default) or if the safer_check argument is FALSE: only the pathways specified by the current .libPaths() are used for package calling.
 #' @param error_text Single character string used to add information in error messages returned by the function, notably if the function is inside other functions, which is practical for debugging. Example: error_text = " INSIDE <PACKAGE_1>::<FUNCTION_1> INSIDE <PACKAGE_2>::<FUNCTION_2>.". If NULL, converted into "".
-#' @returns The message or NULL if no message and print.no is FALSE.
+#' @returns The message or NULL if no message and print_no is FALSE.
 #' @details 
 #' WARNINGS
 #' 
@@ -26,26 +26,26 @@
 #' @author \href{yushi.han2000@gmail.com}{Yushi Han}
 #' @author \href{wanghaiding442@gmail.com}{Haiding Wang}
 #' @examples
-#' get_message(data = "wilcox.test(c(1,1,3), c(1, 2, 4), paired = TRUE)", kind = "error", print.no = TRUE, text = "IN A")
+#' get_message(data = "wilcox.test(c(1,1,3), c(1, 2, 4), paired = TRUE)", kind = "error", print_no = TRUE, text = "IN A")
 #' 
 #' get_message(data = "wilcox.test(c(1,1,3), c(1, 2, 4), paired = TRUE)", kind = "warning", 
-#' print.no = TRUE, text = "IN A")
+#' print_no = TRUE, text = "IN A")
 #' 
 #' get_message(data = "wilcox.test(c(1,1,3), c(1, 2, 4), paired = TRUE)", kind = "message", 
-#' print.no = TRUE, text = "IN A")
+#' print_no = TRUE, text = "IN A")
 #' 
-#' get_message(data = "wilcox.test()", kind = "message", print.no = TRUE, text = "IN A")
+#' get_message(data = "wilcox.test()", kind = "message", print_no = TRUE, text = "IN A")
 
-#' get_message(data = "wilcox.test()", kind = "error", print.no = TRUE, text = "IN A")
+#' get_message(data = "wilcox.test()", kind = "error", print_no = TRUE, text = "IN A")
 #' 
-#' get_message(data = "sum(1)", kind = "error", print.no = TRUE, text = "IN A")
+#' get_message(data = "sum(1)", kind = "error", print_no = TRUE, text = "IN A")
 #' 
-#' get_message(data = "message('ahah')", kind = "error", print.no = TRUE, text = "IN A")
+#' get_message(data = "message('ahah')", kind = "error", print_no = TRUE, text = "IN A")
 #' 
-#' get_message(data = "message('ahah')", kind = "message", print.no = TRUE, text = "IN A")
+#' get_message(data = "message('ahah')", kind = "message", print_no = TRUE, text = "IN A")
 #' 
 #' get_message(data = "ggplot2::ggplot(data = data.frame(X = 1:10, stringsAsFactors = TRUE), 
-#' mapping = ggplot2::aes(x = X)) + ggplot2::geom_histogram()", kind = "message", print.no = TRUE, 
+#' mapping = ggplot2::aes(x = X)) + ggplot2::geom_histogram()", kind = "message", print_no = TRUE, 
 #' text = "IN INSTRUCTION 1")
 #' @importFrom ggplot2 ggplot_build
 #' @export
@@ -53,7 +53,7 @@ get_message <- function(
     data, 
     kind = "error", 
     header = TRUE, 
-    print.no = FALSE, 
+    print_no = FALSE, 
     text = NULL, 
     env = NULL, 
     safer_check = TRUE, 
@@ -61,14 +61,14 @@ get_message <- function(
     error_text = "" 
 ){  
     # DEBUGGING
-    # data = "wilcox.test(c(1,1,3), c(1, 2, 4), paired = TRUE)" ; kind = "warning" ; header = TRUE ; print.no = FALSE ; text = NULL ; env = NULL ; safer_check = TRUE # for function debugging
-    # data = "sum(1)" ; kind = "warning" ; header = TRUE ; print.no = FALSE ; text = NULL ; env = NULL; safer_check = TRUE  # for function debugging
-    # set.seed(1) ; obs1 <- data.frame(Time = c(rnorm(10), rnorm(10) + 2), Group1 = rep(c("G", "H"), each = 10), stringsAsFactors = TRUE) ; data = 'gg_boxplot(data1 = obs1, y = "Time", categ = "Group1")' ; kind = "warning" ; header = TRUE ; print.no = FALSE ; text = NULL ; env = NULL ; safer_check = TRUE  # for function debugging
-    # data = "message('ahah')" ; kind = "error" ; header = TRUE ; print.no = TRUE ; text = "IN A" ; env = NULL ; safer_check = TRUE 
-    # data = 'ggplot2::ggplot(data = data.frame(X = "a", stringsAsFactors = TRUE), mapping = ggplot2::aes(x = X)) + ggplot2::geom_histogram()' ; kind = "message" ; header = TRUE ; print.no = FALSE ; text = NULL ; safer_check = TRUE # for function debugging
-    # data = 'ggplot2::ggplot(data = data.frame(X = "a", stringsAsFactors = TRUE), mapping = ggplot2::aes(x = X)) + ggplot2::geom_histogram()' ; kind = "warning" ; header = TRUE ; print.no = FALSE ; text = NULL ; safer_check = TRUE # for function debugging
-    # data = "emmeans::emmeans(object = emm.rg, specs = contrast.var)" ; kind = "message" ; header = TRUE ; print.no = FALSE ; text = NULL ; env = NULL ; safer_check = TRUE # for function debugging
-    # data = sum("a") ; kind = "message" ; header = TRUE ; print.no = FALSE ; text = NULL ; env = NULL ; safer_check = TRUE # for function debugging
+    # data = "wilcox.test(c(1,1,3), c(1, 2, 4), paired = TRUE)" ; kind = "warning" ; header = TRUE ; print_no = FALSE ; text = NULL ; env = NULL ; safer_check = TRUE # for function debugging
+    # data = "sum(1)" ; kind = "warning" ; header = TRUE ; print_no = FALSE ; text = NULL ; env = NULL; safer_check = TRUE  # for function debugging
+    # set.seed(1) ; obs1 <- data.frame(Time = c(rnorm(10), rnorm(10) + 2), Group1 = rep(c("G", "H"), each = 10), stringsAsFactors = TRUE) ; data = 'gg_boxplot(data1 = obs1, y = "Time", categ = "Group1")' ; kind = "warning" ; header = TRUE ; print_no = FALSE ; text = NULL ; env = NULL ; safer_check = TRUE  # for function debugging
+    # data = "message('ahah')" ; kind = "error" ; header = TRUE ; print_no = TRUE ; text = "IN A" ; env = NULL ; safer_check = TRUE 
+    # data = 'ggplot2::ggplot(data = data.frame(X = "a", stringsAsFactors = TRUE), mapping = ggplot2::aes(x = X)) + ggplot2::geom_histogram()' ; kind = "message" ; header = TRUE ; print_no = FALSE ; text = NULL ; safer_check = TRUE # for function debugging
+    # data = 'ggplot2::ggplot(data = data.frame(X = "a", stringsAsFactors = TRUE), mapping = ggplot2::aes(x = X)) + ggplot2::geom_histogram()' ; kind = "warning" ; header = TRUE ; print_no = FALSE ; text = NULL ; safer_check = TRUE # for function debugging
+    # data = "emmeans::emmeans(object = emm.rg, specs = contrast.var)" ; kind = "message" ; header = TRUE ; print_no = FALSE ; text = NULL ; env = NULL ; safer_check = TRUE # for function debugging
+    # data = sum("a") ; kind = "message" ; header = TRUE ; print_no = FALSE ; text = NULL ; env = NULL ; safer_check = TRUE # for function debugging
 
     #### package name
     package_name <- "saferDev" # write NULL if the function developed is not in a package
@@ -170,7 +170,7 @@ get_message <- function(
         # "data", # inactivated because returns a bug if data is an unquote and uncorrect expression. Checked below
         "kind", 
         "header", 
-        "print.no",
+        "print_no",
         # "text",  # inactivated because can be null
         # "env",  # inactivated because can be null 
         # "lib_path", # inactivated because can be NULL
@@ -197,7 +197,7 @@ get_message <- function(
         # "data", # inactivated because returns a bug if data is an unquote and uncorrect expression. Checked below
         "kind", 
         "header", 
-        "print.no",
+        "print_no",
         "text",
         "env", 
         "safer_check", 
@@ -357,7 +357,7 @@ get_message <- function(
     # tempo <- saferDev::arg_check(data = data, class = "vector", typeof = "character", mode = NULL, length = 1, prop = FALSE, double_as_integer_allowed = FALSE, options = NULL, all_options_in_data = FALSE, na_contain = TRUE, neg_values = TRUE, inf_values = TRUE, print = FALSE, data_name = NULL, data_arg = TRUE, safer_check = FALSE, lib_path = lib_path, error_text = embed_error_text) ; base::eval(expr = ee, envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL)) # inactivated because returns a bug if data is an unquote and uncorrect expression. Checked below
     tempo <- saferDev::arg_check(data = kind, class = NULL, typeof = NULL, mode = NULL, length = 1, prop = FALSE, double_as_integer_allowed = FALSE, options = base::c("error", "warning", "message"), all_options_in_data = FALSE, na_contain = FALSE, neg_values = TRUE, inf_values = TRUE, print = FALSE, data_name = NULL, data_arg = TRUE, safer_check = FALSE, lib_path = lib_path, error_text = embed_error_text) ; base::eval(expr = ee, envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL))
     tempo <- saferDev::arg_check(data = header, class = "vector", typeof = "logical", mode = NULL, length = 1, prop = FALSE, double_as_integer_allowed = FALSE, options = NULL, all_options_in_data = FALSE, na_contain = FALSE, neg_values = TRUE, inf_values = TRUE, print = FALSE, data_name = NULL, data_arg = TRUE, safer_check = FALSE, lib_path = lib_path, error_text = embed_error_text) ; base::eval(expr = ee, envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL))
-    tempo <- saferDev::arg_check(data = print.no, class = "vector", typeof = "logical", mode = NULL, length = 1, prop = FALSE, double_as_integer_allowed = FALSE, options = NULL, all_options_in_data = FALSE, na_contain = FALSE, neg_values = TRUE, inf_values = TRUE, print = FALSE, data_name = NULL, data_arg = TRUE, safer_check = FALSE, lib_path = lib_path, error_text = embed_error_text) ; base::eval(expr = ee, envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL))
+    tempo <- saferDev::arg_check(data = print_no, class = "vector", typeof = "logical", mode = NULL, length = 1, prop = FALSE, double_as_integer_allowed = FALSE, options = NULL, all_options_in_data = FALSE, na_contain = FALSE, neg_values = TRUE, inf_values = TRUE, print = FALSE, data_name = NULL, data_arg = TRUE, safer_check = FALSE, lib_path = lib_path, error_text = embed_error_text) ; base::eval(expr = ee, envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL))
     if( ! base::is.null(x = text)){
         tempo <- saferDev::arg_check(data = text, class = "character", typeof = NULL, mode = "character", length = 1, prop = FALSE, double_as_integer_allowed = TRUE, options = NULL, all_options_in_data = FALSE, na_contain = TRUE, neg_values = TRUE, inf_values = TRUE, print = FALSE, data_name = NULL, data_arg = TRUE, safer_check = FALSE, lib_path = lib_path, error_text = embed_error_text) ; base::eval(expr = ee, envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL))
     }
@@ -495,9 +495,9 @@ get_message <- function(
         }else{
             output <- tempo.error[1] #
         }
-    }else if(kind == "error" & base::is.null(x = tempo.error) & print.no == TRUE){
+    }else if(kind == "error" & base::is.null(x = tempo.error) & print_no == TRUE){
         output <- base::paste0("NO ERROR MESSAGE REPORTED", base::ifelse(test = base::is.null(x = text), yes = "", no = " "), text, collapse = NULL, recycle0 = FALSE)
-    }else if(kind != "error" & ( ! base::is.null(x = tempo.error)) & print.no == TRUE){
+    }else if(kind != "error" & ( ! base::is.null(x = tempo.error)) & print_no == TRUE){
         output <- base::paste0("NO POTENTIAL ", base::ifelse(test = kind == "warning", yes = "WARNING", no = "STANDARD (NON ERROR AND NON WARNING)"), " MESSAGE BECAUSE OF ERROR MESSAGE REPORTED", base::ifelse(test = base::is.null(x = text), yes = "", no = " "), text, collapse = NULL, recycle0 = FALSE)
     }else if(base::is.null(x = tempo.error)){
         fun.warning.capture <- function(expr){
@@ -545,11 +545,11 @@ get_message <- function(
                     output <- tempo.warn #
                 }
             }else{
-                if(print.no == TRUE){
+                if(print_no == TRUE){
                     output <- base::paste0("NO WARNING MESSAGE REPORTED", base::ifelse(test = base::is.null(x = text), yes = "", no = " "), text, collapse = NULL, recycle0 = FALSE)
                 } # no need else{} here because output is already NULL at first
             }
-        }else if(kind == "warning" & base::is.null(x = tempo.warn) & print.no == TRUE){
+        }else if(kind == "warning" & base::is.null(x = tempo.warn) & print_no == TRUE){
             output <- base::paste0("NO WARNING MESSAGE REPORTED", base::ifelse(test = base::is.null(x = text), yes = "", no = " "), text, collapse = NULL, recycle0 = FALSE)
         }else if(kind == "message" & base::exists(x = "tempo.message", where = -1, envir = base::environment(fun = NULL), frame = , mode = "any", inherits = FALSE) == TRUE){ # inherits = FALSE avoid the portee lexical and thus the declared word
             if(base::length(x = tempo.message) > 0){ # if something is returned by capture.ouptput() (only in this env) with a length more than 1
@@ -559,11 +559,11 @@ get_message <- function(
                     output <- tempo.message #
                 }
             }else{
-                if(print.no == TRUE){
+                if(print_no == TRUE){
                     output <- base::paste0("NO STANDARD (NON ERROR AND NON WARNING) MESSAGE REPORTED", base::ifelse(test = base::is.null(x = text), yes = "", no = " "), text, collapse = NULL, recycle0 = FALSE)
                 } # no need else{} here because output is already NULL at first
             }
-        }else if(kind == "message" & base::exists(x = "tempo.message", where = -1, envir = base::environment(fun = NULL), frame = , mode = "any", inherits = FALSE) == FALSE & print.no == TRUE){
+        }else if(kind == "message" & base::exists(x = "tempo.message", where = -1, envir = base::environment(fun = NULL), frame = , mode = "any", inherits = FALSE) == FALSE & print_no == TRUE){
             output <- base::paste0("NO STANDARD (NON ERROR AND NON WARNING) MESSAGE REPORTED", base::ifelse(test = base::is.null(x = text), yes = "", no = " "), text, collapse = NULL, recycle0 = FALSE)
         } # no need else{} here because output is already NULL at first
     }

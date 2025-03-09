@@ -57,16 +57,16 @@ arg_test(
     arg = argum, 
     val = value,
     export = TRUE,
-    res.path = getwd()
+    res_path = getwd()
 )
 
 arg_test(
     fun = f2, 
     arg = argum2, 
     val = value2,
-    expect.error = error2,
-    plot.fun = TRUE,
-    res.path = "."
+    expect_error = error2,
+    plot_fun = TRUE,
+    res_path = "."
 )
 ```
 <br>
@@ -77,14 +77,15 @@ arg_test(
     fun = f, 
     arg = argum, 
     val= value, 
-    expect.error = error, 
+    expect_error = error, 
     parall = FALSE, 
-    thread.nb = NULL, 
-    print.count = 10, 
-    plot.fun = FALSE, 
+    thread_nb = NULL, 
+    print_count = 10, 
+    plot_fun = FALSE, 
     export = FALSE, 
-    res.path = ".", 
-    lib_path = NULL,
-    safer_check = TRUE
+    res_path = ".", 
+    safer_check = TRUE, # perform some "safer" checks? Warning : always set this argument to FALSE if all_args_here() is used inside another safer function.
+    lib_path = NULL, # absolute pathways of the directories containing the required packages if not in the default directories.
+    error_text = "" # add information in error messages returned by the function.
 ) # check the function "mean" in the environment one step above the local environment
 ```

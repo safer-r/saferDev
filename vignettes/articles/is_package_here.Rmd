@@ -29,36 +29,38 @@ path # character vector specifying the absolute pathways of the directories, thi
 ```
 <br>
 
-### Argument req.package
+### Argument req_package
 ```{r, echo = TRUE, error = TRUE}
-is_package_here(req.package = req.pkg) # check if the package serpentine is in the computer
-```
-<br>
-
-### Argument lib_path
-```{r, echo = TRUE, error = TRUE}
-is_package_here(
-    req.package = req.pkg,
-    lib_path = "."
-) # check if the package is in the computer
+is_package_here(req_package = req.pkg) # check if the package is in the computer
 ```
 <br>
 
 ### Argument safer_check
 ```{r, echo = TRUE, error = TRUE}
 is_package_here(
-    req.package = req.pkg,
+    req_package = req.pkg,
     safer_check = TRUE
 ) # check if the package is in the computer, safer_check = TRUE, checkings are performed before main code running 
+```
+<br>
+
+### Argument lib_path and error_text
+```{r}
+is_package_here(
+    req_package = req.pkg,
+    lib_path = ".", # absolute pathways of the directories containing the required packages if not in the default directories.
+    error_text = "TEXT ADDED" # add information in error messages returned by the function.
+)
 ```
 <br>
 
 ### All the arguments
 ```{r, echo = TRUE, error = TRUE}
 is_package_here(
-    req.package = req.pkg,
-    lib_path = path,
-    safer_check = TRUE
+    req_package = req.pkg,
+    safer_check = TRUE, # perform some "safer" checks? Warning : always set this argument to FALSE if all_args_here() is used inside another safer function.
+    lib_path = NULL, # absolute pathways of the directories containing the required packages if not in the default directories.
+    error_text = "" # add information in error messages returned by the function.
 ) # check if the package is in the computer
 ```
 ```
