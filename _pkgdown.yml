@@ -38,9 +38,6 @@ reference:
 - title: "is_package_here"
   contents: 
   - is_package_here
-- title: "is_python_package_here"
-  contents: 
-  - is_python_package_here
 - title: "report"
   contents: 
   - report
