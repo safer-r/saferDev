@@ -59,7 +59,6 @@
     <a class="dropdown-item" href="../articles/get_message.html">get_message</a>
     <a class="dropdown-item" href="../articles/is_function_here.html">is_function_here</a>
     <a class="dropdown-item" href="../articles/is_package_here.html">is_package_here</a>
-    <a class="dropdown-item" href="../articles/is_python_package_here.html">is_python_package_here</a>
     <a class="dropdown-item" href="../articles/report.html">report</a>
   </div>
 </li>
@@ -125,12 +124,12 @@
 <div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a><span class="fu">colons_check</span>(<span class="at">x =</span> fun1) <span class="co"># a function name, written without quotes and brackets</span></span>
 <span id="cb4-2"><a href="#cb4-2" tabindex="-1"></a><span class="sc">&gt;</span> </span>
 <span id="cb4-3"><a href="#cb4-3" tabindex="-1"></a><span class="er">&gt;</span> </span>
-<span id="cb4-4"><a href="#cb4-4" tabindex="-1"></a><span class="er">&gt;</span> AFTER RUNNING <span class="fu">colons_check</span>() OF THE saferDev PACKAGE<span class="sc">:</span></span>
-<span id="cb4-5"><a href="#cb4-5" tabindex="-1"></a><span class="er">&gt;</span> INSIDE fun1, EVERYTHING SEEMS CLEAN</span>
+<span id="cb4-4"><a href="#cb4-4" tabindex="-1"></a><span class="er">&gt;</span> AFTER RUNNING saferDev<span class="sc">::</span><span class="fu">colons_check</span>().</span>
+<span id="cb4-5"><a href="#cb4-5" tabindex="-1"></a><span class="sc">&gt;</span> INSIDE <span class="fu">fun1</span>(), EVERYTHING SEEMS CLEAN.</span>
 <span id="cb4-6"><a href="#cb4-6" tabindex="-1"></a><span class="fu">colons_check</span>(<span class="at">x =</span> fun2) <span class="co"># a function name, written without quotes and brackets</span></span>
 <span id="cb4-7"><a href="#cb4-7" tabindex="-1"></a><span class="sc">&gt;</span> </span>
 <span id="cb4-8"><a href="#cb4-8" tabindex="-1"></a><span class="er">&gt;</span> </span>
-<span id="cb4-9"><a href="#cb4-9" tabindex="-1"></a><span class="er">&gt;</span> INSIDE <span class="fu">fun2</span>(), SOME <span class="sc">::</span> OR <span class="sc">:::</span> ARE MISSING AT BASIC FUNCTION POSITIONS<span class="sc">:</span></span>
+<span id="cb4-9"><a href="#cb4-9" tabindex="-1"></a><span class="er">&gt;</span> INSIDE <span class="fu">fun2</span>(), SOME <span class="sc">::</span> OR <span class="sc">:::</span> ARE MISSING BEFORE BASIC FUNCTIONS<span class="sc">:</span></span>
 <span id="cb4-10"><a href="#cb4-10" tabindex="-1"></a><span class="er">&gt;</span> </span>
 <span id="cb4-11"><a href="#cb4-11" tabindex="-1"></a><span class="er">&gt;</span> LINE  FUN     STRING_BEFORE</span>
 <span id="cb4-12"><a href="#cb4-12" tabindex="-1"></a><span class="sc">&gt;</span> <span class="dv">2</span> sum     </span></code></pre></div>
@@ -151,12 +150,14 @@
 </h3>
 <div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a><span class="fu">colons_check</span>(</span>
 <span id="cb6-2"><a href="#cb6-2" tabindex="-1"></a>    <span class="at">x =</span> fun1, <span class="co"># a function name, written without quotes and brackets</span></span>
-<span id="cb6-3"><a href="#cb6-3" tabindex="-1"></a>    <span class="at">safer_check =</span> <span class="cn">TRUE</span> <span class="co"># Single logical value. Perform some "safer" checks (see https://github.com/safer-r) ?</span></span>
-<span id="cb6-4"><a href="#cb6-4" tabindex="-1"></a>)</span>
-<span id="cb6-5"><a href="#cb6-5" tabindex="-1"></a><span class="sc">&gt;</span> </span>
-<span id="cb6-6"><a href="#cb6-6" tabindex="-1"></a><span class="er">&gt;</span> </span>
-<span id="cb6-7"><a href="#cb6-7" tabindex="-1"></a><span class="er">&gt;</span> AFTER RUNNING <span class="fu">colons_check</span>() OF THE saferDev PACKAGE<span class="sc">:</span></span>
-<span id="cb6-8"><a href="#cb6-8" tabindex="-1"></a><span class="er">&gt;</span> INSIDE fun1, EVERYTHING SEEMS CLEAN</span></code></pre></div>
+<span id="cb6-3"><a href="#cb6-3" tabindex="-1"></a>    <span class="at">safer_check =</span> <span class="cn">TRUE</span>, <span class="co"># perform some "safer" checks? Warning : always set this argument to FALSE if all_args_here() is used inside another safer function.</span></span>
+<span id="cb6-4"><a href="#cb6-4" tabindex="-1"></a>    <span class="at">lib_path =</span> <span class="cn">NULL</span>, <span class="co"># absolute pathways of the directories containing the required packages if not in the default directories.</span></span>
+<span id="cb6-5"><a href="#cb6-5" tabindex="-1"></a>    <span class="at">error_text =</span> <span class="st">""</span> <span class="co"># add information in error messages returned by the function.</span></span>
+<span id="cb6-6"><a href="#cb6-6" tabindex="-1"></a>)</span>
+<span id="cb6-7"><a href="#cb6-7" tabindex="-1"></a><span class="sc">&gt;</span> </span>
+<span id="cb6-8"><a href="#cb6-8" tabindex="-1"></a><span class="er">&gt;</span> </span>
+<span id="cb6-9"><a href="#cb6-9" tabindex="-1"></a><span class="er">&gt;</span> AFTER RUNNING saferDev<span class="sc">::</span><span class="fu">colons_check</span>().</span>
+<span id="cb6-10"><a href="#cb6-10" tabindex="-1"></a><span class="sc">&gt;</span> INSIDE <span class="fu">fun1</span>(), EVERYTHING SEEMS CLEAN.</span></code></pre></div>
 <p><br></p>
 </div>
 <div class="section level3">
@@ -169,7 +170,7 @@
 <span id="cb7-5"><a href="#cb7-5" tabindex="-1"></a>)</span>
 <span id="cb7-6"><a href="#cb7-6" tabindex="-1"></a><span class="sc">&gt;</span> </span>
 <span id="cb7-7"><a href="#cb7-7" tabindex="-1"></a><span class="er">&gt;</span> </span>
-<span id="cb7-8"><a href="#cb7-8" tabindex="-1"></a><span class="er">&gt;</span> INSIDE <span class="fu">test</span>(), SOME <span class="sc">::</span> OR <span class="sc">:::</span> ARE MISSING AT BASIC FUNCTION POSITIONS<span class="sc">:</span></span>
+<span id="cb7-8"><a href="#cb7-8" tabindex="-1"></a><span class="er">&gt;</span> INSIDE <span class="fu">test</span>(), SOME <span class="sc">::</span> OR <span class="sc">:::</span> ARE MISSING BEFORE BASIC FUNCTIONS<span class="sc">:</span></span>
 <span id="cb7-9"><a href="#cb7-9" tabindex="-1"></a><span class="er">&gt;</span> </span>
 <span id="cb7-10"><a href="#cb7-10" tabindex="-1"></a><span class="er">&gt;</span> LINE  FUN     STRING_BEFORE</span>
 <span id="cb7-11"><a href="#cb7-11" tabindex="-1"></a><span class="sc">&gt;</span> <span class="dv">5</span> gregexpr        matches <span class="ot">&lt;-</span> </span>
@@ -182,7 +183,7 @@
 <span id="cb7-18"><a href="#cb7-18" tabindex="-1"></a><span class="er">&gt;</span> INSIDE <span class="fu">test</span>(), INTERNAL FUNCTION DETECTED<span class="sc">:</span></span>
 <span id="cb7-19"><a href="#cb7-19" tabindex="-1"></a><span class="er">&gt;</span> FUN1</span>
 <span id="cb7-20"><a href="#cb7-20" tabindex="-1"></a><span class="sc">&gt;</span> </span>
-<span id="cb7-21"><a href="#cb7-21" tabindex="-1"></a><span class="er">&gt;</span> INSIDE <span class="fu">test</span>(), SOME <span class="sc">::</span> OR <span class="sc">:::</span> ARE MISSING AT OTHER FUNCTION POSITIONS<span class="sc">:</span></span>
+<span id="cb7-21"><a href="#cb7-21" tabindex="-1"></a><span class="er">&gt;</span> INSIDE <span class="fu">test</span>(), SOME <span class="sc">::</span> OR <span class="sc">:::</span> ARE MISSING BEFORE OTHER FUNCTIONS<span class="sc">:</span></span>
 <span id="cb7-22"><a href="#cb7-22" tabindex="-1"></a><span class="er">&gt;</span> </span>
 <span id="cb7-23"><a href="#cb7-23" tabindex="-1"></a><span class="er">&gt;</span> LINE  FUN     STRING_BEFORE</span>
 <span id="cb7-24"><a href="#cb7-24" tabindex="-1"></a><span class="sc">&gt;</span> <span class="dv">16</span>    roc1        base<span class="sc">::</span><span class="fu">length</span>(</span>

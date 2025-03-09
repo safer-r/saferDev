@@ -35,7 +35,6 @@
     <a class="dropdown-item" href="../articles/get_message.html">get_message</a>
     <a class="dropdown-item" href="../articles/is_function_here.html">is_function_here</a>
     <a class="dropdown-item" href="../articles/is_package_here.html">is_package_here</a>
-    <a class="dropdown-item" href="../articles/is_python_package_here.html">is_python_package_here</a>
     <a class="dropdown-item" href="../articles/report.html">report</a>
   </div>
 </li>
@@ -66,15 +65,16 @@
 <span>  path_out <span class="op">=</span> <span class="st">"."</span>,</span>
 <span>  df_name <span class="op">=</span> <span class="st">"res.tsv"</span>,</span>
 <span>  overwrite <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  safer_check <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  lib_path <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  safer_check <span class="op">=</span> <span class="cn">TRUE</span></span>
+<span>  error_text <span class="op">=</span> <span class="st">""</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
     <dl><dt>x</dt>
-<dd><p>a function name, written without quotes and brackets.</p></dd>
+<dd><p>Function name, written without quotes and brackets.</p></dd>
 
 
 <dt>export</dt>
@@ -93,12 +93,16 @@
 <dd><p>Single logical value. Overwrite potential df_name file already existing in path_out? Ignored if export is FALSE.</p></dd>
 
 
-<dt>lib_path</dt>
-<dd><p>Vector of characters specifying the absolute pathways of the directories containing the required packages if not in the default directories. If NULL, the pathway specified by .libPaths() is used.</p></dd>
-
-
 <dt>safer_check</dt>
-<dd><p>Single logical value. Perform some "safer" checks? If TRUE, checkings are performed before main code running (see https://github.com/safer-r): 1) R classical operators (like "&lt;-") not overwritten by another package because of the R scope and 2) required functions and related packages effectively present in local R lybraries. Must be set to FALSE if all_args_here() fonction is used inside another "safer" function to avoid pointless multiple checkings.</p></dd>
+<dd><p>Single logical value. Perform some "safer" checks? If TRUE, checkings are performed before main code running (see https://github.com/safer-r): 1) correct lib_path argument value 2) required functions and related packages effectively present in local R lybraries and 3) R classical operators (like "&lt;-") not overwritten by another package because of the R scope. Must be set to FALSE if this fonction is used inside another "safer" function to avoid pointless multiple checkings.</p></dd>
+
+
+<dt>lib_path</dt>
+<dd><p>Vector of characters specifying the absolute pathways of the directories containing the required packages for the function, if not in the default directories. Useful when R package are not installed in the default directories because of lack of admin rights.  More precisely, lib_path is passed through the new argument of .libPaths() so that the new library paths are unique(c(new, .Library.site, .Library)). Warning: .libPaths() is restored to the initial paths, after function execution. Ignored if NULL (default) or if the safer_check argument is FALSE: only the pathways specified by the current .libPaths() are used for package calling.</p></dd>
+
+
+<dt>error_text</dt>
+<dd><p>Single character string used to add information in error messages returned by the function, notably if the function is inside other functions, which is practical for debugging. Example: error_text = " INSIDE &lt;PACKAGE_1&gt;::&lt;FUNCTION_1&gt; INSIDE &lt;PACKAGE_2&gt;::&lt;FUNCTION_2&gt;.". If NULL, converted into "".</p></dd>
 
 </dl></div>
     <div class="section level2">
@@ -112,10 +116,10 @@ Data frame:
  $FUN_NAME: the function name.
  $FUN_ARGS: the written arguments of $FUN_NAME. "NOT_CONSIDERED" means that the function is between quotes or after $
  $FUN_POS: the position of the first character of the function name in the $LINE_NB line of the code.
- $DEF_ARGS: the defaults arguments of $FUN_NAME. "NO_ARGS" means that the function has no arguments
+ $DEF_ARGS: the defaults arguments of $FUN_NAME. "NO_ARGS" means that the function has no arguments. "INTERNAL_FUNCTION" means that the function has been created inside the checked function. "SKIPPED" means that the function is not analyzed for the reason indicated in the "details" section below.
  $MISSING_ARG_NAMES: the missing argument names in $FUN_ARGS.
  $MISSING_ARGS: the missing arguments with their values in $FUN_ARGS.
- $STATUS: either "GOOD", meaning that all the arguments are already written, or a new proposal of arguments writting, or indicates if some arguments are not fully written (abbreviation is discouraged), or nothing.</p>
+ $STATUS: either "GOOD", meaning that all the arguments are already written, or a new proposal of arguments writing, or indicates if some arguments are not fully written (abbreviation is discouraged), or nothing.</p>
 
 
 <p>An additionnal message "EVERYTHING SEEMS CLEAN" if the $STATUS column is only made of "" and "GOOD".</p>
@@ -123,38 +127,46 @@ Data frame:
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
     <p>More precisely, all_args_here() verifies that all the strings before an opening bracket "(" are written with all their arguments. Thus, it cannot check function names written without brackets, like in the FUN argument of some functions, e.g., sapply(1:3, FUN = as.character).</p>
-<p>The perl regex used to detect a function name is: "[a-zA-Z.]1[a-zA-Z0-9._]*\s*\(".</p>
-<p>Function names preceeded by $ and any space are not considered (pattern "\$ *[a-zA-Z.]1[a-zA-Z0-9._]* *\(")</p> 
-<p>The following R functions using bracket are not considered: "function", "if", "for", "while" and "repeat".</p>
-<p>Most of the time, all_args_here() does not check inside comments, but some unexpected writting could dupe all_args_here().</p>
+<p>The perl regex used to detect a function name is: "([a-zA-Z]|\.[a-zA-Z._])[a-zA-Z0-9._]*\s*\(".</p>
+<p>Currently,  all_args_here() cannot detect functions written between quotes, like "+"() or "rownames&lt;-"(x, "a").</p>
+<p>Function names preceeded by $ are not considered.</p> 
+<p>The following R functions are skipped: "function", "if", "for", "while", "repeat" and "else".</p>
+<p>Warning: the following R functions are also skipped (as indicated by "SKIPPED" in the $DEF_ARGS column of the returned data frame) for the indicated reason: "as.environment" (https://bugs.r-project.org/show_bug.cgi?id=18849).</p>
+<p>Warning: some functions, like rownames(), have different arguments depending on whether something is assigned to it (e.g., rownames(x) &lt;- "a") or not. The all_args_here() function always propose the arguments defined in the help page without assignement, meaning that is cannot detect the assignation. A way to by-pass this is to use the "exact" writing of the function. For instance, base::"rownames&lt;-"(x, "a") instead of using base::rownames(x) &lt;- "a", and use getAnywhere("rownames&lt;-") to see the arguments of the function.</p>
+<p>Most of the time, all_args_here() does not check inside comments, but some unexpected writing could dupe all_args_here(). Please, report here https://github.com/safer-r/saferDev/issues if it is the case.</p>
 <p>The returned line numbers are indicative, depending on which source is checked. For instance, saferDev::report (compiled) has not the same line numbers as its source file (https://github.com/safer-r/saferDev/blob/main/R/report.R). Notably, compiled functions do not have comments anymore, compared to the same source function sourced into the working environment. In addition, the counting starts at the "&lt;- function" line, i.e., without counting the #' header lines potentially present in source files.</p>
+<p>The function works by notably replacing first in the code: 1) the three consecutive characters "'" or '"' by three spaces, 2) "\"'" and '\'"' by four spaces and 3) escape quotes like \" or \' by two spaces.</p>
 <p>Warnings: 
 1) The function could not properly work if any comma is present in default argument values. Please, report here https://github.com/safer-r/saferDev/issues if it is the case.</p>
-<p>2) Proposals in the STATUS column are only suggestions, as it is difficult to anticipate all the exceptions with arguments writting.</p>
+<p>2) Proposals in the STATUS column are only suggestions, as it is difficult to anticipate all the exceptions with arguments writing.</p>
     </div>
     <div class="section level2">
     <h2 id="author">Author<a class="anchor" aria-label="anchor" href="#author"></a></h2>
-    <p>Gael Millot &lt;gael.millot@pasteur.fr&gt;</p>
+    <p><a href="gael.millot@pasteur.fr">Gael Millot</a></p>
     </div>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span>  <span class="co"># Example that return an error</span></span></span>
-<span class="r-in"><span><span class="fu">all_args_here</span><span class="op">(</span><span class="va">mean</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/source.html" class="external-link">source</a></span><span class="op">(</span><span class="st">"https://raw.githubusercontent.com/safer-r/saferDev/main/dev/other/test2.R"</span><span class="op">)</span> ; <span class="fu">all_args_here</span><span class="op">(</span><span class="va">test2</span>, export <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">all_args_here</span><span class="op">(</span><span class="va">mean</span><span class="op">)</span> <span class="co"># example that return an error</span></span></span>
+<span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/source.html" class="external-link">source</a></span><span class="op">(</span><span class="st">"https://raw.githubusercontent.com/safer-r/saferDev/main/dev/other/test2.R"</span><span class="op">)</span> ; <span class="fu">all_args_here</span><span class="op">(</span><span class="va">test2</span><span class="op">)</span> <span class="co"># the checked function must be executable</span></span></span>
 <span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error:</span> </span>
 <span class="r-err co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-err co"><span class="r-pr">#&gt;</span> ================</span>
 <span class="r-err co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> ERROR IN all_args_here() OF THE saferDev PACKAGE</span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> THE TESTED FUNCTION test2 SEEMS TO HAVE A WRITTING ERROR IN LINE 13 AND FUNCTION length.</span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> ERROR IN saferDev:::.all_args_here_fill() INSIDE saferDev::all_args_here().</span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> THE TESTED FUNCTION test2 SEEMS TO HAVE A WRITING ERROR IN LINE 13 AND FUNCTION length.</span>
 <span class="r-err co"><span class="r-pr">#&gt;</span> PLEASE, RUN THE TESTED FUNCTION FIRST.</span>
 <span class="r-err co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-err co"><span class="r-pr">#&gt;</span> ================</span>
 <span class="r-err co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">FUN2</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span>, <span class="va">y</span><span class="op">)</span><span class="op">{</span><span class="va">middle_bracket2</span> <span class="op">&lt;-</span> <span class="fu">base</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/base/do.call.html" class="external-link">do.call</a></span><span class="op">(</span>what <span class="op">=</span> <span class="fu">base</span><span class="fu">::</span><span class="va"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span>, args <span class="op">=</span> <span class="va">code_for_col</span>, quote <span class="op">=</span> <span class="cn">FALSE</span>, envir <span class="op">=</span> <span class="fu">base</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/base/sys.parent.html" class="external-link">parent.frame</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span><span class="op">}</span></span></span>
-<span class="r-in"><span><span class="fu">all_args_here</span><span class="op">(</span><span class="va">FUN2</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">all_args_here</span><span class="op">(</span><span class="va">FUN2</span>, safer_check <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> INSIDE FUN2(), ARGUMENTS ARE MISSING.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   LINE_NB     FUN_NAME</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1       1      do.call</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 2       1 parent.frame</span>
@@ -168,14 +180,14 @@ Data frame:
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1                             GOOD</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 2        n = 1 parent.frame(n = 1)</span>
 <span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/source.html" class="external-link">source</a></span><span class="op">(</span><span class="st">"https://raw.githubusercontent.com/safer-r/.github/refs/heads/main/profile/backbone.R"</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu">all_args_here</span><span class="op">(</span><span class="va">BACKBONE</span>, export <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-in"><span><span class="fu">all_args_here</span><span class="op">(</span><span class="va">BACKBONE</span>, export <span class="op">=</span> <span class="cn">TRUE</span>, safer_check <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> AFTER RUNNING all_args_here() OF THE saferDev PACKAGE:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> RESULT EXPORTED IN</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> RESULT EXPORTED IN:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> ./res.tsv</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> BUT INSIDE BACKBONE(), EVERYTHING SEEMS CLEAN</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> BUT INSIDE BACKBONE(), EVERYTHING SEEMS CLEAN.</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>

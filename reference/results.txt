@@ -1,3 +1,30 @@
+THE FOLLOWING VECTOR IS:
+
 [1] 1 2 3
 
+
+THE FOLLOWING MATRIX IS:
+
+     [,1]
+[1,]    1
+[2,]    2
+[3,]    3
+[4,]    4
+[5,]    5
+
+
+
+
+
+THE FOLLOWING DATA FRAME IS:
+
+  A B
+1 1 a
+2 2 b
+3 3 c
+4 4 d
+5 5 e
+6 6 f
+7 7 g
+8 8 h
 

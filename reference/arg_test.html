@@ -35,7 +35,6 @@
     <a class="dropdown-item" href="../articles/get_message.html">get_message</a>
     <a class="dropdown-item" href="../articles/is_function_here.html">is_function_here</a>
     <a class="dropdown-item" href="../articles/is_package_here.html">is_package_here</a>
-    <a class="dropdown-item" href="../articles/is_python_package_here.html">is_python_package_here</a>
     <a class="dropdown-item" href="../articles/report.html">report</a>
   </div>
 </li>
@@ -64,15 +63,16 @@
 <span>  <span class="va">fun</span>,</span>
 <span>  <span class="va">arg</span>,</span>
 <span>  <span class="va">val</span>,</span>
-<span>  expect.error <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  expect_error <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  parall <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  thread.nb <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  print.count <span class="op">=</span> <span class="fl">10</span>,</span>
-<span>  plot.fun <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  thread_nb <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  print_count <span class="op">=</span> <span class="fl">10</span>,</span>
+<span>  plot_fun <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  export <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  res.path <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  res_path <span class="op">=</span> <span class="st">"."</span>,</span>
+<span>  safer_check <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  lib_path <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  safer_check <span class="op">=</span> <span class="cn">TRUE</span></span>
+<span>  error_text <span class="op">=</span> <span class="st">""</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -90,7 +90,7 @@
 <dd><p>List with number of compartments equal to the length of arg, each compartment containing values of the corresponding argument in arg. Each different value must be in a list or in a vector. For instance, argument 3 in arg is a logical argument (values accepted TRUE, FALSE, NA). Thus, compartment 3 of val can be either list(TRUE, FALSE, NA), or c(TRUE, FALSE, NA). NULL value alone must be written list(NULL).</p></dd>
 
 
-<dt>expect.error</dt>
+<dt>expect_error</dt>
 <dd><p>List of exactly the same structure as val argument, but containing FALSE or TRUE, depending on whether error is expected (TRUE) or not (FALSE) for each corresponding value of val. A message is returned depending on discrepancies between the expected and observed errors. See the examples below. BEWARE: not always possible to write the expected errors for all the combination of argument values. Ignored if NULL.</p></dd>
 
 
@@ -98,15 +98,15 @@
 <dd><p>Single logical value. Force parallelization ?</p></dd>
 
 
-<dt>thread.nb</dt>
+<dt>thread_nb</dt>
 <dd><p>Single numeric integer indicating the number of threads to use if ever parallelization is required. If NULL, all the available threads will be used. Ignored if parall is FALSE.</p></dd>
 
 
-<dt>print.count</dt>
-<dd><p>Single interger value. Print a working progress message every print.count during loops. BEWARE: can increase substentially the time to complete the process if using a small integer value, like 10 for instance. Use Inf if no loop message desired.</p></dd>
+<dt>print_count</dt>
+<dd><p>Single interger value. Print a working progress message every print_count during loops. BEWARE: can increase substentially the time to complete the process if using a small integer value, like 10 for instance. Use Inf if no loop message desired.</p></dd>
 
 
-<dt>plot.fun</dt>
+<dt>plot_fun</dt>
 <dd><p>Single logical value. Plot the plotting function tested for each test? Ignored if the tested function is not a graphic function.</p></dd>
 
 
@@ -114,23 +114,27 @@
 <dd><p>Single logical value. Export the results into a .RData file and into a .tsv file? If FALSE, return a list into the console (see below). BEWARE: will be automatically set to TRUE if parall is TRUE. This means that when using parallelization, the results are systematically exported, not returned into the console.</p></dd>
 
 
-<dt>res.path</dt>
-<dd><p>Single character string indicating the absolute pathway of the folder where the txt results and pdfs, containing all the plots, will be saved. Several txt and pdf, one per thread, if parallelization. Ignored if export is FALSE. Must be specified if parall is TRUE or if export is TRUE.</p></dd>
-
-
-<dt>lib_path</dt>
-<dd><p>Vector of characters specifying the absolute pathways of the directories containing the required packages if not in the default directories. Ignored if NULL.</p></dd>
+<dt>res_path</dt>
+<dd><p>Single character string indicating the absolute pathway of the folder where the txt results and pdfs, containing all the plots, will be saved (by default into the working directory). Several txt and pdf, one per thread, if parallelization. Ignored if export is FALSE. Must be specified if parall is TRUE or if export is TRUE.</p></dd>
 
 
 <dt>safer_check</dt>
-<dd><p>Single logical value. Perform some "safer" checks? If TRUE, checkings are performed before main code running (see https://github.com/safer-r): 1) R classical operators (like "&lt;-") not overwritten by another package because of the R scope and 2) required functions and related packages effectively present in local R lybraries. Must be set to FALSE if this fonction is used inside another "safer" function to avoid pointless multiple checkings.</p></dd>
+<dd><p>Single logical value. Perform some "safer" checks? If TRUE, checkings are performed before main code running (see https://github.com/safer-r): 1) correct lib_path argument value 2) required functions and related packages effectively present in local R lybraries and 3) R classical operators (like "&lt;-") not overwritten by another package because of the R scope. Must be set to FALSE if this fonction is used inside another "safer" function to avoid pointless multiple checkings.</p></dd>
+
+
+<dt>lib_path</dt>
+<dd><p>Vector of characters specifying the absolute pathways of the directories containing the required packages for the function, if not in the default directories. Useful when R package are not installed in the default directories because of lack of admin rights.  More precisely, lib_path is passed through the new argument of .libPaths() so that the new library paths are unique(c(new, .Library.site, .Library)). Warning: .libPaths() is restored to the initial paths, after function execution. Ignored if NULL (default) or if the safer_check argument is FALSE: only the pathways specified by the current .libPaths() are used for package calling.</p></dd>
+
+
+<dt>error_text</dt>
+<dd><p>Single character string used to add information in error messages returned by the function, notably if the function is inside other functions, which is practical for debugging. Example: error_text = " INSIDE &lt;PACKAGE_1&gt;::&lt;FUNCTION_1&gt; INSIDE &lt;PACKAGE_2&gt;::&lt;FUNCTION_2&gt;.". If NULL, converted into "".</p></dd>
 
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
     
 
-<p>One or several pdf if a plotting function is tested and if the plot.fun argument is TRUE.</p>
+<p>One or several pdf if a plotting function is tested and if the plot_fun argument is TRUE.</p>
 
 
 <p>And then, if export is FALSE a list containing:</p>
@@ -150,7 +154,7 @@
      - $problem: a logical vector indicating if error or not.</p>
      
 
-<p>- $expected.error: optional logical vector indicating the expected error specified in the expect.error argument.
+<p>- $expected.error: optional logical vector indicating the expected error specified in the expect_error argument.
      - $message: either NULL if $kind is always "OK", or the messages.</p>
      
 
@@ -166,7 +170,7 @@
 <p>- also the $data data frame into a .tsv file.</p>
 
 
-<p>- if expect.error is non NULL and if any discrepancy, the $data data frame into a .tsv file but containing only the rows with discrepancies between expected and observed errors.</p>
+<p>- if expect_error is non NULL and if any discrepancy, the $data data frame into a .tsv file but containing only the rows with discrepancies between expected and observed errors.</p>
     </div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
@@ -178,9 +182,9 @@
     </div>
     <div class="section level2">
     <h2 id="author">Author<a class="anchor" aria-label="anchor" href="#author"></a></h2>
-    <p>Gael Millot &lt;gael.millot@pasteur.fr&gt;</p>
-<p>Yushi Han &lt;yushi.han2000@gmail.com&gt;</p>
-<p>Haiding Wang &lt;wanghaiding442@gmail.com&gt;</p>
+    <p><a href="gael.millot@pasteur.fr">Gael Millot</a></p>
+<p><a href="yushi.han2000@gmail.com">Yushi Han</a></p>
+<p><a href="wanghaiding442@gmail.com">Haiding Wang</a></p>
     </div>
 
     <div class="section level2">
@@ -194,6 +198,13 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> LOOP PROCESS ENDED | LOOP 9 / 9 | TIME SPENT: 0S</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> test JOB END</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> TIME: 2025-03-09 18:02:44.489193</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> TOTAL TIME LAPSE: 0S</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $fun</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "unique"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
@@ -202,94 +213,26 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span>     c(1, 1, 2, 8), NA), incomparable = c(TRUE, FALSE, NA)))</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $data</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                               x incomparables kind problem message</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> arg_test_1 1 2 3 4 5 6 7 8 9 10          TRUE   OK   FALSE        </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> arg_test_2 1 2 3 4 5 6 7 8 9 10         FALSE   OK   FALSE        </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> arg_test_3 1 2 3 4 5 6 7 8 9 10            NA   OK   FALSE        </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> arg_test_4              1 1 2 8          TRUE   OK   FALSE        </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> arg_test_5              1 1 2 8         FALSE   OK   FALSE        </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> arg_test_6              1 1 2 8            NA   OK   FALSE        </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> arg_test_7                   NA          TRUE   OK   FALSE        </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> arg_test_8                   NA         FALSE   OK   FALSE        </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> arg_test_9                   NA            NA   OK   FALSE        </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $sys.info</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> R version 4.3.3 (2024-02-29)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Platform: x86_64-pc-linux-gnu (64-bit)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Running under: Ubuntu 22.04.4 LTS</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Matrix products: default</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> BLAS:   /usr/lib/x86_64-linux-gnu/openblas-pthread/libblas.so.3 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> LAPACK: /usr/lib/x86_64-linux-gnu/openblas-pthread/libopenblasp-r0.3.20.so;  LAPACK version 3.10.0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> locale:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [1] LC_CTYPE=en_US.UTF-8       LC_NUMERIC=C              </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [3] LC_TIME=en_US.UTF-8        LC_COLLATE=C              </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [5] LC_MONETARY=en_US.UTF-8    LC_MESSAGES=en_US.UTF-8   </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [7] LC_PAPER=en_US.UTF-8       LC_NAME=C                 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [9] LC_ADDRESS=C               LC_TELEPHONE=C            </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [11] LC_MEASUREMENT=en_US.UTF-8 LC_IDENTIFICATION=C       </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> time zone: UTC</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> tzcode source: system (glibc)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> attached base packages:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] stats     graphics  grDevices utils     datasets  methods   base     </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> other attached packages:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] saferDev_1.0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> loaded via a namespace (and not attached):</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [1] Matrix_1.6-5       R6_2.5.1           Rcpp_1.0.12        askpass_1.2.0     </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [5] brio_1.1.4         bslib_0.7.0        cachem_1.0.8       cli_3.6.2         </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [9] colorspace_2.1-0   compiler_4.3.3     curl_5.2.1         desc_1.4.3        </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [13] digest_0.6.35      downlit_0.4.3      evaluate_0.23      fansi_1.0.6       </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [17] fastmap_1.1.1      fs_1.6.3           generics_0.1.3     ggplot2_3.5.0     </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [21] glue_1.7.0         grid_4.3.3         gtable_0.3.5       htmltools_0.5.8.1 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [25] htmlwidgets_1.6.4  httr_1.4.7         jquerylib_0.1.4    jsonlite_1.8.8    </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [29] knitr_1.46         lattice_0.22-6     lifecycle_1.0.4    lubridate_1.9.3   </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [33] magrittr_2.0.3     memoise_2.0.1      munsell_0.5.1      parallel_4.3.3    </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [37] pillar_1.9.0       pkgconfig_2.0.3    pkgdown_2.0.9      png_0.1-8         </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [41] purrr_1.0.2        qpdf_1.3.3         ragg_1.3.0         remotes_2.5.0.9000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [45] reticulate_1.36.1  rlang_1.1.3        rmarkdown_2.26     rstudioapi_0.16.0 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [49] sass_0.4.9         scales_1.3.0       systemfonts_1.0.6  testthat_3.2.1.1  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [53] textshaping_0.3.7  tibble_3.2.1       timechange_0.3.0   tools_4.3.3       </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [57] utf8_1.2.4         vctrs_0.6.5        whisker_0.4.1      withr_3.0.0       </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [61] xfun_0.43          xml2_1.3.6         yaml_2.3.8        </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="fu">arg_test</span><span class="op">(</span>fun <span class="op">=</span> <span class="st">"unique"</span>, arg <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"x"</span>, <span class="st">"incomparables"</span><span class="op">)</span>, </span></span>
-<span class="r-in"><span>val <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">10</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">1</span>,<span class="fl">2</span>,<span class="fl">8</span><span class="op">)</span>, <span class="cn">NA</span><span class="op">)</span>, </span></span>
-<span class="r-in"><span>incomparable <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="cn">TRUE</span>, <span class="cn">FALSE</span>, <span class="cn">NA</span><span class="op">)</span><span class="op">)</span>, expect.error <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="cn">FALSE</span>, <span class="cn">FALSE</span>, <span class="cn">TRUE</span><span class="op">)</span>, </span></span>
-<span class="r-in"><span>incomparable <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="cn">FALSE</span>, <span class="cn">FALSE</span>, <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> test JOB IGNITION</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> TOTAL NUMBER OF TESTS: 9</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> LOOP PROCESS ENDED | LOOP 9 / 9 | TIME SPENT: 0S</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> DISCREPANCIES BETWEEN EXPECTED AND OBSERVED ERRORS (SEE THE $data RESULT)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $fun</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "unique"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $ini</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> arg_test(fun = "unique", arg = c("x", "incomparables"), val = list(x = list(1:10, </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     c(1, 1, 2, 8), NA), incomparable = c(TRUE, FALSE, NA)), expect.error = list(x = list(FALSE, </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     FALSE, TRUE), incomparable = c(FALSE, FALSE, TRUE)))</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $data</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                               x incomparables kind problem expected.error</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> arg_test_1 1 2 3 4 5 6 7 8 9 10          TRUE   OK   FALSE          FALSE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> arg_test_2 1 2 3 4 5 6 7 8 9 10         FALSE   OK   FALSE          FALSE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> arg_test_3 1 2 3 4 5 6 7 8 9 10            NA   OK   FALSE           TRUE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> arg_test_4              1 1 2 8          TRUE   OK   FALSE          FALSE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> arg_test_5              1 1 2 8         FALSE   OK   FALSE          FALSE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> arg_test_6              1 1 2 8            NA   OK   FALSE           TRUE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> arg_test_7                   NA          TRUE   OK   FALSE           TRUE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> arg_test_8                   NA         FALSE   OK   FALSE           TRUE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> arg_test_9                   NA            NA   OK   FALSE           TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>            X.SPECIAL.VALUE.OF.CLASS.integer.AND.TYPE.integer.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> arg_test_1    SPECIAL VALUE OF CLASS integer AND TYPE integer</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> arg_test_2    SPECIAL VALUE OF CLASS integer AND TYPE integer</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> arg_test_3    SPECIAL VALUE OF CLASS integer AND TYPE integer</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> arg_test_4     SPECIAL VALUE OF CLASS numeric AND TYPE double</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> arg_test_5     SPECIAL VALUE OF CLASS numeric AND TYPE double</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> arg_test_6     SPECIAL VALUE OF CLASS numeric AND TYPE double</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> arg_test_7    SPECIAL VALUE OF CLASS logical AND TYPE logical</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> arg_test_8    SPECIAL VALUE OF CLASS logical AND TYPE logical</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> arg_test_9    SPECIAL VALUE OF CLASS logical AND TYPE logical</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>            X.SPECIAL.VALUE.OF.CLASS.logical.AND.TYPE.logical. kind problem</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> arg_test_1    SPECIAL VALUE OF CLASS logical AND TYPE logical   OK   FALSE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> arg_test_2    SPECIAL VALUE OF CLASS logical AND TYPE logical   OK   FALSE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> arg_test_3    SPECIAL VALUE OF CLASS logical AND TYPE logical   OK   FALSE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> arg_test_4    SPECIAL VALUE OF CLASS logical AND TYPE logical   OK   FALSE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> arg_test_5    SPECIAL VALUE OF CLASS logical AND TYPE logical   OK   FALSE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> arg_test_6    SPECIAL VALUE OF CLASS logical AND TYPE logical   OK   FALSE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> arg_test_7    SPECIAL VALUE OF CLASS logical AND TYPE logical   OK   FALSE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> arg_test_8    SPECIAL VALUE OF CLASS logical AND TYPE logical   OK   FALSE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> arg_test_9    SPECIAL VALUE OF CLASS logical AND TYPE logical   OK   FALSE</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>            message</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> arg_test_1        </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> arg_test_2        </span>
@@ -328,28 +271,131 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] saferDev_1.0</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> loaded via a namespace (and not attached):</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [1] Matrix_1.6-5       R6_2.5.1           Rcpp_1.0.12        askpass_1.2.0     </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [5] brio_1.1.4         bslib_0.7.0        cachem_1.0.8       cli_3.6.2         </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [9] colorspace_2.1-0   compiler_4.3.3     curl_5.2.1         desc_1.4.3        </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [13] digest_0.6.35      downlit_0.4.3      evaluate_0.23      fansi_1.0.6       </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [17] fastmap_1.1.1      fs_1.6.3           generics_0.1.3     ggplot2_3.5.0     </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [21] glue_1.7.0         grid_4.3.3         gtable_0.3.5       htmltools_0.5.8.1 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [25] htmlwidgets_1.6.4  httr_1.4.7         jquerylib_0.1.4    jsonlite_1.8.8    </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [29] knitr_1.46         lattice_0.22-6     lifecycle_1.0.4    lubridate_1.9.3   </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [33] magrittr_2.0.3     memoise_2.0.1      munsell_0.5.1      parallel_4.3.3    </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [37] pillar_1.9.0       pkgconfig_2.0.3    pkgdown_2.0.9      png_0.1-8         </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [41] purrr_1.0.2        qpdf_1.3.3         ragg_1.3.0         remotes_2.5.0.9000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [45] reticulate_1.36.1  rlang_1.1.3        rmarkdown_2.26     rstudioapi_0.16.0 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [49] sass_0.4.9         scales_1.3.0       systemfonts_1.0.6  testthat_3.2.1.1  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [53] textshaping_0.3.7  tibble_3.2.1       timechange_0.3.0   tools_4.3.3       </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [57] utf8_1.2.4         vctrs_0.6.5        whisker_0.4.1      withr_3.0.0       </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [61] xfun_0.43          xml2_1.3.6         yaml_2.3.8        </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [1] R6_2.5.1           Rcpp_1.0.12        askpass_1.2.0      brio_1.1.4        </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [5] bslib_0.7.0        cachem_1.0.8       cli_3.6.2          colorspace_2.1-0  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [9] compiler_4.3.3     curl_5.2.1         desc_1.4.3         digest_0.6.35     </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [13] downlit_0.4.3      evaluate_0.23      fansi_1.0.6        fastmap_1.1.1     </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [17] fs_1.6.3           generics_0.1.3     ggplot2_3.5.0      glue_1.7.0        </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [21] grid_4.3.3         gtable_0.3.5       htmltools_0.5.8.1  htmlwidgets_1.6.4 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [25] httr_1.4.7         jquerylib_0.1.4    jsonlite_1.8.8     knitr_1.46        </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [29] lifecycle_1.0.4    lubridate_1.9.3    magrittr_2.0.3     memoise_2.0.1     </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [33] munsell_0.5.1      parallel_4.3.3     pillar_1.9.0       pkgconfig_2.0.3   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [37] pkgdown_2.0.9      purrr_1.0.2        qpdf_1.3.3         ragg_1.3.0        </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [41] remotes_2.5.0.9000 rlang_1.1.3        rmarkdown_2.26     rstudioapi_0.16.0 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [45] sass_0.4.9         scales_1.3.0       systemfonts_1.0.6  testthat_3.2.1.1  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [49] textshaping_0.3.7  tibble_3.2.1       timechange_0.3.0   tools_4.3.3       </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [53] utf8_1.2.4         vctrs_0.6.5        whisker_0.4.1      withr_3.0.0       </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [57] xfun_0.43          xml2_1.3.6         yaml_2.3.8        </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="fu">arg_test</span><span class="op">(</span>fun <span class="op">=</span> <span class="st">"unique"</span>, arg <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"x"</span>, <span class="st">"incomparables"</span><span class="op">)</span>, </span></span>
+<span class="r-in"><span>val <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">10</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">1</span>,<span class="fl">2</span>,<span class="fl">8</span><span class="op">)</span>, <span class="cn">NA</span><span class="op">)</span>, </span></span>
+<span class="r-in"><span>incomparable <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="cn">TRUE</span>, <span class="cn">FALSE</span>, <span class="cn">NA</span><span class="op">)</span><span class="op">)</span>, expect_error <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="cn">FALSE</span>, <span class="cn">FALSE</span>, <span class="cn">TRUE</span><span class="op">)</span>, </span></span>
+<span class="r-in"><span>incomparable <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="cn">FALSE</span>, <span class="cn">FALSE</span>, <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> test JOB IGNITION</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> TOTAL NUMBER OF TESTS: 9</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> LOOP PROCESS ENDED | LOOP 9 / 9 | TIME SPENT: 0S</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> DISCREPANCIES BETWEEN EXPECTED AND OBSERVED ERRORS (SEE THE $data RESULT)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> test JOB END</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> TIME: 2025-03-09 18:02:44.729957</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> TOTAL TIME LAPSE: 0S</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $fun</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "unique"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $ini</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> arg_test(fun = "unique", arg = c("x", "incomparables"), val = list(x = list(1:10, </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     c(1, 1, 2, 8), NA), incomparable = c(TRUE, FALSE, NA)), expect_error = list(x = list(FALSE, </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     FALSE, TRUE), incomparable = c(FALSE, FALSE, TRUE)))</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $data</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>            X.SPECIAL.VALUE.OF.CLASS.integer.AND.TYPE.integer.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> arg_test_1    SPECIAL VALUE OF CLASS integer AND TYPE integer</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> arg_test_2    SPECIAL VALUE OF CLASS integer AND TYPE integer</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> arg_test_3    SPECIAL VALUE OF CLASS integer AND TYPE integer</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> arg_test_4     SPECIAL VALUE OF CLASS numeric AND TYPE double</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> arg_test_5     SPECIAL VALUE OF CLASS numeric AND TYPE double</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> arg_test_6     SPECIAL VALUE OF CLASS numeric AND TYPE double</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> arg_test_7    SPECIAL VALUE OF CLASS logical AND TYPE logical</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> arg_test_8    SPECIAL VALUE OF CLASS logical AND TYPE logical</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> arg_test_9    SPECIAL VALUE OF CLASS logical AND TYPE logical</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>            X.SPECIAL.VALUE.OF.CLASS.logical.AND.TYPE.logical. kind problem</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> arg_test_1    SPECIAL VALUE OF CLASS logical AND TYPE logical   OK   FALSE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> arg_test_2    SPECIAL VALUE OF CLASS logical AND TYPE logical   OK   FALSE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> arg_test_3    SPECIAL VALUE OF CLASS logical AND TYPE logical   OK   FALSE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> arg_test_4    SPECIAL VALUE OF CLASS logical AND TYPE logical   OK   FALSE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> arg_test_5    SPECIAL VALUE OF CLASS logical AND TYPE logical   OK   FALSE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> arg_test_6    SPECIAL VALUE OF CLASS logical AND TYPE logical   OK   FALSE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> arg_test_7    SPECIAL VALUE OF CLASS logical AND TYPE logical   OK   FALSE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> arg_test_8    SPECIAL VALUE OF CLASS logical AND TYPE logical   OK   FALSE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> arg_test_9    SPECIAL VALUE OF CLASS logical AND TYPE logical   OK   FALSE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>            expected.error message</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> arg_test_1          FALSE        </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> arg_test_2          FALSE        </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> arg_test_3           TRUE        </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> arg_test_4          FALSE        </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> arg_test_5          FALSE        </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> arg_test_6           TRUE        </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> arg_test_7           TRUE        </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> arg_test_8           TRUE        </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> arg_test_9           TRUE        </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $sys.info</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> R version 4.3.3 (2024-02-29)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Platform: x86_64-pc-linux-gnu (64-bit)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Running under: Ubuntu 22.04.4 LTS</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Matrix products: default</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> BLAS:   /usr/lib/x86_64-linux-gnu/openblas-pthread/libblas.so.3 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> LAPACK: /usr/lib/x86_64-linux-gnu/openblas-pthread/libopenblasp-r0.3.20.so;  LAPACK version 3.10.0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> locale:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [1] LC_CTYPE=en_US.UTF-8       LC_NUMERIC=C              </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [3] LC_TIME=en_US.UTF-8        LC_COLLATE=C              </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [5] LC_MONETARY=en_US.UTF-8    LC_MESSAGES=en_US.UTF-8   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [7] LC_PAPER=en_US.UTF-8       LC_NAME=C                 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [9] LC_ADDRESS=C               LC_TELEPHONE=C            </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [11] LC_MEASUREMENT=en_US.UTF-8 LC_IDENTIFICATION=C       </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> time zone: UTC</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> tzcode source: system (glibc)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> attached base packages:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] stats     graphics  grDevices utils     datasets  methods   base     </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> other attached packages:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] saferDev_1.0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> loaded via a namespace (and not attached):</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [1] R6_2.5.1           Rcpp_1.0.12        askpass_1.2.0      brio_1.1.4        </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [5] bslib_0.7.0        cachem_1.0.8       cli_3.6.2          colorspace_2.1-0  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [9] compiler_4.3.3     curl_5.2.1         desc_1.4.3         digest_0.6.35     </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [13] downlit_0.4.3      evaluate_0.23      fansi_1.0.6        fastmap_1.1.1     </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [17] fs_1.6.3           generics_0.1.3     ggplot2_3.5.0      glue_1.7.0        </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [21] grid_4.3.3         gtable_0.3.5       htmltools_0.5.8.1  htmlwidgets_1.6.4 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [25] httr_1.4.7         jquerylib_0.1.4    jsonlite_1.8.8     knitr_1.46        </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [29] lifecycle_1.0.4    lubridate_1.9.3    magrittr_2.0.3     memoise_2.0.1     </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [33] munsell_0.5.1      parallel_4.3.3     pillar_1.9.0       pkgconfig_2.0.3   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [37] pkgdown_2.0.9      purrr_1.0.2        qpdf_1.3.3         ragg_1.3.0        </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [41] remotes_2.5.0.9000 rlang_1.1.3        rmarkdown_2.26     rstudioapi_0.16.0 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [45] sass_0.4.9         scales_1.3.0       systemfonts_1.0.6  testthat_3.2.1.1  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [49] textshaping_0.3.7  tibble_3.2.1       timechange_0.3.0   tools_4.3.3       </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [53] utf8_1.2.4         vctrs_0.6.5        whisker_0.4.1      withr_3.0.0       </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [57] xfun_0.43          xml2_1.3.6         yaml_2.3.8        </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu">arg_test</span><span class="op">(</span>fun <span class="op">=</span> <span class="st">"unique"</span>, arg <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"x"</span>, <span class="st">"incomparables"</span><span class="op">)</span>, </span></span>
 <span class="r-in"><span>val <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">10</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">1</span>,<span class="fl">2</span>,<span class="fl">8</span><span class="op">)</span>, <span class="cn">NA</span><span class="op">)</span>, incomparable <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="cn">TRUE</span>, <span class="cn">FALSE</span>, <span class="cn">NA</span><span class="op">)</span><span class="op">)</span>, </span></span>
-<span class="r-in"><span>expect.error <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="cn">FALSE</span>, <span class="cn">FALSE</span>, <span class="cn">TRUE</span><span class="op">)</span>, incomparable <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="cn">FALSE</span>, <span class="cn">FALSE</span>, <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span>, </span></span>
-<span class="r-in"><span>export <span class="op">=</span> <span class="cn">TRUE</span>, res.path <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/getwd.html" class="external-link">getwd</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span>expect_error <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="cn">FALSE</span>, <span class="cn">FALSE</span>, <span class="cn">TRUE</span><span class="op">)</span>, incomparable <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="cn">FALSE</span>, <span class="cn">FALSE</span>, <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span>, </span></span>
+<span class="r-in"><span>export <span class="op">=</span> <span class="cn">TRUE</span>, res_path <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/getwd.html" class="external-link">getwd</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> test JOB IGNITION</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
@@ -361,68 +407,88 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> test JOB END</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> TIME: 2024-12-26 15:24:43.383104</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> TIME: 2025-03-09 18:02:44.968242</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> TOTAL TIME LAPSE: 0S</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>FROM arg_test() OF THE saferDev PACKAGE</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> (1) THE FIRST FOR &amp; WHILE LOOP STEPS HAVE BEEN TOO FAR AND SUBSEQUENT LOOP STEPS WILL NOT RUN</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span>  <span class="co"># Example that return an error</span></span></span>
-<span class="r-in"><span><span class="fu">arg_test</span><span class="op">(</span>fun <span class="op">=</span> <span class="st">"unique"</span>, arg <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"x"</span>, <span class="st">"incomparables"</span><span class="op">)</span>, val <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">10</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">1</span>,<span class="fl">2</span>,<span class="fl">8</span><span class="op">)</span>, <span class="cn">NA</span><span class="op">)</span>, incomparable <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="cn">TRUE</span>, <span class="cn">FALSE</span>, <span class="cn">NA</span><span class="op">)</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">arg_test</span><span class="op">(</span>fun <span class="op">=</span> <span class="st">"unique"</span>, arg <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"x"</span>, <span class="st">"incomparables"</span><span class="op">)</span>, val <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>A <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">10</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">1</span>,<span class="fl">2</span>,<span class="fl">8</span><span class="op">)</span>, <span class="cn">NA</span><span class="op">)</span>, incomparable <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="cn">TRUE</span>, <span class="cn">FALSE</span>, <span class="cn">NA</span><span class="op">)</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu">arg_test</span><span class="op">(</span>fun <span class="op">=</span> <span class="st">"round"</span>, arg <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"data"</span>, <span class="st">"dec.nb"</span>, <span class="st">"after.lead.zero"</span><span class="op">)</span>, val <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>L1 <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">1.0002256</span>, <span class="fl">1.23568</span><span class="op">)</span>, <span class="st">"a"</span>, <span class="cn">NA</span><span class="op">)</span>, L2 <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="fl">2</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">3</span><span class="op">)</span>, <span class="cn">NA</span><span class="op">)</span>, L3 <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="cn">TRUE</span>, <span class="cn">FALSE</span>, <span class="cn">NA</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error:</span> </span>
 <span class="r-err co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-err co"><span class="r-pr">#&gt;</span> ================</span>
 <span class="r-err co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> ERROR IN arg_test() OF THE saferDev PACKAGE</span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> SOME OF THE STRINGS IN arg ARE NOT ARGUMENTS OF fun</span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> fun ARGUMENTS: </span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> PROBLEMATIC STRINGS IN arg: data dec.nb after.lead.zero</span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> ERROR IN saferDev::arg_test().</span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> SOME OF THE STRINGS IN arg ARE NOT ARGUMENTS OF fun.</span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> fun ARGUMENTS:</span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> PROBLEMATIC STRINGS IN arg:</span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> data dec.nb after.lead.zero</span>
 <span class="r-err co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-err co"><span class="r-pr">#&gt;</span> ================</span>
 <span class="r-err co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu">arg_test</span><span class="op">(</span>fun <span class="op">=</span> <span class="st">"plot"</span>, arg <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"x"</span>, <span class="st">"y"</span><span class="op">)</span>, val <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">10</span>, <span class="fl">12</span><span class="op">:</span><span class="fl">13</span>, <span class="cn">NA</span>, <span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">10</span><span class="op">)</span><span class="op">^</span><span class="fl">2</span><span class="op">)</span>, </span></span>
-<span class="r-in"><span>y <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">10</span>, <span class="cn">NA</span>, <span class="cn">NA</span><span class="op">)</span><span class="op">)</span>,  expect.error <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="cn">FALSE</span>, <span class="cn">TRUE</span>, <span class="cn">TRUE</span>, <span class="cn">FALSE</span><span class="op">)</span>, </span></span>
-<span class="r-in"><span>y <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="cn">FALSE</span>, <span class="cn">TRUE</span>, <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span>, parall <span class="op">=</span> <span class="cn">FALSE</span>, thread.nb <span class="op">=</span> <span class="cn">NULL</span>, plot.fun <span class="op">=</span> <span class="cn">TRUE</span>, </span></span>
-<span class="r-in"><span>res.path <span class="op">=</span> <span class="st">"."</span>, lib_path <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></span>
+<span class="r-in"><span>y <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">10</span>, <span class="cn">NA</span>, <span class="cn">NA</span><span class="op">)</span><span class="op">)</span>,  expect_error <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="cn">FALSE</span>, <span class="cn">TRUE</span>, <span class="cn">TRUE</span>, <span class="cn">FALSE</span><span class="op">)</span>, </span></span>
+<span class="r-in"><span>y <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="cn">FALSE</span>, <span class="cn">TRUE</span>, <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span>, parall <span class="op">=</span> <span class="cn">FALSE</span>, thread_nb <span class="op">=</span> <span class="cn">NULL</span>, plot_fun <span class="op">=</span> <span class="cn">TRUE</span>, </span></span>
+<span class="r-in"><span>res_path <span class="op">=</span> <span class="st">"."</span>, lib_path <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> test JOB IGNITION</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> TOTAL NUMBER OF TESTS: 12</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> LOOP 10 / 12 | TIME SPENT: 0S | EXPECTED END: 2024-12-26 15:24:43.71699</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> LOOP 10 / 12 | TIME SPENT: 0S | EXPECTED END: 2025-03-09 18:02:45.339548</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> LOOP PROCESS ENDED | LOOP 12 / 12 | TIME SPENT: 0S</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> NO DISCREPANCY BETWEEN EXPECTED AND OBSERVED ERRORS</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> test JOB END</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> TIME: 2025-03-09 18:02:45.349231</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> TOTAL TIME LAPSE: 0S</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $fun</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "plot"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $ini</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> arg_test(fun = "plot", arg = c("x", "y"), val = list(x = list(1:10, </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     12:13, NA, (1:10)^2), y = list(1:10, NA, NA)), expect.error = list(x = list(FALSE, </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     12:13, NA, (1:10)^2), y = list(1:10, NA, NA)), expect_error = list(x = list(FALSE, </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     TRUE, TRUE, FALSE), y = list(FALSE, TRUE, TRUE)), parall = FALSE, </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     thread.nb = NULL, plot.fun = TRUE, res.path = ".", lib_path = NULL)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     thread_nb = NULL, plot_fun = TRUE, res_path = ".", lib_path = NULL)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $data</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                       x                    y  kind problem</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> arg_test_01        1 2 3 4 5 6 7 8 9 10 1 2 3 4 5 6 7 8 9 10    OK   FALSE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> arg_test_02        1 2 3 4 5 6 7 8 9 10                   NA ERROR    TRUE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> arg_test_03        1 2 3 4 5 6 7 8 9 10                   NA ERROR    TRUE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> arg_test_04                       12 13 1 2 3 4 5 6 7 8 9 10 ERROR    TRUE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> arg_test_05                       12 13                   NA ERROR    TRUE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> arg_test_06                       12 13                   NA ERROR    TRUE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> arg_test_07                          NA 1 2 3 4 5 6 7 8 9 10 ERROR    TRUE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> arg_test_08                          NA                   NA ERROR    TRUE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> arg_test_09                          NA                   NA ERROR    TRUE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> arg_test_10 1 4 9 16 25 36 49 64 81 100 1 2 3 4 5 6 7 8 9 10    OK   FALSE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> arg_test_11 1 4 9 16 25 36 49 64 81 100                   NA ERROR    TRUE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> arg_test_12 1 4 9 16 25 36 49 64 81 100                   NA ERROR    TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>             X.SPECIAL.VALUE.OF.CLASS.integer.AND.TYPE.integer.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> arg_test_01    SPECIAL VALUE OF CLASS integer AND TYPE integer</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> arg_test_02    SPECIAL VALUE OF CLASS integer AND TYPE integer</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> arg_test_03    SPECIAL VALUE OF CLASS integer AND TYPE integer</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> arg_test_04    SPECIAL VALUE OF CLASS integer AND TYPE integer</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> arg_test_05    SPECIAL VALUE OF CLASS integer AND TYPE integer</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> arg_test_06    SPECIAL VALUE OF CLASS integer AND TYPE integer</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> arg_test_07    SPECIAL VALUE OF CLASS logical AND TYPE logical</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> arg_test_08    SPECIAL VALUE OF CLASS logical AND TYPE logical</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> arg_test_09    SPECIAL VALUE OF CLASS logical AND TYPE logical</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> arg_test_10     SPECIAL VALUE OF CLASS numeric AND TYPE double</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> arg_test_11     SPECIAL VALUE OF CLASS numeric AND TYPE double</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> arg_test_12     SPECIAL VALUE OF CLASS numeric AND TYPE double</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>             X.SPECIAL.VALUE.OF.CLASS.integer.AND.TYPE.integer..1  kind problem</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> arg_test_01      SPECIAL VALUE OF CLASS integer AND TYPE integer    OK   FALSE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> arg_test_02      SPECIAL VALUE OF CLASS logical AND TYPE logical ERROR    TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> arg_test_03      SPECIAL VALUE OF CLASS logical AND TYPE logical ERROR    TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> arg_test_04      SPECIAL VALUE OF CLASS integer AND TYPE integer ERROR    TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> arg_test_05      SPECIAL VALUE OF CLASS logical AND TYPE logical ERROR    TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> arg_test_06      SPECIAL VALUE OF CLASS logical AND TYPE logical ERROR    TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> arg_test_07      SPECIAL VALUE OF CLASS integer AND TYPE integer ERROR    TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> arg_test_08      SPECIAL VALUE OF CLASS logical AND TYPE logical ERROR    TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> arg_test_09      SPECIAL VALUE OF CLASS logical AND TYPE logical ERROR    TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> arg_test_10      SPECIAL VALUE OF CLASS integer AND TYPE integer    OK   FALSE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> arg_test_11      SPECIAL VALUE OF CLASS logical AND TYPE logical ERROR    TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> arg_test_12      SPECIAL VALUE OF CLASS logical AND TYPE logical ERROR    TRUE</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>             expected.error</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> arg_test_01          FALSE</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> arg_test_02           TRUE</span>
@@ -477,35 +543,41 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] saferDev_1.0</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> loaded via a namespace (and not attached):</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [1] Matrix_1.6-5       R6_2.5.1           Rcpp_1.0.12        askpass_1.2.0     </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [5] brio_1.1.4         bslib_0.7.0        cachem_1.0.8       cli_3.6.2         </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [9] colorspace_2.1-0   compiler_4.3.3     curl_5.2.1         desc_1.4.3        </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [13] digest_0.6.35      downlit_0.4.3      evaluate_0.23      fansi_1.0.6       </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [17] fastmap_1.1.1      fs_1.6.3           generics_0.1.3     ggplot2_3.5.0     </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [21] glue_1.7.0         grid_4.3.3         gtable_0.3.5       htmltools_0.5.8.1 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [25] htmlwidgets_1.6.4  httr_1.4.7         jquerylib_0.1.4    jsonlite_1.8.8    </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [29] knitr_1.46         lattice_0.22-6     lifecycle_1.0.4    lubridate_1.9.3   </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [33] magrittr_2.0.3     memoise_2.0.1      munsell_0.5.1      parallel_4.3.3    </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [37] pillar_1.9.0       pkgconfig_2.0.3    pkgdown_2.0.9      png_0.1-8         </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [41] purrr_1.0.2        qpdf_1.3.3         ragg_1.3.0         remotes_2.5.0.9000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [45] reticulate_1.36.1  rlang_1.1.3        rmarkdown_2.26     rstudioapi_0.16.0 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [49] sass_0.4.9         scales_1.3.0       systemfonts_1.0.6  testthat_3.2.1.1  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [53] textshaping_0.3.7  tibble_3.2.1       timechange_0.3.0   tools_4.3.3       </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [57] utf8_1.2.4         vctrs_0.6.5        whisker_0.4.1      withr_3.0.0       </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [61] xfun_0.43          xml2_1.3.6         yaml_2.3.8        </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [1] R6_2.5.1           Rcpp_1.0.12        askpass_1.2.0      brio_1.1.4        </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [5] bslib_0.7.0        cachem_1.0.8       cli_3.6.2          colorspace_2.1-0  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [9] compiler_4.3.3     curl_5.2.1         desc_1.4.3         digest_0.6.35     </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [13] downlit_0.4.3      evaluate_0.23      fansi_1.0.6        fastmap_1.1.1     </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [17] fs_1.6.3           generics_0.1.3     ggplot2_3.5.0      glue_1.7.0        </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [21] grid_4.3.3         gtable_0.3.5       htmltools_0.5.8.1  htmlwidgets_1.6.4 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [25] httr_1.4.7         jquerylib_0.1.4    jsonlite_1.8.8     knitr_1.46        </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [29] lifecycle_1.0.4    lubridate_1.9.3    magrittr_2.0.3     memoise_2.0.1     </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [33] munsell_0.5.1      parallel_4.3.3     pillar_1.9.0       pkgconfig_2.0.3   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [37] pkgdown_2.0.9      purrr_1.0.2        qpdf_1.3.3         ragg_1.3.0        </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [41] remotes_2.5.0.9000 rlang_1.1.3        rmarkdown_2.26     rstudioapi_0.16.0 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [45] sass_0.4.9         scales_1.3.0       systemfonts_1.0.6  testthat_3.2.1.1  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [49] textshaping_0.3.7  tibble_3.2.1       timechange_0.3.0   tools_4.3.3       </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [53] utf8_1.2.4         vctrs_0.6.5        whisker_0.4.1      withr_3.0.0       </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [57] xfun_0.43          xml2_1.3.6         yaml_2.3.8        </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu">arg_test</span><span class="op">(</span>fun <span class="op">=</span> <span class="st">"plot"</span>, arg <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"x"</span>, <span class="st">"y"</span><span class="op">)</span>, val <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">10</span>, <span class="fl">12</span><span class="op">:</span><span class="fl">13</span>, <span class="cn">NA</span>, <span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">10</span><span class="op">)</span><span class="op">^</span><span class="fl">2</span><span class="op">)</span>, </span></span>
-<span class="r-in"><span>y <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">10</span>, <span class="cn">NA</span>, <span class="cn">NA</span><span class="op">)</span><span class="op">)</span>, parall <span class="op">=</span> <span class="cn">FALSE</span>, thread.nb <span class="op">=</span> <span class="fl">4</span>, </span></span>
-<span class="r-in"><span>plot.fun <span class="op">=</span> <span class="cn">TRUE</span>, res.path <span class="op">=</span> <span class="st">"."</span>, </span></span>
+<span class="r-in"><span>y <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">10</span>, <span class="cn">NA</span>, <span class="cn">NA</span><span class="op">)</span><span class="op">)</span>, parall <span class="op">=</span> <span class="cn">FALSE</span>, thread_nb <span class="op">=</span> <span class="fl">4</span>, </span></span>
+<span class="r-in"><span>plot_fun <span class="op">=</span> <span class="cn">TRUE</span>, res_path <span class="op">=</span> <span class="st">"."</span>, </span></span>
 <span class="r-in"><span>lib_path <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> test JOB IGNITION</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> TOTAL NUMBER OF TESTS: 12</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> LOOP 10 / 12 | TIME SPENT: 0S | EXPECTED END: 2024-12-26 15:24:43.977516</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> LOOP 10 / 12 | TIME SPENT: 0S | EXPECTED END: 2025-03-09 18:02:45.635326</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> LOOP PROCESS ENDED | LOOP 12 / 12 | TIME SPENT: 0S</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> test JOB END</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> TIME: 2025-03-09 18:02:45.643644</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> TOTAL TIME LAPSE: 0S</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $fun</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "plot"</span>
@@ -513,22 +585,35 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span> $ini</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> arg_test(fun = "plot", arg = c("x", "y"), val = list(x = list(1:10, </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     12:13, NA, (1:10)^2), y = list(1:10, NA, NA)), parall = FALSE, </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     thread.nb = 4, plot.fun = TRUE, res.path = ".", lib_path = NULL)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     thread_nb = 4, plot_fun = TRUE, res_path = ".", lib_path = NULL)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $data</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                       x                    y  kind problem</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> arg_test_01        1 2 3 4 5 6 7 8 9 10 1 2 3 4 5 6 7 8 9 10    OK   FALSE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> arg_test_02        1 2 3 4 5 6 7 8 9 10                   NA ERROR    TRUE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> arg_test_03        1 2 3 4 5 6 7 8 9 10                   NA ERROR    TRUE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> arg_test_04                       12 13 1 2 3 4 5 6 7 8 9 10 ERROR    TRUE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> arg_test_05                       12 13                   NA ERROR    TRUE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> arg_test_06                       12 13                   NA ERROR    TRUE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> arg_test_07                          NA 1 2 3 4 5 6 7 8 9 10 ERROR    TRUE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> arg_test_08                          NA                   NA ERROR    TRUE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> arg_test_09                          NA                   NA ERROR    TRUE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> arg_test_10 1 4 9 16 25 36 49 64 81 100 1 2 3 4 5 6 7 8 9 10    OK   FALSE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> arg_test_11 1 4 9 16 25 36 49 64 81 100                   NA ERROR    TRUE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> arg_test_12 1 4 9 16 25 36 49 64 81 100                   NA ERROR    TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>             X.SPECIAL.VALUE.OF.CLASS.integer.AND.TYPE.integer.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> arg_test_01    SPECIAL VALUE OF CLASS integer AND TYPE integer</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> arg_test_02    SPECIAL VALUE OF CLASS integer AND TYPE integer</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> arg_test_03    SPECIAL VALUE OF CLASS integer AND TYPE integer</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> arg_test_04    SPECIAL VALUE OF CLASS integer AND TYPE integer</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> arg_test_05    SPECIAL VALUE OF CLASS integer AND TYPE integer</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> arg_test_06    SPECIAL VALUE OF CLASS integer AND TYPE integer</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> arg_test_07    SPECIAL VALUE OF CLASS logical AND TYPE logical</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> arg_test_08    SPECIAL VALUE OF CLASS logical AND TYPE logical</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> arg_test_09    SPECIAL VALUE OF CLASS logical AND TYPE logical</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> arg_test_10     SPECIAL VALUE OF CLASS numeric AND TYPE double</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> arg_test_11     SPECIAL VALUE OF CLASS numeric AND TYPE double</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> arg_test_12     SPECIAL VALUE OF CLASS numeric AND TYPE double</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>             X.SPECIAL.VALUE.OF.CLASS.integer.AND.TYPE.integer..1  kind problem</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> arg_test_01      SPECIAL VALUE OF CLASS integer AND TYPE integer    OK   FALSE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> arg_test_02      SPECIAL VALUE OF CLASS logical AND TYPE logical ERROR    TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> arg_test_03      SPECIAL VALUE OF CLASS logical AND TYPE logical ERROR    TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> arg_test_04      SPECIAL VALUE OF CLASS integer AND TYPE integer ERROR    TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> arg_test_05      SPECIAL VALUE OF CLASS logical AND TYPE logical ERROR    TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> arg_test_06      SPECIAL VALUE OF CLASS logical AND TYPE logical ERROR    TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> arg_test_07      SPECIAL VALUE OF CLASS integer AND TYPE integer ERROR    TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> arg_test_08      SPECIAL VALUE OF CLASS logical AND TYPE logical ERROR    TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> arg_test_09      SPECIAL VALUE OF CLASS logical AND TYPE logical ERROR    TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> arg_test_10      SPECIAL VALUE OF CLASS integer AND TYPE integer    OK   FALSE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> arg_test_11      SPECIAL VALUE OF CLASS logical AND TYPE logical ERROR    TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> arg_test_12      SPECIAL VALUE OF CLASS logical AND TYPE logical ERROR    TRUE</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                                                                                      message</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> arg_test_01                                                                                 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> arg_test_02 Error in xy.coords(x, y, xlabel, ylabel, log) : \n  'x' and 'y' lengths differ\n</span>
@@ -570,22 +655,21 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] saferDev_1.0</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> loaded via a namespace (and not attached):</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [1] Matrix_1.6-5       R6_2.5.1           Rcpp_1.0.12        askpass_1.2.0     </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [5] brio_1.1.4         bslib_0.7.0        cachem_1.0.8       cli_3.6.2         </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [9] colorspace_2.1-0   compiler_4.3.3     curl_5.2.1         desc_1.4.3        </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [13] digest_0.6.35      downlit_0.4.3      evaluate_0.23      fansi_1.0.6       </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [17] fastmap_1.1.1      fs_1.6.3           generics_0.1.3     ggplot2_3.5.0     </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [21] glue_1.7.0         grid_4.3.3         gtable_0.3.5       htmltools_0.5.8.1 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [25] htmlwidgets_1.6.4  httr_1.4.7         jquerylib_0.1.4    jsonlite_1.8.8    </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [29] knitr_1.46         lattice_0.22-6     lifecycle_1.0.4    lubridate_1.9.3   </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [33] magrittr_2.0.3     memoise_2.0.1      munsell_0.5.1      parallel_4.3.3    </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [37] pillar_1.9.0       pkgconfig_2.0.3    pkgdown_2.0.9      png_0.1-8         </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [41] purrr_1.0.2        qpdf_1.3.3         ragg_1.3.0         remotes_2.5.0.9000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [45] reticulate_1.36.1  rlang_1.1.3        rmarkdown_2.26     rstudioapi_0.16.0 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [49] sass_0.4.9         scales_1.3.0       systemfonts_1.0.6  testthat_3.2.1.1  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [53] textshaping_0.3.7  tibble_3.2.1       timechange_0.3.0   tools_4.3.3       </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [57] utf8_1.2.4         vctrs_0.6.5        whisker_0.4.1      withr_3.0.0       </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [61] xfun_0.43          xml2_1.3.6         yaml_2.3.8        </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [1] R6_2.5.1           Rcpp_1.0.12        askpass_1.2.0      brio_1.1.4        </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [5] bslib_0.7.0        cachem_1.0.8       cli_3.6.2          colorspace_2.1-0  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [9] compiler_4.3.3     curl_5.2.1         desc_1.4.3         digest_0.6.35     </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [13] downlit_0.4.3      evaluate_0.23      fansi_1.0.6        fastmap_1.1.1     </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [17] fs_1.6.3           generics_0.1.3     ggplot2_3.5.0      glue_1.7.0        </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [21] grid_4.3.3         gtable_0.3.5       htmltools_0.5.8.1  htmlwidgets_1.6.4 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [25] httr_1.4.7         jquerylib_0.1.4    jsonlite_1.8.8     knitr_1.46        </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [29] lifecycle_1.0.4    lubridate_1.9.3    magrittr_2.0.3     memoise_2.0.1     </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [33] munsell_0.5.1      parallel_4.3.3     pillar_1.9.0       pkgconfig_2.0.3   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [37] pkgdown_2.0.9      purrr_1.0.2        qpdf_1.3.3         ragg_1.3.0        </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [41] remotes_2.5.0.9000 rlang_1.1.3        rmarkdown_2.26     rstudioapi_0.16.0 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [45] sass_0.4.9         scales_1.3.0       systemfonts_1.0.6  testthat_3.2.1.1  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [49] textshaping_0.3.7  tibble_3.2.1       timechange_0.3.0   tools_4.3.3       </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [53] utf8_1.2.4         vctrs_0.6.5        whisker_0.4.1      withr_3.0.0       </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [57] xfun_0.43          xml2_1.3.6         yaml_2.3.8        </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 </code></pre></div>
     </div>

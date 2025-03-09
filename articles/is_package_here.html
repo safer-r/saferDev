@@ -59,7 +59,6 @@
     <a class="dropdown-item" href="../articles/get_message.html">get_message</a>
     <a class="dropdown-item" href="../articles/is_function_here.html">is_function_here</a>
     <a class="dropdown-item" href="../articles/is_package_here.html">is_package_here</a>
-    <a class="dropdown-item" href="../articles/is_python_package_here.html">is_python_package_here</a>
     <a class="dropdown-item" href="../articles/report.html">report</a>
   </div>
 </li>
@@ -111,41 +110,56 @@
 <p><br></p>
 </div>
 <div class="section level3">
-<h3 id="argument-req-package">Argument req.package<a class="anchor" aria-label="anchor" href="#argument-req-package"></a>
+<h3 id="argument-req_package">Argument req_package<a class="anchor" aria-label="anchor" href="#argument-req_package"></a>
 </h3>
-<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a><span class="fu">is_package_here</span>(<span class="at">req.package =</span> req.pkg) <span class="co"># check if the package serpentine is in the computer</span></span>
-<span id="cb4-2"><a href="#cb4-2" tabindex="-1"></a><span class="sc">&gt;</span> Error <span class="cf">in</span> <span class="fu">is_package_here</span>(<span class="at">req.package =</span> req.pkg)<span class="sc">:</span> unused <span class="fu">argument</span> (<span class="at">req.package =</span> req.pkg)</span></code></pre></div>
-<p><br></p>
-</div>
-<div class="section level3">
-<h3 id="argument-lib_path">Argument lib_path<a class="anchor" aria-label="anchor" href="#argument-lib_path"></a>
-</h3>
-<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a><span class="fu">is_package_here</span>(</span>
-<span id="cb5-2"><a href="#cb5-2" tabindex="-1"></a>    <span class="at">req.package =</span> req.pkg,</span>
-<span id="cb5-3"><a href="#cb5-3" tabindex="-1"></a>    <span class="at">lib_path =</span> <span class="st">"."</span></span>
-<span id="cb5-4"><a href="#cb5-4" tabindex="-1"></a>) <span class="co"># check if the package is in the computer</span></span>
-<span id="cb5-5"><a href="#cb5-5" tabindex="-1"></a><span class="sc">&gt;</span> Error <span class="cf">in</span> <span class="fu">is_package_here</span>(<span class="at">req.package =</span> req.pkg, <span class="at">lib_path =</span> <span class="st">"."</span>)<span class="sc">:</span> unused <span class="fu">argument</span> (<span class="at">req.package =</span> req.pkg)</span></code></pre></div>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/is_package_here.html">is_package_here</a></span><span class="op">(</span>req_package <span class="op">=</span> <span class="va">req.pkg</span><span class="op">)</span> <span class="co"># check if the package is in the computer</span></span></code></pre></div>
 <p><br></p>
 </div>
 <div class="section level3">
 <h3 id="argument-safer_check">Argument safer_check<a class="anchor" aria-label="anchor" href="#argument-safer_check"></a>
 </h3>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/is_package_here.html">is_package_here</a></span><span class="op">(</span></span>
+<span>    req_package <span class="op">=</span> <span class="va">req.pkg</span>,</span>
+<span>    safer_check <span class="op">=</span> <span class="cn">TRUE</span></span>
+<span><span class="op">)</span> <span class="co"># check if the package is in the computer, safer_check = TRUE, checkings are performed before main code running </span></span></code></pre></div>
+<p><br></p>
+</div>
+<div class="section level3">
+<h3 id="argument-lib_path-and-error_text">Argument lib_path and error_text<a class="anchor" aria-label="anchor" href="#argument-lib_path-and-error_text"></a>
+</h3>
 <div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a><span class="fu">is_package_here</span>(</span>
-<span id="cb6-2"><a href="#cb6-2" tabindex="-1"></a>    <span class="at">req.package =</span> req.pkg,</span>
-<span id="cb6-3"><a href="#cb6-3" tabindex="-1"></a>    <span class="at">safer_check =</span> <span class="cn">TRUE</span></span>
-<span id="cb6-4"><a href="#cb6-4" tabindex="-1"></a>) <span class="co"># check if the package is in the computer, safer_check = TRUE, checkings are performed before main code running </span></span>
-<span id="cb6-5"><a href="#cb6-5" tabindex="-1"></a><span class="sc">&gt;</span> Error <span class="cf">in</span> <span class="fu">is_package_here</span>(<span class="at">req.package =</span> req.pkg, <span class="at">safer_check =</span> <span class="cn">TRUE</span>)<span class="sc">:</span> unused <span class="fu">argument</span> (<span class="at">req.package =</span> req.pkg)</span></code></pre></div>
+<span id="cb6-2"><a href="#cb6-2" tabindex="-1"></a>    <span class="at">req_package =</span> req.pkg,</span>
+<span id="cb6-3"><a href="#cb6-3" tabindex="-1"></a>    <span class="at">lib_path =</span> <span class="st">"."</span>, <span class="co"># absolute pathways of the directories containing the required packages if not in the default directories.</span></span>
+<span id="cb6-4"><a href="#cb6-4" tabindex="-1"></a>    <span class="at">error_text =</span> <span class="st">"TEXT ADDED"</span> <span class="co"># add information in error messages returned by the function.</span></span>
+<span id="cb6-5"><a href="#cb6-5" tabindex="-1"></a>)</span>
+<span id="cb6-6"><a href="#cb6-6" tabindex="-1"></a><span class="sc">&gt;</span> Error<span class="sc">:</span> </span>
+<span id="cb6-7"><a href="#cb6-7" tabindex="-1"></a><span class="er">&gt;</span> </span>
+<span id="cb6-8"><a href="#cb6-8" tabindex="-1"></a><span class="er">&gt;</span> <span class="er">================</span></span>
+<span id="cb6-9"><a href="#cb6-9" tabindex="-1"></a><span class="er">&gt;</span> </span>
+<span id="cb6-10"><a href="#cb6-10" tabindex="-1"></a><span class="er">&gt;</span> ERROR IN saferDev<span class="sc">:::</span><span class="fu">.pack_and_function_check</span>() INSIDE saferDev<span class="sc">::</span><span class="fu">is_package_here</span>()TEXT ADDED</span>
+<span id="cb6-11"><a href="#cb6-11" tabindex="-1"></a><span class="sc">&gt;</span> </span>
+<span id="cb6-12"><a href="#cb6-12" tabindex="-1"></a><span class="er">&gt;</span> REQUIRED PACKAGE<span class="sc">:</span></span>
+<span id="cb6-13"><a href="#cb6-13" tabindex="-1"></a><span class="er">&gt;</span> saferDev</span>
+<span id="cb6-14"><a href="#cb6-14" tabindex="-1"></a><span class="sc">&gt;</span> MUST BE INSTALLED IN ONE OF THESE FOLDERS<span class="sc">:</span></span>
+<span id="cb6-15"><a href="#cb6-15" tabindex="-1"></a><span class="er">&gt;</span> <span class="er">/</span>__w<span class="sc">/</span>saferDev<span class="sc">/</span>saferDev<span class="sc">/</span>vignettes<span class="sc">/</span>articles</span>
+<span id="cb6-16"><a href="#cb6-16" tabindex="-1"></a><span class="sc">&gt;</span> <span class="er">/</span>usr<span class="sc">/</span>local<span class="sc">/</span>lib<span class="sc">/</span>R<span class="sc">/</span>site<span class="sc">-</span>library</span>
+<span id="cb6-17"><a href="#cb6-17" tabindex="-1"></a><span class="sc">&gt;</span> <span class="er">/</span>usr<span class="sc">/</span>local<span class="sc">/</span>lib<span class="sc">/</span>R<span class="sc">/</span>library</span>
+<span id="cb6-18"><a href="#cb6-18" tabindex="-1"></a><span class="sc">&gt;</span> </span>
+<span id="cb6-19"><a href="#cb6-19" tabindex="-1"></a><span class="er">&gt;</span> <span class="er">================</span></span></code></pre></div>
 <p><br></p>
 </div>
 <div class="section level3">
 <h3 id="all-the-arguments">All the arguments<a class="anchor" aria-label="anchor" href="#all-the-arguments"></a>
 </h3>
-<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a><span class="fu">is_package_here</span>(</span>
-<span id="cb7-2"><a href="#cb7-2" tabindex="-1"></a>    <span class="at">req.package =</span> req.pkg,</span>
-<span id="cb7-3"><a href="#cb7-3" tabindex="-1"></a>    <span class="at">lib_path =</span> path,</span>
-<span id="cb7-4"><a href="#cb7-4" tabindex="-1"></a>    <span class="at">safer_check =</span> <span class="cn">TRUE</span></span>
-<span id="cb7-5"><a href="#cb7-5" tabindex="-1"></a>) <span class="co"># check if the package is in the computer</span></span>
-<span id="cb7-6"><a href="#cb7-6" tabindex="-1"></a><span class="sc">&gt;</span> Error <span class="cf">in</span> <span class="fu">is_package_here</span>(<span class="at">req.package =</span> req.pkg, <span class="at">lib_path =</span> path, <span class="at">safer_check =</span> <span class="cn">TRUE</span>)<span class="sc">:</span> unused <span class="fu">argument</span> (<span class="at">req.package =</span> req.pkg)</span></code></pre></div>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/is_package_here.html">is_package_here</a></span><span class="op">(</span></span>
+<span>    req_package <span class="op">=</span> <span class="va">req.pkg</span>,</span>
+<span>    safer_check <span class="op">=</span> <span class="cn">TRUE</span>, <span class="co"># perform some "safer" checks? Warning : always set this argument to FALSE if all_args_here() is used inside another safer function.</span></span>
+<span>    lib_path <span class="op">=</span> <span class="cn">NULL</span>, <span class="co"># absolute pathways of the directories containing the required packages if not in the default directories.</span></span>
+<span>    error_text <span class="op">=</span> <span class="st">""</span> <span class="co"># add information in error messages returned by the function.</span></span>
+<span><span class="op">)</span> <span class="co"># check if the package is in the computer</span></span></code></pre></div>
 <p>```</p>
 </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>

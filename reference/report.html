@@ -35,7 +35,6 @@
     <a class="dropdown-item" href="../articles/get_message.html">get_message</a>
     <a class="dropdown-item" href="../articles/is_function_here.html">is_function_here</a>
     <a class="dropdown-item" href="../articles/is_package_here.html">is_package_here</a>
-    <a class="dropdown-item" href="../articles/is_python_package_here.html">is_python_package_here</a>
     <a class="dropdown-item" href="../articles/report.html">report</a>
   </div>
 </li>
@@ -65,11 +64,13 @@
 <span>  output <span class="op">=</span> <span class="st">"log.txt"</span>,</span>
 <span>  <span class="va">path</span>,</span>
 <span>  overwrite <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  rownames.kept <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  vector.cat <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  rownames_kept <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  vector_cat <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  noquote <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  sep <span class="op">=</span> <span class="fl">2</span>,</span>
-<span>  safer_check <span class="op">=</span> <span class="cn">TRUE</span></span>
+<span>  safer_check <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  lib_path <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  error_text <span class="op">=</span> <span class="st">""</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -88,14 +89,14 @@
 
 
 <dt>overwrite</dt>
-<dd><p>Single logical value. If output file already exists, defines if the printing is appended (default FALSE) or if the output file content is erased before printing (TRUE).</p></dd>
+<dd><p>Single logical value. If output file already exists and overwrite is TRUE, an error message is returned (no overwrite of existing file possible). Otherwise, the printing is appended (and the output file is created if it does not exist yet).</p></dd>
 
 
-<dt>rownames.kept</dt>
-<dd><p>Single logical value. Defines whether row names have to be removed or in 2D objects. Warning: in 1D tables, names over the values are taken as row names, and are thus removed if rownames.kept is FALSE.</p></dd>
+<dt>rownames_kept</dt>
+<dd><p>Single logical value. Defines whether row names have to be removed or in 2D objects. Warning: in 1D tables, names over the values are taken as row names, and are thus removed if rownames_kept is FALSE.</p></dd>
 
 
-<dt>vector.cat</dt>
+<dt>vector_cat</dt>
 <dd><p>Single logical value. If TRUE print a vector of length &gt; 1 using cat() instead of capture.output(). Otherwise (default FALSE) the opposite. Names of values are not printed when TRUE</p></dd>
 
 
@@ -108,7 +109,15 @@
 
 
 <dt>safer_check</dt>
-<dd><p>Single logical value. Perform some "safer" checks? If TRUE, checkings are performed before main code running (see https://github.com/safer-r): 1) R classical operators (like "&lt;-") not overwritten by another package because of the R scope and 2) required functions and related packages effectively present in local R lybraries. Must be set to FALSE if this fonction is used inside another "safer" function to avoid pointless multiple checkings.</p></dd>
+<dd><p>Single logical value. Perform some "safer" checks? If TRUE, checkings are performed before main code running (see https://github.com/safer-r): 1) correct lib_path argument value 2) required functions and related packages effectively present in local R lybraries and 3) R classical operators (like "&lt;-") not overwritten by another package because of the R scope. Must be set to FALSE if this fonction is used inside another "safer" function to avoid pointless multiple checkings.</p></dd>
+
+
+<dt>lib_path</dt>
+<dd><p>Vector of characters specifying the absolute pathways of the directories containing the required packages for the function, if not in the default directories. Useful when R package are not installed in the default directories because of lack of admin rights.  More precisely, lib_path is passed through the new argument of .libPaths() so that the new library paths are unique(c(new, .Library.site, .Library)). Warning: .libPaths() is restored to the initial paths, after function execution. Ignored if NULL (default) or if the safer_check argument is FALSE: only the pathways specified by the current .libPaths() are used for package calling.</p></dd>
+
+
+<dt>error_text</dt>
+<dd><p>Single character string used to add information in error messages returned by the function, notably if the function is inside other functions, which is practical for debugging. Example: error_text = " INSIDE &lt;PACKAGE_1&gt;::&lt;FUNCTION_1&gt; INSIDE &lt;PACKAGE_2&gt;::&lt;FUNCTION_2&gt;.". If NULL, converted into "".</p></dd>
 
 </dl></div>
     <div class="section level2">
@@ -123,15 +132,20 @@
     </div>
     <div class="section level2">
     <h2 id="author">Author<a class="anchor" aria-label="anchor" href="#author"></a></h2>
-    <p>Gael Millot &lt;gael.millot@pasteur.fr&gt;</p>
-<p>Yushi Han &lt;yushi.han2000@gmail.com&gt;</p>
-<p>Haiding Wang &lt;wanghaiding442@gmail.com&gt;</p>
+    <p><a href="gael.millot@pasteur.fr">Gael Millot</a></p>
+<p><a href="yushi.han2000@gmail.com">Yushi Han</a></p>
+<p><a href="wanghaiding442@gmail.com">Haiding Wang</a></p>
     </div>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu">report</span><span class="op">(</span>data <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">3</span>, output <span class="op">=</span> <span class="st">"results.txt"</span>, path <span class="op">=</span> <span class="st">"."</span>, overwrite <span class="op">=</span> <span class="cn">TRUE</span>, </span></span>
-<span class="r-in"><span>rownames.kept <span class="op">=</span> <span class="cn">FALSE</span>, vector.cat <span class="op">=</span> <span class="cn">FALSE</span>, noquote <span class="op">=</span> <span class="cn">FALSE</span>, sep <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu">report</span><span class="op">(</span>data <span class="op">=</span> <span class="st">"THE FOLLOWING VECTOR IS:\n"</span>, output <span class="op">=</span> <span class="st">"results.txt"</span>, path <span class="op">=</span> <span class="st">"."</span>, overwrite <span class="op">=</span> <span class="cn">TRUE</span>, sep <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">report</span><span class="op">(</span>data <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">3</span>, output <span class="op">=</span> <span class="st">"results.txt"</span>, path <span class="op">=</span> <span class="st">"."</span>, overwrite <span class="op">=</span> <span class="cn">FALSE</span>, rownames_kept <span class="op">=</span> <span class="cn">FALSE</span>, vector_cat <span class="op">=</span> <span class="cn">FALSE</span>, noquote <span class="op">=</span> <span class="cn">FALSE</span>, sep <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">report</span><span class="op">(</span>data <span class="op">=</span> <span class="st">"THE FOLLOWING MATRIX IS:\n"</span>, output <span class="op">=</span> <span class="st">"results.txt"</span>, path <span class="op">=</span> <span class="st">"."</span>, overwrite <span class="op">=</span> <span class="cn">FALSE</span>, sep <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">report</span><span class="op">(</span>data <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">5</span><span class="op">)</span>, output <span class="op">=</span> <span class="st">"results.txt"</span>, path <span class="op">=</span> <span class="st">"."</span>, overwrite <span class="op">=</span> <span class="cn">FALSE</span>, rownames_kept <span class="op">=</span> <span class="cn">FALSE</span>, vector_cat <span class="op">=</span> <span class="cn">FALSE</span>, noquote <span class="op">=</span> <span class="cn">FALSE</span>, sep <span class="op">=</span> <span class="fl">5</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">report</span><span class="op">(</span>data <span class="op">=</span> <span class="st">"THE FOLLOWING DATA FRAME IS:\n"</span>, output <span class="op">=</span> <span class="st">"results.txt"</span>, path <span class="op">=</span> <span class="st">"."</span>, overwrite <span class="op">=</span> <span class="cn">FALSE</span>, sep <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">report</span><span class="op">(</span>data <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>A <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">8</span>, B <span class="op">=</span> <span class="va">letters</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">8</span><span class="op">]</span><span class="op">)</span>, output <span class="op">=</span> <span class="st">"results.txt"</span>, path <span class="op">=</span> <span class="st">"."</span>, overwrite <span class="op">=</span> <span class="cn">FALSE</span>, rownames_kept <span class="op">=</span> <span class="cn">FALSE</span>, vector_cat <span class="op">=</span> <span class="cn">FALSE</span>, noquote <span class="op">=</span> <span class="cn">FALSE</span>, sep <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>

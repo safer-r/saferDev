@@ -59,7 +59,6 @@
     <a class="dropdown-item" href="../articles/get_message.html">get_message</a>
     <a class="dropdown-item" href="../articles/is_function_here.html">is_function_here</a>
     <a class="dropdown-item" href="../articles/is_package_here.html">is_package_here</a>
-    <a class="dropdown-item" href="../articles/is_python_package_here.html">is_python_package_here</a>
     <a class="dropdown-item" href="../articles/report.html">report</a>
   </div>
 </li>
@@ -141,15 +140,39 @@
 <p><br></p>
 </div>
 <div class="section level3">
+<h3 id="argument-lib_path-and-error_text">Argument lib_path and error_text<a class="anchor" aria-label="anchor" href="#argument-lib_path-and-error_text"></a>
+</h3>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" tabindex="-1"></a><span class="fu">env_check</span>(</span>
+<span id="cb8-2"><a href="#cb8-2" tabindex="-1"></a>    <span class="at">lib_path =</span> <span class="st">"."</span>, <span class="co"># absolute pathways of the directories containing the required packages if not in the default directories.</span></span>
+<span id="cb8-3"><a href="#cb8-3" tabindex="-1"></a>    <span class="at">error_text =</span> <span class="st">"TEXT ADDED"</span> <span class="co"># add information in error messages returned by the function.</span></span>
+<span id="cb8-4"><a href="#cb8-4" tabindex="-1"></a>)</span>
+<span id="cb8-5"><a href="#cb8-5" tabindex="-1"></a><span class="sc">&gt;</span> Error<span class="sc">:</span> </span>
+<span id="cb8-6"><a href="#cb8-6" tabindex="-1"></a><span class="er">&gt;</span> </span>
+<span id="cb8-7"><a href="#cb8-7" tabindex="-1"></a><span class="er">&gt;</span> <span class="er">================</span></span>
+<span id="cb8-8"><a href="#cb8-8" tabindex="-1"></a><span class="er">&gt;</span> </span>
+<span id="cb8-9"><a href="#cb8-9" tabindex="-1"></a><span class="er">&gt;</span> ERROR IN saferDev<span class="sc">:::</span><span class="fu">.pack_and_function_check</span>() INSIDE saferDev<span class="sc">::</span><span class="fu">env_check</span>()TEXT ADDED</span>
+<span id="cb8-10"><a href="#cb8-10" tabindex="-1"></a><span class="sc">&gt;</span> </span>
+<span id="cb8-11"><a href="#cb8-11" tabindex="-1"></a><span class="er">&gt;</span> REQUIRED PACKAGE<span class="sc">:</span></span>
+<span id="cb8-12"><a href="#cb8-12" tabindex="-1"></a><span class="er">&gt;</span> saferDev</span>
+<span id="cb8-13"><a href="#cb8-13" tabindex="-1"></a><span class="sc">&gt;</span> MUST BE INSTALLED IN ONE OF THESE FOLDERS<span class="sc">:</span></span>
+<span id="cb8-14"><a href="#cb8-14" tabindex="-1"></a><span class="er">&gt;</span> <span class="er">/</span>__w<span class="sc">/</span>saferDev<span class="sc">/</span>saferDev<span class="sc">/</span>vignettes<span class="sc">/</span>articles</span>
+<span id="cb8-15"><a href="#cb8-15" tabindex="-1"></a><span class="sc">&gt;</span> <span class="er">/</span>usr<span class="sc">/</span>local<span class="sc">/</span>lib<span class="sc">/</span>R<span class="sc">/</span>site<span class="sc">-</span>library</span>
+<span id="cb8-16"><a href="#cb8-16" tabindex="-1"></a><span class="sc">&gt;</span> <span class="er">/</span>usr<span class="sc">/</span>local<span class="sc">/</span>lib<span class="sc">/</span>R<span class="sc">/</span>library</span>
+<span id="cb8-17"><a href="#cb8-17" tabindex="-1"></a><span class="sc">&gt;</span> </span>
+<span id="cb8-18"><a href="#cb8-18" tabindex="-1"></a><span class="er">&gt;</span> <span class="er">================</span></span></code></pre></div>
+</div>
+<div class="section level3">
 <h3 id="all-the-arguments">All the arguments<a class="anchor" aria-label="anchor" href="#all-the-arguments"></a>
 </h3>
-<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" tabindex="-1"></a>mean <span class="ot">&lt;-</span> <span class="dv">2</span></span>
-<span id="cb8-2"><a href="#cb8-2" tabindex="-1"></a><span class="fu">env_check</span>(</span>
-<span id="cb8-3"><a href="#cb8-3" tabindex="-1"></a>    <span class="at">pos =</span> <span class="dv">1</span>,</span>
-<span id="cb8-4"><a href="#cb8-4" tabindex="-1"></a>    <span class="at">name =</span> <span class="st">"mean"</span>,</span>
-<span id="cb8-5"><a href="#cb8-5" tabindex="-1"></a>    <span class="at">safer_check =</span> <span class="cn">TRUE</span></span>
-<span id="cb8-6"><a href="#cb8-6" tabindex="-1"></a>) <span class="co"># check if the object "mean" is in the environment one step above the env_check() environment, and if yes, returns if the same name exists in above environments</span></span>
-<span id="cb8-7"><a href="#cb8-7" tabindex="-1"></a><span class="sc">&gt;</span> [<span class="dv">1</span>] <span class="st">"SOME VARIABLES OF mean ARE ALSO PRESENT IN :</span><span class="sc">\n</span><span class="st">package:base: mean</span><span class="sc">\n</span><span class="st">"</span></span></code></pre></div>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" tabindex="-1"></a>mean <span class="ot">&lt;-</span> <span class="dv">2</span></span>
+<span id="cb9-2"><a href="#cb9-2" tabindex="-1"></a><span class="fu">env_check</span>(</span>
+<span id="cb9-3"><a href="#cb9-3" tabindex="-1"></a>    <span class="at">pos =</span> <span class="dv">1</span>,</span>
+<span id="cb9-4"><a href="#cb9-4" tabindex="-1"></a>    <span class="at">name =</span> <span class="st">"mean"</span>,</span>
+<span id="cb9-5"><a href="#cb9-5" tabindex="-1"></a>    <span class="at">safer_check =</span> <span class="cn">TRUE</span>, <span class="co"># perform some "safer" checks? Warning : always set this argument to FALSE if all_args_here() is used inside another safer function.</span></span>
+<span id="cb9-6"><a href="#cb9-6" tabindex="-1"></a>    <span class="at">lib_path =</span> <span class="cn">NULL</span>, <span class="co"># absolute pathways of the directories containing the required packages if not in the default directories.</span></span>
+<span id="cb9-7"><a href="#cb9-7" tabindex="-1"></a>    <span class="at">error_text =</span> <span class="st">""</span> <span class="co"># add information in error messages returned by the function.</span></span>
+<span id="cb9-8"><a href="#cb9-8" tabindex="-1"></a>) <span class="co"># check if the object "mean" is in the environment one step above the env_check() environment, and if yes, returns if the same name exists in above environments</span></span>
+<span id="cb9-9"><a href="#cb9-9" tabindex="-1"></a><span class="sc">&gt;</span> [<span class="dv">1</span>] <span class="st">"SOME VARIABLES OF mean ARE ALSO PRESENT IN :</span><span class="sc">\n</span><span class="st">package:base: mean</span><span class="sc">\n</span><span class="st">"</span></span></code></pre></div>
 </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
     </nav></aside>

@@ -35,7 +35,6 @@
     <a class="dropdown-item" href="../articles/get_message.html">get_message</a>
     <a class="dropdown-item" href="../articles/is_function_here.html">is_function_here</a>
     <a class="dropdown-item" href="../articles/is_package_here.html">is_package_here</a>
-    <a class="dropdown-item" href="../articles/is_python_package_here.html">is_python_package_here</a>
     <a class="dropdown-item" href="../articles/report.html">report</a>
   </div>
 </li>
@@ -75,9 +74,10 @@
 <span>  inf_values <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  print <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  data_name <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  fun_name <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  pack_name <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  safer_check <span class="op">=</span> <span class="cn">TRUE</span></span>
+<span>  data_arg <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  safer_check <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  lib_path <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  error_text <span class="op">=</span> <span class="st">""</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -139,16 +139,20 @@
 <dd><p>Single character string indicating the name of the object to test. If NULL, use what is assigned to the data argument for the returned message.</p></dd>
 
 
-<dt>fun_name</dt>
-<dd><p>Single character string indicating the name of the function checked (i.e., when arg_check() is used to check the arguments of this function). If non-null, the value of fun_name will be added into the message returned by arg_check().</p></dd>
-
-
-<dt>pack_name</dt>
-<dd><p>Single character string indicating the name of the package of fun_name. If non-null, the value of pack_name will be added into the message returned by arg_check().</p></dd>
+<dt>data_arg</dt>
+<dd><p>Single logical value. Is the tested object a function argument? If TRUE (default), "ARGUMENT" is written in messages, otherwise "OBJECT".</p></dd>
 
 
 <dt>safer_check</dt>
-<dd><p>Single logical value. Perform some "safer" checks? If TRUE, checkings are performed before main code running (see https://github.com/safer-r): 1) R classical operators (like "&lt;-") not overwritten by another package because of the R scope and 2) required functions and related packages effectively present in local R lybraries. Must be set to FALSE if this fonction is used inside another "safer" function to avoid pointless multiple checkings.</p></dd>
+<dd><p>Single logical value. Perform some "safer" checks? If TRUE, checkings are performed before main code running (see https://github.com/safer-r): 1) correct lib_path argument value 2) required functions and related packages effectively present in local R lybraries and 3) R classical operators (like "&lt;-") not overwritten by another package because of the R scope. Must be set to FALSE if this fonction is used inside another "safer" function to avoid pointless multiple checkings.</p></dd>
+
+
+<dt>lib_path</dt>
+<dd><p>Vector of characters specifying the absolute pathways of the directories containing the required packages for the function, if not in the default directories. Useful when R package are not installed in the default directories because of lack of admin rights.  More precisely, lib_path is passed through the new argument of .libPaths() so that the new library paths are unique(c(new, .Library.site, .Library)). Warning: .libPaths() is restored to the initial paths, after function execution. Ignored if NULL (default) or if the safer_check argument is FALSE: only the pathways specified by the current .libPaths() are used for package calling.</p></dd>
+
+
+<dt>error_text</dt>
+<dd><p>Single character string used to add information in error messages returned by the function, notably if the function is inside other functions, which is practical for debugging. Example: error_text = " INSIDE &lt;PACKAGE_1&gt;::&lt;FUNCTION_1&gt; INSIDE &lt;PACKAGE_2&gt;::&lt;FUNCTION_2&gt;.". If NULL, converted into "". Of note, in arg_check(), error_text is also used at the end of the string returned when no problem is detected.</p></dd>
 
 </dl></div>
     <div class="section level2">
@@ -168,12 +172,12 @@
     </div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
-    <p>- If options == NULL, then at least class or type or mode or length argument must be non-null.</p> 
-<p>- If options is non-null, then class, type and mode must be NULL, and length can be NULL or specified.</p> 
-<p>- The function tests what is written in its arguments, even if what is written is incoherent. For instance, arg_check(data = factor(1), class = "factor", mode = "character") will return a problem, whatever the object tested in the data argument, because no object can be class "factor" and mode "character" (factors are class "factor" and mode "numeric"). Of note, length of object of class "environment" is always 0.</p> 
-<p>- If the tested object base::is.null, then the function will always return a checking problem.</p> 
-<p>- Argument "class" with value "vector" means that the object is tested for class(data) returning only "numeric", "integer", "character", "logical", "complex" or "expression". Please, use another value of class (e.g., class = "call" or class = "list") for other types and class of objects</p> 
-<p>- Since R &gt;= 4.0.0, class(matrix()) returns "matrix" "array", and not "matrix" alone as before. However, use argument class = "matrix" to check for matrix object (of class "matrix" "array" in R &gt;= 4.0.0) and use argument class = "array" to check for array object (of class "array" in R &gt;= 4.0.0).</p>
+    <p>If options == NULL, then at least class or type or mode or length argument must be non-null.</p> 
+<p>If options is non-null, then class, type and mode must be NULL, and length can be NULL or specified.</p> 
+<p>The function tests what is written in its arguments, even if what is written is incoherent. For instance, arg_check(data = factor(1), class = "factor", mode = "character") will return a problem, whatever the object tested in the data argument, because no object can be class "factor" and mode "character" (factors are class "factor" and mode "numeric"). Of note, length of object of class "environment" is always 0.</p> 
+<p>If the tested object base::is.null, then the function will always return a checking problem.</p> 
+<p>Argument "class" with value "vector" means that the object is tested for class(data) returning only "numeric", "integer", "character", "logical", "complex" or "expression". Please, use another value of class (e.g., class = "call" or class = "list") for other types and class of objects</p> 
+<p>Since R &gt;= 4.0.0, class(matrix()) returns "matrix" "array", and not "matrix" alone as before. However, use argument class = "matrix" to check for matrix object (of class "matrix" "array" in R &gt;= 4.0.0) and use argument class = "array" to check for array object (of class "array" in R &gt;= 4.0.0).</p>
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
@@ -181,15 +185,38 @@
     </div>
     <div class="section level2">
     <h2 id="author">Author<a class="anchor" aria-label="anchor" href="#author"></a></h2>
-    <p>Gael Millot &lt;gael.millot@pasteur.fr&gt;</p>
-<p>Yushi Han &lt;yushi.han2000@gmail.com&gt;</p>
-<p>Haiding Wang &lt;wanghaiding442@gmail.com&gt;</p>
+    <p><a href="gael.millot@pasteur.fr">Gael Millot</a></p>
+<p><a href="yushi.han2000@gmail.com">Yushi Han</a></p>
+<p><a href="wanghaiding442@gmail.com">Haiding Wang</a></p>
     </div>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">test</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">3</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="co"># arg_check(data = test, print = TRUE, class = "vector", mode = "numeric")  # commented because this example returns an error</span></span></span>
+<span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span>  <span class="co"># Example that return an error</span></span></span>
+<span class="r-in"><span><span class="fu">arg_check</span><span class="op">(</span>data <span class="op">=</span> <span class="va">test</span>, print <span class="op">=</span> <span class="cn">TRUE</span>, class <span class="op">=</span> <span class="st">"vector"</span>, mode <span class="op">=</span> <span class="st">"numeric"</span><span class="op">)</span>  <span class="co"># error: THE test ARGUMENT MUST BE CLASS vector</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="fu">arg_check</span><span class="op">(</span>data <span class="op">=</span> <span class="va">test</span>, print <span class="op">=</span> <span class="cn">TRUE</span>, class <span class="op">=</span> <span class="st">"matrix"</span>, mode <span class="op">=</span> <span class="st">"numeric"</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $problem</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] FALSE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $text</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "NO PROBLEM DETECTED FOR THE test ARGUMENT."</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $object.name</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "test"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-in"><span><span class="fu">arg_check</span><span class="op">(</span>data <span class="op">=</span> <span class="va">test</span>, print <span class="op">=</span> <span class="cn">TRUE</span>, class <span class="op">=</span> <span class="st">"matrix"</span>, mode <span class="op">=</span> <span class="st">"numeric"</span>, error_text <span class="op">=</span> <span class="st">" using saferDev::arg_check()"</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $problem</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] FALSE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $text</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "NO PROBLEM DETECTED FOR THE test ARGUMENT using saferDev::arg_check()"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $object.name</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "test"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>

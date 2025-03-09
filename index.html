@@ -59,7 +59,6 @@
     <a class="dropdown-item" href="articles/get_message.html">get_message</a>
     <a class="dropdown-item" href="articles/is_function_here.html">is_function_here</a>
     <a class="dropdown-item" href="articles/is_package_here.html">is_package_here</a>
-    <a class="dropdown-item" href="articles/is_python_package_here.html">is_python_package_here</a>
     <a class="dropdown-item" href="articles/report.html">report</a>
   </div>
 </li>
@@ -128,11 +127,11 @@
 </tr>
 <tr class="odd">
 <td align="left"><strong>arg_test()</strong></td>
-<td align="left">Test a set of values for a defined set of arguments of a function. Contrary to <code><a href="https://testthat.r-lib.org/reference/test_that.html" class="external-link">testthat::test_that()</a></code>, the function 1) test a batch of argument values and 2) does not control that the result is identical to an expected one but control only if an error is returned or not.</td>
+<td align="left">Test a set of values for a defined set of arguments of a function. Contrary to <code><a href="https://testthat.r-lib.org/reference/expect_error.html" class="external-link">testthat::expect_error()</a></code>, the function 1) tests a batch of argument values and 2) returns a pdf of outputs if a graphic function is tested.</td>
 </tr>
 <tr class="even">
 <td align="left"><strong>colons_check()</strong></td>
-<td align="left">Verify that all the functions used inside a function are all referenced by their package attribution. For instance: <code><a href="https://rdrr.io/r/base/mean.html" class="external-link">base::mean()</a></code> and not <code><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean()</a></code>, or <code>saferDev:::.base_op_check()</code> and not <code><a href="reference/internal_function.html">.base_op_check()</a></code>.</td>
+<td align="left">Verify that all the functions used inside a function are all referenced by their package attribution. For instance: <code><a href="https://rdrr.io/r/base/mean.html" class="external-link">base::mean()</a></code> and not <code><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean()</a></code>, or <code>saferDev:::.base_op_check()</code> and not <code><a href="reference/dot-base_op_check.html">.base_op_check()</a></code>.</td>
 </tr>
 <tr class="odd">
 <td align="left"><strong>env_check()</strong></td>
@@ -151,10 +150,6 @@
 <td align="left">Check if required packages are installed locally.</td>
 </tr>
 <tr class="odd">
-<td align="left"><strong>is_python_package_here()</strong></td>
-<td align="left">Check if required python packages are installed locally.</td>
-</tr>
-<tr class="even">
 <td align="left"><strong>report()</strong></td>
 <td align="left">Print a character string or a data object into a same log file.</td>
 </tr>
@@ -176,7 +171,7 @@
 <p><em>saferDev</em> can be currently be installed from GitHub:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># install.packages("remotes")</span></span>
-<span><span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"https://github.com/safer-r/saferDev"</span><span class="op">)</span> <span class="co"># or open R as admin and remotes::install_github("https://github.com/safer-r/saferDev", lib = "C:/Program Files/R/R-4.3.1/library")</span></span></code></pre></div>
+<span><span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"https://github.com/safer-r/saferDev"</span><span class="op">)</span> <span class="co"># or open R as admin and remotes::install_github("https://github.com/safer-r/saferDev", lib = "C:/Program Files/R/R-4.4.2/library")</span></span></code></pre></div>
 <p>Older versions can be installed like this:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">v</span> <span class="op">&lt;-</span> <span class="st">"v1.0"</span> <span class="co"># desired tag version</span></span>
