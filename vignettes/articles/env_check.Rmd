@@ -5,8 +5,9 @@ title: "env_check"
 
 ```{r, include = FALSE}
 knitr::opts_chunk$set(
-  collapse = TRUE,
-  comment = ">"
+    error = TRUE, 
+    collapse = TRUE,
+    comment = ">"
 )
 ```
 

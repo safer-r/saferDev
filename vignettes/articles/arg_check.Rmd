@@ -5,8 +5,9 @@ title: "arg_check"
 
 ```{r, include = FALSE}
 knitr::opts_chunk$set(
-  collapse = TRUE,
-  comment = ">"
+    error = TRUE, 
+    collapse = TRUE,
+    comment = ">"
 )
 ```
 
@@ -233,7 +234,7 @@ arg_check(
     data = mat1, 
     class = "matrix", 
     lib_path = ".", # absolute pathways of the directories containing the required packages if not in the default directories.
-    error_text = "TEXT ADDED" # add information in error messages returned by the function.
+    error_text = " === TEXT ADDED ===" # add information in error messages returned by the function.
 )
 ```
 <br>

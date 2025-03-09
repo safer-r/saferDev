@@ -5,8 +5,9 @@ title: "get_message"
 
 ```{r, include = FALSE}
 knitr::opts_chunk$set(
-  collapse = TRUE,
-  comment = ">"
+    error = TRUE, 
+    collapse = TRUE,
+    comment = ">"
 )
 ```
 

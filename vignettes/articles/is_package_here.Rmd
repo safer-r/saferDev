@@ -5,6 +5,7 @@ title: "is_package_here"
 
 ```{r, include = FALSE}
 knitr::opts_chunk$set(
+    error = TRUE, 
     collapse = TRUE,
     comment = ">"
 )
