@@ -136,13 +136,13 @@ testthat::test_that(".pack_and_function_check()", {
     ## end tests (ordered by arg appearance and conditions in the code)
 
     ## other tests
-    result <- saferDev::get_message('.pack_and_function_check(fun = char2_fun, lib_path = NULL, error_text = "")', kind = "error", print.no = TRUE, text = NULL, safer_check = FALSE) 
+    result <- saferDev::get_message('.pack_and_function_check(fun = char2_fun, lib_path = NULL, error_text = "")', kind = "error", print_no = TRUE, text = NULL, safer_check = FALSE) 
     expected <- "ERROR MESSAGE REPORTED:\nError : \n\n================\n\nERROR IN saferDev:::.pack_and_function_check().\n\nTHE STRING IN fun ARGUMENT MUST CONTAIN \"::\" OR \":::.\":\narg_check\n\n================\n\n\n"
     testthat::expect_equal(result, expected)
-    result <- saferDev::get_message('.pack_and_function_check(fun = char3_fun, lib_path = NULL, error_text = "")', kind = "error", print.no = TRUE, text = NULL, safer_check = FALSE) 
+    result <- saferDev::get_message('.pack_and_function_check(fun = char3_fun, lib_path = NULL, error_text = "")', kind = "error", print_no = TRUE, text = NULL, safer_check = FALSE) 
     expected <- base::paste0("ERROR MESSAGE REPORTED:\nError : \n\n================\n\nERROR IN saferDev:::.pack_and_function_check().\n\nREQUIRED PACKAGE:\nNOTGOOD\nMUST BE INSTALLED IN ONE OF THESE FOLDERS:\n", paste0( .libPaths(), collapse = "\n", recycle0 = FALSE), "\n\n================\n\n\n", collapse = NULL, recycle0 = FALSE)
     testthat::expect_equal(result, expected)
-    result <- saferDev::get_message('.pack_and_function_check(fun = char4_fun, lib_path = NULL, error_text = "")', kind = "error", print.no = TRUE, text = NULL, safer_check = FALSE) 
+    result <- saferDev::get_message('.pack_and_function_check(fun = char4_fun, lib_path = NULL, error_text = "")', kind = "error", print_no = TRUE, text = NULL, safer_check = FALSE) 
     expected <- base::paste0("ERROR MESSAGE REPORTED:\nError : \n\n================\n\nERROR IN saferDev:::.pack_and_function_check().\n\nREQUIRED FUNCTION IS MISSING IN THE INSTALLED PACKAGE:\nsaferDev::NOTGOOD\n\nIN ONE OF THESE FOLDERS:\n", paste0( .libPaths(), collapse = "\n", recycle0 = FALSE), "\n\n================\n\n\n", collapse = NULL, recycle0 = FALSE)
     testthat::expect_equal(result, expected)
     ## end other tests
