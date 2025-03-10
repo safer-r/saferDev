@@ -94,7 +94,9 @@ testthat::test_that(".pack_and_function_check()", {
     ######## end argument checking with arg_check()
 
     ######## management of "" in arguments of mode character
-    testthat::expect_error(.pack_and_function_check(fun = "", lib_path = NULL, error_text = "")) 
+    testthat::expect_error(.pack_and_function_check(fun = "", lib_path = NULL, error_text = ""))
+    testthat::expect_error(.pack_and_function_check(fun = char1_fun, lib_path = "", error_text = ""))
+    testthat::expect_no_error(.pack_and_function_check(fun = char1_fun, lib_path = NULL, error_text = ""))
     ######## end management of "" in arguments of mode character
 
     #### end argument secondary checking
