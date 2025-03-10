@@ -4,7 +4,7 @@
 #' @param string Single string.
 #' @param pattern Single string indicating the pattern to detect. Warning : must be very simple pattern, like "\\(".
 #' @param no_regex_pattern Single string of the pattern to detect but without escape characters or list, etc.
-#' @param replacement Single string for pattern replacement. Is not regex.
+#' @param replacement Single string for pattern replacement. Must have the same number of character then no_regex_pattern. Is not regex.
 #' @param perl Single logical value. Use Perl regex in pattern ?
 #' @param lib_path Vector of characters specifying the absolute pathways of the directories containing the required packages for the function, if not in the default directories. Useful when R package are not installed in the default directories because of lack of admin rights.  More precisely, lib_path is passed through the new argument of .libPaths() so that the new library paths are unique(c(new, .Library.site, .Library)). Warning: .libPaths() is restored to the initial paths, after function execution. Ignored if NULL (default) or if the safer_check argument is FALSE: only the pathways specified by the current .libPaths() are used for package calling.
 #' @param error_text Single character string used to add information in error messages returned by the function, notably if the function is inside other functions, which is practical for debugging. Example: error_text = " INSIDE <PACKAGE_1>::<FUNCTION_1> INSIDE <PACKAGE_2>::<FUNCTION_2>.". If NULL, converted into "".
@@ -344,6 +344,18 @@
     ######## end graphic device checking
 
     ######## other checkings
+    if(base::all(string == pattern, na.rm = TRUE)){
+        tempo_cat <- base::paste0(
+            error_text_start, 
+            "ARGUMENTS string AND pattern CANNOT BE IDENTICAL.\nstring:\n", 
+            base::paste0(string, collapse = "\n", recycle0 = FALSE), 
+            "\npattern:\n", 
+            base::paste0(pattern, collapse = "\n", recycle0 = FALSE), 
+            collapse = NULL, 
+            recycle0 = FALSE
+        )
+        base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL) # == in base::stop() to be able to add several messages between ==
+    }
     ######## end other checkings
 
     #### end second round of checking and data preparation
@@ -351,9 +363,8 @@
     #### main code
     if(base::nchar(x = no_regex_pattern, type = "chars", allowNA = FALSE, keepNA = NA) != base::nchar(x = replacement, type = "chars", allowNA = FALSE, keepNA = NA)){
         tempo_cat <- base::paste0(
-            "INTERNAL ERROR 1 IN ", 
-            intern_error_text_start, 
-            "ARGUMENTS no_regex_pattern AND replacement MUST HAVE THE SAME NUMBER OF CHARACTERS\nno_regex_pattern (", 
+            error_text_start,  
+            "ARGUMENTS no_regex_pattern AND replacement MUST HAVE THE SAME NUMBER OF CHARACTERS.\nno_regex_pattern (", 
             base::nchar(x = no_regex_pattern, type = "chars", allowNA = FALSE, keepNA = NA), 
             " characters):\n", 
             base::paste0(no_regex_pattern, collapse = "\n", recycle0 = FALSE), 
@@ -361,7 +372,6 @@
             base::nchar(x = replacement, type = "chars", allowNA = FALSE, keepNA = NA), 
             " characters):\n", 
             base::paste0(replacement, collapse = "\n", recycle0 = FALSE), 
-            intern_error_text_end, 
             collapse = NULL, 
             recycle0 = FALSE
         )
@@ -443,12 +453,13 @@
         tempo <- base::substring(text = string, first =  pos, last =  pos)
         if( ! base::all(base::unique(x = tempo, incomparables = FALSE) == no_regex_pattern, na.rm = TRUE)){
             tempo_cat <- base::paste0(
-                "INTERNAL ERROR 2 IN ", 
+                "INTERNAL ERROR 1 IN ", 
                 intern_error_text_start, 
                 "ARGUMENT no_regex_pattern NOT CORRECTLY DETECTED\nno_regex_pattern: \"", 
                 no_regex_pattern, 
                 "\"\nREPLACED CHARACTERS IN string ARGUMENT:\n", 
                 base::paste0(tempo, collapse = "\n", recycle0 = FALSE), 
+                "\n\nCHECK THE pattern, no_regex_pattern AND replacement ARGUMENTS AND ", 
                 intern_error_text_end, 
                 collapse = NULL, 
                 recycle0 = FALSE
