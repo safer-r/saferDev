@@ -412,10 +412,10 @@ testthat::test_that("arg_check()", {
     expect <- list(problem = TRUE, text = "ERROR\n\nTHE vec6 ARGUMENT MUST BE SOME OF THESE OPTIONS:\na\nBUT IS NOT EVEN TYPE CHARACTER OR INTEGER.", object.name = "vec6")
     testthat::expect_equal(result, expect)
     # end     }else if( ! base::is.null(options)){
-    #     if( ! base::is.null(class)){
-    testthat::expect_no_error(arg_check(data = mat1, class = "numeric"))
-    testthat::expect_no_error(arg_check(data = factor1, class = "numeric"))
-    # end      if( ! base::is.null(class)){
+    # if( ! base::is.null(class)){
+    testthat::expect_no_error(arg_check(data = mat1, class = "matrix"))
+    testthat::expect_no_error(arg_check(data = factor1, class = "factor"))
+    # end if( ! base::is.null(class)){
     #     if(base::is.null(options)){ # work on the 4 "class", "typeof", "mode", "length" arguments
     # for class
     # data of type double & double_as_integer_allowed == TRUE and (class = "integer" | typeof = "integer") but finally, data is double but not made of integers # if(base::typeof(data) == "double" & double_as_integer_allowed == TRUE & ((arg.names[i2] == "class" & base::all(base::get(arg.names[i2], envir = base::sys.nframe(), inherits = FALSE) == "integer")) | (arg.names[i2] == "typeof" & base::all(base::get(arg.names[i2], envir = base::sys.nframe(), inherits = FALSE) == "integer")))){
