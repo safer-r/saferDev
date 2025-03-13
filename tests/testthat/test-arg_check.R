@@ -10,6 +10,7 @@ testthat::test_that("arg_check()", {
     vec8 <- c(vec3, Inf)
     mat1 <- base::matrix(vec1)
     mat2 <- base::matrix(base::c(1:3 / 3, NA))
+    mat3 <- base::matrix(vec5)
     number <- 1
     factor1 <- base::as.factor(vec5)
     expr1 <- expression(1)
@@ -179,23 +180,23 @@ testthat::test_that("arg_check()", {
 
     ######## other checkings
     # management of special classes
-    testthat::expect_error(arg_check(data = vec1, class = mat1, typeof = "integer"))
-    testthat::expect_error(arg_check(data = vec1, class = "numeric", typeof = mat1))
-    testthat::expect_error(arg_check(data = vec1, class = "numeric", mode = mat1))
-    testthat::expect_error(arg_check(data = vec1, class = "numeric", length = mat1))
-    testthat::expect_error(arg_check(data = vec1, class = "numeric", prop = mat1))
-    testthat::expect_error(arg_check(data = vec1, class = "numeric", double_as_integer_allowed = mat1))
-    testthat::expect_error(arg_check(data = vec1, class = "numeric", options = mat1))
-    testthat::expect_error(arg_check(data = vec1, class = "numeric", all_options_in_data = mat1))
-    testthat::expect_error(arg_check(data = vec1, class = "numeric", na_contain = mat1))
-    testthat::expect_error(arg_check(data = vec1, class = "numeric", neg_values = mat1))
-    testthat::expect_error(arg_check(data = vec1, class = "numeric", inf_values = mat1))
-    testthat::expect_error(arg_check(data = vec1, class = "numeric", print = mat1))
-    testthat::expect_error(arg_check(data = vec1, class = "numeric", data_name = mat1))
-    testthat::expect_error(arg_check(data = vec1, class = "numeric", data_arg = mat1))
-    testthat::expect_error(arg_check(data = vec1, class = "numeric", safer_check = TRUE, lib_path = mat1))
-    testthat::expect_error(arg_check(data = vec1, class = "numeric", safer_check = mat1))
-    testthat::expect_no_error(arg_check(data = vec1, class = "numeric", error_text = mat1))
+    testthat::expect_error(arg_check(data = vec1, class = mat3, typeof = "integer"))
+    testthat::expect_error(arg_check(data = vec1, class = "numeric", typeof = mat3))
+    testthat::expect_error(arg_check(data = vec1, class = "numeric", mode = mat3))
+    testthat::expect_error(arg_check(data = vec1, class = "numeric", length = mat3))
+    testthat::expect_error(arg_check(data = vec1, class = "numeric", prop = mat3))
+    testthat::expect_error(arg_check(data = vec1, class = "numeric", double_as_integer_allowed = mat3))
+    testthat::expect_error(arg_check(data = vec1, class = "numeric", options = mat3))
+    testthat::expect_error(arg_check(data = vec1, class = "numeric", all_options_in_data = mat3))
+    testthat::expect_error(arg_check(data = vec1, class = "numeric", na_contain = mat3))
+    testthat::expect_error(arg_check(data = vec1, class = "numeric", neg_values = mat3))
+    testthat::expect_error(arg_check(data = vec1, class = "numeric", inf_values = mat3))
+    testthat::expect_error(arg_check(data = vec1, class = "numeric", print = mat3))
+    testthat::expect_error(arg_check(data = vec1, class = "numeric", data_name = mat3))
+    testthat::expect_error(arg_check(data = vec1, class = "numeric", data_arg = mat3))
+    testthat::expect_error(arg_check(data = vec1, class = "numeric", safer_check = TRUE, lib_path = mat3))
+    testthat::expect_error(arg_check(data = vec1, class = "numeric", safer_check = mat3))
+    testthat::expect_no_error(arg_check(data = vec1, class = "numeric", error_text = mat3))
     # end management of special classes
     # management of the logical arguments
     # prop tested below
