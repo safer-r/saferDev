@@ -258,26 +258,11 @@
     ######## end argument checking with arg_check()
 
     ######## management of "" in arguments of mode character
-    tempo_arg <- base::c(
+    # not required
         # "input_string", # inactivated because can be ""
-        "pattern"
+        # "pattern" # cannot be "" but already tested in arg_check() with the options argument
         # "lib_path" # inactivated because already checked above
         # "error_text" # inactivated because can be ""
-    )
-    # backbone personalized here (base::is.null(x = x)){base::return(TRUE) removed) because the pattern argument cannot be NULL and codecov must be optimized
-    # INTERNAL ERROR IN THE BACKBONE PART section removed because codecov must be optimized. I have checked that this pattern argument are tested for mode character upstream
-    tempo_log <- base::sapply(X = base::lapply(X = tempo_arg, FUN = function(x){base::get(x = x, pos = -1L, envir = base::parent.frame(n = 2), mode = "any", inherits = FALSE)}), FUN = function(x){base::any(x == "", na.rm = TRUE)}, simplify = TRUE, USE.NAMES = TRUE) # parent.frame(n = 2) because sapply(lapply()).  # for character argument that can also be NULL, if NULL -> returns FALSE. Thus no need to test is.null()
-    if(base::any(tempo_log, na.rm = TRUE)){
-        tempo_cat <- base::paste0(
-            error_text_start, 
-            base::ifelse(test = base::sum(tempo_log, na.rm = TRUE) > 1, yes = "THESE ARGUMENTS\n", no = "THIS ARGUMENT\n"), 
-            base::paste0(tempo_arg[tempo_log], collapse = "\n", recycle0 = FALSE),
-            "\nCANNOT CONTAIN EMPTY STRING \"\".", 
-            collapse = NULL, 
-            recycle0 = FALSE
-        )
-        base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL) # == in stop() to be able to add several messages between ==
-    }
     ######## end management of "" in arguments of mode character
 
     #### end argument secondary checking
