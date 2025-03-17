@@ -1,14 +1,8 @@
 testthat::test_that(".extract_all_fun_names()", {
 
     ## data argument values
-    str1 <- 'This is a "test" string with "odd" quotes'
-    str1b <- 'This is a "test" string with \" "odd" quotes'
-    str2 <- "This is a 'test' string with 'odd' quotes"
-    str2b <- "This is a 'test' string with \' 'odd' quotes"
-    pattern1 <- '"'
-    pattern2 <- "'"
-    char3_fun <- "NOTGOOD::arg_check"
-    char4_fun <- "saferDev::NOTGOOD"
+    str1 <- 'This is a test string with sum()'
+    pattern1 <- "[a-zA-Z.][a-zA-Z0-9._]*\\s*\\("
     mat1 <- base::matrix(-1:3)
     factor1 <- base::as.factor(str1)
     expr1 <- expression(1)
@@ -128,7 +122,7 @@ testthat::test_that(".extract_all_fun_names()", {
     testthat::expect_error(.extract_all_fun_names(text = str1, pattern = factor1, lib_path = NULL, error_text = ""))
     testthat::expect_error(.extract_all_fun_names(text = str1, pattern = expr1, lib_path = NULL, error_text = ""))
     testthat::expect_error(.extract_all_fun_names(text = str1, pattern = fun1, lib_path = NULL, error_text = ""))
-    testthat::expect_error(.extract_all_fun_names(text = str1, pattern = str1, lib_path = NULL, error_text = ""))
+    testthat::expect_no_error(.extract_all_fun_names(text = str1, pattern = str1, lib_path = NULL, error_text = ""))
     # end pattern
     # lib_path cannot be tested because safer_check is not present and lib_path is checked only is safer_check = TRUE in the enclosing function
 
@@ -165,17 +159,9 @@ testthat::test_that(".extract_all_fun_names()", {
 
     #### main code
     result <- .extract_all_fun_names(text = str1, pattern = pattern1, lib_path = NULL, error_text = "")
-    expect <- FALSE
+    expect <- list(string = "sum", pos = NULL)
     testthat::expect_equal(result, expect)
-    result <- .extract_all_fun_names(text = str1b, pattern = pattern1, lib_path = NULL, error_text = "")
-    expect <- TRUE
-    testthat::expect_equal(result, expect)
-    result <- .extract_all_fun_names(text = str2, pattern = pattern2, lib_path = NULL, error_text = "")
-    expect <- FALSE
-    testthat::expect_equal(result, expect)
-    result <- .extract_all_fun_names(text = str2b, pattern = pattern2, lib_path = NULL, error_text = "")
-    expect <- TRUE
-    testthat::expect_equal(result, expect)
+
     #### end main code
 
     ## end tests (ordered by arg appearance and conditions in the code)
