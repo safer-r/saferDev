@@ -159,7 +159,7 @@ testthat::test_that(".extract_all_fun_names()", {
 
     #### main code
     result <- .extract_all_fun_names(text = str1, pattern = pattern1, lib_path = NULL, error_text = "")
-    expect <- list(string = "sum", pos = NULL)
+    expect <- list(string = "sum", pos = 28)
     testthat::expect_equal(result, expect)
 
     #### end main code
