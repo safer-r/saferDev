@@ -2,7 +2,7 @@ testthat::test_that(".extract_all_fun_names()", {
 
     ## data argument values
     str1 <- 'This is a test string with sum()'
-    pattern1 <- "[a-zA-Z.][a-zA-Z0-9._]*\\s*\\("
+    pattern1 <- "([a-zA-Z]|\\.[a-zA-Z._])[a-zA-Z0-9._]*\\s*\\("
     mat1 <- base::matrix(-1:3)
     factor1 <- base::as.factor(str1)
     expr1 <- expression(1)
