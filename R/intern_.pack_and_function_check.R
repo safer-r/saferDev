@@ -238,7 +238,7 @@
         # "lib_path" # inactivated because already checked above
         # "error_text" # inactivated because can be ""
     )
-    tempo_log <- ! base::sapply(X = base::lapply(X = tempo_arg, FUN = function(x){base::get(x = x, pos = -1L, envir = base::parent.frame(n = 2), mode = "any", inherits = FALSE)}), FUN = function(x){if(base::is.null(x = x)){base::return(TRUE)}else{base::all(base::mode(x = x) == "character", na.rm = TRUE)}}, simplify = TRUE, USE.NAMES = TRUE) # parent.frame(n = 2) because sapply(lapply())  #  need to test is.null() here
+    tempo_log <- ! base::sapply(X = base::lapply(X = tempo_arg, FUN = function(x){base::get(x = x, pos = -1L, envir = base::parent.frame(n = 2), mode = "any", inherits = FALSE)}), FUN = function(x){base::all(base::mode(x = x) == "character", na.rm = TRUE)}, simplify = TRUE, USE.NAMES = TRUE) # parent.frame(n = 2) because sapply(lapply())  #  backbone personalized here (base::is.null(x = x)){base::return(TRUE) removed) because fun cannot be NULL and codecov must be optimized
     if(base::any(tempo_log, na.rm = TRUE)){
         tempo_cat <- base::paste0(
             error_text_start,
