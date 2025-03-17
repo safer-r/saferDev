@@ -6,8 +6,8 @@
 #' @param no_regex_pattern Single string of the pattern to detect but without escape characters or list, etc.
 #' @param replacement Single string for pattern replacement. Is not regex.
 #' @param perl Single logical value. Use Perl regex in pattern ?
-#' @param open_pos Single integer indicating the position of the opening parenthesis.
-#' @param close_pos Single integer indicating the position of the closing parenthesis.
+#' @param open_pos Single positive and non zero integer indicating the position of the opening parenthesis.
+#' @param close_pos Single positive and non zero integer indicating the position of the closing parenthesis.
 #' @param lib_path Vector of characters specifying the absolute pathways of the directories containing the required packages for the function, if not in the default directories. Useful when R package are not installed in the default directories because of lack of admin rights.  More precisely, lib_path is passed through the new argument of .libPaths() so that the new library paths are unique(c(new, .Library.site, .Library)). Warning: .libPaths() is restored to the initial paths, after function execution. Ignored if NULL (default) or if the safer_check argument is FALSE: only the pathways specified by the current .libPaths() are used for package calling.
 #' @param error_text Single character string used to add information in error messages returned by the function, notably if the function is inside other functions, which is practical for debugging. Example: error_text = " INSIDE <PACKAGE_1>::<FUNCTION_1> INSIDE <PACKAGE_2>::<FUNCTION_2>.". If NULL, converted into "".
 #' @returns A list containing:
@@ -279,7 +279,7 @@
     tempo <- saferDev::arg_check(data = open_pos, class = "vector", typeof = "integer", mode = NULL, length = 1, prop = FALSE, double_as_integer_allowed = TRUE, options = NULL, all_options_in_data = FALSE, na_contain = TRUE, neg_values = TRUE, inf_values = TRUE, print = FALSE, data_name = NULL, data_arg = TRUE, safer_check = FALSE, lib_path = lib_path, error_text = embed_error_text) ; base::eval(expr = ee, envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL))
     tempo <- saferDev::arg_check(data = close_pos, class = "vector", typeof = "integer", mode = NULL, length = 1, prop = FALSE, double_as_integer_allowed = TRUE, options = NULL, all_options_in_data = FALSE, na_contain = TRUE, neg_values = TRUE, inf_values = TRUE, print = FALSE, data_name = NULL, data_arg = TRUE, safer_check = FALSE, lib_path = lib_path, error_text = embed_error_text) ; base::eval(expr = ee, envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL))
     # lib_path already checked above
-    # error_text already checked above
+    # error_text converted to single string above
     if( ! base::is.null(x = argum_check)){
         if(base::any(argum_check, na.rm = TRUE)){
             base::stop(base::paste0("\n\n================\n\n", base::paste0(text_check[argum_check], collapse = "\n\n", recycle0 = FALSE), "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL)
@@ -347,6 +347,7 @@
     ######## end graphic device checking
 
     ######## other checkings
+    # no need to test neg or 0 value for open_pos and close_pos, because tested downstream with the pos of pattern
     ######## end other checkings
 
     #### end second round of checking and data preparation
@@ -354,15 +355,13 @@
     #### main code
     if(base::substr(x = string, start =  open_pos, stop =  open_pos) != "("){
         tempo_cat <- base::paste0(
-            "INTERNAL ERROR 1 IN ", 
-            intern_error_text_start, 
-            "ARGUMENT open_pos DOES NOT REFER TO A POSITION OF OPENING PARENTHESIS\nopen_pos:\n", 
+            error_text_start, 
+            "ARGUMENT open_pos DOES NOT REFER TO A POSITION OF OPENING PARENTHESIS.\nopen_pos:\n", 
             base::paste0(open_pos, collapse = "\n", recycle0 = FALSE), 
             "\nstring:\n", 
             base::paste0(string, collapse = "\n", recycle0 = FALSE), 
             "\nsubstr(string, open_pos, open_pos):\n", 
             base::paste0(base::substr(x = string, start =  open_pos, stop =  open_pos), collapse = "\n", recycle0 = FALSE), 
-            intern_error_text_end, 
             collapse = NULL, 
             recycle0 = FALSE
         )
@@ -370,15 +369,13 @@
     }
     if(base::substr(x = string, start =  close_pos, stop =  close_pos) != ")"){
         tempo_cat <- base::paste0(
-            "INTERNAL ERROR 2 IN ", 
-            intern_error_text_start, 
-            "ARGUMENT close_pos DOES NOT REFER TO A POSITION OF CLOSING PARENTHESIS\nclose_pos:\n", 
+            error_text_start, 
+            "ARGUMENT close_pos DOES NOT REFER TO A POSITION OF CLOSING PARENTHESIS.\nclose_pos:\n", 
             base::paste0(close_pos, collapse = "\n", recycle0 = FALSE), 
             "\nstring:\n", 
             base::paste0(string, collapse = "\n", recycle0 = FALSE), 
             "\nsubstr(string, close_pos, close_pos):\n", 
-            base::paste0(base::substr(x = string, start =  close_pos, stop =  close_pos), collapse = "\n", recycle0 = FALSE), 
-            intern_error_text_end, 
+            base::paste0(base::substr(x = string, start =  close_pos, stop =  close_pos), collapse = "\n", recycle0 = FALSE),  
             collapse = NULL, 
             recycle0 = FALSE
         )
@@ -391,7 +388,7 @@
     comma_position_in_substring <- base::gregexpr(pattern = pattern, text =  substring_in_parentheses, ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE)[[1]]
     # Initialize a vector to store global positions of the replaced commas
     pos <- NULL
-    if (comma_position_in_substring[1] != -1) {
+    if(comma_position_in_substring[1] != -1){
         for (relative_comma_position in comma_position_in_substring) {
             # Calculate the global position of the comma in the original string
             global_comma_position <- open_pos + relative_comma_position - 1
@@ -405,13 +402,11 @@
         tempo <- base::substring(text = string, first =  pos, last =  pos)
         if( ! base::all(base::unique(x = tempo, incomparables = FALSE) == no_regex_pattern, na.rm = TRUE)){
             tempo_cat <- base::paste0(
-                "INTERNAL ERROR 3 IN ", 
-                intern_error_text_start, 
-                "ARGUMENT no_regex_pattern NOT CORRECTLY DETECTED\nno_regex_pattern: \"", 
+                error_text_start, 
+                "ARGUMENT no_regex_pattern NOT CORRECTLY DETECTED.\nno_regex_pattern: \"", 
                 no_regex_pattern, 
                 "\"\nREPLACED CHARACTERS IN string ARGUMENT:\n", 
                 base::paste0(tempo, collapse = "\n", recycle0 = FALSE), 
-                intern_error_text_end, 
                 collapse = NULL, 
                 recycle0 = FALSE
             )

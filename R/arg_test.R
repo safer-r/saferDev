@@ -424,7 +424,7 @@ arg_test <- function(
     }
     # lib_path already checked above
     # safer_check already checked above
-    # error_text already checked above
+    # error_text converted to single string above
     if( ! base::is.null(x = argum_check)){
         if(base::any(argum_check, na.rm = TRUE)){
             base::stop(base::paste0("\n\n================\n\n", base::paste0(text_check[argum_check], collapse = "\n\n", recycle0 = FALSE), "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL)

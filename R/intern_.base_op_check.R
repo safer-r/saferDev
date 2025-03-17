@@ -157,7 +157,7 @@
     #### argument secondary checking
 
     ######## argument checking with arg_check()
-    # error_text already checked above
+    # error_text converted to single string above
     ######## end argument checking with arg_check()
 
     ######## management of "" in arguments of mode character
