@@ -208,7 +208,7 @@ testthat::test_that(".noclean_functions()", {
 
     #### main code
     result <- saferDev::get_message('.noclean_functions(col1 = 1, col2 = str1, col3 = str2, ini = ini1, lib_path = NULL, error_text = "")', kind = "error", print_no = TRUE, text = NULL, safer_check = FALSE) 
-    expected <- "ERROR MESSAGE REPORTED:\nError : \n\n================\n\nERROR IN saferDev:::.noclean_functions().\n\ncol1, col2 AND col3 ARGUMENTS MUST HAVE THE SAME LENGTH.\nHERE:\nLENGTH OF col1:\n1\nLENGTH OF col2:\n2\nLENGTH OF col3:\n2\n\n================\n\n\n"
+    expected <- "ERROR MESSAGE REPORTED:\nError : \n\n================\n\nERROR IN saferDev:::.noclean_functions().\n\ncol1, col2 AND col3 ARGUMENTS MUST HAVE THE SAME LENGTH.\nLENGTH OF col1:\n1\nLENGTH OF col2:\n2\nLENGTH OF col3:\n2\n\n================\n\n\n"
     testthat::expect_equal(result, expected)
     result <- .noclean_functions(col1 =  int1, col2 = str1, col3 = str2, ini = ini1, lib_path = NULL, error_text = "")
     expected <- c(FALSE, FALSE)
