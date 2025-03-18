@@ -1,8 +1,8 @@
 #' @title .noclean_functions
 #' @description
 #' Indicate if function names are inside quotes or after $
-#' @param col1 Vector of integers.
-#' @param col2 Vector of strings of the function names.
+#' @param col1 Vector of integers of line numbers in a code.
+#' @param col2 Vector of strings of the function names scrutinized.
 #' @param col3 Vector of strings of the code before the function name.
 #' @param ini Vector of strings of the initial function code analyzed.
 #' @param lib_path Vector of characters specifying the absolute pathways of the directories containing the required packages for the function, if not in the default directories. Useful when R package are not installed in the default directories because of lack of admin rights.  More precisely, lib_path is passed through the new argument of .libPaths() so that the new library paths are unique(c(new, .Library.site, .Library)). Warning: .libPaths() is restored to the initial paths, after function execution. Ignored if NULL (default) or if the safer_check argument is FALSE: only the pathways specified by the current .libPaths() are used for package calling.
@@ -328,8 +328,22 @@
     ######## end graphic device checking
 
     ######## other checkings
-    ######## end other checkings
 
+    ######## end other checkings
+    if( ! (base::length(x = col1) == base::length(x = col2) & base::length(x = col1) == base::length(x = col3))){
+        tempo_cat <- base::paste0(
+            error_text_start, 
+            "col1, col2 AND col3 ARGUMENTS MUST HAVE THE SAME LENGTH.\nLENGTH OF col1:\n", 
+            base::length(x = col1), 
+            "\nLENGTH OF col2:\n", 
+            base::length(x = col2), 
+            "\nLENGTH OF col3:\n", 
+            base::length(x = col3), 
+            collapse = NULL, 
+            recycle0 = FALSE
+        )
+        base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL) # == in stop() to be able to add several messages between ==
+    }
     #### end second round of checking and data preparation
 
     #### main code
