@@ -98,165 +98,167 @@ LINE_NB	FUN_NAME	FUN_ARGS	FUN_POS	DEF_ARGS	MISSING_ARG_NAMES	MISSING_ARGS	STATUS
 124	all	all(base::typeof(x = safer_check) == "logical",  na.rm = TRUE)	13	..., na.rm = FALSE			GOOD
 124	typeof	typeof(x = safer_check)	23	x			GOOD
 125	length	length(x = safer_check)	23	x			GOOD
-126	paste0	paste0(error_text_start, "THE safer_check ARGUMENT VALUE MUST BE A SINGLE LOGICAL VALUE (TRUE OR FALSE ONLY).\nHERE IT IS:\n",  base::ifelse(test = base::length(x = safer_check) ==  0 | base::all(safer_check == base::quote(expr = ),  na.rm = TRUE) | base::all(safer_check == "",  na.rm = TRUE), yes = "<NULL, \"\", EMPTY OBJECT OR EMPTY NAME>",  no = base::paste0(safer_check, collapse = "\n",  recycle0 = FALSE)), collapse = NULL, recycle0 = FALSE)	20	..., collapse = NULL, recycle0 = FALSE			GOOD
+126	paste0	paste0(error_text_start, "THE safer_check ARGUMENT VALUE MUST BE A SINGLE LOGICAL VALUE (TRUE OR FALSE ONLY).\nHERE IT IS:\n",  base::ifelse(test = base::length(x = safer_check) ==  0 | base::all(base::suppressWarnings(expr = safer_check ==  base::quote(expr = ), classes = "warning"), na.rm = TRUE) |  base::all(safer_check == "", na.rm = TRUE), yes = "<NULL, \"\", EMPTY OBJECT OR EMPTY NAME>",  no = base::paste0(safer_check, collapse = "\n",  recycle0 = FALSE)), collapse = NULL, recycle0 = FALSE)	20	..., collapse = NULL, recycle0 = FALSE			GOOD
 126	VALUE	NOT_CONSIDERED	102				
-127	ifelse	ifelse(test = base::length(x = safer_check) ==  0 | base::all(safer_check == base::quote(expr = ),  na.rm = TRUE) | base::all(safer_check == "",  na.rm = TRUE), yes = "<NULL, \"\", EMPTY OBJECT OR EMPTY NAME>",  no = base::paste0(safer_check, collapse = "\n",  recycle0 = FALSE))	7	test, yes, no			GOOD
+127	ifelse	ifelse(test = base::length(x = safer_check) ==  0 | base::all(base::suppressWarnings(expr = safer_check ==  base::quote(expr = ), classes = "warning"), na.rm = TRUE) |  base::all(safer_check == "", na.rm = TRUE), yes = "<NULL, \"\", EMPTY OBJECT OR EMPTY NAME>",  no = base::paste0(safer_check, collapse = "\n",  recycle0 = FALSE))	7	test, yes, no			GOOD
 127	length	length(x = safer_check)	27	x			GOOD
-128	all	all(safer_check == base::quote(expr = ),  na.rm = TRUE)	11	..., na.rm = FALSE			GOOD
-128	quote	quote(expr = )	36	expr			GOOD
-129	all	all(safer_check == "",  na.rm = TRUE)	23	..., na.rm = FALSE			GOOD
+128	all	all(base::suppressWarnings(expr = safer_check ==  base::quote(expr = ), classes = "warning"), na.rm = TRUE)	11	..., na.rm = FALSE			GOOD
+128	suppressWarnings	suppressWarnings(expr = safer_check ==  base::quote(expr = ), classes = "warning")	21	expr, classes = "warning"			GOOD
+129	quote	quote(expr = )	7	expr			GOOD
+130	all	all(safer_check == "", na.rm = TRUE)	7	..., na.rm = FALSE			GOOD
 131	paste0	paste0(safer_check, collapse = "\n",  recycle0 = FALSE)	12	..., collapse = NULL, recycle0 = FALSE			GOOD
 133	stop	stop(base::paste0("\n\n================\n\n", tempo_cat,  "\n\n================\n\n", collapse = NULL, recycle0 = FALSE),  call. = FALSE, domain = NULL)	7	..., call. = TRUE, domain = NULL			GOOD
 133	paste0	paste0("\n\n================\n\n", tempo_cat,  "\n\n================\n\n", collapse = NULL, recycle0 = FALSE)	18	..., collapse = NULL, recycle0 = FALSE			GOOD
 138	is.null	is.null(x = lib_path)	12	x			GOOD
 139	all	all(base::typeof(x = lib_path) == "character",  na.rm = TRUE)	12	..., na.rm = FALSE			GOOD
 139	typeof	typeof(x = lib_path)	22	x			GOOD
-141	paste0	paste0(error_text_start, "THE DIRECTORY PATH INDICATED IN THE lib_path ARGUMENT MUST BE A VECTOR OF CHARACTERS.\nHERE IT IS:\n",  base::ifelse(test = base::length(x = lib_path) ==  0 | base::all(lib_path == base::quote(expr = ),  na.rm = TRUE), yes = "<NULL, EMPTY OBJECT OR EMPTY NAME>",  no = base::paste0(lib_path, collapse = "\n",  recycle0 = FALSE)), collapse = NULL, recycle0 = FALSE)	20	..., collapse = NULL, recycle0 = FALSE			GOOD
-142	ifelse	ifelse(test = base::length(x = lib_path) ==  0 | base::all(lib_path == base::quote(expr = ),  na.rm = TRUE), yes = "<NULL, EMPTY OBJECT OR EMPTY NAME>",  no = base::paste0(lib_path, collapse = "\n",  recycle0 = FALSE))	7	test, yes, no			GOOD
+141	paste0	paste0(error_text_start, "THE DIRECTORY PATH INDICATED IN THE lib_path ARGUMENT MUST BE A VECTOR OF CHARACTERS.\nHERE IT IS:\n",  base::ifelse(test = base::length(x = lib_path) ==  0 | base::all(base::suppressWarnings(expr = lib_path ==  base::quote(expr = ), classes = "warning"),  na.rm = TRUE), yes = "<NULL, EMPTY OBJECT OR EMPTY NAME>",  no = base::paste0(lib_path, collapse = "\n",  recycle0 = FALSE)), collapse = NULL, recycle0 = FALSE)	20	..., collapse = NULL, recycle0 = FALSE			GOOD
+142	ifelse	ifelse(test = base::length(x = lib_path) ==  0 | base::all(base::suppressWarnings(expr = lib_path ==  base::quote(expr = ), classes = "warning"),  na.rm = TRUE), yes = "<NULL, EMPTY OBJECT OR EMPTY NAME>",  no = base::paste0(lib_path, collapse = "\n",  recycle0 = FALSE))	7	test, yes, no			GOOD
 142	length	length(x = lib_path)	27	x			GOOD
-143	all	all(lib_path == base::quote(expr = ),  na.rm = TRUE)	11	..., na.rm = FALSE			GOOD
-143	quote	quote(expr = )	33	expr			GOOD
-145	paste0	paste0(lib_path, collapse = "\n",  recycle0 = FALSE)	12	..., collapse = NULL, recycle0 = FALSE			GOOD
-147	stop	stop(base::paste0("\n\n================\n\n",  tempo_cat, "\n\n================\n\n", collapse = NULL,  recycle0 = FALSE), call. = FALSE, domain = NULL)	7	..., call. = TRUE, domain = NULL			GOOD
-147	paste0	paste0("\n\n================\n\n",  tempo_cat, "\n\n================\n\n", collapse = NULL,  recycle0 = FALSE)	18	..., collapse = NULL, recycle0 = FALSE			GOOD
-151	all	all(base::dir.exists(paths = lib_path),  na.rm = TRUE)	17	..., na.rm = FALSE			GOOD
-151	dir.exists	dir.exists(paths = lib_path)	27	paths			GOOD
-153	dir.exists	dir.exists(paths = lib_path)	21	paths			GOOD
-156	paste0	paste0(error_text_start, "THE DIRECTORY PATH",  base::ifelse(test = base::sum(tempo_log, na.rm = TRUE) >  1, yes = "S", no = ""), " INDICATED IN THE lib_path ARGUMENT DO",  base::ifelse(test = base::sum(tempo_log, na.rm = TRUE) >  1, yes = "", no = "ES"), " NOT EXIST:\n",  base::paste0(tempo_cat_b, collapse = "\n",  recycle0 = FALSE), collapse = NULL, recycle0 = FALSE)	20	..., collapse = NULL, recycle0 = FALSE			GOOD
-157	ifelse	ifelse(test = base::sum(tempo_log, na.rm = TRUE) >  1, yes = "S", no = "")	7	test, yes, no			GOOD
-157	sum	sum(tempo_log, na.rm = TRUE)	27	..., na.rm = FALSE			GOOD
-159	ifelse	ifelse(test = base::sum(tempo_log, na.rm = TRUE) >  1, yes = "", no = "ES")	7	test, yes, no			GOOD
-159	sum	sum(tempo_log, na.rm = TRUE)	27	..., na.rm = FALSE			GOOD
-161	paste0	paste0(tempo_cat_b, collapse = "\n",  recycle0 = FALSE)	7	..., collapse = NULL, recycle0 = FALSE			GOOD
-163	stop	stop(base::paste0("\n\n================\n\n",  tempo_cat, "\n\n================\n\n", collapse = NULL,  recycle0 = FALSE), call. = FALSE, domain = NULL)	7	..., call. = TRUE, domain = NULL			GOOD
-163	paste0	paste0("\n\n================\n\n",  tempo_cat, "\n\n================\n\n", collapse = NULL,  recycle0 = FALSE)	18	..., collapse = NULL, recycle0 = FALSE			GOOD
-168	.libPaths	.libPaths(new = , include.site = TRUE)	24	new, include.site = TRUE			GOOD
-169	on.exit	on.exit(expr = base:::.libPaths(new = ini_lib_path,  include.site = TRUE), add = TRUE, after = TRUE)	7	expr = NULL, add = FALSE, after = TRUE			GOOD
-169	.libPaths	.libPaths(new = ini_lib_path,  include.site = TRUE)	29	new, include.site = TRUE			GOOD
-171	.libPaths	.libPaths(new = base::sub(x = lib_path,  pattern = "/$|\\\\$", replacement = "", ignore.case = FALSE,  perl = FALSE, fixed = FALSE, useBytes = FALSE),  include.site = TRUE)	8	new, include.site = TRUE			GOOD
-171	sub	sub(x = lib_path,  pattern = "/$|\\\\$", replacement = "", ignore.case = FALSE,  perl = FALSE, fixed = FALSE, useBytes = FALSE)	30	pattern, replacement, x, ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE			GOOD
-175	.libPaths	.libPaths(new = , include.site = TRUE)	20	new, include.site = TRUE			GOOD
-179	.libPaths	.libPaths(new = , include.site = TRUE)	20	new, include.site = TRUE			GOOD
-183	.pack_and_function_check	.pack_and_function_check(fun = base::c("saferDev::arg_check",  "lubridate::seconds_to_period", "saferDev:::.base_op_check"),  lib_path = lib_path, error_text = embed_error_text)	12	fun, lib_path, error_text			GOOD
-183	c	c("saferDev::arg_check",  "lubridate::seconds_to_period", "saferDev:::.base_op_check")	49	...			
-188	.base_op_check	.base_op_check(error_text = embed_error_text)	12	error_text			GOOD
-193	paste0	paste0("ERROR ", embed_error_text,  "\n\n", collapse = NULL, recycle0 = FALSE)	31	..., collapse = NULL, recycle0 = FALSE			GOOD
-195	expression	expression(argum_check <- base::c(argum_check,  tempo$problem), text_check <- base::c(text_check, tempo$text),  checked_arg_names <- base::c(checked_arg_names, tempo$object.name))	13	...			
-195	c	c(argum_check,  tempo$problem)	45	...			
-196	c	c(text_check, tempo$text)	37	...			
-197	c	c(checked_arg_names, tempo$object.name)	28	...			
-198	arg_check	arg_check(data = data, class = NULL, typeof = NULL,  mode = "numeric", length = NULL, prop = FALSE, double_as_integer_allowed = FALSE,  options = NULL, all_options_in_data = FALSE, na_contain = TRUE,  neg_values = TRUE, inf_values = TRUE, print = FALSE,  data_name = NULL, data_arg = TRUE, safer_check = FALSE,  lib_path = lib_path, error_text = embed_error_text)	20	data, class = NULL, typeof = NULL, mode = NULL, length = NULL, prop = FALSE, double_as_integer_allowed = FALSE, options = NULL, all_options_in_data = FALSE, na_contain = FALSE, neg_values = TRUE, inf_values = TRUE, print = FALSE, data_name = NULL, data_arg = TRUE, safer_check = TRUE, lib_path = NULL, error_text = ""			GOOD
-204	eval	eval(expr = ee, envir = base::environment(fun = NULL),  enclos = base::environment(fun = NULL))	7	expr, envir = parent.frame(), enclos = if (is.list(envir) || is.pairlist(envir)) parent.frame() else baseenv()			GOOD
-204	environment	environment(fun = NULL)	37	fun = NULL			GOOD
-205	environment	environment(fun = NULL)	16	fun = NULL			GOOD
-206	arg_check	arg_check(data = arg1, class = "vector",  typeof = NULL, mode = "character", length = 1, prop = FALSE,  double_as_integer_allowed = FALSE, options = NULL, all_options_in_data = FALSE,  na_contain = TRUE, neg_values = TRUE, inf_values = TRUE,  print = FALSE, data_name = NULL, data_arg = TRUE, safer_check = FALSE,  lib_path = lib_path, error_text = embed_error_text)	20	data, class = NULL, typeof = NULL, mode = NULL, length = NULL, prop = FALSE, double_as_integer_allowed = FALSE, options = NULL, all_options_in_data = FALSE, na_contain = FALSE, neg_values = TRUE, inf_values = TRUE, print = FALSE, data_name = NULL, data_arg = TRUE, safer_check = TRUE, lib_path = NULL, error_text = ""			GOOD
-212	eval	eval(expr = ee, envir = base::environment(fun = NULL),  enclos = base::environment(fun = NULL))	7	expr, envir = parent.frame(), enclos = if (is.list(envir) || is.pairlist(envir)) parent.frame() else baseenv()			GOOD
-212	environment	environment(fun = NULL)	37	fun = NULL			GOOD
-213	environment	environment(fun = NULL)	16	fun = NULL			GOOD
-214	is.null	is.null(x = seed)	12	x			GOOD
-215	arg_check	arg_check(data = seed, class = "vector",  typeof = "integer", mode = NULL, length = NULL, prop = FALSE,  double_as_integer_allowed = TRUE, options = NULL,  all_options_in_data = FALSE, na_contain = FALSE,  neg_values = TRUE, inf_values = FALSE, print = FALSE,  data_name = NULL, data_arg = TRUE, safer_check = FALSE,  lib_path = lib_path, error_text = embed_error_text)	20	data, class = NULL, typeof = NULL, mode = NULL, length = NULL, prop = FALSE, double_as_integer_allowed = FALSE, options = NULL, all_options_in_data = FALSE, na_contain = FALSE, neg_values = TRUE, inf_values = TRUE, print = FALSE, data_name = NULL, data_arg = TRUE, safer_check = TRUE, lib_path = NULL, error_text = ""			GOOD
-222	eval	eval(expr = ee, envir = base::environment(fun = NULL),  enclos = base::environment(fun = NULL))	7	expr, envir = parent.frame(), enclos = if (is.list(envir) || is.pairlist(envir)) parent.frame() else baseenv()			GOOD
-222	environment	environment(fun = NULL)	37	fun = NULL			GOOD
-223	environment	environment(fun = NULL)	16	fun = NULL			GOOD
-225	arg_check	arg_check(data = data, class = "vector",  typeof = NULL, mode = "character", length = 1, prop = FALSE,  double_as_integer_allowed = FALSE, options = NULL, all_options_in_data = FALSE,  na_contain = TRUE, neg_values = TRUE, inf_values = TRUE,  print = FALSE, data_name = NULL, data_arg = TRUE, safer_check = FALSE,  lib_path = lib_path, error_text = embed_error_text)	21	data, class = NULL, typeof = NULL, mode = NULL, length = NULL, prop = FALSE, double_as_integer_allowed = FALSE, options = NULL, all_options_in_data = FALSE, na_contain = FALSE, neg_values = TRUE, inf_values = TRUE, print = FALSE, data_name = NULL, data_arg = TRUE, safer_check = TRUE, lib_path = NULL, error_text = ""			GOOD
-231	arg_check	arg_check(data = data, class = "factor",  typeof = NULL, mode = NULL, length = 1, prop = FALSE,  double_as_integer_allowed = FALSE, options = NULL, all_options_in_data = FALSE,  na_contain = TRUE, neg_values = TRUE, inf_values = TRUE,  print = FALSE, data_name = NULL, data_arg = TRUE, safer_check = FALSE,  lib_path = lib_path, error_text = embed_error_text)	21	data, class = NULL, typeof = NULL, mode = NULL, length = NULL, prop = FALSE, double_as_integer_allowed = FALSE, options = NULL, all_options_in_data = FALSE, na_contain = FALSE, neg_values = TRUE, inf_values = TRUE, print = FALSE, data_name = NULL, data_arg = TRUE, safer_check = TRUE, lib_path = NULL, error_text = ""			GOOD
-237	arg_check	arg_check(data = data, class = "integer",  typeof = NULL, mode = NULL, length = 1, prop = FALSE,  double_as_integer_allowed = FALSE, options = NULL, all_options_in_data = FALSE,  na_contain = TRUE, neg_values = TRUE, inf_values = TRUE,  print = FALSE, data_name = NULL, data_arg = TRUE, safer_check = FALSE,  lib_path = lib_path, error_text = embed_error_text)	21	data, class = NULL, typeof = NULL, mode = NULL, length = NULL, prop = FALSE, double_as_integer_allowed = FALSE, options = NULL, all_options_in_data = FALSE, na_contain = FALSE, neg_values = TRUE, inf_values = TRUE, print = FALSE, data_name = NULL, data_arg = TRUE, safer_check = TRUE, lib_path = NULL, error_text = ""			GOOD
-245	paste0	paste0(arg_check_error_text, "data ARGUMENT MUST BE (1) A VECTOR OF STRINGS, (2) A FACTOR OR (3) A VECTOR OF INTEGERS",  collapse = NULL, recycle0 = FALSE)	20	..., collapse = NULL, recycle0 = FALSE			GOOD
-245	BE	NOT_CONSIDERED	69				
-245	OR	NOT_CONSIDERED	110				
-247	c	c(text.check, tempo.cat)	21	...			
-248	c	c(argum.check, TRUE)	22	...			
-249	c	c(checked.arg.names, tempo1$object.name)	28	...			
-251	is.null	is.null(x = argum_check)	12	x			GOOD
-252	any	any(argum_check, na.rm = TRUE)	11	..., na.rm = FALSE			GOOD
-253	stop	stop(base::paste0("\n\n================\n\n",  base::paste0(text_check[argum_check], collapse = "\n\n",  recycle0 = FALSE), "\n\n================\n\n",  collapse = NULL, recycle0 = FALSE), call. = FALSE,  domain = NULL)	7	..., call. = TRUE, domain = NULL			GOOD
-253	paste0	paste0("\n\n================\n\n",  base::paste0(text_check[argum_check], collapse = "\n\n",  recycle0 = FALSE), "\n\n================\n\n",  collapse = NULL, recycle0 = FALSE)	18	..., collapse = NULL, recycle0 = FALSE			GOOD
-254	paste0	paste0(text_check[argum_check], collapse = "\n\n",  recycle0 = FALSE)	7	..., collapse = NULL, recycle0 = FALSE			GOOD
-260	c	c("arg1")	20	...			
-261	sapply	sapply(X = base::lapply(X = tempo_arg,  FUN = function(x) { base::get(x = x, pos = -1L, envir = base::parent.frame(n = 2),  mode = "any", inherits = FALSE) }), FUN = function(x) { if (base::is.null(x = x)) { base::return(TRUE) } else { base::all(base::mode(x = x) == "character", na.rm = TRUE) } }, simplify = TRUE, USE.NAMES = TRUE)	21	X, FUN, ..., simplify = TRUE, USE.NAMES = TRUE			GOOD
-261	lapply	lapply(X = tempo_arg,  FUN = function(x) { base::get(x = x, pos = -1L, envir = base::parent.frame(n = 2),  mode = "any", inherits = FALSE) })	38	X, FUN, ...			GOOD
-263	get	get(x = x, pos = -1L, envir = base::parent.frame(n = 2),  mode = "any", inherits = FALSE)	7	x, pos = -1L, envir = as.environment(pos), mode = "any", inherits = TRUE			GOOD
-263	parent.frame	parent.frame(n = 2)	43	n = 1			GOOD
-266	is.null	is.null(x = x)	11	x			GOOD
-267	return	return(TRUE)	7	NO_ARGS			
-270	all	all(base::mode(x = x) == "character", na.rm = TRUE)	7	..., na.rm = FALSE			GOOD
-270	mode	mode(x = x)	17	x			GOOD
-273	any	any(tempo_log, na.rm = TRUE)	11	..., na.rm = FALSE			GOOD
-274	paste0	paste0("INTERNAL ERROR IN THE BACKBONE PART OF ",  intern_error_text_start, "IN THE SECTION \"management of \"\" in arguments of mode character\"\n",  base::ifelse(test = base::sum(tempo_log, na.rm = TRUE) >  1, yes = "THESE ARGUMENTS ARE", no = "THIS ARGUMENT IS"),  " NOT CLASS \"character\":\n", base::paste0(tempo_arg[tempo_log],  collapse = "\n", recycle0 = FALSE), intern_error_text_end,  collapse = NULL, recycle0 = FALSE)	20	..., collapse = NULL, recycle0 = FALSE			GOOD
-276	ifelse	ifelse(test = base::sum(tempo_log, na.rm = TRUE) >  1, yes = "THESE ARGUMENTS ARE", no = "THIS ARGUMENT IS")	7	test, yes, no			GOOD
-276	sum	sum(tempo_log, na.rm = TRUE)	27	..., na.rm = FALSE			GOOD
-278	paste0	paste0(tempo_arg[tempo_log],  collapse = "\n", recycle0 = FALSE)	38	..., collapse = NULL, recycle0 = FALSE			GOOD
-281	stop	stop(base::paste0("\n\n================\n\n", tempo_cat,  "\n\n================\n\n", collapse = NULL, recycle0 = FALSE),  call. = FALSE, domain = NULL)	7	..., call. = TRUE, domain = NULL			GOOD
-281	paste0	paste0("\n\n================\n\n", tempo_cat,  "\n\n================\n\n", collapse = NULL, recycle0 = FALSE)	18	..., collapse = NULL, recycle0 = FALSE			GOOD
-286	sapply	sapply(X = base::lapply(X = tempo_arg,  FUN = function(x) { base::get(x = x, pos = -1L, envir = base::parent.frame(n = 2),  mode = "any", inherits = FALSE) }), FUN = function(x) { base::any(x == "", na.rm = TRUE) }, simplify = TRUE, USE.NAMES = TRUE)	20	X, FUN, ..., simplify = TRUE, USE.NAMES = TRUE			GOOD
-286	lapply	lapply(X = tempo_arg,  FUN = function(x) { base::get(x = x, pos = -1L, envir = base::parent.frame(n = 2),  mode = "any", inherits = FALSE) })	37	X, FUN, ...			GOOD
-288	get	get(x = x, pos = -1L, envir = base::parent.frame(n = 2),  mode = "any", inherits = FALSE)	7	x, pos = -1L, envir = as.environment(pos), mode = "any", inherits = TRUE			GOOD
-288	parent.frame	parent.frame(n = 2)	43	n = 1			GOOD
-291	any	any(x == "", na.rm = TRUE)	7	..., na.rm = FALSE			GOOD
-293	any	any(tempo_log, na.rm = TRUE)	11	..., na.rm = FALSE			GOOD
-294	paste0	paste0(error_text_start, base::ifelse(test = base::sum(tempo_log,  na.rm = TRUE) > 1, yes = "THESE ARGUMENTS\n",  no = "THIS ARGUMENT\n"), base::paste0(tempo_arg[tempo_log],  collapse = "\n", recycle0 = FALSE), "\nCANNOT CONTAIN EMPTY STRING \"\".",  collapse = NULL, recycle0 = FALSE)	20	..., collapse = NULL, recycle0 = FALSE			GOOD
-294	ifelse	ifelse(test = base::sum(tempo_log,  na.rm = TRUE) > 1, yes = "THESE ARGUMENTS\n",  no = "THIS ARGUMENT\n")	51	test, yes, no			GOOD
-294	sum	sum(tempo_log,  na.rm = TRUE)	71	..., na.rm = FALSE			GOOD
-296	paste0	paste0(tempo_arg[tempo_log],  collapse = "\n", recycle0 = FALSE)	32	..., collapse = NULL, recycle0 = FALSE			GOOD
-299	stop	stop(base::paste0("\n\n================\n\n",  tempo_cat, "\n\n================\n\n", collapse = NULL,  recycle0 = FALSE), call. = FALSE, domain = NULL)	7	..., call. = TRUE, domain = NULL			GOOD
-299	paste0	paste0("\n\n================\n\n",  tempo_cat, "\n\n================\n\n", collapse = NULL,  recycle0 = FALSE)	18	..., collapse = NULL, recycle0 = FALSE			GOOD
-304	c	c("fake_x", "fake_y", "fake_categ",  "color")	25	...			
-306	exists	exists(x = ".Random.seed", where = -1, envir = .GlobalEnv,  frame = , mode = "any", inherits = TRUE)	11	x, where = -1, envir = if (missing(frame)) as.environment(where) else sys.frame(frame), frame, mode = "any", inherits = TRUE			GOOD
-309	on.exit	on.exit(expr = base::assign(x = ".Random.seed",  value = tempo.random.seed, pos = -1, envir = .GlobalEnv,  inherits = FALSE, immediate = TRUE), add = TRUE,  after = TRUE)	7	expr = NULL, add = FALSE, after = TRUE			GOOD
-309	assign	assign(x = ".Random.seed",  value = tempo.random.seed, pos = -1, envir = .GlobalEnv,  inherits = FALSE, immediate = TRUE)	28	x, value, pos = -1, envir = as.environment(pos), inherits = FALSE, immediate = TRUE			GOOD
-315	on.exit	on.exit(expr = base::set.seed(seed = NULL, kind = NULL,  normal.kind = NULL, sample.kind = NULL), add = TRUE,  after = TRUE)	7	expr = NULL, add = FALSE, after = TRUE			GOOD
-315	set.seed	set.seed(seed = NULL, kind = NULL,  normal.kind = NULL, sample.kind = NULL)	28	seed, kind = NULL, normal.kind = NULL, sample.kind = NULL			GOOD
-319	set.seed	set.seed(seed = seed, kind = NULL, normal.kind = NULL,  sample.kind = NULL)	7	seed, kind = NULL, normal.kind = NULL, sample.kind = NULL			GOOD
-321	options	options()	29	...			
-322	options	options(warning.length = 8170)	7	...			
-325	dev.list	dev.list()	24				
-326	on.exit	on.exit(expr = if (base::length(x = dev_list) != base::length(x = grDevices::dev.list())) { tempo_cat <- base::paste0("INTERNAL ERROR IN THE BACKBONE PART OF ",  intern_error_text_start, "SOME GRAPHIC DEVICES WERE OPENED BY ",  function_name, " BUT NOT CLOSED BEFORE END OF EXECUTION.\n\nIF IT IS EXPECTED, JUST REMOVE THE CODE DISPLAYING THIS MESSAGE INSIDE ",  function_name, ".\n\nOTHERWISE, THE PROBLEM COMES FROM OPENED GRAPHIC DEVICES BEFORE RUNNING ",  function_name, " (n = ", base::length(x = dev_list),  ") AND AFTER (n = ", base::length(x = grDevices::dev.list()),  ").", intern_error_text_end, collapse = NULL, recycle0 = FALSE) base::stop(base::paste0("\n\n================\n\n", tempo_cat,  "\n\n================\n\n", collapse = NULL, recycle0 = FALSE),  call. = FALSE, domain = NULL) }, add = TRUE, after = TRUE)	7	expr = NULL, add = FALSE, after = TRUE			GOOD
-326	length	length(x = dev_list)	32	x			GOOD
-326	length	length(x = grDevices::dev.list())	62	x			GOOD
-326	dev.list	dev.list()	84				
-327	paste0	paste0("INTERNAL ERROR IN THE BACKBONE PART OF ",  intern_error_text_start, "SOME GRAPHIC DEVICES WERE OPENED BY ",  function_name, " BUT NOT CLOSED BEFORE END OF EXECUTION.\n\nIF IT IS EXPECTED, JUST REMOVE THE CODE DISPLAYING THIS MESSAGE INSIDE ",  function_name, ".\n\nOTHERWISE, THE PROBLEM COMES FROM OPENED GRAPHIC DEVICES BEFORE RUNNING ",  function_name, " (n = ", base::length(x = dev_list),  ") AND AFTER (n = ", base::length(x = grDevices::dev.list()),  ").", intern_error_text_end, collapse = NULL, recycle0 = FALSE)	20	..., collapse = NULL, recycle0 = FALSE			GOOD
-331	length	length(x = dev_list)	32	x			GOOD
-332	AFTER	NOT_CONSIDERED	8				
-332	length	length(x = grDevices::dev.list())	28	x			GOOD
-332	dev.list	dev.list()	50				
-334	stop	stop(base::paste0("\n\n================\n\n", tempo_cat,  "\n\n================\n\n", collapse = NULL, recycle0 = FALSE),  call. = FALSE, domain = NULL)	7	..., call. = TRUE, domain = NULL			GOOD
-334	paste0	paste0("\n\n================\n\n", tempo_cat,  "\n\n================\n\n", collapse = NULL, recycle0 = FALSE)	18	..., collapse = NULL, recycle0 = FALSE			GOOD
-338	length	length(x = grDevices::dev.list())	11	x			GOOD
-338	dev.list	dev.list()	33				
-339	suppressWarnings	suppressWarnings(expr = graphics::par(no.readonly = TRUE),  classes = "warning")	18	expr, classes = "warning"			GOOD
-339	par	par(no.readonly = TRUE)	52	..., no.readonly = FALSE			GOOD
-341	on.exit	on.exit(expr = base::suppressWarnings(expr = graphics::par(par_ini,  no.readonly = TRUE), classes = "warning"), add = TRUE,  after = TRUE)	7	expr = NULL, add = FALSE, after = TRUE			GOOD
-341	suppressWarnings	suppressWarnings(expr = graphics::par(par_ini,  no.readonly = TRUE), classes = "warning")	28	expr, classes = "warning"			GOOD
-341	par	par(par_ini,  no.readonly = TRUE)	62	..., no.readonly = FALSE			GOOD
-345	length	length(x = data)	11	x			GOOD
-346	paste0	paste0(error_text_start, "data ARGUMENT CANNOT BE LENGTH 0.",  collapse = NULL, recycle0 = FALSE)	20	..., collapse = NULL, recycle0 = FALSE			GOOD
-348	stop	stop(base::paste0("\n\n================\n\n", tempo_cat,  "\n\n================\n\n", collapse = NULL, recycle0 = FALSE),  call. = FALSE, domain = NULL)	7	..., call. = TRUE, domain = NULL			GOOD
-348	paste0	paste0("\n\n================\n\n", tempo_cat,  "\n\n================\n\n", collapse = NULL, recycle0 = FALSE)	18	..., collapse = NULL, recycle0 = FALSE			GOOD
-353	paste0	paste0("(", warn_count, ") THE FIRST FOR & WHILE LOOP STEPS HAVE BEEN TOO FAR AND SUBSEQUENT LOOP STEPS WILL NOT RUN.",  collapse = NULL, recycle0 = FALSE)	21	..., collapse = NULL, recycle0 = FALSE			GOOD
-355	paste0	paste0(base::ifelse(test = base::is.null(x = warn),  yes = tempo_warn, no = base::paste0(warn, "\n\n", tempo_warn,  collapse = NULL, recycle0 = FALSE)), collapse = NULL,  recycle0 = FALSE)	15	..., collapse = NULL, recycle0 = FALSE			GOOD
-355	ifelse	ifelse(test = base::is.null(x = warn),  yes = tempo_warn, no = base::paste0(warn, "\n\n", tempo_warn,  collapse = NULL, recycle0 = FALSE))	28	test, yes, no			GOOD
-355	is.null	is.null(x = warn)	48	x			GOOD
-356	paste0	paste0(warn, "\n\n", tempo_warn,  collapse = NULL, recycle0 = FALSE)	30	..., collapse = NULL, recycle0 = FALSE			GOOD
-359	any	any(base::names(x = data) %in% reserved_words,  na.rm = TRUE)	11	..., na.rm = FALSE			GOOD
-359	names	names(x = data)	21	x			GOOD
-361	names	names(x = data)	20	x			GOOD
-362	paste0	paste0(error_text_start, "COLUMN NAMES OF THE data ARGUMENT CANNOT BE ",  base::ifelse(test = base::length(x = reserved_words) ==  1, yes = "THIS WORD", no = "ONE OF THESE WORDS"),  ":\n", base::paste0(reserved_words, collapse = "\n",  recycle0 = FALSE), "\n", base::ifelse(test = base::length(x = reserved_words) ==  1, yes = "IT IS", no = "THEY ARE"), " RESERVED FOR THE PROPER EXECUTION OF THE ",  function_name, " FUNCTION.", collapse = NULL, recycle0 = FALSE)	20	..., collapse = NULL, recycle0 = FALSE			GOOD
-363	ifelse	ifelse(test = base::length(x = reserved_words) ==  1, yes = "THIS WORD", no = "ONE OF THESE WORDS")	7	test, yes, no			GOOD
-363	length	length(x = reserved_words)	27	x			GOOD
-365	paste0	paste0(reserved_words, collapse = "\n",  recycle0 = FALSE)	14	..., collapse = NULL, recycle0 = FALSE			GOOD
-366	ifelse	ifelse(test = base::length(x = reserved_words) ==  1, yes = "IT IS", no = "THEY ARE")	32	test, yes, no			GOOD
-366	length	length(x = reserved_words)	52	x			GOOD
-369	stop	stop(base::paste0("\n\n================\n\n", tempo.cat,  "\n\n================\n\n", base::ifelse(test = base::is.null(x = warn),  yes = "", no = base::paste0("IN ADDITION\nWARNING",  base::ifelse(test = warn_count > 1, yes = "S",  no = ""), ":\n\n", warn, collapse = NULL,  recycle0 = FALSE)), collapse = NULL, recycle0 = FALSE),  call. = FALSE, domain = NULL)	7	..., call. = TRUE, domain = NULL			GOOD
-369	paste0	paste0("\n\n================\n\n", tempo.cat,  "\n\n================\n\n", base::ifelse(test = base::is.null(x = warn),  yes = "", no = base::paste0("IN ADDITION\nWARNING",  base::ifelse(test = warn_count > 1, yes = "S",  no = ""), ":\n\n", warn, collapse = NULL,  recycle0 = FALSE)), collapse = NULL, recycle0 = FALSE)	18	..., collapse = NULL, recycle0 = FALSE			GOOD
-370	ifelse	ifelse(test = base::is.null(x = warn),  yes = "", no = base::paste0("IN ADDITION\nWARNING",  base::ifelse(test = warn_count > 1, yes = "S",  no = ""), ":\n\n", warn, collapse = NULL,  recycle0 = FALSE))	35	test, yes, no			GOOD
-370	is.null	is.null(x = warn)	55	x			GOOD
-371	paste0	paste0("IN ADDITION\nWARNING",  base::ifelse(test = warn_count > 1, yes = "S",  no = ""), ":\n\n", warn, collapse = NULL,  recycle0 = FALSE)	22	..., collapse = NULL, recycle0 = FALSE			GOOD
-372	ifelse	ifelse(test = warn_count > 1, yes = "S",  no = "")	7	test, yes, no			GOOD
-377	is.null	is.null(x = warn)	12	x			GOOD
-378	on.exit	on.exit(expr = base::warning(base::paste0(base::sub(pattern = "^ERROR IN ",  replacement = "FROM ", x = error_text_start, ignore.case = FALSE,  perl = FALSE, fixed = FALSE, useBytes = FALSE), warn,  collapse = NULL, recycle0 = FALSE), call. = FALSE,  immediate. = FALSE, noBreaks. = FALSE, domain = NULL),  add = TRUE, after = TRUE)	7	expr = NULL, add = FALSE, after = TRUE			GOOD
-378	warning	warning(base::paste0(base::sub(pattern = "^ERROR IN ",  replacement = "FROM ", x = error_text_start, ignore.case = FALSE,  perl = FALSE, fixed = FALSE, useBytes = FALSE), warn,  collapse = NULL, recycle0 = FALSE), call. = FALSE,  immediate. = FALSE, noBreaks. = FALSE, domain = NULL)	28	..., call. = TRUE, immediate. = FALSE, noBreaks. = FALSE, domain = NULL			GOOD
-378	paste0	paste0(base::sub(pattern = "^ERROR IN ",  replacement = "FROM ", x = error_text_start, ignore.case = FALSE,  perl = FALSE, fixed = FALSE, useBytes = FALSE), warn,  collapse = NULL, recycle0 = FALSE)	42	..., collapse = NULL, recycle0 = FALSE			GOOD
-378	sub	sub(pattern = "^ERROR IN ",  replacement = "FROM ", x = error_text_start, ignore.case = FALSE,  perl = FALSE, fixed = FALSE, useBytes = FALSE)	55	pattern, replacement, x, ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE			GOOD
-385	on.exit	on.exit(expr = base::options(warning.length = ini_warning_length),  add = TRUE, after = TRUE)	7	expr = NULL, add = FALSE, after = TRUE			GOOD
-385	options	options(warning.length = ini_warning_length)	28	...			
-387	return	return(output)	7	NO_ARGS			
+143	all	all(base::suppressWarnings(expr = lib_path ==  base::quote(expr = ), classes = "warning"),  na.rm = TRUE)	11	..., na.rm = FALSE			GOOD
+143	suppressWarnings	suppressWarnings(expr = lib_path ==  base::quote(expr = ), classes = "warning")	21	expr, classes = "warning"			GOOD
+144	quote	quote(expr = )	7	expr			GOOD
+146	paste0	paste0(lib_path, collapse = "\n",  recycle0 = FALSE)	12	..., collapse = NULL, recycle0 = FALSE			GOOD
+148	stop	stop(base::paste0("\n\n================\n\n",  tempo_cat, "\n\n================\n\n", collapse = NULL,  recycle0 = FALSE), call. = FALSE, domain = NULL)	7	..., call. = TRUE, domain = NULL			GOOD
+148	paste0	paste0("\n\n================\n\n",  tempo_cat, "\n\n================\n\n", collapse = NULL,  recycle0 = FALSE)	18	..., collapse = NULL, recycle0 = FALSE			GOOD
+152	all	all(base::dir.exists(paths = lib_path),  na.rm = TRUE)	17	..., na.rm = FALSE			GOOD
+152	dir.exists	dir.exists(paths = lib_path)	27	paths			GOOD
+154	dir.exists	dir.exists(paths = lib_path)	21	paths			GOOD
+157	paste0	paste0(error_text_start, "THE DIRECTORY PATH",  base::ifelse(test = base::sum(tempo_log, na.rm = TRUE) >  1, yes = "S", no = ""), " INDICATED IN THE lib_path ARGUMENT DO",  base::ifelse(test = base::sum(tempo_log, na.rm = TRUE) >  1, yes = "", no = "ES"), " NOT EXIST:\n",  base::paste0(tempo_cat_b, collapse = "\n",  recycle0 = FALSE), collapse = NULL, recycle0 = FALSE)	20	..., collapse = NULL, recycle0 = FALSE			GOOD
+158	ifelse	ifelse(test = base::sum(tempo_log, na.rm = TRUE) >  1, yes = "S", no = "")	7	test, yes, no			GOOD
+158	sum	sum(tempo_log, na.rm = TRUE)	27	..., na.rm = FALSE			GOOD
+160	ifelse	ifelse(test = base::sum(tempo_log, na.rm = TRUE) >  1, yes = "", no = "ES")	7	test, yes, no			GOOD
+160	sum	sum(tempo_log, na.rm = TRUE)	27	..., na.rm = FALSE			GOOD
+162	paste0	paste0(tempo_cat_b, collapse = "\n",  recycle0 = FALSE)	7	..., collapse = NULL, recycle0 = FALSE			GOOD
+164	stop	stop(base::paste0("\n\n================\n\n",  tempo_cat, "\n\n================\n\n", collapse = NULL,  recycle0 = FALSE), call. = FALSE, domain = NULL)	7	..., call. = TRUE, domain = NULL			GOOD
+164	paste0	paste0("\n\n================\n\n",  tempo_cat, "\n\n================\n\n", collapse = NULL,  recycle0 = FALSE)	18	..., collapse = NULL, recycle0 = FALSE			GOOD
+169	.libPaths	.libPaths(new = , include.site = TRUE)	24	new, include.site = TRUE			GOOD
+170	on.exit	on.exit(expr = base:::.libPaths(new = ini_lib_path,  include.site = TRUE), add = TRUE, after = TRUE)	7	expr = NULL, add = FALSE, after = TRUE			GOOD
+170	.libPaths	.libPaths(new = ini_lib_path,  include.site = TRUE)	29	new, include.site = TRUE			GOOD
+172	.libPaths	.libPaths(new = base::sub(x = lib_path,  pattern = "/$|\\\\$", replacement = "", ignore.case = FALSE,  perl = FALSE, fixed = FALSE, useBytes = FALSE),  include.site = TRUE)	8	new, include.site = TRUE			GOOD
+172	sub	sub(x = lib_path,  pattern = "/$|\\\\$", replacement = "", ignore.case = FALSE,  perl = FALSE, fixed = FALSE, useBytes = FALSE)	30	pattern, replacement, x, ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE			GOOD
+176	.libPaths	.libPaths(new = , include.site = TRUE)	20	new, include.site = TRUE			GOOD
+180	.libPaths	.libPaths(new = , include.site = TRUE)	20	new, include.site = TRUE			GOOD
+184	.pack_and_function_check	.pack_and_function_check(fun = base::c("saferDev::arg_check",  "lubridate::seconds_to_period", "saferDev:::.base_op_check"),  lib_path = lib_path, error_text = embed_error_text)	12	fun, lib_path, error_text			GOOD
+184	c	c("saferDev::arg_check",  "lubridate::seconds_to_period", "saferDev:::.base_op_check")	49	...			
+189	.base_op_check	.base_op_check(error_text = embed_error_text)	12	error_text			GOOD
+194	paste0	paste0("ERROR ", embed_error_text,  "\n\n", collapse = NULL, recycle0 = FALSE)	31	..., collapse = NULL, recycle0 = FALSE			GOOD
+196	expression	expression(argum_check <- base::c(argum_check,  tempo$problem), text_check <- base::c(text_check, tempo$text),  checked_arg_names <- base::c(checked_arg_names, tempo$object.name))	13	...			
+196	c	c(argum_check,  tempo$problem)	45	...			
+197	c	c(text_check, tempo$text)	37	...			
+198	c	c(checked_arg_names, tempo$object.name)	28	...			
+199	arg_check	arg_check(data = data, class = NULL, typeof = NULL,  mode = "numeric", length = NULL, prop = FALSE, double_as_integer_allowed = FALSE,  options = NULL, all_options_in_data = FALSE, na_contain = TRUE,  neg_values = TRUE, inf_values = TRUE, print = FALSE,  data_name = NULL, data_arg = TRUE, safer_check = FALSE,  lib_path = lib_path, error_text = embed_error_text)	20	data, class = NULL, typeof = NULL, mode = NULL, length = NULL, prop = FALSE, double_as_integer_allowed = FALSE, options = NULL, all_options_in_data = FALSE, na_contain = FALSE, neg_values = TRUE, inf_values = TRUE, print = FALSE, data_name = NULL, data_arg = TRUE, safer_check = TRUE, lib_path = NULL, error_text = ""			GOOD
+205	eval	eval(expr = ee, envir = base::environment(fun = NULL),  enclos = base::environment(fun = NULL))	7	expr, envir = parent.frame(), enclos = if (is.list(envir) || is.pairlist(envir)) parent.frame() else baseenv()			GOOD
+205	environment	environment(fun = NULL)	37	fun = NULL			GOOD
+206	environment	environment(fun = NULL)	16	fun = NULL			GOOD
+207	arg_check	arg_check(data = arg1, class = "vector",  typeof = NULL, mode = "character", length = 1, prop = FALSE,  double_as_integer_allowed = FALSE, options = NULL, all_options_in_data = FALSE,  na_contain = TRUE, neg_values = TRUE, inf_values = TRUE,  print = FALSE, data_name = NULL, data_arg = TRUE, safer_check = FALSE,  lib_path = lib_path, error_text = embed_error_text)	20	data, class = NULL, typeof = NULL, mode = NULL, length = NULL, prop = FALSE, double_as_integer_allowed = FALSE, options = NULL, all_options_in_data = FALSE, na_contain = FALSE, neg_values = TRUE, inf_values = TRUE, print = FALSE, data_name = NULL, data_arg = TRUE, safer_check = TRUE, lib_path = NULL, error_text = ""			GOOD
+213	eval	eval(expr = ee, envir = base::environment(fun = NULL),  enclos = base::environment(fun = NULL))	7	expr, envir = parent.frame(), enclos = if (is.list(envir) || is.pairlist(envir)) parent.frame() else baseenv()			GOOD
+213	environment	environment(fun = NULL)	37	fun = NULL			GOOD
+214	environment	environment(fun = NULL)	16	fun = NULL			GOOD
+215	is.null	is.null(x = seed)	12	x			GOOD
+216	arg_check	arg_check(data = seed, class = "vector",  typeof = "integer", mode = NULL, length = NULL, prop = FALSE,  double_as_integer_allowed = TRUE, options = NULL,  all_options_in_data = FALSE, na_contain = FALSE,  neg_values = TRUE, inf_values = FALSE, print = FALSE,  data_name = NULL, data_arg = TRUE, safer_check = FALSE,  lib_path = lib_path, error_text = embed_error_text)	20	data, class = NULL, typeof = NULL, mode = NULL, length = NULL, prop = FALSE, double_as_integer_allowed = FALSE, options = NULL, all_options_in_data = FALSE, na_contain = FALSE, neg_values = TRUE, inf_values = TRUE, print = FALSE, data_name = NULL, data_arg = TRUE, safer_check = TRUE, lib_path = NULL, error_text = ""			GOOD
+223	eval	eval(expr = ee, envir = base::environment(fun = NULL),  enclos = base::environment(fun = NULL))	7	expr, envir = parent.frame(), enclos = if (is.list(envir) || is.pairlist(envir)) parent.frame() else baseenv()			GOOD
+223	environment	environment(fun = NULL)	37	fun = NULL			GOOD
+224	environment	environment(fun = NULL)	16	fun = NULL			GOOD
+226	arg_check	arg_check(data = data, class = "vector",  typeof = NULL, mode = "character", length = 1, prop = FALSE,  double_as_integer_allowed = FALSE, options = NULL, all_options_in_data = FALSE,  na_contain = TRUE, neg_values = TRUE, inf_values = TRUE,  print = FALSE, data_name = NULL, data_arg = TRUE, safer_check = FALSE,  lib_path = lib_path, error_text = embed_error_text)	21	data, class = NULL, typeof = NULL, mode = NULL, length = NULL, prop = FALSE, double_as_integer_allowed = FALSE, options = NULL, all_options_in_data = FALSE, na_contain = FALSE, neg_values = TRUE, inf_values = TRUE, print = FALSE, data_name = NULL, data_arg = TRUE, safer_check = TRUE, lib_path = NULL, error_text = ""			GOOD
+232	arg_check	arg_check(data = data, class = "factor",  typeof = NULL, mode = NULL, length = 1, prop = FALSE,  double_as_integer_allowed = FALSE, options = NULL, all_options_in_data = FALSE,  na_contain = TRUE, neg_values = TRUE, inf_values = TRUE,  print = FALSE, data_name = NULL, data_arg = TRUE, safer_check = FALSE,  lib_path = lib_path, error_text = embed_error_text)	21	data, class = NULL, typeof = NULL, mode = NULL, length = NULL, prop = FALSE, double_as_integer_allowed = FALSE, options = NULL, all_options_in_data = FALSE, na_contain = FALSE, neg_values = TRUE, inf_values = TRUE, print = FALSE, data_name = NULL, data_arg = TRUE, safer_check = TRUE, lib_path = NULL, error_text = ""			GOOD
+238	arg_check	arg_check(data = data, class = "integer",  typeof = NULL, mode = NULL, length = 1, prop = FALSE,  double_as_integer_allowed = FALSE, options = NULL, all_options_in_data = FALSE,  na_contain = TRUE, neg_values = TRUE, inf_values = TRUE,  print = FALSE, data_name = NULL, data_arg = TRUE, safer_check = FALSE,  lib_path = lib_path, error_text = embed_error_text)	21	data, class = NULL, typeof = NULL, mode = NULL, length = NULL, prop = FALSE, double_as_integer_allowed = FALSE, options = NULL, all_options_in_data = FALSE, na_contain = FALSE, neg_values = TRUE, inf_values = TRUE, print = FALSE, data_name = NULL, data_arg = TRUE, safer_check = TRUE, lib_path = NULL, error_text = ""			GOOD
+246	paste0	paste0(arg_check_error_text, "data ARGUMENT MUST BE (1) A VECTOR OF STRINGS, (2) A FACTOR OR (3) A VECTOR OF INTEGERS",  collapse = NULL, recycle0 = FALSE)	20	..., collapse = NULL, recycle0 = FALSE			GOOD
+246	BE	NOT_CONSIDERED	69				
+246	OR	NOT_CONSIDERED	110				
+248	c	c(text.check, tempo.cat)	21	...			
+249	c	c(argum.check, TRUE)	22	...			
+250	c	c(checked.arg.names, tempo1$object.name)	28	...			
+252	is.null	is.null(x = argum_check)	12	x			GOOD
+253	any	any(argum_check, na.rm = TRUE)	11	..., na.rm = FALSE			GOOD
+254	stop	stop(base::paste0("\n\n================\n\n",  base::paste0(text_check[argum_check], collapse = "\n\n",  recycle0 = FALSE), "\n\n================\n\n",  collapse = NULL, recycle0 = FALSE), call. = FALSE,  domain = NULL)	7	..., call. = TRUE, domain = NULL			GOOD
+254	paste0	paste0("\n\n================\n\n",  base::paste0(text_check[argum_check], collapse = "\n\n",  recycle0 = FALSE), "\n\n================\n\n",  collapse = NULL, recycle0 = FALSE)	18	..., collapse = NULL, recycle0 = FALSE			GOOD
+255	paste0	paste0(text_check[argum_check], collapse = "\n\n",  recycle0 = FALSE)	7	..., collapse = NULL, recycle0 = FALSE			GOOD
+261	c	c("arg1")	20	...			
+262	sapply	sapply(X = base::lapply(X = tempo_arg,  FUN = function(x) { base::get(x = x, pos = -1L, envir = base::parent.frame(n = 2),  mode = "any", inherits = FALSE) }), FUN = function(x) { if (base::is.null(x = x)) { base::return(TRUE) } else { base::all(base::mode(x = x) == "character", na.rm = TRUE) } }, simplify = TRUE, USE.NAMES = TRUE)	21	X, FUN, ..., simplify = TRUE, USE.NAMES = TRUE			GOOD
+262	lapply	lapply(X = tempo_arg,  FUN = function(x) { base::get(x = x, pos = -1L, envir = base::parent.frame(n = 2),  mode = "any", inherits = FALSE) })	38	X, FUN, ...			GOOD
+264	get	get(x = x, pos = -1L, envir = base::parent.frame(n = 2),  mode = "any", inherits = FALSE)	7	x, pos = -1L, envir = as.environment(pos), mode = "any", inherits = TRUE			GOOD
+264	parent.frame	parent.frame(n = 2)	43	n = 1			GOOD
+267	is.null	is.null(x = x)	11	x			GOOD
+268	return	return(TRUE)	7	NO_ARGS			
+271	all	all(base::mode(x = x) == "character", na.rm = TRUE)	7	..., na.rm = FALSE			GOOD
+271	mode	mode(x = x)	17	x			GOOD
+274	any	any(tempo_log, na.rm = TRUE)	11	..., na.rm = FALSE			GOOD
+275	paste0	paste0("INTERNAL ERROR IN THE BACKBONE PART OF ",  intern_error_text_start, "IN THE SECTION \"management of \"\" in arguments of mode character\"\n",  base::ifelse(test = base::sum(tempo_log, na.rm = TRUE) >  1, yes = "THESE ARGUMENTS ARE", no = "THIS ARGUMENT IS"),  " NOT CLASS \"character\":\n", base::paste0(tempo_arg[tempo_log],  collapse = "\n", recycle0 = FALSE), intern_error_text_end,  collapse = NULL, recycle0 = FALSE)	20	..., collapse = NULL, recycle0 = FALSE			GOOD
+277	ifelse	ifelse(test = base::sum(tempo_log, na.rm = TRUE) >  1, yes = "THESE ARGUMENTS ARE", no = "THIS ARGUMENT IS")	7	test, yes, no			GOOD
+277	sum	sum(tempo_log, na.rm = TRUE)	27	..., na.rm = FALSE			GOOD
+279	paste0	paste0(tempo_arg[tempo_log],  collapse = "\n", recycle0 = FALSE)	38	..., collapse = NULL, recycle0 = FALSE			GOOD
+282	stop	stop(base::paste0("\n\n================\n\n", tempo_cat,  "\n\n================\n\n", collapse = NULL, recycle0 = FALSE),  call. = FALSE, domain = NULL)	7	..., call. = TRUE, domain = NULL			GOOD
+282	paste0	paste0("\n\n================\n\n", tempo_cat,  "\n\n================\n\n", collapse = NULL, recycle0 = FALSE)	18	..., collapse = NULL, recycle0 = FALSE			GOOD
+287	sapply	sapply(X = base::lapply(X = tempo_arg,  FUN = function(x) { base::get(x = x, pos = -1L, envir = base::parent.frame(n = 2),  mode = "any", inherits = FALSE) }), FUN = function(x) { base::any(x == "", na.rm = TRUE) }, simplify = TRUE, USE.NAMES = TRUE)	20	X, FUN, ..., simplify = TRUE, USE.NAMES = TRUE			GOOD
+287	lapply	lapply(X = tempo_arg,  FUN = function(x) { base::get(x = x, pos = -1L, envir = base::parent.frame(n = 2),  mode = "any", inherits = FALSE) })	37	X, FUN, ...			GOOD
+289	get	get(x = x, pos = -1L, envir = base::parent.frame(n = 2),  mode = "any", inherits = FALSE)	7	x, pos = -1L, envir = as.environment(pos), mode = "any", inherits = TRUE			GOOD
+289	parent.frame	parent.frame(n = 2)	43	n = 1			GOOD
+292	any	any(x == "", na.rm = TRUE)	7	..., na.rm = FALSE			GOOD
+294	any	any(tempo_log, na.rm = TRUE)	11	..., na.rm = FALSE			GOOD
+295	paste0	paste0(error_text_start, base::ifelse(test = base::sum(tempo_log,  na.rm = TRUE) > 1, yes = "THESE ARGUMENTS\n",  no = "THIS ARGUMENT\n"), base::paste0(tempo_arg[tempo_log],  collapse = "\n", recycle0 = FALSE), "\nCANNOT CONTAIN EMPTY STRING \"\".",  collapse = NULL, recycle0 = FALSE)	20	..., collapse = NULL, recycle0 = FALSE			GOOD
+295	ifelse	ifelse(test = base::sum(tempo_log,  na.rm = TRUE) > 1, yes = "THESE ARGUMENTS\n",  no = "THIS ARGUMENT\n")	51	test, yes, no			GOOD
+295	sum	sum(tempo_log,  na.rm = TRUE)	71	..., na.rm = FALSE			GOOD
+297	paste0	paste0(tempo_arg[tempo_log],  collapse = "\n", recycle0 = FALSE)	32	..., collapse = NULL, recycle0 = FALSE			GOOD
+300	stop	stop(base::paste0("\n\n================\n\n",  tempo_cat, "\n\n================\n\n", collapse = NULL,  recycle0 = FALSE), call. = FALSE, domain = NULL)	7	..., call. = TRUE, domain = NULL			GOOD
+300	paste0	paste0("\n\n================\n\n",  tempo_cat, "\n\n================\n\n", collapse = NULL,  recycle0 = FALSE)	18	..., collapse = NULL, recycle0 = FALSE			GOOD
+305	c	c("fake_x", "fake_y", "fake_categ",  "color")	25	...			
+307	exists	exists(x = ".Random.seed", where = -1, envir = .GlobalEnv,  frame = , mode = "any", inherits = TRUE)	11	x, where = -1, envir = if (missing(frame)) as.environment(where) else sys.frame(frame), frame, mode = "any", inherits = TRUE			GOOD
+310	on.exit	on.exit(expr = base::assign(x = ".Random.seed",  value = tempo.random.seed, pos = -1, envir = .GlobalEnv,  inherits = FALSE, immediate = TRUE), add = TRUE,  after = TRUE)	7	expr = NULL, add = FALSE, after = TRUE			GOOD
+310	assign	assign(x = ".Random.seed",  value = tempo.random.seed, pos = -1, envir = .GlobalEnv,  inherits = FALSE, immediate = TRUE)	28	x, value, pos = -1, envir = as.environment(pos), inherits = FALSE, immediate = TRUE			GOOD
+316	on.exit	on.exit(expr = base::set.seed(seed = NULL, kind = NULL,  normal.kind = NULL, sample.kind = NULL), add = TRUE,  after = TRUE)	7	expr = NULL, add = FALSE, after = TRUE			GOOD
+316	set.seed	set.seed(seed = NULL, kind = NULL,  normal.kind = NULL, sample.kind = NULL)	28	seed, kind = NULL, normal.kind = NULL, sample.kind = NULL			GOOD
+320	set.seed	set.seed(seed = seed, kind = NULL, normal.kind = NULL,  sample.kind = NULL)	7	seed, kind = NULL, normal.kind = NULL, sample.kind = NULL			GOOD
+322	options	options()	29	...			
+323	options	options(warning.length = 8170)	7	...			
+326	dev.list	dev.list()	24				
+327	on.exit	on.exit(expr = if (base::length(x = dev_list) != base::length(x = grDevices::dev.list())) { tempo_cat <- base::paste0("INTERNAL ERROR IN THE BACKBONE PART OF ",  intern_error_text_start, "SOME GRAPHIC DEVICES WERE OPENED BY ",  function_name, " BUT NOT CLOSED BEFORE END OF EXECUTION.\n\nIF IT IS EXPECTED, JUST REMOVE THE CODE DISPLAYING THIS MESSAGE INSIDE ",  function_name, ".\n\nOTHERWISE, THE PROBLEM COMES FROM OPENED GRAPHIC DEVICES BEFORE RUNNING ",  function_name, " (n = ", base::length(x = dev_list),  ") AND AFTER (n = ", base::length(x = grDevices::dev.list()),  ").", intern_error_text_end, collapse = NULL, recycle0 = FALSE) base::stop(base::paste0("\n\n================\n\n", tempo_cat,  "\n\n================\n\n", collapse = NULL, recycle0 = FALSE),  call. = FALSE, domain = NULL) }, add = TRUE, after = TRUE)	7	expr = NULL, add = FALSE, after = TRUE			GOOD
+327	length	length(x = dev_list)	32	x			GOOD
+327	length	length(x = grDevices::dev.list())	62	x			GOOD
+327	dev.list	dev.list()	84				
+328	paste0	paste0("INTERNAL ERROR IN THE BACKBONE PART OF ",  intern_error_text_start, "SOME GRAPHIC DEVICES WERE OPENED BY ",  function_name, " BUT NOT CLOSED BEFORE END OF EXECUTION.\n\nIF IT IS EXPECTED, JUST REMOVE THE CODE DISPLAYING THIS MESSAGE INSIDE ",  function_name, ".\n\nOTHERWISE, THE PROBLEM COMES FROM OPENED GRAPHIC DEVICES BEFORE RUNNING ",  function_name, " (n = ", base::length(x = dev_list),  ") AND AFTER (n = ", base::length(x = grDevices::dev.list()),  ").", intern_error_text_end, collapse = NULL, recycle0 = FALSE)	20	..., collapse = NULL, recycle0 = FALSE			GOOD
+332	length	length(x = dev_list)	32	x			GOOD
+333	AFTER	NOT_CONSIDERED	8				
+333	length	length(x = grDevices::dev.list())	28	x			GOOD
+333	dev.list	dev.list()	50				
+335	stop	stop(base::paste0("\n\n================\n\n", tempo_cat,  "\n\n================\n\n", collapse = NULL, recycle0 = FALSE),  call. = FALSE, domain = NULL)	7	..., call. = TRUE, domain = NULL			GOOD
+335	paste0	paste0("\n\n================\n\n", tempo_cat,  "\n\n================\n\n", collapse = NULL, recycle0 = FALSE)	18	..., collapse = NULL, recycle0 = FALSE			GOOD
+339	length	length(x = grDevices::dev.list())	11	x			GOOD
+339	dev.list	dev.list()	33				
+340	suppressWarnings	suppressWarnings(expr = graphics::par(no.readonly = TRUE),  classes = "warning")	18	expr, classes = "warning"			GOOD
+340	par	par(no.readonly = TRUE)	52	..., no.readonly = FALSE			GOOD
+342	on.exit	on.exit(expr = base::suppressWarnings(expr = graphics::par(par_ini,  no.readonly = TRUE), classes = "warning"), add = TRUE,  after = TRUE)	7	expr = NULL, add = FALSE, after = TRUE			GOOD
+342	suppressWarnings	suppressWarnings(expr = graphics::par(par_ini,  no.readonly = TRUE), classes = "warning")	28	expr, classes = "warning"			GOOD
+342	par	par(par_ini,  no.readonly = TRUE)	62	..., no.readonly = FALSE			GOOD
+346	length	length(x = data)	11	x			GOOD
+347	paste0	paste0(error_text_start, "data ARGUMENT CANNOT BE LENGTH 0.",  collapse = NULL, recycle0 = FALSE)	20	..., collapse = NULL, recycle0 = FALSE			GOOD
+349	stop	stop(base::paste0("\n\n================\n\n", tempo_cat,  "\n\n================\n\n", collapse = NULL, recycle0 = FALSE),  call. = FALSE, domain = NULL)	7	..., call. = TRUE, domain = NULL			GOOD
+349	paste0	paste0("\n\n================\n\n", tempo_cat,  "\n\n================\n\n", collapse = NULL, recycle0 = FALSE)	18	..., collapse = NULL, recycle0 = FALSE			GOOD
+354	paste0	paste0("(", warn_count, ") THE FIRST FOR & WHILE LOOP STEPS HAVE BEEN TOO FAR AND SUBSEQUENT LOOP STEPS WILL NOT RUN.",  collapse = NULL, recycle0 = FALSE)	21	..., collapse = NULL, recycle0 = FALSE			GOOD
+356	paste0	paste0(base::ifelse(test = base::is.null(x = warn),  yes = tempo_warn, no = base::paste0(warn, "\n\n", tempo_warn,  collapse = NULL, recycle0 = FALSE)), collapse = NULL,  recycle0 = FALSE)	15	..., collapse = NULL, recycle0 = FALSE			GOOD
+356	ifelse	ifelse(test = base::is.null(x = warn),  yes = tempo_warn, no = base::paste0(warn, "\n\n", tempo_warn,  collapse = NULL, recycle0 = FALSE))	28	test, yes, no			GOOD
+356	is.null	is.null(x = warn)	48	x			GOOD
+357	paste0	paste0(warn, "\n\n", tempo_warn,  collapse = NULL, recycle0 = FALSE)	30	..., collapse = NULL, recycle0 = FALSE			GOOD
+360	any	any(base::names(x = data) %in% reserved_words,  na.rm = TRUE)	11	..., na.rm = FALSE			GOOD
+360	names	names(x = data)	21	x			GOOD
+362	names	names(x = data)	20	x			GOOD
+363	paste0	paste0(error_text_start, "COLUMN NAMES OF THE data ARGUMENT CANNOT BE ",  base::ifelse(test = base::length(x = reserved_words) ==  1, yes = "THIS WORD", no = "ONE OF THESE WORDS"),  ":\n", base::paste0(reserved_words, collapse = "\n",  recycle0 = FALSE), "\n", base::ifelse(test = base::length(x = reserved_words) ==  1, yes = "IT IS", no = "THEY ARE"), " RESERVED FOR THE PROPER EXECUTION OF THE ",  function_name, " FUNCTION.", collapse = NULL, recycle0 = FALSE)	20	..., collapse = NULL, recycle0 = FALSE			GOOD
+364	ifelse	ifelse(test = base::length(x = reserved_words) ==  1, yes = "THIS WORD", no = "ONE OF THESE WORDS")	7	test, yes, no			GOOD
+364	length	length(x = reserved_words)	27	x			GOOD
+366	paste0	paste0(reserved_words, collapse = "\n",  recycle0 = FALSE)	14	..., collapse = NULL, recycle0 = FALSE			GOOD
+367	ifelse	ifelse(test = base::length(x = reserved_words) ==  1, yes = "IT IS", no = "THEY ARE")	32	test, yes, no			GOOD
+367	length	length(x = reserved_words)	52	x			GOOD
+370	stop	stop(base::paste0("\n\n================\n\n", tempo.cat,  "\n\n================\n\n", base::ifelse(test = base::is.null(x = warn),  yes = "", no = base::paste0("IN ADDITION\nWARNING",  base::ifelse(test = warn_count > 1, yes = "S",  no = ""), ":\n\n", warn, collapse = NULL,  recycle0 = FALSE)), collapse = NULL, recycle0 = FALSE),  call. = FALSE, domain = NULL)	7	..., call. = TRUE, domain = NULL			GOOD
+370	paste0	paste0("\n\n================\n\n", tempo.cat,  "\n\n================\n\n", base::ifelse(test = base::is.null(x = warn),  yes = "", no = base::paste0("IN ADDITION\nWARNING",  base::ifelse(test = warn_count > 1, yes = "S",  no = ""), ":\n\n", warn, collapse = NULL,  recycle0 = FALSE)), collapse = NULL, recycle0 = FALSE)	18	..., collapse = NULL, recycle0 = FALSE			GOOD
+371	ifelse	ifelse(test = base::is.null(x = warn),  yes = "", no = base::paste0("IN ADDITION\nWARNING",  base::ifelse(test = warn_count > 1, yes = "S",  no = ""), ":\n\n", warn, collapse = NULL,  recycle0 = FALSE))	35	test, yes, no			GOOD
+371	is.null	is.null(x = warn)	55	x			GOOD
+372	paste0	paste0("IN ADDITION\nWARNING",  base::ifelse(test = warn_count > 1, yes = "S",  no = ""), ":\n\n", warn, collapse = NULL,  recycle0 = FALSE)	22	..., collapse = NULL, recycle0 = FALSE			GOOD
+373	ifelse	ifelse(test = warn_count > 1, yes = "S",  no = "")	7	test, yes, no			GOOD
+378	is.null	is.null(x = warn)	12	x			GOOD
+379	on.exit	on.exit(expr = base::warning(base::paste0(base::sub(pattern = "^ERROR IN ",  replacement = "FROM ", x = error_text_start, ignore.case = FALSE,  perl = FALSE, fixed = FALSE, useBytes = FALSE), warn,  collapse = NULL, recycle0 = FALSE), call. = FALSE,  immediate. = FALSE, noBreaks. = FALSE, domain = NULL),  add = TRUE, after = TRUE)	7	expr = NULL, add = FALSE, after = TRUE			GOOD
+379	warning	warning(base::paste0(base::sub(pattern = "^ERROR IN ",  replacement = "FROM ", x = error_text_start, ignore.case = FALSE,  perl = FALSE, fixed = FALSE, useBytes = FALSE), warn,  collapse = NULL, recycle0 = FALSE), call. = FALSE,  immediate. = FALSE, noBreaks. = FALSE, domain = NULL)	28	..., call. = TRUE, immediate. = FALSE, noBreaks. = FALSE, domain = NULL			GOOD
+379	paste0	paste0(base::sub(pattern = "^ERROR IN ",  replacement = "FROM ", x = error_text_start, ignore.case = FALSE,  perl = FALSE, fixed = FALSE, useBytes = FALSE), warn,  collapse = NULL, recycle0 = FALSE)	42	..., collapse = NULL, recycle0 = FALSE			GOOD
+379	sub	sub(pattern = "^ERROR IN ",  replacement = "FROM ", x = error_text_start, ignore.case = FALSE,  perl = FALSE, fixed = FALSE, useBytes = FALSE)	55	pattern, replacement, x, ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE			GOOD
+386	on.exit	on.exit(expr = base::options(warning.length = ini_warning_length),  add = TRUE, after = TRUE)	7	expr = NULL, add = FALSE, after = TRUE			GOOD
+386	options	options(warning.length = ini_warning_length)	28	...			
+388	return	return(output)	7	NO_ARGS			
