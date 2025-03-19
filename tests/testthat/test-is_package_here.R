@@ -1,6 +1,5 @@
 testthat::test_that("is_package_here()", {
 
-
     ## data argument values
     str1 <- "ggplot2"
     str2 <- "NOTGOOD"
@@ -164,6 +163,11 @@ testthat::test_that("is_package_here()", {
     # result <- saferDev::get_message('is_package_here(req_package = str2, safer_check = TRUE, lib_path = NULL, error_text = "")', kind = "error", print_no = TRUE, text = NULL, safer_check = FALSE) 
     # expected <- "ERROR MESSAGE REPORTED:\nError : \n\n================\n\nERROR IN saferDev::is_package_here().\n\nREQUIRED PACKAGE:\nNOTGOOD\n\nMUST BE INSTALLED IN:\nC:/Program Files/R/R-4.4.2/library\n\n================\n\n\n"
     # testthat::expect_equal(result, expected)
+    #### end main code
 
+    ## end tests (ordered by arg appearance and conditions in the code)
+
+    ## other tests
+    ## end other tests
 
 })
