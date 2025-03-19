@@ -25,9 +25,8 @@ is_package_here <- function(
     error_text = ""
 ){
     # DEBUGGING
-    # req_package = "ggplot2" ; lib_path = "C:/Program Files/R/R-4.3.1/library" ; safer_check = TRUE
-    # req_package = "serpentine" ; lib_path = "C:/Users/yhan/AppData/Local/Temp/RtmpkfYz9V/RLIBS_2cb051b94b38" ; safer_check = TRUE
-    
+    # req_package = "ggplot2" ; safer_check = TRUE ; lib_path = "C:/Program Files/R/R-4.4.2/library" ; error_text = ""
+    # function_name <- "is_package_here" ; arg_user_setting = base::list(req_package = "ggplot2", safer_check = TRUE, lib_path = NULL, error_text = "") ; arg_names <- c("req_package", "safer_check", "lib_path", "error_text")
     #### package name
     package_name <- "saferDev" # write NULL if the function developed is not in a package
     #### end package name
@@ -220,7 +219,7 @@ is_package_here <- function(
         tempo_cat <- base::paste0(
             error_text_start, 
             "THE safer_check ARGUMENT VALUE MUST BE A SINGLE LOGICAL VALUE (TRUE OR FALSE ONLY).\nHERE IT IS:\n", 
-            base::ifelse(test = base::length(x = safer_check) == 0 | base::all(safer_check == base::quote(expr = ), na.rm = TRUE) | base::all(safer_check == "", na.rm = TRUE), yes = "<NULL, \"\", EMPTY OBJECT OR EMPTY NAME>", no = base::paste0(safer_check, collapse = "\n", recycle0 = FALSE)),
+            base::ifelse(test = base::length(x = safer_check) == 0 | base::all(base::suppressWarnings(expr = safer_check == base::quote(expr = ), classes = "warning"), na.rm = TRUE) | base::all(safer_check == "", na.rm = TRUE), yes = "<NULL, \"\", EMPTY OBJECT OR EMPTY NAME>", no = base::paste0(safer_check, collapse = "\n", recycle0 = FALSE)),
             collapse = NULL, 
             recycle0 = FALSE
         )
@@ -236,7 +235,7 @@ is_package_here <- function(
                 tempo_cat <- base::paste0(
                     error_text_start, 
                     "THE DIRECTORY PATH INDICATED IN THE lib_path ARGUMENT MUST BE A VECTOR OF CHARACTERS.\nHERE IT IS:\n", 
-                    base::ifelse(test = base::length(x = lib_path) == 0 | base::all(lib_path == base::quote(expr = ), na.rm = TRUE), yes = "<NULL, EMPTY OBJECT OR EMPTY NAME>", no = base::paste0(lib_path, collapse = "\n", recycle0 = FALSE)),
+                    base::ifelse(test = base::length(x = lib_path) == 0 | base::all(base::suppressWarnings(expr = lib_path == base::quote(expr = ), classes = "warning"), na.rm = TRUE), yes = "<NULL, EMPTY OBJECT OR EMPTY NAME>", no = base::paste0(lib_path, collapse = "\n", recycle0 = FALSE)),
                     collapse = NULL, 
                     recycle0 = FALSE
                 )
@@ -369,6 +368,20 @@ is_package_here <- function(
     ######## end graphic device checking
 
     ######## other checkings
+    tempo.log <- base::grepl(x = req_package, pattern = ":{2,3}", ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE)
+    # [a-zA-Z][a-zA-Z0-9.]+ means any single alphabet character (package name cannot start by dot or underscore or num), then any alphanum and dots
+    # (:{2}[a-zA-Z]|:{3}\\.[a-zA-Z._]) means either double colon and any single alphabet character or triple colon followed by a dot and any single alphabet character or dot (because .. is ok for function name) or underscore (because ._ is ok for function name). Starting "dot and num" or underscore is not authorized for function name
+    # [a-zA-Z0-9._]* means any several of these characters or nothing
+    if(base::all(tempo.log, na.rm = TRUE)){
+        tempo_cat <- base::paste0(
+            error_text_start, 
+            "THE STRING IN req_package ARGUMENT MUST NOT CONTAIN \"::\" OR \":::.\":\n", 
+            base::paste0(req_package[tempo.log], collapse = "\n", recycle0 = FALSE), 
+            collapse = NULL, 
+            recycle0 = FALSE
+        )
+        base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL) # == in base::stop() to be able to add several messages between ==
+    }
     ######## end other checkings
 
     #### end second round of checking and data preparation
