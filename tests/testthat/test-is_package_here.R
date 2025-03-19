@@ -159,9 +159,11 @@ testthat::test_that("is_package_here()", {
     #### end second round of checking and data preparation
 
     #### main code
-    result <- saferDev::get_message('is_package_here(req_package = str2, safer_check = TRUE, lib_path = NULL, error_text = "")', kind = "error", print_no = TRUE, text = NULL, safer_check = FALSE) 
-    expected <- "ERROR MESSAGE REPORTED:\nError : \n\n================\n\nERROR IN saferDev::is_package_here().\n\nREQUIRED PACKAGE:\nNOTGOOD\n\nMUST BE INSTALLED IN:\nC:/Program Files/R/R-4.4.2/library\n\n================\n\n\n"
-    testthat::expect_equal(result, expected)
+    testthat::expect_error(is_package_here(req_package = str2, safer_check = TRUE, lib_path = NULL, error_text = ""))
+    # below cannot be used because difficult to determine .libPath() in CI
+    # result <- saferDev::get_message('is_package_here(req_package = str2, safer_check = TRUE, lib_path = NULL, error_text = "")', kind = "error", print_no = TRUE, text = NULL, safer_check = FALSE) 
+    # expected <- "ERROR MESSAGE REPORTED:\nError : \n\n================\n\nERROR IN saferDev::is_package_here().\n\nREQUIRED PACKAGE:\nNOTGOOD\n\nMUST BE INSTALLED IN:\nC:/Program Files/R/R-4.4.2/library\n\n================\n\n\n"
+    # testthat::expect_equal(result, expected)
 
 
 })
