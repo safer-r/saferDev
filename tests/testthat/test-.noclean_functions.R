@@ -4,8 +4,12 @@ testthat::test_that(".noclean_functions()", {
     source("https://raw.githubusercontent.com/safer-r/saferDev/main/dev/other/test.R")
     ini1 = utils::capture.output(test)
     int1 <-  c(15, 17)
+    int2 <- c(15, 25)
     str1 <- c("gregexpr", "regmatches")
     str2 <- c("matches <- ",  "matched_strings <- " )
+    str3 <- c("matches <- ",  "matched_strings$" )
+    str4 <- c("gregexpr", "roc00")
+    str5 <- c("matches <- ",  'tempo.cat <- base::paste0("IAGE\nLENGTHS OF ')
     mat1 <- base::matrix(-1:3)
     factor1 <- base::as.factor(str1)
     expr1 <- expression(1)
@@ -214,6 +218,17 @@ testthat::test_that(".noclean_functions()", {
     expected <- c(FALSE, FALSE)
     testthat::expect_equal(result, expected)
 
+    # detection of a$fun() pattern
+    result <- .noclean_functions(col1 =  int1, col2 = str1, col3 = str3, ini = ini1, lib_path = NULL, error_text = "")
+    expected <- c(FALSE, TRUE)
+    testthat::expect_equal(result, expected)
+    # end detection of a$fun() pattern
+    result <- .noclean_functions(col1 =  int2, col2 = str4, col3 = str5, ini = ini1, lib_path = NULL, error_text = "")
+    expected <- c(FALSE, TRUE)
+    testthat::expect_equal(result, expected)
+    # detection of functions between quotes
+
+    # end detection of functions between quotes
     #### end main code
 
     ## end tests (ordered by arg appearance and conditions in the code)
