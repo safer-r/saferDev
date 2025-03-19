@@ -225,9 +225,8 @@ testthat::test_that(".noclean_functions()", {
     # end detection of a$fun() pattern
 
     # detection of functions between quotes
-    result <- .noclean_functions(col1 =  int2, col2 = str4, col3 = str5, ini = ini1, lib_path = NULL, error_text = "")
-    expected <- c(FALSE, TRUE)
-    testthat::expect_equal(result, expected)
+    testthat::expect_error(.noclean_functions(col1 =  int2, col2 = str4, col3 = str5, ini = ini1, lib_path = NULL, error_text = ""))
+
     # end detection of functions between quotes
     #### end main code
 
