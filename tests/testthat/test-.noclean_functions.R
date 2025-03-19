@@ -9,7 +9,7 @@ testthat::test_that(".noclean_functions()", {
     str2 <- c("matches <- ",  "matched_strings <- " )
     str3 <- c("matches <- ",  "matched_strings$" )
     str4 <- c("gregexpr", "roc00")
-    str5 <- c("matches <- ",  'tempo.cat <- base::paste0("IAGE\nLENGTHS OF ')
+    str5 <- c("matches <- ",  "tempo.cat <- base::paste0('IAGE\nLENGTHS OF ")
     mat1 <- base::matrix(-1:3)
     factor1 <- base::as.factor(str1)
     expr1 <- expression(1)
