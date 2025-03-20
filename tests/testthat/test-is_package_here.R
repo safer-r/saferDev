@@ -80,20 +80,39 @@ testthat::test_that("is_package_here()", {
 
     #### environment checking
 
-    ######## check of lib_path
-    # already done in the main function
-    ######## end check of lib_path
-
     ######## safer_check argument checking
-    # not required because not here
+    testthat::expect_error(is_package_here(req_package = str1, safer_check = NULL, lib_path = NULL, error_text = ""))
+    testthat::expect_error(is_package_here(req_package = str1, safer_check = NA, lib_path = NULL, error_text = ""))
+    testthat::expect_error(is_package_here(req_package = str1, safer_check = 1, lib_path = NULL, error_text = ""))
+    testthat::expect_error(is_package_here(req_package = str1, safer_check = c(TRUE, FALSE), lib_path = NULL, error_text = ""))
+    testthat::expect_error(is_package_here(req_package = str1, safer_check = mat1, lib_path = NULL, error_text = ""))
+    testthat::expect_error(is_package_here(req_package = str1, safer_check = factor1, lib_path = NULL, error_text = ""))
+    testthat::expect_error(is_package_here(req_package = str1, safer_check = expr1, lib_path = NULL, error_text = ""))
+    testthat::expect_error(is_package_here(req_package = str1, safer_check = fun1, lib_path = NULL, error_text = ""))
     ######## end safer_check argument checking
 
+    ######## check of lib_path
+    # safer_check must be TRUE
+    testthat::expect_no_error(is_package_here(req_package = str1, safer_check = TRUE, lib_path = NULL, error_text = ""))
+    testthat::expect_error(is_package_here(req_package = str1, safer_check = TRUE, lib_path = NA, error_text = ""))
+    testthat::expect_error(is_package_here(req_package = str1, safer_check = TRUE, lib_path = 1, error_text = ""))
+    testthat::expect_error(is_package_here(req_package = str1, safer_check = TRUE, lib_path = c(TRUE, FALSE), error_text = ""))
+    testthat::expect_error(is_package_here(req_package = str1, safer_check = TRUE, lib_path = mat1, error_text = ""))
+    testthat::expect_error(is_package_here(req_package = str1, safer_check = TRUE, lib_path = factor1, error_text = ""))
+    testthat::expect_error(is_package_here(req_package = str1, safer_check = TRUE, lib_path = expr1, error_text = ""))
+    testthat::expect_error(is_package_here(req_package = str1, safer_check = TRUE, lib_path = fun1, error_text = ""))
+    testthat::expect_error(is_package_here(req_package = str1, safer_check = TRUE, lib_path = "PATH_NOT_GOOD", error_text = ""))
+    # ini_lib_path <- base:::.libPaths(new = , include.site = TRUE)
+    # testthat::expect_no_error(arg_check(data = vec1, class = "numeric", safer_check = TRUE, lib_path = ".")) # lib_path = "." with safer_check = TRUE returns an error
+    # testthat::expect_equal(ini_lib_path, base:::.libPaths(new = , include.site = TRUE)) # .libPaths must not be changed by lib_path = "."
+    ######## end check of lib_path
+
     ######## check of the required functions from the required packages
-    # not required
+    testthat::expect_no_error(is_package_here(req_package = str1, safer_check = TRUE, lib_path = NULL, error_text = "")) # see above for the result comparison
     ######## end check of the required functions from the required packages
 
     ######## critical operator checking
-    # already done in the main function
+    testthat::expect_no_error(is_package_here(req_package = str1, safer_check = TRUE, lib_path = NULL, error_text = "")) # see above for the result comparison
     ######## end critical operator checking
 
     #### end environment checking
