@@ -102,6 +102,7 @@ testthat::test_that("is_package_here()", {
     testthat::expect_error(is_package_here(req_package = str1, safer_check = TRUE, lib_path = expr1, error_text = ""))
     testthat::expect_error(is_package_here(req_package = str1, safer_check = TRUE, lib_path = fun1, error_text = ""))
     testthat::expect_error(is_package_here(req_package = str1, safer_check = TRUE, lib_path = "PATH_NOT_GOOD", error_text = ""))
+    testthat::expect_no_error(is_package_here(req_package = str1, safer_check = TRUE, lib_path = base:::.libPaths(new = , include.site = TRUE), error_text = ""))
     # ini_lib_path <- base:::.libPaths(new = , include.site = TRUE)
     # testthat::expect_no_error(arg_check(data = vec1, class = "numeric", safer_check = TRUE, lib_path = ".")) # lib_path = "." with safer_check = TRUE returns an error
     # testthat::expect_equal(ini_lib_path, base:::.libPaths(new = , include.site = TRUE)) # .libPaths must not be changed by lib_path = "."
@@ -131,20 +132,9 @@ testthat::test_that("is_package_here()", {
     testthat::expect_error(is_package_here(req_package = expr1, safer_check = TRUE, lib_path = NULL, error_text = ""))
     testthat::expect_error(is_package_here(req_package = fun1, safer_check = TRUE, lib_path = NULL, error_text = ""))
     # end req_package
-    # pattern
-    testthat::expect_no_error(is_package_here(req_package = str1, safer_check = TRUE, lib_path = NULL, error_text = ""))
-    testthat::expect_error(is_package_here(req_package = str1, safer_check = NULL, lib_path = NULL, error_text = ""))
-    testthat::expect_error(is_package_here(req_package = str1, safer_check = NA, lib_path = NULL, error_text = ""))
-    testthat::expect_error(is_package_here(req_package = str1, safer_check = 1, lib_path = NULL, error_text = ""))
-    testthat::expect_error(is_package_here(req_package = str1, safer_check = c(TRUE, FALSE), lib_path = NULL, error_text = ""))
-    testthat::expect_error(is_package_here(req_package = str1, safer_check = mat1, lib_path = NULL, error_text = ""))
-    testthat::expect_error(is_package_here(req_package = str1, safer_check = factor1, lib_path = NULL, error_text = ""))
-    testthat::expect_error(is_package_here(req_package = str1, safer_check = expr1, lib_path = NULL, error_text = ""))
-    testthat::expect_error(is_package_here(req_package = str1, safer_check = fun1, lib_path = NULL, error_text = ""))
-    testthat::expect_error(is_package_here(req_package = str1, safer_check = str1, lib_path = NULL, error_text = ""))
-    # end pattern
-    # lib_path cannot be tested because safer_check is not present and lib_path is checked only is safer_check = TRUE in the enclosing function
-
+    # lib_path already checked above
+    # safer_check already checked above
+    # error_text converted to single string above
     ######## end argument checking with arg_check()
 
     ######## management of "" in arguments of mode character

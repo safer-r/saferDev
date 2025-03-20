@@ -80,20 +80,37 @@ testthat::test_that("is_function_here()", {
 
     #### environment checking
 
-    ######## check of lib_path
-    # already done in the main function
-    ######## end check of lib_path
-
     ######## safer_check argument checking
-    # not required because not here
+    testthat::expect_error(is_function_here(fun = str1, safer_check = NULL, lib_path = NULL, error_text = ""))
+    testthat::expect_error(is_function_here(fun = str1, safer_check = NA, lib_path = NULL, error_text = ""))
+    testthat::expect_error(is_function_here(fun = str1, safer_check = 1, lib_path = NULL, error_text = ""))
+    testthat::expect_error(is_function_here(fun = str1, safer_check = c(TRUE, FALSE), lib_path = NULL, error_text = ""))
+    testthat::expect_error(is_function_here(fun = str1, safer_check = mat1, lib_path = NULL, error_text = ""))
+    testthat::expect_error(is_function_here(fun = str1, safer_check = factor1, lib_path = NULL, error_text = ""))
+    testthat::expect_error(is_function_here(fun = str1, safer_check = expr1, lib_path = NULL, error_text = ""))
+    testthat::expect_error(is_function_here(fun = str1, safer_check = fun1, lib_path = NULL, error_text = ""))
     ######## end safer_check argument checking
 
+    ######## check of lib_path
+    # safer_check must be TRUE
+    testthat::expect_no_error(is_function_here(fun = str1, safer_check = TRUE, lib_path = NULL, error_text = ""))
+    testthat::expect_error(is_function_here(fun = str1, safer_check = TRUE, lib_path = NA, error_text = ""))
+    testthat::expect_error(is_function_here(fun = str1, safer_check = TRUE, lib_path = 1, error_text = ""))
+    testthat::expect_error(is_function_here(fun = str1, safer_check = TRUE, lib_path = c(TRUE, FALSE), error_text = ""))
+    testthat::expect_error(is_function_here(fun = str1, safer_check = TRUE, lib_path = mat1, error_text = ""))
+    testthat::expect_error(is_function_here(fun = str1, safer_check = TRUE, lib_path = factor1, error_text = ""))
+    testthat::expect_error(is_function_here(fun = str1, safer_check = TRUE, lib_path = expr1, error_text = ""))
+    testthat::expect_error(is_function_here(fun = str1, safer_check = TRUE, lib_path = fun1, error_text = ""))
+    testthat::expect_error(is_function_here(fun = str1, safer_check = TRUE, lib_path = "PATH_NOT_GOOD", error_text = ""))
+    testthat::expect_no_error(is_function_here(fun = str1, safer_check = TRUE, lib_path = base:::.libPaths(new = , include.site = TRUE), error_text = ""))
+    ######## end check of lib_path
+
     ######## check of the required functions from the required packages
-    # not required
+    testthat::expect_no_error(is_function_here(fun = str1, safer_check = TRUE, lib_path = NULL, error_text = "")) # see above for the result comparison
     ######## end check of the required functions from the required packages
 
     ######## critical operator checking
-    # already done in the main function
+    testthat::expect_no_error(is_function_here(fun = str1, safer_check = TRUE, lib_path = NULL, error_text = "")) # see above for the result comparison
     ######## end critical operator checking
 
     #### end environment checking
@@ -112,20 +129,9 @@ testthat::test_that("is_function_here()", {
     testthat::expect_error(is_function_here(fun = expr1, safer_check = TRUE, lib_path = NULL, error_text = ""))
     testthat::expect_error(is_function_here(fun = fun1, safer_check = TRUE, lib_path = NULL, error_text = ""))
     # end fun
-    # pattern
-    testthat::expect_no_error(is_function_here(fun = str1, safer_check = TRUE, lib_path = NULL, error_text = ""))
-    testthat::expect_error(is_function_here(fun = str1, safer_check = NULL, lib_path = NULL, error_text = ""))
-    testthat::expect_error(is_function_here(fun = str1, safer_check = NA, lib_path = NULL, error_text = ""))
-    testthat::expect_error(is_function_here(fun = str1, safer_check = 1, lib_path = NULL, error_text = ""))
-    testthat::expect_error(is_function_here(fun = str1, safer_check = c(TRUE, FALSE), lib_path = NULL, error_text = ""))
-    testthat::expect_error(is_function_here(fun = str1, safer_check = mat1, lib_path = NULL, error_text = ""))
-    testthat::expect_error(is_function_here(fun = str1, safer_check = factor1, lib_path = NULL, error_text = ""))
-    testthat::expect_error(is_function_here(fun = str1, safer_check = expr1, lib_path = NULL, error_text = ""))
-    testthat::expect_error(is_function_here(fun = str1, safer_check = fun1, lib_path = NULL, error_text = ""))
-    testthat::expect_error(is_function_here(fun = str1, safer_check = str1, lib_path = NULL, error_text = ""))
-    # end pattern
-    # lib_path cannot be tested because safer_check is not present and lib_path is checked only is safer_check = TRUE in the enclosing function
-
+    # lib_path already checked above
+    # safer_check already checked above
+    # error_text converted to single string above
     ######## end argument checking with arg_check()
 
     ######## management of "" in arguments of mode character
