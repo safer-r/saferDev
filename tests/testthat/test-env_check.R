@@ -178,6 +178,8 @@ testthat::test_that("env_check()", {
         expr1,
         fun1
     )
+    testthat::expect_no_error(env_check(pos = 1, name = NULL, safer_check = TRUE, lib_path = NULL, error_text = ""))
+    testthat::expect_no_error(env_check(pos = 2, name = NULL, safer_check = TRUE, lib_path = NULL, error_text = ""))
     mean <- 1
     t.test <- 1
     testthat::expect_no_error(env_check(pos = 1, name = NULL, safer_check = TRUE, lib_path = NULL, error_text = "")) # pos = 2 to be in the .GlobalEnv

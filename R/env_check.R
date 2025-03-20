@@ -2,7 +2,7 @@
 #' @description
 #' Verify that object names in the environment defined by the pos parameter are identical or not to object names in the above environments (following R Scope). This can be used to verify that names used for objects inside a function or in the working environment do not override names of objects already present in the above R environments, following the R scope.
 #' @param pos Single non nul positive integer indicating the position of the environment checked (argument n of the parent.frame() function). Value 1 means one step above the env_check() local environment (by default). This means that when env_check(pos = 1) is used inside a function A, it checks if the name of any object in the local environment of this function A is also present in above environments, following R Scope, starting by the just above environment. When env_check(pos = 1) is used in the working (Global) environment (named .GlobalEnv), it checks the object names of this .GlobalEnv environment, in the above environments. See the examples below.
-#' @param name Single character string indicating a string that will be added in the output string, for instance the name of a function inside which env_check() is used.
+#' @param name Single character string indicating a string that changes the name of the checked env (added in the output string).
 #' @param safer_check Single logical value. Perform some "safer" checks? If TRUE, checkings are performed before main code running (see https://github.com/safer-r): 1) correct lib_path argument value 2) required functions and related packages effectively present in local R lybraries and 3) R classical operators (like "<-") not overwritten by another package because of the R scope. Must be set to FALSE if this fonction is used inside another "safer" function to avoid pointless multiple checkings.
 #' @param lib_path Vector of characters specifying the absolute pathways of the directories containing the required packages for the function, if not in the default directories. Useful when R package are not installed in the default directories because of lack of admin rights.  More precisely, lib_path is passed through the new argument of .libPaths() so that the new library paths are unique(c(new, .Library.site, .Library)). Warning: .libPaths() is restored to the initial paths, after function execution. Ignored if NULL (default) or if the safer_check argument is FALSE: only the pathways specified by the current .libPaths() are used for package calling.
 #' @param error_text Single character string used to add information in error messages returned by the function, notably if the function is inside other functions, which is practical for debugging. Example: error_text = " INSIDE <PACKAGE_1>::<FUNCTION_1> INSIDE <PACKAGE_2>::<FUNCTION_2>.". If NULL, converted into "".
@@ -414,15 +414,15 @@ env_check <- function(
     # match.list <- base::vector("list", length = (base::length(base::sys.calls()) - 1 + base::length(base::search()) + base::ifelse(base::length(base::sys.calls()) == 1L, -1, 0))) # match.list is a list of all the environment tested (local of functions and R envs), base::length(base::sys.calls()) - 1 to remove the level of the ebase::nv_check() function, base::sys.calls() giving all the names of the imbricated functions, including env_check, base::ifelse(base::length(sys.calls()) == 1L, -1, 0) to remove Global env if this one is tested
     tempo.name <- base::rev(x = base::as.character(x = base::unlist(x = base::sys.calls(), recursive = TRUE, use.names = TRUE))) # get names of frames (i.e., enclosed env)
     tempo.frame <- base::rev(x = base::sys.frames())  # get frames (i.e., enclosed env)
-
     ######## dealing with source()
     # source() used in the Global env creates three frames above the Global env, which should be removed because not very interesting for variable duplications. Add a <<-(sys.frames()) in this code and source anova_contrasts code to see this. With ls(a[[4]]), we can see the content of each env, which are probably elements of source()
-    if(base::any(base::sapply(X = tempo.frame, FUN = base::environmentName, simplify = TRUE, USE.NAMES = TRUE) %in% "R_GlobalEnv", na.rm = TRUE)){
-        global.pos <- base::which(x = base::sapply(X = tempo.frame, FUN = base::environmentName, simplify = TRUE, USE.NAMES = TRUE) %in% "R_GlobalEnv", arr.ind = FALSE, useNames = TRUE)
+    # Inactivated below because I cannot find anymore what was the problem.
+    # if(base::any(base::sapply(X = tempo.frame, FUN = base::environmentName, simplify = TRUE, USE.NAMES = TRUE) %in% "R_GlobalEnv", na.rm = TRUE)){
+        # global.pos <- base::which(x = base::sapply(X = tempo.frame, FUN = base::environmentName, simplify = TRUE, USE.NAMES = TRUE) %in% "R_GlobalEnv", arr.ind = FALSE, useNames = TRUE)
         # remove the global env (because already in base::search(), and all the above env
-        tempo.name <- tempo.name[-base::c(global.pos:base::length(x = tempo.frame))]
-        tempo.frame <- tempo.frame[-base::c(global.pos:base::length(x = tempo.frame))]
-    }
+        # tempo.name <- tempo.name[-base::c(global.pos:base::length(x = tempo.frame))]
+        # tempo.frame <- tempo.frame[-base::c(global.pos:base::length(x = tempo.frame))]
+    # }
     ######## end dealing with source()
 
     # might have a problem if(length(x = tempo.name) == 0L){
@@ -446,11 +446,11 @@ env_check <- function(
     ######## output
     if( ! base::all(base::sapply(X = match.list, FUN = is.null, simplify = TRUE, USE.NAMES = TRUE), na.rm = TRUE)){
         output <- base::paste0(
-            "SOME VARIABLES ", 
+            "SOME VARIABLES OF THE CHECKED ENVIRONMENT ", 
             base::ifelse(
                 test = base::is.null(x = name), 
-                yes = "OF THE CHECKED ENVIRONMENT", 
-                no = base::paste0("OF ", name, collapse = NULL, recycle0 = FALSE)
+                yes = ls.tested, 
+                no = name
             ), 
             " ARE ALSO PRESENT IN :\n", 
             base::paste0(
@@ -460,6 +460,8 @@ env_check <- function(
                 collapse = "\n",
                 recycle0 = FALSE
             ), 
+            "\nSEARCH PATH CHECKED:\n", 
+            base::paste0(ls.input, collapse = "\n", recycle0 = FALSE), 
             "\n", 
             collapse = NULL, 
             recycle0 = FALSE
