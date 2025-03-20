@@ -354,6 +354,7 @@
         tempo.col2 <- col2[tempo.order] # reorder to work only once with duplicated functions
         tempo.ini <- ini
         pos.rm <- NULL # positions to remove (functions between quotes)
+        cat("\n\n") ; cat(paste0(ini, collapse = " **** ")) ; cat("\n\n")
         for(i2 in 1:base::length(x = tempo.col1)){
             pattern1 <- base::paste0(tempo.col2[i2], " *\\(", collapse = NULL, recycle0 = FALSE)
             lines.split <- base::strsplit(x = tempo.ini[tempo.col1[i2]], split = pattern1, fixed = FALSE, perl = FALSE, useBytes = FALSE)[[1]][1]
@@ -364,7 +365,7 @@
                 "\n",
                 paste0(tempo.ini[tempo.col1[i2]], collapse = " **** "),
                 "\n",
-                paste0(tempo.ini, collapse = " **** "),
+                paste0(tempo.col1[i2], collapse = " **** "),
                 "\n",
                 paste0(pattern1, collapse = " **** "),
                 "\n\n"
