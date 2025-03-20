@@ -366,8 +366,8 @@
                 "\n",
                 paste0(tempo.ini, collapse = " **** "),
                 "\n",
-                paste0(pattern1, collapse = " **** ")
-                
+                paste0(pattern1, collapse = " **** "),
+                "\n\n"
             ))
             # if odds number of quotes, it means that # has broken the string in the middle of a quoted part
             double.quote.test <- saferDev:::.has_odd_number_of_quotes(
