@@ -3,6 +3,9 @@ testthat::test_that("is_function_here()", {
     ## data argument values
     str1 <- "ggplot2::geom_point"
     str2 <- "NOTGOOD"
+    str3 <- "ggplot2::geom_point()"
+    str4 <- "BAD::NOTGOOD"
+    str5 <- "ggplot2::NOTGOOD"
     mat1 <- base::matrix(-1:3)
     factor1 <- base::as.factor(str1)
     expr1 <- expression(1)
@@ -162,6 +165,9 @@ testthat::test_that("is_function_here()", {
 
     #### main code
     testthat::expect_error(is_function_here(fun = str2, safer_check = TRUE, lib_path = NULL, error_text = ""))
+    testthat::expect_error(is_function_here(fun = str3, safer_check = TRUE, lib_path = NULL, error_text = ""))
+    testthat::expect_error(is_function_here(fun = str4, safer_check = TRUE, lib_path = NULL, error_text = ""))
+    testthat::expect_error(is_function_here(fun = str5, safer_check = TRUE, lib_path = NULL, error_text = ""))
     # below cannot be used because difficult to determine .libPath() in CI
     # result <- saferDev::get_message('is_function_here(fun = str2, safer_check = TRUE, lib_path = NULL, error_text = "")', kind = "error", print_no = TRUE, text = NULL, safer_check = FALSE) 
     # expected <- "ERROR MESSAGE REPORTED:\nError : \n\n================\n\nERROR IN saferDev::is_function_here().\n\nREQUIRED PACKAGE:\nNOTGOOD\n\nMUST BE INSTALLED IN:\nC:/Program Files/R/R-4.4.2/library\n\n================\n\n\n"
