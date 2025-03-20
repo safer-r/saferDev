@@ -30,6 +30,7 @@
     # DEBUGGING
     # source("https://raw.githubusercontent.com/safer-r/saferDev/main/dev/other/test.R") ; col1 = c(15, 17) ; col2 = c("gregexpr", "regmatches") ; col3 = c("matches <- ",  "matched_strings <- " ) ; ini = utils::capture.output(test) ; lib_path = NULL ; error_text = " INSIDE P1::F1"
     # source("https://raw.githubusercontent.com/safer-r/saferDev/main/dev/other/test.R") ; col1 = c(15, 22, 22) ; col2 = c("gregexpr", "col1", "roc1") ; col3 = c("matches <- ",  "matched_strings <- " ) ; ini = utils::capture.output(test) ; lib_path = NULL ; error_text = " INSIDE P1::F1"
+    # function_name <- ".noclean_functions" ; arg_user_setting = base::list(col1 = c(15, 22, 22), col2 = c("gregexpr", "col1", "roc1"), col3 = c("matches <- ",  "matched_strings <- " ), ini = utils::capture.output(test), lib_path = NULL, error_text = "") ; arg_names <- c("col1", "col2", "col3", "ini", "safer_check", "lib_path", "error_text")
 
     #### package name
     package_name <- "saferDev" # write NULL if the function developed is not in a package
@@ -356,6 +357,8 @@
         for(i2 in 1:base::length(x = tempo.col1)){
             pattern1 <- base::paste0(tempo.col2[i2], " *\\(", collapse = NULL, recycle0 = FALSE)
             lines.split <- base::strsplit(x = tempo.ini[tempo.col1[i2]], split = pattern1, fixed = FALSE, perl = FALSE, useBytes = FALSE)[[1]][1]
+            print(lines.split)
+            cat("\n")
             # if odds number of quotes, it means that # has broken the string in the middle of a quoted part
             double.quote.test <- saferDev:::.has_odd_number_of_quotes(
                 input_string = lines.split, 
