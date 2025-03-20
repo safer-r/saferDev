@@ -330,6 +330,18 @@
         )
         base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL) # == in stop() to be able to add several messages between ==
     }
+    if(base::any(col1 > base::length(x = ini), na.rm = TRUE)){
+        tempo_cat <- base::paste0(
+            error_text_start, 
+            "col1 CANNOT BE OVER THE LENGTH OF ini.\ncol1:\n", 
+            base::paste0(x = col1, collapse = "\n", recycle0 = FALSE), 
+            "\nLENGTH OF ini:\n", 
+            base::length(x = ini), 
+            collapse = NULL, 
+            recycle0 = FALSE
+        )
+        base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL) # == in stop() to be able to add several messages between ==
+    }
     #### end second round of checking and data preparation
 
     #### main code
@@ -354,22 +366,9 @@
         tempo.col2 <- col2[tempo.order] # reorder to work only once with duplicated functions
         tempo.ini <- ini
         pos.rm <- NULL # positions to remove (functions between quotes)
-        cat("\n\n") ; cat(paste0(ini, collapse = " **** ")) ; cat("\n\n")
         for(i2 in 1:base::length(x = tempo.col1)){
             pattern1 <- base::paste0(tempo.col2[i2], " *\\(", collapse = NULL, recycle0 = FALSE)
             lines.split <- base::strsplit(x = tempo.ini[tempo.col1[i2]], split = pattern1, fixed = FALSE, perl = FALSE, useBytes = FALSE)[[1]][1]
-            cat(paste0(
-                i2,
-                "\n",
-                paste0(lines.split, collapse = " **** "),
-                "\n",
-                paste0(tempo.ini[tempo.col1[i2]], collapse = " **** "),
-                "\n",
-                paste0(tempo.col1[i2], collapse = " **** "),
-                "\n",
-                paste0(pattern1, collapse = " **** "),
-                "\n\n"
-            ))
             # if odds number of quotes, it means that # has broken the string in the middle of a quoted part
             double.quote.test <- saferDev:::.has_odd_number_of_quotes(
                 input_string = lines.split, 

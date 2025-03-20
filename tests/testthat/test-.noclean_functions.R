@@ -5,6 +5,7 @@ testthat::test_that(".noclean_functions()", {
     ini1 = utils::capture.output(test)
     int1 <-  c(15, 17)
     int2 <- c(15, 25)
+    int3 <- c(15, 25000)
     str1 <- c("gregexpr", "regmatches")
     str2 <- c("matches <- ",  "matched_strings <- " )
     str3 <- c("matches <- ",  "matched_strings$" )
@@ -206,6 +207,7 @@ testthat::test_that(".noclean_functions()", {
 
     ######## other checkings
     testthat::expect_error(.noclean_functions(col1 = 1, col2 = str1, col3 = str2, ini = ini1, lib_path = NULL, error_text = ""))
+    testthat::expect_error(.noclean_functions(col1 = int3, col2 = str1, col3 = str2, ini = ini1, lib_path = NULL, error_text = ""))
     ######## end other checkings
 
     #### end second round of checking and data preparation
