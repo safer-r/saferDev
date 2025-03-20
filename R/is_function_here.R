@@ -360,6 +360,17 @@ is_function_here <- function(
     #### end second round of checking and data preparation
 
     #### main code
+    tempo.log <- base::grepl(x = fun, pattern = "^.+\\( *\\)$", ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE)
+    if(base::any(tempo.log, na.rm = TRUE)){
+        tempo_cat <- base::paste0(
+            error_text_start, 
+            "THE STRING IN fun ARGUMENT MUST NOT FINISH BY \"()\":\n", 
+            base::paste0(fun[tempo.log], collapse = "\n", recycle0 = FALSE),
+            collapse = NULL, 
+            recycle0 = FALSE
+        )
+        base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL) # == in base::stop() to be able to add several messages between ==
+    }
     tempo.log <- base::grepl(x = fun, pattern = "^[a-zA-Z][a-zA-Z0-9.]*(:{2}[a-zA-Z]|:{3}\\.[a-zA-Z._])[a-zA-Z0-9._]*$", ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE)
     # [a-zA-Z][a-zA-Z0-9.]+ means any single alphabet character (package name cannot start by dot or underscore or num), then any alphanum and dots
     # (:{2}[a-zA-Z]|:{3}\\.[a-zA-Z._]) means either double colon and any single alphabet character or triple colon followed by a dot and any single alphabet character or dot (because .. is ok for function name) or underscore (because ._ is ok for function name). Starting "dot and num" or underscore is not authorized for function name
@@ -369,17 +380,6 @@ is_function_here <- function(
             error_text_start, 
             "THE STRING IN fun ARGUMENT MUST CONTAIN \"::\" OR \":::.\":\n", 
             base::paste0(fun[ ! tempo.log], collapse = "\n", recycle0 = FALSE), 
-            collapse = NULL, 
-            recycle0 = FALSE
-        )
-        base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL) # == in base::stop() to be able to add several messages between ==
-    }
-    tempo.log <- base::grepl(x = fun, pattern = "^.+\\(\\)$", ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE)
-    if(base::any(tempo.log, na.rm = TRUE)){
-        tempo_cat <- base::paste0(
-            error_text_start, 
-            "THE STRING IN fun ARGUMENT MUST NOT FINISH BY \"()\":\n", 
-            base::paste0(fun[tempo.log], collapse = "\n", recycle0 = FALSE),
             collapse = NULL, 
             recycle0 = FALSE
         )

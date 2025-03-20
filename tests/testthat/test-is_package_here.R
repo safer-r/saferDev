@@ -103,9 +103,6 @@ testthat::test_that("is_package_here()", {
     testthat::expect_error(is_package_here(req_package = str1, safer_check = TRUE, lib_path = fun1, error_text = ""))
     testthat::expect_error(is_package_here(req_package = str1, safer_check = TRUE, lib_path = "PATH_NOT_GOOD", error_text = ""))
     testthat::expect_no_error(is_package_here(req_package = str1, safer_check = TRUE, lib_path = base:::.libPaths(new = , include.site = TRUE), error_text = ""))
-    # ini_lib_path <- base:::.libPaths(new = , include.site = TRUE)
-    # testthat::expect_no_error(arg_check(data = vec1, class = "numeric", safer_check = TRUE, lib_path = ".")) # lib_path = "." with safer_check = TRUE returns an error
-    # testthat::expect_equal(ini_lib_path, base:::.libPaths(new = , include.site = TRUE)) # .libPaths must not be changed by lib_path = "."
     ######## end check of lib_path
 
     ######## check of the required functions from the required packages
