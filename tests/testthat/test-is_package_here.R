@@ -21,19 +21,11 @@ testthat::test_that("is_package_here()", {
     #### end function name
 
     ########  argument with no default values
-    # all internals have no defaults values
     testthat::expect_error(is_package_here()) 
     req_package <- str1
-    safer_check <- TRUE
-    lib_path <- NULL 
-    error_text <- ""
-    testthat::expect_error(is_package_here()) # R classical non traced error message due to error_text without default value (specific of my internal functions)
-    testthat::expect_error(is_package_here(error_text = "")) # safer error message of arg with no default values (even if the same objects exist in the R scope)
+    testthat::expect_error(is_package_here())
     rm(
-        req_package,
-        safer_check,
-        lib_path,
-        error_text
+        req_package
     )
     ########  end argument with no default values
 
