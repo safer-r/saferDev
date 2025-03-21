@@ -449,7 +449,11 @@ env_check <- function(
             "SOME VARIABLES OF THE CHECKED ENVIRONMENT ", 
             base::ifelse(
                 test = base::is.null(x = name), 
-                yes = ls.tested, 
+                yes = base::ifelse(
+                    test = base::all(base::typeof(x = ls.tested) == "character", na.rm = TRUE), 
+                    yes = ls.tested, 
+                    no = "UNNAMED"
+                ), 
                 no = name
             ), 
             " ARE ALSO PRESENT IN :\n", 
