@@ -190,6 +190,9 @@ testthat::test_that("env_check()", {
         mean,
         t.test
     )
+    result <- env_check(pos = 1, name = NULL, safer_check = TRUE, lib_path = NULL, error_text = "")
+    expected <- NULL
+    testthat::expect_equal(result, expected)
     #### end main code
 
     ## end tests (ordered by arg appearance and conditions in the code)
