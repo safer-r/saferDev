@@ -203,7 +203,7 @@
                 error_text_start, 
                 base::ifelse(test = base::sum(tempo_log, na.rm = TRUE) > 1, yes = "THESE ARGUMENTS", no = "THIS ARGUMENT"), 
                 " CANNOT BE AN EMPTY NON NULL OBJECT:\n", 
-                base::paste0(tempo_arg_user_setting_eval[tempo_log], collapse = "\n", recycle0 = FALSE), 
+                base::paste0(base::names(x = tempo_arg_user_setting_eval)[tempo_log], collapse = "\n", recycle0 = FALSE), 
                 collapse = NULL, 
                 recycle0 = FALSE
             )
