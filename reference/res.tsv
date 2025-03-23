@@ -75,10 +75,11 @@ LINE_NB	FUN_NAME	FUN_ARGS	FUN_POS	DEF_ARGS	MISSING_ARG_NAMES	MISSING_ARGS	STATUS
 95	length	length(x = x)	7	x			GOOD
 95	is.null	is.null(x = x)	35	x			GOOD
 97	any	any(tempo_log, na.rm = TRUE)	11	..., na.rm = FALSE			GOOD
-98	paste0	paste0(error_text_start, base::ifelse(test = base::sum(tempo_log,  na.rm = TRUE) > 1, yes = "THESE ARGUMENTS", no = "THIS ARGUMENT"),  " CANNOT BE AN EMPTY NON NULL OBJECT:\n", base::paste0(tempo_arg_user_setting_eval[tempo_log],  collapse = "\n", recycle0 = FALSE), collapse = NULL,  recycle0 = FALSE)	20	..., collapse = NULL, recycle0 = FALSE			GOOD
+98	paste0	paste0(error_text_start, base::ifelse(test = base::sum(tempo_log,  na.rm = TRUE) > 1, yes = "THESE ARGUMENTS", no = "THIS ARGUMENT"),  " CANNOT BE AN EMPTY NON NULL OBJECT:\n", base::paste0(base::names(x = tempo_arg_user_setting_eval)[tempo_log],  collapse = "\n", recycle0 = FALSE), collapse = NULL,  recycle0 = FALSE)	20	..., collapse = NULL, recycle0 = FALSE			GOOD
 98	ifelse	ifelse(test = base::sum(tempo_log,  na.rm = TRUE) > 1, yes = "THESE ARGUMENTS", no = "THIS ARGUMENT")	51	test, yes, no			GOOD
 98	sum	sum(tempo_log,  na.rm = TRUE)	71	..., na.rm = FALSE			GOOD
-100	paste0	paste0(tempo_arg_user_setting_eval[tempo_log],  collapse = "\n", recycle0 = FALSE)	49	..., collapse = NULL, recycle0 = FALSE			GOOD
+100	paste0	paste0(base::names(x = tempo_arg_user_setting_eval)[tempo_log],  collapse = "\n", recycle0 = FALSE)	49	..., collapse = NULL, recycle0 = FALSE			GOOD
+100	names	names(x = tempo_arg_user_setting_eval)	62	x			GOOD
 103	stop	stop(base::paste0("\n\n================\n\n",  tempo_cat, "\n\n================\n\n", collapse = NULL,  recycle0 = FALSE), call. = FALSE, domain = NULL)	7	..., call. = TRUE, domain = NULL			GOOD
 103	paste0	paste0("\n\n================\n\n",  tempo_cat, "\n\n================\n\n", collapse = NULL,  recycle0 = FALSE)	18	..., collapse = NULL, recycle0 = FALSE			GOOD
 108	length	length(x = arg_user_setting_eval)	11	x			GOOD
