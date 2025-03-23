@@ -196,7 +196,7 @@
                 error_text_start, 
                 base::ifelse(test = base::sum(tempo_log, na.rm = TRUE) > 1, yes = "THESE ARGUMENTS", no = "THIS ARGUMENT"), 
                 " CANNOT BE MADE OF NA ONLY:\n", 
-                base::paste0(arg_user_setting_names[tempo_log], collapse = "\n", recycle0 = FALSE), 
+                base::paste0(base::names(x = arg_user_setting_eval)[tempo_log], collapse = "\n", recycle0 = FALSE), 
                 collapse = NULL, 
                 recycle0 = FALSE
             )

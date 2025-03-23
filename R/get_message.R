@@ -3,12 +3,12 @@
 #' Evaluate an instruction written between "" and return the first of the error message, or the last of the warning or standard (non error non warning) messages if ever exist.
 #' 
 #' Using argument print_no = FALSE, return NULL if no message, which is convenient in some cases.
-#' @param data Single character string to evaluate.
+#' @param data any possible value. If a single character string, then it is evaluated.
 #' @param kind Single character string. Either "error" to get error messages, or "warning" to get warning messages, or "message" to get non error and non warning messages.
 #' @param header Single logical value. Add a header in the returned message?
 #' @param print_no Single logical value. Print a message saying that no message reported?
 #' @param text Single character string added to the output message (even if no message exists and print_no is TRUE). Inactivated if the header argument is FALSE. Write NULL if not required.
-#' @param env The name of an existing environment. Write NULL if not required.
+#' @param env An object corresponding to an existing environment. Write NULL if not required. Example env = .GlobalEnv.
 #' @param safer_check Single logical value. Perform some "safer" checks? If TRUE, checkings are performed before main code running (see https://github.com/safer-r): 1) correct lib_path argument value 2) required functions and related packages effectively present in local R lybraries and 3) R classical operators (like "<-") not overwritten by another package because of the R scope. Must be set to FALSE if this fonction is used inside another "safer" function to avoid pointless multiple checkings.
 #' @param lib_path Vector of characters specifying the absolute pathways of the directories containing the required packages for the function, if not in the default directories. Useful when R package are not installed in the default directories because of lack of admin rights.  More precisely, lib_path is passed through the new argument of .libPaths() so that the new library paths are unique(c(new, .Library.site, .Library)). Warning: .libPaths() is restored to the initial paths, after function execution. Ignored if NULL (default) or if the safer_check argument is FALSE: only the pathways specified by the current .libPaths() are used for package calling.
 #' @param error_text Single character string used to add information in error messages returned by the function, notably if the function is inside other functions, which is practical for debugging. Example: error_text = " INSIDE <PACKAGE_1>::<FUNCTION_1> INSIDE <PACKAGE_2>::<FUNCTION_2>.". If NULL, converted into "".
@@ -169,7 +169,7 @@ get_message <- function(
     ######## management of NULL arguments
     # before NA checking because is.na(NULL) return logical(0) and all(logical(0)) is TRUE (but secured with & base::length(x = x) > 0)
     tempo_arg <-base::c(
-        # "data", # inactivated because returns a bug if data is an unquote and uncorrect expression. Checked below
+        # "data", # inactivated because returns a bug if data is an unquote and uncorrect expression. Anyway: can be anything
         "kind", 
         "header", 
         "print_no",
@@ -196,7 +196,7 @@ get_message <- function(
     ######## management of empty non NULL arguments
     # # before NA checking because is.na(logical()) is logical(0) (but secured with & base::length(x = x) > 0)
     tempo_arg <-base::c(
-        # "data", # inactivated because returns a bug if data is an unquote and uncorrect expression. Checked below
+        # "data", # inactivated because returns a bug if data is an unquote and uncorrect expression. Anyway: can be anything
         "kind", 
         "header", 
         "print_no",
@@ -256,7 +256,7 @@ get_message <- function(
                 error_text_start, 
                 base::ifelse(test = base::sum(tempo_log, na.rm = TRUE) > 1, yes = "THESE ARGUMENTS", no = "THIS ARGUMENT"), 
                 " CANNOT BE MADE OF NA ONLY:\n", 
-                base::paste0(arg_user_setting_names[tempo_log], collapse = "\n", recycle0 = FALSE), 
+                base::paste0(base::names(x = arg_user_setting_eval)[tempo_log], collapse = "\n", recycle0 = FALSE), 
                 collapse = NULL, 
                 recycle0 = FALSE
             )
@@ -356,7 +356,7 @@ get_message <- function(
     arg_check_error_text <- base::paste0("ERROR ", embed_error_text, "\n\n", collapse = NULL, recycle0 = FALSE) # must be used instead of error_text = embed_error_text when several arg_check are performed on the same argument (tempo1, tempo2, see below)
     ee <- base::expression(argum_check <- base::c(argum_check, tempo$problem) , text_check <- base::c(text_check, tempo$text) , checked_arg_names <- base::c(checked_arg_names, tempo$object.name))
     # add as many lines as below, for each of your arguments of your function in development
-    # tempo <- saferDev::arg_check(data = data, class = "vector", typeof = "character", mode = NULL, length = 1, prop = FALSE, double_as_integer_allowed = FALSE, options = NULL, all_options_in_data = FALSE, na_contain = TRUE, neg_values = TRUE, inf_values = TRUE, print = FALSE, data_name = NULL, data_arg = TRUE, safer_check = FALSE, lib_path = lib_path, error_text = embed_error_text) ; base::eval(expr = ee, envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL)) # inactivated because returns a bug if data is an unquote and uncorrect expression. Checked below
+    # tempo <- saferDev::arg_check(data = data, class = "vector", typeof = "character", mode = NULL, length = 1, prop = FALSE, double_as_integer_allowed = FALSE, options = NULL, all_options_in_data = FALSE, na_contain = TRUE, neg_values = TRUE, inf_values = TRUE, print = FALSE, data_name = NULL, data_arg = TRUE, safer_check = FALSE, lib_path = lib_path, error_text = embed_error_text) ; base::eval(expr = ee, envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL)) # inactivated because returns a bug if data is an unquote and uncorrect expression. Anyway: can be anything
     tempo <- saferDev::arg_check(data = kind, class = NULL, typeof = NULL, mode = NULL, length = 1, prop = FALSE, double_as_integer_allowed = FALSE, options = base::c("error", "warning", "message"), all_options_in_data = FALSE, na_contain = FALSE, neg_values = TRUE, inf_values = TRUE, print = FALSE, data_name = NULL, data_arg = TRUE, safer_check = FALSE, lib_path = lib_path, error_text = embed_error_text) ; base::eval(expr = ee, envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL))
     tempo <- saferDev::arg_check(data = header, class = "vector", typeof = "logical", mode = NULL, length = 1, prop = FALSE, double_as_integer_allowed = FALSE, options = NULL, all_options_in_data = FALSE, na_contain = FALSE, neg_values = TRUE, inf_values = TRUE, print = FALSE, data_name = NULL, data_arg = TRUE, safer_check = FALSE, lib_path = lib_path, error_text = embed_error_text) ; base::eval(expr = ee, envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL))
     tempo <- saferDev::arg_check(data = print_no, class = "vector", typeof = "logical", mode = NULL, length = 1, prop = FALSE, double_as_integer_allowed = FALSE, options = NULL, all_options_in_data = FALSE, na_contain = FALSE, neg_values = TRUE, inf_values = TRUE, print = FALSE, data_name = NULL, data_arg = TRUE, safer_check = FALSE, lib_path = lib_path, error_text = embed_error_text) ; base::eval(expr = ee, envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL))
@@ -381,7 +381,7 @@ get_message <- function(
 
     ######## management of "" in arguments of mode character
     tempo_arg <- base::c(
-        # "data", # inactivated because returns a bug if data is an unquote and uncorrect expression. Checked below
+        # "data", # inactivated because returns a bug if data is an unquote and uncorrect expression. Anyway: can be anything
         "kind"
         # "text" # inactivated because can be ""
         # "lib_path" # inactivated because already checked above
