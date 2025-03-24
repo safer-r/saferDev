@@ -26,7 +26,7 @@
 #' @author \href{yushi.han2000@gmail.com}{Yushi Han}
 #' @author \href{wanghaiding442@gmail.com}{Haiding Wang}
 #' @examples
-#' get_message(data = "wilcox.test(c(1,1,3), c(1, 2, 4), paired = TRUE)", kind = "error", print_no = TRUE, text = "IN A")
+#' get_message(data = "wilcox.test(c(1,1,3), c(1, 2, 4), paired = TRUE)", kind = "error", header = TRUE, print_no = FALSE, text = NULL, env = NULL, safer_check = TRUE, lib_path = NULL, error_text = "")
 #' 
 #' get_message(data = "wilcox.test(c(1,1,3), c(1, 2, 4), paired = TRUE)", kind = "warning", 
 #' print_no = TRUE, text = "IN A")
@@ -61,14 +61,16 @@ get_message <- function(
     error_text = "" 
 ){  
     # DEBUGGING
-    # data = "wilcox.test(c(1,1,3), c(1, 2, 4), paired = TRUE)" ; kind = "warning" ; header = TRUE ; print_no = FALSE ; text = NULL ; env = NULL ; safer_check = TRUE # for function debugging
-    # data = "sum(1)" ; kind = "warning" ; header = TRUE ; print_no = FALSE ; text = NULL ; env = NULL; safer_check = TRUE  # for function debugging
-    # set.seed(1) ; obs1 <- data.frame(Time = c(rnorm(10), rnorm(10) + 2), Group1 = rep(c("G", "H"), each = 10), stringsAsFactors = TRUE) ; data = 'gg_boxplot(data1 = obs1, y = "Time", categ = "Group1")' ; kind = "warning" ; header = TRUE ; print_no = FALSE ; text = NULL ; env = NULL ; safer_check = TRUE  # for function debugging
-    # data = "message('ahah')" ; kind = "error" ; header = TRUE ; print_no = TRUE ; text = "IN A" ; env = NULL ; safer_check = TRUE 
-    # data = 'ggplot2::ggplot(data = data.frame(X = "a", stringsAsFactors = TRUE), mapping = ggplot2::aes(x = X)) + ggplot2::geom_histogram()' ; kind = "message" ; header = TRUE ; print_no = FALSE ; text = NULL ; safer_check = TRUE # for function debugging
-    # data = 'ggplot2::ggplot(data = data.frame(X = "a", stringsAsFactors = TRUE), mapping = ggplot2::aes(x = X)) + ggplot2::geom_histogram()' ; kind = "warning" ; header = TRUE ; print_no = FALSE ; text = NULL ; safer_check = TRUE # for function debugging
-    # data = "emmeans::emmeans(object = emm.rg, specs = contrast.var)" ; kind = "message" ; header = TRUE ; print_no = FALSE ; text = NULL ; env = NULL ; safer_check = TRUE # for function debugging
-    # data = sum("a") ; kind = "message" ; header = TRUE ; print_no = FALSE ; text = NULL ; env = NULL ; safer_check = TRUE # for function debugging
+    # data = "wilcox.test(c(1,1,3), c(1, 2, 4), paired = TRUE)" ; kind = "warning" ; header = TRUE ; print_no = FALSE ; text = NULL ; env = NULL ; safer_check = TRUE ; lib_path = NULL ; error_text = "" 
+    # data = "sum(1)" ; kind = "warning" ; header = TRUE ; print_no = FALSE ; text = NULL ; env = NULL; safer_check = TRUE ; lib_path = NULL ; error_text = ""  
+    # set.seed(1) ; obs1 <- data.frame(Time = c(rnorm(10), rnorm(10) + 2), Group1 = rep(c("G", "H"), each = 10), stringsAsFactors = TRUE) ; data = 'gg_boxplot(data1 = obs1, y = "Time", categ = "Group1")' ; kind = "warning" ; header = TRUE ; print_no = FALSE ; text = NULL ; env = NULL ; safer_check = TRUE ; lib_path = NULL ; error_text = ""  
+    # data = "message('ahah')" ; kind = "error" ; header = TRUE ; print_no = TRUE ; text = "IN A" ; env = NULL ; safer_check = TRUE ; lib_path = NULL ; error_text = "" 
+    # data = 'ggplot2::ggplot(data = data.frame(X = "a", stringsAsFactors = TRUE), mapping = ggplot2::aes(x = X)) + ggplot2::geom_histogram()' ; kind = "message" ; header = TRUE ; print_no = FALSE ; text = NULL ; safer_check = TRUE ; lib_path = NULL ; error_text = "" 
+    # data = 'ggplot2::ggplot(data = data.frame(X = "a", stringsAsFactors = TRUE), mapping = ggplot2::aes(x = X)) + ggplot2::geom_histogram()' ; kind = "warning" ; header = TRUE ; print_no = FALSE ; text = NULL ; safer_check = TRUE ; lib_path = NULL ; error_text = "" 
+    # data = "emmeans::emmeans(object = emm.rg, specs = contrast.var)" ; kind = "message" ; header = TRUE ; print_no = FALSE ; text = NULL ; env = NULL ; safer_check = TRUE ; lib_path = NULL ; error_text = "" 
+    # data = sum("a") ; kind = "message" ; header = TRUE ; print_no = FALSE ; text = NULL ; env = NULL ; safer_check = TRUE ; lib_path = NULL ; error_text = "" 
+    # data = NULL ; kind = "warning" ; header = TRUE ; print_no = FALSE ; text = NULL ; env = NULL ; safer_check = TRUE ; lib_path = NULL ; error_text = "" 
+    # function_name <- "get_message" ; arg_user_setting = base::list(x = as.name(x = "get_message"), kind = "error", header = TRUE, print_no = FALSE, text = NULL, env = NULL, safer_check = TRUE, lib_path = NULL, error_text = "") ; arg_names <- c("data", "kind",  "header",  "print_no",  "text", "env", "safer_check", "lib_path", "error_text")
 
     #### package name
     package_name <- "saferDev" # write NULL if the function developed is not in a package
@@ -206,6 +208,8 @@ get_message <- function(
         "lib_path"
         # "error_text" # inactivated because empty value converted to "" above
     )
+    print(env)
+    print(class(env))
     tempo_arg_user_setting_eval <- arg_user_setting_eval[base::names(x = arg_user_setting_eval) %in% tempo_arg]
     if(base::length(x = tempo_arg_user_setting_eval) != 0){
         tempo_log <- base::suppressWarnings(

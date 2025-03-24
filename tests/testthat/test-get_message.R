@@ -20,11 +20,11 @@ testthat::test_that("get_message()", {
     ## tests (ordered by arg appearance and conditions in the code)
 
     #### function name
-    testthat::expect_no_error(saferDev:::get_message()) # to test if(function_name[1] == "::()" | function_name[1] == ":::()"){
+    testthat::expect_error(saferDev:::get_message()) # to test if(function_name[1] == "::()" | function_name[1] == ":::()"){
     #### end function name
 
     ########  argument with no default values
-    testthat::expect_no_error(get_message()) # the function has default values for all args.
+    testthat::expect_error(get_message()) # the function has default values for all args.
     ########  end argument with no default values
 
     ######## management of NULL arguments
