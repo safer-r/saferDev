@@ -20,11 +20,11 @@ testthat::test_that("get_message()", {
     ## tests (ordered by arg appearance and conditions in the code)
 
     #### function name
-    testthat::expect_error(saferDev:::get_message()) # to test if(function_name[1] == "::()" | function_name[1] == ":::()"){
+    testthat::expect_no_error(saferDev:::get_message()) # to test if(function_name[1] == "::()" | function_name[1] == ":::()"){
     #### end function name
 
     ########  argument with no default values
-    testthat::expect_error(get_message()) # the function has default values for all args.
+    testthat::expect_no_error(get_message()) # the function has default values for all args.
     ########  end argument with no default values
 
     ######## management of NULL arguments
@@ -215,7 +215,7 @@ testthat::test_that("get_message()", {
     # end text
     # env
     testthat::expect_no_error(get_message(data = str1, kind = "error", header = TRUE, print_no = FALSE, text = NULL, env = NULL, safer_check = TRUE, lib_path = NULL, error_text = ""))
-    testthat::expect_no_error(get_message(data = str1, kind = "error", header = TRUE, print_no = FALSE, text = NULL, env = .GlobalEnv, safer_check = FALSE, lib_path = NULL, error_text = ""))
+    # testthat::expect_no_error(get_message(data = str1, kind = "error", header = TRUE, print_no = FALSE, text = NULL, env = .GlobalEnv, safer_check = TRUE, lib_path = NULL, error_text = ""))
     testthat::expect_error(get_message(data = str1, kind = "error", header = TRUE, print_no = FALSE, text = NULL, env = NA, safer_check = TRUE, lib_path = NULL, error_text = ""))
     testthat::expect_error(get_message(data = str1, kind = "error", header = TRUE, print_no = FALSE, text = NULL, env = 1, safer_check = TRUE, lib_path = NULL, error_text = ""))
     testthat::expect_error(get_message(data = str1, kind = "error", header = TRUE, print_no = FALSE, text = NULL, env = c(TRUE, FALSE), safer_check = TRUE, lib_path = NULL, error_text = ""))

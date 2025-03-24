@@ -208,8 +208,6 @@ get_message <- function(
         "lib_path"
         # "error_text" # inactivated because empty value converted to "" above
     )
-    print(env)
-    print(class(env))
     tempo_arg_user_setting_eval <- arg_user_setting_eval[base::names(x = arg_user_setting_eval) %in% tempo_arg]
     if(base::length(x = tempo_arg_user_setting_eval) != 0){
         tempo_log <- base::suppressWarnings(
