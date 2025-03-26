@@ -8,7 +8,7 @@
 #' @param header Single logical value. Add a header in the returned message?
 #' @param print_no Single logical value. Print a message saying that no message reported?
 #' @param text Single character string added to the output message (even if no message exists and print_no is TRUE). Inactivated if the header argument is FALSE. Write NULL if not required.
-#' @param env An object corresponding to an existing environment. Write NULL if not required. Example env = .GlobalEnv.
+#' @param env An object corresponding to an existing environment. Only used if the data argument value is a character string, which is then evaluated only in the indicated environment. Write NULL if not required (R scope is used). Example env = .GlobalEnv.
 #' @param safer_check Single logical value. Perform some "safer" checks? If TRUE, checkings are performed before main code running (see https://github.com/safer-r): 1) correct lib_path argument value 2) required functions and related packages effectively present in local R lybraries and 3) R classical operators (like "<-") not overwritten by another package because of the R scope. Must be set to FALSE if this fonction is used inside another "safer" function to avoid pointless multiple checkings.
 #' @param lib_path Vector of characters specifying the absolute pathways of the directories containing the required packages for the function, if not in the default directories. Useful when R package are not installed in the default directories because of lack of admin rights.  More precisely, lib_path is passed through the new argument of .libPaths() so that the new library paths are unique(c(new, .Library.site, .Library)). Warning: .libPaths() is restored to the initial paths, after function execution. Ignored if NULL (default) or if the safer_check argument is FALSE: only the pathways specified by the current .libPaths() are used for package calling.
 #' @param error_text Single character string used to add information in error messages returned by the function, notably if the function is inside other functions, which is practical for debugging. Example: error_text = " INSIDE <PACKAGE_1>::<FUNCTION_1> INSIDE <PACKAGE_2>::<FUNCTION_2>.". If NULL, converted into "".
@@ -389,34 +389,19 @@ get_message <- function(
         # "lib_path" # inactivated because already checked above
         # "error_text" # inactivated because can be ""
     )
-    tempo_log <- ! base::sapply(X = base::lapply(X = tempo_arg, FUN = function(x){base::get(x = x, pos = -1L, envir = base::parent.frame(n = 2), mode = "any", inherits = FALSE)}), FUN = function(x){if(base::is.null(x = x)){base::return(TRUE)}else{base::all(base::mode(x = x) == "character", na.rm = TRUE)}}, simplify = TRUE, USE.NAMES = TRUE) # parent.frame(n = 2) because sapply(lapply())  #  need to test is.null() here
+    # backbone personalized here (base::is.null(x = x)){base::return(TRUE) removed) because the 4 arguments cannot be NULL and codecov must be optimized
+    # INTERNAL ERROR IN THE BACKBONE PART section removed because codecov must be optimized. I have checked that these four arguments are tested for mode character upstream
+    tempo_log <- base::sapply(X = base::lapply(X = tempo_arg, FUN = function(x){base::get(x = x, pos = -1L, envir = base::parent.frame(n = 2), mode = "any", inherits = FALSE)}), FUN = function(x){base::any(x == "", na.rm = TRUE)}, simplify = TRUE, USE.NAMES = TRUE) # parent.frame(n = 2) because sapply(lapply()).  # for character argument that can also be NULL, if NULL -> returns FALSE. Thus no need to test is.null()
     if(base::any(tempo_log, na.rm = TRUE)){
-        # This check is here in case the developer has not correctly fill tempo_arg
         tempo_cat <- base::paste0(
-            "INTERNAL ERROR IN THE BACKBONE PART OF ", 
-            intern_error_text_start, 
-            "IN THE SECTION \"management of \"\" in arguments of mode character\"\n", 
-            base::ifelse(test = base::sum(tempo_log, na.rm = TRUE) > 1, yes = "THESE ARGUMENTS ARE", no = "THIS ARGUMENT IS"), 
-            " NOT CLASS \"character\":\n", 
-            base::paste0(tempo_arg[tempo_log], collapse = "\n", recycle0 = FALSE), 
-            intern_error_text_end, 
+            error_text_start, 
+            base::ifelse(test = base::sum(tempo_log, na.rm = TRUE) > 1, yes = "THESE ARGUMENTS\n", no = "THIS ARGUMENT\n"), 
+            base::paste0(tempo_arg[tempo_log], collapse = "\n", recycle0 = FALSE),
+            "\nCANNOT CONTAIN EMPTY STRING \"\".", 
             collapse = NULL, 
             recycle0 = FALSE
         )
-        base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL)
-    }else{
-        tempo_log <- base::sapply(X = base::lapply(X = tempo_arg, FUN = function(x){base::get(x = x, pos = -1L, envir = base::parent.frame(n = 2), mode = "any", inherits = FALSE)}), FUN = function(x){base::any(x == "", na.rm = TRUE)}, simplify = TRUE, USE.NAMES = TRUE) # parent.frame(n = 2) because sapply(lapply()).  # for character argument that can also be NULL, if NULL -> returns FALSE. Thus no need to test is.null()
-        if(base::any(tempo_log, na.rm = TRUE)){
-            tempo_cat <- base::paste0(
-                error_text_start, 
-                base::ifelse(test = base::sum(tempo_log, na.rm = TRUE) > 1, yes = "THESE ARGUMENTS\n", no = "THIS ARGUMENT\n"), 
-                base::paste0(tempo_arg[tempo_log], collapse = "\n", recycle0 = FALSE),
-                "\nCANNOT CONTAIN EMPTY STRING \"\".", 
-                collapse = NULL, 
-                recycle0 = FALSE
-            )
-            base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL) # == in stop() to be able to add several messages between ==
-        }
+        base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL) # == in stop() to be able to add several messages between ==
     }
     ######## end management of "" in arguments of mode character
 
@@ -436,31 +421,7 @@ get_message <- function(
     ######## graphic device checking
     # check the number of graphic devices on exit
     dev_list <- grDevices::dev.list() 
-    base::on.exit(
-        expr = if(base::length(x = dev_list) != base::length(x = grDevices::dev.list())){
-            tempo_cat <- base::paste0(
-                "INTERNAL ERROR IN THE BACKBONE PART OF ", 
-                intern_error_text_start, 
-                "SOME GRAPHIC DEVICES WERE OPENED BY ", 
-                function_name, 
-                " BUT NOT CLOSED BEFORE END OF EXECUTION.\n\nIF IT IS EXPECTED, JUST REMOVE THE CODE DISPLAYING THIS MESSAGE INSIDE ", 
-                function_name, 
-                ".\n\nOTHERWISE, THE PROBLEM COMES FROM OPENED GRAPHIC DEVICES BEFORE RUNNING ", 
-                function_name, 
-                " (n = ", 
-                base::length(x = dev_list), 
-                ") AND AFTER (n = ", 
-                base::length(x = grDevices::dev.list()), 
-                ").", 
-                intern_error_text_end, 
-                collapse = NULL, 
-                recycle0 = FALSE
-            )
-            base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL)
-        }, 
-        add = TRUE, 
-        after = TRUE
-    )
+    base::on.exit(expr = if(base::length(x = dev_list) != base::length(x = grDevices::dev.list())){tempo_cat <- base::paste0("INTERNAL ERROR IN THE BACKBONE PART OF ", intern_error_text_start, "SOME GRAPHIC DEVICES WERE OPENED BY ", function_name, " BUT NOT CLOSED BEFORE END OF EXECUTION.\n\nIF IT IS EXPECTED, JUST REMOVE THE CODE DISPLAYING THIS MESSAGE INSIDE ", function_name, ".\n\nOTHERWISE, THE PROBLEM COMES FROM OPENED GRAPHIC DEVICES BEFORE RUNNING ", function_name, " (n = ", base::length(x = dev_list), ") AND AFTER (n = ", base::length(x = grDevices::dev.list()), ").", intern_error_text_end, collapse = NULL, recycle0 = FALSE) ; base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL)}, add = TRUE, after = TRUE)
     # end check the number of graphic devices on exit
     # restore the graphic parameters on exit
     if(base::length(x = grDevices::dev.list()) > 0){

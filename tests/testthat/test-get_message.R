@@ -215,7 +215,7 @@ testthat::test_that("get_message()", {
     # end text
     # env
     testthat::expect_no_error(get_message(data = str1, kind = "error", header = TRUE, print_no = FALSE, text = NULL, env = NULL, safer_check = TRUE, lib_path = NULL, error_text = ""))
-    testthat::expect_no_error(get_message(data = str1, kind = "error", header = TRUE, print_no = FALSE, text = NULL, env = baseenv(), safer_check = TRUE, lib_path = NULL, error_text = "")) # weird. Return an error 
+    testthat::expect_no_error(get_message(data = str1, kind = "error", header = TRUE, print_no = FALSE, text = NULL, env = baseenv(), safer_check = TRUE, lib_path = NULL, error_text = "")) # weird. Return an error with .GlobalEnv
     testthat::expect_error(get_message(data = str1, kind = "error", header = TRUE, print_no = FALSE, text = NULL, env = NA, safer_check = TRUE, lib_path = NULL, error_text = ""))
     testthat::expect_error(get_message(data = str1, kind = "error", header = TRUE, print_no = FALSE, text = NULL, env = 1, safer_check = TRUE, lib_path = NULL, error_text = ""))
     testthat::expect_error(get_message(data = str1, kind = "error", header = TRUE, print_no = FALSE, text = NULL, env = c(TRUE, FALSE), safer_check = TRUE, lib_path = NULL, error_text = ""))
@@ -249,6 +249,7 @@ testthat::test_that("get_message()", {
     ######## end warning initiation
 
     ######## graphic device checking
+    testthat::expect_no_error(get_message(data = plot(1), kind = "error", header = TRUE, print_no = FALSE, text = NULL, env = NULL, safer_check = TRUE, lib_path = NULL, error_text = ""))
     ######## end graphic device checking
 
     ######## other checkings
