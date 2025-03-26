@@ -47,7 +47,7 @@
 #' get_message(data = "ggplot2::ggplot(data = data.frame(X = 1:10, stringsAsFactors = TRUE), 
 #' mapping = ggplot2::aes(x = X)) + ggplot2::geom_histogram()", kind = "message", print_no = TRUE, 
 #' text = "IN INSTRUCTION 1")
-#' @importFrom ggplot2 ggplot_build
+#' @importFrom ggplot2 ggplot_build dplyr
 #' @export
 get_message <- function(
     data, 
@@ -384,25 +384,11 @@ get_message <- function(
     ######## management of "" in arguments of mode character
     tempo_arg <- base::c(
         # "data", # inactivated because returns a bug if data is an unquote and uncorrect expression. Anyway: can be anything
-        "kind"
+        # "kind" # already checked in arg_check section because it is an optional arg
         # "text" # inactivated because can be ""
         # "lib_path" # inactivated because already checked above
         # "error_text" # inactivated because can be ""
     )
-    # backbone personalized here (base::is.null(x = x)){base::return(TRUE) removed) because the 4 arguments cannot be NULL and codecov must be optimized
-    # INTERNAL ERROR IN THE BACKBONE PART section removed because codecov must be optimized. I have checked that these four arguments are tested for mode character upstream
-    tempo_log <- base::sapply(X = base::lapply(X = tempo_arg, FUN = function(x){base::get(x = x, pos = -1L, envir = base::parent.frame(n = 2), mode = "any", inherits = FALSE)}), FUN = function(x){base::any(x == "", na.rm = TRUE)}, simplify = TRUE, USE.NAMES = TRUE) # parent.frame(n = 2) because sapply(lapply()).  # for character argument that can also be NULL, if NULL -> returns FALSE. Thus no need to test is.null()
-    if(base::any(tempo_log, na.rm = TRUE)){
-        tempo_cat <- base::paste0(
-            error_text_start, 
-            base::ifelse(test = base::sum(tempo_log, na.rm = TRUE) > 1, yes = "THESE ARGUMENTS\n", no = "THIS ARGUMENT\n"), 
-            base::paste0(tempo_arg[tempo_log], collapse = "\n", recycle0 = FALSE),
-            "\nCANNOT CONTAIN EMPTY STRING \"\".", 
-            collapse = NULL, 
-            recycle0 = FALSE
-        )
-        base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL) # == in stop() to be able to add several messages between ==
-    }
     ######## end management of "" in arguments of mode character
 
     #### end argument secondary checking
