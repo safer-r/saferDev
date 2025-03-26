@@ -476,102 +476,105 @@ get_message <- function(
     #### end second round of checking and data preparation
 
     #### main code
-    grDevices::pdf(file = NULL, width = , height = , onefile = , family = , title = , fonts = , version = , paper = , encoding = , bg = , fg = , pointsize = , pagecentre = , colormodel = , useDingbats = , useKerning = , fillOddEven = , compress = ) # send plots into a NULL file, no pdf file created
-    window.nb <- grDevices::dev.cur()
-    base::invisible(x = grDevices::dev.set(which = window.nb))
-    # last warning cannot be used because suppressWarnings() does not modify last.warning present in the base evironment (created at first warning in a new R session), or warnings() # to reset the warning history : unlockBinding("last.warning", baseenv()) ; assign("last.warning", NULL, envir = baseenv())
     output <- NULL
-    tempo.error <- base::try(expr = base::suppressMessages(expr = base::suppressWarnings(expr = base::eval(expr = base::parse(text = data, file = "", n = NULL, prompt = "?", keep.source = base::getOption(x = "keep.source", default = NULL), srcfile = NULL, encoding = "unknown"), envir = if(base::is.null(x = env)){base::parent.frame(n = 1)}else{env}, enclos = base::environment(fun = NULL)), classes = "warning"), classes = "message"), silent = TRUE, outFile = base::getOption(x = "try.outFile", default = base::stderr())) # get error message, not warning or messages
-    if(base::any(base::class(x = tempo.error) %in% base::c("gg", "ggplot"), na.rm = TRUE)){ # %in% never returns NA
-        tempo.error <- base::try(expr = base::suppressMessages(expr = base::suppressWarnings(expr = ggplot2::ggplot_build(plot = tempo.error), classes = "warning"), classes = "message"), silent = TRUE, outFile = base::getOption(x = "try.outFile", default = base::stderr()))[1]
-    }
-    if(base::exists(x = "tempo.error", where = -1, envir = base::environment(fun = NULL), frame = , mode = "any", inherits = FALSE) == TRUE){ # inherits = FALSE avoid the portee lexical and thus the declared word
-        if( ! base::all(base::class(x = tempo.error) == "try-error", na.rm = TRUE)){ # deal with NULL and S4 objects. Old code:  ! (base::all(base::class(tempo.error) == "try-error") & base::any(base::grepl(x = tempo.error, pattern = "^Error|^error|^ERROR"))) but problem with S4 objects. Old code : if((base::length(tempo.error) > 0 & ! base::any(base::grepl(x = tempo.error, pattern = "^Error|^error|^ERROR"))) | (base::length(tempo.error) == 0) ){ but problem when tempo.error is a list but added this did not work: | ! base::all(base::class(tempo.error) == "character") # no NA returned using base::class()
+    tempo.error <- base::try(expr = base::suppressMessages(expr = base::suppressWarnings(expr = base::eval(expr = base::parse(text = is.null(data), file = "", n = NULL, prompt = "?", keep.source = base::getOption(x = "keep.source", default = NULL), srcfile = NULL, encoding = "unknown"), envir = if(base::is.null(x = env)){base::parent.frame(n = 1)}else{env}, enclos = base::environment(fun = NULL)), classes = "warning"), classes = "message"), silent = TRUE, outFile = base::getOption(x = "try.outFile", default = base::stderr())) # deal fisrt with data = NULL: return NULL
+    if( ! base::all(tempo.error == TRUE, na.rm = TRUE)){
+        grDevices::pdf(file = NULL, width = , height = , onefile = , family = , title = , fonts = , version = , paper = , encoding = , bg = , fg = , pointsize = , pagecentre = , colormodel = , useDingbats = , useKerning = , fillOddEven = , compress = ) # send plots into a NULL file, no pdf file created
+        window.nb <- grDevices::dev.cur()
+        base::invisible(x = grDevices::dev.set(which = window.nb))
+        # last warning cannot be used because suppressWarnings() does not modify last.warning present in the base evironment (created at first warning in a new R session), or warnings() # to reset the warning history : unlockBinding("last.warning", baseenv()) ; assign("last.warning", NULL, envir = baseenv())
+        tempo.error <- base::try(expr = base::suppressMessages(expr = base::suppressWarnings(expr = base::eval(expr = base::parse(text = data, file = "", n = NULL, prompt = "?", keep.source = base::getOption(x = "keep.source", default = NULL), srcfile = NULL, encoding = "unknown"), envir = if(base::is.null(x = env)){base::parent.frame(n = 1)}else{env}, enclos = base::environment(fun = NULL)), classes = "warning"), classes = "message"), silent = TRUE, outFile = base::getOption(x = "try.outFile", default = base::stderr())) # get error message, not warning or messages
+        if(base::any(base::class(x = tempo.error) %in% base::c("gg", "ggplot"), na.rm = TRUE)){ # %in% never returns NA
+            tempo.error <- base::try(expr = base::suppressMessages(expr = base::suppressWarnings(expr = ggplot2::ggplot_build(plot = tempo.error), classes = "warning"), classes = "message"), silent = TRUE, outFile = base::getOption(x = "try.outFile", default = base::stderr()))[1]
+        }
+        if(base::exists(x = "tempo.error", where = -1, envir = base::environment(fun = NULL), frame = , mode = "any", inherits = FALSE) == TRUE){ # inherits = FALSE avoid the portee lexical and thus the declared word
+            if( ! base::all(base::class(x = tempo.error) == "try-error", na.rm = TRUE)){ # deal with NULL and S4 objects. Old code:  ! (base::all(base::class(tempo.error) == "try-error") & base::any(base::grepl(x = tempo.error, pattern = "^Error|^error|^ERROR"))) but problem with S4 objects. Old code : if((base::length(tempo.error) > 0 & ! base::any(base::grepl(x = tempo.error, pattern = "^Error|^error|^ERROR"))) | (base::length(tempo.error) == 0) ){ but problem when tempo.error is a list but added this did not work: | ! base::all(base::class(tempo.error) == "character") # no NA returned using base::class()
+                tempo.error <- NULL
+            }
+        }else{
             tempo.error <- NULL
         }
-    }else{
-        tempo.error <- NULL
-    }
-    if(kind == "error" & ! base::is.null(x = tempo.error)){ # 
-        if(header == TRUE){
-            tempo.error[1] <- base::gsub(x = tempo.error[1], pattern = "^Error i|^error i|^ERROR I", replacement = "I", ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE)
-            output <- base::paste0("ERROR MESSAGE REPORTED", base::ifelse(test = base::is.null(x = text), yes = "", no = " "), text, ":\n", tempo.error[1], collapse = NULL, recycle0 = FALSE) #
-        }else{
-            output <- tempo.error[1] #
-        }
-    }else if(kind == "error" & base::is.null(x = tempo.error) & print_no == TRUE){
-        output <- base::paste0("NO ERROR MESSAGE REPORTED", base::ifelse(test = base::is.null(x = text), yes = "", no = " "), text, collapse = NULL, recycle0 = FALSE)
-    }else if(kind != "error" & ( ! base::is.null(x = tempo.error)) & print_no == TRUE){
-        output <- base::paste0("NO POTENTIAL ", base::ifelse(test = kind == "warning", yes = "WARNING", no = "STANDARD (NON ERROR AND NON WARNING)"), " MESSAGE BECAUSE OF ERROR MESSAGE REPORTED", base::ifelse(test = base::is.null(x = text), yes = "", no = " "), text, collapse = NULL, recycle0 = FALSE)
-    }else if(base::is.null(x = tempo.error)){
-        fun.warning.capture <- function(expr){
-            # from demo(error.catching) typed in the R console, coming from ?tryCatch
-            # see also http://mazamascience.com/WorkingWithData/?p=912
-            # return a character string or NULL
-            # expr <- wilcox.test.default(c(1, 1, 3), c(1, 2, 4), paired = TRUE)
-            W <- NULL
-            w.handler <- function(w){ # warning handler
-                W <<- w # send to the above env, i.e., the inside of the fun.warning.capture function
-                base::invokeRestart(r = "muffleWarning") # here w.handler() muffles all the warnings. See http://romainfrancois.blog.free.fr/index.php?post/2009/05/20/Disable-specific-warnings to muffle specific warnings and print others
-            }
-            output <- base::list(
-                value = base::suppressMessages(expr = base::withCallingHandlers(expr = base::tryCatch(expr = expr, error = function(e){e}, finally = ), warning = w.handler), classes = "message"), # BEWARE: w.handler is a function written without (), like in other functions with FUN argument
-                warning = W # processed by w.handler()
-            )
-            base::return(if(base::is.null(x = output$warning)){NULL}else{base::as.character(x = output$warning)})
-        }
-        tempo.warn <- fun.warning.capture(base::eval(expr = base::parse(text = data, file = "", n = NULL, prompt = "?", keep.source = base::getOption(x = "keep.source", default = NULL), srcfile = NULL, encoding = "unknown"), envir = if(base::is.null(x = env)){base::parent.frame(n = 1)}else{env}, enclos = base::environment(fun = NULL)))
-        # warn.options.ini <- options()$warn ; options(warn = 1) ; tempo.warn <- utils::capture.output({tempo <- suppressMessages(eval(parse(text = data), envir = if(is.null(x = env)){parent.frame()}else{env}))}, type = "message") ; options(warn = warn.options.ini) # this recover warnings not messages and not errors but does not work in all enviroments
-        tempo.message <- utils::capture.output({
-            tempo <- base::suppressMessages(expr = base::suppressWarnings(expr = base::eval(expr = base::parse(text = data, file = "", n = NULL, prompt = "?", keep.source = base::getOption(x = "keep.source", default = NULL), srcfile = NULL, encoding = "unknown"), envir = if(base::is.null(x = env)){base::parent.frame(n = 1)}else{env}, enclos = base::environment(fun = NULL)), classes = "warning"), classes = "message")
-            if(base::any(base::class(x = tempo) %in% base::c("gg", "ggplot"), na.rm = TRUE)){ # %in% never returns NA
-                tempo <- ggplot2::ggplot_build(plot = tempo)
+        if(kind == "error" & ! base::is.null(x = tempo.error)){ # 
+            if(header == TRUE){
+                tempo.error[1] <- base::gsub(x = tempo.error[1], pattern = "^Error i|^error i|^ERROR I", replacement = "I", ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE)
+                output <- base::paste0("ERROR MESSAGE REPORTED", base::ifelse(test = base::is.null(x = text), yes = "", no = " "), text, ":\n", tempo.error[1], collapse = NULL, recycle0 = FALSE) #
             }else{
-                tempo <- base::suppressWarnings(expr = base::eval(expr = base::parse(text = data, file = "", n = NULL, prompt = "?", keep.source = base::getOption(x = "keep.source", default = NULL), srcfile = NULL, encoding = "unknown"), envir = if(base::is.null(x = env)){base::parent.frame(n = 1)}else{env}, enclos = base::environment(fun = NULL)), classes = "warning")
+                output <- tempo.error[1] #
             }
-        }, type = "message", file = NULL, append = FALSE, split = FALSE) # recover messages not warnings and not errors
-        if(kind == "warning" & ! base::is.null(x = tempo.warn)){
-            if(base::length(x = tempo.warn) > 0){ # to avoid base::character(0)
-                if( ! base::any(base::sapply(X = tempo.warn, FUN = "grepl", pattern = "() FUNCTION:$", simplify = TRUE, USE.NAMES = TRUE), na.rm = TRUE)){
-                    tempo.warn <- base::paste0(base::unique(x = tempo.warn, incomparables = FALSE), collapse = "\n", recycle0 = FALSE) # if FALSE, means that the tested data is a special function. If TRUE, means that the data is a standard function. In that case, the output of utils::capture.output() is two strings per warning messages: if several warning messages -> identical first string, which is removed in next messages by base::unique()
-                }else{
-                    tempo.warn <- base::paste0(tempo.warn, collapse = "\n", recycle0 = FALSE)
+        }else if(kind == "error" & base::is.null(x = tempo.error) & print_no == TRUE){
+            output <- base::paste0("NO ERROR MESSAGE REPORTED", base::ifelse(test = base::is.null(x = text), yes = "", no = " "), text, collapse = NULL, recycle0 = FALSE)
+        }else if(kind != "error" & ( ! base::is.null(x = tempo.error)) & print_no == TRUE){
+            output <- base::paste0("NO POTENTIAL ", base::ifelse(test = kind == "warning", yes = "WARNING", no = "STANDARD (NON ERROR AND NON WARNING)"), " MESSAGE BECAUSE OF ERROR MESSAGE REPORTED", base::ifelse(test = base::is.null(x = text), yes = "", no = " "), text, collapse = NULL, recycle0 = FALSE)
+        }else if(base::is.null(x = tempo.error)){
+            fun.warning.capture <- function(expr){
+                # from demo(error.catching) typed in the R console, coming from ?tryCatch
+                # see also http://mazamascience.com/WorkingWithData/?p=912
+                # return a character string or NULL
+                # expr <- wilcox.test.default(c(1, 1, 3), c(1, 2, 4), paired = TRUE)
+                W <- NULL
+                w.handler <- function(w){ # warning handler
+                    W <<- w # send to the above env, i.e., the inside of the fun.warning.capture function
+                    base::invokeRestart(r = "muffleWarning") # here w.handler() muffles all the warnings. See http://romainfrancois.blog.free.fr/index.php?post/2009/05/20/Disable-specific-warnings to muffle specific warnings and print others
                 }
-                if(header == TRUE){
-                    if(base::any(base::grepl(x = tempo.warn[[1]], pattern = "^simpleWarning i", ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE), na.rm = TRUE)){
-                        tempo.warn[[1]] <- base::gsub(x = tempo.warn[[1]], pattern = "^simpleWarning i", replacement = "I", ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE)
+                output <- base::list(
+                    value = base::suppressMessages(expr = base::withCallingHandlers(expr = base::tryCatch(expr = expr, error = function(e){e}, finally = ), warning = w.handler), classes = "message"), # BEWARE: w.handler is a function written without (), like in other functions with FUN argument
+                    warning = W # processed by w.handler()
+                )
+                base::return(if(base::is.null(x = output$warning)){NULL}else{base::as.character(x = output$warning)})
+            }
+            tempo.warn <- fun.warning.capture(base::eval(expr = base::parse(text = data, file = "", n = NULL, prompt = "?", keep.source = base::getOption(x = "keep.source", default = NULL), srcfile = NULL, encoding = "unknown"), envir = if(base::is.null(x = env)){base::parent.frame(n = 1)}else{env}, enclos = base::environment(fun = NULL)))
+            # warn.options.ini <- options()$warn ; options(warn = 1) ; tempo.warn <- utils::capture.output({tempo <- suppressMessages(eval(parse(text = data), envir = if(is.null(x = env)){parent.frame()}else{env}))}, type = "message") ; options(warn = warn.options.ini) # this recover warnings not messages and not errors but does not work in all enviroments
+            tempo.message <- utils::capture.output({
+                tempo <- base::suppressMessages(expr = base::suppressWarnings(expr = base::eval(expr = base::parse(text = data, file = "", n = NULL, prompt = "?", keep.source = base::getOption(x = "keep.source", default = NULL), srcfile = NULL, encoding = "unknown"), envir = if(base::is.null(x = env)){base::parent.frame(n = 1)}else{env}, enclos = base::environment(fun = NULL)), classes = "warning"), classes = "message")
+                if(base::any(base::class(x = tempo) %in% base::c("gg", "ggplot"), na.rm = TRUE)){ # %in% never returns NA
+                    tempo <- ggplot2::ggplot_build(plot = tempo)
+                }else{
+                    tempo <- base::suppressWarnings(expr = base::eval(expr = base::parse(text = data, file = "", n = NULL, prompt = "?", keep.source = base::getOption(x = "keep.source", default = NULL), srcfile = NULL, encoding = "unknown"), envir = if(base::is.null(x = env)){base::parent.frame(n = 1)}else{env}, enclos = base::environment(fun = NULL)), classes = "warning")
+                }
+            }, type = "message", file = NULL, append = FALSE, split = FALSE) # recover messages not warnings and not errors
+            if(kind == "warning" & ! base::is.null(x = tempo.warn)){
+                if(base::length(x = tempo.warn) > 0){ # to avoid base::character(0)
+                    if( ! base::any(base::sapply(X = tempo.warn, FUN = "grepl", pattern = "() FUNCTION:$", simplify = TRUE, USE.NAMES = TRUE), na.rm = TRUE)){
+                        tempo.warn <- base::paste0(base::unique(x = tempo.warn, incomparables = FALSE), collapse = "\n", recycle0 = FALSE) # if FALSE, means that the tested data is a special function. If TRUE, means that the data is a standard function. In that case, the output of utils::capture.output() is two strings per warning messages: if several warning messages -> identical first string, which is removed in next messages by base::unique()
+                    }else{
+                        tempo.warn <- base::paste0(tempo.warn, collapse = "\n", recycle0 = FALSE)
                     }
-                    if(base::any(base::grepl(x = tempo.warn[[1]], pattern = "^Warning i", ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE), na.rm = TRUE)){
-                        tempo.warn[[1]] <- base::gsub(x = tempo.warn[[1]], pattern = "^Warning i", replacement = "I", ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE)
+                    if(header == TRUE){
+                        if(base::any(base::grepl(x = tempo.warn[[1]], pattern = "^simpleWarning i", ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE), na.rm = TRUE)){
+                            tempo.warn[[1]] <- base::gsub(x = tempo.warn[[1]], pattern = "^simpleWarning i", replacement = "I", ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE)
+                        }
+                        if(base::any(base::grepl(x = tempo.warn[[1]], pattern = "^Warning i", ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE), na.rm = TRUE)){
+                            tempo.warn[[1]] <- base::gsub(x = tempo.warn[[1]], pattern = "^Warning i", replacement = "I", ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE)
+                        }
+                        output <- base::paste0("WARNING MESSAGE REPORTED", base::ifelse(test = base::is.null(x = text), yes = "", no = " "), text, ":\n", tempo.warn, collapse = NULL, recycle0 = FALSE) #
+                    }else{
+                        output <- tempo.warn #
                     }
-                    output <- base::paste0("WARNING MESSAGE REPORTED", base::ifelse(test = base::is.null(x = text), yes = "", no = " "), text, ":\n", tempo.warn, collapse = NULL, recycle0 = FALSE) #
                 }else{
-                    output <- tempo.warn #
+                    if(print_no == TRUE){
+                        output <- base::paste0("NO WARNING MESSAGE REPORTED", base::ifelse(test = base::is.null(x = text), yes = "", no = " "), text, collapse = NULL, recycle0 = FALSE)
+                    } # no need else{} here because output is already NULL at first
                 }
-            }else{
-                if(print_no == TRUE){
-                    output <- base::paste0("NO WARNING MESSAGE REPORTED", base::ifelse(test = base::is.null(x = text), yes = "", no = " "), text, collapse = NULL, recycle0 = FALSE)
-                } # no need else{} here because output is already NULL at first
-            }
-        }else if(kind == "warning" & base::is.null(x = tempo.warn) & print_no == TRUE){
-            output <- base::paste0("NO WARNING MESSAGE REPORTED", base::ifelse(test = base::is.null(x = text), yes = "", no = " "), text, collapse = NULL, recycle0 = FALSE)
-        }else if(kind == "message" & base::exists(x = "tempo.message", where = -1, envir = base::environment(fun = NULL), frame = , mode = "any", inherits = FALSE) == TRUE){ # inherits = FALSE avoid the portee lexical and thus the declared word
-            if(base::length(x = tempo.message) > 0){ # if something is returned by capture.ouptput() (only in this env) with a length more than 1
-                if(header == TRUE){
-                    output <- base::paste0("STANDARD (NON ERROR AND NON WARNING) MESSAGE REPORTED", base::ifelse(test = base::is.null(x = text), yes = "", no = " "), text, ":\n", tempo.message, collapse = NULL, recycle0 = FALSE) #
+            }else if(kind == "warning" & base::is.null(x = tempo.warn) & print_no == TRUE){
+                output <- base::paste0("NO WARNING MESSAGE REPORTED", base::ifelse(test = base::is.null(x = text), yes = "", no = " "), text, collapse = NULL, recycle0 = FALSE)
+            }else if(kind == "message" & base::exists(x = "tempo.message", where = -1, envir = base::environment(fun = NULL), frame = , mode = "any", inherits = FALSE) == TRUE){ # inherits = FALSE avoid the portee lexical and thus the declared word
+                if(base::length(x = tempo.message) > 0){ # if something is returned by capture.ouptput() (only in this env) with a length more than 1
+                    if(header == TRUE){
+                        output <- base::paste0("STANDARD (NON ERROR AND NON WARNING) MESSAGE REPORTED", base::ifelse(test = base::is.null(x = text), yes = "", no = " "), text, ":\n", tempo.message, collapse = NULL, recycle0 = FALSE) #
+                    }else{
+                        output <- tempo.message #
+                    }
                 }else{
-                    output <- tempo.message #
+                    if(print_no == TRUE){
+                        output <- base::paste0("NO STANDARD (NON ERROR AND NON WARNING) MESSAGE REPORTED", base::ifelse(test = base::is.null(x = text), yes = "", no = " "), text, collapse = NULL, recycle0 = FALSE)
+                    } # no need else{} here because output is already NULL at first
                 }
-            }else{
-                if(print_no == TRUE){
-                    output <- base::paste0("NO STANDARD (NON ERROR AND NON WARNING) MESSAGE REPORTED", base::ifelse(test = base::is.null(x = text), yes = "", no = " "), text, collapse = NULL, recycle0 = FALSE)
-                } # no need else{} here because output is already NULL at first
-            }
-        }else if(kind == "message" & base::exists(x = "tempo.message", where = -1, envir = base::environment(fun = NULL), frame = , mode = "any", inherits = FALSE) == FALSE & print_no == TRUE){
-            output <- base::paste0("NO STANDARD (NON ERROR AND NON WARNING) MESSAGE REPORTED", base::ifelse(test = base::is.null(x = text), yes = "", no = " "), text, collapse = NULL, recycle0 = FALSE)
-        } # no need else{} here because output is already NULL at first
+            }else if(kind == "message" & base::exists(x = "tempo.message", where = -1, envir = base::environment(fun = NULL), frame = , mode = "any", inherits = FALSE) == FALSE & print_no == TRUE){
+                output <- base::paste0("NO STANDARD (NON ERROR AND NON WARNING) MESSAGE REPORTED", base::ifelse(test = base::is.null(x = text), yes = "", no = " "), text, collapse = NULL, recycle0 = FALSE)
+            } # no need else{} here because output is already NULL at first
+        }
+        base::invisible(x = grDevices::dev.off(which = window.nb)) # end send plots into a NULL file
     }
-    base::invisible(x = grDevices::dev.off(which = window.nb)) # end send plots into a NULL file
     #### end main code
 
     #### warning output
