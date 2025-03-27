@@ -20,7 +20,7 @@
 #' 
 #' Always use the env argument when get_message() is used inside functions.
 #' 
-#' The function does not prevent printing if print() is used inside the instruction tested. To prevent that, use tempo <- utils::capture.output(error <- get_message(data = "arg_check(data = 'a', class = mean, neg_values = FALSE, print = TRUE)")). The return of get_message() is assigned into error and the printed messages are captured by utils::capture.output() and assigned into tempo. See the examples.
+#' The function does not prevent printing, for instance if print() or show() is used inside the instruction tested. To prevent that, use tempo <- utils::capture.output(error <- get_message(data = "arg_check(data = 'a', class = mean, neg_values = FALSE, print = TRUE)")). The return of get_message() is assigned into error and the printed messages are captured by utils::capture.output() and assigned into tempo. See the examples.
 #' @seealso \code{\link{try}}.
 #' @author \href{gael.millot@pasteur.fr}{Gael Millot}
 #' @author \href{yushi.han2000@gmail.com}{Yushi Han}
@@ -71,6 +71,7 @@ get_message <- function(
     # data = sum("a") ; kind = "message" ; header = TRUE ; print_no = FALSE ; text = NULL ; env = NULL ; safer_check = TRUE ; lib_path = NULL ; error_text = "" 
     # data = NULL ; kind = "warning" ; header = TRUE ; print_no = FALSE ; text = NULL ; env = NULL ; safer_check = TRUE ; lib_path = NULL ; error_text = "" 
     # function_name <- "get_message" ; arg_user_setting = base::list(x = as.name(x = "get_message"), kind = "error", header = TRUE, print_no = FALSE, text = NULL, env = NULL, safer_check = TRUE, lib_path = NULL, error_text = "") ; arg_names <- c("data", "kind",  "header",  "print_no",  "text", "env", "safer_check", "lib_path", "error_text")
+    # data = str4 ; kind = "error" ; header = TRUE ; print_no = TRUE ; text = "IN FUN1" ; env = NULL ; safer_check = TRUE ; lib_path = NULL ; error_text = ""
 
     #### package name
     package_name <- "saferDev" # write NULL if the function developed is not in a package
@@ -434,13 +435,13 @@ get_message <- function(
         if(base::any(base::class(x = tempo.error) %in% base::c("gg", "ggplot"), na.rm = TRUE)){ # %in% never returns NA
             tempo.error <- base::try(expr = base::suppressMessages(expr = base::suppressWarnings(expr = ggplot2::ggplot_build(plot = tempo.error), classes = "warning"), classes = "message"), silent = TRUE, outFile = base::getOption(x = "try.outFile", default = base::stderr()))[1]
         }
-        if(base::exists(x = "tempo.error", where = -1, envir = base::environment(fun = NULL), frame = , mode = "any", inherits = FALSE) == TRUE){ # inherits = FALSE avoid the portee lexical and thus the declared word
-            if( ! base::all(base::class(x = tempo.error) == "try-error", na.rm = TRUE)){ # deal with S4 objects. Old code:  ! (base::all(base::class(tempo.error) == "try-error") & base::any(base::grepl(x = tempo.error, pattern = "^Error|^error|^ERROR"))) but problem with S4 objects. Old code : if((base::length(tempo.error) > 0 & ! base::any(base::grepl(x = tempo.error, pattern = "^Error|^error|^ERROR"))) | (base::length(tempo.error) == 0) ){ but problem when tempo.error is a list but added this did not work: | ! base::all(base::class(tempo.error) == "character") # no NA returned using base::class()
-                tempo.error <- NULL
-            }
-        }else{
+        # if(base::exists(x = "tempo.error", where = -1, envir = base::environment(fun = NULL), frame = , mode = "any", inherits = FALSE) == TRUE){ # inherits = FALSE avoid the portee lexical and thus the declared word #inactivated because tempo.error always exists
+        if( ! base::all(base::class(x = tempo.error) == "try-error", na.rm = TRUE)){ # deal with S4 objects. Old code:  ! (base::all(base::class(tempo.error) == "try-error") & base::any(base::grepl(x = tempo.error, pattern = "^Error|^error|^ERROR"))) but problem with S4 objects. Old code : if((base::length(tempo.error) > 0 & ! base::any(base::grepl(x = tempo.error, pattern = "^Error|^error|^ERROR"))) | (base::length(tempo.error) == 0) ){ but problem when tempo.error is a list but added this did not work: | ! base::all(base::class(tempo.error) == "character") # no NA returned using base::class()
             tempo.error <- NULL
         }
+        # }else{
+            # tempo.error <- NULL
+        # }
         if(kind == "error" & ! base::is.null(x = tempo.error)){ # 
             if(header == TRUE){
                 tempo.error[1] <- base::gsub(x = tempo.error[1], pattern = "^Error i|^error i|^ERROR I", replacement = "I", ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE)
@@ -452,7 +453,7 @@ get_message <- function(
             output <- base::paste0("NO ERROR MESSAGE REPORTED", base::ifelse(test = base::is.null(x = text), yes = "", no = " "), text, collapse = NULL, recycle0 = FALSE)
         }else if(kind != "error" & ( ! base::is.null(x = tempo.error)) & print_no == TRUE){
             output <- base::paste0("NO POTENTIAL ", base::ifelse(test = kind == "warning", yes = "WARNING", no = "STANDARD (NON ERROR AND NON WARNING)"), " MESSAGE BECAUSE OF ERROR MESSAGE REPORTED", base::ifelse(test = base::is.null(x = text), yes = "", no = " "), text, collapse = NULL, recycle0 = FALSE)
-        }else if(base::is.null(x = tempo.error)){
+        }else if(base::is.null(x = tempo.error)){ #is.null() TRUE means no error
             fun.warning.capture <- function(expr){
                 # from demo(error.catching) typed in the R console, coming from ?tryCatch
                 # see also http://mazamascience.com/WorkingWithData/?p=912
