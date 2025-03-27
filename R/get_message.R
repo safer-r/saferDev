@@ -453,7 +453,7 @@ get_message <- function(
             output <- base::paste0("NO ERROR MESSAGE REPORTED", base::ifelse(test = base::is.null(x = text), yes = "", no = " "), text, collapse = NULL, recycle0 = FALSE)
         }else if(kind != "error" & ( ! base::is.null(x = tempo.error)) & print_no == TRUE){
             output <- base::paste0("NO POTENTIAL ", base::ifelse(test = kind == "warning", yes = "WARNING", no = "STANDARD (NON ERROR AND NON WARNING)"), " MESSAGE BECAUSE OF ERROR MESSAGE REPORTED", base::ifelse(test = base::is.null(x = text), yes = "", no = " "), text, collapse = NULL, recycle0 = FALSE)
-        }else if(base::is.null(x = tempo.error)){ #is.null() TRUE means no error
+        }else if(base::is.null(x = tempo.error)){ #is.null() TRUE means no error detected
             fun.warning.capture <- function(expr){
                 # from demo(error.catching) typed in the R console, coming from ?tryCatch
                 # see also http://mazamascience.com/WorkingWithData/?p=912

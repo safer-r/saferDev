@@ -1,12 +1,13 @@
 testthat::test_that("get_message()", {
 
     ## data argument values
-    str1 <- "wilcox.test(letters, c(1, 2, 4))"
-    str2 <- "message('ahah')"
-    str3 <- "message('ahah'); warning('ohoh')"
-    str4 <- "sum(1, 2, 3)"
-    str5 <- "ggplot2::ggplot(data = data.frame(X = 1:10, stringsAsFactors = TRUE), mapping = ggplot2::aes(x = X)) + ggplot2::geom_histogram()"
-    str6 <- "wilcox.test.default(c(1, 1, 3), c(1, 2, 4), paired = TRUE)"
+    str1 <- "wilcox.test(letters, c(1, 2, 4))" # error
+    str2 <- "message('ahah')" # message
+    str3 <- "message('ahah'); warning('ohoh')" # message and warning
+    str4 <- "sum(1, 2, 3)" # nothing
+    str5 <- "ggplot2::ggplot(data = data.frame(X = 1:10, stringsAsFactors = TRUE), mapping = ggplot2::aes(x = X)) + ggplot2::geom_histogram()" # ggplot and message
+    str6 <- "wilcox.test(c(1, 1, 3), c(1, 2, 4), paired = TRUE)" # warning
+    str7 <- "ggplot2::ggplot(data = data.frame(X = c(1:10, NA), stringsAsFactors = TRUE), mapping = ggplot2::aes(x = X)) + ggplot2::geom_histogram()" # ggplot and message
 
     mat1 <- base::matrix(-1:3)
     factor1 <- base::as.factor(str1)
@@ -318,18 +319,25 @@ testthat::test_that("get_message()", {
     expected <- "NO POTENTIAL STANDARD (NON ERROR AND NON WARNING) MESSAGE BECAUSE OF ERROR MESSAGE REPORTED IN FUN1"
     testthat::expect_equal(result, expected)
     # end }else if(kind != "error" & ( ! base::is.null(x = tempo.error)) & print_no == TRUE){
-    # }else if(base::is.null(x = tempo.error)){
-        # kind == "error" & base::is.null(x = tempo.error) & print_no == FALSE
-        testthat::expect_no_error(get_message(data = str4, kind = "error", header = TRUE, print_no = FALSE, text = "IN FUN1", env = NULL, safer_check = TRUE, lib_path = NULL, error_text = ""))
-        result <- get_message(data = str4, kind = "error", header = TRUE, print_no = FALSE, text = "IN FUN1", env = NULL, safer_check = TRUE, lib_path = NULL, error_text = "")
-        expected <- NULL
-        testthat::expect_equal(result, expected)
-        # end kind == "error" & base::is.null(x = tempo.error) & print_no == FALSE
+    # }else if(base::is.null(x = tempo.error)){ # meaning no error
+        # warning message
+        testthat::expect_no_error(get_message(data = str6, kind = "warning", header = TRUE, print_no = TRUE, text = "IN FUN1", env = NULL, safer_check = TRUE, lib_path = NULL, error_text = ""))
+        stats_env <- as.environment("package:stats")
+        testthat::expect_no_error(get_message(data = str6, kind = "warning", header = TRUE, print_no = TRUE, text = "IN FUN1", env = stats_env, safer_check = TRUE, lib_path = NULL, error_text = "")) # env
+        rm(stats_env)
+        testthat::expect_no_error(get_message(data = str7, kind = "warning", header = TRUE, print_no = TRUE, text = "IN FUN1", env = NULL, safer_check = TRUE, lib_path = NULL, error_text = "")) # ggplot2
+        # end warning message
+        # message
+        testthat::expect_no_error(get_message(data = str2, kind = "message", header = TRUE, print_no = TRUE, text = "IN FUN1", env = NULL, safer_check = TRUE, lib_path = NULL, error_text = ""))
+        testthat::expect_no_error(get_message(data = str2, kind = "message", header = TRUE, print_no = TRUE, text = "IN FUN1", env =  baseenv(), safer_check = TRUE, lib_path = NULL, error_text = ""))
+        testthat::expect_no_error(get_message(data = str5, kind = "message", header = TRUE, print_no = TRUE, text = "IN FUN1", env = NULL, safer_check = TRUE, lib_path = NULL, error_text = "")) # ggplot2
+        # end message
+    # if(base::any(base::class(x = tempo) %in% base::c("gg", "ggplot"), na.rm = TRUE)){
+
+
+
 
     # end }else if(base::is.null(x = tempo.error)){
-
-
-
 
     testthat::expect_no_error(get_message(data = str4, kind = "error", header = TRUE, print_no = TRUE, text = "IN FUN1", env = NULL, safer_check = TRUE, lib_path = NULL, error_text = ""))
     testthat::expect_no_error(get_message(data = str1, kind = "warning", header = TRUE, print_no = FALSE, text = NULL, env = NULL, safer_check = TRUE, lib_path = NULL, error_text = ""))
