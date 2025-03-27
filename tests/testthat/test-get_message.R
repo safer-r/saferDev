@@ -6,7 +6,7 @@ testthat::test_that("get_message()", {
     str3 <- "message('ahah'); warning('ohoh')"
     str4 <- "sum(1, 2, 3)"
     str5 <- "ggplot2::ggplot(data = data.frame(X = 1:10, stringsAsFactors = TRUE), mapping = ggplot2::aes(x = X)) + ggplot2::geom_histogram()"
-    str6 <- "wilcox.test(1:3, c(1, 2, 4))"
+    str6 <- "wilcox.test.default(c(1, 1, 3), c(1, 2, 4), paired = TRUE)"
 
     mat1 <- base::matrix(-1:3)
     factor1 <- base::as.factor(str1)
@@ -263,6 +263,18 @@ testthat::test_that("get_message()", {
     #### end second round of checking and data preparation
 
     #### main code
+    # if( ! base::all(tempo.error == TRUE, na.rm = TRUE)){
+    testthat::expect_no_error(get_message(data = NULL, kind = "error", header = TRUE, print_no = FALSE, text = NULL, env = NULL, safer_check = TRUE, lib_path = NULL, error_text = ""))
+    result <- get_message(data = NULL, kind = "error", header = TRUE, print_no = FALSE, text = NULL, env = NULL, safer_check = TRUE, lib_path = NULL, error_text = "")
+    expected <- NULL
+    testthat::expect_equal(result, expected)
+    # end if( ! base::all(tempo.error == TRUE, na.rm = TRUE)){
+    # if(base::any(base::class(x = tempo.error) %in% base::c("gg", "ggplot"), na.rm = TRUE)){
+    testthat::expect_no_error(get_message(data = str5, kind = "error", header = TRUE, print_no = FALSE, text = NULL, env = NULL, safer_check = TRUE, lib_path = NULL, error_text = ""))
+    result <- get_message(data = str5, kind = "error", header = TRUE, print_no = FALSE, text = NULL, env = NULL, safer_check = TRUE, lib_path = NULL, error_text = "")
+    expected <- NULL
+    testthat::expect_equal(result, expected)
+    # end if(base::any(base::class(x = tempo.error) %in% base::c("gg", "ggplot"), na.rm = TRUE)){
     testthat::expect_no_error(get_message(data = "show()", kind = "error", header = TRUE, print_no = FALSE, text = NULL, env = NULL, safer_check = TRUE, lib_path = NULL, error_text = "")) # S4 object
     testthat::expect_no_error(get_message(data = show(), kind = "error", header = TRUE, print_no = FALSE, text = NULL, env = NULL, safer_check = TRUE, lib_path = NULL, error_text = "")) # S4 object
 
@@ -272,6 +284,7 @@ testthat::test_that("get_message()", {
     testthat::expect_no_error(get_message(data = str1, kind = "warning", header = TRUE, print_no = TRUE, text = NULL, env = NULL, safer_check = TRUE, lib_path = NULL, error_text = ""))
     testthat::expect_no_error(get_message(data = str6, kind = "warning", header = TRUE, print_no = TRUE, text = NULL, env = NULL, safer_check = TRUE, lib_path = NULL, error_text = ""))
     testthat::expect_no_error(get_message(data = str1, kind = "message", header = TRUE, print_no = FALSE, text = NULL, env = NULL, safer_check = TRUE, lib_path = NULL, error_text = ""))
+    testthat::expect_no_error(get_message(data = fun1, kind = "message", header = TRUE, print_no = FALSE, text = NULL, env = NULL, safer_check = TRUE, lib_path = NULL, error_text = ""))
     testthat::expect_no_error(get_message(data = "library(dplyr)", kind = "message", header = TRUE, print_no = FALSE, text = NULL, env = NULL, safer_check = TRUE, lib_path = NULL, error_text = ""))
     testthat::expect_no_error(get_message(data = "library(dplyr)", kind = "message", header = TRUE, print_no = TRUE, text = NULL, env = NULL, safer_check = TRUE, lib_path = NULL, error_text = ""))
     #### end main code
