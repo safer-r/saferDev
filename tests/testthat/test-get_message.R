@@ -7,7 +7,7 @@ testthat::test_that("get_message()", {
     str4 <- "sum(1, 2, 3)" # nothing
     str5 <- "ggplot2::ggplot(data = data.frame(X = 1:10, stringsAsFactors = TRUE), mapping = ggplot2::aes(x = X)) + ggplot2::geom_histogram()" # ggplot and message
     str6 <- "wilcox.test(c(1, 1, 3), c(1, 2, 4), paired = TRUE)" # warning
-    str7 <- "ggplot2::ggplot(data = data.frame(X = c(1:10, NA), stringsAsFactors = TRUE), mapping = ggplot2::aes(x = X)) + ggplot2::geom_histogram()" # ggplot and message
+    str7 <- "ggplot2::ggplot(data = data.frame(X = c(1:10, NA), stringsAsFactors = TRUE), mapping = ggplot2::aes(x = X)) + ggplot2::geom_histogram()" # ggplot and warning
 
     mat1 <- base::matrix(-1:3)
     factor1 <- base::as.factor(str1)
@@ -321,16 +321,16 @@ testthat::test_that("get_message()", {
     # end }else if(kind != "error" & ( ! base::is.null(x = tempo.error)) & print_no == TRUE){
     # }else if(base::is.null(x = tempo.error)){ # meaning no error
         # warning message
-        testthat::expect_no_error(get_message(data = str6, kind = "warning", header = TRUE, print_no = TRUE, text = "IN FUN1", env = NULL, safer_check = TRUE, lib_path = NULL, error_text = ""))
+        testthat::expect_no_error(get_message(data = str6, kind = "warning", header = TRUE, print_no = FALSE, text = "IN FUN1", env = NULL, safer_check = TRUE, lib_path = NULL, error_text = ""))
         stats_env <- as.environment("package:stats")
-        testthat::expect_no_error(get_message(data = str6, kind = "warning", header = TRUE, print_no = TRUE, text = "IN FUN1", env = stats_env, safer_check = TRUE, lib_path = NULL, error_text = "")) # env
+        testthat::expect_no_error(get_message(data = str6, kind = "warning", header = TRUE, print_no = FALSE, text = "IN FUN1", env = stats_env, safer_check = TRUE, lib_path = NULL, error_text = "")) # env
         rm(stats_env)
-        testthat::expect_no_error(get_message(data = str7, kind = "warning", header = TRUE, print_no = TRUE, text = "IN FUN1", env = NULL, safer_check = TRUE, lib_path = NULL, error_text = "")) # ggplot2
+        testthat::expect_no_error(get_message(data = str7, kind = "warning", header = TRUE, print_no = FALSE, text = "IN FUN1", env = NULL, safer_check = TRUE, lib_path = NULL, error_text = "")) # ggplot2
         # end warning message
         # message
-        testthat::expect_no_error(get_message(data = str2, kind = "message", header = TRUE, print_no = TRUE, text = "IN FUN1", env = NULL, safer_check = TRUE, lib_path = NULL, error_text = ""))
-        testthat::expect_no_error(get_message(data = str2, kind = "message", header = TRUE, print_no = TRUE, text = "IN FUN1", env =  baseenv(), safer_check = TRUE, lib_path = NULL, error_text = ""))
-        testthat::expect_no_error(get_message(data = str5, kind = "message", header = TRUE, print_no = TRUE, text = "IN FUN1", env = NULL, safer_check = TRUE, lib_path = NULL, error_text = "")) # ggplot2
+        testthat::expect_no_error(get_message(data = str2, kind = "message", header = TRUE, print_no = FALSE, text = "IN FUN1", env = NULL, safer_check = TRUE, lib_path = NULL, error_text = ""))
+        testthat::expect_no_error(get_message(data = str2, kind = "message", header = TRUE, print_no = FALSE, text = "IN FUN1", env =  baseenv(), safer_check = TRUE, lib_path = NULL, error_text = ""))
+        testthat::expect_no_error(get_message(data = str5, kind = "message", header = TRUE, print_no = FALSE, text = "IN FUN1", env = NULL, safer_check = TRUE, lib_path = NULL, error_text = "")) # ggplot2
         # end message
     # if(base::any(base::class(x = tempo) %in% base::c("gg", "ggplot"), na.rm = TRUE)){
 
