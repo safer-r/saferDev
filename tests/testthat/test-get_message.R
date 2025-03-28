@@ -333,11 +333,82 @@ testthat::test_that("get_message()", {
         testthat::expect_no_error(get_message(data = str5, kind = "message", header = TRUE, print_no = FALSE, text = "IN FUN1", env = NULL, safer_check = TRUE, lib_path = NULL, error_text = "")) # ggplot2
         # end message
     # if(base::any(base::class(x = tempo) %in% base::c("gg", "ggplot"), na.rm = TRUE)){
-
-
-
-
+    testthat::expect_no_error(get_message(data = ggplot2::ggplot(data = data.frame(X = c(1:10, NA), stringsAsFactors = TRUE), mapping = ggplot2::aes(x = X)) + ggplot2::geom_histogram(), kind = "warning", header = TRUE, print_no = FALSE, text = "IN FUN1", env = NULL, safer_check = TRUE, lib_path = NULL, error_text = ""))
     # end }else if(base::is.null(x = tempo.error)){
+    # if(kind == "warning" & ! base::is.null(x = tempo.warn)){
+        # if(base::length(x = tempo.warn) > 0){
+            # if( ! base::any(base::sapply(X = tempo.warn, FUN = "grepl", 
+            testthat::expect_no_error(get_message(data = str6, kind = "warning", header = TRUE, print_no = FALSE, text = NULL, env = NULL, safer_check = TRUE, lib_path = NULL, error_text = ""))
+            testthat::expect_no_error(get_message(data = wilcox.test(c(1, 1, 3), c(1, 2, 4), paired = TRUE), kind = "warning", header = TRUE, print_no = FALSE, text = NULL, env = NULL, safer_check = TRUE, lib_path = NULL, error_text = ""))
+            # end if( ! base::any(base::sapply(X = tempo.warn, FUN = "grepl", 
+            # }else{
+            testthat::expect_no_error(get_message(data = "function(){}", kind = "warning", header = TRUE, print_no = FALSE, text = NULL, env = NULL, safer_check = TRUE, lib_path = NULL, error_text = ""))
+            testthat::expect_no_error(get_message(data = function(){}, kind = "warning", header = TRUE, print_no = FALSE, text = NULL, env = NULL, safer_check = TRUE, lib_path = NULL, error_text = ""))
+            # end }else{
+
+            # if(header == TRUE){
+                # if(base::any(base::grepl(x = tempo.warn[[1]], pattern
+
+                # end if(base::any(base::grepl(x = tempo.warn[[1]], pattern
+
+                
+                # if(base::any(base::grepl(x = tempo.warn[[1]], pattern = "^Warning i", ignore.case = FALSE, 
+
+                # end if(base::any(base::grepl(x = tempo.warn[[1]], pattern = "^Warning i", ig
+
+            # end if(header == TRUE){
+
+            # }else{
+
+            # end }else{
+
+        # end if(base::length(x = tempo.warn) > 0){
+
+        # }else{
+        testthat::expect_no_error(get_message(data = character(), kind = "warning", header = TRUE, print_no = FALSE, text = NULL, env = NULL, safer_check = TRUE, lib_path = NULL, error_text = ""))
+        testthat::expect_no_error(get_message(data = "character()", kind = "warning", header = TRUE, print_no = FALSE, text = NULL, env = NULL, safer_check = TRUE, lib_path = NULL, error_text = ""))
+            # if(print_no == TRUE){
+            testthat::expect_no_error(get_message(data = character(), kind = "warning", header = TRUE, print_no = TRUE, text = NULL, env = NULL, safer_check = TRUE, lib_path = NULL, error_text = ""))
+            testthat::expect_no_error(get_message(data = "character()", kind = "warning", header = TRUE, print_no = TRUE, text = NULL, env = NULL, safer_check = TRUE, lib_path = NULL, error_text = ""))
+            # end if(print_no == TRUE){
+        # end }else{
+
+    # end if(kind == "warning" & ! base::is.null(x = tempo.warn)){
+
+    # }else if(kind == "warning" & base::is.null(x = tempo.warn) & print_no == TRUE){
+
+    # end }else if(kind == "warning" & base::is.null(x = tempo.warn) & print_no == TRUE){
+             
+    # }else if(kind == "message" & base::exists(x = "tempo.message", where = -1, envir = base:
+    
+        # if(base::length(x = tempo.message) > 0){
+
+            # if(header == TRUE){
+
+            # end if(header == TRUE){
+
+            # }else{
+
+            # end }else{
+
+        # end if(base::length(x = tempo.message) > 0){
+
+        # }else{
+
+            # if(print_no == TRUE){
+
+            # end if(print_no == TRUE){
+
+        # end }else{
+
+    # end }else if(kind == "message" & base::exists(x = "tempo.message", where = -1, envir = base:
+    
+    # }else if(kind == "message" & base::exists(x = "tempo.message", where = -1, envi
+
+    # end }else if(kind == "message" & base::exists(x = "tempo.message", where = -1, envi
+
+
+
 
     testthat::expect_no_error(get_message(data = str4, kind = "error", header = TRUE, print_no = TRUE, text = "IN FUN1", env = NULL, safer_check = TRUE, lib_path = NULL, error_text = ""))
     testthat::expect_no_error(get_message(data = str1, kind = "warning", header = TRUE, print_no = FALSE, text = NULL, env = NULL, safer_check = TRUE, lib_path = NULL, error_text = ""))

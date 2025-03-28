@@ -314,6 +314,9 @@ arg_test <- function(
 
     ######## safer_check argument checking
     if( ! (base::all(base::typeof(x = safer_check) == "logical", na.rm = TRUE) & base::length(x = safer_check) == 1)){ # no need to test NA because NA only already managed above and base::length(x = safer_check) == 1)
+        if(base::all(base::mode(x = safer_check) == "function", na.rm = TRUE)){
+            safer_check <- base::deparse1(expr = safer_check, collapse = "", width.cutoff = 500L)
+        }
         tempo_cat <- base::paste0(
             error_text_start, 
             "THE safer_check ARGUMENT VALUE MUST BE A SINGLE LOGICAL VALUE (TRUE OR FALSE ONLY).\nHERE IT IS:\n", 
@@ -330,6 +333,9 @@ arg_test <- function(
     if(safer_check == TRUE){
         if( ! base::is.null(x = lib_path)){ #  is.null(NA) returns FALSE so OK.
             if( ! base::all(base::typeof(x = lib_path) == "character", na.rm = TRUE)){ # na.rm = TRUE but no NA returned with typeof (typeof(NA) == "character" returns FALSE)
+                if(base::all(base::mode(x = lib_path) == "function", na.rm = TRUE)){
+                    lib_path <- base::deparse1(expr = lib_path, collapse = "", width.cutoff = 500L)
+                }
                 tempo_cat <- base::paste0(
                     error_text_start, 
                     "THE DIRECTORY PATH INDICATED IN THE lib_path ARGUMENT MUST BE A VECTOR OF CHARACTERS.\nHERE IT IS:\n", 

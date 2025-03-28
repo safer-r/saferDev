@@ -61,7 +61,8 @@ get_message <- function(
     error_text = "" 
 ){  
     # DEBUGGING
-    # data = "wilcox.test(c(1,1,3), c(1, 2, 4), paired = TRUE)" ; kind = "warning" ; header = TRUE ; print_no = FALSE ; text = NULL ; env = NULL ; safer_check = TRUE ; lib_path = NULL ; error_text = "" 
+    # data = "wilcox.test(c(1,1,3), c(1, 2, 4), paired = TRUE)" ; kind = "warning" ; header = TRUE ; print_no = FALSE ; text = NULL ; env = NULL ; safer_check = TRUE ; lib_path = NULL ; error_text = ""
+    # function_name <- "get_message" ; arg_user_setting = base::list(x = as.name(x = "get_message"), kind = "warning", header = TRUE, print_no = FALSE, text = NULL, env = NULL, safer_check = TRUE, lib_path = NULL, error_text = "") ; arg_names <- c("data", "kind",  "header",  "print_no",  "text", "env", "safer_check", "lib_path", "error_text")
     # data = "sum(1)" ; kind = "warning" ; header = TRUE ; print_no = FALSE ; text = NULL ; env = NULL; safer_check = TRUE ; lib_path = NULL ; error_text = ""  
     # set.seed(1) ; obs1 <- data.frame(Time = c(rnorm(10), rnorm(10) + 2), Group1 = rep(c("G", "H"), each = 10), stringsAsFactors = TRUE) ; data = 'gg_boxplot(data1 = obs1, y = "Time", categ = "Group1")' ; kind = "warning" ; header = TRUE ; print_no = FALSE ; text = NULL ; env = NULL ; safer_check = TRUE ; lib_path = NULL ; error_text = ""  
     # data = "message('ahah')" ; kind = "error" ; header = TRUE ; print_no = TRUE ; text = "IN A" ; env = NULL ; safer_check = TRUE ; lib_path = NULL ; error_text = "" 
@@ -274,6 +275,9 @@ get_message <- function(
 
     ######## safer_check argument checking
     if( ! (base::all(base::typeof(x = safer_check) == "logical", na.rm = TRUE) & base::length(x = safer_check) == 1)){ # no need to test NA because NA only already managed above and base::length(x = safer_check) == 1)
+        if(base::all(base::mode(x = safer_check) == "function", na.rm = TRUE)){
+            safer_check <- base::deparse1(expr = safer_check, collapse = "", width.cutoff = 500L)
+        }
         tempo_cat <- base::paste0(
             error_text_start, 
             "THE safer_check ARGUMENT VALUE MUST BE A SINGLE LOGICAL VALUE (TRUE OR FALSE ONLY).\nHERE IT IS:\n", 
@@ -290,6 +294,9 @@ get_message <- function(
     if(safer_check == TRUE){
         if( ! base::is.null(x = lib_path)){ #  is.null(NA) returns FALSE so OK.
             if( ! base::all(base::typeof(x = lib_path) == "character", na.rm = TRUE)){ # na.rm = TRUE but no NA returned with typeof (typeof(NA) == "character" returns FALSE)
+                if(base::all(base::mode(x = lib_path) == "function", na.rm = TRUE)){
+                    lib_path <- base::deparse1(expr = lib_path, collapse = "", width.cutoff = 500L)
+                }
                 tempo_cat <- base::paste0(
                     error_text_start, 
                     "THE DIRECTORY PATH INDICATED IN THE lib_path ARGUMENT MUST BE A VECTOR OF CHARACTERS.\nHERE IT IS:\n", 
@@ -428,10 +435,15 @@ get_message <- function(
     grDevices::pdf(file = NULL, width = , height = , onefile = , family = , title = , fonts = , version = , paper = , encoding = , bg = , fg = , pointsize = , pagecentre = , colormodel = , useDingbats = , useKerning = , fillOddEven = , compress = ) # send plots into a NULL file, no pdf file created
     window.nb <- grDevices::dev.cur()
     base::invisible(x = grDevices::dev.set(which = window.nb))
-    tempo.error <- base::try(expr = base::suppressMessages(expr = base::suppressWarnings(expr = base::eval(expr = base::parse(text = is.null(data), file = "", n = NULL, prompt = "?", keep.source = base::getOption(x = "keep.source", default = NULL), srcfile = NULL, encoding = "unknown"), envir = if(base::is.null(x = env)){base::parent.frame(n = 1)}else{env}, enclos = base::environment(fun = NULL)), classes = "warning"), classes = "message"), silent = TRUE, outFile = base::getOption(x = "try.outFile", default = base::stderr())) # deal first with data = NULL: return NULL
+    tempo.error <- base::try(expr = base::suppressMessages(expr = base::suppressWarnings(expr = base::eval(expr = base::parse(text = base::is.null(x = data), file = "", n = NULL, prompt = "?", keep.source = base::getOption(x = "keep.source", default = NULL), srcfile = NULL, encoding = "unknown"), envir = if(base::is.null(x = env)){base::parent.frame(n = 1)}else{env}, enclos = base::environment(fun = NULL)), classes = "warning"), classes = "message"), silent = TRUE, outFile = base::getOption(x = "try.outFile", default = base::stderr())) # deal first with data = NULL: return NULL
     if( ! base::all(tempo.error == TRUE, na.rm = TRUE)){
         # last warning cannot be used because suppressWarnings() does not modify last.warning present in the base evironment (created at first warning in a new R session), or warnings() # to reset the warning history : unlockBinding("last.warning", baseenv()) ; assign("last.warning", NULL, envir = baseenv())
-        tempo.error <- base::try(expr = base::suppressMessages(expr = base::suppressWarnings(expr = base::eval(expr = base::parse(text = data, file = "", n = NULL, prompt = "?", keep.source = base::getOption(x = "keep.source", default = NULL), srcfile = NULL, encoding = "unknown"), envir = if(base::is.null(x = env)){base::parent.frame(n = 1)}else{env}, enclos = base::environment(fun = NULL)), classes = "warning"), classes = "message"), silent = TRUE, outFile = base::getOption(x = "try.outFile", default = base::stderr())) # get error message, not warning or messages
+        tempo.error <- base::try(expr = base::suppressMessages(expr = base::suppressWarnings(expr = base::eval(expr = base::parse(text = base::is.character(x = data), file = "", n = NULL, prompt = "?", keep.source = base::getOption(x = "keep.source", default = NULL), srcfile = NULL, encoding = "unknown"), envir = if(base::is.null(x = env)){base::parent.frame(n = 1)}else{env}, enclos = base::environment(fun = NULL)), classes = "warning"), classes = "message"), silent = TRUE, outFile = base::getOption(x = "try.outFile", default = base::stderr())) # deal first with data = NULL: return NULL
+        if( ! base::all(tempo.error == TRUE, na.rm = TRUE)){
+            tempo.error <- base::try(expr = base::suppressMessages(expr = base::suppressWarnings(expr = data, classes = "warning"), classes = "message"), silent = TRUE, outFile = base::getOption(x = "try.outFile", default = base::stderr())) # get error message, not warning or messages
+        }else{
+            tempo.error <- base::try(expr = base::suppressMessages(expr = base::suppressWarnings(expr = base::eval(expr = base::parse(text = data, file = "", n = NULL, prompt = "?", keep.source = base::getOption(x = "keep.source", default = NULL), srcfile = NULL, encoding = "unknown"), envir = if(base::is.null(x = env)){base::parent.frame(n = 1)}else{env}, enclos = base::environment(fun = NULL)), classes = "warning"), classes = "message"), silent = TRUE, outFile = base::getOption(x = "try.outFile", default = base::stderr())) # get error message, not warning or messages
+        }
         if(base::any(base::class(x = tempo.error) %in% base::c("gg", "ggplot"), na.rm = TRUE)){ # %in% never returns NA
             tempo.error <- base::try(expr = base::suppressMessages(expr = base::suppressWarnings(expr = ggplot2::ggplot_build(plot = tempo.error), classes = "warning"), classes = "message"), silent = TRUE, outFile = base::getOption(x = "try.outFile", default = base::stderr()))[1]
         }
@@ -453,12 +465,12 @@ get_message <- function(
             output <- base::paste0("NO ERROR MESSAGE REPORTED", base::ifelse(test = base::is.null(x = text), yes = "", no = " "), text, collapse = NULL, recycle0 = FALSE)
         }else if(kind != "error" & ( ! base::is.null(x = tempo.error)) & print_no == TRUE){
             output <- base::paste0("NO POTENTIAL ", base::ifelse(test = kind == "warning", yes = "WARNING", no = "STANDARD (NON ERROR AND NON WARNING)"), " MESSAGE BECAUSE OF ERROR MESSAGE REPORTED", base::ifelse(test = base::is.null(x = text), yes = "", no = " "), text, collapse = NULL, recycle0 = FALSE)
-        }else if(base::is.null(x = tempo.error)){ #is.null() TRUE means no error detected
+        }else if(base::is.null(x = tempo.error) & kind != "error"){ #is.null() TRUE means no error detected
             fun.warning.capture <- function(expr){
                 # from demo(error.catching) typed in the R console, coming from ?tryCatch
                 # see also http://mazamascience.com/WorkingWithData/?p=912
                 # return a character string or NULL
-                # expr <- wilcox.test.default(c(1, 1, 3), c(1, 2, 4), paired = TRUE)
+                # expr <- wilcox.test(c(1, 1, 3), c(1, 2, 4), paired = TRUE)
                 W <- NULL
                 w.handler <- function(w){ # warning handler
                     W <<- w # send to the above env, i.e., the inside of the fun.warning.capture function
