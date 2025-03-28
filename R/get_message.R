@@ -3,7 +3,7 @@
 #' Evaluate an instruction written between "" and return the first of the error message, or the last of the warning or standard (non error non warning) messages if ever exist.
 #' 
 #' Using argument print_no = FALSE, return NULL if no message, which is convenient in some cases.
-#' @param data any possible value. If a single character string, then it is evaluated.
+#' @param data Single character string.
 #' @param kind Single character string. Either "error" to get error messages, or "warning" to get warning messages, or "message" to get non error and non warning messages.
 #' @param header Single logical value. Add a header in the returned message?
 #' @param print_no Single logical value. Print a message saying that no message reported?
@@ -73,7 +73,8 @@ get_message <- function(
     # data = NULL ; kind = "warning" ; header = TRUE ; print_no = FALSE ; text = NULL ; env = NULL ; safer_check = TRUE ; lib_path = NULL ; error_text = "" 
     # function_name <- "get_message" ; arg_user_setting = base::list(x = as.name(x = "get_message"), kind = "error", header = TRUE, print_no = FALSE, text = NULL, env = NULL, safer_check = TRUE, lib_path = NULL, error_text = "") ; arg_names <- c("data", "kind",  "header",  "print_no",  "text", "env", "safer_check", "lib_path", "error_text")
     # data = str4 ; kind = "error" ; header = TRUE ; print_no = TRUE ; text = "IN FUN1" ; env = NULL ; safer_check = TRUE ; lib_path = NULL ; error_text = ""
-
+    # str7 <- "ggplot2::ggplot(data = data.frame(X = c(1:10, NA), stringsAsFactors = TRUE), mapping = ggplot2::aes(x = X)) + ggplot2::geom_histogram()" ; data = str7 ; kind = "warning" ; header = TRUE ; print_no = FALSE ; text = NULL ; env = NULL ; safer_check = TRUE ; lib_path = NULL ; error_text = ""
+    # function_name <- "get_message" ; arg_user_setting = base::list(x = as.name(x = "get_message"), kind = "warning", header = TRUE, print_no = FALSE, text = NULL, env = NULL, safer_check = TRUE, lib_path = NULL, error_text = "") ; arg_names <- c("data", "kind",  "header",  "print_no",  "text", "env", "safer_check", "lib_path", "error_text")
     #### package name
     package_name <- "saferDev" # write NULL if the function developed is not in a package
     #### end package name
@@ -436,13 +437,29 @@ get_message <- function(
     window.nb <- grDevices::dev.cur()
     base::invisible(x = grDevices::dev.set(which = window.nb))
     tempo.error <- base::try(expr = base::suppressMessages(expr = base::suppressWarnings(expr = base::eval(expr = base::parse(text = base::is.null(x = data), file = "", n = NULL, prompt = "?", keep.source = base::getOption(x = "keep.source", default = NULL), srcfile = NULL, encoding = "unknown"), envir = if(base::is.null(x = env)){base::parent.frame(n = 1)}else{env}, enclos = base::environment(fun = NULL)), classes = "warning"), classes = "message"), silent = TRUE, outFile = base::getOption(x = "try.outFile", default = base::stderr())) # deal first with data = NULL: return NULL
-    if( ! base::all(tempo.error == TRUE, na.rm = TRUE)){
+    if(base::all(tempo.error == TRUE, na.rm = TRUE)){
+        base::invisible(x = grDevices::dev.off(which = window.nb)) # end send plots into a NULL file
+        tempo_cat <- base::paste0(
+            error_text_start, 
+            "THE data ARGUMENT MUST BE A SINGLE CHARACTER STRING.", 
+            collapse = NULL, 
+            recycle0 = FALSE
+        )
+        base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL)
+    }else{
         # last warning cannot be used because suppressWarnings() does not modify last.warning present in the base evironment (created at first warning in a new R session), or warnings() # to reset the warning history : unlockBinding("last.warning", baseenv()) ; assign("last.warning", NULL, envir = baseenv())
         tempo.error <- base::try(expr = base::suppressMessages(expr = base::suppressWarnings(expr = base::eval(expr = base::parse(text = base::is.character(x = data), file = "", n = NULL, prompt = "?", keep.source = base::getOption(x = "keep.source", default = NULL), srcfile = NULL, encoding = "unknown"), envir = if(base::is.null(x = env)){base::parent.frame(n = 1)}else{env}, enclos = base::environment(fun = NULL)), classes = "warning"), classes = "message"), silent = TRUE, outFile = base::getOption(x = "try.outFile", default = base::stderr())) # deal first with data = NULL: return NULL
-        if( ! base::all(tempo.error == TRUE, na.rm = TRUE)){
-            tempo.error <- base::try(expr = base::suppressMessages(expr = base::suppressWarnings(expr = data, classes = "warning"), classes = "message"), silent = TRUE, outFile = base::getOption(x = "try.outFile", default = base::stderr())) # get error message, not warning or messages
-        }else{
+        if(base::all(tempo.error == TRUE, na.rm = TRUE)){
             tempo.error <- base::try(expr = base::suppressMessages(expr = base::suppressWarnings(expr = base::eval(expr = base::parse(text = data, file = "", n = NULL, prompt = "?", keep.source = base::getOption(x = "keep.source", default = NULL), srcfile = NULL, encoding = "unknown"), envir = if(base::is.null(x = env)){base::parent.frame(n = 1)}else{env}, enclos = base::environment(fun = NULL)), classes = "warning"), classes = "message"), silent = TRUE, outFile = base::getOption(x = "try.outFile", default = base::stderr())) # get error message, not warning or messages
+        }else{
+            base::invisible(x = grDevices::dev.off(which = window.nb)) # end send plots into a NULL file
+            tempo_cat <- base::paste0(
+                error_text_start, 
+                "THE data ARGUMENT MUST BE A SINGLE CHARACTER STRING.", 
+                collapse = NULL, 
+                recycle0 = FALSE
+            )
+            base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL)
         }
         if(base::any(base::class(x = tempo.error) %in% base::c("gg", "ggplot"), na.rm = TRUE)){ # %in% never returns NA
             tempo.error <- base::try(expr = base::suppressMessages(expr = base::suppressWarnings(expr = ggplot2::ggplot_build(plot = tempo.error), classes = "warning"), classes = "message"), silent = TRUE, outFile = base::getOption(x = "try.outFile", default = base::stderr()))[1]
@@ -487,7 +504,7 @@ get_message <- function(
             tempo.message <- utils::capture.output({
                 tempo <- base::suppressMessages(expr = base::suppressWarnings(expr = base::eval(expr = base::parse(text = data, file = "", n = NULL, prompt = "?", keep.source = base::getOption(x = "keep.source", default = NULL), srcfile = NULL, encoding = "unknown"), envir = if(base::is.null(x = env)){base::parent.frame(n = 1)}else{env}, enclos = base::environment(fun = NULL)), classes = "warning"), classes = "message")
                 if(base::any(base::class(x = tempo) %in% base::c("gg", "ggplot"), na.rm = TRUE)){ # %in% never returns NA
-                    tempo <- ggplot2::ggplot_build(plot = tempo)
+                    tempo <- base::suppressWarnings(expr = ggplot2::ggplot_build(plot = tempo), classes = "warning")
                 }else{
                     tempo <- base::suppressWarnings(expr = base::eval(expr = base::parse(text = data, file = "", n = NULL, prompt = "?", keep.source = base::getOption(x = "keep.source", default = NULL), srcfile = NULL, encoding = "unknown"), envir = if(base::is.null(x = env)){base::parent.frame(n = 1)}else{env}, enclos = base::environment(fun = NULL)), classes = "warning")
                 }

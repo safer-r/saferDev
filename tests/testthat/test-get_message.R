@@ -32,7 +32,7 @@ testthat::test_that("get_message()", {
 
     ######## management of NULL arguments
     # all the arguments must be present
-    testthat::expect_no_error(get_message(data = NULL, kind = "error", header = TRUE, print_no = FALSE, text = NULL, env = NULL, safer_check = TRUE, lib_path = NULL, error_text = ""))
+    testthat::expect_error(get_message(data = NULL, kind = "error", header = TRUE, print_no = FALSE, text = NULL, env = NULL, safer_check = TRUE, lib_path = NULL, error_text = ""))
     testthat::expect_error(get_message(data = str1, kind = NULL, header = TRUE, print_no = FALSE, text = NULL, env = NULL, safer_check = TRUE, lib_path = NULL, error_text = ""))
     testthat::expect_error(get_message(data = str1, kind = "error", header = NULL, print_no = FALSE, text = NULL, env = NULL, safer_check = TRUE, lib_path = NULL, error_text = ""))
     testthat::expect_error(get_message(data = str1, kind = "error", header = TRUE, print_no = NULL, text = NULL, env = NULL, safer_check = TRUE, lib_path = NULL, error_text = ""))
@@ -46,12 +46,12 @@ testthat::test_that("get_message()", {
     ######## management of empty non NULL arguments
     # all the arguments must be present
     testthat::expect_no_error(get_message(data = character(), kind = "error", header = TRUE, print_no = FALSE, text = NULL, env = NULL, safer_check = TRUE, lib_path = NULL, error_text = ""))
-    testthat::expect_no_error(get_message(data = integer(), kind = "error", header = TRUE, print_no = FALSE, text = NULL, env = NULL, safer_check = TRUE, lib_path = NULL, error_text = ""))
-    testthat::expect_no_error(get_message(data = double(), kind = "error", header = TRUE, print_no = FALSE, text = NULL, env = NULL, safer_check = TRUE, lib_path = NULL, error_text = ""))
-    testthat::expect_no_error(get_message(data = logical(), kind = "error", header = TRUE, print_no = FALSE, text = NULL, env = NULL, safer_check = TRUE, lib_path = NULL, error_text = ""))
-    testthat::expect_no_error(get_message(data = complex(), kind = "error", header = TRUE, print_no = FALSE, text = NULL, env = NULL, safer_check = TRUE, lib_path = NULL, error_text = ""))
-    testthat::expect_no_error(get_message(data = data.frame(), kind = "error", header = TRUE, print_no = FALSE, text = NULL, env = NULL, safer_check = TRUE, lib_path = NULL, error_text = ""))
-    testthat::expect_no_error(get_message(data = list(), kind = "error", header = TRUE, print_no = FALSE, text = NULL, env = NULL, safer_check = TRUE, lib_path = NULL, error_text = ""))
+    testthat::expect_error(get_message(data = integer(), kind = "error", header = TRUE, print_no = FALSE, text = NULL, env = NULL, safer_check = TRUE, lib_path = NULL, error_text = ""))
+    testthat::expect_error(get_message(data = double(), kind = "error", header = TRUE, print_no = FALSE, text = NULL, env = NULL, safer_check = TRUE, lib_path = NULL, error_text = ""))
+    testthat::expect_error(get_message(data = logical(), kind = "error", header = TRUE, print_no = FALSE, text = NULL, env = NULL, safer_check = TRUE, lib_path = NULL, error_text = ""))
+    testthat::expect_error(get_message(data = complex(), kind = "error", header = TRUE, print_no = FALSE, text = NULL, env = NULL, safer_check = TRUE, lib_path = NULL, error_text = ""))
+    testthat::expect_error(get_message(data = data.frame(), kind = "error", header = TRUE, print_no = FALSE, text = NULL, env = NULL, safer_check = TRUE, lib_path = NULL, error_text = ""))
+    testthat::expect_error(get_message(data = list(), kind = "error", header = TRUE, print_no = FALSE, text = NULL, env = NULL, safer_check = TRUE, lib_path = NULL, error_text = ""))
 
     testthat::expect_error(get_message(data = str1, kind = character(), header = TRUE, print_no = FALSE, text = NULL, env = NULL, safer_check = TRUE, lib_path = NULL, error_text = ""))
     testthat::expect_error(get_message(data = str1, kind = integer(), header = TRUE, print_no = FALSE, text = NULL, env = NULL, safer_check = TRUE, lib_path = NULL, error_text = ""))
@@ -109,7 +109,7 @@ testthat::test_that("get_message()", {
 
     ######## management of NA arguments
     # all the arguments must be present
-    testthat::expect_no_error(get_message(data = NA, kind = "error", header = TRUE, print_no = FALSE, text = NULL, env = NULL, safer_check = TRUE, lib_path = NULL, error_text = ""))
+    testthat::expect_error(get_message(data = NA, kind = "error", header = TRUE, print_no = FALSE, text = NULL, env = NULL, safer_check = TRUE, lib_path = NULL, error_text = ""))
     testthat::expect_error(get_message(data = str1, kind = NA, header = TRUE, print_no = FALSE, text = NULL, env = NULL, safer_check = TRUE, lib_path = NULL, error_text = ""))
     testthat::expect_error(get_message(data = str1, kind = "error", header = NA, print_no = FALSE, text = NULL, env = NULL, safer_check = TRUE, lib_path = NULL, error_text = ""))
     testthat::expect_error(get_message(data = str1, kind = "error", header = TRUE, print_no = NA, text = NULL, env = NULL, safer_check = TRUE, lib_path = NULL, error_text = ""))
@@ -163,14 +163,14 @@ testthat::test_that("get_message()", {
 
     ######## argument checking with arg_check()
     # data
-    testthat::expect_no_error(get_message(data = NULL, kind = "error", header = TRUE, print_no = FALSE, text = NULL, env = NULL, safer_check = TRUE, lib_path = NULL, error_text = ""))
-    testthat::expect_no_error(get_message(data = NA, kind = "error", header = TRUE, print_no = FALSE, text = NULL, env = NULL, safer_check = TRUE, lib_path = NULL, error_text = ""))
-    testthat::expect_no_error(get_message(data = 1, kind = "error", header = TRUE, print_no = FALSE, text = NULL, env = NULL, safer_check = TRUE, lib_path = NULL, error_text = ""))
-    testthat::expect_no_error(get_message(data = c(TRUE, FALSE), kind = "error", header = TRUE, print_no = FALSE, text = NULL, env = NULL, safer_check = TRUE, lib_path = NULL, error_text = ""))
-    testthat::expect_no_error(get_message(data = mat1, kind = "error", header = TRUE, print_no = FALSE, text = NULL, env = NULL, safer_check = TRUE, lib_path = NULL, error_text = ""))
-    testthat::expect_no_error(get_message(data = factor1, kind = "error", header = TRUE, print_no = FALSE, text = NULL, env = NULL, safer_check = TRUE, lib_path = NULL, error_text = ""))
-    testthat::expect_no_error(get_message(data = expr1, kind = "error", header = TRUE, print_no = FALSE, text = NULL, env = NULL, safer_check = TRUE, lib_path = NULL, error_text = ""))
-    testthat::expect_no_error(get_message(data = fun1, kind = "error", header = TRUE, print_no = FALSE, text = NULL, env = NULL, safer_check = TRUE, lib_path = NULL, error_text = ""))
+    testthat::expect_error(get_message(data = NULL, kind = "error", header = TRUE, print_no = FALSE, text = NULL, env = NULL, safer_check = TRUE, lib_path = NULL, error_text = ""))
+    testthat::expect_error(get_message(data = NA, kind = "error", header = TRUE, print_no = FALSE, text = NULL, env = NULL, safer_check = TRUE, lib_path = NULL, error_text = ""))
+    testthat::expect_error(get_message(data = 1, kind = "error", header = TRUE, print_no = FALSE, text = NULL, env = NULL, safer_check = TRUE, lib_path = NULL, error_text = ""))
+    testthat::expect_error(get_message(data = c(TRUE, FALSE), kind = "error", header = TRUE, print_no = FALSE, text = NULL, env = NULL, safer_check = TRUE, lib_path = NULL, error_text = ""))
+    testthat::expect_error(get_message(data = mat1, kind = "error", header = TRUE, print_no = FALSE, text = NULL, env = NULL, safer_check = TRUE, lib_path = NULL, error_text = ""))
+    testthat::expect_error(get_message(data = factor1, kind = "error", header = TRUE, print_no = FALSE, text = NULL, env = NULL, safer_check = TRUE, lib_path = NULL, error_text = ""))
+    testthat::expect_error(get_message(data = expr1, kind = "error", header = TRUE, print_no = FALSE, text = NULL, env = NULL, safer_check = TRUE, lib_path = NULL, error_text = ""))
+    testthat::expect_error(get_message(data = fun1, kind = "error", header = TRUE, print_no = FALSE, text = NULL, env = NULL, safer_check = TRUE, lib_path = NULL, error_text = ""))
     # end data
     # kind
     testthat::expect_no_error(get_message(data = str1, kind = "error", header = TRUE, print_no = FALSE, text = NULL, env = NULL, safer_check = TRUE, lib_path = NULL, error_text = ""))
@@ -252,11 +252,16 @@ testthat::test_that("get_message()", {
     ######## end warning initiation
 
     ######## graphic device checking
-    testthat::expect_no_error(get_message(data = plot(1), kind = "error", header = TRUE, print_no = FALSE, text = NULL, env = NULL, safer_check = TRUE, lib_path = NULL, error_text = ""))
+    testthat::expect_error(get_message(data = plot(1), kind = "error", header = TRUE, print_no = FALSE, text = NULL, env = NULL, safer_check = TRUE, lib_path = NULL, error_text = ""))
     plot(1)
-    testthat::expect_no_error(get_message(data = plot(1), kind = "error", header = TRUE, print_no = FALSE, text = NULL, env = NULL, safer_check = TRUE, lib_path = NULL, error_text = ""))
+    testthat::expect_error(get_message(data = plot(1), kind = "error", header = TRUE, print_no = FALSE, text = NULL, env = NULL, safer_check = TRUE, lib_path = NULL, error_text = ""))
     graphics.off()
-    testthat::expect_no_error(get_message(data = ggplot(), kind = "error", header = TRUE, print_no = FALSE, text = NULL, env = NULL, safer_check = TRUE, lib_path = NULL, error_text = ""))
+    testthat::expect_error(get_message(data = ggplot(), kind = "error", header = TRUE, print_no = FALSE, text = NULL, env = NULL, safer_check = TRUE, lib_path = NULL, error_text = ""))
+    testthat::expect_no_error(get_message(data = "plot(1)", kind = "error", header = TRUE, print_no = FALSE, text = NULL, env = NULL, safer_check = TRUE, lib_path = NULL, error_text = ""))
+    plot(1)
+    testthat::expect_no_error(get_message(data = "plot(1)", kind = "error", header = TRUE, print_no = FALSE, text = NULL, env = NULL, safer_check = TRUE, lib_path = NULL, error_text = ""))
+    graphics.off()
+    testthat::expect_no_error(get_message(data = "ggplot()", kind = "error", header = TRUE, print_no = FALSE, text = NULL, env = NULL, safer_check = TRUE, lib_path = NULL, error_text = ""))
     ######## end graphic device checking
 
     ######## other checkings
@@ -264,148 +269,148 @@ testthat::test_that("get_message()", {
     #### end second round of checking and data preparation
 
     #### main code
-    # if( ! base::all(tempo.error == TRUE, na.rm = TRUE)){
-    testthat::expect_no_error(get_message(data = NULL, kind = "error", header = TRUE, print_no = FALSE, text = NULL, env = NULL, safer_check = TRUE, lib_path = NULL, error_text = ""))
-    result <- get_message(data = NULL, kind = "error", header = TRUE, print_no = FALSE, text = NULL, env = NULL, safer_check = TRUE, lib_path = NULL, error_text = "")
-    expected <- NULL
-    testthat::expect_equal(result, expected)
-    # end if( ! base::all(tempo.error == TRUE, na.rm = TRUE)){
-    # if(base::any(base::class(x = tempo.error) %in% base::c("gg", "ggplot"), na.rm = TRUE)){
-    testthat::expect_no_error(get_message(data = str5, kind = "error", header = TRUE, print_no = FALSE, text = NULL, env = NULL, safer_check = TRUE, lib_path = NULL, error_text = ""))
-    result <- get_message(data = str5, kind = "error", header = TRUE, print_no = FALSE, text = NULL, env = NULL, safer_check = TRUE, lib_path = NULL, error_text = "")
-    expected <- NULL
-    testthat::expect_equal(result, expected)
-    # end if(base::any(base::class(x = tempo.error) %in% base::c("gg", "ggplot"), na.rm = TRUE)){
-    # if( ! base::all(base::class(x = tempo.error) == "try-error", na.rm = TRUE)){
-    testthat::expect_no_error(get_message(data = "show(1)", kind = "error", header = TRUE, print_no = FALSE, text = NULL, env = NULL, safer_check = TRUE, lib_path = NULL, error_text = "")) # S4 object
-    result <- get_message(data = "show(1)", kind = "error", header = TRUE, print_no = FALSE, text = NULL, env = NULL, safer_check = TRUE, lib_path = NULL, error_text = "") # S4 object
-    expected <- NULL
-    testthat::expect_equal(result, expected)
-    result <- get_message(data = show(1), kind = "error", header = TRUE, print_no = FALSE, text = NULL, env = NULL, safer_check = TRUE, lib_path = NULL, error_text = "") # S4 object
-    expected <- NULL
-    testthat::expect_equal(result, expected)
-    # end if( ! base::all(base::class(x = tempo.error) == "try-error", na.rm = TRUE)){
-    # if(kind == "error" & ! base::is.null(x = tempo.error)){
-    # if(header == TRUE){
-    testthat::expect_no_error(get_message(data = str1, kind = "error", header = TRUE, print_no = TRUE, text = "IN FUN1", env = NULL, safer_check = TRUE, lib_path = NULL, error_text = "")) # text not NULL
-    result <- get_message(data = str1, kind = "error", header = TRUE, print_no = TRUE, text = "IN FUN1", env = NULL, safer_check = TRUE, lib_path = NULL, error_text = "")
-     expected <- "ERROR MESSAGE REPORTED IN FUN1:\nIn wilcox.test.default(letters, c(1, 2, 4)) : 'x' must be numeric\n"
-    testthat::expect_equal(result, expected)
-    testthat::expect_no_error(get_message(data = str1, kind = "error", header = TRUE, print_no = TRUE, text = NULL, env = NULL, safer_check = TRUE, lib_path = NULL, error_text = "")) # text not NULL
-    result <- get_message(data = str1, kind = "error", header = TRUE, print_no = TRUE, text = NULL, env = NULL, safer_check = TRUE, lib_path = NULL, error_text = "")
-     expected <- "ERROR MESSAGE REPORTED:\nIn wilcox.test.default(letters, c(1, 2, 4)) : 'x' must be numeric\n"
-    testthat::expect_equal(result, expected)
-    # end if(header == TRUE){
+    # if(base::all(tempo.error == TRUE, na.rm = TRUE)){
+    testthat::expect_error(get_message(data = NULL, kind = "error", header = TRUE, print_no = FALSE, text = NULL, env = NULL, safer_check = TRUE, lib_path = NULL, error_text = ""))
+    # end if(base::all(tempo.error == TRUE, na.rm = TRUE)){
     # }else{
-    testthat::expect_no_error(get_message(data = str1, kind = "error", header = FALSE, print_no = TRUE, text = "IN FUN1", env = NULL, safer_check = TRUE, lib_path = NULL, error_text = ""))
-    result <- get_message(data = str1, kind = "error", header = FALSE, print_no = TRUE, text = "IN FUN1", env = NULL, safer_check = TRUE, lib_path = NULL, error_text = "")
-    expected <- "Error in wilcox.test.default(letters, c(1, 2, 4)) : 'x' must be numeric\n"
-    testthat::expect_equal(result, expected)
-    # }else{
-    # end if(kind == "error" & ! base::is.null(x = tempo.error)){
-    # }else if(kind == "error" & base::is.null(x = tempo.error) & print_no == TRUE){
-    testthat::expect_no_error(get_message(data = str4, kind = "error", header = TRUE, print_no = TRUE, text = "IN FUN1", env = NULL, safer_check = TRUE, lib_path = NULL, error_text = "")) # text not NULL
-    result <- get_message(data = str4, kind = "error", header = TRUE, print_no = TRUE, text = "IN FUN1", env = NULL, safer_check = TRUE, lib_path = NULL, error_text = "") 
-    expected <- "NO ERROR MESSAGE REPORTED IN FUN1"
-    testthat::expect_equal(result, expected)
-    testthat::expect_no_error(get_message(data = str4, kind = "error", header = TRUE, print_no = TRUE, text = NULL, env = NULL, safer_check = TRUE, lib_path = NULL, error_text = "")) # text NULL
-    result <- get_message(data = str4, kind = "error", header = TRUE, print_no = TRUE, text = NULL, env = NULL, safer_check = TRUE, lib_path = NULL, error_text = "") 
-    expected <- "NO ERROR MESSAGE REPORTED"
-    testthat::expect_equal(result, expected)
-    # end }else if(kind == "error" & base::is.null(x = tempo.error) & print_no == TRUE){
-    # }else if(kind != "error" & ( ! base::is.null(x = tempo.error)) & print_no == TRUE){
-    testthat::expect_no_error(get_message(data = str1, kind = "message", header = FALSE, print_no = TRUE, text = "IN FUN1", env = NULL, safer_check = TRUE, lib_path = NULL, error_text = ""))
-    result <- get_message(data = str1, kind = "message", header = FALSE, print_no = TRUE, text = "IN FUN1", env = NULL, safer_check = TRUE, lib_path = NULL, error_text = "")
-    expected <- "NO POTENTIAL STANDARD (NON ERROR AND NON WARNING) MESSAGE BECAUSE OF ERROR MESSAGE REPORTED IN FUN1"
-    testthat::expect_equal(result, expected)
-    # end }else if(kind != "error" & ( ! base::is.null(x = tempo.error)) & print_no == TRUE){
-    # }else if(base::is.null(x = tempo.error)){ # meaning no error
-        # warning message
-        testthat::expect_no_error(get_message(data = str6, kind = "warning", header = TRUE, print_no = FALSE, text = "IN FUN1", env = NULL, safer_check = TRUE, lib_path = NULL, error_text = ""))
-        stats_env <- as.environment("package:stats")
-        testthat::expect_no_error(get_message(data = str6, kind = "warning", header = TRUE, print_no = FALSE, text = "IN FUN1", env = stats_env, safer_check = TRUE, lib_path = NULL, error_text = "")) # env
-        rm(stats_env)
-        testthat::expect_no_error(get_message(data = str7, kind = "warning", header = TRUE, print_no = FALSE, text = "IN FUN1", env = NULL, safer_check = TRUE, lib_path = NULL, error_text = "")) # ggplot2
-        # end warning message
-        # message
-        testthat::expect_no_error(get_message(data = str2, kind = "message", header = TRUE, print_no = FALSE, text = "IN FUN1", env = NULL, safer_check = TRUE, lib_path = NULL, error_text = ""))
-        testthat::expect_no_error(get_message(data = str2, kind = "message", header = TRUE, print_no = FALSE, text = "IN FUN1", env =  baseenv(), safer_check = TRUE, lib_path = NULL, error_text = ""))
-        testthat::expect_no_error(get_message(data = str5, kind = "message", header = TRUE, print_no = FALSE, text = "IN FUN1", env = NULL, safer_check = TRUE, lib_path = NULL, error_text = "")) # ggplot2
-        # end message
-    # if(base::any(base::class(x = tempo) %in% base::c("gg", "ggplot"), na.rm = TRUE)){
-    testthat::expect_no_error(get_message(data = ggplot2::ggplot(data = data.frame(X = c(1:10, NA), stringsAsFactors = TRUE), mapping = ggplot2::aes(x = X)) + ggplot2::geom_histogram(), kind = "warning", header = TRUE, print_no = FALSE, text = "IN FUN1", env = NULL, safer_check = TRUE, lib_path = NULL, error_text = ""))
-    # end }else if(base::is.null(x = tempo.error)){
-    # if(kind == "warning" & ! base::is.null(x = tempo.warn)){
-        # if(base::length(x = tempo.warn) > 0){
-            # if( ! base::any(base::sapply(X = tempo.warn, FUN = "grepl", 
-            testthat::expect_no_error(get_message(data = str6, kind = "warning", header = TRUE, print_no = FALSE, text = NULL, env = NULL, safer_check = TRUE, lib_path = NULL, error_text = ""))
-            testthat::expect_no_error(get_message(data = wilcox.test(c(1, 1, 3), c(1, 2, 4), paired = TRUE), kind = "warning", header = TRUE, print_no = FALSE, text = NULL, env = NULL, safer_check = TRUE, lib_path = NULL, error_text = ""))
-            # end if( ! base::any(base::sapply(X = tempo.warn, FUN = "grepl", 
+        testthat::expect_no_error(get_message(data = "NULL", kind = "error", header = TRUE, print_no = FALSE, text = NULL, env = NULL, safer_check = TRUE, lib_path = NULL, error_text = ""))
+        result <- get_message(data = "NULL", kind = "error", header = TRUE, print_no = FALSE, text = NULL, env = NULL, safer_check = TRUE, lib_path = NULL, error_text = "")
+        expected <- NULL
+        testthat::expect_equal(result, expected)
+        # if(base::any(base::class(x = tempo.error) %in% base::c("gg", "ggplot"), na.rm = TRUE)){
+        testthat::expect_no_error(get_message(data = str5, kind = "error", header = TRUE, print_no = FALSE, text = NULL, env = NULL, safer_check = TRUE, lib_path = NULL, error_text = ""))
+        result <- get_message(data = str5, kind = "error", header = TRUE, print_no = FALSE, text = NULL, env = NULL, safer_check = TRUE, lib_path = NULL, error_text = "")
+        expected <- NULL
+        testthat::expect_equal(result, expected)
+        # end if(base::any(base::class(x = tempo.error) %in% base::c("gg", "ggplot"), na.rm = TRUE)){
+        # if( ! base::all(base::class(x = tempo.error) == "try-error", na.rm = TRUE)){
+        testthat::expect_no_error(get_message(data = "show(1)", kind = "error", header = TRUE, print_no = FALSE, text = NULL, env = NULL, safer_check = TRUE, lib_path = NULL, error_text = "")) # S4 object
+        result <- get_message(data = "show(1)", kind = "error", header = TRUE, print_no = FALSE, text = NULL, env = NULL, safer_check = TRUE, lib_path = NULL, error_text = "") # S4 object
+        expected <- NULL
+        testthat::expect_equal(result, expected)
+        testthat::expect_error(get_message(data = show(1), kind = "error", header = TRUE, print_no = FALSE, text = NULL, env = NULL, safer_check = TRUE, lib_path = NULL, error_text = "")) # S4 object
+        # end if( ! base::all(base::class(x = tempo.error) == "try-error", na.rm = TRUE)){
+        # if(kind == "error" & ! base::is.null(x = tempo.error)){
+        # if(header == TRUE){
+        testthat::expect_no_error(get_message(data = str1, kind = "error", header = TRUE, print_no = TRUE, text = "IN FUN1", env = NULL, safer_check = TRUE, lib_path = NULL, error_text = "")) # text not NULL
+        result <- get_message(data = str1, kind = "error", header = TRUE, print_no = TRUE, text = "IN FUN1", env = NULL, safer_check = TRUE, lib_path = NULL, error_text = "")
+        expected <- "ERROR MESSAGE REPORTED IN FUN1:\nIn wilcox.test.default(letters, c(1, 2, 4)) : 'x' must be numeric\n"
+        testthat::expect_equal(result, expected)
+        testthat::expect_no_error(get_message(data = str1, kind = "error", header = TRUE, print_no = TRUE, text = NULL, env = NULL, safer_check = TRUE, lib_path = NULL, error_text = "")) # text not NULL
+        result <- get_message(data = str1, kind = "error", header = TRUE, print_no = TRUE, text = NULL, env = NULL, safer_check = TRUE, lib_path = NULL, error_text = "")
+        expected <- "ERROR MESSAGE REPORTED:\nIn wilcox.test.default(letters, c(1, 2, 4)) : 'x' must be numeric\n"
+        testthat::expect_equal(result, expected)
+        # end if(header == TRUE){
+        # }else{
+        testthat::expect_no_error(get_message(data = str1, kind = "error", header = FALSE, print_no = TRUE, text = "IN FUN1", env = NULL, safer_check = TRUE, lib_path = NULL, error_text = ""))
+        result <- get_message(data = str1, kind = "error", header = FALSE, print_no = TRUE, text = "IN FUN1", env = NULL, safer_check = TRUE, lib_path = NULL, error_text = "")
+        expected <- "Error in wilcox.test.default(letters, c(1, 2, 4)) : 'x' must be numeric\n"
+        testthat::expect_equal(result, expected)
+        # }else{
+        # end if(kind == "error" & ! base::is.null(x = tempo.error)){
+        # }else if(kind == "error" & base::is.null(x = tempo.error) & print_no == TRUE){
+        testthat::expect_no_error(get_message(data = str4, kind = "error", header = TRUE, print_no = TRUE, text = "IN FUN1", env = NULL, safer_check = TRUE, lib_path = NULL, error_text = "")) # text not NULL
+        result <- get_message(data = str4, kind = "error", header = TRUE, print_no = TRUE, text = "IN FUN1", env = NULL, safer_check = TRUE, lib_path = NULL, error_text = "") 
+        expected <- "NO ERROR MESSAGE REPORTED IN FUN1"
+        testthat::expect_equal(result, expected)
+        testthat::expect_no_error(get_message(data = str4, kind = "error", header = TRUE, print_no = TRUE, text = NULL, env = NULL, safer_check = TRUE, lib_path = NULL, error_text = "")) # text NULL
+        result <- get_message(data = str4, kind = "error", header = TRUE, print_no = TRUE, text = NULL, env = NULL, safer_check = TRUE, lib_path = NULL, error_text = "") 
+        expected <- "NO ERROR MESSAGE REPORTED"
+        testthat::expect_equal(result, expected)
+        # end }else if(kind == "error" & base::is.null(x = tempo.error) & print_no == TRUE){
+        # }else if(kind != "error" & ( ! base::is.null(x = tempo.error)) & print_no == TRUE){
+        testthat::expect_no_error(get_message(data = str1, kind = "message", header = FALSE, print_no = TRUE, text = "IN FUN1", env = NULL, safer_check = TRUE, lib_path = NULL, error_text = ""))
+        result <- get_message(data = str1, kind = "message", header = FALSE, print_no = TRUE, text = "IN FUN1", env = NULL, safer_check = TRUE, lib_path = NULL, error_text = "")
+        expected <- "NO POTENTIAL STANDARD (NON ERROR AND NON WARNING) MESSAGE BECAUSE OF ERROR MESSAGE REPORTED IN FUN1"
+        testthat::expect_equal(result, expected)
+        # end }else if(kind != "error" & ( ! base::is.null(x = tempo.error)) & print_no == TRUE){
+        # }else if(base::is.null(x = tempo.error)){ # meaning no error
+            # warning message
+            testthat::expect_no_error(get_message(data = str6, kind = "warning", header = TRUE, print_no = FALSE, text = "IN FUN1", env = NULL, safer_check = TRUE, lib_path = NULL, error_text = ""))
+            stats_env <- as.environment("package:stats")
+            testthat::expect_no_error(get_message(data = str6, kind = "warning", header = TRUE, print_no = FALSE, text = "IN FUN1", env = stats_env, safer_check = TRUE, lib_path = NULL, error_text = "")) # env
+            rm(stats_env)
+            testthat::expect_no_error(get_message(data = str7, kind = "warning", header = TRUE, print_no = FALSE, text = "IN FUN1", env = NULL, safer_check = TRUE, lib_path = NULL, error_text = "")) # ggplot2
+            # end warning message
+            # message
+            testthat::expect_no_error(get_message(data = str2, kind = "message", header = TRUE, print_no = FALSE, text = "IN FUN1", env = NULL, safer_check = TRUE, lib_path = NULL, error_text = ""))
+            testthat::expect_no_error(get_message(data = str2, kind = "message", header = TRUE, print_no = FALSE, text = "IN FUN1", env =  baseenv(), safer_check = TRUE, lib_path = NULL, error_text = ""))
+            testthat::expect_no_error(get_message(data = str5, kind = "message", header = TRUE, print_no = FALSE, text = "IN FUN1", env = NULL, safer_check = TRUE, lib_path = NULL, error_text = "")) # ggplot2
+            # end message
+        # if(base::any(base::class(x = tempo) %in% base::c("gg", "ggplot"), na.rm = TRUE)){
+        testthat::expect_error(get_message(data = ggplot2::ggplot(data = data.frame(X = c(1:10, NA), stringsAsFactors = TRUE), mapping = ggplot2::aes(x = X)) + ggplot2::geom_histogram(), kind = "warning", header = TRUE, print_no = FALSE, text = "IN FUN1", env = NULL, safer_check = TRUE, lib_path = NULL, error_text = ""))
+        # end }else if(base::is.null(x = tempo.error)){
+        # if(kind == "warning" & ! base::is.null(x = tempo.warn)){
+            # if(base::length(x = tempo.warn) > 0){
+                # if( ! base::any(base::sapply(X = tempo.warn, FUN = "grepl", 
+                testthat::expect_no_error(get_message(data = str6, kind = "warning", header = TRUE, print_no = FALSE, text = NULL, env = NULL, safer_check = TRUE, lib_path = NULL, error_text = ""))
+                testthat::expect_error(get_message(data = wilcox.test(c(1, 1, 3), c(1, 2, 4), paired = TRUE), kind = "warning", header = TRUE, print_no = FALSE, text = NULL, env = NULL, safer_check = TRUE, lib_path = NULL, error_text = ""))
+                # end if( ! base::any(base::sapply(X = tempo.warn, FUN = "grepl", 
+                # }else{
+                testthat::expect_no_error(get_message(data = "function(){}", kind = "warning", header = TRUE, print_no = FALSE, text = NULL, env = NULL, safer_check = TRUE, lib_path = NULL, error_text = ""))
+                testthat::expect_error(get_message(data = function(){}, kind = "warning", header = TRUE, print_no = FALSE, text = NULL, env = NULL, safer_check = TRUE, lib_path = NULL, error_text = ""))
+                # end }else{
+
+                # if(header == TRUE){
+                    # if(base::any(base::grepl(x = tempo.warn[[1]], pattern
+
+                    # end if(base::any(base::grepl(x = tempo.warn[[1]], pattern
+
+                    
+                    # if(base::any(base::grepl(x = tempo.warn[[1]], pattern = "^Warning i", ignore.case = FALSE, 
+
+                    # end if(base::any(base::grepl(x = tempo.warn[[1]], pattern = "^Warning i", ig
+
+                # end if(header == TRUE){
+
+                # }else{
+
+                # end }else{
+
+            # end if(base::length(x = tempo.warn) > 0){
+
             # }else{
-            testthat::expect_no_error(get_message(data = "function(){}", kind = "warning", header = TRUE, print_no = FALSE, text = NULL, env = NULL, safer_check = TRUE, lib_path = NULL, error_text = ""))
-            testthat::expect_no_error(get_message(data = function(){}, kind = "warning", header = TRUE, print_no = FALSE, text = NULL, env = NULL, safer_check = TRUE, lib_path = NULL, error_text = ""))
+            testthat::expect_no_error(get_message(data = character(), kind = "warning", header = TRUE, print_no = FALSE, text = NULL, env = NULL, safer_check = TRUE, lib_path = NULL, error_text = ""))
+            testthat::expect_no_error(get_message(data = "character()", kind = "warning", header = TRUE, print_no = FALSE, text = NULL, env = NULL, safer_check = TRUE, lib_path = NULL, error_text = ""))
+                # if(print_no == TRUE){
+                testthat::expect_no_error(get_message(data = character(), kind = "warning", header = TRUE, print_no = TRUE, text = NULL, env = NULL, safer_check = TRUE, lib_path = NULL, error_text = ""))
+                testthat::expect_no_error(get_message(data = "character()", kind = "warning", header = TRUE, print_no = TRUE, text = NULL, env = NULL, safer_check = TRUE, lib_path = NULL, error_text = ""))
+                # end if(print_no == TRUE){
             # end }else{
 
-            # if(header == TRUE){
-                # if(base::any(base::grepl(x = tempo.warn[[1]], pattern
+        # end if(kind == "warning" & ! base::is.null(x = tempo.warn)){
 
-                # end if(base::any(base::grepl(x = tempo.warn[[1]], pattern
+        # }else if(kind == "warning" & base::is.null(x = tempo.warn) & print_no == TRUE){
 
+        # end }else if(kind == "warning" & base::is.null(x = tempo.warn) & print_no == TRUE){
                 
-                # if(base::any(base::grepl(x = tempo.warn[[1]], pattern = "^Warning i", ignore.case = FALSE, 
+        # }else if(kind == "message" & base::exists(x = "tempo.message", where = -1, envir = base:
+        
+            # if(base::length(x = tempo.message) > 0){
 
-                # end if(base::any(base::grepl(x = tempo.warn[[1]], pattern = "^Warning i", ig
+                # if(header == TRUE){
 
-            # end if(header == TRUE){
+                # end if(header == TRUE){
 
-            # }else{
+                # }else{
 
-            # end }else{
+                # end }else{
 
-        # end if(base::length(x = tempo.warn) > 0){
-
-        # }else{
-        testthat::expect_no_error(get_message(data = character(), kind = "warning", header = TRUE, print_no = FALSE, text = NULL, env = NULL, safer_check = TRUE, lib_path = NULL, error_text = ""))
-        testthat::expect_no_error(get_message(data = "character()", kind = "warning", header = TRUE, print_no = FALSE, text = NULL, env = NULL, safer_check = TRUE, lib_path = NULL, error_text = ""))
-            # if(print_no == TRUE){
-            testthat::expect_no_error(get_message(data = character(), kind = "warning", header = TRUE, print_no = TRUE, text = NULL, env = NULL, safer_check = TRUE, lib_path = NULL, error_text = ""))
-            testthat::expect_no_error(get_message(data = "character()", kind = "warning", header = TRUE, print_no = TRUE, text = NULL, env = NULL, safer_check = TRUE, lib_path = NULL, error_text = ""))
-            # end if(print_no == TRUE){
-        # end }else{
-
-    # end if(kind == "warning" & ! base::is.null(x = tempo.warn)){
-
-    # }else if(kind == "warning" & base::is.null(x = tempo.warn) & print_no == TRUE){
-
-    # end }else if(kind == "warning" & base::is.null(x = tempo.warn) & print_no == TRUE){
-             
-    # }else if(kind == "message" & base::exists(x = "tempo.message", where = -1, envir = base:
-    
-        # if(base::length(x = tempo.message) > 0){
-
-            # if(header == TRUE){
-
-            # end if(header == TRUE){
+            # end if(base::length(x = tempo.message) > 0){
 
             # }else{
 
+                # if(print_no == TRUE){
+
+                # end if(print_no == TRUE){
+
             # end }else{
 
-        # end if(base::length(x = tempo.message) > 0){
+        # end }else if(kind == "message" & base::exists(x = "tempo.message", where = -1, envir = base:
+        
+        # }else if(kind == "message" & base::exists(x = "tempo.message", where = -1, envi
 
-        # }else{
-
-            # if(print_no == TRUE){
-
-            # end if(print_no == TRUE){
-
-        # end }else{
-
-    # end }else if(kind == "message" & base::exists(x = "tempo.message", where = -1, envir = base:
-    
-    # }else if(kind == "message" & base::exists(x = "tempo.message", where = -1, envi
-
-    # end }else if(kind == "message" & base::exists(x = "tempo.message", where = -1, envi
+        # end }else if(kind == "message" & base::exists(x = "tempo.message", where = -1, envi
 
 
 
@@ -415,9 +420,10 @@ testthat::test_that("get_message()", {
     testthat::expect_no_error(get_message(data = str1, kind = "warning", header = TRUE, print_no = TRUE, text = NULL, env = NULL, safer_check = TRUE, lib_path = NULL, error_text = ""))
     testthat::expect_no_error(get_message(data = str6, kind = "warning", header = TRUE, print_no = TRUE, text = NULL, env = NULL, safer_check = TRUE, lib_path = NULL, error_text = ""))
     testthat::expect_no_error(get_message(data = str1, kind = "message", header = TRUE, print_no = FALSE, text = NULL, env = NULL, safer_check = TRUE, lib_path = NULL, error_text = ""))
-    testthat::expect_no_error(get_message(data = fun1, kind = "message", header = TRUE, print_no = FALSE, text = NULL, env = NULL, safer_check = TRUE, lib_path = NULL, error_text = ""))
+    testthat::expect_error(get_message(data = fun1, kind = "message", header = TRUE, print_no = FALSE, text = NULL, env = NULL, safer_check = TRUE, lib_path = NULL, error_text = ""))
     testthat::expect_no_error(get_message(data = "library(dplyr)", kind = "message", header = TRUE, print_no = FALSE, text = NULL, env = NULL, safer_check = TRUE, lib_path = NULL, error_text = ""))
     testthat::expect_no_error(get_message(data = "library(dplyr)", kind = "message", header = TRUE, print_no = TRUE, text = NULL, env = NULL, safer_check = TRUE, lib_path = NULL, error_text = ""))
+    # }else{
     #### end main code
 
     ## end tests (ordered by arg appearance and conditions in the code)
