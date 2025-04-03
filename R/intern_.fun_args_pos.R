@@ -273,7 +273,7 @@
 
     ######## management of "" in arguments of mode character
     tempo_arg <- base::c(
-        # "text", # inactivated because can be ""
+        "text", # a priori cannot be ""
         "pattern"
         # "lib_path" # inactivated because already checked above
         # "error_text" # inactivated because can be ""
