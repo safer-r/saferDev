@@ -349,17 +349,8 @@
 
     # removal of comments
     comment_line.log <- base::grepl(x = code, pattern = "^\\s*#", ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE) # removal of the lines starting by #
-    if(base::length(x = code) == 0){
-        tempo_cat <- base::paste0(
-            error_text_start, 
-            "THE TESTED FUNCTION ", 
-            arg_user_setting2$x, 
-            " IS EMPTY OR ONLY MADE OF COMMENTS.", 
-            collapse = NULL, 
-            recycle0 = FALSE
-        )
-        base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL)
-    }
+    # no test for empty code here because code style contains "function" as fisrt line of code
+
     comment.log <- base::grepl(x = code, pattern = "#", ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE)
     if(base::any(comment.log, na.rm = TRUE)){
         comment.line.to.rm <- base::which(x = comment.log, arr.ind = FALSE, useNames = TRUE) # elements among code that have #
@@ -397,6 +388,7 @@
         }
         code[comment.line.to.rm] <- lines
     }
+    # no test for empty code here because code style contains "function" as fisrt line of code
     # end removal of comments
     # catch the internal function name created inside the tested function
     internal_fun_names <- base::unlist(x = base::lapply(X = code, FUN = function(x){
@@ -453,6 +445,18 @@
     tempo_log <- base::lapply(X = fun_name, FUN = function(x){ ! x %in% skipped_base})
     fun_name_wo_op <- base::mapply(FUN = function(x, y){x[y]}, x = fun_name, y = tempo_log, MoreArgs = NULL, SIMPLIFY = FALSE, USE.NAMES = TRUE)
     fun_name_pos_wo_op <- base::mapply(FUN = function(x, y){x[y]}, x = fun_name_pos, y = tempo_log, MoreArgs = NULL, SIMPLIFY = FALSE, USE.NAMES = TRUE)
+    if(base::length(x = unlist(fun_name_wo_op)) == 0 | base::length(x = unlist(fun_name_pos_wo_op)) == 0){
+        tempo_cat <- base::paste0(
+            error_text_start, 
+            "THE TESTED FUNCTION ", 
+            arg_user_setting2$x, 
+            " IS EMPTY OR ONLY MADE OF COMMENTS OR ONLY MADE OF THE SKIPPED FUNCTIONS:\n", 
+            base::paste0(skipped_base, collapse = "\n", recycle0 = FALSE), 
+            collapse = NULL, 
+            recycle0 = FALSE
+        )
+        base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL)
+    }
     # end removal of special functions
     # removal of empty string
     tempo.log <- base::sapply(X = fun_name_wo_op, FUN = function(x){base::length(x = x) == 0}, simplify = TRUE, USE.NAMES = TRUE) # detection of string with empty function names
@@ -460,31 +464,9 @@
     fun_name_pos_wo_op <- fun_name_pos_wo_op[ ! tempo.log]
     code_line_nb <- code_line_nb[( ! tempo.log) & ( ! comment_line.log) & ( ! empty_line.log)]
     if( ! (base::length(x = fun_name_wo_op) == base::length(x = fun_name_pos_wo_op) & base::length(x = fun_name_wo_op) == base::length(x = code_line_nb))){
-        tempo_cat <- base::paste0(
-            "INTERNAL ERROR 2 IN ",
-            intern_error_text_start, 
-            "LENGTHS SHOULD BE IDENTICAL\nfun_name_wo_op: ", 
-            base::length(x = fun_name_wo_op), 
-            "\nfun_name_pos_wo_op: ", 
-            base::length(x = fun_name_pos_wo_op), 
-            "\ncode_line_nb: ", 
-            base::length(x = code_line_nb), 
-            intern_error_text_end, 
-            collapse = NULL, 
-            recycle0 = FALSE
-        )
-        base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL)
+        tempo_cat <- base::paste0("INTERNAL ERROR 2 IN ", intern_error_text_start,  "LENGTHS SHOULD BE IDENTICAL\nfun_name_wo_op: ",  base::length(x = fun_name_wo_op),  "\nfun_name_pos_wo_op: ",  base::length(x = fun_name_pos_wo_op),  "\ncode_line_nb: ",  base::length(x = code_line_nb),  intern_error_text_end,  collapse = NULL,  recycle0 = FALSE) ; base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL)
     }else if(base::any(base::is.na(x = code_line_nb), na.rm = TRUE)){
-        tempo_cat <- base::paste0(
-            "INTERNAL ERROR 3 IN ", 
-            intern_error_text_start, 
-            "code_line_nb SHOULD NOT CONTAIN NA.\ncode_line_nb:\n", 
-            base::paste0(code_line_nb, collapse = "\n", recycle0 = FALSE), 
-            intern_error_text_end, 
-            collapse = NULL, 
-            recycle0 = FALSE
-        )
-        base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL)
+        tempo_cat <- base::paste0("INTERNAL ERROR 3 IN ", intern_error_text_start, "code_line_nb SHOULD NOT CONTAIN NA.\ncode_line_nb:\n", base::paste0(code_line_nb, collapse = "\n", recycle0 = FALSE), intern_error_text_end, collapse = NULL, recycle0 = FALSE) ; base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL)
     }else{
         # with that, now the code line of code is indicated in as compartment names
         base::names(x = fun_name_wo_op) <- base::paste0("c", code_line_nb, collapse = NULL, recycle0 = FALSE)
@@ -492,19 +474,7 @@
     }
     # end removal of empty string
     test.log <- base::mapply(FUN = function(x, y){base::length(x = x) != base::length(x = y)}, x = fun_name_wo_op, y = fun_name_pos_wo_op, MoreArgs = NULL, SIMPLIFY = TRUE, USE.NAMES = TRUE)
-    if(base::any(test.log, na.rm = TRUE)){
-        tempo_cat <- base::paste0(
-            "INTERNAL ERROR 4 IN ",
-            intern_error_text_start, 
-            "LENGTHS SHOULD BE IDENTICAL IN COMPARTMENTS ", 
-            base::paste0(base::which(x = test.log, arr.ind = FALSE, useNames = TRUE), collapse = ", ", recycle0 = FALSE), 
-            " OF fun_name_wo_op AND fun_name_pos_wo_op.", 
-            intern_error_text_end, 
-            collapse = NULL, 
-            recycle0 = FALSE
-        )
-        base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL)
-    }
+    if(base::any(test.log, na.rm = TRUE)){tempo_cat <- base::paste0("INTERNAL ERROR 4 IN ", intern_error_text_start, "LENGTHS SHOULD BE IDENTICAL IN COMPARTMENTS ", base::paste0(base::which(x = test.log, arr.ind = FALSE, useNames = TRUE), collapse = ", ", recycle0 = FALSE), " OF fun_name_wo_op AND fun_name_pos_wo_op.", intern_error_text_end, collapse = NULL, recycle0 = FALSE) ; base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL)}
     # fun_name_wo_op_uni <- base::unlist(base::unique(fun_name_wo_op)) # in case
     # end all function names in x
 
