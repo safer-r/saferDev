@@ -321,12 +321,13 @@
     # recovering the basic functions of R
     s <- base::c("package:stats", "package:graphics",  "package:grDevices", "package:utils", "package:datasets", "package:methods", "Autoloads", "package:base") # basic base::search() scope
     if(base::any( ! s %in% base::search(), na.rm = TRUE)){
+        tempo <- s[ ! s %in% base::search()]
         tempo_cat <- base::paste0(
-            "INTERNAL ERROR 1 IN ",
-            intern_error_text_start, 
-            "THE base::search() SCOPE OF R HAS CHANGED.\nTHE PROBLEM IS:\n",
-            base::paste0(s[ ! s %in% base::search()], collapse = "\n", recycle0 = FALSE), 
-            intern_error_text_end, 
+            error_text_start, 
+            "THE default base::search() SCOPE OF R HAS CHANGED.\nTHE PROBLEM IS:\n",
+            base::paste0(tempo, collapse = "\n", recycle0 = FALSE), 
+            "\nTHE FUNCTION CANNOT WORK WITH ",
+            base::ifelse(test = base::length(x = tempo) == 1, yes = "THIS NAME SPACE DETACHED. PLEASE, ATTACH IT.", no = "THESE NAME SPACES DETACHED. PLEASE, ATTACH THEM."), 
             collapse = NULL, 
             recycle0 = FALSE
         )

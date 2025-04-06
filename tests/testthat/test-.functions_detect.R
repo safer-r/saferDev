@@ -31,6 +31,7 @@ testthat::test_that(".functions_detect()", {
         base::return(bobo) # a$sub("\\($##", "", matched_strings)
     }
     arg_user_setting2_1 <- base::list(x =  as.name(x = "test"))
+    arg_user_setting2_2 <- base::list(x =  as.name(x = "PACK::test"))
     vec1 <- c("function", "if", "for", "while", "repeat", "else")
     str1 <- "blabla" # error saferDev:::.noclean_functions()
     str2 <- c("", "UseMethod(\"mean\")") # no error
@@ -210,9 +211,28 @@ testthat::test_that(".functions_detect()", {
     #### end second round of checking and data preparation
 
     #### main code
-
-
-
+    # modification of arg_user_setting2$x for clean messages
+    testthat::expect_no_error(.functions_detect(x = test, arg_user_setting2 = arg_user_setting2_2, skipped_base = vec1, lib_path = NULL, error_text = ""))
+    result <- .functions_detect(x = test, arg_user_setting2 = arg_user_setting2_2, skipped_base = vec1, lib_path = NULL, error_text = "")$arg_user_setting$x
+    expected <- as.name("PACK::test")
+    testthat::expect_equal(result, expected)
+    # end modification of arg_user_setting2$x for clean messages
+    # recovering the basic functions of R
+    detach("package:stats", unload = FALSE)
+    testthat::expect_error(.functions_detect(x = test, arg_user_setting2 = arg_user_setting2_1, skipped_base = vec1, lib_path = NULL, error_text = ""))
+    result <- saferDev::get_message('.functions_detect(x = test, arg_user_setting2 = arg_user_setting2_1, skipped_base = vec1, lib_path = NULL, error_text = "")', kind = "error", print_no = TRUE, text = NULL) 
+    expected <- "ERROR MESSAGE REPORTED:\nError : \n\n================\n\nERROR IN saferDev:::.functions_detect().\n\nTHE default base::search() SCOPE OF R HAS CHANGED.\nTHE PROBLEM IS:\npackage:stats\nTHE FUNCTION CANNOT WORK WITH THIS NAME SPACE DETACHED. PLEASE, ATTACH IT.\n\n================\n\n\n"
+    testthat::expect_equal(result, expected)
+    attachNamespace("stats")
+    detach("package:stats", unload = FALSE)
+    detach("package:graphics", unload = FALSE)
+    testthat::expect_error(.functions_detect(x = test, arg_user_setting2 = arg_user_setting2_1, skipped_base = vec1, lib_path = NULL, error_text = ""))
+    result <- saferDev::get_message('.functions_detect(x = test, arg_user_setting2 = arg_user_setting2_1, skipped_base = vec1, lib_path = NULL, error_text = "")', kind = "error", print_no = TRUE, text = NULL) 
+    expected <- "ERROR MESSAGE REPORTED:\nError : \n\n================\n\nERROR IN saferDev:::.functions_detect().\n\nTHE default base::search() SCOPE OF R HAS CHANGED.\nTHE PROBLEM IS:\npackage:stats\npackage:graphics\nTHE FUNCTION CANNOT WORK WITH THESE NAME SPACES DETACHED. PLEASE, ATTACH THEM.\n\n================\n\n\n"
+    testthat::expect_equal(result, expected)
+    attachNamespace("stats")
+    attachNamespace("graphics")
+    # end recovering the basic functions of R
     #### end main code
 
     ## end tests (ordered by arg appearance and conditions in the code)
