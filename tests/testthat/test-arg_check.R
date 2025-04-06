@@ -14,6 +14,7 @@ testthat::test_that("arg_check()", {
     number <- 1
     factor1 <- base::as.factor(vec5)
     expr1 <- expression(1)
+    fun1 <- function(x){x = 1}
     ## end data argument values
 
     ## initialization of tests
@@ -119,6 +120,10 @@ testthat::test_that("arg_check()", {
     testthat::expect_error(arg_check(data = vec1, class = "numeric", safer_check = NA))
     testthat::expect_error(arg_check(data = vec1, class = "numeric", safer_check = 1))
     testthat::expect_error(arg_check(data = vec1, class = "numeric", safer_check = c(TRUE, FALSE)))
+    testthat::expect_error(arg_check(data = vec1, class = "numeric", safer_check = mat1))
+    testthat::expect_error(arg_check(data = vec1, class = "numeric", safer_check = factor1))
+    testthat::expect_error(arg_check(data = vec1, class = "numeric", safer_check = expr1))
+    testthat::expect_error(arg_check(data = vec1, class = "numeric", safer_check = fun1))
     result <- arg_check(data = vec1, class = "numeric", safer_check = TRUE)
     expect <- list(problem = TRUE, text = "ERROR\n\nTHE vec1 ARGUMENT MUST BE CLASS numeric", object.name = "vec1")
     testthat::expect_equal(result, expect)
@@ -129,8 +134,14 @@ testthat::test_that("arg_check()", {
 
     ######## lib_path argument
     # safer_check must be TRUE
+    testthat::expect_no_error(arg_check(data = vec1, class = "numeric", safer_check = TRUE, lib_path = NULL))
     testthat::expect_error(arg_check(data = vec1, class = "numeric", safer_check = TRUE, lib_path = NA))
     testthat::expect_error(arg_check(data = vec1, class = "numeric", safer_check = TRUE, lib_path = 1))
+    testthat::expect_error(arg_check(data = vec1, class = "numeric", safer_check = TRUE, lib_path = c(TRUE, FALSE)))
+    testthat::expect_error(arg_check(data = vec1, class = "numeric", safer_check = TRUE, lib_path = mat1))
+    testthat::expect_error(arg_check(data = vec1, class = "numeric", safer_check = TRUE, lib_path = factor1))
+    testthat::expect_error(arg_check(data = vec1, class = "numeric", safer_check = TRUE, lib_path = expr1))
+    testthat::expect_error(arg_check(data = vec1, class = "numeric", safer_check = TRUE, lib_path = fun1))
     testthat::expect_error(arg_check(data = vec1, class = "numeric", safer_check = TRUE, lib_path = "PATH_NOT_GOOD"))
     result <- arg_check(data = vec1, class = "numeric", safer_check = TRUE, lib_path = NULL)
     expect <- list(problem = TRUE, text = "ERROR\n\nTHE vec1 ARGUMENT MUST BE CLASS numeric", object.name = "vec1")
