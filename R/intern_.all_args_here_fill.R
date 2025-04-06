@@ -381,22 +381,6 @@
     ######## end graphic device checking
 
     ######## other checkings
-    if(base::length(x = arg_full_names) != base::length(x = three_dots_log)){
-            tempo_cat <- base::paste0(
-                error_text_start, 
-                "\nARGUMENTS arg_full_names AND three_dots_log MUST HAVE THE SAME LENGTH.\narg_full_names (", 
-                base::length(x = arg_full_names), 
-                "):\n", 
-                base::paste0(arg_full_names, collapse = "\n", recycle0 = FALSE), 
-                "\nthree_dots_log (", 
-                base::length(x = three_dots_log), 
-                "):\n", 
-                base::paste0(three_dots_log, collapse = "\n", recycle0 = FALSE), 
-                collapse = NULL, 
-                recycle0 = FALSE
-            )
-            base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL) # == in stop() to be able to add several messages between ==
-    }
     ######## end other checkings
 
     #### end second round of checking and data preparation
