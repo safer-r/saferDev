@@ -381,10 +381,10 @@
     ######## end graphic device checking
 
     ######## other checkings
-    if(base::length(x = arg_full_names) != base::length(x = three_dots_log)){
+    if( ! ((base::length(x = arg_full_names) == base::length(x = three_dots_log)) | (base::is.null(x = arg_full_names) & base::length(x = three_dots_log) == 1 & base::sum(three_dots_log, na.rm = TRUE) == 0))){ # either equal length, or arg_full_names = NULL and three_dots_log = FALSE
             tempo_cat <- base::paste0(
                 error_text_start, 
-                "\nARGUMENTS arg_full_names AND three_dots_log MUST HAVE THE SAME LENGTH.\narg_full_names (", 
+                "\nARGUMENTS arg_full_names AND three_dots_log MUST HAVE THE SAME LENGTH, OR THE FIRST BEING NULL AND THE SECOND BEING FALSE.\narg_full_names (", 
                 base::length(x = arg_full_names), 
                 "):\n", 
                 base::paste0(arg_full_names, collapse = "\n", recycle0 = FALSE), 
