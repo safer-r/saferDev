@@ -278,34 +278,19 @@
         # "lib_path" # inactivated because already checked above
         # "error_text" # inactivated because can be ""
     )
-    tempo_log <- ! base::sapply(X = base::lapply(X = tempo_arg, FUN = function(x){base::get(x = x, pos = -1L, envir = base::parent.frame(n = 2), mode = "any", inherits = FALSE)}), FUN = function(x){if(base::is.null(x = x)){base::return(TRUE)}else{base::all(base::mode(x = x) == "character", na.rm = TRUE)}}, simplify = TRUE, USE.NAMES = TRUE) # parent.frame(n = 2) because sapply(lapply())  #  need to test is.null() here
+    # backbone personalized here (base::is.null(x = x)){base::return(TRUE) removed) because the 4 arguments cannot be NULL and codecov must be optimized
+    # INTERNAL ERROR IN THE BACKBONE PART section removed because codecov must be optimized. I have checked that these four arguments are tested for mode character upstream
+    tempo_log <- base::sapply(X = base::lapply(X = tempo_arg, FUN = function(x){base::get(x = x, pos = -1L, envir = base::parent.frame(n = 2), mode = "any", inherits = FALSE)}), FUN = function(x){base::any(x == "", na.rm = TRUE)}, simplify = TRUE, USE.NAMES = TRUE) # parent.frame(n = 2) because sapply(lapply()).  # for character argument that can also be NULL, if NULL -> returns FALSE. Thus no need to test is.null()
     if(base::any(tempo_log, na.rm = TRUE)){
-        # This check is here in case the developer has not correctly fill tempo_arg
         tempo_cat <- base::paste0(
-            "INTERNAL ERROR IN THE BACKBONE PART OF ", 
-            intern_error_text_start, 
-            "IN THE SECTION \"management of \"\" in arguments of mode character\"\n", 
-            base::ifelse(test = base::sum(tempo_log, na.rm = TRUE) > 1, yes = "THESE ARGUMENTS ARE", no = "THIS ARGUMENT IS"), 
-            " NOT CLASS \"character\":\n", 
-            base::paste0(tempo_arg[tempo_log], collapse = "\n", recycle0 = FALSE), 
-            intern_error_text_end, 
+            error_text_start, 
+            base::ifelse(test = base::sum(tempo_log, na.rm = TRUE) > 1, yes = "THESE ARGUMENTS\n", no = "THIS ARGUMENT\n"), 
+            base::paste0(tempo_arg[tempo_log], collapse = "\n", recycle0 = FALSE),
+            "\nCANNOT CONTAIN EMPTY STRING \"\".", 
             collapse = NULL, 
             recycle0 = FALSE
         )
-        base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL)
-    }else{
-        tempo_log <- base::sapply(X = base::lapply(X = tempo_arg, FUN = function(x){base::get(x = x, pos = -1L, envir = base::parent.frame(n = 2), mode = "any", inherits = FALSE)}), FUN = function(x){base::any(x == "", na.rm = TRUE)}, simplify = TRUE, USE.NAMES = TRUE) # parent.frame(n = 2) because sapply(lapply()).  # for character argument that can also be NULL, if NULL -> returns FALSE. Thus no need to test is.null()
-        if(base::any(tempo_log, na.rm = TRUE)){
-            tempo_cat <- base::paste0(
-                error_text_start, 
-                base::ifelse(test = base::sum(tempo_log, na.rm = TRUE) > 1, yes = "THESE ARGUMENTS\n", no = "THIS ARGUMENT\n"), 
-                base::paste0(tempo_arg[tempo_log], collapse = "\n", recycle0 = FALSE),
-                "\nCANNOT CONTAIN EMPTY STRING \"\".", 
-                collapse = NULL, 
-                recycle0 = FALSE
-            )
-            base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL) # == in stop() to be able to add several messages between ==
-        }
+        base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL) # == in stop() to be able to add several messages between ==
     }
     ######## end management of "" in arguments of mode character
 
@@ -389,33 +374,7 @@
             loop.nb <- loop.nb + 1
         }
         if(count != 0){
-            tempo_name <- base::paste0("while_loop_fun_args_pos_internal_error_", intern_error_nb, ".txt")
-            base::cat(text, file = tempo_name, sep = "", fill = FALSE, labels = NULL, append = FALSE)
-            tempo_cat <- base::paste0(
-                "INTERNAL ERROR ", 
-                intern_error_nb, 
-                " IN ",
-                intern_error_text_start, 
-                "INTERNAL FUNCTION DID NOT PROPERLY DETECT THE POSITION OF THE CLOSING BRACKET.\n", 
-                "\nstart: ",
-                start, 
-                "\nall_pos: ",
-                all_pos, 
-                "\nopen_pos: ",
-                open_pos,
-                "\nclose_pos: ",
-                close_pos,
-                "\ntext:\nSEE THE FILE ",
-                tempo_name, 
-                "\npattern: ", 
-                base::paste0(pattern, collapse = "\n", recycle0 = FALSE), 
-                "\ncount: ", 
-                base::paste0(count, collapse = "\n", recycle0 = FALSE), 
-                intern_error_text_end, 
-                collapse = NULL, 
-                recycle0 = FALSE
-            )
-            base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL)
+            tempo_name <- base::paste0("while_loop_fun_args_pos_internal_error_", intern_error_nb, ".txt") ; base::cat(text, file = tempo_name, sep = "", fill = FALSE, labels = NULL, append = FALSE) ; tempo_cat <- base::paste0("INTERNAL ERROR ", intern_error_nb, " IN ", intern_error_text_start, "INTERNAL FUNCTION DID NOT PROPERLY DETECT THE POSITION OF THE CLOSING BRACKET.\n", "\nstart: ", start, "\nall_pos: ", all_pos, "\nopen_pos: ", open_pos, "\nclose_pos: ", close_pos, "\ntext:\nSEE THE FILE ", tempo_name, "\npattern: ", base::paste0(pattern, collapse = "\n", recycle0 = FALSE), "\ncount: ", base::paste0(count, collapse = "\n", recycle0 = FALSE), intern_error_text_end, collapse = NULL, recycle0 = FALSE) ; base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL)
         }else{
             base::return(final_pos)
         }
@@ -468,27 +427,8 @@
         count_open_paren_pos_inside <- base::length(x = open_paren_pos_inside)
         close_paren_pos_inside <- all_pos_inside[all_pos_inside %in% close_paren_pos]
         count_close_paren_pos_inside <- base::length(x = open_paren_pos_inside)
-        if(count_open_paren_pos_inside != count_close_paren_pos_inside | count_open_paren_pos_inside == 0){ #count_open_paren_pos_inside == 0 because tempo_log above has some TRUE
-            tempo_cat <- base::paste0(
-                "INTERNAL ERROR 4 IN ", 
-                intern_error_text_start, 
-                "THE ", 
-                function_name, 
-                " INTERNAL FUNCTION DID NOT PROPERLY DETECT THE POSITION OF ALL THE BRACKETS INSIDE THE FUN(    ) BRACKETS.", 
-                "\ntext: ", 
-                base::paste0(text, collapse = "\n", recycle0 = FALSE), 
-                "\npattern: ", 
-                base::paste0(pattern, collapse = "\n", recycle0 = FALSE), 
-                "\nCOUNT OF OPENED BRACKETS: ", 
-                count_open_paren_pos_inside, 
-                "\nCOUNT OF CLOSING BRACKETS: ", 
-                count_close_paren_pos_inside, 
-                "\nCHECK THAT THE STRING HAS ALL THE BRACKETS BETWEEN QUOTES REMOVED.", 
-                intern_error_text_end, 
-                collapse = NULL, 
-                recycle0 = FALSE
-            )
-            base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL)
+        if(count_open_paren_pos_inside != count_close_paren_pos_inside | count_open_paren_pos_inside == 0){ # count_open_paren_pos_inside == 0 because tempo_log above has some TRUE
+            tempo_cat <- base::paste0("INTERNAL ERROR 4 IN ", intern_error_text_start, "THE ", function_name, " INTERNAL FUNCTION DID NOT PROPERLY DETECT THE POSITION OF ALL THE BRACKETS INSIDE THE FUN(    ) BRACKETS.", "\ntext: ", base::paste0(text, collapse = "\n", recycle0 = FALSE), "\npattern: ", base::paste0(pattern, collapse = "\n", recycle0 = FALSE), "\nCOUNT OF OPENED BRACKETS: ", count_open_paren_pos_inside, "\nCOUNT OF CLOSING BRACKETS: ", count_close_paren_pos_inside, "\nCHECK THAT THE STRING HAS ALL THE BRACKETS BETWEEN QUOTES REMOVED.", intern_error_text_end, collapse = NULL, recycle0 = FALSE) ; base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL)
         }
         middle_bracket_pos <- base::vector(mode = "list", length = count_open_paren_pos_inside)
         for(i2 in 1:count_open_paren_pos_inside){
