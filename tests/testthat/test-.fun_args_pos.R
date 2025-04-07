@@ -2,6 +2,7 @@ testthat::test_that(".fun_args_pos()", {
 
     ## data argument values
     str1 <- ' "a" ; paste0("I", paste0(sum(1:3), collapse = " "), min(1) ) ; range(2)'
+    str2 <- 'paste0("I", "b")' # no middle brackets
     pattern1 <- paste0("paste0", "[\\s\\r\\n]*\\(")
     mat1 <- base::matrix(-1:3)
     factor1 <- base::as.factor(str1)
@@ -157,7 +158,9 @@ testthat::test_that(".fun_args_pos()", {
     #### end second round of checking and data preparation
 
     #### main code
-    
+    # middle brackets
+    testthat::expect_no_error(.fun_args_pos(text = str2, pattern = pattern1, lib_path = NULL, error_text = ""))
+    # end middle brackets
     #### end main code
 
     ## end tests (ordered by arg appearance and conditions in the code)
