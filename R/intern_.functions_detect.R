@@ -474,7 +474,9 @@
     }
     # end removal of empty string
     test.log <- base::mapply(FUN = function(x, y){base::length(x = x) != base::length(x = y)}, x = fun_name_wo_op, y = fun_name_pos_wo_op, MoreArgs = NULL, SIMPLIFY = TRUE, USE.NAMES = TRUE)
-    if(base::any(test.log, na.rm = TRUE)){tempo_cat <- base::paste0("INTERNAL ERROR 4 IN ", intern_error_text_start, "LENGTHS SHOULD BE IDENTICAL IN COMPARTMENTS ", base::paste0(base::which(x = test.log, arr.ind = FALSE, useNames = TRUE), collapse = ", ", recycle0 = FALSE), " OF fun_name_wo_op AND fun_name_pos_wo_op.", intern_error_text_end, collapse = NULL, recycle0 = FALSE) ; base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL)}
+    if(base::any(test.log, na.rm = TRUE)){
+        tempo_cat <- base::paste0("INTERNAL ERROR 4 IN ", intern_error_text_start, "LENGTHS SHOULD BE IDENTICAL IN COMPARTMENTS ", base::paste0(base::which(x = test.log, arr.ind = FALSE, useNames = TRUE), collapse = ", ", recycle0 = FALSE), " OF fun_name_wo_op AND fun_name_pos_wo_op.", intern_error_text_end, collapse = NULL, recycle0 = FALSE) ; base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL)
+    }
     # fun_name_wo_op_uni <- base::unlist(base::unique(fun_name_wo_op)) # in case
     # end all function names in x
 
