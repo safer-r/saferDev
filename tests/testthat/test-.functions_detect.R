@@ -32,6 +32,8 @@ testthat::test_that(".functions_detect()", {
     }
     arg_user_setting2_1 <- base::list(x =  as.name(x = "test"))
     arg_user_setting2_2 <- base::list(x =  as.name(x = "PACK::test"))
+    arg_user_setting2_3 <- base::list(x =  c("::", "PACK", "test"))
+    arg_user_setting2_4 <- base::list(x =  as.name(x = "fun4"))
     vec1 <- c("function", "if", "for", "while", "repeat", "else")
     str1 <- "blabla" # error saferDev:::.noclean_functions()
     str2 <- c("", "UseMethod(\"mean\")") # no error
@@ -41,6 +43,10 @@ testthat::test_that(".functions_detect()", {
     fun1 <- function(x){x = 1}
     fun2 <- function(){
         # blabla
+    }
+    fun3 <- function
+    (){
+        dt <- base::c(2:8)
     }
     ## end data argument values
 
@@ -215,9 +221,9 @@ testthat::test_that(".functions_detect()", {
 
     #### main code
     # modification of arg_user_setting2$x for clean messages
-    testthat::expect_no_error(.functions_detect(x = test, arg_user_setting2 = arg_user_setting2_2, skipped_base = vec1, lib_path = NULL, error_text = ""))
-    result <- .functions_detect(x = test, arg_user_setting2 = arg_user_setting2_2, skipped_base = vec1, lib_path = NULL, error_text = "")$arg_user_setting$x
-    expected <- as.name("PACK::test")
+    testthat::expect_no_error(.functions_detect(x = test, arg_user_setting2 = arg_user_setting2_3, skipped_base = vec1, lib_path = NULL, error_text = ""))
+    result <- .functions_detect(x = test, arg_user_setting2 = arg_user_setting2_3, skipped_base = vec1, lib_path = NULL, error_text = "")$arg_user_setting$x
+    expected <- "PACK::test()"
     testthat::expect_equal(result, expected)
     # end modification of arg_user_setting2$x for clean messages
     # recovering the basic functions of R
@@ -244,7 +250,9 @@ testthat::test_that(".functions_detect()", {
     testthat::expect_equal(result, expected)
     # end removal of special functions
 
-
+    # trick to deal with end of lines between the name of the function and "("
+    testthat::expect_no_error(.functions_detect(x = fun3, arg_user_setting2 = arg_user_setting2_4, skipped_base = vec1, lib_path = NULL, error_text = ""))
+    # end trick to deal with end of lines between the name of the function and "("
     #### end main code
 
     ## end tests (ordered by arg appearance and conditions in the code)
