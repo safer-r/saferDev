@@ -467,9 +467,11 @@ get_message <- function(
             tempo_error <- base::try(expr = base::suppressMessages(expr = base::suppressWarnings(expr = print(gg_obj), classes = "warning"), classes = "message"), silent = TRUE, outFile = base::getOption(x = "try.outFile", default = base::stderr()))[1]
         }
         # if(base::exists(x = "tempo_error", where = -1, envir = base::environment(fun = NULL), frame = , mode = "any", inherits = FALSE) == TRUE){ # inherits = FALSE avoid the portee lexical and thus the declared word #inactivated because tempo_error always exists
-        if( ! (ggplot2_detect == TRUE & base::any(base::grepl(x = tempo_error, pattern = "^Error i|^error i|^ERROR I", ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE), na.rm = TRUE))){
-            tempo_error <- NULL
-        }else if( ggplot2_detect == FALSE & ! base::all(base::class(x = tempo_error) == "try-error", na.rm = TRUE)){ # deal with S4 objects. Old code:  ! (base::all(base::class(tempo_error) == "try-error") & base::any(base::grepl(x = tempo_error, pattern = "^Error|^error|^ERROR"))) but problem with S4 objects. Old code : if((base::length(tempo_error) > 0 & ! base::any(base::grepl(x = tempo_error, pattern = "^Error|^error|^ERROR"))) | (base::length(tempo_error) == 0) ){ but problem when tempo_error is a list but added this did not work: | ! base::all(base::class(tempo_error) == "character") # no NA returned using base::class()
+        if(ggplot2_detect == TRUE){
+            if( ! base::any(base::grepl(x = tempo_error, pattern = "^Error i|^error i|^ERROR I", ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE), na.rm = TRUE)){
+                tempo_error <- NULL
+            }
+        }else if( ! base::all(base::class(x = tempo_error) == "try-error", na.rm = TRUE)){ # deal with S4 objects. Old code:  ! (base::all(base::class(tempo_error) == "try-error") & base::any(base::grepl(x = tempo_error, pattern = "^Error|^error|^ERROR"))) but problem with S4 objects. Old code : if((base::length(tempo_error) > 0 & ! base::any(base::grepl(x = tempo_error, pattern = "^Error|^error|^ERROR"))) | (base::length(tempo_error) == 0) ){ but problem when tempo_error is a list but added this did not work: | ! base::all(base::class(tempo_error) == "character") # no NA returned using base::class()
             tempo_error <- NULL
         }
         if(kind == "error" & ! base::is.null(x = tempo_error)){ # 
