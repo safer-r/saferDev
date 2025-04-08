@@ -9,6 +9,7 @@ testthat::test_that("get_message()", {
     str6 <- "wilcox.test(c(1, 1, 3), c(1, 2, 4), paired = TRUE)" # warning
     str7 <- "ggplot2::ggplot(data = data.frame(X = c(1:10, NA), stringsAsFactors = TRUE), mapping = ggplot2::aes(x = X)) + ggplot2::geom_histogram()" # ggplot and warning
     str8 <-  "1+factor(1)" # warning message
+    str9 <- "ggplot2::ggplot(data = data.frame(X = 'a', stringsAsFactors = FALSE), mapping = ggplot2::aes(x = X)) + ggplot2::geom_histogram()" # ggplot and error
     mat1 <- base::matrix(-1:3)
     factor1 <- base::as.factor(str1)
     expr1 <- expression(1)
@@ -282,6 +283,10 @@ testthat::test_that("get_message()", {
         result <- get_message(data = str5, kind = "error", header = TRUE, print_no = FALSE, text = NULL, env = NULL, safer_check = TRUE, lib_path = NULL, error_text = "")
         expected <- NULL
         testthat::expect_equal(result, expected)
+        testthat::expect_no_error(get_message(data = str9, kind = "error", header = TRUE, print_no = FALSE, text = NULL, env = NULL, safer_check = TRUE, lib_path = NULL, error_text = ""))
+        result <- get_message(data = str5, kind = "error", header = TRUE, print_no = FALSE, text = NULL, env = NULL, safer_check = TRUE, lib_path = NULL, error_text = "")
+        expected <- NULL
+        testthat::expect_equal(result, expected)
         # end if(base::any(base::class(x = tempo.error) %in% base::c("gg", "ggplot"), na.rm = TRUE)){
         # if( ! base::all(base::class(x = tempo.error) == "try-error", na.rm = TRUE)){
         testthat::expect_no_error(get_message(data = "show(1)", kind = "error", header = TRUE, print_no = FALSE, text = NULL, env = NULL, safer_check = TRUE, lib_path = NULL, error_text = "")) # S4 object
@@ -339,7 +344,7 @@ testthat::test_that("get_message()", {
             # end message
         # if(base::any(base::class(x = tempo) %in% base::c("gg", "ggplot"), na.rm = TRUE)){
         testthat::expect_no_error(get_message(data = str7, kind = "warning", header = TRUE, print_no = FALSE, text = "IN FUN1", env = NULL, safer_check = TRUE, lib_path = NULL, error_text = ""))
-        testthat::expect_no_error(get_message(data = str7, kind = "warning", header = TRUE, print_no = FALSE, text = "IN FUN1", env = .GlobalEnv, safer_check = TRUE, lib_path = NULL, error_text = ""))
+        testthat::expect_no_error(get_message(data = str7, kind = "warning", header = TRUE, print_no = FALSE, text = "IN FUN1", env = baseenv(), safer_check = TRUE, lib_path = NULL, error_text = ""))
         # end }else if(base::is.null(x = tempo.error)){
         # if(kind == "warning" & base::length(x = tempo.warn) > 0){
             testthat::expect_no_error(get_message(data = str6, kind = "warning", header = TRUE, print_no = FALSE, text = NULL, env = NULL, safer_check = TRUE, lib_path = NULL, error_text = ""))
