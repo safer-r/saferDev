@@ -339,12 +339,16 @@ testthat::test_that("get_message()", {
             # end warning message
             # message
             testthat::expect_no_error(get_message(data = str2, kind = "message", header = TRUE, print_no = FALSE, text = "IN FUN1", env = NULL, safer_check = TRUE, lib_path = NULL, error_text = ""))
-            testthat::expect_no_error(get_message(data = str2, kind = "message", header = TRUE, print_no = FALSE, text = "IN FUN1", env =  baseenv(), safer_check = TRUE, lib_path = NULL, error_text = ""))
+            stats_env <- as.environment("package:stats")
+            testthat::expect_no_error(get_message(data = str2, kind = "message", header = TRUE, print_no = FALSE, text = "IN FUN1", env =  stats_env, safer_check = TRUE, lib_path = NULL, error_text = ""))
+            rm(stats_env)
             testthat::expect_no_error(get_message(data = str5, kind = "message", header = TRUE, print_no = FALSE, text = "IN FUN1", env = NULL, safer_check = TRUE, lib_path = NULL, error_text = "")) # ggplot2
             # end message
         # if(base::any(base::class(x = tempo) %in% base::c("gg", "ggplot"), na.rm = TRUE)){
         testthat::expect_no_error(get_message(data = str7, kind = "warning", header = TRUE, print_no = FALSE, text = "IN FUN1", env = NULL, safer_check = TRUE, lib_path = NULL, error_text = ""))
-        testthat::expect_no_error(get_message(data = str7, kind = "warning", header = TRUE, print_no = FALSE, text = "IN FUN1", env = baseenv(), safer_check = TRUE, lib_path = NULL, error_text = ""))
+        stats_env <- as.environment("package:stats")
+        testthat::expect_no_error(get_message(data = str7, kind = "warning", header = TRUE, print_no = FALSE, text = "IN FUN1", env = stats_env, safer_check = TRUE, lib_path = NULL, error_text = ""))
+        rm(stats_env)
         # end }else if(base::is.null(x = tempo.error)){
         # if(kind == "warning" & base::length(x = tempo.warn) > 0){
             testthat::expect_no_error(get_message(data = str6, kind = "warning", header = TRUE, print_no = FALSE, text = NULL, env = NULL, safer_check = TRUE, lib_path = NULL, error_text = ""))
