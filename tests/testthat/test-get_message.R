@@ -360,8 +360,6 @@ testthat::test_that("get_message()", {
                 # }else{
                 testthat::expect_no_error(get_message(data = str6, kind = "warning", header = FALSE, print_no = FALSE, text = NULL, env = NULL, safer_check = TRUE, lib_path = NULL, error_text = ""))
                 # end }else{
-
-
         # end if(kind == "warning" & base::length(x = tempo.warn) > 0){
         # }else if(kind == "warning" & base::length(x = tempo.warn) == 0 & print_no == TRUE){
             testthat::expect_no_error(get_message(data = str2, kind = "warning", header = TRUE, print_no = TRUE, text = NULL, env = NULL, safer_check = TRUE, lib_path = NULL, error_text = ""))
@@ -369,9 +367,11 @@ testthat::test_that("get_message()", {
         # }else if(kind == "message" & base::length(x = tempo_message) > 0){
             # if(header == TRUE){
                 testthat::expect_no_error(get_message(data = str2, kind = "message", header = TRUE, print_no = FALSE, text = NULL, env = NULL, safer_check = TRUE, lib_path = NULL, error_text = ""))
+                testthat::expect_no_error(get_message(data = str5, kind = "message", header = TRUE, print_no = FALSE, text = NULL, env = NULL, safer_check = TRUE, lib_path = NULL, error_text = ""))
             # end if(header == TRUE){
             # }else{
                 testthat::expect_no_error(get_message(data = str2, kind = "message", header = FALSE, print_no = FALSE, text = NULL, env = NULL, safer_check = TRUE, lib_path = NULL, error_text = ""))
+                testthat::expect_no_error(get_message(data = str5, kind = "message", header = FALSE, print_no = FALSE, text = NULL, env = NULL, safer_check = TRUE, lib_path = NULL, error_text = ""))
             # end }else{
         # end if(kind == "message" & base::length(x = tempo_message) > 0){
         # }else if(kind == "message" & base::length(x = tempo_message) == 0 & print_no == TRUE){
