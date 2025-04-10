@@ -6,11 +6,13 @@ testthat::test_that(".colons_check_message()", {
     line_nb1 <- 2
     ini1 <- c("function (x, ...) ", "UseMethod(\"mean\")")
     arg_user_setting2_1 <- list(x = "mean")
+    arg_user_setting2_2 <- list(x = c("::", "PACK", "test"))
     text1 <- "BASIC"
     str1 <- "blabla" # error saferDev:::.noclean_functions()
     str2 <- c("", "UseMethod(\"mean\")") # no error
-    mat1 <- base::matrix(-1:3)
-    factor1 <- base::as.factor(str1)
+
+    mat1 <- matrix(-1:3)
+    factor1 <- as.factor(str1)
     expr1 <- expression(1)
     fun1 <- function(x){x = 1}
     ## end data argument values
@@ -284,6 +286,12 @@ testthat::test_that(".colons_check_message()", {
     #### end second round of checking and data preparation
 
     #### main code
+    # modification of arg_user_setting2$x for clean messages
+    testthat::expect_no_error(.colons_check_message(list_fun = list_fun1, list_fun_pos = list_fun_pos1, line_nb = line_nb1, ini = ini1, arg_user_setting2 = arg_user_setting2_2, text = text1, internal_fun_names = NULL, lib_path = NULL, error_text = ""))
+    # end modification of arg_user_setting2$x for clean messages
+
+
+
     testthat::expect_no_error(.colons_check_message(list_fun = list_fun1, list_fun_pos = list_fun_pos1, line_nb = line_nb1, ini = ini1, arg_user_setting2 = arg_user_setting2_1, text = "BASIC", internal_fun_names = NULL, lib_path = NULL, error_text = ""))
     testthat::expect_no_error(.colons_check_message(list_fun = list_fun1, list_fun_pos = list_fun_pos1, line_nb = line_nb1, ini = ini1, arg_user_setting2 = arg_user_setting2_1, text = "OTHER", internal_fun_names = NULL, lib_path = NULL, error_text = ""))
     testthat::expect_error(.colons_check_message(list_fun = list_fun1, list_fun_pos = list_fun_pos1, line_nb = line_nb1, ini = ini1, arg_user_setting2 = arg_user_setting2_1, text = str1, internal_fun_names = NULL, lib_path = NULL, error_text = ""))

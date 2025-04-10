@@ -397,6 +397,13 @@ testthat::test_that("get_message()", {
         # end }else if(kind == "message" & base::length(x = tempo_message) == 0 & print_no == TRUE){
 
 
+
+    # }else{
+    #### end main code
+    ## end tests (ordered by arg appearance and conditions in the code)
+
+
+    ## other tests
     testthat::expect_no_error(get_message(data = str4, kind = "error", header = TRUE, print_no = TRUE, text = "IN FUN1", env = NULL, safer_check = TRUE, lib_path = NULL, error_text = ""))
     testthat::expect_no_error(get_message(data = str1, kind = "warning", header = TRUE, print_no = FALSE, text = NULL, env = NULL, safer_check = TRUE, lib_path = NULL, error_text = ""))
     testthat::expect_no_error(get_message(data = str1, kind = "warning", header = TRUE, print_no = TRUE, text = NULL, env = NULL, safer_check = TRUE, lib_path = NULL, error_text = ""))
@@ -405,12 +412,24 @@ testthat::test_that("get_message()", {
     testthat::expect_error(get_message(data = fun1, kind = "message", header = TRUE, print_no = FALSE, text = NULL, env = NULL, safer_check = TRUE, lib_path = NULL, error_text = ""))
     testthat::expect_no_error(get_message(data = "library(dplyr)", kind = "message", header = TRUE, print_no = FALSE, text = NULL, env = NULL, safer_check = TRUE, lib_path = NULL, error_text = ""))
     testthat::expect_no_error(get_message(data = "library(dplyr)", kind = "message", header = TRUE, print_no = TRUE, text = NULL, env = NULL, safer_check = TRUE, lib_path = NULL, error_text = ""))
-    # }else{
-    #### end main code
+    # env test
+    result <- get_message(data = str1, kind = "error", header = TRUE, print_no = FALSE, text = NULL, env = baseenv(), safer_check = TRUE, lib_path = NULL, error_text = "")
+    expected <-  "ERROR MESSAGE REPORTED:\nIn wilcox.test(letters, c(1, 2, 4)) : \n  could not find function \"wilcox.test\"\n" # eval only in baseenv()
+    testthat::expect_equal(result, expected)
+    stats_env <- as.environment("package:stats")
+    result <- get_message(data = str1, kind = "error", header = TRUE, print_no = FALSE, text = "IN FUN1", env = stats_env, safer_check = TRUE, lib_path = NULL, error_text = "")
+    expected <-  "ERROR MESSAGE REPORTED IN FUN1:\nIn wilcox.test.default(letters, c(1, 2, 4)) : 'x' must be numeric\n" # eval only in stat(), str1 not found
+    testthat::expect_equal(result, expected)
+    result <- get_message(data = 'get_message(data = str6, kind = "warning", header = TRUE, print_no = FALSE, text = "IN FUN1", env = stats_env, safer_check = TRUE, lib_path = NULL, error_text = "")', kind = "error", header = TRUE, print_no = FALSE, text = NULL, env = NULL, safer_check = TRUE, lib_path = NULL, error_text = "")
+    expected <-  "ERROR MESSAGE REPORTED:\nError : \n\n================\n\nERROR IN saferDev::get_message().\n\nTHE data ARGUMENT MUST BE A SINGLE CHARACTER STRING.\n\n================\n\n\n" # eval only in stat(). str6 not found
+    testthat::expect_equal(result, expected)
+    rm(stats_env)
+    # end env test
 
-    ## end tests (ordered by arg appearance and conditions in the code)
-
-    ## other tests
     ## end other tests
+
+
+
+
 
 })

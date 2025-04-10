@@ -8,11 +8,19 @@
 #' @param header Single logical value. Add a header in the returned message?
 #' @param print_no Single logical value. Print a message saying that no message reported?
 #' @param text Single character string added to the output message (even if no message exists and print_no is TRUE). Inactivated if the header argument is FALSE. Write NULL if not required.
-#' @param env An object corresponding to an existing environment. Only used if the data argument value is a character string, which is then evaluated only in the indicated environment. Write NULL if not required (R scope is used). Example env = .GlobalEnv.
+#' @param env An object corresponding to an existing environment. Then the data argument value is evaluated only in the indicated environment. Write NULL if not required (R scope is used). Example env = .GlobalEnv.
 #' @param safer_check Single logical value. Perform some "safer" checks? If TRUE, checkings are performed before main code running (see https://github.com/safer-r): 1) correct lib_path argument value 2) required functions and related packages effectively present in local R lybraries and 3) R classical operators (like "<-") not overwritten by another package because of the R scope. Must be set to FALSE if this fonction is used inside another "safer" function to avoid pointless multiple checkings.
 #' @param lib_path Vector of characters specifying the absolute pathways of the directories containing the required packages for the function, if not in the default directories. Useful when R package are not installed in the default directories because of lack of admin rights.  More precisely, lib_path is passed through the new argument of .libPaths() so that the new library paths are unique(c(new, .Library.site, .Library)). Warning: .libPaths() is restored to the initial paths, after function execution. Ignored if NULL (default) or if the safer_check argument is FALSE: only the pathways specified by the current .libPaths() are used for package calling.
 #' @param error_text Single character string used to add information in error messages returned by the function, notably if the function is inside other functions, which is practical for debugging. Example: error_text = " INSIDE <PACKAGE_1>::<FUNCTION_1> INSIDE <PACKAGE_2>::<FUNCTION_2>.". If NULL, converted into "".
-#' @returns The message or NULL if no message and print_no is FALSE.
+#' @returns
+#' The function returns the error, warning, or standart message, as a single character string, depending on what has been selected using the kind argument and if such message exists.
+#' 
+#' NULL if no selected message returned and the print_no argument is FALSE.
+#' 
+#' The following message if no selected message returned and the print_no argument is TRUE: "NO (ERROR|WARNING|STANDARD) MESSAGE REPORTED".
+#' 
+#' The following message if 1) the kind argument is "warning" or "message" while an error message is returned and 2) the print_no argument is TRUE: "NO POTENTIAL (WARNING|STANDARD) MESSAGE BECAUSE OF ERROR MESSAGE REPORTED".
+#' 
 #' @details 
 #' WARNINGS
 #' 
@@ -484,15 +492,14 @@ get_message <- function(
         }else if(kind == "error" & base::is.null(x = tempo_error) & print_no == TRUE){
             output <- base::paste0("NO ERROR MESSAGE REPORTED", base::ifelse(test = base::is.null(x = text), yes = "", no = " "), text, collapse = NULL, recycle0 = FALSE)
         }else if(kind != "error" & ( ! base::is.null(x = tempo_error)) & print_no == TRUE){
-            output <- base::paste0("NO POTENTIAL ", base::ifelse(test = kind == "warning", yes = "WARNING", no = "STANDARD (NON ERROR AND NON WARNING)"), " MESSAGE BECAUSE OF ERROR MESSAGE REPORTED", base::ifelse(test = base::is.null(x = text), yes = "", no = " "), text, collapse = NULL, recycle0 = FALSE)
+            output <- base::paste0("NO POTENTIAL ", base::ifelse(test = kind == "warning", yes = "WARNING", no = "STANDARD"), " MESSAGE BECAUSE OF ERROR MESSAGE REPORTED", base::ifelse(test = base::is.null(x = text), yes = "", no = " "), text, collapse = NULL, recycle0 = FALSE)
         }else if(base::is.null(x = tempo_error) & kind != "error"){ #is.null() TRUE means no error detected
             # get message
             tempo_message <- utils::capture.output({
-                tempo <- base::suppressMessages(expr = base::suppressWarnings(expr = base::eval(expr = base::parse(text = data, file = "", n = NULL, prompt = "?", keep.source = base::getOption(x = "keep.source", default = NULL), srcfile = NULL, encoding = "unknown"), envir = if(base::is.null(x = env)){base::parent.frame(n = 1)}else{env}, enclos = base::environment(fun = NULL)), classes = "warning"), classes = "message")
                 if(ggplot2_detect == TRUE){ # %in% never returns NA
                     tempo <- base::suppressWarnings(expr = base::print(gg_obj), classes = "warning")
                 }else{
-                    tempo <- base::suppressWarnings(expr = base::eval(expr = base::parse(text = data, file = "", n = NULL, prompt = "?", keep.source = base::getOption(x = "keep.source", default = NULL), srcfile = NULL, encoding = "unknown"), envir = if(base::is.null(x = env)){base::parent.frame(n = 1)}else{env}, enclos = base::environment(fun = NULL)), classes = "warning")
+                    base::suppressWarnings(expr = base::eval(expr = base::parse(text = data, file = "", n = NULL, prompt = "?", keep.source = base::getOption(x = "keep.source", default = NULL), srcfile = NULL, encoding = "unknown"), envir = if(base::is.null(x = env)){base::parent.frame(n = 1)}else{env}, enclos = base::environment(fun = NULL)), classes = "warning")
                 }
             }, type = "message", file = NULL, append = FALSE, split = FALSE) # recover messages not warnings and not errors
             # end get message
@@ -537,12 +544,12 @@ get_message <- function(
                 output <- base::paste0("NO WARNING MESSAGE REPORTED", base::ifelse(test = base::is.null(x = text), yes = "", no = " "), text, collapse = NULL, recycle0 = FALSE)
             }else if(kind == "message" & base::length(x = tempo_message) > 0){ 
                 if(header == TRUE){
-                    output <- base::paste0("STANDARD (NON ERROR AND NON WARNING) MESSAGE REPORTED", base::ifelse(test = base::is.null(x = text), yes = "", no = " "), text, ":\n", tempo_message, collapse = NULL, recycle0 = FALSE) #
+                    output <- base::paste0("STANDARD MESSAGE REPORTED", base::ifelse(test = base::is.null(x = text), yes = "", no = " "), text, ":\n", tempo_message, collapse = NULL, recycle0 = FALSE) #
                 }else{
                     output <- tempo_message #
                 }
             }else if(kind == "message" & base::length(x = tempo_message) == 0 & print_no == TRUE){
-                output <- base::paste0("NO STANDARD (NON ERROR AND NON WARNING) MESSAGE REPORTED", base::ifelse(test = base::is.null(x = text), yes = "", no = " "), text, collapse = NULL, recycle0 = FALSE)
+                output <- base::paste0("NO STANDARD MESSAGE REPORTED", base::ifelse(test = base::is.null(x = text), yes = "", no = " "), text, collapse = NULL, recycle0 = FALSE)
             } # no need else{} here because output is already NULL at first
         }
     }
