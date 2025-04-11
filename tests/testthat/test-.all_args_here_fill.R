@@ -2,8 +2,10 @@ testthat::test_that(".all_args_here_fill()", {
 
     ## data argument values
     list_fun1 <- list(x = pairlist(x = quote(expr = )))
+    list_fun2 <- list(x = pairlist(... = quote(expr = ), na.rm = FALSE))
     str1 <- "x"
     str2 <- "length"
+    str3 <- c("...", "na.rm")
     arg_user_setting_x_1 <- "\"FUN1\""
     mat1 <- base::matrix(-1:3)
     factor1 <- base::as.factor(str1)
