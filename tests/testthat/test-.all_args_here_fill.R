@@ -358,6 +358,10 @@ testthat::test_that(".all_args_here_fill()", {
     #### end second round of checking and data preparation
 
     #### main code
+    # if(base::any(three_dots_log, na.rm = TRUE)){
+
+    # end if(base::any(three_dots_log, na.rm = TRUE)){
+
 
 
 
