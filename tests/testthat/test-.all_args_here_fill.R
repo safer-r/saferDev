@@ -376,7 +376,7 @@ testthat::test_that(".all_args_here_fill()", {
     # if(base::length(x = tempo_split) == 0 & base::length(x = arg_full_names) > 0){
     testthat::expect_error(.all_args_here_fill(arg_full = list_fun2, arg_full_names = arg_full_names_2, tempo_split = tempo_split_4, three_dots_log = c(TRUE, FALSE), i2 = 1, col1_i2 = 1, col2_i2 = col2_i2_2, arg_user_setting_x = arg_user_setting_x_1, warn = NULL, warn_count = 0, lib_path = NULL, error_text = ""))
     result <- get_message(data = '.all_args_here_fill(arg_full = list_fun2, arg_full_names = arg_full_names_2, tempo_split = tempo_split_4, three_dots_log = c(TRUE, FALSE), i2 = 1, col1_i2 = 1, col2_i2 = col2_i2_2, arg_user_setting_x = arg_user_setting_x_1, warn = NULL, warn_count = 0, lib_path = NULL, error_text = "")', kind = "error")
-    expected <- "ERROR MESSAGE REPORTED:\nError : \n\n================\n\nERROR IN saferDev:::.all_args_here_fill().\n\npattern3 DETECTED SEVERAL TIMES IN ARGUMENTS:\n\npattern3:\n^[\\s\\r\\n]*na.rm[\\s]*=\n\ntempo_split:\nna.rm = FALSE\nna.rm = FALSE\n\nCHECK IF THE ARGUMENT IS PRESENT SEVERAL TIMES IN LINE 1, INSIDE sum\n\n================\n\n\n"
+    expected <- "ERROR MESSAGE REPORTED:\nError : \n\n================\n\nERROR IN saferDev:::.all_args_here_fill().\n\npattern3 DETECTED SEVERAL TIMES IN ARGUMENTS.\n\npattern3:\n^[\\s\\r\\n]*na.rm[\\s]*=\n\ntempo_split:\nna.rm = FALSE\nna.rm = FALSE\n\nCHECK IF THE ARGUMENT IS PRESENT SEVERAL TIMES IN LINE 1, INSIDE sum\n\n================\n\n\n"
     testthat::expect_equal(result, expected)
     # end if(base::length(x = tempo_split) == 0 & base::length(x = arg_full_names) > 0){
 
