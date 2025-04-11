@@ -9,7 +9,9 @@ testthat::test_that(".all_args_here_fill()", {
     arg_full_names_3 <- c("...", "na.rm", "na.rm_test")
     tempo_split_2 <- "1:2" # args of sum()
     tempo_split_3 <- c("1:2", "na.rm = FALSE") # args of sum()
-    tempo_split_4 <- c("1:2", "na.rm = FALSE", "na.rm = FALSE") 
+    tempo_split_4 <- c("1:2", "na.rm = FALSE", "na.rm = FALSE")
+    tempo_split_5 <- c("1:2", "FALSE") 
+    tempo_split_6 <- c("1:2", "na = FALSE") # args of sum()
     col2_i2_1 <- "pairlist"
     col2_i2_2 <- "sum"
     arg_user_setting_x_1 <- "\"FUN1\""
@@ -386,6 +388,20 @@ testthat::test_that(".all_args_here_fill()", {
     expected <- list(col6 = "na.rm_test", col7 = "na.rm_test = NULL", col8 = "sum(1:2,na.rm = FALSE, na.rm_test = NULL)")
     testthat::expect_equal(result, expected)
     # end if(base::sum(tempo_log, na.rm = TRUE) > 1){
+
+    # removal of arguments without arg name before in obs_arg_log
+    testthat::expect_no_error(.all_args_here_fill(arg_full = list_fun2, arg_full_names = arg_full_names_2, tempo_split = tempo_split_5, three_dots_log = c(TRUE, FALSE), i2 = 1, col1_i2 = 1, col2_i2 = col2_i2_2, arg_user_setting_x = arg_user_setting_x_1, warn = NULL, warn_count = 0, lib_path = NULL, error_text = ""))
+    result <- .all_args_here_fill(arg_full = list_fun2, arg_full_names = arg_full_names_2, tempo_split = tempo_split_5, three_dots_log = c(TRUE, FALSE), i2 = 1, col1_i2 = 1, col2_i2 = col2_i2_2, arg_user_setting_x = arg_user_setting_x_1, warn = NULL, warn_count = 0, lib_path = NULL, error_text = "")
+    expected <- list(col6 = "na.rm", col7 = "na.rm = FALSE", col8 = "sum(1:2,FALSE, na.rm = FALSE)")
+    testthat::expect_equal(result, expected)
+    # end removal of arguments without arg name before in obs_arg_log
+
+    # checking if arg name are not fully written
+    testthat::expect_no_error(.all_args_here_fill(arg_full = list_fun2, arg_full_names = arg_full_names_2, tempo_split = tempo_split_5, three_dots_log = c(TRUE, FALSE), i2 = 1, col1_i2 = 1, col2_i2 = col2_i2_2, arg_user_setting_x = arg_user_setting_x_1, warn = NULL, warn_count = 0, lib_path = NULL, error_text = ""))
+    result <- .all_args_here_fill(arg_full = list_fun2, arg_full_names = arg_full_names_2, tempo_split = tempo_split_6, three_dots_log = c(TRUE, FALSE), i2 = 1, col1_i2 = 1, col2_i2 = col2_i2_2, arg_user_setting_x = arg_user_setting_x_1, warn = NULL, warn_count = 0, lib_path = NULL, error_text = "")
+    # expected <- list(col6 = "na.rm", col7 = "na.rm = FALSE", col8 = "sum(1:2,FALSE, na.rm = FALSE)")
+    # testthat::expect_equal(result, expected)
+    # end checking if arg name are not fully written
 
 
 
