@@ -5,9 +5,11 @@ testthat::test_that(".all_args_here_fill()", {
     list_fun2 <- list(... = quote(expr = ), na.rm = FALSE) # args of sum()
     str1 <- "x"
     str2 <- "length"
-    str3 <- c("...", "na.rm") # args of sum()
-    str4 <- c("1:2", "na.rm = FALSE") # args of sum()
-    str5 <- "1:2" # args of sum()
+    arg_full_names_2 <- c("...", "na.rm") # args of sum()
+    arg_full_names_3 <- c("...", "na.rm", "na.rm_test")
+    tempo_split_2 <- "1:2" # args of sum()
+    tempo_split_3 <- c("1:2", "na.rm = FALSE") # args of sum()
+    tempo_split_4 <- c("1:2", "na.rm = FALSE", "na.rm = FALSE") 
     col2_i2_1 <- "pairlist"
     col2_i2_2 <- "sum"
     arg_user_setting_x_1 <- "\"FUN1\""
@@ -365,12 +367,25 @@ testthat::test_that(".all_args_here_fill()", {
 
     #### main code
     # if(base::any(three_dots_log, na.rm = TRUE)){
-
-    testthat::expect_no_error(.all_args_here_fill(arg_full = list_fun2, arg_full_names = str3, tempo_split = str5, three_dots_log = c(TRUE, FALSE), i2 = 1, col1_i2 = 1, col2_i2 = col2_i2_2, arg_user_setting_x = arg_user_setting_x_1, warn = NULL, warn_count = 0, lib_path = NULL, error_text = ""))
+    testthat::expect_no_error(.all_args_here_fill(arg_full = list_fun2, arg_full_names = arg_full_names_2, tempo_split = tempo_split_2, three_dots_log = c(TRUE, FALSE), i2 = 1, col1_i2 = 1, col2_i2 = col2_i2_2, arg_user_setting_x = arg_user_setting_x_1, warn = NULL, warn_count = 0, lib_path = NULL, error_text = ""))
+    result <- .all_args_here_fill(arg_full = list_fun2, arg_full_names = arg_full_names_2, tempo_split = tempo_split_2, three_dots_log = c(TRUE, FALSE), i2 = 1, col1_i2 = 1, col2_i2 = col2_i2_2, arg_user_setting_x = arg_user_setting_x_1, warn = NULL, warn_count = 0, lib_path = NULL, error_text = "")
+    expected <- list(col6 = "na.rm", col7 = "na.rm = FALSE", col8 = "sum(1:2, na.rm = FALSE)")
+    testthat::expect_equal(result, expected)
     # end if(base::any(three_dots_log, na.rm = TRUE)){
 
+    # if(base::length(x = tempo_split) == 0 & base::length(x = arg_full_names) > 0){
+    testthat::expect_error(.all_args_here_fill(arg_full = list_fun2, arg_full_names = arg_full_names_2, tempo_split = tempo_split_4, three_dots_log = c(TRUE, FALSE), i2 = 1, col1_i2 = 1, col2_i2 = col2_i2_2, arg_user_setting_x = arg_user_setting_x_1, warn = NULL, warn_count = 0, lib_path = NULL, error_text = ""))
+    result <- get_message(data = '.all_args_here_fill(arg_full = list_fun2, arg_full_names = arg_full_names_2, tempo_split = tempo_split_4, three_dots_log = c(TRUE, FALSE), i2 = 1, col1_i2 = 1, col2_i2 = col2_i2_2, arg_user_setting_x = arg_user_setting_x_1, warn = NULL, warn_count = 0, lib_path = NULL, error_text = "")', kind = "error")
+    expected <- "ERROR MESSAGE REPORTED:\nError : \n\n================\n\nERROR IN saferDev:::.all_args_here_fill().\n\npattern3 DETECTED SEVERAL TIMES IN ARGUMENTS:\n\npattern3:\n^[\\s\\r\\n]*na.rm[\\s]*=\n\ntempo_split:\nna.rm = FALSE\nna.rm = FALSE\n\nCHECK IF THE ARGUMENT IS PRESENT SEVERAL TIMES IN LINE 1, INSIDE sum\n\n================\n\n\n"
+    testthat::expect_equal(result, expected)
+    # end if(base::length(x = tempo_split) == 0 & base::length(x = arg_full_names) > 0){
 
-
+    # if(base::sum(tempo_log, na.rm = TRUE) > 1){
+    testthat::expect_no_error(.all_args_here_fill(arg_full = list_fun2, arg_full_names = arg_full_names_3, tempo_split = tempo_split_3, three_dots_log = c(TRUE, FALSE, FALSE), i2 = 1, col1_i2 = 1, col2_i2 = col2_i2_2, arg_user_setting_x = arg_user_setting_x_1, warn = NULL, warn_count = 0, lib_path = NULL, error_text = ""))
+    result <- .all_args_here_fill(arg_full = list_fun2, arg_full_names = arg_full_names_3, tempo_split = tempo_split_3, three_dots_log = c(TRUE, FALSE, FALSE), i2 = 1, col1_i2 = 1, col2_i2 = col2_i2_2, arg_user_setting_x = arg_user_setting_x_1, warn = NULL, warn_count = 0, lib_path = NULL, error_text = "")
+    expected <- list(col6 = "na.rm_test", col7 = "na.rm_test = NULL", col8 = "sum(1:2,na.rm = FALSE, na.rm_test = NULL)")
+    testthat::expect_equal(result, expected)
+    # end if(base::sum(tempo_log, na.rm = TRUE) > 1){
 
 
 

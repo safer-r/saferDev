@@ -419,9 +419,8 @@
                     missing_args_names <- base::c(missing_args_names, arg_full_names[i3])
                 }else{
                     tempo_cat <- base::paste0(
-                        "INTERNAL ERROR 1 IN ",
-                        intern_error_text_start, 
-                        "pattern3 DETECTED SEVERAL TIMES IN ARGUMENTS:\n\npattern3:\n", 
+                        error_text_start,
+                        "pattern3 DETECTED SEVERAL TIMES IN ARGUMENTS.\n\npattern3:\n", 
                         base::paste0(pattern3, collapse = "\n", recycle0 = FALSE), 
                         "\n\ntempo_split:\n", 
                         base::paste0(tempo_split[tempo.log], collapse = "\n", recycle0 = FALSE), 
@@ -429,7 +428,6 @@
                         col1_i2, 
                         ", INSIDE ", 
                         col2_i2, 
-                        intern_error_text_end, 
                         collapse = NULL, 
                         recycle0 = FALSE
                     )
