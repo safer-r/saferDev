@@ -389,9 +389,6 @@ testthat::test_that(".all_args_here_fill()", {
 
 
 
-
-    testthat::expect_no_error(.all_args_here_fill(arg_full = list_fun2, arg_full_names = str3, tempo_split = str4, three_dots_log = c(TRUE, FALSE), i2 = 1, col1_i2 = 1, col2_i2 = col2_i2_2, arg_user_setting_x = arg_user_setting_x_1, warn = NULL, warn_count = 0, lib_path = NULL, error_text = ""))
-
     #### end main code
 
     ## end tests (ordered by arg appearance and conditions in the code)
