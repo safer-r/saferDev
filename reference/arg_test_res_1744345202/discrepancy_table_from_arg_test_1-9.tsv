@@ -1,0 +1,6 @@
+	X.SPECIAL.VALUE.OF.CLASS.integer.AND.TYPE.integer.	X.SPECIAL.VALUE.OF.CLASS.logical.AND.TYPE.logical.	kind	problem	expected.error	message
+arg_test_3	SPECIAL VALUE OF CLASS integer AND TYPE integer	SPECIAL VALUE OF CLASS logical AND TYPE logical	OK	FALSE	TRUE	
+arg_test_6	SPECIAL VALUE OF CLASS numeric AND TYPE double	SPECIAL VALUE OF CLASS logical AND TYPE logical	OK	FALSE	TRUE	
+arg_test_7	SPECIAL VALUE OF CLASS logical AND TYPE logical	SPECIAL VALUE OF CLASS logical AND TYPE logical	OK	FALSE	TRUE	
+arg_test_8	SPECIAL VALUE OF CLASS logical AND TYPE logical	SPECIAL VALUE OF CLASS logical AND TYPE logical	OK	FALSE	TRUE	
+arg_test_9	SPECIAL VALUE OF CLASS logical AND TYPE logical	SPECIAL VALUE OF CLASS logical AND TYPE logical	OK	FALSE	TRUE	
