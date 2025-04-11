@@ -22,7 +22,7 @@
 #' - Warning: requires saferDev::arg_check. In the safer Backbone section "######## check of the required functions from the required packages" add this function when checking for the presence of saferDev:::.all_args_here_fill.
 #' @examples
 #' \dontrun{ # Example that shouldn't be run because this is an internal function (not found by devtools::check())
-#' saferDev:::.all_args_here_fill(arg_full = list(x = pairlist(x = quote(expr = ))), arg_full_names = "x", tempo_split = "x", three_dots_log = FALSE, i2 = 1, col1_i2 = 1, col2_i2 =  "length", arg_user_setting_x = "\"FUN1\"", warn = NULL, warn_count = 0, lib_path = NULL, error_text = " INSIDE P1::F1")
+#' saferDev:::.all_args_here_fill(arg_full = list(x = quote(expr = )), arg_full_names = "x", tempo_split = "x", three_dots_log = FALSE, i2 = 1, col1_i2 = 1, col2_i2 =  "length", arg_user_setting_x = "\"FUN1\"", warn = NULL, warn_count = 0, lib_path = NULL, error_text = " INSIDE P1::F1")
 #' }
 #' @author \href{gael.millot@pasteur.fr}{Gael Millot}
 
@@ -165,7 +165,7 @@
     tempo_arg <-base::c(
         "arg_full",
         # "arg_full_names", # inactivated because can be NULL
-        "tempo_split", 
+        # "tempo_split", # inactivated because can be NULL
         "three_dots_log", 
         "i2", 
         "col1_i2", 
@@ -301,7 +301,9 @@
     if( ! base::is.null(x = arg_full_names)){ # for all arguments that can be NULL, write like this:
         tempo <-  saferDev::arg_check(data = arg_full_names, class = "vector", typeof = "character", mode = NULL, length = NULL, prop = FALSE, double_as_integer_allowed = FALSE, options = NULL, all_options_in_data = FALSE, na_contain = TRUE, neg_values = TRUE, inf_values = TRUE, print = FALSE, data_name = NULL, data_arg = TRUE, safer_check = FALSE, lib_path = lib_path, error_text = embed_error_text) ; base::eval(expr = ee, envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL))
     }
-    tempo <-  saferDev::arg_check(data = tempo_split, class = "vector", typeof = "character", mode = NULL, length = NULL, prop = FALSE, double_as_integer_allowed = FALSE, options = NULL, all_options_in_data = FALSE, na_contain = TRUE, neg_values = TRUE, inf_values = TRUE, print = FALSE, data_name = NULL, data_arg = TRUE, safer_check = FALSE, lib_path = lib_path, error_text = embed_error_text) ; base::eval(expr = ee, envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL))
+    if( ! base::is.null(x = tempo_split)){
+        tempo <-  saferDev::arg_check(data = tempo_split, class = "vector", typeof = "character", mode = NULL, length = NULL, prop = FALSE, double_as_integer_allowed = FALSE, options = NULL, all_options_in_data = FALSE, na_contain = TRUE, neg_values = TRUE, inf_values = TRUE, print = FALSE, data_name = NULL, data_arg = TRUE, safer_check = FALSE, lib_path = lib_path, error_text = embed_error_text) ; base::eval(expr = ee, envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL))
+    }
     tempo <-  saferDev::arg_check(data = three_dots_log, class = "vector", typeof = "logical", mode = NULL, length = NULL, prop = FALSE, double_as_integer_allowed = FALSE, options = NULL, all_options_in_data = FALSE, na_contain = TRUE, neg_values = TRUE, inf_values = TRUE, print = FALSE, data_name = NULL, data_arg = TRUE, safer_check = FALSE, lib_path = lib_path, error_text = embed_error_text) ; base::eval(expr = ee, envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL))
     tempo <-  saferDev::arg_check(data = i2, class = "vector", typeof = "integer", mode = NULL, length = 1, prop = FALSE, double_as_integer_allowed = TRUE, options = NULL, all_options_in_data = FALSE, na_contain = TRUE, neg_values = FALSE, inf_values = TRUE, print = FALSE, data_name = NULL, data_arg = TRUE, safer_check = FALSE, lib_path = lib_path, error_text = embed_error_text) ; base::eval(expr = ee, envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL))
     tempo <-  saferDev::arg_check(data = col1_i2, class = "vector", typeof = "integer", mode = NULL, length = 1, prop = FALSE, double_as_integer_allowed = TRUE, options = NULL, all_options_in_data = FALSE, na_contain = TRUE, neg_values = FALSE, inf_values = TRUE, print = FALSE, data_name = NULL, data_arg = TRUE, safer_check = FALSE, lib_path = lib_path, error_text = embed_error_text) ; base::eval(expr = ee, envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL))
@@ -449,9 +451,9 @@
             }
         }
         # end removal of arguments without arg name before in obs_arg_log
-        # detection of arguments that starts by the same string in the sub function
+        # detection of arguments that starts by the same string in the sub function (example: path_in and path_out)
         tempo_col8_end <- NULL
-        same_begin <- base::unlist(
+        same_begin <- base::unlist( # common string
             x = base::lapply(
                 FUN = function(x){
                     tempo_log <- base::grepl(x = arg_full_names, pattern = base::paste0("^", x, collapse = NULL, recycle0 = FALSE), perl = FALSE, ignore.case = FALSE, fixed = FALSE, useBytes = FALSE)
@@ -467,7 +469,7 @@
         if( ! base::is.null(x = same_begin)){
             tempo_col8_end <- base::paste0("WARNING: SEVERAL ARGUMENT NAMES OF THE FUNCTION BEGINNING WITH ", base::paste0(same_begin[ ! base::is.null(x = same_begin)], collapse = " ", recycle0 = FALSE), collapse = NULL, recycle0 = FALSE)
         }
-        # end detection of arguments that starts by the same string in the sub function
+        # end detection of arguments that starts by the same string in the sub function (example: path_in and path_out)
         # checking if arg name are not fully written
         arg_full_symbol_type <- base::sapply(X = arg_full, FUN = function(x){base::all(base::typeof(x = x) == "symbol", na.rm =TRUE)}, simplify = TRUE, USE.NAMES = TRUE) # to check if any arg without optional value are completed with obs arg values
         if(base::any(arg_full_symbol_type, na.rm =TRUE) & base::length(x = tempo_split) == 0){

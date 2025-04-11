@@ -3,16 +3,18 @@ testthat::test_that(".all_args_here_fill()", {
     ## data argument values
     list_fun1 <- list(x = pairlist(x = quote(expr = )))
     list_fun2 <- list(... = quote(expr = ), na.rm = FALSE) # args of sum()
+    list_fun3 <- list(pattern = quote(expr = ), x = quote(expr = ), ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE) #args of grepl()
     str1 <- "x"
-    str2 <- "length"
     arg_full_names_2 <- c("...", "na.rm") # args of sum()
     arg_full_names_3 <- c("...", "na.rm", "na.rm_test")
+    arg_full_names_4 <- c("pattern", "x", "ignore.case", "perl", "fixed", "useBytes")
     tempo_split_2 <- "1:2" # args of sum()
     tempo_split_3 <- c("1:2", "na.rm = FALSE") # args of sum()
     tempo_split_4 <- c("1:2", "na.rm = FALSE", "na.rm = FALSE")
     tempo_split_5 <- c("1:2", "FALSE") 
     tempo_split_6 <- c("1:2", "na = FALSE") # args of sum()
-    col2_i2_1 <- "pairlist"
+    tempo_split_7 <- c("pa = m", " december", " ignore.case = FALSE", " perl = FALSE", " fixed = FALSE")
+    col2_i2_1 <- "length"
     col2_i2_2 <- "sum"
     arg_user_setting_x_1 <- "\"FUN1\""
     mat1 <- base::matrix(-1:3)
@@ -41,7 +43,7 @@ testthat::test_that(".all_args_here_fill()", {
     three_dots_log <- FALSE
     i2 <- 1
     col1_i2 <- 1
-    col2_i2 <- str2
+    col2_i2 <- "length"
     arg_user_setting_x <- arg_user_setting_x_1
     warn <- NULL
     warn_count <- 0
@@ -69,7 +71,7 @@ testthat::test_that(".all_args_here_fill()", {
     # all the arguments must be present
     testthat::expect_error(.all_args_here_fill(arg_full = NULL, arg_full_names = str1, tempo_split = str1, three_dots_log = FALSE, i2 = 1, col1_i2 = 1, col2_i2 = col2_i2_1, arg_user_setting_x = arg_user_setting_x_1, warn = NULL, warn_count = 0, lib_path = NULL, error_text = ""))
     testthat::expect_error(.all_args_here_fill(arg_full = list_fun1, arg_full_names = NULL, tempo_split = str1, three_dots_log = FALSE, i2 = 1, col1_i2 = 1, col2_i2 = col2_i2_1, arg_user_setting_x = arg_user_setting_x_1, warn = NULL, warn_count = 0, lib_path = NULL, error_text = ""))
-    testthat::expect_error(.all_args_here_fill(arg_full = list_fun1, arg_full_names = str1, tempo_split = NULL, three_dots_log = FALSE, i2 = 1, col1_i2 = 1, col2_i2 = col2_i2_1, arg_user_setting_x = arg_user_setting_x_1, warn = NULL, warn_count = 0, lib_path = NULL, error_text = ""))
+    testthat::expect_no_error(.all_args_here_fill(arg_full = list_fun1, arg_full_names = str1, tempo_split = NULL, three_dots_log = FALSE, i2 = 1, col1_i2 = 1, col2_i2 = col2_i2_1, arg_user_setting_x = arg_user_setting_x_1, warn = NULL, warn_count = 0, lib_path = NULL, error_text = ""))
     testthat::expect_error(.all_args_here_fill(arg_full = list_fun1, arg_full_names = str1, tempo_split = str1, three_dots_log = NULL, i2 = 1, col1_i2 = 1, col2_i2 = col2_i2_1, arg_user_setting_x = arg_user_setting_x_1, warn = NULL, warn_count = 0, lib_path = NULL, error_text = ""))
     testthat::expect_error(.all_args_here_fill(arg_full = list_fun1, arg_full_names = str1, tempo_split = str1, three_dots_log = FALSE, i2 = NULL, col1_i2 = 1, col2_i2 = col2_i2_1, arg_user_setting_x = arg_user_setting_x_1, warn = NULL, warn_count = 0, lib_path = NULL, error_text = ""))
     testthat::expect_error(.all_args_here_fill(arg_full = list_fun1, arg_full_names = str1, tempo_split = str1, three_dots_log = FALSE, i2 = 1, col1_i2 = NULL, col2_i2 = col2_i2_1, arg_user_setting_x = arg_user_setting_x_1, warn = NULL, warn_count = 0, lib_path = NULL, error_text = ""))
@@ -236,7 +238,7 @@ testthat::test_that(".all_args_here_fill()", {
     # end arg_full_names
     # tempo_split
     testthat::expect_no_error(.all_args_here_fill(arg_full = list_fun1, arg_full_names = str1, tempo_split = str1, three_dots_log = FALSE, i2 = 1, col1_i2 = 1, col2_i2 = col2_i2_1, arg_user_setting_x = arg_user_setting_x_1, warn = NULL, warn_count = 0, lib_path = NULL, error_text = ""))
-    testthat::expect_error(.all_args_here_fill(arg_full = list_fun1, arg_full_names = str1, tempo_split = NULL, three_dots_log = FALSE, i2 = 1, col1_i2 = 1, col2_i2 = col2_i2_1, arg_user_setting_x = arg_user_setting_x_1, warn = NULL, warn_count = 0, lib_path = NULL, error_text = ""))
+    testthat::expect_no_error(.all_args_here_fill(arg_full = list_fun1, arg_full_names = str1, tempo_split = NULL, three_dots_log = FALSE, i2 = 1, col1_i2 = 1, col2_i2 = col2_i2_1, arg_user_setting_x = arg_user_setting_x_1, warn = NULL, warn_count = 0, lib_path = NULL, error_text = ""))
     testthat::expect_error(.all_args_here_fill(arg_full = list_fun1, arg_full_names = str1, tempo_split = NA, three_dots_log = FALSE, i2 = 1, col1_i2 = 1, col2_i2 = col2_i2_1, arg_user_setting_x = arg_user_setting_x_1, warn = NULL, warn_count = 0, lib_path = NULL, error_text = ""))
     testthat::expect_error(.all_args_here_fill(arg_full = list_fun1, arg_full_names = str1, tempo_split = 1, three_dots_log = FALSE, i2 = 1, col1_i2 = 1, col2_i2 = col2_i2_1, arg_user_setting_x = arg_user_setting_x_1, warn = NULL, warn_count = 0, lib_path = NULL, error_text = ""))
     testthat::expect_error(.all_args_here_fill(arg_full = list_fun1, arg_full_names = str1, tempo_split = c(TRUE, FALSE), three_dots_log = FALSE, i2 = 1, col1_i2 = 1, col2_i2 = col2_i2_1, arg_user_setting_x = arg_user_setting_x_1, warn = NULL, warn_count = 0, lib_path = NULL, error_text = ""))
@@ -397,10 +399,32 @@ testthat::test_that(".all_args_here_fill()", {
     # end removal of arguments without arg name before in obs_arg_log
 
     # checking if arg name are not fully written
-    testthat::expect_no_error(.all_args_here_fill(arg_full = list_fun2, arg_full_names = arg_full_names_2, tempo_split = tempo_split_5, three_dots_log = c(TRUE, FALSE), i2 = 1, col1_i2 = 1, col2_i2 = col2_i2_2, arg_user_setting_x = arg_user_setting_x_1, warn = NULL, warn_count = 0, lib_path = NULL, error_text = ""))
+    # without ... in args
+    testthat::expect_error(.all_args_here_fill(arg_full = list_fun3, arg_full_names = arg_full_names_4, tempo_split = NULL, three_dots_log = c(FALSE, FALSE, FALSE, FALSE, FALSE, FALSE), i2 = 1, col1_i2 = 1, col2_i2 = col2_i2_2, arg_user_setting_x = arg_user_setting_x_1, warn = NULL, warn_count = 0, lib_path = NULL, error_text = ""))
+    result <- get_message(data = '.all_args_here_fill(arg_full = list_fun3, arg_full_names = arg_full_names_4, tempo_split = NULL, three_dots_log = c(FALSE, FALSE, FALSE, FALSE, FALSE, FALSE), i2 = 1, col1_i2 = 1, col2_i2 = col2_i2_2, arg_user_setting_x = arg_user_setting_x_1, warn = NULL, warn_count = 0, lib_path = NULL, error_text = "")', kind = "error")
+    expected <- "ERROR MESSAGE REPORTED:\nError : \n\n================\n\nERROR IN saferDev:::.all_args_here_fill().\n\nTHE TESTED FUNCTION \"FUN1\" SEEMS TO HAVE A WRITING ERROR IN LINE 1 AND FUNCTION sum.\nPLEASE, RUN THE TESTED FUNCTION FIRST.\n\n================\n\n\n"
+    testthat::expect_equal(result, expected)
+
+
+
+    testthat::expect_no_error(.all_args_here_fill(arg_full = list_fun3, arg_full_names = arg_full_names_4, tempo_split = tempo_split_7, three_dots_log = c(FALSE, FALSE, FALSE, FALSE, FALSE, FALSE), i2 = 1, col1_i2 = 1, col2_i2 = col2_i2_2, arg_user_setting_x = arg_user_setting_x_1, warn = NULL, warn_count = 0, lib_path = NULL, error_text = ""))
+    result <- .all_args_here_fill(arg_full = list_fun3, arg_full_names = arg_full_names_4, tempo_split = tempo_split_7, three_dots_log = c(FALSE, FALSE, FALSE, FALSE, FALSE, FALSE), i2 = 1, col1_i2 = 1, col2_i2 = col2_i2_2, arg_user_setting_x = arg_user_setting_x_1, warn = NULL, warn_count = 0, lib_path = NULL, error_text = "")
+    expected <- list(col6 = "pattern, x, useBytes", col7 = "pattern = pa = m, x =  december, useBytes = FALSE", col8 = "sum(pattern = pa = m, x =  december, ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE)")
+    testthat::expect_equal(result, expected)
+
+
+
+
+
+
+
+    # end without ... in args
+    # with ... in args
+    testthat::expect_no_error(.all_args_here_fill(arg_full = list_fun2, arg_full_names = arg_full_names_2, tempo_split = tempo_split_6, three_dots_log = c(TRUE, FALSE), i2 = 1, col1_i2 = 1, col2_i2 = col2_i2_2, arg_user_setting_x = arg_user_setting_x_1, warn = NULL, warn_count = 0, lib_path = NULL, error_text = ""))
     result <- .all_args_here_fill(arg_full = list_fun2, arg_full_names = arg_full_names_2, tempo_split = tempo_split_6, three_dots_log = c(TRUE, FALSE), i2 = 1, col1_i2 = 1, col2_i2 = col2_i2_2, arg_user_setting_x = arg_user_setting_x_1, warn = NULL, warn_count = 0, lib_path = NULL, error_text = "")
     # expected <- list(col6 = "na.rm", col7 = "na.rm = FALSE", col8 = "sum(1:2,FALSE, na.rm = FALSE)")
     # testthat::expect_equal(result, expected)
+    # with ... in args
     # end checking if arg name are not fully written
 
 
