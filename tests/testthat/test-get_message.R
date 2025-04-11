@@ -429,8 +429,4 @@ testthat::test_that("get_message()", {
 
     ## end other tests
 
-
-
-
-
 })
