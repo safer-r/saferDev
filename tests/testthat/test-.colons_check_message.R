@@ -2,7 +2,10 @@ testthat::test_that(".colons_check_message()", {
 
     ## data argument values
     list_fun1 <- list(c2 = "UseMethod")
+    list_fun2 <- list(c2 = c("UseMethod", "mean", "rep"))
     list_fun_pos1 <- list(c2 = 1)
+    list_fun_pos2 <- list(c2 = 1:3)
+    list_fun_pos3 <- list(c2 = 1, c3 = 4)
     line_nb1 <- 2
     ini1 <- c("function (x, ...) ", "UseMethod(\"mean\")")
     arg_user_setting2_1 <- list(x = "mean")
@@ -280,7 +283,7 @@ testthat::test_that(".colons_check_message()", {
     ######## end graphic device checking
 
     ######## other checkings
-
+    testthat::expect_error(.colons_check_message(list_fun = list_fun1, list_fun_pos = list_fun_pos3, line_nb = line_nb1, ini = ini1, arg_user_setting2 = arg_user_setting2_1, text = text1, internal_fun_names = NULL, lib_path = NULL, error_text = ""))
     ######## end other checkings
 
     #### end second round of checking and data preparation
@@ -289,6 +292,14 @@ testthat::test_that(".colons_check_message()", {
     # modification of arg_user_setting2$x for clean messages
     testthat::expect_no_error(.colons_check_message(list_fun = list_fun1, list_fun_pos = list_fun_pos1, line_nb = line_nb1, ini = ini1, arg_user_setting2 = arg_user_setting2_2, text = text1, internal_fun_names = NULL, lib_path = NULL, error_text = ""))
     # end modification of arg_user_setting2$x for clean messages
+    # check the identical structure of list_fun and list_fun_pos
+    testthat::expect_error(.colons_check_message(list_fun = list_fun1, list_fun_pos = arg_user_setting2_2, line_nb = line_nb1, ini = ini1, arg_user_setting2 = arg_user_setting2_1, text = text1, internal_fun_names = NULL, lib_path = NULL, error_text = ""))
+    # end check the identical structure of list_fun and list_fun_pos
+    # remove internal functions in other functions (list_fun and list_fun_pos)
+    testthat::expect_no_error(.colons_check_message(list_fun = list_fun2, list_fun_pos = list_fun_pos2, line_nb = line_nb1, ini = ini1, arg_user_setting2 = arg_user_setting2_1, text = "OTHER", internal_fun_names = c("mean", "sum"), lib_path = NULL, error_text = ""))
+    # end remove internal functions in other functions (list_fun and list_fun_pos)
+
+
 
 
 
