@@ -3,11 +3,14 @@ testthat::test_that(".colons_check_message()", {
     ## data argument values
     list_fun1 <- list(c2 = "UseMethod")
     list_fun2 <- list(c2 = c("UseMethod", "mean", "rep"))
+    list_fun3 <- list(c1 = "function", c2 = c("paste0", "mean"))
     list_fun_pos1 <- list(c2 = 1)
     list_fun_pos2 <- list(c2 = 1:3)
-    list_fun_pos3 <- list(c2 = 1, c3 = 4)
+    list_fun_pos3 <- list(c2 = 1, c3 = c(1, 8))
     line_nb1 <- 2
+    line_nb2 <- 1:2
     ini1 <- c("function (x, ...) ", "UseMethod(\"mean\")")
+    ini2 <- c("function (x, ...) ", "paste0$mean(1:3)")
     arg_user_setting2_1 <- list(x = "mean")
     arg_user_setting2_2 <- list(x = c("::", "PACK", "test"))
     text1 <- "BASIC"
@@ -298,9 +301,13 @@ testthat::test_that(".colons_check_message()", {
     # remove internal functions in other functions (list_fun and list_fun_pos)
     testthat::expect_no_error(.colons_check_message(list_fun = list_fun2, list_fun_pos = list_fun_pos2, line_nb = line_nb1, ini = ini1, arg_user_setting2 = arg_user_setting2_1, text = "OTHER", internal_fun_names = c("mean", "sum"), lib_path = NULL, error_text = ""))
     # end remove internal functions in other functions (list_fun and list_fun_pos)
-
-
-
+    # if( ! (base::length(x = list_fun) == base::length(x = list_fun_pos) & base::length(x = list_fun) == base::length(x = line_nb) & base::length(x = list_fun) == base::length(x = basic_ini))){
+    testthat::expect_error(.colons_check_message(list_fun = list_fun1, list_fun_pos = list_fun_pos1, line_nb = 1:3, ini = ini1, arg_user_setting2 = arg_user_setting2_1, text = text1, internal_fun_names = NULL, lib_path = NULL, error_text = ""))
+    # end if( ! (base::length(x = list_fun) == base::length(x = list_fun_pos) & base::length(x = list_fun) == base::length(x = line_nb) & base::length(x = list_fun) == base::length(x = basic_ini))){
+    # if( ! base::all(base::sapply(X = res2, FUN = function(x){base::length(x = x)}, simplify = TRUE, USE.NAMES = TRUE) == base::sapply(X = res, FUN = function(x){base::length(x = x)}, simplify = TRUE, USE.NAMES = TRUE), na.rm = TRUE)){
+    testthat::expect_error(.colons_check_message(list_fun = list_fun1, list_fun_pos = list(50), line_nb = line_nb1, ini = ini1, arg_user_setting2 = arg_user_setting2_1, text = text1, internal_fun_names = NULL, lib_path = NULL, error_text = ""))
+    # end if( ! base::all(base::sapply(X = res2, FUN = function(x){base::length(x = x)}, simplify = TRUE, USE.NAMES = TRUE) == base::sapply(X = res, FUN = function(x){base::length(x = x)}, simplify = TRUE, USE.NAMES = TRUE), na.rm = TRUE)){
+    testthat::expect_no_error(.colons_check_message(list_fun = list_fun3, list_fun_pos = list_fun_pos3, line_nb = line_nb2, ini = ini2, arg_user_setting2 = arg_user_setting2_1, text = text1, internal_fun_names = NULL, lib_path = NULL, error_text = ""))
 
 
     testthat::expect_no_error(.colons_check_message(list_fun = list_fun1, list_fun_pos = list_fun_pos1, line_nb = line_nb1, ini = ini1, arg_user_setting2 = arg_user_setting2_1, text = "BASIC", internal_fun_names = NULL, lib_path = NULL, error_text = ""))

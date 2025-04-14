@@ -461,6 +461,7 @@
                 lib_path = lib_path, 
                 error_text = embed_error_text
             ) # function names are inside quotes or after $ ?
+            print(tempo.log)
             if(base::sum(tempo.log, na.rm = TRUE) > 0){
                 col1 <- col1[ ! tempo.log] # keep clean functions
                 col2 <- col2[ ! tempo.log] # keep clean functions
