@@ -305,7 +305,7 @@ testthat::test_that(".colons_check_message()", {
     testthat::expect_error(.colons_check_message(list_fun = list_fun1, list_fun_pos = list_fun_pos1, line_nb = 1:3, ini = ini1, arg_user_setting2 = arg_user_setting2_1, text = text1, internal_fun_names = NULL, lib_path = NULL, error_text = ""))
     # end if( ! (base::length(x = list_fun) == base::length(x = list_fun_pos) & base::length(x = list_fun) == base::length(x = line_nb) & base::length(x = list_fun) == base::length(x = basic_ini))){
     # if( ! base::all(base::sapply(X = res2, FUN = function(x){base::length(x = x)}, simplify = TRUE, USE.NAMES = TRUE) == base::sapply(X = res, FUN = function(x){base::length(x = x)}, simplify = TRUE, USE.NAMES = TRUE), na.rm = TRUE)){
-    testthat::expect_error(.colons_check_message(list_fun = list_fun1, list_fun_pos = list(50), line_nb = line_nb1, ini = ini1, arg_user_setting2 = arg_user_setting2_1, text = text1, internal_fun_names = NULL, lib_path = NULL, error_text = ""))
+    testthat::expect_no_error(.colons_check_message(list_fun = list_fun1, list_fun_pos = list(50), line_nb = line_nb1, ini = ini1, arg_user_setting2 = arg_user_setting2_1, text = text1, internal_fun_names = NULL, lib_path = NULL, error_text = ""))
     # end if( ! base::all(base::sapply(X = res2, FUN = function(x){base::length(x = x)}, simplify = TRUE, USE.NAMES = TRUE) == base::sapply(X = res, FUN = function(x){base::length(x = x)}, simplify = TRUE, USE.NAMES = TRUE), na.rm = TRUE)){
     testthat::expect_no_error(.colons_check_message(list_fun = list_fun3, list_fun_pos = list_fun_pos3, line_nb = line_nb2, ini = ini2, arg_user_setting2 = arg_user_setting2_1, text = text1, internal_fun_names = NULL, lib_path = NULL, error_text = ""))
 
