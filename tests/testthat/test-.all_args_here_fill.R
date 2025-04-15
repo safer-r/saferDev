@@ -3,20 +3,39 @@ testthat::test_that(".all_args_here_fill()", {
     ## data argument values
     list_fun1 <- list(x = pairlist(x = quote(expr = )))
     list_fun2 <- list(... = quote(expr = ), na.rm = FALSE) # args of sum()
-    list_fun3 <- list(pattern = quote(expr = ), x = quote(expr = ), ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE) #args of grepl()
+    list_fun3 <- list(pattern = quote(expr = ), x = quote(expr = ), ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE) # args of grepl()
+    list_fun4 <- list(pattern = "a", x = "baba", ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE) # args of grepl()
     str1 <- "x"
     arg_full_names_2 <- c("...", "na.rm") # args of sum()
     arg_full_names_3 <- c("...", "na.rm", "na.rm_test")
     arg_full_names_4 <- c("pattern", "x", "ignore.case", "perl", "fixed", "useBytes")
+    arg_full_names_5 <- c("pattern", "pa", "ignore.case", "perl", "fixed", "useBytes")
     tempo_split_2 <- "1:2" # args of sum()
     tempo_split_3 <- c("1:2", "na.rm = FALSE") # args of sum()
     tempo_split_4 <- c("1:2", "na.rm = FALSE", "na.rm = FALSE")
     tempo_split_5 <- c("1:2", "FALSE") 
     tempo_split_6 <- c("1:2", "na = FALSE") # args of sum()
     tempo_split_7 <- c("pa = m", " december", " ignore.case = FALSE", " perl = FALSE", " fixed = FALSE")
+    tempo_split_8 <- c("pattern = 'a'", 'use = "baba"', " ignore.case = FALSE", " perl = FALSE", " fixed = FALSE")
+    tempo_split_9 <- c('pattern = "baba"',  'pa = "baba"', " ignore.case = FALSE", " perl = FALSE")
     col2_i2_1 <- "length"
     col2_i2_2 <- "sum"
+    col2_i2_3 <- "grepl"
     arg_user_setting_x_1 <- "\"FUN1\""
+
+    fun10 <- function(deparse, depar = NULL, sep = "a"){}
+    list_fun10 <- list(deparse = quote(expr = ), depar = NULL, sep = "a") # args of grepl()
+    arg_full_names_10 <- c("deparse", "depar", "sep")
+    tempo_split_10 <- c(' dep = "b"')
+    col2_i2_10 <- "fun10"
+
+    fun11 <- function(deparse, sep = "a"){}
+    list_fun11 <- list(deparse = quote(expr = ), sep = "a") # args of grepl()
+    arg_full_names_11 <- c("deparse", "sep")
+    tempo_split_11 <- c(' dep = "b"')
+    col2_i2_11 <- "fun11"
+
+
     mat1 <- base::matrix(-1:3)
     factor1 <- base::as.factor(str1)
     expr1 <- expression(1)
@@ -387,7 +406,7 @@ testthat::test_that(".all_args_here_fill()", {
     # if(base::sum(tempo_log, na.rm = TRUE) > 1){
     testthat::expect_no_error(.all_args_here_fill(arg_full = list_fun2, arg_full_names = arg_full_names_3, tempo_split = tempo_split_3, three_dots_log = c(TRUE, FALSE, FALSE), i2 = 1, col1_i2 = 1, col2_i2 = col2_i2_2, arg_user_setting_x = arg_user_setting_x_1, warn = NULL, warn_count = 0, lib_path = NULL, error_text = ""))
     result <- .all_args_here_fill(arg_full = list_fun2, arg_full_names = arg_full_names_3, tempo_split = tempo_split_3, three_dots_log = c(TRUE, FALSE, FALSE), i2 = 1, col1_i2 = 1, col2_i2 = col2_i2_2, arg_user_setting_x = arg_user_setting_x_1, warn = NULL, warn_count = 0, lib_path = NULL, error_text = "")
-    expected <- list(col6 = "na.rm_test", col7 = "na.rm_test = NULL", col8 = "sum(1:2,na.rm = FALSE, na.rm_test = NULL)")
+    expected <- list(col6 = "na.rm_test", col7 = "na.rm_test = NULL", col8 = "na.rm ARG NAME HAS TO BE FULLY WRITTEN na.rm_test & WARNING: SEVERAL ARGUMENT NAMES OF THE FUNCTION BEGINNING WITH na.rm")
     testthat::expect_equal(result, expected)
     # end if(base::sum(tempo_log, na.rm = TRUE) > 1){
 
@@ -404,12 +423,20 @@ testthat::test_that(".all_args_here_fill()", {
     result <- get_message(data = '.all_args_here_fill(arg_full = list_fun3, arg_full_names = arg_full_names_4, tempo_split = NULL, three_dots_log = c(FALSE, FALSE, FALSE, FALSE, FALSE, FALSE), i2 = 1, col1_i2 = 1, col2_i2 = col2_i2_2, arg_user_setting_x = arg_user_setting_x_1, warn = NULL, warn_count = 0, lib_path = NULL, error_text = "")', kind = "error")
     expected <- "ERROR MESSAGE REPORTED:\nError : \n\n================\n\nERROR IN saferDev:::.all_args_here_fill().\n\nTHE TESTED FUNCTION \"FUN1\" SEEMS TO HAVE A WRITING ERROR IN LINE 1 AND FUNCTION sum.\nPLEASE, RUN THE TESTED FUNCTION FIRST.\n\n================\n\n\n"
     testthat::expect_equal(result, expected)
+    testthat::expect_no_error(.all_args_here_fill(arg_full = list_fun4, arg_full_names = arg_full_names_5, tempo_split = tempo_split_9, three_dots_log = c(FALSE, FALSE, FALSE, FALSE, FALSE, FALSE), i2 = 1, col1_i2 = 1, col2_i2 = col2_i2_3, arg_user_setting_x = arg_user_setting_x_1, warn = NULL, warn_count = 0, lib_path = NULL, error_text = ""))
+
+
+    testthat::expect_error(.all_args_here_fill(arg_full = list_fun10, arg_full_names = arg_full_names_10, tempo_split = tempo_split_10, three_dots_log = c(FALSE, FALSE, FALSE), i2 = 1, col1_i2 = 1, col2_i2 = col2_i2_10, arg_user_setting_x = arg_user_setting_x_1, warn = NULL, warn_count = 0, lib_path = NULL, error_text = ""))
+
+
+    testthat::expect_no_error(.all_args_here_fill(arg_full = list_fun11, arg_full_names = arg_full_names_11, tempo_split = tempo_split_11, three_dots_log = c(FALSE, FALSE), i2 = 1, col1_i2 = 1, col2_i2 = col2_i2_11, arg_user_setting_x = arg_user_setting_x_1, warn = NULL, warn_count = 0, lib_path = NULL, error_text = ""))
+
 
 
 
     testthat::expect_no_error(.all_args_here_fill(arg_full = list_fun3, arg_full_names = arg_full_names_4, tempo_split = tempo_split_7, three_dots_log = c(FALSE, FALSE, FALSE, FALSE, FALSE, FALSE), i2 = 1, col1_i2 = 1, col2_i2 = col2_i2_2, arg_user_setting_x = arg_user_setting_x_1, warn = NULL, warn_count = 0, lib_path = NULL, error_text = ""))
     result <- .all_args_here_fill(arg_full = list_fun3, arg_full_names = arg_full_names_4, tempo_split = tempo_split_7, three_dots_log = c(FALSE, FALSE, FALSE, FALSE, FALSE, FALSE), i2 = 1, col1_i2 = 1, col2_i2 = col2_i2_2, arg_user_setting_x = arg_user_setting_x_1, warn = NULL, warn_count = 0, lib_path = NULL, error_text = "")
-    expected <- list(col6 = "pattern, x, useBytes", col7 = "pattern = pa = m, x =  december, useBytes = FALSE", col8 = "sum(pattern = pa = m, x =  december, ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE)")
+    expected <- list(col6 = "pattern, x, useBytes", col7 = "pattern = pa = m, x =  december, useBytes = FALSE", col8 = "pa ARG NAME HAS TO BE FULLY WRITTEN pattern")
     testthat::expect_equal(result, expected)
 
 

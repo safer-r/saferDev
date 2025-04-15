@@ -453,7 +453,7 @@
         # end removal of arguments without arg name before in obs_arg_log
         # detection of arguments that starts by the same string in the sub function (example: path_in and path_out)
         tempo_col8_end <- NULL
-        same_begin <- base::unlist( # common string
+        same_begin <- base::unlist( # common string of all the arguments
             x = base::lapply(
                 FUN = function(x){
                     tempo_log <- base::grepl(x = arg_full_names, pattern = base::paste0("^", x, collapse = NULL, recycle0 = FALSE), perl = FALSE, ignore.case = FALSE, fixed = FALSE, useBytes = FALSE)
@@ -492,42 +492,36 @@
             for(i3 in 1:base::length(x = tempo_split)){
                 if(base::grepl(x = tempo_split[i3], pattern = pattern1, perl = TRUE, ignore.case = FALSE, fixed = FALSE, useBytes = FALSE)){
                     tempo_arg_name <- base::strsplit(x = tempo_split[i3], split = "[\\s\\r\\n]*=", perl = TRUE, fixed = FALSE, useBytes = FALSE)[[1]][1]
-                    tempo_arg_name <- base::gsub(pattern = "^[\\s]*", replacement = "", x = tempo_arg_name, ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE) # removing leading space
-                    if( ! base::is.null(x = same_begin)){
-                        if( ! tempo_arg_name %in% same_begin){
-                            tempo.log <- base::grepl(x = missing_args_names, pattern = base::paste0("^", tempo_arg_name, collapse = NULL, recycle0 = FALSE), perl = FALSE, ignore.case = FALSE, fixed = FALSE, useBytes = FALSE)
-                            if(base::sum(tempo.log, na.rm = TRUE) > 1){
-                                tempo_cat <- base::paste0(
-                                    "INTERNAL ERROR 2 IN ", 
-                                    intern_error_text_start, 
-                                    "IN LINE ", 
-                                    i2, 
-                                    " IN THE ", 
-                                    col2_i2, 
-                                    " FUNCTION\ntempo_arg_name DETECTS SEVERAL TIMES ARGUMENT NAMES:\n\ntempo_arg_name:\n", 
-                                    tempo_arg_name, 
-                                    "\n\nmissing_args_names:\n", 
-                                    base::paste0(missing_args_names, collapse = "\n", recycle0 = FALSE), 
-                                    "\n\nmissing_args_names[tempo.log]:\n", 
-                                    base::paste0(missing_args_names[tempo.log], collapse = "\n", recycle0 = FALSE), 
-                                    intern_error_text_end, 
-                                    collapse = NULL, 
-                                    recycle0 = FALSE
-                                )
-                                base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", base::ifelse(test = base::is.null(x = warn), yes = "", no = base::paste0("IN ADDITION\nWARNING", base::ifelse(test = warn_count > 1, yes = "S", no = ""), ":\n\n", warn, collapse = NULL, recycle0 = FALSE)), collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL)
-                            }
-                            if(base::sum(tempo.log, na.rm = TRUE) == 1){
-                                tempo_col8 <- base::c(
-                                    tempo_col8, 
-                                    base::paste0(
-                                        base::ifelse(test = base::is.null(x = tempo_col8), yes = "", no = " ; "), 
-                                        base::paste0(tempo_arg_name, " ARG NAME HAS TO BE FULLY WRITTEN ", missing_args_names[tempo.log], collapse = NULL, recycle0 = FALSE), 
-                                        collapse = NULL, 
-                                        recycle0 = FALSE
-                                    )
-                                )
-                            }
-                        }
+                    tempo_arg_name <- base::gsub(pattern = "^[\\s]*", replacement = "", x = tempo_arg_name, ignore.case = FALSE, perl = TRUE, fixed = FALSE, useBytes = FALSE) # removing leading space
+                    tempo.log <- base::grepl(x = missing_args_names, pattern = base::paste0("^", tempo_arg_name, collapse = NULL, recycle0 = FALSE), perl = FALSE, ignore.case = FALSE, fixed = FALSE, useBytes = FALSE) # check if any missing_args_names starts by tempo_arg_name
+                    if(base::sum(tempo.log, na.rm = TRUE) > 1){ # this is a secu that should never happens, because should already been detected by base::grepl(x = tempo_arg_name, pattern = base::paste0("^", same_begin, collapse = "|")
+                        tempo_cat <- base::paste0(
+                            error_text_start, 
+                            "IN LINE ", 
+                            i2, 
+                            " AND IN THE ", 
+                            col2_i2, 
+                            " FUNCTION.\nDETECTION OF A NON FULLY WRITTEN ARGUMENT THAT CORRESPOND TO SEVERAL ARGUMENTS STARTING BY THE SAME CHARACTERS.\n\nWRITTEN ARGUMENT:\n", 
+                            tempo_arg_name, 
+                            "\n\nMISSING ARGUMENTS:\n", 
+                            base::paste0(missing_args_names, collapse = "\n", recycle0 = FALSE), 
+                            "\n\nMISSING ARGUMENTS STARTING BY THE SAME CHARACTERS:\n", 
+                            base::paste0(missing_args_names[tempo.log], collapse = "\n", recycle0 = FALSE), 
+                            collapse = NULL, 
+                            recycle0 = FALSE
+                        )
+                        base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", base::ifelse(test = base::is.null(x = warn), yes = "", no = base::paste0("IN ADDITION\nWARNING", base::ifelse(test = warn_count > 1, yes = "S", no = ""), ":\n\n", warn, collapse = NULL, recycle0 = FALSE)), collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL)
+                    }
+                    if(base::sum(tempo.log, na.rm = TRUE) == 1){ # this means that an argument is missing because not fully written
+                        tempo_col8 <- base::c(
+                            tempo_col8, 
+                            base::paste0(
+                                base::ifelse(test = base::is.null(x = tempo_col8), yes = "", no = " ; "), 
+                                base::paste0(tempo_arg_name, " ARG NAME HAS TO BE FULLY WRITTEN ", missing_args_names[tempo.log], collapse = NULL, recycle0 = FALSE), 
+                                collapse = NULL, 
+                                recycle0 = FALSE
+                            )
+                        )
                     }
                 }
             }
