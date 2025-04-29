@@ -472,7 +472,7 @@ get_message <- function(
         if(base::any(base::class(x = tempo_error) %in% base::c("gg", "ggplot"), na.rm = TRUE)){ # %in% never returns NA
             ggplot2_detect <- TRUE
             gg_obj <- tempo_error
-            tempo_error <- base::try(expr = base::suppressMessages(expr = base::suppressWarnings(expr = print(gg_obj), classes = "warning"), classes = "message"), silent = TRUE, outFile = base::getOption(x = "try.outFile", default = base::stderr()))[1]
+            tempo_error <- base::try(expr = base::suppressMessages(expr = base::suppressWarnings(expr = base::print(x = gg_obj), classes = "warning"), classes = "message"), silent = TRUE, outFile = base::getOption(x = "try.outFile", default = base::stderr()))[1]
         }
         # if(base::exists(x = "tempo_error", where = -1, envir = base::environment(fun = NULL), frame = , mode = "any", inherits = FALSE) == TRUE){ # inherits = FALSE avoid the portee lexical and thus the declared word #inactivated because tempo_error always exists
         if(ggplot2_detect == TRUE){
@@ -497,7 +497,7 @@ get_message <- function(
             # get message
             tempo_message <- utils::capture.output({
                 if(ggplot2_detect == TRUE){ # %in% never returns NA
-                    tempo <- base::suppressWarnings(expr = base::print(gg_obj), classes = "warning")
+                    tempo <- base::suppressWarnings(expr = base::print(x = gg_obj), classes = "warning")
                 }else{
                     tempo <- base::suppressWarnings(expr = base::eval(expr = base::parse(text = data, file = "", n = NULL, prompt = "?", keep.source = base::getOption(x = "keep.source", default = NULL), srcfile = NULL, encoding = "unknown"), envir = if(base::is.null(x = env)){base::parent.frame(n = 1)}else{env}, enclos = base::environment(fun = NULL)), classes = "warning")
                 }
@@ -525,7 +525,7 @@ get_message <- function(
                 tempo_warn <- fun.warning.capture(expr = base::eval(expr = base::parse(text = data, file = "", n = NULL, prompt = "?", keep.source = base::getOption(x = "keep.source", default = NULL), srcfile = NULL, encoding = "unknown"), envir = if(base::is.null(x = env)){base::parent.frame(n = 1)}else{env}, enclos = base::environment(fun = NULL)))
             }else{
                  # last warning cannot be used because suppressWarnings() does not modify last.warning present in the base evironment (created at first warning in a new R session), or warnings() # to reset the warning history : unlockBinding("last.warning", baseenv()) ; assign("last.warning", NULL, envir = baseenv())
-                tempo_warn <- fun.warning.capture(expr = base::print(gg_obj))
+                tempo_warn <- fun.warning.capture(expr = base::print(x = gg_obj))
             }
             # end get warning
             # warn.options.ini <- options()$warn ; options(warn = 1) ; tempo_warn <- utils::capture.output({tempo <- suppressMessages(eval(parse(text = data), envir = if(is.null(x = env)){parent.frame()}else{env}))}, type = "message") ; options(warn = warn.options.ini) # this recover warnings not messages and not errors but does not work in all enviroments

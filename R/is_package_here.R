@@ -368,7 +368,7 @@ is_package_here <- function(
     if(base::all(tempo.log, na.rm = TRUE)){
         tempo_cat <- base::paste0(
             error_text_start, 
-            "THE STRING IN req_package ARGUMENT MUST NOT CONTAIN \"::\" OR \":::.\":\n", 
+            "THE STRING IN req_package ARGUMENT MUST NOT CONTAIN \"::\" OR \":::\":\n", 
             base::paste0(req_package[tempo.log], collapse = "\n", recycle0 = FALSE), 
             collapse = NULL, 
             recycle0 = FALSE
