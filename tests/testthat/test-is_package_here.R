@@ -150,7 +150,7 @@ testthat::test_that("is_package_here()", {
 
     ######## other checkings
     result <- saferDev::get_message('is_package_here(req_package = "ggplot::geom_point", safer_check = TRUE, lib_path = NULL, error_text = "")', kind = "error", print_no = TRUE, text = NULL, safer_check = FALSE) 
-    expected <- "ERROR MESSAGE REPORTED:\nError : \n\n================\n\nERROR IN saferDev::is_package_here().\n\nTHE STRING IN req_package ARGUMENT MUST NOT CONTAIN \"::\" OR \":::.\":\nggplot::geom_point\n\n================\n\n\n"
+    expected <- "ERROR MESSAGE REPORTED:\nError : \n\n================\n\nERROR IN saferDev::is_package_here().\n\nTHE STRING IN req_package ARGUMENT MUST NOT CONTAIN \"::\" OR \":::\":\nggplot::geom_point\n\n================\n\n\n"
     testthat::expect_equal(result, expected)
     ######## end other checkings
     #### end second round of checking and data preparation

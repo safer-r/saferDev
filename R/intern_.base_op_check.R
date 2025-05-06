@@ -8,7 +8,6 @@
 #' @author \href{yushi.han2000@gmail.com}{Yushi Han}
 #' @author \href{wanghaiding442@gmail.com}{Haiding Wang}
 #' @examples
-#' \dontrun{
 #' \dontrun{ # Example that shouldn't be run because this is an internal function (not found by devtools::check())
 #' saferDev:::.base_op_check(error_text = " INSIDE fun1.") # nothing should happen
 #' assign("!", 1) ; assign("+", 2) ; saferDev:::.base_op_check(error_text = " INSIDE fun1.") # this example returns an error

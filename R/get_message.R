@@ -55,7 +55,7 @@
 #' get_message(data = "ggplot2::ggplot(data = data.frame(X = 1:10, stringsAsFactors = TRUE), 
 #' mapping = ggplot2::aes(x = X)) + ggplot2::geom_histogram()", kind = "message", print_no = TRUE, 
 #' text = "IN INSTRUCTION 1")
-#' @importFrom ggplot2 ggplot_build dplyr
+#' @importFrom ggplot2 ggplot_build
 #' @export
 get_message <- function(
     data, 

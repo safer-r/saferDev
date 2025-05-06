@@ -21,7 +21,7 @@
 
 \item{no_regex_pattern}{Single string of the pattern to detect but without escape characters or list, etc.}
 
-\item{replacement}{Single string for pattern replacement. Is not regex.}
+\item{replacement}{Single string for pattern replacement. Must have the same number of character then no_regex_pattern. Is not regex.}
 
 \item{perl}{Single logical value. Use Perl regex in pattern ?}
 

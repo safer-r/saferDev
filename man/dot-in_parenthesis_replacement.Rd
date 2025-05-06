@@ -27,9 +27,9 @@
 
 \item{perl}{Single logical value. Use Perl regex in pattern ?}
 
-\item{open_pos}{Single integer indicating the position of the opening parenthesis.}
+\item{open_pos}{Single positive and non zero integer indicating the position of the opening parenthesis.}
 
-\item{close_pos}{Single integer indicating the position of the closing parenthesis.}
+\item{close_pos}{Single positive and non zero integer indicating the position of the closing parenthesis.}
 
 \item{lib_path}{Vector of characters specifying the absolute pathways of the directories containing the required packages for the function, if not in the default directories. Useful when R package are not installed in the default directories because of lack of admin rights.  More precisely, lib_path is passed through the new argument of .libPaths() so that the new library paths are unique(c(new, .Library.site, .Library)). Warning: .libPaths() is restored to the initial paths, after function execution. Ignored if NULL (default) or if the safer_check argument is FALSE: only the pathways specified by the current .libPaths() are used for package calling.}
 

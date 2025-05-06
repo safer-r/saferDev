@@ -16,6 +16,15 @@ An error message if at least one of the checked operator is present in the R sco
 Check if critical operators of R are not present in other packages or in the global env.
 Others functions of the R scope can be overwritten because safer functions always use :: when using any function.
 }
+\examples{
+\dontrun{ # Example that shouldn't be run because this is an internal function (not found by devtools::check())
+saferDev:::.base_op_check(error_text = " INSIDE fun1.") # nothing should happen
+assign("!", 1) ; assign("+", 2) ; saferDev:::.base_op_check(error_text = " INSIDE fun1.") # this example returns an error
+rm("!") ; rm("+") 
+}
+
+
+}
 \author{
 \href{gael.millot@pasteur.fr}{Gael Millot}
 

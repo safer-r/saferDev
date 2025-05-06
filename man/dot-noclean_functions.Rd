@@ -7,9 +7,9 @@
 .noclean_functions(col1, col2, col3, ini, lib_path, error_text)
 }
 \arguments{
-\item{col1}{Vector of integers.}
+\item{col1}{Vector of integers of line numbers in a code.}
 
-\item{col2}{Vector of strings of the function names.}
+\item{col2}{Vector of strings of the function names scrutinized.}
 
 \item{col3}{Vector of strings of the code before the function name.}
 

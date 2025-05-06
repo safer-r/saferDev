@@ -17,7 +17,7 @@ get_message(
 )
 }
 \arguments{
-\item{data}{Single character string to evaluate.}
+\item{data}{Single character string.}
 
 \item{kind}{Single character string. Either "error" to get error messages, or "warning" to get warning messages, or "message" to get non error and non warning messages.}
 
@@ -27,7 +27,7 @@ get_message(
 
 \item{text}{Single character string added to the output message (even if no message exists and print_no is TRUE). Inactivated if the header argument is FALSE. Write NULL if not required.}
 
-\item{env}{The name of an existing environment. Write NULL if not required.}
+\item{env}{An object corresponding to an existing environment. Then the data argument value is evaluated only in the indicated environment. Write NULL if not required (R scope is used). Example env = .GlobalEnv.}
 
 \item{safer_check}{Single logical value. Perform some "safer" checks? If TRUE, checkings are performed before main code running (see https://github.com/safer-r): 1) correct lib_path argument value 2) required functions and related packages effectively present in local R lybraries and 3) R classical operators (like "<-") not overwritten by another package because of the R scope. Must be set to FALSE if this fonction is used inside another "safer" function to avoid pointless multiple checkings.}
 
@@ -36,7 +36,13 @@ get_message(
 \item{error_text}{Single character string used to add information in error messages returned by the function, notably if the function is inside other functions, which is practical for debugging. Example: error_text = " INSIDE <PACKAGE_1>::<FUNCTION_1> INSIDE <PACKAGE_2>::<FUNCTION_2>.". If NULL, converted into "".}
 }
 \value{
-The message or NULL if no message and print_no is FALSE.
+The function returns the error, warning, or standart message, as a single character string, depending on what has been selected using the kind argument and if such message exists.
+
+NULL if no selected message returned and the print_no argument is FALSE.
+
+The following message if no selected message returned and the print_no argument is TRUE: "NO (ERROR|WARNING|STANDARD) MESSAGE REPORTED".
+
+The following message if 1) the kind argument is "warning" or "message" while an error message is returned and 2) the print_no argument is TRUE: "NO POTENTIAL (WARNING|STANDARD) MESSAGE BECAUSE OF ERROR MESSAGE REPORTED".
 }
 \description{
 Evaluate an instruction written between "" and return the first of the error message, or the last of the warning or standard (non error non warning) messages if ever exist.
@@ -50,10 +56,10 @@ Only the first standard/error/warning message is returned.
 
 Always use the env argument when get_message() is used inside functions.
 
-The function does not prevent printing if print() is used inside the instruction tested. To prevent that, use tempo <- utils::capture.output(error <- get_message(data = "arg_check(data = 'a', class = mean, neg_values = FALSE, print = TRUE)")). The return of get_message() is assigned into error and the printed messages are captured by utils::capture.output() and assigned into tempo. See the examples.
+The function does not prevent printing, for instance if print() or show() is used inside the instruction tested. To prevent that, use tempo <- utils::capture.output(error <- get_message(data = "arg_check(data = 'a', class = mean, neg_values = FALSE, print = TRUE)")). The return of get_message() is assigned into error and the printed messages are captured by utils::capture.output() and assigned into tempo. See the examples.
 }
 \examples{
-get_message(data = "wilcox.test(c(1,1,3), c(1, 2, 4), paired = TRUE)", kind = "error", print_no = TRUE, text = "IN A")
+get_message(data = "wilcox.test(c(1,1,3), c(1, 2, 4), paired = TRUE)", kind = "error", header = TRUE, print_no = FALSE, text = NULL, env = NULL, safer_check = TRUE, lib_path = NULL, error_text = "")
 
 get_message(data = "wilcox.test(c(1,1,3), c(1, 2, 4), paired = TRUE)", kind = "warning", 
 print_no = TRUE, text = "IN A")

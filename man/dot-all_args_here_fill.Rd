@@ -28,17 +28,17 @@
 
 \item{three_dots_log}{Vector of logical. Is ... present among arg_full_names.}
 
-\item{i2}{Single integer value indicating the loop number.}
+\item{i2}{Single positive and non null integer value indicating the loop number.}
 
-\item{col1_i2}{Single integer value indicating the code line number of the checked function.}
+\item{col1_i2}{Single positive and non null integer value indicating the code line number of the checked function.}
 
 \item{col2_i2}{Single string indicating the name of the checked sub function.}
 
 \item{arg_user_setting_x}{Single string indicating the name of the checked function.}
 
-\item{warn}{warning string. Can be NULL.}
+\item{warn}{Single warning string. Can be NULL.}
 
-\item{warn_count}{warning count.}
+\item{warn_count}{Single positive integer value indicating the warning count.}
 
 \item{lib_path}{Vector of characters specifying the absolute pathways of the directories containing the required packages for the function, if not in the default directories. Useful when R package are not installed in the default directories because of lack of admin rights.  More precisely, lib_path is passed through the new argument of .libPaths() so that the new library paths are unique(c(new, .Library.site, .Library)). Warning: .libPaths() is restored to the initial paths, after function execution. Ignored if NULL (default) or if the safer_check argument is FALSE: only the pathways specified by the current .libPaths() are used for package calling.}
 
@@ -58,7 +58,7 @@ Get the $MISSING_ARG_NAMES, $MISSING_ARGS and $NEW of all_args_here().
 }
 \examples{
 \dontrun{ # Example that shouldn't be run because this is an internal function (not found by devtools::check())
-saferDev:::.all_args_here_fill(arg_full = list(x = pairlist(x = quote(expr = ))), arg_full_names = "x", tempo_split = "x", three_dots_log = FALSE, i2 = 1, col1_i2 = 1, col2_i2 =  "length", arg_user_setting_x = "\"FUN1\"", warn = NULL, warn_count = 0, lib_path = NULL, error_text = " INSIDE P1::F1")
+saferDev:::.all_args_here_fill(arg_full = list(x = quote(expr = )), arg_full_names = "x", tempo_split = "x", three_dots_log = FALSE, i2 = 1, col1_i2 = 1, col2_i2 =  "length", arg_user_setting_x = "\"FUN1\"", warn = NULL, warn_count = 0, lib_path = NULL, error_text = " INSIDE P1::F1")
 }
 }
 \author{
