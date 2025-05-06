@@ -5,6 +5,7 @@ testthat::test_that(".all_args_here_fill()", {
     list_fun2 <- list(... = quote(expr = ), na.rm = FALSE) # args of sum()
     list_fun3 <- list(pattern = quote(expr = ), x = quote(expr = ), ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE) # args of grepl()
     list_fun4 <- list(pattern = "a", x = "baba", ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE) # args of grepl()
+   list_fun5 <- list(pattern = quote(expr = ), x = quote(expr = ), ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = NULL) 
     str1 <- "x"
     arg_full_names_2 <- c("...", "na.rm") # args of sum()
     arg_full_names_3 <- c("...", "na.rm", "na.rm_test")
@@ -18,6 +19,7 @@ testthat::test_that(".all_args_here_fill()", {
     tempo_split_7 <- c("pa = m", " december", " ignore.case = FALSE", " perl = FALSE", " fixed = FALSE")
     tempo_split_8 <- c("pattern = 'a'", 'use = "baba"', " ignore.case = FALSE", " perl = FALSE", " fixed = FALSE")
     tempo_split_9 <- c('pattern = "baba"',  'pa = "baba"', " ignore.case = FALSE", " perl = FALSE")
+    tempo_split_10 <- c('pattern = "a"',  'x = "baba"', " ignore.case = FALSE", " perl = FALSE", "fixed = FALSE", "useBytes = FALSE")
     col2_i2_1 <- "length"
     col2_i2_2 <- "sum"
     col2_i2_3 <- "grepl"
@@ -424,38 +426,31 @@ testthat::test_that(".all_args_here_fill()", {
     expected <- "ERROR MESSAGE REPORTED:\nError : \n\n================\n\nERROR IN saferDev:::.all_args_here_fill().\n\nTHE TESTED FUNCTION \"FUN1\" SEEMS TO HAVE A WRITING ERROR IN LINE 1 AND FUNCTION sum.\nPLEASE, RUN THE TESTED FUNCTION FIRST.\n\n================\n\n\n"
     testthat::expect_equal(result, expected)
     testthat::expect_no_error(.all_args_here_fill(arg_full = list_fun4, arg_full_names = arg_full_names_5, tempo_split = tempo_split_9, three_dots_log = c(FALSE, FALSE, FALSE, FALSE, FALSE, FALSE), i2 = 1, col1_i2 = 1, col2_i2 = col2_i2_3, arg_user_setting_x = arg_user_setting_x_1, warn = NULL, warn_count = 0, lib_path = NULL, error_text = ""))
-
-
     testthat::expect_error(.all_args_here_fill(arg_full = list_fun10, arg_full_names = arg_full_names_10, tempo_split = tempo_split_10, three_dots_log = c(FALSE, FALSE, FALSE), i2 = 1, col1_i2 = 1, col2_i2 = col2_i2_10, arg_user_setting_x = arg_user_setting_x_1, warn = NULL, warn_count = 0, lib_path = NULL, error_text = ""))
-
-
     testthat::expect_no_error(.all_args_here_fill(arg_full = list_fun11, arg_full_names = arg_full_names_11, tempo_split = tempo_split_11, three_dots_log = c(FALSE, FALSE), i2 = 1, col1_i2 = 1, col2_i2 = col2_i2_11, arg_user_setting_x = arg_user_setting_x_1, warn = NULL, warn_count = 0, lib_path = NULL, error_text = ""))
-
-
-
-
     testthat::expect_no_error(.all_args_here_fill(arg_full = list_fun3, arg_full_names = arg_full_names_4, tempo_split = tempo_split_7, three_dots_log = c(FALSE, FALSE, FALSE, FALSE, FALSE, FALSE), i2 = 1, col1_i2 = 1, col2_i2 = col2_i2_2, arg_user_setting_x = arg_user_setting_x_1, warn = NULL, warn_count = 0, lib_path = NULL, error_text = ""))
     result <- .all_args_here_fill(arg_full = list_fun3, arg_full_names = arg_full_names_4, tempo_split = tempo_split_7, three_dots_log = c(FALSE, FALSE, FALSE, FALSE, FALSE, FALSE), i2 = 1, col1_i2 = 1, col2_i2 = col2_i2_2, arg_user_setting_x = arg_user_setting_x_1, warn = NULL, warn_count = 0, lib_path = NULL, error_text = "")
     expected <- list(col6 = "pattern, x, useBytes", col7 = "pattern = pa = m, x =  december, useBytes = FALSE", col8 = "pa ARG NAME HAS TO BE FULLY WRITTEN pattern")
     testthat::expect_equal(result, expected)
-
-
-
-
-
-
-
     # end without ... in args
     # with ... in args
     testthat::expect_no_error(.all_args_here_fill(arg_full = list_fun2, arg_full_names = arg_full_names_2, tempo_split = tempo_split_6, three_dots_log = c(TRUE, FALSE), i2 = 1, col1_i2 = 1, col2_i2 = col2_i2_2, arg_user_setting_x = arg_user_setting_x_1, warn = NULL, warn_count = 0, lib_path = NULL, error_text = ""))
     result <- .all_args_here_fill(arg_full = list_fun2, arg_full_names = arg_full_names_2, tempo_split = tempo_split_6, three_dots_log = c(TRUE, FALSE), i2 = 1, col1_i2 = 1, col2_i2 = col2_i2_2, arg_user_setting_x = arg_user_setting_x_1, warn = NULL, warn_count = 0, lib_path = NULL, error_text = "")
-    # expected <- list(col6 = "na.rm", col7 = "na.rm = FALSE", col8 = "sum(1:2,FALSE, na.rm = FALSE)")
-    # testthat::expect_equal(result, expected)
-    # with ... in args
+    expected <- list(col6 = "na.rm", col7 = "na.rm = FALSE", col8 = "na ARG NAME HAS TO BE FULLY WRITTEN na.rm")
+    testthat::expect_equal(result, expected)
+    # end with ... in args
     # end checking if arg name are not fully written
 
-
-
+    # when ... is present or not
+    testthat::expect_no_error(.all_args_here_fill(arg_full = list_fun5, arg_full_names = arg_full_names_4, tempo_split = tempo_split_7, three_dots_log = c(FALSE, FALSE, FALSE, FALSE, FALSE, FALSE), i2 = 1, col1_i2 = 1, col2_i2 = col2_i2_2, arg_user_setting_x = arg_user_setting_x_1, warn = NULL, warn_count = 0, lib_path = NULL, error_text = ""))
+    result <- .all_args_here_fill(arg_full = list_fun5, arg_full_names = arg_full_names_4, tempo_split = tempo_split_7, three_dots_log = c(FALSE, FALSE, FALSE, FALSE, FALSE, FALSE), i2 = 1, col1_i2 = 1, col2_i2 = col2_i2_2, arg_user_setting_x = arg_user_setting_x_1, warn = NULL, warn_count = 0, lib_path = NULL, error_text = "")
+    expected <- list(col6 = "pattern, x, useBytes", col7 = "pattern = pa = m, x =  december, useBytes = NULL", col8 = "pa ARG NAME HAS TO BE FULLY WRITTEN pattern")
+    testthat::expect_equal(result, expected)
+    # end when ... is present or not
+    testthat::expect_no_error(.all_args_here_fill(arg_full = list_fun4, arg_full_names = arg_full_names_4, tempo_split = tempo_split_10, three_dots_log = c(FALSE, FALSE, FALSE, FALSE, FALSE, FALSE), i2 = 1, col1_i2 = 1, col2_i2 = col2_i2_2, arg_user_setting_x = arg_user_setting_x_1, warn = NULL, warn_count = 0, lib_path = NULL, error_text = ""))
+    result <- .all_args_here_fill(arg_full = list_fun4, arg_full_names = arg_full_names_4, tempo_split = tempo_split_10, three_dots_log = c(FALSE, FALSE, FALSE, FALSE, FALSE, FALSE), i2 = 1, col1_i2 = 1, col2_i2 = col2_i2_2, arg_user_setting_x = arg_user_setting_x_1, warn = NULL, warn_count = 0, lib_path = NULL, error_text = "")
+    expected <- list(col6 = "", col7 = "", col8 = "GOOD")
+    testthat::expect_equal(result, expected)
     #### end main code
 
     ## end tests (ordered by arg appearance and conditions in the code)
