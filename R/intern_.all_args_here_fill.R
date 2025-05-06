@@ -553,7 +553,7 @@
                         tempo <- base::paste0(arg_full_names[i3], " = ", tempo_split[base::which(x = missing_full_arg_name_log == TRUE, arr.ind = FALSE, useNames = TRUE)[1]], collapse = NULL, recycle0 = FALSE)
                         missing_full_arg_name_log[base::which(x = missing_full_arg_name_log == TRUE, arr.ind = FALSE, useNames = TRUE)[1]] <- FALSE
                     }else{
-                        tempo <- base::paste0(arg_full_names[i3], " = ", if(base::is.null(x = base::deparse(expr = arg_full[[i3]], width.cutoff = 60L, backtick = FALSE, control = base::c("keepNA", "keepInteger", "niceNames", "showAttributes"), nlines = -1L))){"NULL"}else{base::deparse(expr = arg_full[[i3]], width.cutoff = 60L, backtick = FALSE, control = base::c("keepNA", "keepInteger", "niceNames", "showAttributes"), nlines = -1L)}, collapse = NULL, recycle0 = FALSE)
+                        tempo <- base::paste0(arg_full_names[i3], " = ", if(base::is.null(x = arg_full[[i3]])){"NULL"}else{base::deparse(expr = arg_full[[i3]], width.cutoff = 60L, backtick = FALSE, control = base::c("keepNA", "keepInteger", "niceNames", "showAttributes"), nlines = -1L)}, collapse = NULL, recycle0 = FALSE)
                     }
                     missing_args <- base::c(missing_args, tempo)
                     final <- base::c(final, base::ifelse(test = i3 == 1, yes = tempo, no = base::paste0(" ", tempo, collapse = NULL, recycle0 = FALSE))) # take the first pos always of the args with no arg names
