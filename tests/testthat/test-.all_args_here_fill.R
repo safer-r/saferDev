@@ -19,7 +19,6 @@ testthat::test_that(".all_args_here_fill()", {
     tempo_split_7 <- c("pa = m", " december", " ignore.case = FALSE", " perl = FALSE", " fixed = FALSE")
     tempo_split_8 <- c("pattern = 'a'", 'use = "baba"', " ignore.case = FALSE", " perl = FALSE", " fixed = FALSE")
     tempo_split_9 <- c('pattern = "baba"',  'pa = "baba"', " ignore.case = FALSE", " perl = FALSE")
-    tempo_split_10 <- c('pattern = "a"',  'x = "baba"', " ignore.case = FALSE", " perl = FALSE", "fixed = FALSE", "useBytes = FALSE")
     col2_i2_1 <- "length"
     col2_i2_2 <- "sum"
     col2_i2_3 <- "grepl"
@@ -37,6 +36,7 @@ testthat::test_that(".all_args_here_fill()", {
     tempo_split_11 <- c(' dep = "b"')
     col2_i2_11 <- "fun11"
 
+    tempo_split_12 <- c('pattern = "a"',  'x = "baba"', " ignore.case = FALSE", " perl = FALSE", "fixed = FALSE", "useBytes = FALSE")
 
     mat1 <- base::matrix(-1:3)
     factor1 <- base::as.factor(str1)
@@ -447,8 +447,8 @@ testthat::test_that(".all_args_here_fill()", {
     expected <- list(col6 = "pattern, x, useBytes", col7 = "pattern = pa = m, x =  december, useBytes = NULL", col8 = "pa ARG NAME HAS TO BE FULLY WRITTEN pattern")
     testthat::expect_equal(result, expected)
     # end when ... is present or not
-    testthat::expect_no_error(.all_args_here_fill(arg_full = list_fun4, arg_full_names = arg_full_names_4, tempo_split = tempo_split_10, three_dots_log = c(FALSE, FALSE, FALSE, FALSE, FALSE, FALSE), i2 = 1, col1_i2 = 1, col2_i2 = col2_i2_2, arg_user_setting_x = arg_user_setting_x_1, warn = NULL, warn_count = 0, lib_path = NULL, error_text = ""))
-    result <- .all_args_here_fill(arg_full = list_fun4, arg_full_names = arg_full_names_4, tempo_split = tempo_split_10, three_dots_log = c(FALSE, FALSE, FALSE, FALSE, FALSE, FALSE), i2 = 1, col1_i2 = 1, col2_i2 = col2_i2_2, arg_user_setting_x = arg_user_setting_x_1, warn = NULL, warn_count = 0, lib_path = NULL, error_text = "")
+    testthat::expect_no_error(.all_args_here_fill(arg_full = list_fun4, arg_full_names = arg_full_names_4, tempo_split = tempo_split_12, three_dots_log = c(FALSE, FALSE, FALSE, FALSE, FALSE, FALSE), i2 = 1, col1_i2 = 1, col2_i2 = col2_i2_2, arg_user_setting_x = arg_user_setting_x_1, warn = NULL, warn_count = 0, lib_path = NULL, error_text = ""))
+    result <- .all_args_here_fill(arg_full = list_fun4, arg_full_names = arg_full_names_4, tempo_split = tempo_split_12, three_dots_log = c(FALSE, FALSE, FALSE, FALSE, FALSE, FALSE), i2 = 1, col1_i2 = 1, col2_i2 = col2_i2_2, arg_user_setting_x = arg_user_setting_x_1, warn = NULL, warn_count = 0, lib_path = NULL, error_text = "")
     expected <- list(col6 = "", col7 = "", col8 = "GOOD")
     testthat::expect_equal(result, expected)
     #### end main code
