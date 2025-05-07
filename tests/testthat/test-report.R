@@ -17,6 +17,7 @@ testthat::test_that("report()", {
     data_4 <- table(1:4)
 
     data_5 <- 1:3
+    data_6 <- letters[1:3]
 
     ## end data argument values
 
@@ -328,17 +329,17 @@ testthat::test_that("report()", {
                     testthat::expect_no_error(report(data = data_4, output = output_1, path = path_1, overwrite = FALSE, rownames_kept = FALSE, vector_cat = FALSE, noquote = TRUE, sep = 1, safer_check = TRUE, lib_path = NULL, error_text = ""))
                     # end if(noquote == TRUE){
                 # end if(rownames_kept == FALSE & base::all(base::class(x = data) == "data.frame", na.rm = TRUE) & base::nrow(x = data) != 0 & base::nrow(x = data) <= 4){ # for data frames with nrows <= 4
-                # 
-                    testthat::expect_no_error(report(data = data_2, output = output_1, path = path_1, overwrite = FALSE, rownames_kept = FALSE, vector_cat = FALSE, noquote = FALSE, sep = 1, safer_check = TRUE, lib_path = NULL, error_text = ""))
-                    testthat::expect_no_error(report(data = data_3, output = output_1, path = path_1, overwrite = FALSE, rownames_kept = FALSE, vector_cat = FALSE, noquote = FALSE, sep = 1, safer_check = TRUE, lib_path = NULL, error_text = ""))
-                    testthat::expect_no_error(report(data = data_4, output = output_1, path = path_1, overwrite = FALSE, rownames_kept = FALSE, vector_cat = FALSE, noquote = FALSE, sep = 1, safer_check = TRUE, lib_path = NULL, error_text = ""))
+                # }else if(base::is.vector(x = data, mode = "any") & base::all(base::class(x = data) != "list", na.rm = TRUE) & (base::length(x = data) == 1L | vector_cat == TRUE)){
+                    testthat::expect_no_error(report(data = data_5, output = output_1, path = path_1, overwrite = FALSE, rownames_kept = FALSE, vector_cat = FALSE, noquote = FALSE, sep = 1, safer_check = TRUE, lib_path = NULL, error_text = ""))
                     # if(noquote == TRUE){
-                    testthat::expect_no_error(report(data = data_2, output = output_1, path = path_1, overwrite = FALSE, rownames_kept = FALSE, vector_cat = FALSE, noquote = TRUE, sep = 1, safer_check = TRUE, lib_path = NULL, error_text = ""))
-                    testthat::expect_no_error(report(data = data_3, output = output_1, path = path_1, overwrite = FALSE, rownames_kept = FALSE, vector_cat = FALSE, noquote = TRUE, sep = 1, safer_check = TRUE, lib_path = NULL, error_text = ""))
-                    testthat::expect_no_error(report(data = data_4, output = output_1, path = path_1, overwrite = FALSE, rownames_kept = FALSE, vector_cat = FALSE, noquote = TRUE, sep = 1, safer_check = TRUE, lib_path = NULL, error_text = ""))
+                    testthat::expect_no_error(report(data = data_5, output = output_1, path = path_1, overwrite = FALSE, rownames_kept = FALSE, vector_cat = FALSE, noquote = TRUE, sep = 1, safer_check = TRUE, lib_path = NULL, error_text = ""))
                     # end if(noquote == TRUE){
+                # end }else if(base::is.vector(x = data, mode = "any") & base::all(base::class(x = data) != "list", na.rm = TRUE) & (base::length(x = data) == 1L | vector_cat == TRUE)){
 
-
+                    testthat::expect_no_error(report(data = data_6, output = output_1, path = path_1, overwrite = FALSE, rownames_kept = FALSE, vector_cat = FALSE, noquote = FALSE, sep = 1, safer_check = TRUE, lib_path = NULL, error_text = ""))
+                    # if(noquote == TRUE){
+                    testthat::expect_no_error(report(data = data_6, output = output_1, path = path_1, overwrite = FALSE, rownames_kept = FALSE, vector_cat = FALSE, noquote = TRUE, sep = 1, safer_check = TRUE, lib_path = NULL, error_text = ""))
+                    # end if(noquote == TRUE){
 
             # end if(base::all(base::class(x = data) == "data.frame", na.rm = TRUE) | base::all(base::class(x = data) == "table", na.rm = TRUE) | base::all(base::class(x = data) %in% base::c("matrix", "array"), na.rm = TRUE)){
 
