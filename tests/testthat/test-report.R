@@ -307,9 +307,9 @@ testthat::test_that("report()", {
     expected <- "ERROR MESSAGE REPORTED:\nError : \n\n================\n\nERROR IN saferDev::report().\n\nsep ARGUMENT CANNOT BE EQUAL TO ZERO.\n\n================\n\n\n"
     testthat::expect_equal(result, expected)
     dir.create("test")
-    testthat::expect_error(report(data = data_1, output = "test", path = path_1, overwrite = FALSE, rownames_kept = FALSE, vector_cat = FALSE, noquote = FALSE, sep = 0, safer_check = TRUE, lib_path = NULL, error_text = ""))
-    result <- saferDev::get_message('report(data = data_1, output = "test", path = path_1, overwrite = FALSE, rownames_kept = FALSE, vector_cat = FALSE, noquote = FALSE, sep = 0, safer_check = TRUE, lib_path = NULL, error_text = "")')
-    expected <- "ERROR MESSAGE REPORTED:\nError : \n\n================\n\nERROR IN saferDev::report().\n\nsep ARGUMENT CANNOT BE EQUAL TO ZERO.\n\n================\n\n\n"
+    testthat::expect_error(report(data = data_1, output = "test", path = path_1, overwrite = TRUE, rownames_kept = FALSE, vector_cat = FALSE, noquote = FALSE, sep = 1, safer_check = TRUE, lib_path = NULL, error_text = ""))
+    result <- saferDev::get_message('report(data = data_1, output = "test", path = path_1, overwrite = TRUE, rownames_kept = FALSE, vector_cat = FALSE, noquote = FALSE, sep = 1, safer_check = TRUE, lib_path = NULL, error_text = "")')
+    expected <- "ERROR MESSAGE REPORTED:\nError : \n\n================\n\nERROR IN saferDev::report().\n\nFILE DEFINED BY THE path AND output ARGUMENTS\n./test\nALREADY EXISTS AND CANNOT BE OVERWRITTEN.\nPLEASE:\nREMOVE THE FILE\nOR CHANGE THE NAME OF THE output ARGUMENT\nOR SET THE overwrite ARGUMENT TO FALSE TO APPEND IN THE EXISTING FILE.\n\n\n================\n\n\n"
     testthat::expect_equal(result, expected)
     unlink("test", recursive = TRUE)
     ######## end other checkings
