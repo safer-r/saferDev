@@ -134,6 +134,8 @@ testthat::test_that("get_message()", {
     testthat::expect_error(get_message(data = str1, kind = "error", header = TRUE, print_no = FALSE, text = NULL, env = NULL, safer_check = factor1, lib_path = NULL, error_text = ""))
     testthat::expect_error(get_message(data = str1, kind = "error", header = TRUE, print_no = FALSE, text = NULL, env = NULL, safer_check = expr1, lib_path = NULL, error_text = ""))
     testthat::expect_error(get_message(data = str1, kind = "error", header = TRUE, print_no = FALSE, text = NULL, env = NULL, safer_check = fun1, lib_path = NULL, error_text = ""))
+    testthat::expect_no_error(get_message(data = str1, kind = "error", header = TRUE, print_no = FALSE, text = NULL, env = NULL, safer_check = TRUE, lib_path = NULL, error_text = ""))
+    testthat::expect_no_error(get_message(data = str1, kind = "error", header = TRUE, print_no = FALSE, text = NULL, env = NULL, safer_check = FALSE, lib_path = NULL, error_text = ""))
     ######## end safer_check argument checking
 
     ######## check of lib_path

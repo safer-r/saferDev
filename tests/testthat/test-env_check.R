@@ -86,6 +86,8 @@ testthat::test_that("env_check()", {
     testthat::expect_error(env_check(pos = int1, name = str1, safer_check = factor1, lib_path = NULL, error_text = ""))
     testthat::expect_error(env_check(pos = int1, name = str1, safer_check = expr1, lib_path = NULL, error_text = ""))
     testthat::expect_error(env_check(pos = int1, name = str1, safer_check = fun1, lib_path = NULL, error_text = ""))
+    testthat::expect_no_error(env_check(pos = int1, name = str1, safer_check = TRUE, lib_path = NULL, error_text = ""))
+    testthat::expect_no_error(env_check(pos = int1, name = str1, safer_check = FALSE, lib_path = NULL, error_text = ""))
     ######## end safer_check argument checking
 
     ######## check of lib_path

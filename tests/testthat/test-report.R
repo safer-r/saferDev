@@ -11,6 +11,13 @@ testthat::test_that("report()", {
     factor1 <- base::as.factor(str1)
     expr1 <- expression(1)
     fun1 <- function(x){x = 1}
+
+    data_2 <- data.frame(A = 1:3, B = letters[1:3])
+    data_3 <- as.matrix(data_2)
+    data_4 <- table(1:4)
+
+    data_5 <- 1:3
+
     ## end data argument values
 
     ## initialization of tests
@@ -150,6 +157,8 @@ testthat::test_that("report()", {
     testthat::expect_error(report(data = data_1, output = output_1, path = path_1, overwrite = FALSE, rownames_kept = FALSE, vector_cat = FALSE, noquote = FALSE, sep = 1, safer_check = factor1, lib_path = NULL, error_text = ""))
     testthat::expect_error(report(data = data_1, output = output_1, path = path_1, overwrite = FALSE, rownames_kept = FALSE, vector_cat = FALSE, noquote = FALSE, sep = 1, safer_check = expr1, lib_path = NULL, error_text = ""))
     testthat::expect_error(report(data = data_1, output = output_1, path = path_1, overwrite = FALSE, rownames_kept = FALSE, vector_cat = FALSE, noquote = FALSE, sep = 1, safer_check = fun1, lib_path = NULL, error_text = ""))
+    testthat::expect_no_error(report(data = data_1, output = output_1, path = path_1, overwrite = FALSE, rownames_kept = FALSE, vector_cat = FALSE, noquote = FALSE, sep = 1, safer_check = TRUE, lib_path = NULL, error_text = ""))
+    testthat::expect_no_error(report(data = data_1, output = output_1, path = path_1, overwrite = FALSE, rownames_kept = FALSE, vector_cat = FALSE, noquote = FALSE, sep = 1, safer_check = FALSE, lib_path = NULL, error_text = ""))
     ######## end safer_check argument checking
 
     ######## check of lib_path
@@ -289,10 +298,51 @@ testthat::test_that("report()", {
     ######## end graphic device checking
 
     ######## other checkings
+    testthat::expect_error(report(data = data_1, output = output_1, path = "caca", overwrite = FALSE, rownames_kept = FALSE, vector_cat = FALSE, noquote = FALSE, sep = 1, safer_check = TRUE, lib_path = NULL, error_text = ""))
+    result <- saferDev::get_message('report(data = data_1, output = output_1, path = "caca", overwrite = FALSE, rownames_kept = FALSE, vector_cat = FALSE, noquote = FALSE, sep = 1, safer_check = TRUE, lib_path = NULL, error_text = "")')
+    expected <- "ERROR MESSAGE REPORTED:\nError : \n\n================\n\nERROR IN saferDev::report().\n\npath ARGUMENT DOES NOT CORRESPOND TO EXISTING DIRECTORY:\ncaca\n\n================\n\n\n"
+    testthat::expect_equal(result, expected)
+    testthat::expect_error(report(data = data_1, output = output_1, path = path_1, overwrite = FALSE, rownames_kept = FALSE, vector_cat = FALSE, noquote = FALSE, sep = 0, safer_check = TRUE, lib_path = NULL, error_text = ""))
+    result <- saferDev::get_message('report(data = data_1, output = output_1, path = path_1, overwrite = FALSE, rownames_kept = FALSE, vector_cat = FALSE, noquote = FALSE, sep = 0, safer_check = TRUE, lib_path = NULL, error_text = "")')
+    expected <- "ERROR MESSAGE REPORTED:\nError : \n\n================\n\nERROR IN saferDev::report().\n\nsep ARGUMENT CANNOT BE EQUAL TO ZERO.\n\n================\n\n\n"
+    testthat::expect_equal(result, expected)
+    dir.create("test")
+    testthat::expect_error(report(data = data_1, output = "test", path = path_1, overwrite = FALSE, rownames_kept = FALSE, vector_cat = FALSE, noquote = FALSE, sep = 0, safer_check = TRUE, lib_path = NULL, error_text = ""))
+    result <- saferDev::get_message('report(data = data_1, output = "test", path = path_1, overwrite = FALSE, rownames_kept = FALSE, vector_cat = FALSE, noquote = FALSE, sep = 0, safer_check = TRUE, lib_path = NULL, error_text = "")')
+    expected <- "ERROR MESSAGE REPORTED:\nError : \n\n================\n\nERROR IN saferDev::report().\n\nsep ARGUMENT CANNOT BE EQUAL TO ZERO.\n\n================\n\n\n"
+    testthat::expect_equal(result, expected)
+    unlink("test", recursive = TRUE)
     ######## end other checkings
     #### end second round of checking and data preparation
 
     #### main code
+    # if( ! base::is.null(x = data)){
+            # if(base::all(base::class(x = data) == "data.frame", na.rm = TRUE) | base::all(base::class(x = data) == "table", na.rm = TRUE) | base::all(base::class(x = data) %in% base::c("matrix", "array"), na.rm = TRUE)){
+                # if(rownames_kept == FALSE & base::all(base::class(x = data) == "data.frame", na.rm = TRUE) & base::nrow(x = data) != 0 & base::nrow(x = data) <= 4){ # for data frames with nrows <= 4
+                    testthat::expect_no_error(report(data = data_2, output = output_1, path = path_1, overwrite = FALSE, rownames_kept = FALSE, vector_cat = FALSE, noquote = FALSE, sep = 1, safer_check = TRUE, lib_path = NULL, error_text = ""))
+                    testthat::expect_no_error(report(data = data_3, output = output_1, path = path_1, overwrite = FALSE, rownames_kept = FALSE, vector_cat = FALSE, noquote = FALSE, sep = 1, safer_check = TRUE, lib_path = NULL, error_text = ""))
+                    testthat::expect_no_error(report(data = data_4, output = output_1, path = path_1, overwrite = FALSE, rownames_kept = FALSE, vector_cat = FALSE, noquote = FALSE, sep = 1, safer_check = TRUE, lib_path = NULL, error_text = ""))
+                    # if(noquote == TRUE){
+                    testthat::expect_no_error(report(data = data_2, output = output_1, path = path_1, overwrite = FALSE, rownames_kept = FALSE, vector_cat = FALSE, noquote = TRUE, sep = 1, safer_check = TRUE, lib_path = NULL, error_text = ""))
+                    testthat::expect_no_error(report(data = data_3, output = output_1, path = path_1, overwrite = FALSE, rownames_kept = FALSE, vector_cat = FALSE, noquote = TRUE, sep = 1, safer_check = TRUE, lib_path = NULL, error_text = ""))
+                    testthat::expect_no_error(report(data = data_4, output = output_1, path = path_1, overwrite = FALSE, rownames_kept = FALSE, vector_cat = FALSE, noquote = TRUE, sep = 1, safer_check = TRUE, lib_path = NULL, error_text = ""))
+                    # end if(noquote == TRUE){
+                # end if(rownames_kept == FALSE & base::all(base::class(x = data) == "data.frame", na.rm = TRUE) & base::nrow(x = data) != 0 & base::nrow(x = data) <= 4){ # for data frames with nrows <= 4
+                # 
+                    testthat::expect_no_error(report(data = data_2, output = output_1, path = path_1, overwrite = FALSE, rownames_kept = FALSE, vector_cat = FALSE, noquote = FALSE, sep = 1, safer_check = TRUE, lib_path = NULL, error_text = ""))
+                    testthat::expect_no_error(report(data = data_3, output = output_1, path = path_1, overwrite = FALSE, rownames_kept = FALSE, vector_cat = FALSE, noquote = FALSE, sep = 1, safer_check = TRUE, lib_path = NULL, error_text = ""))
+                    testthat::expect_no_error(report(data = data_4, output = output_1, path = path_1, overwrite = FALSE, rownames_kept = FALSE, vector_cat = FALSE, noquote = FALSE, sep = 1, safer_check = TRUE, lib_path = NULL, error_text = ""))
+                    # if(noquote == TRUE){
+                    testthat::expect_no_error(report(data = data_2, output = output_1, path = path_1, overwrite = FALSE, rownames_kept = FALSE, vector_cat = FALSE, noquote = TRUE, sep = 1, safer_check = TRUE, lib_path = NULL, error_text = ""))
+                    testthat::expect_no_error(report(data = data_3, output = output_1, path = path_1, overwrite = FALSE, rownames_kept = FALSE, vector_cat = FALSE, noquote = TRUE, sep = 1, safer_check = TRUE, lib_path = NULL, error_text = ""))
+                    testthat::expect_no_error(report(data = data_4, output = output_1, path = path_1, overwrite = FALSE, rownames_kept = FALSE, vector_cat = FALSE, noquote = TRUE, sep = 1, safer_check = TRUE, lib_path = NULL, error_text = ""))
+                    # end if(noquote == TRUE){
+
+
+
+            # end if(base::all(base::class(x = data) == "data.frame", na.rm = TRUE) | base::all(base::class(x = data) == "table", na.rm = TRUE) | base::all(base::class(x = data) %in% base::c("matrix", "array"), na.rm = TRUE)){
+
+
 
     #### end main code
     ## end tests (ordered by arg appearance and conditions in the code)
