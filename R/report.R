@@ -485,7 +485,7 @@ report <- function(
             sep <- sep - 1 # because with lists, R add another additionnal space
         }
         sep.final <- base::paste0(base::rep(x = "\n", times = sep), collapse = "", recycle0 = FALSE)
-        base::write(x = sep.final, file = out_path, ncolumns = if(base::is.character(x = sep.final)){1}else{5}, append = TRUE, sep = "") # add a sep
+        base::write(x = sep.final, file = out_path, ncolumns = 1, append = TRUE, sep = "") # add a sep
     }
     #### end main code
 

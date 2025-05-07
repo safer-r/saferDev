@@ -18,6 +18,7 @@ testthat::test_that("report()", {
 
     data_5 <- 1:3
     data_6 <- letters[1:3]
+    data_7 <- list(letters[1:3])
 
     ## end data argument values
 
@@ -335,14 +336,16 @@ testthat::test_that("report()", {
                     testthat::expect_no_error(report(data = data_5, output = output_1, path = path_1, overwrite = FALSE, rownames_kept = FALSE, vector_cat = FALSE, noquote = TRUE, sep = 1, safer_check = TRUE, lib_path = NULL, error_text = ""))
                     # end if(noquote == TRUE){
                 # end }else if(base::is.vector(x = data, mode = "any") & base::all(base::class(x = data) != "list", na.rm = TRUE) & (base::length(x = data) == 1L | vector_cat == TRUE)){
-
+                #}else if(base::all(base::mode(x = data) == "character", na.rm = TRUE)){
                     testthat::expect_no_error(report(data = data_6, output = output_1, path = path_1, overwrite = FALSE, rownames_kept = FALSE, vector_cat = FALSE, noquote = FALSE, sep = 1, safer_check = TRUE, lib_path = NULL, error_text = ""))
                     # if(noquote == TRUE){
                     testthat::expect_no_error(report(data = data_6, output = output_1, path = path_1, overwrite = FALSE, rownames_kept = FALSE, vector_cat = FALSE, noquote = TRUE, sep = 1, safer_check = TRUE, lib_path = NULL, error_text = ""))
                     # end if(noquote == TRUE){
-
+                # end }else if(base::all(base::mode(x = data) == "character", na.rm = TRUE)){
             # end if(base::all(base::class(x = data) == "data.frame", na.rm = TRUE) | base::all(base::class(x = data) == "table", na.rm = TRUE) | base::all(base::class(x = data) %in% base::c("matrix", "array"), na.rm = TRUE)){
-
+            # if(base::all(base::class(x = data) == "list", na.rm = TRUE)){
+            testthat::expect_no_error(report(data = data_7, output = output_1, path = path_1, overwrite = FALSE, rownames_kept = FALSE, vector_cat = FALSE, noquote = FALSE, sep = 1, safer_check = TRUE, lib_path = NULL, error_text = ""))
+            # end if(base::all(base::class(x = data) == "list", na.rm = TRUE)){
 
 
     #### end main code
