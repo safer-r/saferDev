@@ -68,16 +68,16 @@
 <dd><p>Single string.</p></dd>
 
 
+<dt>pattern</dt>
+<dd><p>Single string of a perl regex to extract function names.</p></dd>
+
+
 <dt>lib_path</dt>
 <dd><p>Vector of characters specifying the absolute pathways of the directories containing the required packages for the function, if not in the default directories. Useful when R package are not installed in the default directories because of lack of admin rights.  More precisely, lib_path is passed through the new argument of .libPaths() so that the new library paths are unique(c(new, .Library.site, .Library)). Warning: .libPaths() is restored to the initial paths, after function execution. Ignored if NULL (default) or if the safer_check argument is FALSE: only the pathways specified by the current .libPaths() are used for package calling.</p></dd>
 
 
 <dt>error_text</dt>
 <dd><p>Single character string used to add information in error messages returned by the function, notably if the function is inside other functions, which is practical for debugging. Example: error_text = " INSIDE &lt;PACKAGE_1&gt;::&lt;FUNCTION_1&gt; INSIDE &lt;PACKAGE_2&gt;::&lt;FUNCTION_2&gt;.". If NULL, converted into "".</p></dd>
-
-
-<dt>pattern:</dt>
-<dd><p>Single string of a perl regex to extract function names.</p></dd>
 
 </dl></div>
     <div class="section level2">
