@@ -456,10 +456,10 @@ report <- function(
         }else if(base::is.vector(x = data, mode = "any") & base::all(base::class(x = data) != "list", na.rm = TRUE) & (base::length(x = data) == 1L | vector_cat == TRUE)){
             if(noquote == TRUE){
                 base::cat(base::noquote(obj = data, right = FALSE), file= out_path, append = ! overwrite, type = NULL, sep =  , fill = FALSE, labels = NULL)
-                sep <- sep - 1 # because with cat(), R add an additionnal space
+                sep <- base::ifelse(test = sep == 0, yes = 0, no = sep - 1) # because with cat(), R add an additionnal space
             }else{
                 base::cat(data, file= out_path, append = ! overwrite, type = NULL, sep =  , fill = FALSE, labels = NULL)
-                sep <- sep - 1 # because with cat(), R add an additionnal space
+                sep <- base::ifelse(test = sep == 0, yes = 0, no = sep - 1) # because with cat(), R add an additionnal space
             }
         }else if(base::all(base::mode(x = data) == "character", na.rm = TRUE)){ # characters (array, list, factor or vector with vector_cat = FALSE)
             if(noquote == TRUE){
@@ -479,10 +479,10 @@ report <- function(
                 base::all(base::class(x = data) == "character", na.rm = TRUE)
             )
         )){
-            sep <- sep - 1 # because in these cases (matrix, data frame, list, etc.), R add an additionnal space
+            sep <- base::ifelse(test = sep == 0, yes = 0, no = sep - 1) # because in these cases (matrix, data frame, list, etc.), R add an additionnal space
         }
         if(base::all(base::class(x = data) == "list", na.rm = TRUE)){
-            sep <- sep - 1 # because with lists, R add another additionnal space
+            sep <- base::ifelse(test = sep == 0, yes = 0, no = sep - 1) # because with lists, R add another additionnal space
         }
         sep.final <- base::paste0(base::rep(x = "\n", times = sep), collapse = "", recycle0 = FALSE)
         base::write(x = sep.final, file = out_path, ncolumns = 1, append = TRUE, sep = "") # add a sep
