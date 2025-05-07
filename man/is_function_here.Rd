@@ -31,7 +31,7 @@ is_function_here(fun = "base::c", error_text = " INSIDE P1::F1")
 
 }
 \seealso{
-\code{\link{exists}} et \code{\link[methods]{findFunction}}
+\code{\link{exists}} et \code{\link{findFunction}}
 }
 \author{
 \href{gael.millot@pasteur.fr}{Gael Millot}

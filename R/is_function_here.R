@@ -6,7 +6,7 @@
 #' @param lib_path Vector of characters specifying the absolute pathways of the directories containing the required packages for the function, if not in the default directories. Useful when R package are not installed in the default directories because of lack of admin rights.  More precisely, lib_path is passed through the new argument of .libPaths() so that the new library paths are unique(c(new, .Library.site, .Library)). Warning: .libPaths() is restored to the initial paths, after function execution. Ignored if NULL (default) or if the safer_check argument is FALSE: only the pathways specified by the current .libPaths() are used for package calling.
 #' @param error_text Single character string used to add information in error messages returned by the function, notably if the function is inside other functions, which is practical for debugging. Example: error_text = " INSIDE <PACKAGE_1>::<FUNCTION_1> INSIDE <PACKAGE_2>::<FUNCTION_2>.". If NULL, converted into "".
 #' @returns  An error message if at least one of the checked packages is missing in lib_path, or if at least one of the checked functions is missing in the required package, nothing otherwise.
-#' @seealso \code{\link{exists}} et \code{\link[methods]{findFunction}}
+#' @seealso \code{\link{exists}} et \code{\link{findFunction}}
 #' @author \href{gael.millot@pasteur.fr}{Gael Millot}
 #' @author \href{yushi.han2000@gmail.com}{Yushi Han}
 #' @author \href{wanghaiding442@gmail.com}{Haiding Wang}
