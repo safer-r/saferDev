@@ -534,7 +534,7 @@
             # Of note, when ... is present, argument values must be preceeded by their arg name. This means that values without arg names of the scanned function are ...
             # Otherwise, the first value without names must take the first arg name not already used, the second value without names must take the second, etc., then finish by the none used arg names with their default values
         missing_arg_log <- arg_full_names %in% missing_args_names
-        if(base::any(three_dots_log, na.rm = TRUE) & base::all( ! arg_full_symbol_type, na.rm =TRUE)){ # ... present but no mandatory args with value to set
+        if(base::any(three_dots_log, na.rm = TRUE) & base::all( ! arg_full_symbol_type, na.rm = TRUE)){ # ... present but no mandatory args with value to set
             if(base::sum(missing_arg_log, na.rm = TRUE) > 0){ # if = 0, then missing_args remains NULL
                 missing_args <- base::paste0(arg_full_names[missing_arg_log], " = ", arg_full[missing_arg_log], collapse = NULL, recycle0 = FALSE) # missing arg values with names
                 good_args <- base::c(

@@ -5,7 +5,8 @@ testthat::test_that(".all_args_here_fill()", {
     list_fun2 <- list(... = quote(expr = ), na.rm = FALSE) # args of sum()
     list_fun3 <- list(pattern = quote(expr = ), x = quote(expr = ), ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE) # args of grepl()
     list_fun4 <- list(pattern = "a", x = "baba", ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE) # args of grepl()
-   list_fun5 <- list(pattern = quote(expr = ), x = quote(expr = ), ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = NULL) 
+   list_fun5 <- list(pattern = quote(expr = ), x = quote(expr = ), ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = NULL)
+    list_fun6 <- list(... = quote(expr = ), na.rm = quote(expr = )) # args of sum(), na.rm with no dafault value (mandatory arg)
     str1 <- "x"
     arg_full_names_2 <- c("...", "na.rm") # args of sum()
     arg_full_names_3 <- c("...", "na.rm", "na.rm_test")
@@ -37,6 +38,8 @@ testthat::test_that(".all_args_here_fill()", {
     col2_i2_11 <- "fun11"
 
     tempo_split_12 <- c('pattern = "a"',  'x = "baba"', " ignore.case = FALSE", " perl = FALSE", "fixed = FALSE", "useBytes = FALSE")
+    tempo_split_13 <- c("1:2", "na.rm = FALSE", "5", "7") # args of sum()
+
 
     mat1 <- base::matrix(-1:3)
     factor1 <- base::as.factor(str1)
@@ -451,6 +454,15 @@ testthat::test_that(".all_args_here_fill()", {
     result <- .all_args_here_fill(arg_full = list_fun4, arg_full_names = arg_full_names_4, tempo_split = tempo_split_12, three_dots_log = c(FALSE, FALSE, FALSE, FALSE, FALSE, FALSE), i2 = 1, col1_i2 = 1, col2_i2 = col2_i2_2, arg_user_setting_x = arg_user_setting_x_1, warn = NULL, warn_count = 0, lib_path = NULL, error_text = "")
     expected <- list(col6 = "", col7 = "", col8 = "GOOD")
     testthat::expect_equal(result, expected)
+
+
+    testthat::expect_no_error(.all_args_here_fill(arg_full = list_fun6, arg_full_names = arg_full_names_2, tempo_split = tempo_split_13, three_dots_log = c(TRUE, FALSE), i2 = 1, col1_i2 = 1, col2_i2 = col2_i2_2, arg_user_setting_x = arg_user_setting_x_1, warn = NULL, warn_count = 0, lib_path = NULL, error_text = ""))
+    result <- .all_args_here_fill(arg_full = list_fun6, arg_full_names = arg_full_names_2, tempo_split = tempo_split_13, three_dots_log = c(TRUE, FALSE), i2 = 1, col1_i2 = 1, col2_i2 = col2_i2_2, arg_user_setting_x = arg_user_setting_x_1, warn = NULL, warn_count = 0, lib_path = NULL, error_text = "")
+    expected <- list(col6 = "", col7 = "", col8 = "GOOD")
+    testthat::expect_equal(result, expected)
+
+
+
     #### end main code
 
     ## end tests (ordered by arg appearance and conditions in the code)
