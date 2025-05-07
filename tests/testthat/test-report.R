@@ -335,6 +335,10 @@ testthat::test_that("report()", {
                     # if(noquote == TRUE){
                     testthat::expect_no_error(report(data = data_5, output = output_1, path = path_1, overwrite = FALSE, rownames_kept = FALSE, vector_cat = FALSE, noquote = TRUE, sep = 1, safer_check = TRUE, lib_path = NULL, error_text = ""))
                     # end if(noquote == TRUE){
+                    testthat::expect_no_error(report(data = 1, output = output_1, path = path_1, overwrite = FALSE, rownames_kept = FALSE, vector_cat = TRUE, noquote = FALSE, sep = 1, safer_check = TRUE, lib_path = NULL, error_text = ""))
+                    # if(noquote == TRUE){
+                    testthat::expect_no_error(report(data = 1, output = output_1, path = path_1, overwrite = FALSE, rownames_kept = FALSE, vector_cat = TRUE, noquote = TRUE, sep = 1, safer_check = TRUE, lib_path = NULL, error_text = ""))
+                    # end if(noquote == TRUE){
                 # end }else if(base::is.vector(x = data, mode = "any") & base::all(base::class(x = data) != "list", na.rm = TRUE) & (base::length(x = data) == 1L | vector_cat == TRUE)){
                 #}else if(base::all(base::mode(x = data) == "character", na.rm = TRUE)){
                     testthat::expect_no_error(report(data = data_6, output = output_1, path = path_1, overwrite = FALSE, rownames_kept = FALSE, vector_cat = FALSE, noquote = FALSE, sep = 1, safer_check = TRUE, lib_path = NULL, error_text = ""))
