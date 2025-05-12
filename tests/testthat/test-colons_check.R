@@ -180,7 +180,7 @@ testthat::test_that("colons_check()", {
     #### end second round of checking and data preparation
 
     #### main code
-    
+    testthat::expect_no_error(colons_check(x = base::mean, safer_check = TRUE, lib_path = NULL, error_text = ""))
 
     #### end main code
 
