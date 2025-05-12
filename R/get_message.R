@@ -83,6 +83,9 @@ get_message <- function(
     # data = str4 ; kind = "error" ; header = TRUE ; print_no = TRUE ; text = "IN FUN1" ; env = NULL ; safer_check = TRUE ; lib_path = NULL ; error_text = ""
     # str7 <- "ggplot2::ggplot(data = data.frame(X = c(1:10, NA), stringsAsFactors = TRUE), mapping = ggplot2::aes(x = X)) + ggplot2::geom_histogram()" ; data = str7 ; kind = "warning" ; header = TRUE ; print_no = FALSE ; text = NULL ; env = NULL ; safer_check = TRUE ; lib_path = NULL ; error_text = ""
     # function_name <- "get_message" ; arg_user_setting = base::list(x = as.name(x = "get_message"), kind = "warning", header = TRUE, print_no = FALSE, text = NULL, env = NULL, safer_check = TRUE, lib_path = NULL, error_text = "") ; arg_names <- c("data", "kind",  "header",  "print_no",  "text", "env", "safer_check", "lib_path", "error_text")
+    # source("https://raw.githubusercontent.com/safer-r/saferDev/main/dev/other/test.R")
+    # data = 'saferDev::colons_check(x = test, safer_check = TRUE, lib_path = NULL, error_text = "")' ; kind = "message" ; header = TRUE ; print_no = FALSE ; text = NULL ; env = NULL ; safer_check = TRUE ; lib_path = NULL ; error_text = ""
+    # function_name <- "get_message" ; arg_user_setting = base::list(x = as.name(x = "get_message"), kind = "message", header = TRUE, print_no = FALSE, text = NULL, env = NULL, safer_check = TRUE, lib_path = NULL, error_text = "") ; arg_names <- c("data", "kind",  "header",  "print_no",  "text", "env", "safer_check", "lib_path", "error_text")
     #### package name
     package_name <- "saferDev" # write NULL if the function developed is not in a package
     #### end package name

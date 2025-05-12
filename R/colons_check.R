@@ -425,18 +425,7 @@ colons_check <- function(
         error_text = embed_error_text
     )
     if( ! (base::all(base::typeof(x = out$fun_names) == "list", na.rm = TRUE) & base::all(base::typeof(x = out$fun_names_pos) == "list", na.rm = TRUE))){
-        tempo_cat <- base::paste0(
-            "INTERNAL ERROR 1 IN ", 
-            intern_error_text_start,
-            "out$fun_names AND out$fun_names_pos MUST BE TYPE list\nout$fun_names:\n", 
-            out$fun_names, 
-            "\nout$fun_names_pos:\n", 
-            out$fun_names_pos, 
-            intern_error_text_end, 
-            collapse = NULL, 
-            recycle0 = FALSE
-        )
-        base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL)
+        tempo_cat <- base::paste0("INTERNAL ERROR 1 IN ", intern_error_text_start, "out$fun_names AND out$fun_names_pos MUST BE TYPE list\nout$fun_names:\n", out$fun_names, "\nout$fun_names_pos:\n", out$fun_names_pos, intern_error_text_end, collapse = NULL, recycle0 = FALSE) ; base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL)
     }
     # basic function names in x
     # selection of basic functions
@@ -451,20 +440,7 @@ colons_check <- function(
         in_basic_fun_names_pos <- in_basic_fun_names_pos[ ! tempo.log]
         in_basic_code_line_nb <- out$code_line_nb[ ! tempo.log]
         if( ! (base::length(x = in_basic_fun) == base::length(x = in_basic_fun_names_pos) & base::length(x = in_basic_fun) == base::length(x = in_basic_code_line_nb))){
-            tempo_cat <- base::paste0(
-                "INTERNAL ERROR 2 IN ", 
-                intern_error_text_start,
-                "LENGTHS SHOULD BE IDENTICAL\nin_basic_fun: ", 
-                base::length(x = in_basic_fun), 
-                "\nin_basic_fun_names_pos: ", 
-                base::length(x = in_basic_fun_names_pos), 
-                "\nin_basic_code_line_nb: ", 
-                base::length(x = in_basic_code_line_nb), 
-                intern_error_text_end, 
-                collapse = NULL, 
-                recycle0 = FALSE
-            )
-            base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL)
+            tempo_cat <- base::paste0("INTERNAL ERROR 2 IN ", intern_error_text_start, "LENGTHS SHOULD BE IDENTICAL\nin_basic_fun: ", base::length(x = in_basic_fun), "\nin_basic_fun_names_pos: ", base::length(x = in_basic_fun_names_pos), "\nin_basic_code_line_nb: ", base::length(x = in_basic_code_line_nb), intern_error_text_end, collapse = NULL, recycle0 = FALSE) ; base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL)
         }
         # end removal of string with empty function names
         in_basic_fun_uni <- base::unlist(x = base::unique(x = in_basic_fun, incomparables = FALSE), recursive = TRUE, use.names = TRUE) #  names of unique basic functions used in x
@@ -505,22 +481,7 @@ colons_check <- function(
         in_other_fun <- in_other_fun[ ! tempo.log] # removal of empty string
         in_other_fun_names_pos <- in_other_fun_names_pos[ ! tempo.log]
         in_other_code_line_nb <- out$code_line_nb[ ! tempo.log]
-        if( ! (base::length(x = in_other_fun) == base::length(x = in_other_fun_names_pos) & base::length(x = in_other_fun) == base::length(x = in_other_code_line_nb))){
-            tempo_cat <- base::paste0(
-                "INTERNAL ERROR 3 IN ", 
-                intern_error_text_start,
-                "LENGTHS SHOULD BE IDENTICAL\nin_other_fun: ", 
-                base::length(x = in_other_fun), 
-                "\nin_other_fun_names_pos: ", 
-                base::length(x = in_other_fun_names_pos), 
-                "\nin_other_code_line_nb: ", 
-                base::length(x = in_other_code_line_nb), 
-                intern_error_text_end, 
-                collapse = NULL, 
-                recycle0 = FALSE
-            )
-            base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL)
-        }
+        if( ! (base::length(x = in_other_fun) == base::length(x = in_other_fun_names_pos) & base::length(x = in_other_fun) == base::length(x = in_other_code_line_nb))){tempo_cat <- base::paste0("INTERNAL ERROR 3 IN ", intern_error_text_start, "LENGTHS SHOULD BE IDENTICAL\nin_other_fun: ", base::length(x = in_other_fun), "\nin_other_fun_names_pos: ", base::length(x = in_other_fun_names_pos), "\nin_other_code_line_nb: ", base::length(x = in_other_code_line_nb), intern_error_text_end, collapse = NULL, recycle0 = FALSE) ; base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL)}
         # end removal of string with empty function names
         in_other_fun_uni <- base::unlist(x = base::unique(x = in_other_fun, incomparables = FALSE), recursive = TRUE, use.names = TRUE) #  names of unique other functions used in x
         # end other function names in x
