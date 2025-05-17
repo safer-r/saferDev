@@ -182,6 +182,7 @@ testthat::test_that("colons_check()", {
     #### main code
     testthat::expect_no_error(colons_check(x = base::mean, safer_check = TRUE, lib_path = NULL, error_text = ""))
     testthat::expect_no_error(colons_check(x = colons_check, safer_check = TRUE, lib_path = NULL, error_text = ""))
+    testthat::expect_no_error(colons_check(x = env_check, safer_check = TRUE, lib_path = NULL, error_text = ""))
     #### end main code
 
     ## end tests (ordered by arg appearance and conditions in the code)
