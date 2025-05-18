@@ -450,7 +450,7 @@
             error_text_start, 
             "THE TESTED FUNCTION ", 
             arg_user_setting2$x, 
-            " IS EMPTY OR ONLY MADE OF COMMENTS OR ONLY MADE OF THE SKIPPED FUNCTIONS:\n", 
+            " IS EMPTY OF FUNCTION OR ONLY MADE OF COMMENTS OR ONLY MADE OF THE SKIPPED FUNCTIONS:\n", 
             base::paste0(skipped_base, collapse = "\n", recycle0 = FALSE), 
             collapse = NULL, 
             recycle0 = FALSE

@@ -7,7 +7,22 @@ testthat::test_that("colons_check()", {
     factor1 <- base::as.factor(str1)
     expr1 <- expression(1)
     fun1 <- function(x){x = 1}
-
+    fun2 <- function(x){
+        ggplot2::ggplot()
+    }
+    fun3 <- function(x){fun1()}
+    fun4 <- function(x){
+        fun5 <- function(x){}
+        fun5()
+    }
+    fun6 <- function(x){
+        ggplot2::ggplot()
+        print()
+    }
+    fun7 <- function(x){
+        ggplot()
+        print()
+    }
     test <- function(
             text, 
             pattern
@@ -36,6 +51,7 @@ testthat::test_that("colons_check()", {
         return(baba) # base::sub("\\($##", "", matched_strings)
         base::return(bobo) # a$sub("\\($##", "", matched_strings)
     }
+
     ## end data argument values
 
     ## initialization of tests
@@ -182,7 +198,12 @@ testthat::test_that("colons_check()", {
     #### main code
     testthat::expect_no_error(colons_check(x = base::mean, safer_check = TRUE, lib_path = NULL, error_text = ""))
     testthat::expect_no_error(colons_check(x = colons_check, safer_check = TRUE, lib_path = NULL, error_text = ""))
-    testthat::expect_no_error(colons_check(x = env_check, safer_check = TRUE, lib_path = NULL, error_text = ""))
+    testthat::expect_no_error(colons_check(x = fun1, safer_check = TRUE, lib_path = NULL, error_text = ""))
+    testthat::expect_no_error(colons_check(x = fun2, safer_check = TRUE, lib_path = NULL, error_text = ""))
+    testthat::expect_no_error(colons_check(x = fun3, safer_check = TRUE, lib_path = NULL, error_text = ""))
+    testthat::expect_no_error(colons_check(x = fun4, safer_check = TRUE, lib_path = NULL, error_text = ""))
+    testthat::expect_no_error(colons_check(x = fun6, safer_check = TRUE, lib_path = NULL, error_text = ""))
+    testthat::expect_no_error(colons_check(x = fun7, safer_check = TRUE, lib_path = NULL, error_text = ""))
     #### end main code
 
     ## end tests (ordered by arg appearance and conditions in the code)
