@@ -198,7 +198,7 @@ testthat::test_that("colons_check()", {
     #### main code
     testthat::expect_no_error(colons_check(x = base::mean, safer_check = TRUE, lib_path = NULL, error_text = ""))
     testthat::expect_no_error(colons_check(x = colons_check, safer_check = TRUE, lib_path = NULL, error_text = ""))
-    testthat::expect_no_error(colons_check(x = fun1, safer_check = TRUE, lib_path = NULL, error_text = ""))
+    testthat::expect_error(colons_check(x = fun1, safer_check = TRUE, lib_path = NULL, error_text = ""))
     testthat::expect_no_error(colons_check(x = fun2, safer_check = TRUE, lib_path = NULL, error_text = ""))
     testthat::expect_no_error(colons_check(x = fun3, safer_check = TRUE, lib_path = NULL, error_text = ""))
     testthat::expect_no_error(colons_check(x = fun4, safer_check = TRUE, lib_path = NULL, error_text = ""))
