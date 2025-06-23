@@ -1261,7 +1261,7 @@ arg_test <- function(
                 }
             }
         }else{
-            tempo_cat <- base::paste0("INTERNAL ERROR 2 IN ", intern_error_text_start, "WEIRD THAT base::length(cluster.list) IN NOT > 1.", intern_error_text_end, collapse = NULL, recycle0 = FALSE)
+            tempo_cat <- base::paste0("INTERNAL ERROR 2 IN ", intern_error_text_start, "WEIRD THAT base::length(cluster.list) IS NOT > 1.", intern_error_text_end, collapse = NULL, recycle0 = FALSE)
             base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", base::ifelse(test = base::is.null(x = warn), yes = "", no = base::paste0("IN ADDITION\nWARNING", base::ifelse(test = warn_count > 1, yes = "S", no = ""), ":\n\n", warn, collapse = NULL, recycle0 = FALSE)), collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL)
         }
         # end files assembly
