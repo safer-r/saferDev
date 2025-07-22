@@ -376,7 +376,8 @@ testthat::test_that("get_message()", {
                 testthat::expect_no_error(get_message(data = str2, kind = "message", header = TRUE, print_no = FALSE, text = NULL, env = NULL, safer_check = TRUE, lib_path = NULL, error_text = ""))
                 result <- get_message(data = str2, kind = "message", header = TRUE, print_no = FALSE, text = NULL, env = NULL, safer_check = TRUE, lib_path = NULL, error_text = "")
                 expected <- "STANDARD MESSAGE REPORTED:\nahah"
-                # testthat::expect_equal(result, expected)
+                testthat::expect_message(object =  get_message(data = str2, kind = "message", header = TRUE, print_no = FALSE, text = NULL, env = NULL, safer_check = TRUE, lib_path = NULL, error_text = ""), fixed = TRUE, inherit = FALSE, regexp = "ahah") #the real message should be regexp = "STANDARD MESSAGE REPORTED:\nahah", but testthat::expect_message() evaluates through cat() and returns two lines, but only the second one is kept
+                # testthat::expect_equal(result, expected) # does not work. See https://github.com/r-lib/testthat/issues/2078#issuecomment-3096762198
                 testthat::expect_no_error(get_message(data = str5, kind = "message", header = TRUE, print_no = FALSE, text = NULL, env = NULL, safer_check = TRUE, lib_path = NULL, error_text = ""))
                 testthat::expect_no_error(get_message(data = str5, kind = "message", header = TRUE, print_no = FALSE, text = "IN FUN1", env = NULL, safer_check = TRUE, lib_path = NULL, error_text = ""))
             # end if(header == TRUE){
@@ -384,11 +385,13 @@ testthat::test_that("get_message()", {
                 testthat::expect_no_error(get_message(data = str2, kind = "message", header = FALSE, print_no = FALSE, text = NULL, env = NULL, safer_check = TRUE, lib_path = NULL, error_text = ""))
                 result <- get_message(data = str2, kind = "message", header = FALSE, print_no = FALSE, text = NULL, env = NULL, safer_check = TRUE, lib_path = NULL, error_text = "")
                 expected <- "ahah"
-                # testthat::expect_equal(result, expected)
+                testthat::expect_message(object =  get_message(data = str2, kind = "message", header = FALSE, print_no = FALSE, text = NULL, env = NULL, safer_check = TRUE, lib_path = NULL, error_text = ""), fixed = TRUE, inherit = FALSE, regexp = expected)
+                # testthat::expect_equal(result, expected) # does not work. See https://github.com/r-lib/testthat/issues/2078#issuecomment-3096762198
                 testthat::expect_no_error(get_message(data = str5, kind = "message", header = FALSE, print_no = FALSE, text = NULL, env = NULL, safer_check = TRUE, lib_path = NULL, error_text = ""))
                 result <- get_message(data = str5, kind = "message", header = FALSE, print_no = FALSE, text = NULL, env = NULL, safer_check = TRUE, lib_path = NULL, error_text = "")
                 expected <- "`stat_bin()` using `bins = 30`. Pick better value with `binwidth`."
-                # testthat::expect_equal(result, expected)
+                testthat::expect_message(object = get_message(data = str5, kind = "message", header = FALSE, print_no = FALSE, text = NULL, env = NULL, safer_check = TRUE, lib_path = NULL, error_text = ""), fixed = TRUE, inherit = FALSE, regexp = expected)
+                # testthat::expect_equal(result, expected) # does not work. See https://github.com/r-lib/testthat/issues/2078#issuecomment-3096762198
             # end }else{
         # end if(kind == "message" & base::length(x = tempo_message) > 0){
         # }else if(kind == "message" & base::length(x = tempo_message) == 0 & print_no == TRUE){
@@ -424,9 +427,9 @@ testthat::test_that("get_message()", {
     testthat::expect_equal(result, expected)
     result <- get_message(data = 'get_message(data = str6, kind = "warning", header = TRUE, print_no = FALSE, text = "IN FUN1", env = stats_env, safer_check = TRUE, lib_path = NULL, error_text = "")', kind = "error", header = TRUE, print_no = FALSE, text = NULL, env = stats_env, safer_check = TRUE, lib_path = NULL, error_text = "")
     # expected <- "ERROR MESSAGE REPORTED:\nError : \n\n================\n\nERROR IN saferDev::get_message().\n\nTHE data ARGUMENT MUST BE A SINGLE CHARACTER STRING.\n\n================\n\n\n" # eval only in stat(). str6 not found
-    # expected <- "ERROR MESSAGE REPORTED:\nIn get_message(data = str6, kind = \"warning\", header = TRUE, print_no = FALSE,  : \n  could not find function \"get_message\"\n" # eval only in stat(). get_message() not found
+    expected <- "ERROR MESSAGE REPORTED:\nIn get_message(data = str6, kind = \"warning\", header = TRUE, print_no = FALSE,  : \n  could not find function \"get_message\"\n" # eval only in stat(). get_message() not found
     # expected <- "ERROR MESSAGE REPORTED:\nIn get_message(data = str6, kind = \"warning\", header = TRUE, print_no = FALSE,  : \n  object 'stats_env' not found\n" # eval only in stat(). stats_env not found
-    expected <- "ERROR MESSAGE REPORTED:\nIn base::eval(expr = base::parse(text = data, file = \"\", n = NULL,  : \n  object 'stats_env' not found\n"
+    # expected <- "ERROR MESSAGE REPORTED:\nIn base::eval(expr = base::parse(text = data, file = \"\", n = NULL,  : \n  object 'stats_env' not found\n"
     testthat::expect_equal(result, expected)
     rm(stats_env)
     # end env test
