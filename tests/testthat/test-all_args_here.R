@@ -270,11 +270,13 @@ testthat::test_that("all_args_here()", {
     ######## end graphic device checking
 
     ######## other checkings
-    testthat::expect_no_error(all_args_here(x = test, export = TRUE, path_out = "./", df_name = "res.tsv", overwrite = FALSE, safer_check = TRUE, lib_path = "", error_text = ""))
-    testthat::expect_no_error(all_args_here(x = test, export = TRUE, path_out = ".\\", df_name = "res.tsv", overwrite = FALSE, safer_check = TRUE, lib_path = "", error_text = ""))
-    testthat::expect_error(all_args_here(x = test, export = TRUE, path_out = "caca", df_name = "res.tsv", overwrite = FALSE, safer_check = TRUE, lib_path = "", error_text = ""))
-    file.create("./caca", showWarnings = TRUE)
-    testthat::expect_error(all_args_here(x = test, export = TRUE, path_out = ".", df_name = "caca", overwrite = FALSE, safer_check = TRUE, lib_path = "", error_text = ""))
+    testthat::expect_no_error(all_args_here(x = test, export = TRUE, path_out = "./", df_name = "res.tsv", overwrite = FALSE, safer_check = TRUE, lib_path = NULL, error_text = ""))
+    a <- file.remove("./res.tsv")
+    testthat::expect_no_error(all_args_here(x = test, export = TRUE, path_out = ".\\", df_name = "res.tsv", overwrite = FALSE, safer_check = TRUE, lib_path = NULL, error_text = ""))
+    a <- file.remove("./res.tsv")
+    testthat::expect_error(all_args_here(x = test, export = TRUE, path_out = "caca", df_name = "res.tsv", overwrite = FALSE, safer_check = TRUE, lib_path = NULL, error_text = ""))
+    a <- file.create("./caca", showWarnings = FALSE)
+    testthat::expect_error(all_args_here(x = test, export = TRUE, path_out = ".", df_name = "caca", overwrite = FALSE, safer_check = TRUE, lib_path = NULL, error_text = ""))
     ######## end other checkings
     #### end second round of checking and data preparation
 
