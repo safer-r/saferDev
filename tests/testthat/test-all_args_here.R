@@ -7,7 +7,10 @@ testthat::test_that("all_args_here()", {
     factor1 <- base::as.factor(str1)
     expr1 <- expression(1)
     fun1 <- function(x){x = 1}
-    fun2 <- function(x){NOT_CONSIDERED = 1}
+    fun2 <- function(x){
+        dt <- base::c(2:8)
+        NOT_CONSIDERED = 1
+        }
 
     test <- function(
             text, 
