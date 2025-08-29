@@ -7,6 +7,7 @@ testthat::test_that("all_args_here()", {
     factor1 <- base::as.factor(str1)
     expr1 <- expression(1)
     fun1 <- function(x){x = 1}
+    fun2 <- function(x){NOT_CONSIDERED = 1}
 
     test <- function(
             text, 
@@ -269,10 +270,19 @@ testthat::test_that("all_args_here()", {
     ######## end graphic device checking
 
     ######## other checkings
+    testthat::expect_no_error(all_args_here(x = test, export = TRUE, path_out = "./", df_name = "res.tsv", overwrite = FALSE, safer_check = TRUE, lib_path = "", error_text = ""))
+    testthat::expect_no_error(all_args_here(x = test, export = TRUE, path_out = ".\\", df_name = "res.tsv", overwrite = FALSE, safer_check = TRUE, lib_path = "", error_text = ""))
+    testthat::expect_error(all_args_here(x = test, export = TRUE, path_out = "caca", df_name = "res.tsv", overwrite = FALSE, safer_check = TRUE, lib_path = "", error_text = ""))
+    file.create("./caca", showWarnings = TRUE)
+    testthat::expect_error(all_args_here(x = test, export = TRUE, path_out = ".", df_name = "caca", overwrite = FALSE, safer_check = TRUE, lib_path = "", error_text = ""))
     ######## end other checkings
     #### end second round of checking and data preparation
 
     #### main code
+    # if(base::grepl(x = fun_1_line, pattern = reserved_words, ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE)){
+    testthat::expect_no_error(all_args_here(x = fun2, export = FALSE, path_out = ".", df_name = "res.tsv", overwrite = FALSE, safer_check = TRUE, lib_path = NULL, error_text = "")) 
+
+
 
     #### end main code
 
