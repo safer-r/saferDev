@@ -201,5 +201,5 @@ testthat::test_that("env_check()", {
 
     ## other tests
     ## end other tests
-
+    rm(list = ls()) # to avoid a warning that block CRAN tests 
 })

@@ -172,5 +172,5 @@ testthat::test_that("is_function_here()", {
 
     ## other tests
     ## end other tests
-
+    rm(list = ls()) # to avoid a warning that block CRAN tests 
 })

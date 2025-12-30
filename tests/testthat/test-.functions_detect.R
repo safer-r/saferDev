@@ -259,6 +259,6 @@ testthat::test_that(".functions_detect()", {
 
     ## other tests
     ## end other tests
-
+    rm(list = ls()) # to avoid a warning that block CRAN tests 
 })
 

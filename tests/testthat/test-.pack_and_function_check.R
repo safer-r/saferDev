@@ -148,6 +148,6 @@ testthat::test_that(".pack_and_function_check()", {
     expected <- base::paste0("ERROR MESSAGE REPORTED:\nError : \n\n================\n\nERROR IN saferDev:::.pack_and_function_check().\n\nREQUIRED FUNCTION IS MISSING IN THE INSTALLED PACKAGE:\nsaferDev::NOTGOOD\n\nIN ONE OF THESE FOLDERS:\n", paste0( .libPaths(), collapse = "\n", recycle0 = FALSE), "\n\n================\n\n\n", collapse = NULL, recycle0 = FALSE)
     testthat::expect_equal(result, expected)
     ## end other tests
-
+    rm(list = ls()) # to avoid a warning that block CRAN tests 
 })
 

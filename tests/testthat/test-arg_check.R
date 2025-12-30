@@ -674,6 +674,6 @@ testthat::test_that("arg_check()", {
     #### end sophiticated examples
 
     ## end other tests
-
+    rm(list = ls()) # to avoid a warning that block CRAN tests 
 })
 

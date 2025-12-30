@@ -360,5 +360,5 @@ testthat::test_that("report()", {
 
 
     ## end other tests
-
+    rm(list = ls()) # to avoid a warning that block CRAN tests 
 })

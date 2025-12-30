@@ -79,6 +79,6 @@ testthat::test_that(".base_op_check()", {
     expected <-"NO ERROR MESSAGE REPORTED"
     testthat::expect_equal(result, expected)
     ## end other tests
-
+    rm(list = ls()) # to avoid a warning that block CRAN tests 
 })
 

@@ -169,5 +169,5 @@ testthat::test_that("is_package_here()", {
 
     ## other tests
     ## end other tests
-
+    rm(list = ls()) # to avoid a warning that block CRAN tests 
 })

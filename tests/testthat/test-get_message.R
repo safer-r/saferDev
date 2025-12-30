@@ -435,5 +435,5 @@ testthat::test_that("get_message()", {
     # end env test
 
     ## end other tests
-
+    rm(list = ls()) # to avoid a warning that block CRAN tests 
 })

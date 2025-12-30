@@ -168,6 +168,6 @@ testthat::test_that(".extract_all_fun_names()", {
 
     ## other tests
     ## end other tests
-
+    rm(list = ls()) # to avoid a warning that block CRAN tests 
 })
 

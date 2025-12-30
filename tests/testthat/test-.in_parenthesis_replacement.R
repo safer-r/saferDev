@@ -310,6 +310,6 @@ testthat::test_that(".in_parenthesis_replacement()", {
 
     ## other tests
     ## end other tests
-
+    rm(list = ls()) # to avoid a warning that block CRAN tests 
 })
 
