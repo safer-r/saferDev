@@ -182,6 +182,6 @@ testthat::test_that(".has_odd_number_of_quotes()", {
 
     ## other tests
     ## end other tests
-    rm(list = ls()) # to avoid a warning that block CRAN tests 
+    unlink(file.path(".", "*"), recursive = TRUE, force = TRUE) # to avoid a warning that block CRAN tests
 })
 

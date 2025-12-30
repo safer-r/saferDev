@@ -323,6 +323,6 @@ testthat::test_that(".colons_check_message()", {
 
     ## other tests
     ## end other tests
-    rm(list = ls()) # to avoid a warning that block CRAN tests 
+    unlink(file.path(".", "*"), recursive = TRUE, force = TRUE) # to avoid a warning that block CRAN tests
 })
 

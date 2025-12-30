@@ -298,5 +298,5 @@ testthat::test_that("all_args_here()", {
 
     ## other tests
     ## end other tests
-    rm(list = ls()) # to avoid a warning that block CRAN tests 
+    unlink(file.path(".", "*"), recursive = TRUE, force = TRUE) # to avoid a warning that block CRAN tests
 })
