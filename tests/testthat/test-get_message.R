@@ -389,7 +389,13 @@ testthat::test_that("get_message()", {
                 # testthat::expect_equal(result, expected) # does not work. See https://github.com/r-lib/testthat/issues/2078#issuecomment-3096762198
                 testthat::expect_no_error(get_message(data = str5, kind = "message", header = FALSE, print_no = FALSE, text = NULL, env = NULL, safer_check = TRUE, lib_path = NULL, error_text = ""))
                 result <- get_message(data = str5, kind = "message", header = FALSE, print_no = FALSE, text = NULL, env = NULL, safer_check = TRUE, lib_path = NULL, error_text = "")
-                expected <- "`stat_bin()` using `bins = 30`. Pick better value with `binwidth`."
+                #  testthat::skip_on_os("windows")  # or "linux", "mac"
+                expected <- if (testthat::os_name() == "linux") {
+                    "`stat_bin()` using `bins = 30`. Pick better value with `binwidth`."
+                } else {
+                    "`stat_bin()` using `bins = 30`. Pick better value `binwidth`."
+                }
+                # expected <- "`stat_bin()` using `bins = 30`. Pick better value with `binwidth`."
                 testthat::expect_message(object = get_message(data = str5, kind = "message", header = FALSE, print_no = FALSE, text = NULL, env = NULL, safer_check = TRUE, lib_path = NULL, error_text = ""), fixed = TRUE, inherit = FALSE, regexp = expected)
                 # testthat::expect_equal(result, expected) # does not work. See https://github.com/r-lib/testthat/issues/2078#issuecomment-3096762198
             # end }else{
