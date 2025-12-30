@@ -48,6 +48,7 @@
 #' @author \href{yushi.han2000@gmail.com}{Yushi Han}
 #' @author \href{wanghaiding442@gmail.com}{Haiding Wang}
 #' @examples
+#' td <- tempdir() # replace by td <- "." to see the output files and folders in the working directory
 #' arg_test(fun = "unique", arg = c("x", "incomparables"), 
 #' val = list(x = list(1:10, c(1,1,2,8), NA), incomparable = c(TRUE, FALSE, NA)))
 #' 
@@ -59,7 +60,7 @@
 #' arg_test(fun = "unique", arg = c("x", "incomparables"), 
 #' val = list(x = list(1:10, c(1,1,2,8), NA), incomparable = c(TRUE, FALSE, NA)), 
 #' expect_error = list(x = c(FALSE, FALSE, TRUE), incomparable = c(FALSE, FALSE, TRUE)), 
-#' export = TRUE, res_path = getwd())
+#' export = TRUE, res_path = td)
 #' 
 #' \dontrun{ # Example that return an error
 #' arg_test(fun = "unique", arg = c("x", "incomparables"), val = list(A = list(x = list(1:10, c(1,1,2,8), NA), incomparable = c(TRUE, FALSE, NA))))
@@ -69,11 +70,11 @@
 #' arg_test(fun = "plot", arg = c("x", "y"), val = list(x = list(1:10, 12:13, NA, (1:10)^2), 
 #' y = list(1:10, NA, NA)),  expect_error = list(x = list(FALSE, TRUE, TRUE, FALSE), 
 #' y = list(FALSE, TRUE, TRUE)), parall = FALSE, thread_nb = NULL, plot_fun = TRUE, 
-#' res_path = ".", lib_path = NULL)
+#' res_path = td, lib_path = NULL)
 #' 
 #' arg_test(fun = "plot", arg = c("x", "y"), val = list(x = list(1:10, 12:13, NA, (1:10)^2), 
 #' y = list(1:10, NA, NA)), parall = FALSE, thread_nb = 4, 
-#' plot_fun = TRUE, res_path = ".", 
+#' plot_fun = TRUE, res_path = td, 
 #' lib_path = NULL)
 #' @importFrom lubridate seconds_to_period
 #' @importFrom qpdf pdf_combine
