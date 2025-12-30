@@ -310,6 +310,6 @@ testthat::test_that(".in_parenthesis_replacement()", {
 
     ## other tests
     ## end other tests
-    unlink(file.path(".", "*"), recursive = TRUE, force = TRUE) # to avoid a warning that block CRAN tests
+    rm(list = ls()) # to avoid a warning that block CRAN tests 
 })
 
