@@ -3,9 +3,9 @@
 #' Verify that all the functions used inside a function are written with all their arguments. For instance: base::paste0(letters[1:2], collapse = NULL, recycle0 = FALSE) and not paste0(letters[1:2]).
 #' @param x Function name, written without quotes and brackets.
 #' @param export Single logical value. Export the data frame into a .tsv file? If TRUE, the data frame is not returned by the function but only exported.
-#' @param path_out Single character string indicating the absolute pathway of the folder where to export the data frame. path_out = "." means the R working directory set by the user. Ignored if export is FALSE
+#' @param out_path Single character string indicating the absolute pathway of the folder where to export the data frame. out_path = "." means the R working directory set by the user. Ignored if export is FALSE
 #' @param df_name Single character string indicating the name of the exported data frame file. Ignored if export is FALSE.
-#' @param overwrite Single logical value. Overwrite potential df_name file already existing in path_out? Ignored if export is FALSE.
+#' @param overwrite Single logical value. Overwrite potential df_name file already existing in out_path? Ignored if export is FALSE.
 #' @param safer_check Single logical value. Perform some "safer" checks? If TRUE, checkings are performed before main code running (see https://github.com/safer-r): 1) correct lib_path argument value 2) required functions and related packages effectively present in local R lybraries and 3) R classical operators (like "<-") not overwritten by another package because of the R scope. Must be set to FALSE if this fonction is used inside another "safer" function to avoid pointless multiple checkings.
 #' @param lib_path Vector of characters specifying the absolute pathways of the directories containing the required packages for the function, if not in the default directories. Useful when R package are not installed in the default directories because of lack of admin rights.  More precisely, lib_path is passed through the new argument of .libPaths() so that the new library paths are unique(c(new, .Library.site, .Library)). Warning: .libPaths() is restored to the initial paths, after function execution. Ignored if NULL (default) or if the safer_check argument is FALSE: only the pathways specified by the current .libPaths() are used for package calling.
 #' @param error_text Single character string used to add information in error messages returned by the function, notably if the function is inside other functions, which is practical for debugging. Example: error_text = " INSIDE <PACKAGE_1>::<FUNCTION_1> INSIDE <PACKAGE_2>::<FUNCTION_2>.". If NULL, converted into "".
@@ -63,7 +63,7 @@
 all_args_here <- function(
     x, 
     export = FALSE, 
-    path_out = ".", 
+    out_path = ".", 
     df_name = "res.tsv", 
     overwrite = FALSE, 
     safer_check = TRUE, 
@@ -71,31 +71,31 @@ all_args_here <- function(
     error_text = ""
 ){
     # DEBUGGING
-    # FUN1 <- function(x){base::length(x)} ; x = FUN1 ; export = FALSE ; path_out = "." ; df_name = "res.tsv" ; overwrite = FALSE ; lib_path = NULL ; safer_check = TRUE ; error_text = ""
-    # function_name <- "all_args_here" ; arg_user_setting = base::list(x = as.name(x = "FUN1"), export = FALSE,  path_out = ".",  df_name = "res.tsv",  overwrite = FALSE,  lib_path = NULL,  safer_check = TRUE, error_text = "") ; arg_names <- c("x", "export",  "path_out",  "df_name",  "overwrite", "lib_path", "safer_check", "error_text")
-    # x = .expand_R_libs_env_var ; export = FALSE ; path_out = "." ; df_name = "res.tsv" ; overwrite = FALSE ; lib_path = NULL ; safer_check = TRUE ; error_text = ""
-    # function_name <- "all_args_here" ; arg_user_setting = base::list(x = as.name(x = ".expand_R_libs_env_var"), export = FALSE,  path_out = ".",  df_name = "res.tsv",  overwrite = FALSE,  lib_path = NULL,  safer_check = TRUE, error_text = "") ; arg_names <- c("x", "export",  "path_out",  "df_name",  "overwrite", "lib_path", "safer_check", "error_text")
-    # library(saferGraph) ; x = close2 ; export = FALSE ; path_out = "." ; df_name = "res.tsv" ; overwrite = FALSE ; lib_path = NULL ; safer_check = TRUE ; error_text = ""
-    # source("C:\\Users\\gmillot\\Documents\\Git_projects\\safer-r\\saferDev\\R\\get_message.R") ; x = get_message ; export = TRUE ; path_out = "." ; df_name = "res.tsv" ; overwrite = FALSE ; lib_path = NULL ; safer_check = TRUE ; error_text = ""
-    # library(saferDev) ; x = get_message ; export = TRUE ; path_out = "." ; df_name = "res.tsv" ; overwrite = FALSE ; lib_path = NULL ; safer_check = TRUE ; error_text = ""
-    # source("C:\\Users\\gmillot\\Documents\\Git_projects\\safer-r\\saferDev\\R\\all_args_here.R") ; x = all_args_here ; export = TRUE ; path_out = "." ; df_name = "res.tsv" ; overwrite = FALSE ; lib_path = NULL ; safer_check = TRUE ; error_text = ""
-    # arg_user_setting = base::list(x = as.name(x = "test2"), export = TRUE,  path_out = ".",  df_name = "res.tsv",  overwrite = TRUE,  lib_path = NULL,  safer_check = TRUE, error_text = "")
-    # source("https://raw.githubusercontent.com/safer-r/saferDev/main/dev/other/test2.R") ; x = test2 ; export = TRUE ; path_out = "." ; df_name = "res.tsv" ; overwrite = FALSE ; lib_path = NULL ; safer_check = TRUE ; error_text = "" # use the folling line before out <- 
-    # function_name <- "all_args_here" ; arg_user_setting = base::list(x = as.name(x = "test2"), export = TRUE,  path_out = ".",  df_name = "res.tsv",  overwrite = TRUE,  lib_path = NULL,  safer_check = TRUE, error_text = "") ; arg_names <- c("x", "export",  "path_out",  "df_name",  "overwrite", "lib_path", "safer_check")
-    # source("C:\\Users\\gmillot\\Documents\\Git_projects\\safer-r\\.github\\profile\\backbone.R") ; x = BACKBONE ; export = TRUE ; path_out = "." ; df_name = "res.tsv" ; overwrite = FALSE ; lib_path = NULL ; safer_check = TRUE ; error_text = "" # use the folling line before out <- 
-    # function_name <- "all_args_here" ; arg_user_setting = base::list(x = as.name(x = "BACKBONE"), export = TRUE,  path_out = ".",  df_name = "res.tsv",  overwrite = TRUE, lib_path = NULL, safer_check = TRUE, error_text = "") ; arg_names <- c("x", "export",  "path_out",  "df_name",  "overwrite", "lib_path", "safer_check")
-    # FUN1 <- function(x, y){middle_bracket2 <- base::do.call(what = base::c, args = code_for_col, quote = FALSE, envir = base::parent.frame())} ; x = FUN1 ; export = FALSE ; path_out = "." ; df_name = "res.tsv" ; overwrite = FALSE ; lib_path = NULL ; safer_check = TRUE ; error_text = ""
-    # function_name <- "all_args_here" ; arg_user_setting = base::list(x = as.name(x = "FUN1"), export = FALSE,  path_out = ".",  df_name = "res.tsv",  overwrite = FALSE,  lib_path = NULL,  safer_check = TRUE, error_text = "") ; arg_names <- c("x", "export",  "path_out",  "df_name",  "overwrite", "lib_path", "safer_check")
-    # x = saferDev::colons_check ; export = FALSE ; path_out = "." ; df_name = "res.tsv" ; overwrite = FALSE ; lib_path = NULL ; safer_check = TRUE ; error_text = ""
-    # function_name <- "colons.check" ; arg_user_setting = base::list(x = as.name(x = "colons.check"), export = FALSE,  path_out = ".",  df_name = "res.tsv",  overwrite = FALSE,  lib_path = NULL,  safer_check = TRUE, error_text = "") ; arg_names <- c("x", "export",  "path_out",  "df_name",  "overwrite", "lib_path", "safer_check")
-    # x = saferDev::all_args_here ; export = FALSE ; path_out = "." ; df_name = "res.tsv" ; overwrite = FALSE ; lib_path = NULL ; safer_check = TRUE ; error_text = ""
-    # function_name <- "all_args_here" ; arg_user_setting = base::list(x = as.name(x = "all_args_here"), export = FALSE,  path_out = ".",  df_name = "res.tsv",  overwrite = FALSE,  lib_path = NULL,  safer_check = TRUE, error_text = "") ; arg_names <- c("x", "export",  "path_out",  "df_name",  "overwrite", "lib_path", "safer_check")
-    # x = .functions_detect ; export = FALSE ; path_out = "." ; df_name = "res.tsv" ; overwrite = FALSE ; lib_path = NULL ; safer_check = TRUE ; error_text = ""
-    # function_name <- ".functions_detect" ; arg_user_setting = base::list(x = as.name(x = ".functions_detect"), export = FALSE,  path_out = ".",  df_name = "res.tsv",  overwrite = FALSE,  lib_path = NULL,  safer_check = TRUE, error_text = "") ; arg_names <- c("x", "export",  "path_out",  "df_name",  "overwrite", "lib_path", "safer_check")
-    # fun1 <- function(){utils::installed.packages(lib.loc = lib_path)} ; x = fun1 ; export = FALSE ; path_out = "." ; df_name = "res.tsv" ; overwrite = FALSE ; lib_path = NULL ; safer_check = TRUE ; error_text = ""
-    # function_name <- "fun1" ; arg_user_setting = base::list(x = as.name(x = "fun1"), export = FALSE,  path_out = ".",  df_name = "res.tsv",  overwrite = FALSE,  lib_path = NULL,  safer_check = TRUE, error_text = "") ; arg_names <- c("x", "export",  "path_out",  "df_name",  "overwrite", "lib_path", "safer_check")
-    # x = .colons_check_message ; export = FALSE ; path_out = "." ; df_name = "res.tsv" ; overwrite = FALSE ; lib_path = NULL ; safer_check = TRUE ; error_text = ""
-    # function_name <- ".colons_check_message" ; arg_user_setting = base::list(x = as.name(x = ".colons_check_message"), export = FALSE,  path_out = ".",  df_name = "res.tsv",  overwrite = FALSE,  lib_path = NULL,  safer_check = TRUE, error_text = "") ; arg_names <- c("x", "export",  "path_out",  "df_name",  "overwrite", "lib_path", "safer_check")
+    # FUN1 <- function(x){base::length(x)} ; x = FUN1 ; export = FALSE ; out_path = "." ; df_name = "res.tsv" ; overwrite = FALSE ; lib_path = NULL ; safer_check = TRUE ; error_text = ""
+    # function_name <- "all_args_here" ; arg_user_setting = base::list(x = as.name(x = "FUN1"), export = FALSE,  out_path = ".",  df_name = "res.tsv",  overwrite = FALSE,  lib_path = NULL,  safer_check = TRUE, error_text = "") ; arg_names <- c("x", "export",  "out_path",  "df_name",  "overwrite", "lib_path", "safer_check", "error_text")
+    # x = .expand_R_libs_env_var ; export = FALSE ; out_path = "." ; df_name = "res.tsv" ; overwrite = FALSE ; lib_path = NULL ; safer_check = TRUE ; error_text = ""
+    # function_name <- "all_args_here" ; arg_user_setting = base::list(x = as.name(x = ".expand_R_libs_env_var"), export = FALSE,  out_path = ".",  df_name = "res.tsv",  overwrite = FALSE,  lib_path = NULL,  safer_check = TRUE, error_text = "") ; arg_names <- c("x", "export",  "out_path",  "df_name",  "overwrite", "lib_path", "safer_check", "error_text")
+    # library(saferGraph) ; x = close2 ; export = FALSE ; out_path = "." ; df_name = "res.tsv" ; overwrite = FALSE ; lib_path = NULL ; safer_check = TRUE ; error_text = ""
+    # source("C:\\Users\\gmillot\\Documents\\Git_projects\\safer-r\\saferDev\\R\\get_message.R") ; x = get_message ; export = TRUE ; out_path = "." ; df_name = "res.tsv" ; overwrite = FALSE ; lib_path = NULL ; safer_check = TRUE ; error_text = ""
+    # library(saferDev) ; x = get_message ; export = TRUE ; out_path = "." ; df_name = "res.tsv" ; overwrite = FALSE ; lib_path = NULL ; safer_check = TRUE ; error_text = ""
+    # source("C:\\Users\\gmillot\\Documents\\Git_projects\\safer-r\\saferDev\\R\\all_args_here.R") ; x = all_args_here ; export = TRUE ; out_path = "." ; df_name = "res.tsv" ; overwrite = FALSE ; lib_path = NULL ; safer_check = TRUE ; error_text = ""
+    # arg_user_setting = base::list(x = as.name(x = "test2"), export = TRUE,  out_path = ".",  df_name = "res.tsv",  overwrite = TRUE,  lib_path = NULL,  safer_check = TRUE, error_text = "")
+    # source("https://raw.githubusercontent.com/safer-r/saferDev/main/dev/other/test2.R") ; x = test2 ; export = TRUE ; out_path = "." ; df_name = "res.tsv" ; overwrite = FALSE ; lib_path = NULL ; safer_check = TRUE ; error_text = "" # use the folling line before out <- 
+    # function_name <- "all_args_here" ; arg_user_setting = base::list(x = as.name(x = "test2"), export = TRUE,  out_path = ".",  df_name = "res.tsv",  overwrite = TRUE,  lib_path = NULL,  safer_check = TRUE, error_text = "") ; arg_names <- c("x", "export",  "out_path",  "df_name",  "overwrite", "lib_path", "safer_check")
+    # source("C:\\Users\\gmillot\\Documents\\Git_projects\\safer-r\\.github\\profile\\backbone.R") ; x = BACKBONE ; export = TRUE ; out_path = "." ; df_name = "res.tsv" ; overwrite = FALSE ; lib_path = NULL ; safer_check = TRUE ; error_text = "" # use the folling line before out <- 
+    # function_name <- "all_args_here" ; arg_user_setting = base::list(x = as.name(x = "BACKBONE"), export = TRUE,  out_path = ".",  df_name = "res.tsv",  overwrite = TRUE, lib_path = NULL, safer_check = TRUE, error_text = "") ; arg_names <- c("x", "export",  "out_path",  "df_name",  "overwrite", "lib_path", "safer_check")
+    # FUN1 <- function(x, y){middle_bracket2 <- base::do.call(what = base::c, args = code_for_col, quote = FALSE, envir = base::parent.frame())} ; x = FUN1 ; export = FALSE ; out_path = "." ; df_name = "res.tsv" ; overwrite = FALSE ; lib_path = NULL ; safer_check = TRUE ; error_text = ""
+    # function_name <- "all_args_here" ; arg_user_setting = base::list(x = as.name(x = "FUN1"), export = FALSE,  out_path = ".",  df_name = "res.tsv",  overwrite = FALSE,  lib_path = NULL,  safer_check = TRUE, error_text = "") ; arg_names <- c("x", "export",  "out_path",  "df_name",  "overwrite", "lib_path", "safer_check")
+    # x = saferDev::colons_check ; export = FALSE ; out_path = "." ; df_name = "res.tsv" ; overwrite = FALSE ; lib_path = NULL ; safer_check = TRUE ; error_text = ""
+    # function_name <- "colons.check" ; arg_user_setting = base::list(x = as.name(x = "colons.check"), export = FALSE,  out_path = ".",  df_name = "res.tsv",  overwrite = FALSE,  lib_path = NULL,  safer_check = TRUE, error_text = "") ; arg_names <- c("x", "export",  "out_path",  "df_name",  "overwrite", "lib_path", "safer_check")
+    # x = saferDev::all_args_here ; export = FALSE ; out_path = "." ; df_name = "res.tsv" ; overwrite = FALSE ; lib_path = NULL ; safer_check = TRUE ; error_text = ""
+    # function_name <- "all_args_here" ; arg_user_setting = base::list(x = as.name(x = "all_args_here"), export = FALSE,  out_path = ".",  df_name = "res.tsv",  overwrite = FALSE,  lib_path = NULL,  safer_check = TRUE, error_text = "") ; arg_names <- c("x", "export",  "out_path",  "df_name",  "overwrite", "lib_path", "safer_check")
+    # x = .functions_detect ; export = FALSE ; out_path = "." ; df_name = "res.tsv" ; overwrite = FALSE ; lib_path = NULL ; safer_check = TRUE ; error_text = ""
+    # function_name <- ".functions_detect" ; arg_user_setting = base::list(x = as.name(x = ".functions_detect"), export = FALSE,  out_path = ".",  df_name = "res.tsv",  overwrite = FALSE,  lib_path = NULL,  safer_check = TRUE, error_text = "") ; arg_names <- c("x", "export",  "out_path",  "df_name",  "overwrite", "lib_path", "safer_check")
+    # fun1 <- function(){utils::installed.packages(lib.loc = lib_path)} ; x = fun1 ; export = FALSE ; out_path = "." ; df_name = "res.tsv" ; overwrite = FALSE ; lib_path = NULL ; safer_check = TRUE ; error_text = ""
+    # function_name <- "fun1" ; arg_user_setting = base::list(x = as.name(x = "fun1"), export = FALSE,  out_path = ".",  df_name = "res.tsv",  overwrite = FALSE,  lib_path = NULL,  safer_check = TRUE, error_text = "") ; arg_names <- c("x", "export",  "out_path",  "df_name",  "overwrite", "lib_path", "safer_check")
+    # x = .colons_check_message ; export = FALSE ; out_path = "." ; df_name = "res.tsv" ; overwrite = FALSE ; lib_path = NULL ; safer_check = TRUE ; error_text = ""
+    # function_name <- ".colons_check_message" ; arg_user_setting = base::list(x = as.name(x = ".colons_check_message"), export = FALSE,  out_path = ".",  df_name = "res.tsv",  overwrite = FALSE,  lib_path = NULL,  safer_check = TRUE, error_text = "") ; arg_names <- c("x", "export",  "out_path",  "df_name",  "overwrite", "lib_path", "safer_check")
 
 
     #### package name
@@ -199,7 +199,7 @@ all_args_here <- function(
     tempo_arg <-base::c(
         "x", 
         "export", 
-        "path_out", 
+        "out_path", 
         "df_name", 
         "overwrite", 
         "safer_check"
@@ -225,7 +225,7 @@ all_args_here <- function(
     tempo_arg <-base::c(
         "x", 
         "export", 
-        "path_out", 
+        "out_path", 
         "df_name", 
         "overwrite", 
         "safer_check", 
@@ -403,7 +403,7 @@ all_args_here <- function(
     # add as many lines as below, for each of your arguments of your function in development
     tempo <- saferDev::arg_check(data = x, class = "function", typeof = NULL, mode = NULL, length = NULL, prop = FALSE, double_as_integer_allowed = FALSE, options = NULL, all_options_in_data = FALSE, na_contain = TRUE, neg_values = TRUE, inf_values = TRUE, print = FALSE, data_name = NULL, data_arg = TRUE, safer_check = FALSE, lib_path = lib_path, error_text = embed_error_text) ; base::eval(expr = ee, envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL))
     tempo <- saferDev::arg_check(data = export, class = "vector", typeof = "logical", mode = NULL, length = 1, prop = FALSE, double_as_integer_allowed = FALSE, options = NULL, all_options_in_data = FALSE, na_contain = FALSE, neg_values = TRUE, inf_values = TRUE, print = FALSE, data_name = NULL, data_arg = TRUE, safer_check = FALSE, lib_path = lib_path, error_text = embed_error_text) ; base::eval(expr = ee, envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL))
-    tempo <- saferDev::arg_check(data = path_out, class = "vector", typeof = "character", mode = NULL, length = 1, prop = FALSE, double_as_integer_allowed = FALSE, options = NULL, all_options_in_data = FALSE, na_contain = FALSE, neg_values = TRUE, inf_values = TRUE, print = FALSE, data_name = NULL, data_arg = TRUE, safer_check = FALSE, lib_path = lib_path, error_text = embed_error_text) ; base::eval(expr = ee, envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL))
+    tempo <- saferDev::arg_check(data = out_path, class = "vector", typeof = "character", mode = NULL, length = 1, prop = FALSE, double_as_integer_allowed = FALSE, options = NULL, all_options_in_data = FALSE, na_contain = FALSE, neg_values = TRUE, inf_values = TRUE, print = FALSE, data_name = NULL, data_arg = TRUE, safer_check = FALSE, lib_path = lib_path, error_text = embed_error_text) ; base::eval(expr = ee, envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL))
     tempo <- saferDev::arg_check(data = df_name, class = "vector", typeof = "character", mode = NULL, length = 1, prop = FALSE, double_as_integer_allowed = FALSE, options = NULL, all_options_in_data = FALSE, na_contain = FALSE, neg_values = TRUE, inf_values = TRUE, print = FALSE, data_name = NULL, data_arg = TRUE, safer_check = FALSE, lib_path = lib_path, error_text = embed_error_text) ; base::eval(expr = ee, envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL))
     tempo <- saferDev::arg_check(data = overwrite, class = "vector", typeof = "logical", mode = NULL, length = 1, prop = FALSE, double_as_integer_allowed = FALSE, options = NULL, all_options_in_data = FALSE, na_contain = FALSE, neg_values = TRUE, inf_values = TRUE, print = FALSE, data_name = NULL, data_arg = TRUE, safer_check = FALSE, lib_path = lib_path, error_text = embed_error_text) ; base::eval(expr = ee, envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL))
     # lib_path already checked above
@@ -421,39 +421,24 @@ all_args_here <- function(
 
     ######## management of "" in arguments of mode character
     tempo_arg <- base::c(
-        "path_out", 
+        "out_path", 
         "df_name"
         # "lib_path" # inactivated because already checked above
         # "error_text" # inactivated because can be ""
     )
-    tempo_log <- ! base::sapply(X = base::lapply(X = tempo_arg, FUN = function(x){base::get(x = x, pos = -1L, envir = base::parent.frame(n = 2), mode = "any", inherits = FALSE)}), FUN = function(x){if(base::is.null(x = x)){base::return(TRUE)}else{base::all(base::mode(x = x) == "character", na.rm = TRUE)}}, simplify = TRUE, USE.NAMES = TRUE) # parent.frame(n = 2) because sapply(lapply())  #  need to test is.null() here
+    # backbone personalized here (base::is.null(x = x)){base::return(TRUE) removed) because the 4 arguments cannot be NULL and codecov must be optimized
+    # INTERNAL ERROR IN THE BACKBONE PART section removed because codecov must be optimized. I have checked that these four arguments are tested for mode character upstream
+    tempo_log <- base::sapply(X = base::lapply(X = tempo_arg, FUN = function(x){base::get(x = x, pos = -1L, envir = base::parent.frame(n = 2), mode = "any", inherits = FALSE)}), FUN = function(x){base::any(x == "", na.rm = TRUE)}, simplify = TRUE, USE.NAMES = TRUE) # parent.frame(n = 2) because sapply(lapply()).  # for character argument that can also be NULL, if NULL -> returns FALSE. Thus no need to test is.null()
     if(base::any(tempo_log, na.rm = TRUE)){
-        # This check is here in case the developer has not correctly fill tempo_arg
         tempo_cat <- base::paste0(
-            "INTERNAL ERROR IN THE BACKBONE PART OF ", 
-            intern_error_text_start, 
-            "IN THE SECTION \"management of \"\" in arguments of mode character\"\n", 
-            base::ifelse(test = base::sum(tempo_log, na.rm = TRUE) > 1, yes = "THESE ARGUMENTS ARE", no = "THIS ARGUMENT IS"), 
-            " NOT CLASS \"character\":\n", 
-            base::paste0(tempo_arg[tempo_log], collapse = "\n", recycle0 = FALSE), 
-            intern_error_text_end, 
+            error_text_start, 
+            base::ifelse(test = base::sum(tempo_log, na.rm = TRUE) > 1, yes = "THESE ARGUMENTS\n", no = "THIS ARGUMENT\n"), 
+            base::paste0(tempo_arg[tempo_log], collapse = "\n", recycle0 = FALSE),
+            "\nCANNOT CONTAIN EMPTY STRING \"\".", 
             collapse = NULL, 
             recycle0 = FALSE
         )
-        base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL)
-    }else{
-        tempo_log <- base::sapply(X = base::lapply(X = tempo_arg, FUN = function(x){base::get(x = x, pos = -1L, envir = base::parent.frame(n = 2), mode = "any", inherits = FALSE)}), FUN = function(x){base::any(x == "", na.rm = TRUE)}, simplify = TRUE, USE.NAMES = TRUE) # parent.frame(n = 2) because sapply(lapply()).  # for character argument that can also be NULL, if NULL -> returns FALSE. Thus no need to test is.null()
-        if(base::any(tempo_log, na.rm = TRUE)){
-            tempo_cat <- base::paste0(
-                error_text_start, 
-                base::ifelse(test = base::sum(tempo_log, na.rm = TRUE) > 1, yes = "THESE ARGUMENTS\n", no = "THIS ARGUMENT\n"), 
-                base::paste0(tempo_arg[tempo_log], collapse = "\n", recycle0 = FALSE),
-                "\nCANNOT CONTAIN EMPTY STRING \"\".", 
-                collapse = NULL, 
-                recycle0 = FALSE
-            )
-            base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL) # == in stop() to be able to add several messages between ==
-        }
+        base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL) # == in stop() to be able to add several messages between ==
     }
     ######## end management of "" in arguments of mode character
 
@@ -481,28 +466,28 @@ all_args_here <- function(
     ######## other checkings
     if(export == TRUE){
         # removal of trailing / or \\ in the path
-        if(base::grepl(x = path_out, pattern = "/$", ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE)){
-            path_out <- base::sub(pattern = "/$", replacement = "", x = path_out, ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE)
-        }else if(base::grepl(x = path_out, pattern = "\\\\$", ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE)){
-            path_out <- base::sub(pattern = "\\\\$", replacement = "", x = path_out, ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE)
+        if(base::grepl(x = out_path, pattern = "/$", ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE)){
+            out_path <- base::sub(pattern = "/$", replacement = "", x = out_path, ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE)
+        }else if(base::grepl(x = out_path, pattern = "\\\\$", ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE)){
+            out_path <- base::sub(pattern = "\\\\$", replacement = "", x = out_path, ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE)
         }
         # end removal of trailing / or \\ in the path
-        if( ! base::dir.exists(paths = path_out)){
+        if( ! base::dir.exists(paths = out_path)){
             tempo_cat <- base::paste0(
                 error_text_start,
-                "DIRECTORY PATH INDICATED IN THE path_out ARGUMENT DOES NOT EXISTS:\n", 
-                path_out, 
+                "DIRECTORY PATH INDICATED IN THE out_path ARGUMENT DOES NOT EXISTS:\n", 
+                out_path, 
                 collapse = NULL, 
                 recycle0 = FALSE
             )
             base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL)
         }
         if(overwrite == FALSE){
-            if(base::file.exists(base::paste0(path_out, "/", df_name, collapse = NULL, recycle0 = FALSE))){
+            if(base::file.exists(base::paste0(out_path, "/", df_name, collapse = NULL, recycle0 = FALSE))){
                 tempo_cat <- base::paste0(
                     error_text_start,
                     "FILE NAME ALREADY EXISTS AT THE INDICATED PATH:\n", 
-                    base::paste0(path_out, "/", df_name, collapse = NULL, recycle0 = FALSE), 
+                    base::paste0(out_path, "/", df_name, collapse = NULL, recycle0 = FALSE), 
                     collapse = NULL, 
                     recycle0 = FALSE
                 )
@@ -520,7 +505,7 @@ all_args_here <- function(
 
     # arg_user_setting$x <- base::as.character(arg_user_setting$x)
     arg_user_setting$x <- base::deparse(expr = arg_user_setting$x, width.cutoff = 60L, backtick = FALSE, control = base::c("keepNA", "keepInteger", "niceNames", "showAttributes"), nlines = -1L) # because arg_user_setting$x is str(arg_user_setting$x) "language saferDev::colons_check". When I use it as string, like as.character(arg_user_setting$x), it splits  "::"           "saferDev"     "colons_check"
-    path_out <- base::paste0(path_out, "/", df_name, collapse = NULL, recycle0 = FALSE)
+    out_path <- base::paste0(out_path, "/", df_name, collapse = NULL, recycle0 = FALSE)
     out <- saferDev:::.functions_detect(
         x = x, 
         skipped_base = skipped_base, 
@@ -582,7 +567,7 @@ all_args_here <- function(
             fun_pos_stop <- fun_pos_start + base::nchar(x = fun_names[[i1]][i2], type = "chars", allowNA = FALSE, keepNA = NA) - 1
             tempo_fun <- base::substr(x = fun_1_line_replace, start = fun_pos_start, stop = fun_pos_stop)
             if(tempo_fun != fun_names[[i1]][i2]){
-                tempo_cat <- base::paste0("INTERNAL ERROR 1 IN ", intern_error_text_start,"tempo_fun MUST BE IDENTICAL TO fun_names[[i1]][i2]\n\ntempo_fun: ", tempo_fun, "\n\nfun_names[[i1]][i2]: ", fun_names[[i1]][i2], "\n\ni1: ", i1, "\n\ni2: ", i2, intern_error_text_end, collapse = NULL, recycle0 = FALSE) ; base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", base::ifelse(test = base::is.null(x = warn), yes = "", no = base::paste0("IN ADDITION\nWARNING", base::ifelse(test = warn_count > 1, yes = "S", no = ""), ":\n\n", warn, collapse = NULL, recycle0 = FALSE)), collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL)
+                tempo_cat <- base::paste0("INTERNAL ERROR 1 IN ", intern_error_text_start, "tempo_fun MUST BE IDENTICAL TO fun_names[[i1]][i2]\n\ntempo_fun: ", tempo_fun, "\n\nfun_names[[i1]][i2]: ", fun_names[[i1]][i2], "\n\ni1: ", i1, "\n\ni2: ", i2, intern_error_text_end, collapse = NULL, recycle0 = FALSE) ; base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", base::ifelse(test = base::is.null(x = warn), yes = "", no = base::paste0("IN ADDITION\nWARNING", base::ifelse(test = warn_count > 1, yes = "S", no = ""), ":\n\n", warn, collapse = NULL, recycle0 = FALSE)), collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL)
             }
             tempo_str_after <- base::substr(x = fun_1_line_replace, start = fun_pos_stop + 1, stop = base::nchar(x = fun_1_line_replace, type = "chars", allowNA = FALSE, keepNA = NA))
             if(base::grepl(x = tempo_str_after, pattern = "^[\\s\\r\\n]*\\(", ignore.case = FALSE, perl = TRUE, fixed = FALSE, useBytes = FALSE)){ # detection that it is a function of interest because ( after function name not removed
@@ -704,7 +689,22 @@ all_args_here <- function(
     # end preparation of columns
     # two new columns for arg proposal
     if( (base::length(x = col1) == 0)){
-        base::cat("\n\nEVERYTHING SEEMS CLEAN\n\n", file = "", sep = " ", fill = FALSE, labels = NULL, append = FALSE)
+        base::cat(base::paste0("\n\nINSIDE ", base::as.character(x = out$arg_user_setting$x), "(), EVERYTHING SEEMS CLEAN, AS NO ANALYSABLE FUNCTION DETECTED.\n\n", collapse = NULL, recycle0 = FALSE), file = "", sep = " ", fill = FALSE, labels = NULL, append = FALSE)
+        #### warning output
+        if( ! base::is.null(x = warn)){
+            base::on.exit(
+                expr = base::warning(
+                    base::paste0(
+                        base::sub(pattern = "^ERROR IN ", replacement = "FROM ", x = error_text_start, ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE), 
+                        warn, 
+                        collapse = NULL, 
+                        recycle0 = FALSE
+                    ), call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, domain = NULL
+                ), add = TRUE, after = TRUE
+            )
+        }
+        base::on.exit(expr = base::options(warning.length = ini_warning_length), add = TRUE, after = TRUE)
+        #### end warning output
     }else{
         col5 <- NULL # all arguments of the function with default value
         col6 <- NULL # missing arg names
@@ -922,48 +922,47 @@ all_args_here <- function(
             }
             # if(i2 != length(col8)){stop(paste0("caca ", i2))}
         }
+        if(base::all(col8 %in%base::c("", "GOOD"), na.rm = FALSE)){
+            tempo_cat <- base::paste0("INSIDE ", base::as.character(x = out$arg_user_setting$x), "(), EVERYTHING SEEMS CLEAN.", collapse = NULL, recycle0 = FALSE)
+            if(export == TRUE){
+                tempo_cat <- base::paste0("RESULT EXPORTED IN:\n", out_path, "\nBUT ", tempo_cat, collapse = NULL, recycle0 = FALSE)
+            }
+            tempo_cat <- base::paste0("AFTER RUNNING ", function_name, " OF THE ", package_name, " PACKAGE:\n", tempo_cat, collapse = NULL, recycle0 = FALSE)
+            base::on.exit(expr = base::cat(base::paste0("\n", tempo_cat, "\n\n", collapse = NULL, recycle0 = FALSE), file = "", sep = " ", fill = FALSE, labels = NULL, append = FALSE), add = TRUE, after = TRUE)
+        }else{
+            tempo_cat <- base::paste0("INSIDE ", base::as.character(x = out$arg_user_setting$x), "(), ARGUMENTS ARE MISSING.", collapse = NULL, recycle0 = FALSE)
+            if(export == TRUE){
+                tempo_cat <- base::paste0(tempo_cat, "\nRESULT EXPORTED IN:\n", out_path, collapse = NULL, recycle0 = FALSE)
+            }
+            base::on.exit(expr = base::cat(base::paste0("\n", tempo_cat, "\n\n", collapse = NULL, recycle0 = FALSE), file = "", sep = " ", fill = FALSE, labels = NULL, append = FALSE), add = TRUE, after = TRUE)
+        }
+        #### end main code
+
+        #### warning output
+        # must be before return()
+        if( ! base::is.null(x = warn)){
+            base::on.exit(
+                expr = base::warning(
+                    base::paste0(
+                        base::sub(pattern = "^ERROR IN ", replacement = "FROM ", x = error_text_start, ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE), 
+                        warn, 
+                        collapse = NULL, 
+                        recycle0 = FALSE
+                    ), call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, domain = NULL
+                ), add = TRUE, after = TRUE
+            )
+        }
+        base::on.exit(expr = base::options(warning.length = ini_warning_length), add = TRUE, after = TRUE)
+        #### end warning output
+
+        #### output
+        output <- base::data.frame(LINE_NB = col1, FUN_NAME = col2, FUN_ARGS = col3, FUN_POS = col4, DEF_ARGS = col5, MISSING_ARG_NAMES = col6, MISSING_ARGS = col7, STATUS = col8, row.names = NULL, check.rows = FALSE, check.names = TRUE, fix.empty.names = TRUE, stringsAsFactors = FALSE)
+        if(export == TRUE){
+            utils::write.table(x = output, file = out_path, row.names = FALSE, col.names = TRUE, append = FALSE, quote = FALSE, sep = "\t", eol = "\n", na = "", dec = ".", qmethod = base::c("escape", "double"), fileEncoding = "")
+        }else{
+            base::return(output)
+        }
+        #### end output
     }
     # end two new columns for arg proposal
-
-    if(base::all(col8 %in%base::c("", "GOOD"), na.rm = FALSE)){
-        tempo_cat <- base::paste0("INSIDE ", base::as.character(x = out$arg_user_setting$x), "(), EVERYTHING SEEMS CLEAN.", collapse = NULL, recycle0 = FALSE)
-        if(export == TRUE){
-            tempo_cat <- base::paste0("RESULT EXPORTED IN:\n", path_out, "\nBUT ", tempo_cat, collapse = NULL, recycle0 = FALSE)
-        }
-        tempo_cat <- base::paste0("AFTER RUNNING ", function_name, " OF THE ", package_name, " PACKAGE:\n", tempo_cat, collapse = NULL, recycle0 = FALSE)
-        base::on.exit(expr = base::cat(base::paste0("\n", tempo_cat, "\n\n", collapse = NULL, recycle0 = FALSE), file = "", sep = " ", fill = FALSE, labels = NULL, append = FALSE), add = TRUE, after = TRUE)
-    }else{
-        tempo_cat <- base::paste0("INSIDE ", base::as.character(x = out$arg_user_setting$x), "(), ARGUMENTS ARE MISSING.", collapse = NULL, recycle0 = FALSE)
-        if(export == TRUE){
-            tempo_cat <- base::paste0(tempo_cat, "\nRESULT EXPORTED IN:\n", path_out, collapse = NULL, recycle0 = FALSE)
-        }
-        base::on.exit(expr = base::cat(base::paste0("\n", tempo_cat, "\n\n", collapse = NULL, recycle0 = FALSE), file = "", sep = " ", fill = FALSE, labels = NULL, append = FALSE), add = TRUE, after = TRUE)
-    }
-    #### end main code
-
-    #### warning output
-    # must be before return()
-    if( ! base::is.null(x = warn)){
-        base::on.exit(
-            expr = base::warning(
-                base::paste0(
-                    base::sub(pattern = "^ERROR IN ", replacement = "FROM ", x = error_text_start, ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE), 
-                    warn, 
-                    collapse = NULL, 
-                    recycle0 = FALSE
-                ), call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, domain = NULL
-            ), add = TRUE, after = TRUE
-        )
-    }
-    base::on.exit(expr = base::options(warning.length = ini_warning_length), add = TRUE, after = TRUE)
-    #### end warning output
-
-    #### output
-    output <- base::data.frame(LINE_NB = col1, FUN_NAME = col2, FUN_ARGS = col3, FUN_POS = col4, DEF_ARGS = col5, MISSING_ARG_NAMES = col6, MISSING_ARGS = col7, STATUS = col8, row.names = NULL, check.rows = FALSE, check.names = TRUE, fix.empty.names = TRUE, stringsAsFactors = FALSE)
-    if(export == TRUE){
-        utils::write.table(x = output, file = path_out, row.names = FALSE, col.names = TRUE, append = FALSE, quote = FALSE, sep = "\t", eol = "\n", na = "", dec = ".", qmethod = base::c("escape", "double"), fileEncoding = "")
-    }else{
-        base::return(output)
-    }
-    #### end output
 }
