@@ -17,6 +17,7 @@ testthat::test_that("all_args_here()", {
     fun6 <- function(x){
         a <- function(x){x + 1}
         a(x = x)
+        base::caca()
     }
     fun7 <- function(x){
         a$count(x)
@@ -306,6 +307,9 @@ testthat::test_that("all_args_here()", {
 
     # if(tempo_log){
     testthat::expect_no_error(all_args_here(x = fun6, export = FALSE, out_path = ".", df_name = "res.tsv", overwrite = FALSE, safer_check = TRUE, lib_path = NULL, error_text = "")) 
+
+
+
 
     # three_dots_log <- if(base::length(x = arg_full) > 0){
     testthat::expect_no_error(all_args_here(x = fun4, export = TRUE, out_path = ".", df_name = "res.tsv", overwrite = FALSE, safer_check = TRUE, lib_path = NULL, error_text = ""))
