@@ -17,11 +17,15 @@ testthat::test_that("all_args_here()", {
     fun6 <- function(x){
         a <- function(x){x + 1}
         a(x = x)
-        base::caca()
     }
     fun7 <- function(x){
         a$count(x)
         NOT_CONSIDERED = 1
+    }
+    fun8 <- function(x){
+        a <- function(x){x + 1}
+        a(x = x)
+        c(2:8)
     }
     test <- function(
             text, 
@@ -304,6 +308,7 @@ testthat::test_that("all_args_here()", {
 
     # if( ! base::is.null(x = warn)){ 
     testthat::expect_no_error(all_args_here(x = fun7, export = FALSE, out_path = ".", df_name = "res.tsv", overwrite = FALSE, safer_check = TRUE, lib_path = NULL, error_text = ""))
+    testthat::expect_error(all_args_here(x = fun8, export = FALSE, out_path = ".", df_name = "res.tsv", overwrite = FALSE, safer_check = TRUE, lib_path = NULL, error_text = ""))
 
     # if(tempo_log){
     testthat::expect_no_error(all_args_here(x = fun6, export = FALSE, out_path = ".", df_name = "res.tsv", overwrite = FALSE, safer_check = TRUE, lib_path = NULL, error_text = "")) 
