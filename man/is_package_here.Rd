@@ -27,7 +27,7 @@ An error message if at least one of the checked packages is missing in lib_path,
 Check if required packages are installed locally.
 }
 \examples{
-\dontrun{ # Example that return an error
+\dontrun{ # Example that returns an error
 is_package_here(req_package = "nopackage", error_text = " INSIDE P1::F1")
 is_package_here(req_package = "ggplot2", lib_path = "C:/Users/gmillot/AppData/Local/R/win-library/4.4") # commented because this example returns an error if the lib_path argument is not an existing directory
 }

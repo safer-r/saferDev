@@ -5,8 +5,9 @@ title: "get_message"
 
 ```{r, include = FALSE}
 knitr::opts_chunk$set(
-  collapse = TRUE,
-  comment = ">"
+    error = TRUE, 
+    collapse = TRUE,
+    comment = ">"
 )
 ```
 
@@ -54,9 +55,9 @@ get_message(data = char1, header = FALSE) # to get error messages (by default) w
 ```
 <br>
 
-### Argument print.no
+### Argument print_no
 ```{r}
-get_message(data = char1, print.no = TRUE) # print a message saying that no message reported
+get_message(data = char1, print_no = TRUE) # print a message saying that no message reported
 ```
 <br>
 
@@ -64,19 +65,19 @@ get_message(data = char1, print.no = TRUE) # print a message saying that no mess
 ```{r}
 get_message(
     data = char2, 
-    print.no = TRUE, 
+    print_no = TRUE, 
     text = "IN A"
-) # print a message even if the argument print.no is TRUE
+) # print a message even if the argument print_no is TRUE
 ```
 <br>
 
-### Argument kind, header, print.no, text
+### Argument kind, header, print_no, text
 ```{r}
 get_message(
     data = char1, 
     kind = "warning", 
     header = FALSE, 
-    print.no = TRUE, 
+    print_no = TRUE, 
     text = "IN A"
 ) # print the warning message in text
 ```
@@ -88,16 +89,27 @@ get_message(data = char2, safer_check = TRUE) # with TRUE, checkings are perform
 ```
 <br>
 
+### Argument lib_path and error_text
+```{r}
+get_message(
+    lib_path = ".", # absolute pathways of the directories containing the required packages if not in the default directories.
+    error_text = "TEXT ADDED" # add information in error messages returned by the function.
+)
+```
+
+
 ### All the arguments
 ```{r}
 get_message(
     data = char1, 
     kind = "warning", 
     header = FALSE,
-    print.no = TRUE, 
+    print_no = TRUE, 
     text = "IN A",
     env = NULL,
-    safer_check = TRUE
+    safer_check = TRUE, # perform some "safer" checks? Warning : always set this argument to FALSE if all_args_here() is used inside another safer function.
+    lib_path = NULL, # absolute pathways of the directories containing the required packages if not in the default directories.
+    error_text = "" # add information in error messages returned by the function.
 ) # print the warning message in text in the environment R_GlobalEnv
 ```
 

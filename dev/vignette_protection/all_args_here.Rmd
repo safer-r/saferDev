@@ -5,6 +5,7 @@ title: "all_args_here"
 
 ```{r, include = FALSE}
 knitr::opts_chunk$set(
+    error = TRUE, 
     collapse = TRUE,
     comment = ">"
 )
@@ -44,14 +45,14 @@ all_args_here(
 ```
 <br>
 
-### Argument export (associated with argument path_out, df_name and overwrite)
+### Argument export (associated with argument out_path, df_name and overwrite)
 ```{r}
 all_args_here(
     x = FUN2, # R function
     export = TRUE, # export the data frame into a .tsv file?
-    path_out = ".", # pathway of the folder where to export the data frame
+    out_path = ".", # pathway of the folder where to export the data frame
     df_name = "res.tsv", # name of the exported data frame file
-    overwrite = TRUE # Overwrite potential df_name file already existing in path_out?
+    overwrite = TRUE # Overwrite potential df_name file already existing in out_path?
 )
 ```
 <br>
@@ -62,21 +63,13 @@ all_args_here(
 all_args_here(
     x = FUN1, # R function
     export = FALSE, # export the data frame into a .tsv file?
-    path_out = ".", # pathway of the folder where to export the data frame
+    out_path = ".", # pathway of the folder where to export the data frame.
     df_name = "res.tsv", # name of the exported data frame file
-    overwrite = FALSE, # Overwrite potential df_name file already existing in path_out?
-    lib_path = NULL, # absolute pathways of the directories containing the required packages if not in the default directories
-    safer_check = TRUE # perform some "safer" checks? Warning : always set this argument to FALSE if all_args_here() is used inside another safer function.
+    overwrite = FALSE, # Overwrite potential df_name file already existing in out_path?
+    safer_check = TRUE, # perform some "safer" checks? Warning : always set this argument to FALSE if all_args_here() is used inside another safer function.
+    lib_path = NULL, # absolute pathways of the directories containing the required packages if not in the default directories.
+    error_text = "" # add information in error messages returned by the function.
 )
 
-all_args_here(
-    x = all_args_here, # R function
-    export = FALSE, # export the data frame into a .tsv file?
-    path_out = ".", # pathway of the folder where to export the data frame
-    df_name = "res.tsv", # name of the exported data frame file
-    overwrite = FALSE, # Overwrite potential df_name file already existing in path_out?
-    lib_path = NULL, # absolute pathways of the directories containing the required packages if not in the default directories
-    safer_check = TRUE # perform some "safer" checks? Warning : always set this argument to FALSE if all_args_here() is used inside another safer function.
-)
 ```
 <br>

@@ -18,13 +18,14 @@
 #' @author \href{yushi.han2000@gmail.com}{Yushi Han}
 #' @author \href{wanghaiding442@gmail.com}{Haiding Wang}
 #' @examples
+#' \dontrun{ # Example that creates a file/folder in the working directory
 #' report(data = "THE FOLLOWING VECTOR IS:\n", output = "results.txt", path = ".", overwrite = TRUE, sep = 1)
 #' report(data = 1:3, output = "results.txt", path = ".", overwrite = FALSE, rownames_kept = FALSE, vector_cat = FALSE, noquote = FALSE, sep = 2)
 #' report(data = "THE FOLLOWING MATRIX IS:\n", output = "results.txt", path = ".", overwrite = FALSE, sep = 1)
 #' report(data = matrix(1:5), output = "results.txt", path = ".", overwrite = FALSE, rownames_kept = FALSE, vector_cat = FALSE, noquote = FALSE, sep = 5)
 #' report(data = "THE FOLLOWING DATA FRAME IS:\n", output = "results.txt", path = ".", overwrite = FALSE, sep = 1)
 #' report(data = data.frame(A = 1:8, B = letters[1:8]), output = "results.txt", path = ".", overwrite = FALSE, rownames_kept = FALSE, vector_cat = FALSE, noquote = FALSE, sep = 1)
-#' 
+#' }
 #' @export
 report <- function(
     data, 

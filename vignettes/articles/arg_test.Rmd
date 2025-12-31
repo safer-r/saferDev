@@ -53,21 +53,23 @@ arg_test(
     val = value2
 )
 
+temp_dir <- tempdir() # replace by temp_dir <- "." to see the output files and folders in the working directory
 arg_test(
     fun = f, 
     arg = argum, 
     val = value,
     export = TRUE,
-    res_path = getwd()
+    res_path = temp_dir
 )
 
+temp_dir <- tempdir() # replace by temp_dir <- "." to see the output files and folders in the working directory
 arg_test(
     fun = f2, 
     arg = argum2, 
     val = value2,
     expect_error = error2,
     plot_fun = TRUE,
-    res_path = "."
+    res_path = temp_dir
 )
 ```
 <br>

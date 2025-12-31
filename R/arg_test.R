@@ -48,7 +48,6 @@
 #' @author \href{yushi.han2000@gmail.com}{Yushi Han}
 #' @author \href{wanghaiding442@gmail.com}{Haiding Wang}
 #' @examples
-#' td <- tempdir() # replace by td <- "." to see the output files and folders in the working directory
 #' arg_test(fun = "unique", arg = c("x", "incomparables"), 
 #' val = list(x = list(1:10, c(1,1,2,8), NA), incomparable = c(TRUE, FALSE, NA)))
 #' 
@@ -57,25 +56,28 @@
 #' incomparable = c(TRUE, FALSE, NA)), expect_error = list(x = list(FALSE, FALSE, TRUE), 
 #' incomparable = c(FALSE, FALSE, TRUE)))
 #' 
-#' arg_test(fun = "unique", arg = c("x", "incomparables"), 
-#' val = list(x = list(1:10, c(1,1,2,8), NA), incomparable = c(TRUE, FALSE, NA)), 
-#' expect_error = list(x = c(FALSE, FALSE, TRUE), incomparable = c(FALSE, FALSE, TRUE)), 
-#' export = TRUE, res_path = td)
-#' 
-#' \dontrun{ # Example that return an error
+#' \dontrun{ # Example that returns an error
 #' arg_test(fun = "unique", arg = c("x", "incomparables"), val = list(A = list(x = list(1:10, c(1,1,2,8), NA), incomparable = c(TRUE, FALSE, NA))))
 #' arg_test(fun = "round", arg = c("data", "dec.nb", "after.lead.zero"), val = list(L1 = list(c(1, 1.0002256, 1.23568), "a", NA), L2 = list(2, c(1,3), NA), L3 = c(TRUE, FALSE, NA)))
 #' }
 #' 
+#' \dontrun{ # Example that creates a file/folder in the working directory
+#' arg_test(fun = "unique", arg = c("x", "incomparables"), 
+#' val = list(x = list(1:10, c(1,1,2,8), NA), incomparable = c(TRUE, FALSE, NA)), 
+#' expect_error = list(x = c(FALSE, FALSE, TRUE), incomparable = c(FALSE, FALSE, TRUE)), 
+#' export = TRUE, res_path = ".")
+#' 
 #' arg_test(fun = "plot", arg = c("x", "y"), val = list(x = list(1:10, 12:13, NA, (1:10)^2), 
 #' y = list(1:10, NA, NA)),  expect_error = list(x = list(FALSE, TRUE, TRUE, FALSE), 
 #' y = list(FALSE, TRUE, TRUE)), parall = FALSE, thread_nb = NULL, plot_fun = TRUE, 
-#' res_path = td, lib_path = NULL)
+#' res_path = ".", lib_path = NULL)
 #' 
 #' arg_test(fun = "plot", arg = c("x", "y"), val = list(x = list(1:10, 12:13, NA, (1:10)^2), 
 #' y = list(1:10, NA, NA)), parall = FALSE, thread_nb = 4, 
-#' plot_fun = TRUE, res_path = td, 
+#' plot_fun = TRUE, res_path = ".", 
 #' lib_path = NULL)
+#' }
+
 #' @importFrom lubridate seconds_to_period
 #' @importFrom qpdf pdf_combine
 #' @importFrom parallel detectCores

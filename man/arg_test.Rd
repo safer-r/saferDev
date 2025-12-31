@@ -90,15 +90,16 @@ val = list(x = list(1:10, c(1,1,2,8), NA),
 incomparable = c(TRUE, FALSE, NA)), expect_error = list(x = list(FALSE, FALSE, TRUE), 
 incomparable = c(FALSE, FALSE, TRUE)))
 
-arg_test(fun = "unique", arg = c("x", "incomparables"), 
-val = list(x = list(1:10, c(1,1,2,8), NA), incomparable = c(TRUE, FALSE, NA)), 
-expect_error = list(x = c(FALSE, FALSE, TRUE), incomparable = c(FALSE, FALSE, TRUE)), 
-export = TRUE, res_path = getwd())
-
-\dontrun{ # Example that return an error
+\dontrun{ # Example that returns an error
 arg_test(fun = "unique", arg = c("x", "incomparables"), val = list(A = list(x = list(1:10, c(1,1,2,8), NA), incomparable = c(TRUE, FALSE, NA))))
 arg_test(fun = "round", arg = c("data", "dec.nb", "after.lead.zero"), val = list(L1 = list(c(1, 1.0002256, 1.23568), "a", NA), L2 = list(2, c(1,3), NA), L3 = c(TRUE, FALSE, NA)))
 }
+
+\dontrun{ # Example that creates a file/folder in the working directory
+arg_test(fun = "unique", arg = c("x", "incomparables"), 
+val = list(x = list(1:10, c(1,1,2,8), NA), incomparable = c(TRUE, FALSE, NA)), 
+expect_error = list(x = c(FALSE, FALSE, TRUE), incomparable = c(FALSE, FALSE, TRUE)), 
+export = TRUE, res_path = ".")
 
 arg_test(fun = "plot", arg = c("x", "y"), val = list(x = list(1:10, 12:13, NA, (1:10)^2), 
 y = list(1:10, NA, NA)),  expect_error = list(x = list(FALSE, TRUE, TRUE, FALSE), 
@@ -109,6 +110,7 @@ arg_test(fun = "plot", arg = c("x", "y"), val = list(x = list(1:10, 12:13, NA, (
 y = list(1:10, NA, NA)), parall = FALSE, thread_nb = 4, 
 plot_fun = TRUE, res_path = ".", 
 lib_path = NULL)
+}
 }
 \seealso{
 \code{\link{arg_check}}.

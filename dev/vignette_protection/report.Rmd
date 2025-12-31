@@ -5,8 +5,9 @@ title: "report"
 
 ```{r, include = FALSE}
 knitr::opts_chunk$set(
-  collapse = TRUE,
-  comment = ">"
+    error = TRUE, 
+    collapse = TRUE,
+    comment = ">"
 )
 ```
 
@@ -72,52 +73,52 @@ report(data = vec2, overwrite = TRUE, output = "test.txt", path = ".") # if the 
 ```
 <br>
 
-### Argument rownames.kept
+### Argument rownames_kept
 ```{r, echo = TRUE, error = TRUE}
 report(
   data = mat1, 
-  rownames.kept = TRUE, 
+  rownames_kept = TRUE, 
   path = "."
 ) # keep the row names when print the matrix mat1 in the file
 
 report(
   data = mat1, 
-  rownames.kept = FALSE, 
+  rownames_kept = FALSE, 
   path = "."
 ) # remove the row names
 
 report(
   data = t1, 
-  rownames.kept = TRUE, 
+  rownames_kept = TRUE, 
   path = "."
 ) # keep the row names when print the table t1 in the file
 
 report(
   data = t1, 
-  rownames.kept = FALSE, 
+  rownames_kept = FALSE, 
   path = "."
 ) # remove the row names
 
 report(
   data = t2, 
-  rownames.kept = TRUE, 
+  rownames_kept = TRUE, 
   path = "."
 ) # keep the row names when print the table t2 in the file
 
 report(
   data = t2, 
-  rownames.kept = FALSE, 
+  rownames_kept = FALSE, 
   path = "."
 ) # remove the row names
 
 ```
 <br>
 
-### Argument vector.cat
+### Argument vector_cat
 ```{r, echo = TRUE, error = TRUE}
 report(
   data = vec3, 
-  vector.cat = TRUE, 
+  vector_cat = TRUE, 
   path = "."
 ) # print a vector of length > 1 using cat() instead of capture.output() : names are lost.
 ```
@@ -143,6 +144,25 @@ report(
 ```
 <br>
 
+### Argument safer_check
+```{r, echo = TRUE, error = TRUE}
+report(
+    data = vec1, 
+    safer_check = TRUE
+) # check if the package is in the computer, safer_check = TRUE, checkings are performed before main code running 
+```
+<br>
+
+### Argument lib_path and error_text
+```{r}
+report(
+    data = vec1, 
+    lib_path = ".", # absolute pathways of the directories containing the required packages if not in the default directories.
+    error_text = "TEXT ADDED" # add information in error messages returned by the function.
+)
+```
+<br>
+
 ### All the arguments
 ```{r, echo = TRUE, error = TRUE}
 report(
@@ -150,11 +170,13 @@ report(
     output = "test2.txt", 
     path = ".", 
     overwrite = TRUE, 
-    rownames.kept = TRUE, 
-    vector.cat = TRUE, 
+    rownames_kept = TRUE, 
+    vector_cat = TRUE, 
     noquote = FALSE, 
     sep = 4,
-    safer_check = TRUE
+    safer_check = TRUE, # perform some "safer" checks? Warning : always set this argument to FALSE if all_args_here() is used inside another safer function.
+    lib_path = NULL, # absolute pathways of the directories containing the required packages if not in the default directories.
+    error_text = "" # add information in error messages returned by the function.
 )
 # matrix mat1 will be print in the file "text2.txt" in the path, with quote and row names being kept, and 4 lines after printing data
 ```

@@ -45,7 +45,7 @@
 #' @author \href{wanghaiding442@gmail.com}{Haiding Wang}
 #' @examples
 #' test <- matrix(1:3)
-#' \dontrun{ # Example that return an error
+#' \dontrun{ # Example that returns an error
 #' arg_check(data = test, print = TRUE, class = "vector", mode = "numeric")  # error: THE test ARGUMENT MUST BE CLASS vector
 #' }
 #' arg_check(data = test, print = TRUE, class = "matrix", mode = "numeric")

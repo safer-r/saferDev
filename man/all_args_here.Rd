@@ -7,7 +7,7 @@
 all_args_here(
   x,
   export = FALSE,
-  path_out = ".",
+  out_path = ".",
   df_name = "res.tsv",
   overwrite = FALSE,
   safer_check = TRUE,
@@ -20,11 +20,11 @@ all_args_here(
 
 \item{export}{Single logical value. Export the data frame into a .tsv file? If TRUE, the data frame is not returned by the function but only exported.}
 
-\item{path_out}{Single character string indicating the absolute pathway of the folder where to export the data frame. path_out = "." means the R working directory set by the user. Ignored if export is FALSE}
+\item{out_path}{Single character string indicating the absolute pathway of the folder where to export the data frame. out_path = "." means the R working directory set by the user. Ignored if export is FALSE}
 
 \item{df_name}{Single character string indicating the name of the exported data frame file. Ignored if export is FALSE.}
 
-\item{overwrite}{Single logical value. Overwrite potential df_name file already existing in path_out? Ignored if export is FALSE.}
+\item{overwrite}{Single logical value. Overwrite potential df_name file already existing in out_path? Ignored if export is FALSE.}
 
 \item{safer_check}{Single logical value. Perform some "safer" checks? If TRUE, checkings are performed before main code running (see https://github.com/safer-r): 1) correct lib_path argument value 2) required functions and related packages effectively present in local R lybraries and 3) R classical operators (like "<-") not overwritten by another package because of the R scope. Must be set to FALSE if this fonction is used inside another "safer" function to avoid pointless multiple checkings.}
 
@@ -77,14 +77,16 @@ Warnings:
 2) Proposals in the STATUS column are only suggestions, as it is difficult to anticipate all the exceptions with arguments writing.
 }
 \examples{
-\dontrun{ # Example that return an error
-all_args_here(mean) # example that return an error
+\dontrun{ # Example that returns an error
+all_args_here(mean) # Example that returns an error
 source("https://raw.githubusercontent.com/safer-r/saferDev/main/dev/other/test2.R") ; all_args_here(test2) # the checked function must be executable
 }
 FUN2 <- function(x, y){middle_bracket2 <- base::do.call(what = base::c, args = code_for_col, quote = FALSE, envir = base::parent.frame())}
 all_args_here(FUN2, safer_check = FALSE)
+\dontrun{ # Example that creates a file/folder in the working directory
 source("https://raw.githubusercontent.com/safer-r/.github/refs/heads/main/profile/backbone.R")
 all_args_here(BACKBONE, export = TRUE, safer_check = FALSE)
+}
 
 }
 \author{

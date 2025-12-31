@@ -22,7 +22,7 @@ An error message if at least one of the checked packages is missing in lib_path,
 Check if required functions are present in installed packages. This controls modifications in of function names package versions.
 }
 \examples{
-\dontrun{ # Example that return an error
+\dontrun{ # Example that returns an error
 is_function_here(fun = "ggplot2::notgood", error_text = " INSIDE P1::F1") # commented because this example returns an error
 is_function_here(fun = c("ggplot2::geom_point", "grid::gpar"))
 is_function_here(fun = "c")

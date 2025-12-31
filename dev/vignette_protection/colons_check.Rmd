@@ -5,8 +5,9 @@ title: "colons_check"
 
 ```{r, include = FALSE}
 knitr::opts_chunk$set(
-  collapse = TRUE,
-  comment = ">"
+    error = TRUE, 
+    collapse = TRUE,
+    comment = ">"
 )
 ```
 
@@ -56,7 +57,9 @@ colons_check(
 ```{r, echo = TRUE, error = TRUE}
 colons_check(
     x = fun1, # a function name, written without quotes and brackets
-    safer_check = TRUE # Single logical value. Perform some "safer" checks (see https://github.com/safer-r) ?
+    safer_check = TRUE, # perform some "safer" checks? Warning : always set this argument to FALSE if all_args_here() is used inside another safer function.
+    lib_path = NULL, # absolute pathways of the directories containing the required packages if not in the default directories.
+    error_text = "" # add information in error messages returned by the function.
 )
 ```
 <br>
