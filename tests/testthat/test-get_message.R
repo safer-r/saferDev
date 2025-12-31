@@ -390,7 +390,7 @@ testthat::test_that("get_message()", {
                 testthat::expect_no_error(get_message(data = str5, kind = "message", header = FALSE, print_no = FALSE, text = NULL, env = NULL, safer_check = TRUE, lib_path = NULL, error_text = ""))
                 result <- get_message(data = str5, kind = "message", header = FALSE, print_no = FALSE, text = NULL, env = NULL, safer_check = TRUE, lib_path = NULL, error_text = "")
                 #  testthat::skip_on_os("windows")  # or "linux", "mac"
-                expected <- if (testthat::os_name() == "linux") {
+                expected <- if (base::Sys.info()[["sysname"]] == "Linux") {
                     "`stat_bin()` using `bins = 30`. Pick better value with `binwidth`."
                 } else {
                     "`stat_bin()` using `bins = 30`. Pick better value `binwidth`."
