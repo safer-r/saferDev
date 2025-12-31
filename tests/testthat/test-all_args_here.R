@@ -30,6 +30,9 @@ testthat::test_that("all_args_here()", {
     fun9 <- function(x){
         graphics::c(2:8)
     }
+    fun10 <- function(x){
+        saferDev:::.colons_check_message(jfgkdgfksdgf = 2:8)
+    }
     test <- function(
             text, 
             pattern
@@ -313,6 +316,7 @@ testthat::test_that("all_args_here()", {
     testthat::expect_no_error(all_args_here(x = fun7, export = FALSE, out_path = ".", df_name = "res.tsv", overwrite = FALSE, safer_check = TRUE, lib_path = NULL, error_text = ""))
     testthat::expect_error(all_args_here(x = fun8, export = FALSE, out_path = ".", df_name = "res.tsv", overwrite = FALSE, safer_check = TRUE, lib_path = NULL, error_text = ""))
     testthat::expect_error(all_args_here(x = fun9, export = FALSE, out_path = ".", df_name = "res.tsv", overwrite = FALSE, safer_check = TRUE, lib_path = NULL, error_text = ""))
+    testthat::expect_no_error(all_args_here(x = fun10, export = FALSE, out_path = ".", df_name = "res.tsv", overwrite = FALSE, safer_check = TRUE, lib_path = NULL, error_text = ""))
 
 
     # if(tempo_log){

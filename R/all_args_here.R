@@ -764,27 +764,7 @@ all_args_here <- function(
                     if(tempo_log){
                         tempo_fun2 <- base::get(x = col2[i2], envir = base::asNamespace(ns = tempo_package_name, base.OK = TRUE), mode = "function", inherits = FALSE, pos = -1L)
                     }else{
-                        tempo_cat <- base::paste0(
-                            error_text_start, 
-                            "CANNOT GET THE ARGUMENTS OF A FUNCTION THAT IS NOT CORRECTLY ASSOCIATED TO ITS PACKAGE IN LINE ", 
-                            col1[i2], 
-                            ":\n\n", 
-                            base::paste0(base::paste0(base::substr(x = code_for_col[i2], start = 1, stop = col4[i2] - 1), col3[i2], collapse = NULL, recycle0 = FALSE), collapse = "\n", recycle0 = FALSE), 
-                            "\n\nPLEASE, RUN utils::getAnywhere('", 
-                            col2[i2], 
-                            "')$where FIRST,\nCORRECT THE LINE ", 
-                            col1[i2], 
-                            " IN ", 
-                            arg_user_setting$x, 
-                            ",\nSAVE AND REIMPORT ", 
-                            arg_user_setting$x, 
-                            "\nAND RERUN saferDev::all_args_here(", 
-                            arg_user_setting$x, 
-                            ").", 
-                            collapse = NULL, 
-                            recycle0 = FALSE
-                        )
-                        base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", base::ifelse(test = base::is.null(x = warn), yes = "", no = base::paste0("IN ADDITION\nWARNING", base::ifelse(test = warn_count > 1, yes = "S", no = ""), ":\n\n", warn, collapse = NULL, recycle0 = FALSE)), collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL)
+                        tempo_cat <- base::paste0("INTERNAL ERROR 4 IN ", intern_error_text_start,"CANNOT GET THE ARGUMENTS OF A FUNCTION THAT IS NOT CORRECTLY ASSOCIATED TO ITS PACKAGE IN LINE ", col1[i2], ":\n\n", base::paste0(base::paste0(base::substr(x = code_for_col[i2], start = 1, stop = col4[i2] - 1), col3[i2], collapse = NULL, recycle0 = FALSE), collapse = "\n", recycle0 = FALSE), "\n\nPLEASE, RUN utils::getAnywhere('", col2[i2], "')$where FIRST,\nCORRECT THE LINE ", col1[i2], " IN ", arg_user_setting$x, ",\nSAVE AND REIMPORT ", arg_user_setting$x, "\nAND RERUN saferDev::all_args_here(", arg_user_setting$x, ").", intern_error_text_end, collapse = NULL, recycle0 = FALSE) ; base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", base::ifelse(test = base::is.null(x = warn), yes = "", no = base::paste0("IN ADDITION\nWARNING", base::ifelse(test = warn_count > 1, yes = "S", no = ""), ":\n\n", warn, collapse = NULL, recycle0 = FALSE)), collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL)
                     }
                     if(base::is.primitive(x = tempo_fun2)){
                         tempo_all_args <- base::as.list(x = base::suppressWarnings(expr = base::formals(fun = base::args(name = col2[i2]), envir = base::asNamespace(ns = tempo_package_name, base.OK = TRUE)), classes = "warning"))
@@ -834,7 +814,7 @@ all_args_here <- function(
                         # arguments: replacement of all the commas inside () of subfunctions
                         if(base::length(x = middle_bracket_open_in_col3[[i2]]) > 0){
                             if(base::length(x = middle_bracket_open_in_col3[[i2]]) != base::length(x = middle_bracket_close_in_col3[[i2]])){
-                                tempo_cat <- base::paste0("INTERNAL ERROR 4 IN ", intern_error_text_start, "middle_bracket_open_in_col3 AND middle_bracket_close_in_col3 MUST HAVE THE SAME LENGTH IN LOOP ", i2, "\n\nmiddle_bracket_open_in_col3 (", base::length(x = middle_bracket_open_in_col3), "):\n", base::paste0(middle_bracket_open_in_col3, collapse = " ", recycle0 = FALSE), "\n\nmiddle_bracket_close_in_col3 (", base::length(x = middle_bracket_close_in_col3), "):\n", base::paste0(middle_bracket_close_in_col3, collapse = " ", recycle0 = FALSE), "\n\ni2:\n", i2, intern_error_text_end, collapse = NULL, recycle0 = FALSE) ; base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", base::ifelse(test = base::is.null(x = warn), yes = "", no = base::paste0("IN ADDITION\nWARNING", base::ifelse(test = warn_count > 1, yes = "S", no = ""), ":\n\n", warn, collapse = NULL, recycle0 = FALSE)), collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL)
+                                tempo_cat <- base::paste0("INTERNAL ERROR 5 IN ", intern_error_text_start, "middle_bracket_open_in_col3 AND middle_bracket_close_in_col3 MUST HAVE THE SAME LENGTH IN LOOP ", i2, "\n\nmiddle_bracket_open_in_col3 (", base::length(x = middle_bracket_open_in_col3), "):\n", base::paste0(middle_bracket_open_in_col3, collapse = " ", recycle0 = FALSE), "\n\nmiddle_bracket_close_in_col3 (", base::length(x = middle_bracket_close_in_col3), "):\n", base::paste0(middle_bracket_close_in_col3, collapse = " ", recycle0 = FALSE), "\n\ni2:\n", i2, intern_error_text_end, collapse = NULL, recycle0 = FALSE) ; base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", base::ifelse(test = base::is.null(x = warn), yes = "", no = base::paste0("IN ADDITION\nWARNING", base::ifelse(test = warn_count > 1, yes = "S", no = ""), ":\n\n", warn, collapse = NULL, recycle0 = FALSE)), collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL)
                             }
                             for(i6 in 1:base::length(x = middle_bracket_open_in_col3[[i2]])){
                                 tempo <- saferDev:::.in_parenthesis_replacement(
@@ -867,13 +847,13 @@ all_args_here <- function(
                             # resseting the pos of the removed commas to fit obs_args
                             pos_rep2 <- pos_rep2 - base::nchar(x = col2[i2], type = "chars", allowNA = FALSE, keepNA = NA) - 1 # -1 for the opening (
                             if(base::any(pos_rep2 <= 0, na.rm = TRUE)){
-                                tempo_cat <- base::paste0("INTERNAL ERROR 5 IN ", intern_error_text_start,"POSITIONS OF REMOVED COMMAS CANOT  OR LESS\n\npos_rep2 (", base::length(x = pos_rep2), "):\n", base::paste0(pos_rep2, collapse = " ", recycle0 = FALSE), "\n\nARGUMENT STRING obs_args:\n", base::paste0(obs_args, collapse = " ", recycle0 = FALSE), "\n\ni2:\n", i2, intern_error_text_end, collapse = NULL, recycle0 = FALSE) ; base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", base::ifelse(test = base::is.null(x = warn), yes = "", no = base::paste0("IN ADDITION\nWARNING", base::ifelse(test = warn_count > 1, yes = "S", no = ""), ":\n\n", warn, collapse = NULL, recycle0 = FALSE)), collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL)
+                                tempo_cat <- base::paste0("INTERNAL ERROR 6 IN ", intern_error_text_start,"POSITIONS OF REMOVED COMMAS CANOT  OR LESS\n\npos_rep2 (", base::length(x = pos_rep2), "):\n", base::paste0(pos_rep2, collapse = " ", recycle0 = FALSE), "\n\nARGUMENT STRING obs_args:\n", base::paste0(obs_args, collapse = " ", recycle0 = FALSE), "\n\ni2:\n", i2, intern_error_text_end, collapse = NULL, recycle0 = FALSE) ; base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", base::ifelse(test = base::is.null(x = warn), yes = "", no = base::paste0("IN ADDITION\nWARNING", base::ifelse(test = warn_count > 1, yes = "S", no = ""), ":\n\n", warn, collapse = NULL, recycle0 = FALSE)), collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL)
                             }
                             # end resseting the pos of the removed commas to fit obs_args
                             for(i6 in 1:base::length(x = tempo_split)){
                                 tempo_log <- pos_rep2 >= 1 & pos_rep2 <= base::nchar(x = tempo_split[i6], type = "chars", allowNA = FALSE, keepNA = NA)
                                 if(base::any(base::is.na(x = tempo_log), na.rm = TRUE)){
-                                    tempo_cat <- base::paste0("INTERNAL ERROR 6 IN ", intern_error_text_start, "tempo_log CONTAINS NA:\n", base::paste0(tempo_log, collapse = " ", recycle0 = FALSE), intern_error_text_end, collapse = NULL, recycle0 = FALSE) ; base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", base::ifelse(test = base::is.null(x = warn), yes = "", no = base::paste0("IN ADDITION\nWARNING", base::ifelse(test = warn_count > 1, yes = "S", no = ""), ":\n\n", warn, collapse = NULL, recycle0 = FALSE)), collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL)
+                                    tempo_cat <- base::paste0("INTERNAL ERROR 7 IN ", intern_error_text_start, "tempo_log CONTAINS NA:\n", base::paste0(tempo_log, collapse = " ", recycle0 = FALSE), intern_error_text_end, collapse = NULL, recycle0 = FALSE) ; base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", base::ifelse(test = base::is.null(x = warn), yes = "", no = base::paste0("IN ADDITION\nWARNING", base::ifelse(test = warn_count > 1, yes = "S", no = ""), ":\n\n", warn, collapse = NULL, recycle0 = FALSE)), collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL)
                                 }
                                 if(base::any(tempo_log, na.rm = TRUE)){
                                     for(i7 in 1:base::length(x = tempo_log)){
@@ -895,7 +875,7 @@ all_args_here <- function(
                         }
                         # checking 
                         if(base::length(x = tempo_split) > base::length(x = arg_full_names) & ! base::any(three_dots_log, na.rm = TRUE)){
-                            tempo_cat <- base::paste0("INTERNAL ERROR 7 IN ", intern_error_text_start, "LENGTH OF tempo_split MUST LOWER OR EQUAL TO LENGTH OF arg_full_names IF ... IS NOT AN ARGUMENT OF THE FUNCTION.\n\nPLEASE, CHECK FIRST THAT ARGUMENTS ARE CORRECTLY ADDED INTO THE FUNCTION.\n\nFUNCTION: ", col2[i2], "\n\ntempo_split (", base::length(x = tempo_split), "):\n", base::paste0(tempo_split, collapse = "\n", recycle0 = FALSE), "\n\narg_full_names (", base::length(x = arg_full_names), "):\n", base::paste0(arg_full_names, collapse = "\n", recycle0 = FALSE), "\n\ni2:\n", i2, "\n\nIF ARGUMENTS ARE CORRECTLY ADDED, THEN ",intern_error_text_end, collapse = NULL, recycle0 = FALSE) ; base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", base::ifelse(test = base::is.null(x = warn), yes = "", no = base::paste0("IN ADDITION\nWARNING", base::ifelse(test = warn_count > 1, yes = "S", no = ""), ":\n\n", warn, collapse = NULL, recycle0 = FALSE)), collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL)
+                            tempo_cat <- base::paste0("INTERNAL ERROR 8 IN ", intern_error_text_start, "LENGTH OF tempo_split MUST LOWER OR EQUAL TO LENGTH OF arg_full_names IF ... IS NOT AN ARGUMENT OF THE FUNCTION.\n\nPLEASE, CHECK FIRST THAT ARGUMENTS ARE CORRECTLY ADDED INTO THE FUNCTION.\n\nFUNCTION: ", col2[i2], "\n\ntempo_split (", base::length(x = tempo_split), "):\n", base::paste0(tempo_split, collapse = "\n", recycle0 = FALSE), "\n\narg_full_names (", base::length(x = arg_full_names), "):\n", base::paste0(arg_full_names, collapse = "\n", recycle0 = FALSE), "\n\ni2:\n", i2, "\n\nIF ARGUMENTS ARE CORRECTLY ADDED, THEN ",intern_error_text_end, collapse = NULL, recycle0 = FALSE) ; base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", base::ifelse(test = base::is.null(x = warn), yes = "", no = base::paste0("IN ADDITION\nWARNING", base::ifelse(test = warn_count > 1, yes = "S", no = ""), ":\n\n", warn, collapse = NULL, recycle0 = FALSE)), collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL)
                         }
                         # end checking
                         tempo_out <- saferDev:::.all_args_here_fill(
