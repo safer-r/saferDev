@@ -12,7 +12,16 @@ testthat::test_that("all_args_here()", {
         NOT_CONSIDERED = 1
         }
     fun3 <- function(x){a$count(x)}
-
+    fun4 <- function(){dt <- base::c(2:8)}
+    fun5 <- function(...){dt <- base::c(2:8)}
+    fun6 <- function(x){
+        a <- function(x){x + 1}
+        a(x = x)
+    }
+    fun7 <- function(x){
+        a$count(x)
+        NOT_CONSIDERED = 1
+    }
     test <- function(
             text, 
             pattern
@@ -292,6 +301,23 @@ testthat::test_that("all_args_here()", {
     # if( (base::length(x = col1) == 0)){
     testthat::expect_no_error(all_args_here(x = fun3, export = FALSE, out_path = ".", df_name = "res.tsv", overwrite = FALSE, safer_check = TRUE, lib_path = NULL, error_text = "")) 
 
+    # if( ! base::is.null(x = warn)){ 
+    testthat::expect_no_error(all_args_here(x = fun7, export = FALSE, out_path = ".", df_name = "res.tsv", overwrite = FALSE, safer_check = TRUE, lib_path = NULL, error_text = ""))
+
+    # if(tempo_log){
+    testthat::expect_no_error(all_args_here(x = fun6, export = FALSE, out_path = ".", df_name = "res.tsv", overwrite = FALSE, safer_check = TRUE, lib_path = NULL, error_text = "")) 
+
+    # three_dots_log <- if(base::length(x = arg_full) > 0){
+    testthat::expect_no_error(all_args_here(x = fun4, export = TRUE, out_path = ".", df_name = "res.tsv", overwrite = FALSE, safer_check = TRUE, lib_path = NULL, error_text = ""))
+    a <- file.remove("./res.tsv")
+    testthat::expect_no_error(all_args_here(x = fun5, export = TRUE, out_path = ".", df_name = "res.tsv", overwrite = FALSE, safer_check = TRUE, lib_path = NULL, error_text = ""))
+    a <- file.remove("./res.tsv")
+
+    # if(export == TRUE){
+    testthat::expect_no_error(all_args_here(x = fun2, export = TRUE, out_path = ".", df_name = "res.tsv", overwrite = FALSE, safer_check = TRUE, lib_path = NULL, error_text = ""))
+    # a <- file.remove("./res.tsv") # but inactivated to test overwrite = TRUE below
+    testthat::expect_no_error(all_args_here(x = fun2, export = TRUE, out_path = ".", df_name = "res.tsv", overwrite = TRUE, safer_check = TRUE, lib_path = NULL, error_text = ""))
+    a <- file.remove("./res.tsv")
     #### end main code
 
     ## end tests (ordered by arg appearance and conditions in the code)
