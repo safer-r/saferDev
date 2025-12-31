@@ -1,5 +1,3 @@
-THE FOLLOWING VECTOR IS:
-
 [1] 1 2 3
 
 

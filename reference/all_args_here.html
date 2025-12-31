@@ -62,7 +62,7 @@
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">all_args_here</span><span class="op">(</span></span>
 <span>  <span class="va">x</span>,</span>
 <span>  export <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  path_out <span class="op">=</span> <span class="st">"."</span>,</span>
+<span>  out_path <span class="op">=</span> <span class="st">"."</span>,</span>
 <span>  df_name <span class="op">=</span> <span class="st">"res.tsv"</span>,</span>
 <span>  overwrite <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  safer_check <span class="op">=</span> <span class="cn">TRUE</span>,</span>
@@ -81,8 +81,8 @@
 <dd><p>Single logical value. Export the data frame into a .tsv file? If TRUE, the data frame is not returned by the function but only exported.</p></dd>
 
 
-<dt>path_out</dt>
-<dd><p>Single character string indicating the absolute pathway of the folder where to export the data frame. path_out = "." means the R working directory set by the user. Ignored if export is FALSE</p></dd>
+<dt>out_path</dt>
+<dd><p>Single character string indicating the absolute pathway of the folder where to export the data frame. out_path = "." means the R working directory set by the user. Ignored if export is FALSE</p></dd>
 
 
 <dt>df_name</dt>
@@ -90,7 +90,7 @@
 
 
 <dt>overwrite</dt>
-<dd><p>Single logical value. Overwrite potential df_name file already existing in path_out? Ignored if export is FALSE.</p></dd>
+<dd><p>Single logical value. Overwrite potential df_name file already existing in out_path? Ignored if export is FALSE.</p></dd>
 
 
 <dt>safer_check</dt>
@@ -147,8 +147,8 @@ Data frame:
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span>  <span class="co"># Example that return an error</span></span></span>
-<span class="r-in"><span><span class="fu">all_args_here</span><span class="op">(</span><span class="va">mean</span><span class="op">)</span> <span class="co"># example that return an error</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span>  <span class="co"># Example that returns an error</span></span></span>
+<span class="r-in"><span><span class="fu">all_args_here</span><span class="op">(</span><span class="va">mean</span><span class="op">)</span> <span class="co"># Example that returns an error</span></span></span>
 <span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/source.html" class="external-link">source</a></span><span class="op">(</span><span class="st">"https://raw.githubusercontent.com/safer-r/saferDev/main/dev/other/test2.R"</span><span class="op">)</span> ; <span class="fu">all_args_here</span><span class="op">(</span><span class="va">test2</span><span class="op">)</span> <span class="co"># the checked function must be executable</span></span></span>
 <span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error:</span> </span>
 <span class="r-err co"><span class="r-pr">#&gt;</span> </span>
@@ -179,14 +179,11 @@ Data frame:
 <span class="r-out co"><span class="r-pr">#&gt;</span>   MISSING_ARGS              STATUS</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1                             GOOD</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 2        n = 1 parent.frame(n = 1)</span>
+<span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span>  <span class="co"># Example that creates a file/folder in the working directory</span></span></span>
 <span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/source.html" class="external-link">source</a></span><span class="op">(</span><span class="st">"https://raw.githubusercontent.com/safer-r/.github/refs/heads/main/profile/backbone.R"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu">all_args_here</span><span class="op">(</span><span class="va">BACKBONE</span>, export <span class="op">=</span> <span class="cn">TRUE</span>, safer_check <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> AFTER RUNNING all_args_here() OF THE saferDev PACKAGE:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> RESULT EXPORTED IN:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> ./res.tsv</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> BUT INSIDE BACKBONE(), EVERYTHING SEEMS CLEAN.</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in eval(expr, envir, enclos):</span> object 'BACKBONE' not found</span>
+<span class="r-in"><span></span></span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>

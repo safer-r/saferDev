@@ -135,15 +135,15 @@
 <p><br></p>
 </div>
 <div class="section level3">
-<h3 id="argument-export-associated-with-argument-path_out-df_name-and-overwrite">Argument export (associated with argument path_out, df_name and
-overwrite)<a class="anchor" aria-label="anchor" href="#argument-export-associated-with-argument-path_out-df_name-and-overwrite"></a>
+<h3 id="argument-export-associated-with-argument-out_path-df_name-and-overwrite">Argument export (associated with argument out_path, df_name and
+overwrite)<a class="anchor" aria-label="anchor" href="#argument-export-associated-with-argument-out_path-df_name-and-overwrite"></a>
 </h3>
 <div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a><span class="fu">all_args_here</span>(</span>
 <span id="cb4-2"><a href="#cb4-2" tabindex="-1"></a>    <span class="at">x =</span> FUN2, <span class="co"># R function</span></span>
 <span id="cb4-3"><a href="#cb4-3" tabindex="-1"></a>    <span class="at">export =</span> <span class="cn">TRUE</span>, <span class="co"># export the data frame into a .tsv file?</span></span>
-<span id="cb4-4"><a href="#cb4-4" tabindex="-1"></a>    <span class="at">path_out =</span> <span class="st">"."</span>, <span class="co"># pathway of the folder where to export the data frame</span></span>
+<span id="cb4-4"><a href="#cb4-4" tabindex="-1"></a>    <span class="at">out_path =</span> <span class="st">"."</span>, <span class="co"># pathway of the folder where to export the data frame</span></span>
 <span id="cb4-5"><a href="#cb4-5" tabindex="-1"></a>    <span class="at">df_name =</span> <span class="st">"res.tsv"</span>, <span class="co"># name of the exported data frame file</span></span>
-<span id="cb4-6"><a href="#cb4-6" tabindex="-1"></a>    <span class="at">overwrite =</span> <span class="cn">TRUE</span> <span class="co"># Overwrite potential df_name file already existing in path_out?</span></span>
+<span id="cb4-6"><a href="#cb4-6" tabindex="-1"></a>    <span class="at">overwrite =</span> <span class="cn">TRUE</span> <span class="co"># Overwrite potential df_name file already existing in out_path?</span></span>
 <span id="cb4-7"><a href="#cb4-7" tabindex="-1"></a>)</span>
 <span id="cb4-8"><a href="#cb4-8" tabindex="-1"></a><span class="sc">&gt;</span> </span>
 <span id="cb4-9"><a href="#cb4-9" tabindex="-1"></a><span class="er">&gt;</span> INSIDE <span class="fu">FUN2</span>(), ARGUMENTS ARE MISSING.</span>
@@ -157,9 +157,9 @@ overwrite)<a class="anchor" aria-label="anchor" href="#argument-export-associate
 <div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a><span class="fu">all_args_here</span>(</span>
 <span id="cb5-2"><a href="#cb5-2" tabindex="-1"></a>    <span class="at">x =</span> FUN1, <span class="co"># R function</span></span>
 <span id="cb5-3"><a href="#cb5-3" tabindex="-1"></a>    <span class="at">export =</span> <span class="cn">FALSE</span>, <span class="co"># export the data frame into a .tsv file?</span></span>
-<span id="cb5-4"><a href="#cb5-4" tabindex="-1"></a>    <span class="at">path_out =</span> <span class="st">"."</span>, <span class="co"># pathway of the folder where to export the data frame.</span></span>
+<span id="cb5-4"><a href="#cb5-4" tabindex="-1"></a>    <span class="at">out_path =</span> <span class="st">"."</span>, <span class="co"># pathway of the folder where to export the data frame.</span></span>
 <span id="cb5-5"><a href="#cb5-5" tabindex="-1"></a>    <span class="at">df_name =</span> <span class="st">"res.tsv"</span>, <span class="co"># name of the exported data frame file</span></span>
-<span id="cb5-6"><a href="#cb5-6" tabindex="-1"></a>    <span class="at">overwrite =</span> <span class="cn">FALSE</span>, <span class="co"># Overwrite potential df_name file already existing in path_out?</span></span>
+<span id="cb5-6"><a href="#cb5-6" tabindex="-1"></a>    <span class="at">overwrite =</span> <span class="cn">FALSE</span>, <span class="co"># Overwrite potential df_name file already existing in out_path?</span></span>
 <span id="cb5-7"><a href="#cb5-7" tabindex="-1"></a>    <span class="at">safer_check =</span> <span class="cn">TRUE</span>, <span class="co"># perform some "safer" checks? Warning : always set this argument to FALSE if all_args_here() is used inside another safer function.</span></span>
 <span id="cb5-8"><a href="#cb5-8" tabindex="-1"></a>    <span class="at">lib_path =</span> <span class="cn">NULL</span>, <span class="co"># absolute pathways of the directories containing the required packages if not in the default directories.</span></span>
 <span id="cb5-9"><a href="#cb5-9" tabindex="-1"></a>    <span class="at">error_text =</span> <span class="st">""</span> <span class="co"># add information in error messages returned by the function.</span></span>
