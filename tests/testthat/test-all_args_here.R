@@ -33,6 +33,16 @@ testthat::test_that("all_args_here()", {
     fun10 <- function(x){
         saferDev:::.colons_check_message(jfgkdgfksdgf = 2:8)
     }
+    fun11 <- function(x){
+        base::paste0(c(2:8))
+    }
+    fun12 <- function(x){
+        base::gregexpr(pattern = base::paste0(pattern, "\\(#"), text = text)
+        repeat(x)
+    }
+    fun13 <- function(x){
+        base::c(2:8)
+    }
     test <- function(
             text, 
             pattern
@@ -322,6 +332,13 @@ testthat::test_that("all_args_here()", {
     # if(tempo_log){
     testthat::expect_no_error(all_args_here(x = fun6, export = FALSE, out_path = ".", df_name = "res.tsv", overwrite = FALSE, safer_check = TRUE, lib_path = NULL, error_text = "")) 
 
+    # if(tempo_string != "::"){
+    testthat::expect_error(all_args_here(x = fun11, export = FALSE, out_path = ".", df_name = "res.tsv", overwrite = FALSE, safer_check = TRUE, lib_path = NULL, error_text = "")) 
+
+    # if(base::length(x = tempo_all_args) == 0){
+    testthat::expect_no_error(all_args_here(x = fun12, export = FALSE, out_path = ".", df_name = "res.tsv", overwrite = FALSE, safer_check = TRUE, lib_path = NULL, error_text = "")) 
+    testthat::expect_no_error(all_args_here(x = fun13, export = FALSE, out_path = ".", df_name = "res.tsv", overwrite = FALSE, safer_check = TRUE, lib_path = NULL, error_text = "")) 
+
 
 
 
@@ -336,6 +353,7 @@ testthat::test_that("all_args_here()", {
     # a <- file.remove("./res.tsv") # but inactivated to test overwrite = TRUE below
     testthat::expect_no_error(all_args_here(x = fun2, export = TRUE, out_path = ".", df_name = "res.tsv", overwrite = TRUE, safer_check = TRUE, lib_path = NULL, error_text = ""))
     a <- file.remove("./res.tsv")
+
     #### end main code
 
     ## end tests (ordered by arg appearance and conditions in the code)
