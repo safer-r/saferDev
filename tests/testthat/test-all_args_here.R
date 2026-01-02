@@ -41,7 +41,7 @@ testthat::test_that("all_args_here()", {
         repeat(x)
     }
     fun13 <- function(x){
-        base::c(2:8)
+        base::as.environment(x)
     }
     test <- function(
             text, 
