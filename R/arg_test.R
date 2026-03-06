@@ -30,7 +30,7 @@
 #'      - $problem: a logical vector indicating if error or not.
 #'      
 #'      - $expected.error: optional logical vector indicating the expected error specified in the expect_error argument.
-#'      - $message: either NULL if $kind is always "OK", or the messages.
+#'      - $message: either NULL (empty) if $kind is always "OK", or the messages.
 #'      
 #' - $sys.info: system and packages info.
 #' 
@@ -1004,6 +1004,9 @@ arg_test <- function(
     # end creation of the txt instruction that includes several loops
 
     if(parall == TRUE){
+        # fun code
+        fun_eval <-  base::eval(expr = base::parse(text = fun, file = "", n = NULL, prompt = "?", keep.source = base::getOption(x = "keep.source", default = NULL), srcfile = NULL, encoding = "unknown"), envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL)) # recover the list of the i1 compartment
+        # end fun code
         # list of i numbers that will be split
         i.list <- base::vector(mode = "list", length =  base::length(x = val)) # positions to split in parallel jobs
         for(i2 in 1:base::length(x = arg)){
@@ -1044,6 +1047,7 @@ arg_test <- function(
             total.comp.nb = total.comp.nb, 
             sp_plot_fun = sp_plot_fun,
             i.list = i.list, 
+            fun_eval = fun_eval, 
             fun.tested = fun,
             arg.values = arg.values,
             fun.test = fun.test,
@@ -1070,6 +1074,7 @@ arg_test <- function(
         total.comp.nb, 
         sp_plot_fun, 
         i.list, 
+        fun_eval, 
         fun.tested, 
         arg.values, 
         fun.test, 
@@ -1126,6 +1131,9 @@ arg_test <- function(
                     base::assign(x = "val", value = val,  pos = -1, envir = base::get(x = env.name, pos = , envir = base::sys.nframe(), mode = "any", inherits = TRUE), inherits = FALSE, immediate = TRUE) # var replaced by val
                 }
                 # end new environment
+                # recreate the fun function in the new env
+                base::assign(x = fun.tested, value = fun_eval,  pos = -1, envir = base::get(x = env.name, pos = , envir = base::sys.nframe(), mode = "any", inherits = TRUE), inherits = FALSE, immediate = TRUE)
+                # end recreate the fun function in the new env
                 print_count_loop <- 0
                 base::suppressMessages(expr = base::suppressWarnings(expr = base::eval(expr = base::parse(text = code, file = "", n = NULL, prompt = "?", keep.source = base::getOption(x = "keep.source", default = NULL), srcfile = NULL, encoding = "unknown"), envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL)), classes = "warning"), classes = "message")
                 base::"colnames<-"(data, arg)
