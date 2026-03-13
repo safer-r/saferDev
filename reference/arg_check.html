@@ -29,7 +29,6 @@
   <div class="dropdown-menu" aria-labelledby="dropdown-articles">
     <a class="dropdown-item" href="../articles/all_args_here.html">all_args_here</a>
     <a class="dropdown-item" href="../articles/arg_check.html">arg_check</a>
-    <a class="dropdown-item" href="../articles/arg_test.html">arg_test</a>
     <a class="dropdown-item" href="../articles/colons_check.html">colons_check</a>
     <a class="dropdown-item" href="../articles/env_check.html">env_check</a>
     <a class="dropdown-item" href="../articles/get_message.html">get_message</a>
@@ -88,7 +87,7 @@
 
 
 <dt>class</dt>
-<dd><p>Single character string. Either one of the class() result or "vector" or "ggplot2" (i.e., objects of class c("gg", "ggplot")) or NULL. See the warning section below.</p></dd>
+<dd><p>Single character string. Either one of the class() result or "vector" or "ggplot2" (i.e., objects of class c("gg", "ggplot") for R &lt; 4.5 and c("ggplot2::ggplot", "ggplot", "ggplot2::gg", "S7_object", "gg") otherwise) or "ggplot_built" (i.e., objects of class "ggplot_built" for R &lt; 4.5 and c("ggplot2::ggplot_built", "ggplot_built",          "ggplot2::gg", "S7_object") otherwise) or NULL. See the warning section below.</p></dd>
 
 
 <dt>typeof</dt>
@@ -181,7 +180,7 @@
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
-    <div class="dont-index"><p><code><a href="https://rdrr.io/r/base/match.arg.html" class="external-link">match.arg</a></code> et <code><a href="arg_test.html">arg_test</a></code>.</p></div>
+    <div class="dont-index"><p><code><a href="https://rdrr.io/r/base/match.arg.html" class="external-link">match.arg</a></code>.</p></div>
     </div>
     <div class="section level2">
     <h2 id="author">Author<a class="anchor" aria-label="anchor" href="#author"></a></h2>

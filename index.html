@@ -53,7 +53,6 @@
   <div class="dropdown-menu" aria-labelledby="dropdown-articles">
     <a class="dropdown-item" href="articles/all_args_here.html">all_args_here</a>
     <a class="dropdown-item" href="articles/arg_check.html">arg_check</a>
-    <a class="dropdown-item" href="articles/arg_test.html">arg_test</a>
     <a class="dropdown-item" href="articles/colons_check.html">colons_check</a>
     <a class="dropdown-item" href="articles/env_check.html">env_check</a>
     <a class="dropdown-item" href="articles/get_message.html">get_message</a>
@@ -126,30 +125,26 @@
 <td align="left">Check expected values of arguments of functions: class, type, mode, length, restricted values panel, kind of numeric values in addition to the distinction between ‘integer’ and ‘double’ (proportion only? Inf values authorized? negative values authorized? Integers of type ‘double’?).</td>
 </tr>
 <tr class="odd">
-<td align="left"><strong>arg_test()</strong></td>
-<td align="left">Test a set of values for a defined set of arguments of a function. Contrary to <code><a href="https://testthat.r-lib.org/reference/expect_error.html" class="external-link">testthat::expect_error()</a></code>, the function 1) tests a batch of argument values and 2) returns a pdf of outputs if a graphic function is tested.</td>
-</tr>
-<tr class="even">
 <td align="left"><strong>colons_check()</strong></td>
 <td align="left">Verify that all the functions used inside a function are all referenced by their package attribution. For instance: <code><a href="https://rdrr.io/r/base/mean.html" class="external-link">base::mean()</a></code> and not <code><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean()</a></code>, or <code>saferDev:::.base_op_check()</code> and not <code><a href="reference/dot-base_op_check.html">.base_op_check()</a></code>.</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td align="left"><strong>env_check()</strong></td>
 <td align="left">Verify that object names in the environment defined by the pos argument are identical or not to object names in the above environments (following R Scope). This can be used to verify that names used for objects inside a function or in the working environment do not override names of objects already present in the above R environments, following the R scope.</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td align="left"><strong>get_message()</strong></td>
 <td align="left">Return the error, warning or simple (non error non warning) message if ever exist of an instruction written between quotes.</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td align="left"><strong>is_function_here()</strong></td>
 <td align="left">Check if required functions are present in installed packages. This controls for instance modifications of function names depending on package versions.</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td align="left"><strong>is_package_here()</strong></td>
 <td align="left">Check if required packages are installed locally.</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td align="left"><strong>report()</strong></td>
 <td align="left">Print a character string or a data object into a same log file.</td>
 </tr>
@@ -171,11 +166,11 @@
 <p><em>saferDev</em> can be currently be installed from GitHub:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># install.packages("remotes")</span></span>
-<span><span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"https://github.com/safer-r/saferDev"</span><span class="op">)</span> <span class="co"># or open R as admin and remotes::install_github("https://github.com/safer-r/saferDev", lib = "C:/Program Files/R/R-4.4.2/library")</span></span></code></pre></div>
+<span><span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/remotes/man/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"https://github.com/safer-r/saferDev"</span><span class="op">)</span> <span class="co"># or open R as admin and remotes::install_github("https://github.com/safer-r/saferDev", lib = "C:/Program Files/R/R-4.4.2/library")</span></span></code></pre></div>
 <p>Older versions can be installed like this:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">v</span> <span class="op">&lt;-</span> <span class="st">"v1.0"</span> <span class="co"># desired tag version</span></span>
-<span><span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"https://github.com/safer-r/saferDev/tree/"</span>, <span class="va">v</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/remotes/man/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"https://github.com/safer-r/saferDev/tree/"</span>, <span class="va">v</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <p><br></p>
 </div>
 <div class="section level2">
@@ -198,6 +193,7 @@
 </h2>
 <p><a href="https://github.com/Tintin2710" class="external-link">Haiding Wang</a>, Bioinformatics and Biostatistics Hub, Institut Pasteur, Paris, France</p>
 <p><a href="https://github.com/yushiHn" class="external-link">Yushi Han</a>, Bioinformatics and Biostatistics Hub, Institut Pasteur, Paris, France</p>
+<p><a href="https://github.com/mialgrs" class="external-link">Mia Legras</a>, Bioinformatics and Biostatistics Hub, Institut Pasteur, Paris, France</p>
 <p><a href="https://github.com/js2264" class="external-link">Jacques Serizay</a>, Spatial Regulation of Genomes team, Institut Pasteur, Paris, France</p>
 <p><a href="https://github.com/gael-millot" class="external-link">Gael A. Millot</a>, Bioinformatics and Biostatistics Hub, Institut Pasteur, Paris, France</p>
 <p><br></p>
