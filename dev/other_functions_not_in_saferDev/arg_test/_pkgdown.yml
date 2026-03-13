@@ -23,6 +23,9 @@ reference:
 - title: "arg_check"
   contents: 
   - arg_check
+- title: "arg_test"
+  contents: 
+  - arg_test
 - title: "env_check"
   contents: 
   - env_check
