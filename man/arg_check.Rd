@@ -28,7 +28,7 @@ arg_check(
 \arguments{
 \item{data}{Object to test.}
 
-\item{class}{Single character string. Either one of the class() result or "vector" or "ggplot2" (i.e., objects of class c("gg", "ggplot")) or NULL. See the warning section below.}
+\item{class}{Single character string. Either one of the class() result or "vector" or "ggplot2" (i.e., objects of class c("gg", "ggplot") for R < 4.5 and c("ggplot2::ggplot", "ggplot", "ggplot2::gg", "S7_object", "gg") otherwise) or "ggplot_built" (i.e., objects of class "ggplot_built" for R < 4.5 and c("ggplot2::ggplot_built", "ggplot_built",          "ggplot2::gg", "S7_object") otherwise) or NULL. See the warning section below.}
 
 \item{typeof}{Single character string. Either one of the typeof() result or NULL.}
 
@@ -97,7 +97,7 @@ arg_check(data = test, print = TRUE, class = "matrix", mode = "numeric", error_t
 
 }
 \seealso{
-\code{\link{match.arg}} et \code{\link{arg_test}}.
+\code{\link{match.arg}}.
 }
 \author{
 \href{gael.millot@pasteur.fr}{Gael Millot}

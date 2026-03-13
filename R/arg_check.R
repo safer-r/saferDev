@@ -39,7 +39,7 @@
 #' Argument "class" with value "vector" means that the object is tested for class(data) returning only "numeric", "integer", "character", "logical", "complex" or "expression". Please, use another value of class (e.g., class = "call" or class = "list") for other types and class of objects
 #'  
 #' Since R >= 4.0.0, class(matrix()) returns "matrix" "array", and not "matrix" alone as before. However, use argument class = "matrix" to check for matrix object (of class "matrix" "array" in R >= 4.0.0) and use argument class = "array" to check for array object (of class "array" in R >= 4.0.0).
-#' @seealso \code{\link{match.arg}} et \code{\link{arg_test}}.
+#' @seealso \code{\link{match.arg}}.
 #' @author \href{gael.millot@pasteur.fr}{Gael Millot}
 #' @author \href{yushi.han2000@gmail.com}{Yushi Han}
 #' @author \href{wanghaiding442@gmail.com}{Haiding Wang}
