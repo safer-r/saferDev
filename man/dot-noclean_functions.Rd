@@ -2,7 +2,7 @@
 % Please edit documentation in R/intern_.noclean_functions.R
 \name{.noclean_functions}
 \alias{.noclean_functions}
-\title{.noclean_functions}
+\title{Internal No-Clean Functions}
 \usage{
 .noclean_functions(col1, col2, col3, ini, lib_path, error_text)
 }
@@ -15,28 +15,36 @@
 
 \item{ini}{Vector of strings of the initial function code analyzed.}
 
-\item{lib_path}{Vector of characters specifying the absolute pathways of the directories containing the required packages for the function, if not in the default directories. Useful when R package are not installed in the default directories because of lack of admin rights.  More precisely, lib_path is passed through the new argument of .libPaths() so that the new library paths are unique(c(new, .Library.site, .Library)). Warning: .libPaths() is restored to the initial paths, after function execution. Ignored if NULL (default) or if the safer_check argument is FALSE: only the pathways specified by the current .libPaths() are used for package calling.}
+\item{lib_path}{Vector of characters specifying the absolute pathways of the directories containing the required packages for the function, if not in the default directories. Useful when R packages are not installed in the default directories because of lack of admin rights. More precisely, \code{lib_path} is passed through the \code{new} argument of \code{.libPaths()} so that the new library paths are \code{unique(c(new, .Library.site, .Library))}. Warning: \code{.libPaths()} is restored to the initial paths, after function execution. Ignored if \code{NULL} (default) or if the \code{safer_check} argument is \code{FALSE}: only the pathways specified by the current \code{.libPaths()} are used for package calling.}
 
-\item{error_text}{Single character string used to add information in error messages returned by the function, notably if the function is inside other functions, which is practical for debugging. Example: error_text = " INSIDE <PACKAGE_1>::<FUNCTION_1> INSIDE <PACKAGE_2>::<FUNCTION_2>.". If NULL, converted into "".}
+\item{error_text}{Single character string used to add information in error messages returned by the function, notably if the function is inside other functions, which is practical for debugging. Example: \code{error_text = " INSIDE <PACKAGE_1>::<FUNCTION_1> INSIDE <PACKAGE_2>::<FUNCTION_2>."}. If \code{NULL}, converted into \code{""}.}
 }
 \value{
-A logical vector indicating if function names of col2 are inside quotes or after $ (TRUE) in ini or not (FALSE). Can be length 0.
+A logical vector indicating if function names of \code{col2} are inside quotes or after \code{$} (\code{TRUE}) in \code{ini} or not (\code{FALSE}). Can be length 0.
 }
 \description{
-Indicate if function names are inside quotes or after $
+Indicate if function names are inside quotes or after \code{$}
 }
 \details{
-- Warning: requires saferDev::arg_check, saferDev:::.has_odd_number_of_quotes. In main safer functions, in the section "######## check of the required functions from the required packages" add these functions when checking for the presence of saferDev:::.noclean_functions.
+Warning: requires \code{saferDev::arg_check}, \code{saferDev:::.has_odd_number_of_quotes}. In main safer functions, in the section \code{"######## check of the required functions from the required packages"} add these functions when checking for the presence of \code{saferDev:::.noclean_functions}.
 }
 \examples{
-\dontrun{ # Example that shouldn't be run because this is an internal function (not found by devtools::check())
+\dontrun{
+# Example that shouldn't be run because this is an internal function (not found by devtools::check())
 source("https://raw.githubusercontent.com/safer-r/saferDev/main/dev/other/test.R")
-saferDev:::.noclean_functions(col1 =  c(15, 17), col2 = c("gregexpr", "regmatches"), col3 = c("matches <- ",  "matched_strings <- " ), ini = utils::capture.output(test), lib_path = NULL, error_text = " INSIDE P1::F1")
+saferDev:::.noclean_functions(col1 = c(15, 17), col2 = c("gregexpr", "regmatches"), 
+col3 = c("matches <- ", "matched_strings <- "), 
+ini = utils::capture.output(test), lib_path = NULL, 
+error_text = " INSIDE P1::F1")
 }
 
 
 }
 \author{
-\href{gael.millot@pasteur.fr}{Gael Millot}
+\href{mailto:gael.millot@pasteur.fr}{Gael Millot}
+
+\href{mailto:yushi.han2000@gmail.com}{Yushi Han}
+
+\href{mailto:wanghaiding442@gmail.com}{Haiding Wang}
 }
 \keyword{internal}

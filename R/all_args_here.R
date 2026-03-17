@@ -6,19 +6,19 @@
 #' @param out_path Single character string indicating the absolute pathway of the folder where to export the data frame. \code{out_path = "."} means the R working directory set by the user. Ignored if export is \code{FALSE}.
 #' @param df_name Single character string indicating the name of the exported data frame file. Ignored if export is \code{FALSE}.
 #' @param overwrite Single logical value. Overwrite potential \code{df_name} file already existing in \code{out_path}? Ignored if export is \code{FALSE}.
-#' @param safer_check Single logical value. Perform some "safer" checks? If \code{TRUE}, checkings are performed before main code running (see \href{https://github.com/safer-r}{safer-r project}): 1) correct \code{lib_path} argument value 2) required functions and related packages effectively present in local R libraries and 3) R classical operators (like \code{"<-"}) not overwritten by another package because of the R scope. WArning: must be set to \code{FALSE} if this function is used inside another "safer" function to avoid pointless multiple checkings.
-#' @param lib_path Vector of characters specifying the absolute pathways of the directories containing the required packages for the function, if not in the default directories. Useful when R packages are not installed in the default directories because of lack of admin rights. More precisely, \code{lib_path} is passed through the \code{new} argument of \code{.libPaths()} so that the new library paths are \code{unique(c(new, .Library.site, .Library))}. Warning: \code{.libPaths()} is restored to the initial paths, after function execution. Ignored if \code{NULL} (default) or if the \code{safer_check} argument is \code{FALSE}: only the pathways specified by the current \code{.libPaths()} are used for package calling.
+#' @param safer_check Single logical value. Perform the "safer" checks? If \code{TRUE}, checkings are performed before main code running (see the \href{https://github.com/safer-r}{safer-r project}): 1) correct \code{lib_path} argument value 2) required functions and related packages effectively present in local R libraries and 3) R classical operators (like \code{"<-"}) not overwritten by another package because of the R scope. Warning: must be set to \code{FALSE} if this function is used inside another "safer" function to avoid pointless multiple checkings.
+#' @param lib_path Vector of characters specifying the absolute pathways of the directories containing the required packages for the function, if not in the default directories. Useful when R packages are not installed in the default directories because of lack of admin rights. More precisely, \code{lib_path} is passed through the \code{new} argument of \code{.libPaths()} so that the new library paths are \code{unique(c(new, .Library.site, .Library))}. Warning: \code{.libPaths()} is restored to the initial paths, after function execution. Ignored if \code{NULL} (default) or if the \code{safer_check} argument is \code{FALSE}. In these 2 cases, only the pathways specified by the current \code{.libPaths()} are used for package calling.
 #' @param error_text Single character string used to add information in error messages returned by the function, notably if the function is inside other functions, which is practical for debugging. Example: \code{error_text = " INSIDE <PACKAGE_1>::<FUNCTION_1> INSIDE <PACKAGE_2>::<FUNCTION_2>."}. If \code{NULL}, converted into \code{""}.
 #' @returns 
 #' A data frame indicating the missing arguments or a message saying that everything seems fine.
 #' If \code{export} argument is \code{TRUE}, then the data frame is exported as \code{res.tsv} instead of being returned.
-#' Data frame: 
+#' Column descriptions: 
 #' \itemize{
-#'   \item \code{$LINE_NB}: the line number in the function code (starting at the \code{"<- function"} line, i.e., without counting the \code{#'} header lines)
+#'   \item \code{$LINE_NB}: the line number in the function code (starting at the \code{"<- function"} line, i.e., without counting the \code{#'} header lines).
 #'   \item \code{$FUN_NAME}: the function name.
-#'   \item \code{$FUN_ARGS}: the written arguments of \code{FUN_NAME}. \code{"NOT_CONSIDERED"} means that the function is between quotes or after \code{$}
-#'   \item \code{$FUN_POS}: the position of the first character of the function name in the \code{$LINE_NB} line of the code.
-#'   \item \code{$DEF_ARGS}: the defaults arguments of \code{FUN_NAME}. \code{"NO_ARGS"} means that the function has no arguments. \code{"INTERNAL_FUNCTION"} means that the function has been created inside the checked function. \code{"SKIPPED"} means that the function is not analyzed for the reason indicated in the "details" section below.
+#'   \item \code{$FUN_ARGS}: the written arguments of \code{FUN_NAME}. \code{"NOT_CONSIDERED"} means that the function is between quotes or after \code{$}.
+#'   \item \code{$FUN_POS}: the position of the first character of the function name in the \code{$LINE_NB} line.
+#'   \item \code{$DEF_ARGS}: the defaults arguments of \code{FUN_NAME}. \code{"NO_ARGS"} means that the function has no arguments. \code{"INTERNAL_FUNCTION"} means that the function has been created inside the checked function. \code{"SKIPPED"} means that the function is not analyzed for the reason indicated in the "details" section.
 #'   \item \code{$MISSING_ARG_NAMES}: the missing argument names in \code{FUN_ARGS}.
 #'   \item \code{$MISSING_ARGS}: the missing arguments with their values in \code{FUN_ARGS}.
 #'   \item \code{$STATUS}: either \code{"GOOD"}, meaning that all the arguments are already written, or a new proposal of arguments writing, or indicates if some arguments are not fully written (abbreviation is discouraged), or nothing.
@@ -34,24 +34,24 @@
 #' 
 #' Function names preceded by \code{$} are not considered.
 #'  
-#' The following R functions are skipped: \code{function}, \code{if}, \code{for}, \code{while}, \code{repeat} and \code{"else"}.
-#' 
-#' Warning: the following R functions are also skipped (as indicated by \code{"SKIPPED"} in the \code{DEF_ARGS} column of the returned data frame) for the indicated reason: \code{"as.environment"} (\href{https://bugs.r-project.org/show_bug.cgi?id=18849}{R Bug Report}).
-#' 
-#' Warning: some functions, like \code{rownames()}, have different arguments depending on whether something is assigned to it (e.g., \code{rownames(x) <- "a"}) or not. The \code{all_args_here()} function always proposes the arguments defined in the help page without assignment, meaning that it cannot detect the assignment. A way to bypass this is to use the "exact" writing of the function. For instance, \code{base::"rownames<-"(x, "a")} instead of using \code{base::rownames(x) <- "a"}, and use \code{getAnywhere("rownames<-")} to see the arguments of the function.
+#' The following R functions are skipped: \code{function}, \code{if}, \code{for}, \code{while}, \code{repeat} and \code{else}.
 #' 
 #' Most of the time, \code{all_args_here()} does not check inside comments, but some unexpected writing could dupe \code{all_args_here()}. Please, report \href{https://github.com/safer-r/saferDev/issues}{here} if it is the case.
 #' 
-#' The returned line numbers are indicative, depending on which source is checked. For instance, \code{saferDev::report} (compiled) has not the same line numbers as its source file (\href{https://github.com/safer-r/saferDev/blob/main/R/report.R}{source file}). Notably, compiled functions do not have comments anymore, compared to the same source function sourced into the working environment. In addition, the counting starts at the \code{"<- function"} line, i.e., without counting the \code{#'} header lines potentially present in source files.
+#' The returned line numbers are indicative, depending on which source is checked. For instance, \code{saferDev::report} (compiled) has not the same line numbers as its \href{https://github.com/safer-r/saferDev/blob/main/R/report.R}{source file}. Notably, compiled functions do not have comments anymore, compared to the same source function sourced into the working environment. In addition, the counting starts at the \code{"<- function"} line, i.e., without counting the \code{#'} header lines potentially present in source files.
 #' 
-#' The function works by notably replacing first in the code: 1) the three consecutive characters \code{'"'} or \code{'"'} by three spaces, 2) \code{"\"'"} and \code{'\'"'} by four spaces and 3) escape quotes like \code{\"} or \code{\'} by two spaces.
+#' The function works first by replacing in the code: 1) the three consecutive characters \code{'"'} or \code{'"'} by three spaces, 2) \code{"\"'"} and \code{'\'"'} by four spaces and 3) escape quotes like \code{\"} or \code{\'} by two spaces.
 #' 
-#' Warnings: 
+#' Warnings:
 #' \enumerate{
+#'   \item The following R functions are skipped (as indicated by \code{"SKIPPED"} in the \code{DEF_ARGS} column of the returned data frame) for the indicated reason: \href{https://bugs.r-project.org/show_bug.cgi?id=18849}{\code{as.environment()}}.
+#'   \item Some functions, like \code{rownames()}, have different arguments depending on whether something is assigned to it (e.g., \code{rownames(x) <- "a"}) or not. The \code{all_args_here()} function always proposes the arguments defined in the help page without assignment, meaning that it cannot detect the assignment. A way to bypass this is to use the "exact" writing of the function. For instance, \code{base::"rownames<-"(x, "a")} instead of using \code{base::rownames(x) <- "a"}, and use \code{getAnywhere("rownames<-")} to see the arguments of the function.
 #'   \item The function could not properly work if any comma is present in default argument values. Please, report \href{https://github.com/safer-r/saferDev/issues}{here} if it is the case.
 #'   \item Proposals in the \code{STATUS} column are only suggestions, as it is difficult to anticipate all the exceptions with arguments writing.
 #' }
 #' @author \href{mailto:gael.millot@pasteur.fr}{Gael Millot}
+#' @author \href{yushi.han2000@gmail.com}{Yushi Han}
+#' @author \href{wanghaiding442@gmail.com}{Haiding Wang}  
 #' @examples
 #' \dontrun{
 #' # Example that returns an error

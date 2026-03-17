@@ -2,7 +2,7 @@
 % Please edit documentation in R/arg_check.R
 \name{arg_check}
 \alias{arg_check}
-\title{arg_check}
+\title{Argument Check}
 \usage{
 arg_check(
   data,
@@ -28,81 +28,80 @@ arg_check(
 \arguments{
 \item{data}{Object to test.}
 
-\item{class}{Single character string. Either one of the class() result or "vector" or "ggplot2" (i.e., objects of class c("gg", "ggplot") for R < 4.5 and c("ggplot2::ggplot", "ggplot", "ggplot2::gg", "S7_object", "gg") otherwise) or "ggplot_built" (i.e., objects of class "ggplot_built" for R < 4.5 and c("ggplot2::ggplot_built", "ggplot_built",          "ggplot2::gg", "S7_object") otherwise) or NULL. See the warning section below.}
+\item{class}{Single character string. Either one of the \code{class()} result or \code{"vector"} or \code{"ggplot2"} (i.e., objects of class \code{c("gg", "ggplot")} for R < 4.5 and \code{c("ggplot2::ggplot", "ggplot", "ggplot2::gg", "S7_object", "gg")} otherwise) or \code{"ggplot_built"} (i.e., objects of class \code{"ggplot_built"} for R < 4.5 and \code{c("ggplot2::ggplot_built", "ggplot_built", "ggplot2::gg", "S7_object")} otherwise) or \code{NULL}. See the warning section below.}
 
-\item{typeof}{Single character string. Either one of the typeof() result or NULL.}
+\item{typeof}{Single character string. Either one of the \code{typeof()} result or \code{NULL}.}
 
-\item{mode}{Single character string. Either one of the mode() result (for non-vector object) or NULL.}
+\item{mode}{Single character string. Either one of the \code{mode()} result (for non-vector object) or \code{NULL}.}
 
-\item{length}{Single numeric value indicating the length of the object. Not considered if NULL.}
+\item{length}{Single numeric value indicating the length of the object. Not considered if \code{NULL}.}
 
-\item{prop}{Single logical value. Are the numeric values between 0 and 1 (proportion)? If TRUE, can be used alone, without considering class, etc.}
+\item{prop}{Single logical value. Are the numeric values between 0 and 1 (proportion)? If \code{TRUE}, can be used alone, without considering class, etc.}
 
-\item{double_as_integer_allowed}{Single logical value. If TRUE, no error is reported in the cheking message if argument is set to typeof == "integer" or class == "integer", while the reality is typeof == "double" or class == "numeric" but the numbers strictly have zero as modulo (remainder of a division). This means that i <- 1, which is typeof(i) -> "double" is considered as integer with double_as_integer_allowed = TRUE. WARNING: data mod 1 == 0L but not isTRUE(all.equal(data mod 1, 0)) is used here because the argument checks for integers stored as double (does not check for decimal numbers that are approximate integers).}
+\item{double_as_integer_allowed}{Single logical value. If \code{TRUE}, no error is reported in the checking message if argument is set to \code{typeof = "integer"} or \code{class = "integer"}, while the reality is \code{typeof == "double"} or \code{class == "numeric"} but the numbers strictly have zero as modulo (reminder of a division). This means that \code{i <- 1}, which is \code{typeof(i) -> "double"} is considered as integer with \code{double_as_integer_allowed = TRUE}. WARNING: \code{data \%\% 1 == 0L} but not \code{isTRUE(all.equal(data \%\% 1, 0))} is used here because the argument checks for integers stored as double (does not check for decimal numbers that are approximate integers).}
 
-\item{options}{Vector of character strings or integers indicating all the possible option values for the data argument, or NULL. Numbers of type "double" are accepted if they have a 0 modulo.}
+\item{options}{Vector of character strings or integers indicating all the possible option values for the \code{data} argument, or \code{NULL}. Numbers of type \code{"double"} are accepted if they have a 0 modulo.}
 
-\item{all_options_in_data}{Single logical value. If TRUE, all of the options must be present at least once in the data argument, and nothing else. If FALSE, some or all of the options must be present in the data argument, and nothing else. Ignored if options base::is.null.}
+\item{all_options_in_data}{Single logical value. If \code{TRUE}, all of the options must be present at least once in the \code{data} argument, and nothing else. If \code{FALSE}, some or all of the options must be present in the \code{data} argument, and nothing else. Ignored if \code{options} is \code{base::is.null}.}
 
-\item{na_contain}{Single logical value. Can the data argument contain NA?}
+\item{na_contain}{Single logical value. Can the \code{data} argument contain \code{NA}?}
 
-\item{neg_values}{Single logical value. Are negative numeric values authorized? Warning: the default setting is TRUE, meaning that, in that case, no check is performed for the presence of negative values. The neg_values argument is activated only when set to FALSE. In addition, (1) neg_values = FALSE can only be used when class, typeof or mode arguments are not NULL, otherwise return an error message, (2) the presence of negative values is not checked with neg_values = FALSE if the tested object is a factor and the following checking message is returned "OBJECT MUST BE MADE OF NON NEGATIVE VALUES BUT IS A FACTOR".}
+\item{neg_values}{Single logical value. Are negative numeric values authorized? Warning: the default setting is \code{TRUE}, meaning that, in that case, no check is performed for the presence of negative values. The \code{neg_values} argument is activated only when set to \code{FALSE}. In addition, (1) \code{neg_values = FALSE} can only be used when \code{class}, \code{typeof} or \code{mode} arguments are not \code{NULL}, otherwise return an error message, (2) the presence of negative values is not checked with \code{neg_values = FALSE} if the tested object is a factor and the following checking message is returned \code{"OBJECT MUST BE MADE OF NON NEGATIVE VALUES BUT IS A FACTOR"}.}
 
-\item{inf_values}{Single logical value. Are infinite numeric values authorized (Inf or -Inf)? Identical remarks as for the neg_values argument.}
+\item{inf_values}{Single logical value. Are infinite numeric values authorized (\code{Inf} or \code{-Inf})? Identical remarks as for the \code{neg_values} argument.}
 
-\item{print}{Single logical value. Print the message if $problem is TRUE? Warning: set by default to FALSE, which facilitates the control of the checking message output when using arg_check() inside functions. See the example section.}
+\item{print}{Single logical value. Print the message if \code{$problem} is \code{TRUE}? Warning: set by default to \code{FALSE}, which facilitates the control of the checking message output when using \code{arg_check()} inside functions. See the example section.}
 
-\item{data_name}{Single character string indicating the name of the object to test. If NULL, use what is assigned to the data argument for the returned message.}
+\item{data_name}{Single character string indicating the name of the object to test. If \code{NULL}, use what is assigned to the \code{data} argument for the returned message.}
 
-\item{data_arg}{Single logical value. Is the tested object a function argument? If TRUE (default), "ARGUMENT" is written in messages, otherwise "OBJECT".}
+\item{data_arg}{Single logical value. Is the tested object a function argument? If \code{TRUE} (default), \code{"ARGUMENT"} is written in messages, otherwise \code{"OBJECT"}.}
 
-\item{safer_check}{Single logical value. Perform some "safer" checks? If TRUE, checkings are performed before main code running (see https://github.com/safer-r): 1) correct lib_path argument value 2) required functions and related packages effectively present in local R lybraries and 3) R classical operators (like "<-") not overwritten by another package because of the R scope. Must be set to FALSE if this fonction is used inside another "safer" function to avoid pointless multiple checkings.}
+\item{safer_check}{Single logical value. Perform some "safer" checks? If \code{TRUE}, checkings are performed before main code running (see \href{https://github.com/safer-r}{safer-r project}): 1) correct \code{lib_path} argument value 2) required functions and related packages effectively present in local R libraries and 3) R classical operators (like \code{"<-"}) not overwritten by another package because of the R scope. Must be set to \code{FALSE} if this function is used inside another "safer" function to avoid pointless multiple checkings.}
 
-\item{lib_path}{Vector of characters specifying the absolute pathways of the directories containing the required packages for the function, if not in the default directories. Useful when R package are not installed in the default directories because of lack of admin rights.  More precisely, lib_path is passed through the new argument of .libPaths() so that the new library paths are unique(c(new, .Library.site, .Library)). Warning: .libPaths() is restored to the initial paths, after function execution. Ignored if NULL (default) or if the safer_check argument is FALSE: only the pathways specified by the current .libPaths() are used for package calling.}
+\item{lib_path}{Vector of characters specifying the absolute pathways of the directories containing the required packages for the function, if not in the default directories. Useful when R packages are not installed in the default directories because of lack of admin rights. More precisely, \code{lib_path} is passed through the \code{new} argument of \code{.libPaths()} so that the new library paths are \code{unique(c(new, .Library.site, .Library))}. Warning: \code{.libPaths()} is restored to the initial paths, after function execution. Ignored if \code{NULL} (default) or if the \code{safer_check} argument is \code{FALSE}: only the pathways specified by the current \code{.libPaths()} are used for package calling.}
 
-\item{error_text}{Single character string used to add information in error messages returned by the function, notably if the function is inside other functions, which is practical for debugging. Example: error_text = " INSIDE <PACKAGE_1>::<FUNCTION_1> INSIDE <PACKAGE_2>::<FUNCTION_2>.". If NULL, converted into "". Of note, in arg_check(), error_text is also used at the end of the string returned when no problem is detected.}
+\item{error_text}{Single character string used to add information in error messages returned by the function, notably if the function is inside other functions, which is practical for debugging. Example: \code{error_text = " INSIDE <PACKAGE_1>::<FUNCTION_1> INSIDE <PACKAGE_2>::<FUNCTION_2>."}. If \code{NULL}, converted into \code{""}. Of note, in \code{arg_check()}, \code{error_text} is also used at the end of the string returned when no problem is detected.}
 }
 \value{
 A list containing:
-
-- §problem: logical. Is there any problem detected?
-
-- §text: message indicating the details of the problem, or the absence of problem.
-
-- §object.name: value of the data_name argument (i.e., name of the checked object if provided, NULL otherwise).
+\itemize{
+  \item \code{problem}: logical. Is there any problem detected?
+  \item \code{text}: message indicating the details of the problem, or the absence of problem.
+  \item \code{object.name}: value of the \code{data_name} argument (i.e., name of the checked object if provided, \code{NULL} otherwise).
+}
 }
 \description{
-Check expected values of an argument of functions: class, type, mode, length, restricted values panel, kind of numeric values in addition to the distinction between 'integer' and 'double' (proportion only? Inf values authorized? negative values authorized? Integers of type 'double'?)
+Check expected values of an argument of functions: class, type, mode, length, restricted values panel, kind of numeric values in addition to the distinction between \code{'integer'} and \code{'double'} (proportion only? Inf values authorized? negative values authorized? Integers of type \code{'double'}?)
 }
 \details{
-If options == NULL, then at least class or type or mode or length argument must be non-null.
+If \code{options == NULL}, then at least \code{class} or \code{type} or \code{mode} or \code{length} argument must be non-null.
  
-If options is non-null, then class, type and mode must be NULL, and length can be NULL or specified.
+If \code{options} is non-null, then \code{class}, \code{type} and \code{mode} must be \code{NULL}, and \code{length} can be \code{NULL} or specified.
  
-The function tests what is written in its arguments, even if what is written is incoherent. For instance, arg_check(data = factor(1), class = "factor", mode = "character") will return a problem, whatever the object tested in the data argument, because no object can be class "factor" and mode "character" (factors are class "factor" and mode "numeric"). Of note, length of object of class "environment" is always 0.
+The function tests what is written in its arguments, even if what is written is incoherent. For instance, \code{arg_check(data = factor(1), class = "factor", mode = "character")} will return a problem, whatever the object tested in the \code{data} argument, because no object can be class \code{"factor"} and mode \code{"character"} (factors are class \code{"factor"} and mode \code{"numeric"}). Of note, length of object of class \code{"environment"} is always 0.
  
-If the tested object base::is.null, then the function will always return a checking problem.
+If the tested object \code{base::is.null}, then the function will always return a checking problem.
  
-Argument "class" with value "vector" means that the object is tested for class(data) returning only "numeric", "integer", "character", "logical", "complex" or "expression". Please, use another value of class (e.g., class = "call" or class = "list") for other types and class of objects
+Argument \code{"class"} with value \code{"vector"} means that the object is tested for \code{class(data)} returning only \code{"numeric"}, \code{"integer"}, \code{"character"}, \code{"logical"}, \code{"complex"} or \code{"expression"}. Please, use another value of \code{class} (e.g., \code{class = "call"} or \code{class = "list"}) for other types and class of objects.
  
-Since R >= 4.0.0, class(matrix()) returns "matrix" "array", and not "matrix" alone as before. However, use argument class = "matrix" to check for matrix object (of class "matrix" "array" in R >= 4.0.0) and use argument class = "array" to check for array object (of class "array" in R >= 4.0.0).
+Since R >= 4.0.0, \code{class(matrix())} returns \code{"matrix"} \code{"array"}, and not \code{"matrix"} alone as before. However, use argument \code{class = "matrix"} to check for matrix object (of class \code{"matrix"} \code{"array"} in R >= 4.0.0) and use argument \code{class = "array"} to check for array object (of class \code{"array"} in R >= 4.0.0).
 }
 \examples{
 test <- matrix(1:3)
-\dontrun{ # Example that returns an error
+\dontrun{
+# Example that returns an error
 arg_check(data = test, print = TRUE, class = "vector", mode = "numeric")  # error: THE test ARGUMENT MUST BE CLASS vector
 }
 arg_check(data = test, print = TRUE, class = "matrix", mode = "numeric")
 arg_check(data = test, print = TRUE, class = "matrix", mode = "numeric", error_text = " using saferDev::arg_check()")
-
 }
 \seealso{
 \code{\link{match.arg}}.
 }
 \author{
-\href{gael.millot@pasteur.fr}{Gael Millot}
+\href{mailto:gael.millot@pasteur.fr}{Gael Millot}
 
-\href{yushi.han2000@gmail.com}{Yushi Han}
+\href{mailto:yushi.han2000@gmail.com}{Yushi Han}
 
-\href{wanghaiding442@gmail.com}{Haiding Wang}
+\href{mailto:wanghaiding442@gmail.com}{Haiding Wang}
 }

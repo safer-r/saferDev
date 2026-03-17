@@ -2,7 +2,7 @@
 % Please edit documentation in R/intern_.all_args_here_fill.R
 \name{.all_args_here_fill}
 \alias{.all_args_here_fill}
-\title{.all_args_here_fill}
+\title{Internal Function for All Arguments Here}
 \usage{
 .all_args_here_fill(
   arg_full,
@@ -22,11 +22,11 @@
 \arguments{
 \item{arg_full}{List of all arguments of the function with default value.}
 
-\item{arg_full_names}{Vector of strings of the names of the arguments of the function. Can be NULL.}
+\item{arg_full_names}{Vector of strings of the names of the arguments of the function. Can be \code{NULL}.}
 
 \item{tempo_split}{Vector of strings of the observed argument writing of the function.}
 
-\item{three_dots_log}{Vector of logical. Is ... present among arg_full_names.}
+\item{three_dots_log}{Vector of logical. Is \code{...} present among \code{arg_full_names}.}
 
 \item{i2}{Single positive and non null integer value indicating the loop number.}
 
@@ -36,32 +36,42 @@
 
 \item{arg_user_setting_x}{Single string indicating the name of the checked function.}
 
-\item{warn}{Single warning string. Can be NULL.}
+\item{warn}{Single warning string. Can be \code{NULL}.}
 
 \item{warn_count}{Single positive integer value indicating the warning count.}
 
-\item{lib_path}{Vector of characters specifying the absolute pathways of the directories containing the required packages for the function, if not in the default directories. Useful when R package are not installed in the default directories because of lack of admin rights.  More precisely, lib_path is passed through the new argument of .libPaths() so that the new library paths are unique(c(new, .Library.site, .Library)). Warning: .libPaths() is restored to the initial paths, after function execution. Ignored if NULL (default) or if the safer_check argument is FALSE: only the pathways specified by the current .libPaths() are used for package calling.}
+\item{lib_path}{Vector of characters specifying the absolute pathways of the directories containing the required packages for the function, if not in the default directories. Useful when R packages are not installed in the default directories because of lack of admin rights. More precisely, \code{lib_path} is passed through the \code{new} argument of \code{.libPaths()} so that the new library paths are \code{unique(c(new, .Library.site, .Library))}. Warning: \code{.libPaths()} is restored to the initial paths, after function execution. Ignored if \code{NULL} (default) or if the \code{safer_check} argument is \code{FALSE}: only the pathways specified by the current \code{.libPaths()} are used for package calling.}
 
-\item{error_text}{Single character string used to add information in error messages returned by the function, notably if the function is inside other functions, which is practical for debugging. Example: error_text = " INSIDE <PACKAGE_1>::<FUNCTION_1> INSIDE <PACKAGE_2>::<FUNCTION_2>.". If NULL, converted into "".}
+\item{error_text}{Single character string used to add information in error messages returned by the function, notably if the function is inside other functions, which is practical for debugging. Example: \code{error_text = " INSIDE <PACKAGE_1>::<FUNCTION_1> INSIDE <PACKAGE_2>::<FUNCTION_2>."}. If \code{NULL}, converted into \code{""}.}
 }
 \value{
 A list:
-   $col6: the $MISSING_ARG_NAMES.
-   $col7: the $MISSING_ARGS.
-   $col8: the $STATUS.
+\itemize{
+  \item \code{col6}: the \code{$MISSING_ARG_NAMES}.
+  \item \code{col7}: the \code{$MISSING_ARGS}.
+  \item \code{col8}: the \code{$STATUS}.
+}
 }
 \description{
-Get the $MISSING_ARG_NAMES, $MISSING_ARGS and $NEW of all_args_here().
+Get the \code{$MISSING_ARG_NAMES}, \code{$MISSING_ARGS} and \code{$NEW} of \code{all_args_here()}.
 }
 \details{
-- Warning: requires saferDev::arg_check. In the safer Backbone section "######## check of the required functions from the required packages" add this function when checking for the presence of saferDev:::.all_args_here_fill.
+Warning: requires \code{saferDev::arg_check}. In the safer Backbone section \code{"######## check of the required functions from the required packages"} add this function when checking for the presence of \code{saferDev:::.all_args_here_fill}.
 }
 \examples{
-\dontrun{ # Example that shouldn't be run because this is an internal function (not found by devtools::check())
-saferDev:::.all_args_here_fill(arg_full = list(x = quote(expr = )), arg_full_names = "x", tempo_split = "x", three_dots_log = FALSE, i2 = 1, col1_i2 = 1, col2_i2 =  "length", arg_user_setting_x = "\"FUN1\"", warn = NULL, warn_count = 0, lib_path = NULL, error_text = " INSIDE P1::F1")
+\dontrun{
+# Example that shouldn't be run because this is an internal function (not found by devtools::check())
+saferDev:::.all_args_here_fill(arg_full = list(x = quote(expr = )), arg_full_names = "x", 
+tempo_split = "x", three_dots_log = FALSE, i2 = 1, col1_i2 = 1, col2_i2 = "length", 
+arg_user_setting_x = "\"FUN1\"", warn = NULL, warn_count = 0, lib_path = NULL, 
+error_text = " INSIDE P1::F1")
 }
 }
 \author{
-\href{gael.millot@pasteur.fr}{Gael Millot}
+\href{mailto:gael.millot@pasteur.fr}{Gael Millot}
+
+\href{yushi.han2000@gmail.com}{Yushi Han}
+
+\href{wanghaiding442@gmail.com}{Haiding Wang}
 }
 \keyword{internal}

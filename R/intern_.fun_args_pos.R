@@ -1,24 +1,34 @@
-#' @title .fun_args_pos
+#' @title Internal Function Arguments Position
 #' @description
 #' Return the positions of 1st letter of the first function name in a string, as well as its own opening and closing parenthesis, as well as positions of the internal parenthesis (inside the own parenthesis).
 #' @param text Single string.
-#' @param pattern Single string of a perl regex to extract function name and (), using generally paste0(<FUNCTION_NAME>, "[\\s\\r\\n]*\\(").
-#' @param lib_path Vector of characters specifying the absolute pathways of the directories containing the required packages for the function, if not in the default directories. Useful when R package are not installed in the default directories because of lack of admin rights.  More precisely, lib_path is passed through the new argument of .libPaths() so that the new library paths are unique(c(new, .Library.site, .Library)). Warning: .libPaths() is restored to the initial paths, after function execution. Ignored if NULL (default) or if the safer_check argument is FALSE: only the pathways specified by the current .libPaths() are used for package calling.
-#' @param error_text Single character string used to add information in error messages returned by the function, notably if the function is inside other functions, which is practical for debugging. Example: error_text = " INSIDE <PACKAGE_1>::<FUNCTION_1> INSIDE <PACKAGE_2>::<FUNCTION_2>.". If NULL, converted into "".
+#' @param pattern Single string of a perl regex to extract function name and \code{()}, using generally \code{paste0(<FUNCTION_NAME>, "[\\s\\r\\n]*\\(")}.
+#' @param lib_path Vector of characters specifying the absolute pathways of the directories containing the required packages for the function, if not in the default directories. Useful when R packages are not installed in the default directories because of lack of admin rights. More precisely, \code{lib_path} is passed through the \code{new} argument of \code{.libPaths()} so that the new library paths are \code{unique(c(new, .Library.site, .Library))}. Warning: \code{.libPaths()} is restored to the initial paths, after function execution. Ignored if \code{NULL} (default) or if the \code{safer_check} argument is \code{FALSE}: only the pathways specified by the current \code{.libPaths()} are used for package calling.
+#' @param error_text Single character string used to add information in error messages returned by the function, notably if the function is inside other functions, which is practical for debugging. Example: \code{error_text = " INSIDE <PACKAGE_1>::<FUNCTION_1> INSIDE <PACKAGE_2>::<FUNCTION_2>."}. If \code{NULL}, converted into \code{""}.
 #' @returns A list containing two positions:
-#' $begin_fun: position of 1st letter of the function name.
-#' $begin: position of the "(" of the function.
-#' $end: position of the closing ")" of the function.
-#' $middle_bracket_pos: list of positions of the couple of brackets in the middle of the begin and end positions. In each compartment, the first number is the position of ( and the second the position of ). NULL if no inside brackets.
+#' \itemize{
+#'   \item \code{begin_fun}: position of 1st letter of the function name.
+#'   \item \code{begin}: position of the \code{"("} of the function.
+#'   \item \code{end}: position of the closing \code{")"} of the function.
+#'   \item \code{middle_bracket_pos}: list of positions of the couple of brackets in the middle of the \code{begin} and \code{end} positions. In each compartment, the first number is the position of \code{(} and the second the position of \code{)}. \code{NULL} if no inside brackets.
+#' }
 #' @details
-#' - Warning: the string must be cleaned form brackets between quotes. Use .in_quotes_replacement() for that.
-#' - Warning: quotes in strings are escaped, so that position of ( in \"a( is 3, not 4.
-#' - Warning: requires saferDev::arg_check. In main safer functions, in the section "######## check of the required functions from the required packages" add these functions when checking for the presence of saferDev:::.fun_args_pos
-#' @author \href{gael.millot@pasteur.fr}{Gael Millot}
+#' Warnings:
+#' \itemize{
+#'   \item the string must be cleaned form brackets between quotes. Use \code{.in_quotes_replacement()} for that.
+#'   \item quotes in strings are escaped, so that position of \code{(} in \code{\"a(} is 3, not 4.
+#'   \item requires \code{saferDev::arg_check}. In main safer functions, in the section \code{"######## check of the required functions from the required packages"} add these functions when checking for the presence of \code{saferDev:::.fun_args_pos}
+#' }
+#' @author \href{mailto:gael.millot@pasteur.fr}{Gael Millot}
+#' @author \href{mailto:yushi.han2000@gmail.com}{Yushi Han}
+#' @author \href{mailto:wanghaiding442@gmail.com}{Haiding Wang}
 #' @examples
-#' \dontrun{ # Example that shouldn't be run because this is an internal function (not found by devtools::check())
+#' \dontrun{
+#' # Example that shouldn't be run because this is an internal function (not found by devtools::check())
 #' # Warning : examples only with strings that must be cleaned from brackets between quotes
-#' saferDev:::.fun_args_pos(text = ' "a" ; paste0("I", paste0(sum(1:3), collapse = " "), min(1) ) ; range(2)', pattern = paste0("paste0", "[\\s\\r\\n]*\\("), lib_path = NULL, error_text = " INSIDE P1::F1")
+#' saferDev:::.fun_args_pos(text = ' "a" ; paste0("I", paste0(sum(1:3), collapse = " "), min(1) ) ; range(2)', 
+#' pattern = paste0("paste0", "[\\s\\r\\n]*\\("), lib_path = NULL, 
+#' error_text = " INSIDE P1::F1")
 #' }
 #' 
 #' 

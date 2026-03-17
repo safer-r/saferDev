@@ -1,49 +1,52 @@
-#' @title colons_check
+#' @title Colons Check
 #' @description
-#' Verify that all the functions used inside a function are preceeded by a package attribution. For instance: \code{base::mean()} and not mean(), or saferDev:::.base_op_check() and not .base_op_check(). Warning: does not check that the package is the good one. Use all_args_here() for that.
+#' Verify that all the functions used inside a function are preceded by a package attribution. For instance: \code{base::mean()} and not \code{mean()}, or \code{saferDev:::.base_op_check()} and not \code{.base_op_check()}. Warning: does not check that the package is the good one. Use \code{all_args_here()} for that.
 #' @param x a function name, written without quotes and brackets.
-#' @param safer_check Single logical value. Perform some "safer" checks? If TRUE, checkings are performed before main code running (see https://github.com/safer-r): 1) correct lib_path argument value 2) required functions and related packages effectively present in local R lybraries and 3) R classical operators (like "<-") not overwritten by another package because of the R scope. Must be set to FALSE if this fonction is used inside another "safer" function to avoid pointless multiple checkings.
-#' @param lib_path Vector of characters specifying the absolute pathways of the directories containing the required packages for the function, if not in the default directories. Useful when R package are not installed in the default directories because of lack of admin rights.  More precisely, lib_path is passed through the new argument of .libPaths() so that the new library paths are unique(c(new, .Library.site, .Library)). Warning: .libPaths() is restored to the initial paths, after function execution. Ignored if NULL (default) or if the safer_check argument is FALSE: only the pathways specified by the current .libPaths() are used for package calling.
-#' @param error_text Single character string used to add information in error messages returned by the function, notably if the function is inside other functions, which is practical for debugging. Example: error_text = " INSIDE <PACKAGE_1>::<FUNCTION_1> INSIDE <PACKAGE_2>::<FUNCTION_2>.". If NULL, converted into "".
+#' @param safer_check Single logical value. Perform some "safer" checks? If \code{TRUE}, checkings are performed before main code running (see \href{https://github.com/safer-r}{safer-r project}): 1) correct \code{lib_path} argument value 2) required functions and related packages effectively present in local R libraries and 3) R classical operators (like \code{"<-"}) not overwritten by another package because of the R scope. Must be set to \code{FALSE} if this function is used inside another "safer" function to avoid pointless multiple checkings.
+#' @param lib_path Vector of characters specifying the absolute pathways of the directories containing the required packages for the function, if not in the default directories. Useful when R packages are not installed in the default directories because of lack of admin rights. More precisely, \code{lib_path} is passed through the \code{new} argument of \code{.libPaths()} so that the new library paths are \code{unique(c(new, .Library.site, .Library))}. Warning: \code{.libPaths()} is restored to the initial paths, after function execution. Ignored if \code{NULL} (default) or if the \code{safer_check} argument is \code{FALSE}: only the pathways specified by the current \code{.libPaths()} are used for package calling.
+#' @param error_text Single character string used to add information in error messages returned by the function, notably if the function is inside other functions, which is practical for debugging. Example: \code{error_text = " INSIDE <PACKAGE_1>::<FUNCTION_1> INSIDE <PACKAGE_2>::<FUNCTION_2>."}. If \code{NULL}, converted into \code{""}.
 #' @returns 
-#' A table-like message indicating the missing :: or ::: or a message saying that everything seems fine.
+#' A table-like message indicating the missing \code{::} or \code{:::} or a message saying that everything seems fine.
 #' 
-#' Table-like: column 1, the line number in the function code (starting at the "<- function" line, i.e., without counting the #' header lines); column 2,  the function name; column 3, the code preceeding the function name.
+#' Table-like: column 1, the line number in the function code (starting at the \code{"<- function"} line, i.e., without counting the \code{#'} header lines); column 2, the function name; column 3, the code preceding the function name.
 #' 
-#' With missing :: or :::, the message also indicates if internal functions are created inside the checked function code, since these functions cannot have :: or :::.
+#' With missing \code{::} or \code{:::}, the message also indicates if internal functions are created inside the checked function code, since these functions cannot have \code{::} or \code{:::}.
 #' @details
-#'Use the result to modify the code of the function like this: <PACKAGE>::<FUNCTION> (OR <PACKAGE>:::<FUNCTION> for function names starting by a dot)
+#' Use the result to modify the code of the function like this: \code{<PACKAGE>::<FUNCTION>} (OR \code{<PACKAGE>:::<FUNCTION>} for function names starting by a dot)
 #' 
-#'More precisely, colons_check() verifies that all the strings before an opening bracket "(" are preceeded by "::" 
+#' More precisely, \code{colons_check()} verifies that all the strings before an opening bracket \code{(} are preceded by \code{::} 
 #' 
-#'":::" are not checked per se, because incorrect writting, like saferDev::.colons_check_message() returns an error, and because base:::sum() is as ok as base::sum(). In the same manner, more than three colons are not checked because it returns an error.
+#' \code{:::} are not checked per se, because incorrect writing, like \code{saferDev::.colons_check_message()} returns an error, and because \code{base:::sum()} is as ok as \code{base::sum()}. In the same manner, more than three colons are not checked because it returns an error.
 #' 
-#'Warning: the function cannot check function names written without brackets, like in the FUN argument of some functions, e.g., sapply(1:3, FUN = as.character).
+#' Warning: the function cannot check function names written without brackets, like in the \code{FUN} argument of some functions, e.g., \code{sapply(1:3, FUN = as.character)}.
 #' 
-#' The perl regex used to detect a function name is: "([a-zA-Z]|\\.[a-zA-Z._])[a-zA-Z0-9._]*\\s*\\(".
+#' The perl regex used to detect a function name is: \code{"([a-zA-Z]|\\.[a-zA-Z._])[a-zA-Z0-9._]*\\s*\\("}.
 #' 
-#' Currently,  all_args_here() cannot detect functions written between quotes, like "+"() or "rownames<-"(x, "a").
+#' Currently, \code{colons_check()} cannot detect functions written between quotes, like \code{"+"()} or \code{"rownames<-"(x, "a")}.
 #' 
-#' Function names preceeded by $ are not considered.
+#' Function names preceded by \code{$} are not considered.
 #'  
-#' The following R functions are skipped: "function", "if", "for", "while", "repeat" and "else".
+#' The following R functions are skipped: \code{"function"}, \code{"if"}, \code{"for"}, \code{"while"}, \code{"repeat"} and \code{"else"}.
 #' 
-#' Most of the time, all_args_here() does not check inside comments, but some unexpected writting could dupe all_args_here(). Please, report here https://github.com/safer-r/saferDev/issues if it is the case.
+#' Most of the time, \code{colons_check()} does not check inside comments, but some unexpected writing could dupe \code{colons_check()}. Please, report \href{https://github.com/safer-r/saferDev/issues}{here} if it is the case.
 #' 
-#' The returned line numbers are indicative, depending on which source is checked. For instance, saferDev::report (compiled) has not the same line numbers as its source file (https://github.com/safer-r/saferDev/blob/main/R/report.R). Notably, compiled functions do not have comments anymore, compared to the same source function sourced into the working environment. In addition, the counting starts at the "<- function" line, i.e., without counting the #' header lines potentially present in source files.
+#' The returned line numbers are indicative, depending on which source is checked. For instance, \code{saferDev::report} (compiled) has not the same line numbers as its source file (\href{https://github.com/safer-r/saferDev/blob/main/R/report.R}{source file}). Notably, compiled functions do not have comments anymore, compared to the same source function sourced into the working environment. In addition, the counting starts at the \code{"<- function"} line, i.e., without counting the \code{#'} header lines potentially present in source files.
 #' 
-#'Of note, during package creation, the devtools::check() command tells which functions where wrongly attributed to package. Example: 
-#'     checking dependencies in R code ... WARNING
-#'       '::' or ':::' import not declared from: 'sbase'
-#'       Missing or unexported objects:
-#'         'base::dev.off' 'base::graphics.off' 'base::hcl' 'base::par' 'base::read.table' 'saferGG::report'
-#' @author \href{gael.millot@pasteur.fr}{Gael Millot}
-#' @author \href{yushi.han2000@gmail.com}{Yushi Han}
-#' @author \href{wanghaiding442@gmail.com}{Haiding Wang}  
+#' Of note, during package creation, the \code{devtools::check()} command tells which functions where wrongly attributed to package. Example: 
+#' \preformatted{
+#' checking dependencies in R code ... WARNING
+#'   '::' or ':::' import not declared from: 'sbase'
+#'   Missing or unexported objects:
+#'     'base::dev.off' 'base::graphics.off' 'base::hcl' 'base::par' 'base::read.table' 'saferGG::report'
+#' }
+#' @author \href{mailto:gael.millot@pasteur.fr}{Gael Millot}
+#' @author \href{mailto:yushi.han2000@gmail.com}{Yushi Han}
+#' @author \href{mailto:wanghaiding442@gmail.com}{Haiding Wang}  
 #' @examples
 #' colons_check(mean)
 #' colons_check(colons_check)
-#' source("https://raw.githubusercontent.com/safer-r/saferDev/main/dev/other/test.R") ; colons_check(test)
+#' source("https://raw.githubusercontent.com/safer-r/saferDev/main/dev/other/test.R")
+#' colons_check(test)
 #' 
 #' @export
 colons_check <- function(

@@ -1,33 +1,42 @@
-#' @title .functions_detect
+#' @title Internal Functions Detection
 #' @description
 #' Detect all the functions names used inside a function.
 #' @param x Function name, written without quotes and brackets.
 #' @param skipped_base Vector of strings specifying the basic functions skipped from detection.
 #' @param arg_user_setting2 Argument user settings list.
-#' @param lib_path Vector of characters specifying the absolute pathways of the directories containing the required packages for the function, if not in the default directories. Useful when R package are not installed in the default directories because of lack of admin rights.  More precisely, lib_path is passed through the new argument of .libPaths() so that the new library paths are unique(c(new, .Library.site, .Library)). Warning: .libPaths() is restored to the initial paths, after function execution. Ignored if NULL (default) or if the safer_check argument is FALSE: only the pathways specified by the current .libPaths() are used for package calling.
-#' @param error_text Single character string used to add information in error messages returned by the function, notably if the function is inside other functions, which is practical for debugging. Example: error_text = " INSIDE <PACKAGE_1>::<FUNCTION_1> INSIDE <PACKAGE_2>::<FUNCTION_2>.". If NULL, converted into "".
+#' @param lib_path Vector of characters specifying the absolute pathways of the directories containing the required packages for the function, if not in the default directories. Useful when R packages are not installed in the default directories because of lack of admin rights. More precisely, \code{lib_path} is passed through the \code{new} argument of \code{.libPaths()} so that the new library paths are \code{unique(c(new, .Library.site, .Library))}. Warning: \code{.libPaths()} is restored to the initial paths, after function execution. Ignored if \code{NULL} (default) or if the \code{safer_check} argument is \code{FALSE}: only the pathways specified by the current \code{.libPaths()} are used for package calling.
+#' @param error_text Single character string used to add information in error messages returned by the function, notably if the function is inside other functions, which is practical for debugging. Example: \code{error_text = " INSIDE <PACKAGE_1>::<FUNCTION_1> INSIDE <PACKAGE_2>::<FUNCTION_2>."}. If \code{NULL}, converted into \code{""}.
 #' @returns 
-#'  A list:
-#' $code: vector of strings of the code of the tested function.
-#' $all_basic_funs: vector or strings of names of all the basic R functions.
-#' $fun_names: list of names of all the functions, not considering base::c("function", "if", "for", "while", "repeat"). Compartment names indicate the code line number of the functions in $code.
-#' $fun_names_pos: list of position of the first character of each $fun_names. Compartment names indicate the code line number of the functions in $code.
-#' $code_line_nb: vector of integers of the code line numbers of code for each non empty compartment of $fun_names and $fun_names_pos.
-#' $internal_fun_names: vector of string of names of internal functions in the code of the tested function.
-#' $arg_user_setting: list of arg user settings of the tested function.
+#' A list:
+#' \itemize{
+#'   \item \code{code}: vector of strings of the code of the tested function.
+#'   \item \code{all_basic_funs}: vector or strings of names of all the basic R functions.
+#'   \item \code{fun_names}: list of names of all the functions, not considering \code{base::c("function", "if", "for", "while", "repeat")}. Compartment names indicate the code line number of the functions in \code{code}.
+#'   \item \code{fun_names_pos}: list of position of the first character of each \code{fun_names}. Compartment names indicate the code line number of the functions in \code{code}.
+#'   \item \code{code_line_nb}: vector of integers of the code line numbers of code for each non empty compartment of \code{fun_names} and \code{fun_names_pos}.
+#'   \item \code{internal_fun_names}: vector of string of names of internal functions in the code of the tested function.
+#'   \item \code{arg_user_setting}: list of arg user settings of the tested function.
+#' }
 #' @details
 #' Does not check if the functions inside the code exist.
 #' 
-#' Use the regex pattern "([a-zA-Z]|\\.[a-zA-Z._])[a-zA-Z0-9._]*\\s*\\(" to detect a function in the code.
+#' Use the regex pattern \code{"([a-zA-Z]|\\.[a-zA-Z._])[a-zA-Z0-9._]*\\s*\\("} to detect a function in the code.
 #' 
-#' $all_basic_funs are all the functions in base::c("package:stats", "package:graphics",  "package:grDevices", "package:utils", "package:datasets", "package:methods", "Autoloads", "package:base").
+#' \code{all_basic_funs} are all the functions in \code{base::c("package:stats", "package:graphics",  "package:grDevices", "package:utils", "package:datasets", "package:methods", "Autoloads", "package:base")}.
 #' 
-#' Warning: requires saferDev::arg_check, saferDev:::.extract_all_fun_names, saferDev:::.has_odd_number_of_quotes. In main safer functions, in the section "######## check of the required functions from the required packages" add these functions when checking for the presence of saferDev:::.functions_detect.
+#' Warning: requires \code{saferDev::arg_check}, \code{saferDev:::.extract_all_fun_names}, \code{saferDev:::.has_odd_number_of_quotes}. In main safer functions, in the section \code{"######## check of the required functions from the required packages"} add these functions when checking for the presence of \code{saferDev:::.functions_detect}.
 #' @examples
-#' \dontrun{ # Example that shouldn't be run because this is an internal function (not found by devtools::check())
-#' source("C:\\Users\\gmillot\\Documents\\Git_projects\\safer-r\\saferDev\\dev\\other\\test.R") ; saferDev:::.functions_detect(x = test, arg_user_setting2 = base::list(x =  as.name(x = "test")), skipped_base = c("function", "if", "for", "while", "repeat", "else"), lib_path = NULL, error_text = " INSIDE P1::F1")
+#' \dontrun{
+#' # Example that shouldn't be run because this is an internal function (not found by devtools::check())
+#' source("C:\\Users\\gmillot\\Documents\\Git_projects\\safer-r\\saferDev\\dev\\other\\test.R")
+#' saferDev:::.functions_detect(x = test, 
+#' arg_user_setting2 = base::list(x = as.name(x = "test")), 
+#' skipped_base = c("function", "if", "for", "while", "repeat", "else"), 
+#' lib_path = NULL, error_text = " INSIDE P1::F1")
 #' }
-#' @author \href{gael.millot@pasteur.fr}{Gael Millot}
+#' @author \href{mailto:gael.millot@pasteur.fr}{Gael Millot}
+#' @author \href{mailto:yushi.han2000@gmail.com}{Yushi Han}
+#' @author \href{mailto:wanghaiding442@gmail.com}{Haiding Wang}
 #' 
 #' 
 #' @keywords internal

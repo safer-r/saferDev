@@ -2,34 +2,38 @@
 % Please edit documentation in R/intern_.base_op_check.R
 \name{.base_op_check}
 \alias{.base_op_check}
-\title{.base_op_check}
+\title{Internal Base Operator Check}
 \usage{
 .base_op_check(error_text)
 }
 \arguments{
-\item{error_text}{Single character string used to add information in error messages returned by the function, notably if the function is inside other functions, which is practical for debugging. Example: error_text = " INSIDE <PACKAGE_1>::<FUNCTION_1> INSIDE <PACKAGE_2>::<FUNCTION_2>.". If NULL, converted into "".}
+\item{error_text}{Single character string used to add information in error messages returned by the function, notably if the function is inside other functions, which is practical for debugging. Example: \code{error_text = " INSIDE <PACKAGE_1>::<FUNCTION_1> INSIDE <PACKAGE_2>::<FUNCTION_2>."}. If \code{NULL}, converted into \code{""}.}
 }
 \value{
 An error message if at least one of the checked operator is present in the R scope, nothing otherwise.
 }
 \description{
 Check if critical operators of R are not present in other packages or in the global env.
-Others functions of the R scope can be overwritten because safer functions always use :: when using any function.
+Others functions of the R scope can be overwritten because safer functions always use \code{::} when using any function.
 }
 \examples{
-\dontrun{ # Example that shouldn't be run because this is an internal function (not found by devtools::check())
+\dontrun{
+# Example that shouldn't be run because this is an internal function (not found by devtools::check())
 saferDev:::.base_op_check(error_text = " INSIDE fun1.") # nothing should happen
-assign("!", 1) ; assign("+", 2) ; saferDev:::.base_op_check(error_text = " INSIDE fun1.") # this example returns an error
-rm("!") ; rm("+") 
+assign("!", 1)
+assign("+", 2)
+saferDev:::.base_op_check(error_text = " INSIDE fun1.") # this example returns an error
+rm("!")
+rm("+") 
 }
 
 
 }
 \author{
-\href{gael.millot@pasteur.fr}{Gael Millot}
+\href{mailto:gael.millot@pasteur.fr}{Gael Millot}
 
-\href{yushi.han2000@gmail.com}{Yushi Han}
+\href{mailto:yushi.han2000@gmail.com}{Yushi Han}
 
-\href{wanghaiding442@gmail.com}{Haiding Wang}
+\href{mailto:wanghaiding442@gmail.com}{Haiding Wang}
 }
 \keyword{internal}

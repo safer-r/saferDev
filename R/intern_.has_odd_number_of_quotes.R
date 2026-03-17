@@ -1,18 +1,28 @@
-#' @title .has_odd_number_of_quotes
+#' @title Internal Has Odd Number of Quotes
 #' @description
 #' Determine if a string has a odd number of quotes.
 #' @param input_string Single string.
-#' @param pattern Either '"' or "'".
-#' @param lib_path Vector of characters specifying the absolute pathways of the directories containing the required packages for the function, if not in the default directories. Useful when R package are not installed in the default directories because of lack of admin rights.  More precisely, lib_path is passed through the new argument of .libPaths() so that the new library paths are unique(c(new, .Library.site, .Library)). Warning: .libPaths() is restored to the initial paths, after function execution. Ignored if NULL (default) or if the safer_check argument is FALSE: only the pathways specified by the current .libPaths() are used for package calling.
-#' @param error_text Single character string used to add information in error messages returned by the function, notably if the function is inside other functions, which is practical for debugging. Example: error_text = " INSIDE <PACKAGE_1>::<FUNCTION_1> INSIDE <PACKAGE_2>::<FUNCTION_2>.". If NULL, converted into "".
-#' @returns TRUE or FALSE.
+#' @param pattern Either \code{'"'} or \code{"'"}.
+#' @param lib_path Vector of characters specifying the absolute pathways of the directories containing the required packages for the function, if not in the default directories. Useful when R packages are not installed in the default directories because of lack of admin rights. More precisely, \code{lib_path} is passed through the \code{new} argument of \code{.libPaths()} so that the new library paths are \code{unique(c(new, .Library.site, .Library))}. Warning: \code{.libPaths()} is restored to the initial paths, after function execution. Ignored if \code{NULL} (default) or if the \code{safer_check} argument is \code{FALSE}: only the pathways specified by the current \code{.libPaths()} are used for package calling.
+#' @param error_text Single character string used to add information in error messages returned by the function, notably if the function is inside other functions, which is practical for debugging. Example: \code{error_text = " INSIDE <PACKAGE_1>::<FUNCTION_1> INSIDE <PACKAGE_2>::<FUNCTION_2>."}. If \code{NULL}, converted into \code{""}.
+#' @returns \code{TRUE} or \code{FALSE}.
 #' @details
-#' - Consider any present ' (pattern = "'") or " (pattern = '"'). Meaning that, the function does not treat special situation, like escape quotes \", or situation like this "'". All these must be removed from the input_string if necessary, using for instance: input_string <- gsub( x = input_string, pattern = '"\'"', replacement = '   ')
-#' - Warning: requires saferDev::arg_check. In main safer functions, in the section "######## check of the required functions from the required packages" add these functions when checking for the presence of saferDev:::.has_odd_number_of_quotes.
-#' @author \href{gael.millot@pasteur.fr}{Gael Millot}
+#' \itemize{
+#'   \item The function considers any present \code{'} (\code{pattern = "'"}) or \code{"} (\code{pattern = '"'}). Meaning that it does not treat special situation, like escape quotes \code{\"}, or situation like this \code{"'"}. All these must be removed from the \code{input_string} if necessary, using for instance: \code{input_string <- gsub( x = input_string, pattern = '"\'"', replacement = '   ')}
+#'   \item Warning: requires \code{saferDev::arg_check}. In main safer functions, in the section \code{"######## check of the required functions from the required packages"} add these functions when checking for the presence of \code{saferDev:::.has_odd_number_of_quotes}.
+#' }
+#' @author \href{mailto:gael.millot@pasteur.fr}{Gael Millot}
+#' @author \href{mailto:yushi.han2000@gmail.com}{Yushi Han}
+#' @author \href{mailto:wanghaiding442@gmail.com}{Haiding Wang}
 #' @examples
-#' \dontrun{ # Example that shouldn't be run because this is an internal function (not found by devtools::check())
-#' saferDev:::.has_odd_number_of_quotes(input_string = 'This is a "test" string with "even" quotes', pattern = '"', lib_path = NULL, error_text = " INSIDE P1::F1")
+#' \dontrun{
+#' # Example that shouldn't be run because this is an internal function (not found by devtools::check())
+#' saferDev:::.has_odd_number_of_quotes(
+#' input_string = 'This is a "test" string with "even" quotes', 
+#' pattern = '"', 
+#' lib_path = NULL, 
+#' error_text = " INSIDE P1::F1"
+#' )
 #' }
 #' 
 #' 

@@ -1,18 +1,17 @@
-#' @title env_check
+#' @title Environment Check
 #' @description
-#' Verify that object names in the environment defined by the pos parameter are identical or not to object names in the above environments (following R Scope). This can be used to verify that names used for objects inside a function or in the working environment do not override names of objects already present in the above R environments, following the R scope.
-#' @param pos Single non nul positive integer indicating the position of the environment checked (argument n of the parent.frame() function). Value 1 means one step above the env_check() local environment (by default). This means that when env_check(pos = 1) is used inside a function A, it checks if the name of any object in the local environment of this function A is also present in above environments, following R Scope, starting by the just above environment. When env_check(pos = 1) is used in the working (Global) environment (named .GlobalEnv), it checks the object names of this .GlobalEnv environment, in the above environments. See the examples below.
+#' Verify that object names in the environment defined by the \code{pos} parameter are identical or not to object names in the above environments (following R Scope). This can be used to verify that names used for objects inside a function or in the working environment do not override names of objects already present in the above R environments, following the R scope.
+#' @param pos Single non null positive integer indicating the position of the environment checked (argument \code{n} of the \code{parent.frame()} function). Value \code{1} means one step above the \code{env_check()} local environment (by default). This means that when \code{env_check(pos = 1)} is used inside a function A, it checks if the name of any object in the local environment of this function A is also present in above environments, following R Scope, starting by the just above environment. When \code{env_check(pos = 1)} is used in the working (Global) environment (named \code{.GlobalEnv}), it checks the object names of this \code{.GlobalEnv} environment, in the above environments. See the examples below.
 #' @param name Single character string indicating a string that changes the name of the checked env (added in the output string).
-#' @param safer_check Single logical value. Perform some "safer" checks? If TRUE, checkings are performed before main code running (see https://github.com/safer-r): 1) correct lib_path argument value 2) required functions and related packages effectively present in local R lybraries and 3) R classical operators (like "<-") not overwritten by another package because of the R scope. Must be set to FALSE if this fonction is used inside another "safer" function to avoid pointless multiple checkings.
-#' @param lib_path Vector of characters specifying the absolute pathways of the directories containing the required packages for the function, if not in the default directories. Useful when R package are not installed in the default directories because of lack of admin rights.  More precisely, lib_path is passed through the new argument of .libPaths() so that the new library paths are unique(c(new, .Library.site, .Library)). Warning: .libPaths() is restored to the initial paths, after function execution. Ignored if NULL (default) or if the safer_check argument is FALSE: only the pathways specified by the current .libPaths() are used for package calling.
-#' @param error_text Single character string used to add information in error messages returned by the function, notably if the function is inside other functions, which is practical for debugging. Example: error_text = " INSIDE <PACKAGE_1>::<FUNCTION_1> INSIDE <PACKAGE_2>::<FUNCTION_2>.". If NULL, converted into "".
+#' @param safer_check Single logical value. Perform some "safer" checks? If \code{TRUE}, checkings are performed before main code running (see \href{https://github.com/safer-r}{safer-r project}): 1) correct \code{lib_path} argument value 2) required functions and related packages effectively present in local R libraries and 3) R classical operators (like \code{"<-"}) not overwritten by another package because of the R scope. Must be set to \code{FALSE} if this function is used inside another "safer" function to avoid pointless multiple checkings.
+#' @param lib_path Vector of characters specifying the absolute pathways of the directories containing the required packages for the function, if not in the default directories. Useful when R packages are not installed in the default directories because of lack of admin rights. More precisely, \code{lib_path} is passed through the \code{new} argument of \code{.libPaths()} so that the new library paths are \code{unique(c(new, .Library.site, .Library))}. Warning: \code{.libPaths()} is restored to the initial paths, after function execution. Ignored if \code{NULL} (default) or if the \code{safer_check} argument is \code{FALSE}: only the pathways specified by the current \code{.libPaths()} are used for package calling.
+#' @param error_text Single character string used to add information in error messages returned by the function, notably if the function is inside other functions, which is practical for debugging. Example: \code{error_text = " INSIDE <PACKAGE_1>::<FUNCTION_1> INSIDE <PACKAGE_2>::<FUNCTION_2>."}. If \code{NULL}, converted into \code{""}.
 #' @returns
-#' A character string indicating the object names of the tested environment that match object names in the above environments, following the R scope, or NULL if no match.
+#' A character string indicating the object names of the tested environment that match object names in the above environments, following the R scope, or \code{NULL} if no match.
 #' @seealso \code{\link{exists}}.
-#' 
-#' @author \href{gael.millot@pasteur.fr}{Gael Millot}
-#' @author \href{yushi.han2000@gmail.com}{Yushi Han}
-#' @author \href{wanghaiding442@gmail.com}{Haiding Wang}
+#' @author \href{mailto:gael.millot@pasteur.fr}{Gael Millot}
+#' @author \href{mailto:yushi.han2000@gmail.com}{Yushi Han}
+#' @author \href{mailto:wanghaiding442@gmail.com}{Haiding Wang}
 #' @examples
 #' # Examples in the working environment
 #' rm(q)
@@ -31,49 +30,61 @@
 #' # test if any object of the stats environment (one step above .GlobalEnv) 
 #' # are in upper environments of stats. Returns NULL since no object names of stats are in upper environments:
 #' env_check(pos = 2) 
-#' rm(mean) ; rm (t.test)
+#' rm(mean)
+#' rm(t.test)
 #' 
 #' # Examples inside a function
 #' # env_check() checks if the object names inside the fun1 function 
 #' # exist in the .GlobalEnv environment and above:
-#' fun1 <- function(){t.test <- 0 ; mean <- 5 ; env_check(pos = 1)} 
+#' fun1 <- function() {
+#'   t.test <- 0
+#'   mean <- 5
+#'   env_check(pos = 1)
+#' }
 #' a <- fun1()
-#' cat(a) # Warning: cat(fun1()) create a additional layer of environment.
+#' cat(a) # Warning: cat(fun1()) creates an additional layer of environment.
 #' # env_check() checks if the object names inside the environment one step above fun2(), 
 #' # here .GlobalEnv, exist in the upper environments of .GlobalEnv:
-#' fun2 <- function(){sum <- 0 ; env_check(pos = 2)} 
-#' fun2() # Warning: cat(fun2()) does not return NULL, because the environement tested is not anymore .GlobalEnv but inside cat().
+#' fun2 <- function() {
+#'   sum <- 0
+#'   env_check(pos = 2)
+#' }
+#' fun2() # Warning: cat(fun2()) does not return NULL, because the environment tested is not anymore .GlobalEnv but inside cat().
 #' a <- fun2() 
-#' cat(a) # nothing displayed bacause fun2() returns NULL
+#' cat(a) # nothing displayed because fun2() returns NULL
 #' # With the name of the function fun3 indicated in the message:
-#' fun3 <- function(){t.test <- 0 ; mean <- 5 ; env_check(pos = 1, name = "fun3")}
+#' fun3 <- function() {
+#'   t.test <- 0
+#'   mean <- 5
+#'   env_check(pos = 1, name = "fun3")
+#' }
 #' a <- fun3() 
 #' cat(a)
 #' # Alternative way:
 #' # sys.calls() gives the name of the imbricated functions and 
 #' # sys.calls()[[length(sys.calls())]] the name of the function one step above.
-#' fun4 <- function(){
-#'     t.test <- 0 ; 
-#'     mean <- 5 ; 
-#'     name <- as.character(sys.calls()[[length(sys.calls())]]) ; 
-#'     env_check(pos = 1, name = name)
+#' fun4 <- function() {
+#'   t.test <- 0
+#'   mean <- 5
+#'   name <- as.character(sys.calls()[[length(sys.calls())]])
+#'   env_check(pos = 1, name = name)
 #' }
 #' a <- fun4() 
 #' cat(a)
 #' # A way to have the name of the tested environment according to test.pos value:
-#' fun7 <- function(){
-#'     min <- "VALUE"
-#'     fun8 <- function(){
-#'         test.pos <- 1 # value 1 tests the fun8 env, 2 tests the fun7 env.
-#'         range <- "VALUE"
-#'         name <- if(length(sys.calls()) >= test.pos){
-#'             as.character(sys.calls()[[length(sys.calls()) + 1 - test.pos]])
-#'         }else{
-#'             search()[(1:length(search()))[test.pos - length(sys.calls())]]
-#'         }
-#'         env_check(pos = test.pos, name = name) 
+#' fun7 <- function() {
+#'   min <- "VALUE"
+#'   fun8 <- function() {
+#'     test.pos <- 1 # value 1 tests the fun8 env, 2 tests the fun7 env.
+#'     range <- "VALUE"
+#'     name <- if(length(sys.calls()) >= test.pos) {
+#'       as.character(sys.calls()[[length(sys.calls()) + 1 - test.pos]])
+#'     } else {
+#'       search()[(1:length(search()))[test.pos - length(sys.calls())]]
 #'     }
-#'     fun8()
+#'     env_check(pos = test.pos, name = name) 
+#'   }
+#'   fun8()
 #' }
 #' a <- fun7() 
 #' cat(a)

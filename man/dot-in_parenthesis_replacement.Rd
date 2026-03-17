@@ -2,7 +2,7 @@
 % Please edit documentation in R/intern_.in_parenthesis_replacement.R
 \name{.in_parenthesis_replacement}
 \alias{.in_parenthesis_replacement}
-\title{.in_parenthesis_replacement}
+\title{Internal In Parenthesis Replacement}
 \usage{
 .in_parenthesis_replacement(
   string,
@@ -19,7 +19,7 @@
 \arguments{
 \item{string}{Single string.}
 
-\item{pattern}{Single string indicating the pattern to detect. Warning : must be very simple pattern, like ",".}
+\item{pattern}{Single string indicating the pattern to detect. Warning: must be very simple pattern, like \code{","}.}
 
 \item{no_regex_pattern}{Single string of the pattern to detect but without escape characters or list, etc.}
 
@@ -31,30 +31,41 @@
 
 \item{close_pos}{Single positive and non zero integer indicating the position of the closing parenthesis.}
 
-\item{lib_path}{Vector of characters specifying the absolute pathways of the directories containing the required packages for the function, if not in the default directories. Useful when R package are not installed in the default directories because of lack of admin rights.  More precisely, lib_path is passed through the new argument of .libPaths() so that the new library paths are unique(c(new, .Library.site, .Library)). Warning: .libPaths() is restored to the initial paths, after function execution. Ignored if NULL (default) or if the safer_check argument is FALSE: only the pathways specified by the current .libPaths() are used for package calling.}
+\item{lib_path}{Vector of characters specifying the absolute pathways of the directories containing the required packages for the function, if not in the default directories. Useful when R packages are not installed in the default directories because of lack of admin rights. More precisely, \code{lib_path} is passed through the \code{new} argument of \code{.libPaths()} so that the new library paths are \code{unique(c(new, .Library.site, .Library))}. Warning: \code{.libPaths()} is restored to the initial paths, after function execution. Ignored if \code{NULL} (default) or if the \code{safer_check} argument is \code{FALSE}: only the pathways specified by the current \code{.libPaths()} are used for package calling.}
 
-\item{error_text}{Single character string used to add information in error messages returned by the function, notably if the function is inside other functions, which is practical for debugging. Example: error_text = " INSIDE <PACKAGE_1>::<FUNCTION_1> INSIDE <PACKAGE_2>::<FUNCTION_2>.". If NULL, converted into "".}
+\item{error_text}{Single character string used to add information in error messages returned by the function, notably if the function is inside other functions, which is practical for debugging. Example: \code{error_text = " INSIDE <PACKAGE_1>::<FUNCTION_1> INSIDE <PACKAGE_2>::<FUNCTION_2>."}. If \code{NULL}, converted into \code{""}.}
 }
 \value{
 A list containing:
-$string: The input string with all pattern replaced by the replacement pattern.
-$pos: the positions of the 1rst character of the replaced pattern. NULL if no replaced pattern. In that case, $string is identical to the input string
+\itemize{
+  \item \code{string}: The input string with all pattern replaced by the replacement pattern.
+  \item \code{pos}: the positions of the 1st character of the replaced pattern. \code{NULL} if no replaced pattern. In that case, \code{string} is identical to the input string
+}
 }
 \description{
-Replace any pattern inside () by another replacement pattern
+Replace any pattern inside \code{()} by another replacement pattern
 }
 \details{
-- Warning : must be very simple pattern, like "\\(".
-- Warning: requires saferDev::arg_check. In main safer functions, in the section "######## check of the required functions from the required packages" add these functions when checking for the presence of saferDev:::.in_parenthesis_replacement.
+\itemize{
+  \item Warning: must be very simple pattern, like \code{"\\("}.
+  \item Warning: requires \code{saferDev::arg_check}. In main safer functions, in the section \code{"######## check of the required functions from the required packages"} add these functions when checking for the presence of \code{saferDev:::.in_parenthesis_replacement}.
+}
 }
 \examples{
-\dontrun{ # Example that shouldn't be run because this is an internal function (not found by devtools::check())
-saferDev:::.in_parenthesis_replacement(string = "pattern = base::paste0(pattern, \"\\\\\\\\(#\"), text = text", pattern = ",", no_regex_pattern = ",", replacement = " ", perl = TRUE, open_pos = 23, close_pos = 39,  lib_path = NULL, error_text = " INSIDE P1::F1")
+\dontrun{
+# Example that shouldn't be run because this is an internal function (not found by devtools::check())
+saferDev:::.in_parenthesis_replacement(string = "pattern = base::paste0(pattern, \"\\\\\\\\(#\"), text = text", 
+pattern = ",", no_regex_pattern = ",", replacement = " ", perl = TRUE, open_pos = 23, 
+close_pos = 39, lib_path = NULL, error_text = " INSIDE P1::F1")
 }
 
 
 }
 \author{
-\href{gael.millot@pasteur.fr}{Gael Millot}
+\href{mailto:gael.millot@pasteur.fr}{Gael Millot}
+
+\href{mailto:yushi.han2000@gmail.com}{Yushi Han}
+
+\href{mailto:wanghaiding442@gmail.com}{Haiding Wang}
 }
 \keyword{internal}

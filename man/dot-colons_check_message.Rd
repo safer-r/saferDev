@@ -2,7 +2,7 @@
 % Please edit documentation in R/intern_.colons_check_message.R
 \name{.colons_check_message}
 \alias{.colons_check_message}
-\title{.colons_check_message}
+\title{Internal Colons Check Message}
 \usage{
 .colons_check_message(
   list_fun,
@@ -19,7 +19,7 @@
 \arguments{
 \item{list_fun}{List of names of all the functions.}
 
-\item{list_fun_pos}{List of positions of first character of names of all the functions in ini.}
+\item{list_fun_pos}{List of positions of first character of names of all the functions in \code{ini}.}
 
 \item{line_nb}{Vector of integers of corresponding line numbers.}
 
@@ -27,31 +27,43 @@
 
 \item{arg_user_setting2}{List of arg user settings.}
 
-\item{text}{Either "BASIC" or "OTHER".}
+\item{text}{Either \code{"BASIC"} or \code{"OTHER"}.}
 
-\item{internal_fun_names}{Vector of strings of names of internal functions in the function code analyzed. Can be NULL.}
+\item{internal_fun_names}{Vector of strings of names of internal functions in the function code analyzed. Can be \code{NULL}.}
 
-\item{lib_path}{Vector of characters specifying the absolute pathways of the directories containing the required packages for the function, if not in the default directories. Useful when R package are not installed in the default directories because of lack of admin rights.  More precisely, lib_path is passed through the new argument of .libPaths() so that the new library paths are unique(c(new, .Library.site, .Library)). Warning: .libPaths() is restored to the initial paths, after function execution. Ignored if NULL (default) or if the safer_check argument is FALSE: only the pathways specified by the current .libPaths() are used for package calling.}
+\item{lib_path}{Vector of characters specifying the absolute pathways of the directories containing the required packages for the function, if not in the default directories. Useful when R packages are not installed in the default directories because of lack of admin rights. More precisely, \code{lib_path} is passed through the \code{new} argument of \code{.libPaths()} so that the new library paths are \code{unique(c(new, .Library.site, .Library))}. Warning: \code{.libPaths()} is restored to the initial paths, after function execution. Ignored if \code{NULL} (default) or if the \code{safer_check} argument is \code{FALSE}: only the pathways specified by the current \code{.libPaths()} are used for package calling.}
 
-\item{error_text}{Single character string used to add information in error messages returned by the function, notably if the function is inside other functions, which is practical for debugging. Example: error_text = " INSIDE <PACKAGE_1>::<FUNCTION_1> INSIDE <PACKAGE_2>::<FUNCTION_2>.". If NULL, converted into "".}
+\item{error_text}{Single character string used to add information in error messages returned by the function, notably if the function is inside other functions, which is practical for debugging. Example: \code{error_text = " INSIDE <PACKAGE_1>::<FUNCTION_1> INSIDE <PACKAGE_2>::<FUNCTION_2>."}. If \code{NULL}, converted into \code{""}.}
 }
 \value{
 A list:
- $output.cat: the message (string).
- $colon_not_here: logical vector. Does list_fun contain function names without :: or ::: ?
+\itemize{
+  \item \code{output.cat}: the message (string).
+  \item \code{colon_not_here}: logical vector. Does \code{list_fun} contain function names without \code{::} or \code{:::} ?
+}
 }
 \description{
-Create the message for the colons_check() function.
+Create the message for the \code{colons_check()} function.
 }
 \details{
-- Warning: requires saferDev::arg_check, saferDev:::.noclean_functions. In main safer functions, in the section "######## check of the required functions from the required packages" add these functions when checking for the presence of saferDev:::.colons_check_message.
+Warning: requires \code{saferDev::arg_check}, \code{saferDev:::.noclean_functions}. In main safer functions, in the section \code{"######## check of the required functions from the required packages"} add these functions when checking for the presence of \code{saferDev:::.colons_check_message}.
 }
 \examples{
-\dontrun{ # Example that shouldn't be run because this is an internal function (not found by devtools::check())
-saferDev:::.colons_check_message(list_fun = list(c2 = "UseMethod"), list_fun_pos = list(c2 = 1), line_nb = 2, ini = c("function (x, ...) ", "UseMethod(\"mean\")"), arg_user_setting2 = list(x = "mean"), text = "BASIC", internal_fun_names = NULL, lib_path = NULL, error_text = " INSIDE P1::F1")
+\dontrun{
+# Example that shouldn't be run because this is an internal function (not found by devtools::check())
+saferDev:::.colons_check_message(list_fun = list(c2 = "UseMethod"), 
+list_fun_pos = list(c2 = 1), line_nb = 2, 
+ini = c("function (x, ...) ", "UseMethod(\"mean\")"), 
+arg_user_setting2 = list(x = "mean"), text = "BASIC", 
+internal_fun_names = NULL, lib_path = NULL, 
+error_text = " INSIDE P1::F1")
 }
 }
 \author{
-\href{gael.millot@pasteur.fr}{Gael Millot}
+\href{mailto:gael.millot@pasteur.fr}{Gael Millot}
+
+\href{mailto:yushi.han2000@gmail.com}{Yushi Han}
+
+\href{mailto:wanghaiding442@gmail.com}{Haiding Wang}
 }
 \keyword{internal}
