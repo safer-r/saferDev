@@ -18,9 +18,9 @@ all_args_here(
 \arguments{
 \item{x}{Function name, written without quotes and brackets.}
 
-\item{export}{Single logical value. Export the data frame into a .tsv file? If TRUE, the data frame is not returned by the function but only exported.}
+\item{export}{Single logical value. Export the data frame into a .tsv file? If `TRUE`, the data frame is not returned by the function but only exported.}
 
-\item{out_path}{Single character string indicating the absolute pathway of the folder where to export the data frame. out_path = "." means the R working directory set by the user. Ignored if export is FALSE}
+\item{out_path}{Single character string indicating the absolute pathway of the folder where to export the data frame. \code{out_path = "."} means the R working directory set by the user. Ignored if export is FALSE}
 
 \item{df_name}{Single character string indicating the name of the exported data frame file. Ignored if export is FALSE.}
 
@@ -48,7 +48,7 @@ Data frame:
 An additionnal message "EVERYTHING SEEMS CLEAN" if the $STATUS column is only made of "" and "GOOD".
 }
 \description{
-Verify that all the functions used inside a function are written with all their arguments. For instance: base::paste0(letters[1:2], collapse = NULL, recycle0 = FALSE) and not paste0(letters[1:2]).
+Verify that all the functions used inside a function are written with all their arguments. For instance: `base::paste0(letters[1:2], collapse = NULL, recycle0 = FALSE)` and not `paste0(letters[1:2])`.
 }
 \details{
 More precisely, all_args_here() verifies that all the strings before an opening bracket "(" are written with all their arguments. Thus, it cannot check function names written without brackets, like in the FUN argument of some functions, e.g., sapply(1:3, FUN = as.character).

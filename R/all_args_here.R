@@ -1,9 +1,9 @@
 #' @title all_args_here
 #' @description
-#' Verify that all the functions used inside a function are written with all their arguments. For instance: base::paste0(letters[1:2], collapse = NULL, recycle0 = FALSE) and not paste0(letters[1:2]).
+#' Verify that all the functions used inside a function are written with all their arguments. For instance: `base::paste0(letters[1:2], collapse = NULL, recycle0 = FALSE)` and not `paste0(letters[1:2])`.
 #' @param x Function name, written without quotes and brackets.
-#' @param export Single logical value. Export the data frame into a .tsv file? If TRUE, the data frame is not returned by the function but only exported.
-#' @param out_path Single character string indicating the absolute pathway of the folder where to export the data frame. out_path = "." means the R working directory set by the user. Ignored if export is FALSE
+#' @param export Single logical value. Export the data frame into a .tsv file? If `TRUE`, the data frame is not returned by the function but only exported.
+#' @param out_path Single character string indicating the absolute pathway of the folder where to export the data frame. \code{out_path = "."} means the R working directory set by the user. Ignored if export is FALSE
 #' @param df_name Single character string indicating the name of the exported data frame file. Ignored if export is FALSE.
 #' @param overwrite Single logical value. Overwrite potential df_name file already existing in out_path? Ignored if export is FALSE.
 #' @param safer_check Single logical value. Perform some "safer" checks? If TRUE, checkings are performed before main code running (see https://github.com/safer-r): 1) correct lib_path argument value 2) required functions and related packages effectively present in local R lybraries and 3) R classical operators (like "<-") not overwritten by another package because of the R scope. Must be set to FALSE if this fonction is used inside another "safer" function to avoid pointless multiple checkings.
