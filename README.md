@@ -10,6 +10,7 @@
 [![downloads](https://cranlogs.r-pkg.org/badges/saferDev)](https://www.rdocumentation.org/trends)
 [![](https://img.shields.io/badge/license-GPL3.0-green.svg)](https://opensource.org/licenses/MITgpl-3-0)
 [![rworkflows](https://github.com/safer-r/saferDev/actions/workflows/rworkflows.yml/badge.svg)](https://github.com/safer-r/saferDev/actions/workflows/rworkflows.yml)
+[![Safer-R Status](https://img.shields.io/badge/Safer--R%20status-backbone%20v19-brightgreen)](#)
 <!-- badges: end -->
 
 <br />
