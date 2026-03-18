@@ -2,7 +2,7 @@
 % Please edit documentation in R/intern_.all_args_here_fill.R
 \name{.all_args_here_fill}
 \alias{.all_args_here_fill}
-\title{Internal Function for All Arguments Here}
+\title{Function for All Arguments Here}
 \usage{
 .all_args_here_fill(
   arg_full,
@@ -56,7 +56,11 @@ A list:
 Get the \code{$MISSING_ARG_NAMES}, \code{$MISSING_ARGS} and \code{$NEW} of \code{all_args_here()}.
 }
 \details{
-Warning: requires \code{saferDev::arg_check}. In the safer Backbone section \code{"######## check of the required functions from the required packages"} add this function when checking for the presence of \code{saferDev:::.all_args_here_fill}.
+Warnings:
+\itemize{
+  \item requires \code{saferDev::arg_check}.
+  \item In the safer Backbone section \code{"######## check of the required functions from the required packages"}, add also \code{saferDev::arg_check} when checking for the presence of \code{saferDev:::.all_args_here_fill}.
+}
 }
 \examples{
 \dontrun{

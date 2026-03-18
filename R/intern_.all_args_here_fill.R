@@ -1,4 +1,4 @@
-#' @title Internal Function for All Arguments Here
+#' @title Function for All Arguments Here
 #' @description
 #' Get the \code{$MISSING_ARG_NAMES}, \code{$MISSING_ARGS} and \code{$NEW} of \code{all_args_here()}.
 #' @param arg_full List of all arguments of the function with default value.
@@ -21,7 +21,11 @@
 #'   \item \code{col8}: the \code{$STATUS}.
 #' }
 #' @details
-#' Warning: requires \code{saferDev::arg_check}. In the safer Backbone section \code{"######## check of the required functions from the required packages"} add this function when checking for the presence of \code{saferDev:::.all_args_here_fill}.
+#' Warnings:
+#' \itemize{
+#'   \item requires \code{saferDev::arg_check}.
+#'   \item In the safer Backbone section \code{"######## check of the required functions from the required packages"}, add also \code{saferDev::arg_check} when checking for the presence of \code{saferDev:::.all_args_here_fill}.
+#' }
 #' @examples
 #' \dontrun{
 #' # Example that shouldn't be run because this is an internal function (not found by devtools::check())

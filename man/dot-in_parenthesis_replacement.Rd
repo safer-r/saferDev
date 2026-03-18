@@ -2,7 +2,7 @@
 % Please edit documentation in R/intern_.in_parenthesis_replacement.R
 \name{.in_parenthesis_replacement}
 \alias{.in_parenthesis_replacement}
-\title{Internal In Parenthesis Replacement}
+\title{Replacement Inside Parenthesis}
 \usage{
 .in_parenthesis_replacement(
   string,
@@ -21,11 +21,11 @@
 
 \item{pattern}{Single string indicating the pattern to detect. Warning: must be very simple pattern, like \code{","}.}
 
-\item{no_regex_pattern}{Single string of the pattern to detect but without escape characters or list, etc.}
+\item{no_regex_pattern}{Same as \code{pattern} without escape characters or list, etc. Used for messages.}
 
-\item{replacement}{Single string for pattern replacement. Is not regex.}
+\item{replacement}{Single string for \code{pattern} replacement. Is not regex.}
 
-\item{perl}{Single logical value. Use Perl regex in pattern ?}
+\item{perl}{Single logical value. Use Perl regex in \code{pattern} ?}
 
 \item{open_pos}{Single positive and non zero integer indicating the position of the opening parenthesis.}
 
@@ -38,17 +38,19 @@
 \value{
 A list containing:
 \itemize{
-  \item \code{string}: The input string with all pattern replaced by the replacement pattern.
+  \item \code{string}: the input string with all pattern replaced by the replacement pattern.
   \item \code{pos}: the positions of the 1st character of the replaced pattern. \code{NULL} if no replaced pattern. In that case, \code{string} is identical to the input string
 }
 }
 \description{
-Replace any pattern inside \code{()} by another replacement pattern
+Parse a string and replace any pattern present between brackets \code{()} by another pattern.
 }
 \details{
+Warnings:
 \itemize{
-  \item Warning: must be very simple pattern, like \code{"\\("}.
-  \item Warning: requires \code{saferDev::arg_check}. In main safer functions, in the section \code{"######## check of the required functions from the required packages"} add these functions when checking for the presence of \code{saferDev:::.in_parenthesis_replacement}.
+  \item Must be very simple pattern, like \code{"\\("}.
+  \item requires \code{saferDev::arg_check}.
+  \item In the safer Backbone section \code{"######## check of the required functions from the required packages"}, add also \code{saferDev::arg_check} when checking for the presence of \code{saferDev:::.in_parenthesis_replacement}.
 }
 }
 \examples{

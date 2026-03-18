@@ -2,7 +2,7 @@
 % Please edit documentation in R/intern_.has_odd_number_of_quotes.R
 \name{.has_odd_number_of_quotes}
 \alias{.has_odd_number_of_quotes}
-\title{Internal Has Odd Number of Quotes}
+\title{Has Odd Number of Quotes}
 \usage{
 .has_odd_number_of_quotes(input_string, pattern, lib_path, error_text)
 }
@@ -22,9 +22,12 @@
 Determine if a string has a odd number of quotes.
 }
 \details{
+The function considers any present \code{'} (\code{pattern = "'\''"}) or \code{"} (\code{pattern = '"'}). Meaning that it does not treat special situation, like escape quotes \code{\"}, or situation like this \code{"'"}. All these must be removed from the \code{input_string} if necessary, using for instance: \code{input_string <- gsub( x = input_string, pattern = '"\'"', replacement = '   ')}
+
+Warnings:
 \itemize{
-  \item The function considers any present \code{'} (\code{pattern = "'"}) or \code{"} (\code{pattern = '"'}). Meaning that it does not treat special situation, like escape quotes \code{\"}, or situation like this \code{"'"}. All these must be removed from the \code{input_string} if necessary, using for instance: \code{input_string <- gsub( x = input_string, pattern = '"\'"', replacement = '   ')}
-  \item Warning: requires \code{saferDev::arg_check}. In main safer functions, in the section \code{"######## check of the required functions from the required packages"} add these functions when checking for the presence of \code{saferDev:::.has_odd_number_of_quotes}.
+  \item requires \code{saferDev::arg_check}.
+  \item In the safer Backbone section \code{"######## check of the required functions from the required packages"}, add also \code{saferDev::arg_check} when checking for the presence of \code{saferDev:::.has_odd_number_of_quotes}.
 }
 }
 \examples{

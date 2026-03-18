@@ -2,7 +2,7 @@
 % Please edit documentation in R/intern_.extract_all_fun_names.R
 \name{.extract_all_fun_names}
 \alias{.extract_all_fun_names}
-\title{Internal Extract All Function Names}
+\title{Extract All Function Names}
 \usage{
 .extract_all_fun_names(text, pattern, lib_path, error_text)
 }
@@ -26,7 +26,11 @@ List containing:
 Extract all function names.
 }
 \details{
-Warning: requires \code{saferDev::arg_check}. In main safer functions, in the section \code{"######## check of the required functions from the required packages"} add these functions when checking for the presence of \code{saferDev:::.extract_all_fun_names}.
+Warnings:
+\itemize{
+  \item requires \code{saferDev::arg_check}.
+  \item In the safer Backbone section \code{"######## check of the required functions from the required packages"}, add also \code{saferDev::arg_check} when checking for the presence of \code{saferDev:::.extract_all_fun_names}.
+}
 }
 \examples{
 \dontrun{

@@ -1,4 +1,4 @@
-#' @title Internal Colons Check Message
+#' @title Colons Check Message
 #' @description
 #' Create the message for the \code{colons_check()} function.
 #' @param list_fun List of names of all the functions.
@@ -17,7 +17,11 @@
 #'   \item \code{colon_not_here}: logical vector. Does \code{list_fun} contain function names without \code{::} or \code{:::} ?
 #' }
 #' @details
-#' Warning: requires \code{saferDev::arg_check}, \code{saferDev:::.noclean_functions}. In main safer functions, in the section \code{"######## check of the required functions from the required packages"} add these functions when checking for the presence of \code{saferDev:::.colons_check_message}.
+#' Warnings:
+#' \itemize{
+#'   \item requires \code{saferDev::arg_check}, \code{saferDev:::.noclean_functions}.
+#'   \item In main safer functions, in the section \code{"######## check of the required functions from the required packages"}, add also these 2 functions when checking for the presence of \code{saferDev:::.colons_check_message}.
+#' }
 #' @examples
 #' \dontrun{
 #' # Example that shouldn't be run because this is an internal function (not found by devtools::check())

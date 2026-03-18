@@ -2,12 +2,12 @@
 % Please edit documentation in R/intern_.pack_and_function_check.R
 \name{.pack_and_function_check}
 \alias{.pack_and_function_check}
-\title{Internal Package and Function Check}
+\title{Package and Function Check}
 \usage{
 .pack_and_function_check(fun, lib_path, error_text)
 }
 \arguments{
-\item{fun}{Character vector of the names of the required functions, preceded by the name of the package they belong to and a double or triple colon. Example: \code{c("ggplot2::geom_point", "grid::gpar")}.}
+\item{fun}{Character vector of the names of the required functions, preceded by the name of the package they belong to, separated by a double or triple colon. Example: \code{c("ggplot2::geom_point", "grid::gpar")}.}
 
 \item{lib_path}{Vector of characters specifying the absolute pathways of the directories containing the required packages for the function, if not in the default directories. Useful when R packages are not installed in the default directories because of lack of admin rights. More precisely, \code{lib_path} is passed through the \code{new} argument of \code{.libPaths()} so that the new library paths are \code{unique(c(new, .Library.site, .Library))}. Warning: \code{.libPaths()} is restored to the initial paths, after function execution. Ignored if \code{NULL} (default) or if the \code{safer_check} argument is \code{FALSE}: only the pathways specified by the current \code{.libPaths()} are used for package calling.}
 
@@ -18,14 +18,18 @@ An error message if at least one of the checked packages is missing in \code{lib
 }
 \description{
 Check if 1) required functions are present in required packages and 2) required packages are installed locally.
-Simplified version of \code{saferDev::is_function_here()}, used as internal function for the other functions of the package.
+Simplified version of \code{saferDev::is_function_here()}, used as internal function for the other functions of the saferDev package.
 }
 \examples{
 \dontrun{
 # Example that shouldn't be run because this is an internal function (not found by devtools::check())
 saferDev:::.pack_and_function_check(fun = 1, lib_path = NULL, error_text = " INSIDE F1.") # this example returns an error
 saferDev:::.pack_and_function_check(fun = "ggplot2::notgood", lib_path = base::.libPaths(), error_text = " INSIDE P1::F1") # this example returns an error
-saferDev:::.pack_and_function_check(fun = c("ggplot2::geom_point", "grid::gpar"), lib_path = base::.libPaths(), error_text = " INSIDE P1::F1")  # nothing should happen
+saferDev:::.pack_and_function_check(
+    fun = c("ggplot2::geom_point", "grid::gpar"), 
+    lib_path = base::.libPaths(), 
+    error_text = " INSIDE P1::F1"
+)  # nothing should happen
 }
 
 

@@ -1,8 +1,8 @@
-#' @title Internal Functions Detection
+#' @title Functions Detection
 #' @description
-#' Detect all the functions names used inside a function.
-#' @param x Function name, written without quotes and brackets.
-#' @param skipped_base Vector of strings specifying the basic functions skipped from detection.
+#' Detect all the functions names inside a function.
+#' @param x Function name to test, written without quotes and brackets.
+#' @param skipped_base Vector of strings specifying the R basic functions skipped from detection.
 #' @param arg_user_setting2 Argument user settings list.
 #' @param lib_path Vector of characters specifying the absolute pathways of the directories containing the required packages for the function, if not in the default directories. Useful when R packages are not installed in the default directories because of lack of admin rights. More precisely, \code{lib_path} is passed through the \code{new} argument of \code{.libPaths()} so that the new library paths are \code{unique(c(new, .Library.site, .Library))}. Warning: \code{.libPaths()} is restored to the initial paths, after function execution. Ignored if \code{NULL} (default) or if the \code{safer_check} argument is \code{FALSE}: only the pathways specified by the current \code{.libPaths()} are used for package calling.
 #' @param error_text Single character string used to add information in error messages returned by the function, notably if the function is inside other functions, which is practical for debugging. Example: \code{error_text = " INSIDE <PACKAGE_1>::<FUNCTION_1> INSIDE <PACKAGE_2>::<FUNCTION_2>."}. If \code{NULL}, converted into \code{""}.
@@ -22,9 +22,12 @@
 #' 
 #' Use the regex pattern \code{"([a-zA-Z]|\\.[a-zA-Z._])[a-zA-Z0-9._]*\\s*\\("} to detect a function in the code.
 #' 
-#' \code{all_basic_funs} are all the functions in \code{base::c("package:stats", "package:graphics",  "package:grDevices", "package:utils", "package:datasets", "package:methods", "Autoloads", "package:base")}.
+#' The result in \code{all_basic_funs} are all the functions in \code{base::c("package:stats", "package:graphics",  "package:grDevices", "package:utils", "package:datasets", "package:methods", "Autoloads", "package:base")}.
 #' 
-#' Warning: requires \code{saferDev::arg_check}, \code{saferDev:::.extract_all_fun_names}, \code{saferDev:::.has_odd_number_of_quotes}. In main safer functions, in the section \code{"######## check of the required functions from the required packages"} add these functions when checking for the presence of \code{saferDev:::.functions_detect}.
+#' Warnings:
+#' \itemize{
+#'   \item Requires \code{saferDev::arg_check}, \code{saferDev:::.extract_all_fun_names}, \code{saferDev:::.has_odd_number_of_quotes}. 
+#'   \item In the safer Backbone section \code{"######## check of the required functions from the required packages"}, add also these 3 functions when checking for the presence of \code{saferDev:::.functions_detect}.
 #' @examples
 #' \dontrun{
 #' # Example that shouldn't be run because this is an internal function (not found by devtools::check())

@@ -7,7 +7,7 @@
 is_function_here(fun, safer_check = TRUE, lib_path = NULL, error_text = "")
 }
 \arguments{
-\item{fun}{Character vector of the names of the required functions, preceded by the name of the package they belong to and a double or triple colon. Example: \code{c("ggplot2::geom_point", "grid::gpar")}. Warning: do not write \code{"()"} at the end of the function.}
+\item{fun}{Character vector of the names of the required functions, preceded by the name of the package they belong to and a double or triple colon. Example: \code{c("ggplot2::geom_point", "grid::gpar")}. Warning: do not write \code{"()"} at the end of each tested function.}
 
 \item{safer_check}{Single logical value. Perform some "safer" checks? If \code{TRUE}, checkings are performed before main code running (see \href{https://github.com/safer-r}{safer-r project}): 1) correct \code{lib_path} argument value 2) required functions and related packages effectively present in local R libraries and 3) R classical operators (like \code{"<-"}) not overwritten by another package because of the R scope. Must be set to \code{FALSE} if this function is used inside another "safer" function to avoid pointless multiple checkings.}
 
@@ -19,16 +19,16 @@ is_function_here(fun, safer_check = TRUE, lib_path = NULL, error_text = "")
 An error message if at least one of the checked packages is missing in \code{lib_path}, or if at least one of the checked functions is missing in the required package, nothing otherwise.
 }
 \description{
-Check if required functions are present in installed packages. This controls modifications in of function names package versions.
+Check if required functions are present in installed packages. This controls the potential modifications of package contents.
 }
 \examples{
 \dontrun{
 # Example that returns an error
-is_function_here(fun = "ggplot2::notgood", error_text = " INSIDE P1::F1") # commented because this example returns an error
-is_function_here(fun = c("ggplot2::geom_point", "grid::gpar"))
-is_function_here(fun = "c")
+saferDev::is_function_here(fun = "ggplot2::notgood", error_text = " INSIDE P1::F1") # commented because this example returns an error
+saferDev::is_function_here(fun = c("ggplot2::geom_point", "grid::gpar"))
+saferDev::is_function_here(fun = "c")
 }
-is_function_here(fun = "base::c", error_text = " INSIDE P1::F1")
+saferDev::is_function_here(fun = "base::c", error_text = " INSIDE P1::F1")
 
 }
 \seealso{

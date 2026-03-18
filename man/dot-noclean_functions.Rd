@@ -2,7 +2,7 @@
 % Please edit documentation in R/intern_.noclean_functions.R
 \name{.noclean_functions}
 \alias{.noclean_functions}
-\title{Internal No-Clean Functions}
+\title{No-Clean Functions}
 \usage{
 .noclean_functions(col1, col2, col3, ini, lib_path, error_text)
 }
@@ -23,10 +23,14 @@
 A logical vector indicating if function names of \code{col2} are inside quotes or after \code{$} (\code{TRUE}) in \code{ini} or not (\code{FALSE}). Can be length 0.
 }
 \description{
-Indicate if function names are inside quotes or after \code{$}
+Indicate if function names are inside quotes or after \code{$}.
 }
 \details{
-Warning: requires \code{saferDev::arg_check}, \code{saferDev:::.has_odd_number_of_quotes}. In main safer functions, in the section \code{"######## check of the required functions from the required packages"} add these functions when checking for the presence of \code{saferDev:::.noclean_functions}.
+Warnings:
+\itemize{
+  \item requires \code{saferDev::arg_check}, \code{saferDev:::.has_odd_number_of_quotes}.
+  \item In the safer Backbone section \code{"######## check of the required functions from the required packages"}, add also these 2 functions when checking for the presence of \code{saferDev:::.noclean_functions}.
+}
 }
 \examples{
 \dontrun{

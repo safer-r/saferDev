@@ -1,6 +1,6 @@
-#' @title Internal No-Clean Functions
+#' @title No-Clean Functions
 #' @description
-#' Indicate if function names are inside quotes or after \code{$}
+#' Indicate if function names are inside quotes or after \code{$}.
 #' @param col1 Vector of integers of line numbers in a code.
 #' @param col2 Vector of strings of the function names scrutinized.
 #' @param col3 Vector of strings of the code before the function name.
@@ -9,7 +9,11 @@
 #' @param error_text Single character string used to add information in error messages returned by the function, notably if the function is inside other functions, which is practical for debugging. Example: \code{error_text = " INSIDE <PACKAGE_1>::<FUNCTION_1> INSIDE <PACKAGE_2>::<FUNCTION_2>."}. If \code{NULL}, converted into \code{""}.
 #' @returns A logical vector indicating if function names of \code{col2} are inside quotes or after \code{$} (\code{TRUE}) in \code{ini} or not (\code{FALSE}). Can be length 0.
 #' @details
-#' Warning: requires \code{saferDev::arg_check}, \code{saferDev:::.has_odd_number_of_quotes}. In main safer functions, in the section \code{"######## check of the required functions from the required packages"} add these functions when checking for the presence of \code{saferDev:::.noclean_functions}.
+#' Warnings:
+#' \itemize{
+#'   \item requires \code{saferDev::arg_check}, \code{saferDev:::.has_odd_number_of_quotes}.
+#'   \item In the safer Backbone section \code{"######## check of the required functions from the required packages"}, add also these 2 functions when checking for the presence of \code{saferDev:::.noclean_functions}.
+#' }
 #' @author \href{mailto:gael.millot@pasteur.fr}{Gael Millot}
 #' @author \href{mailto:yushi.han2000@gmail.com}{Yushi Han}
 #' @author \href{mailto:wanghaiding442@gmail.com}{Haiding Wang}

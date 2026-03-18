@@ -2,7 +2,7 @@
 % Please edit documentation in R/intern_.base_op_check.R
 \name{.base_op_check}
 \alias{.base_op_check}
-\title{Internal Base Operator Check}
+\title{Base Operator Check}
 \usage{
 .base_op_check(error_text)
 }
@@ -14,7 +14,6 @@ An error message if at least one of the checked operator is present in the R sco
 }
 \description{
 Check if critical operators of R are not present in other packages or in the global env.
-Others functions of the R scope can be overwritten because safer functions always use \code{::} when using any function.
 }
 \examples{
 \dontrun{

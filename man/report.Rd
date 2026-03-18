@@ -25,15 +25,15 @@ report(
 
 \item{path}{Single character string indicating the path where to write the output file.}
 
-\item{overwrite}{Single logical value. If output file already exists and \code{overwrite} is \code{TRUE}, an error message is returned (no overwrite of existing file possible). Otherwise, the printing is appended (and the output file is created if it does not exist yet).}
+\item{overwrite}{Single logical value. If the output file already exists and \code{overwrite} is \code{TRUE}, an error message is returned (no overwrite of existing file). Otherwise, the printing is appended (and the output file is created if it does not exist yet).}
 
-\item{rownames_kept}{Single logical value. Defines whether row names have to be removed or in 2D objects. Warning: in 1D tables, names over the values are taken as row names, and are thus removed if \code{rownames_kept} is \code{FALSE}.}
+\item{rownames_kept}{Single logical value. Defines whether row names have to be removed or not in 2D objects. Warning: in 1D tables, names over the values are taken as row names, and are thus removed if \code{rownames_kept} is \code{FALSE}.}
 
-\item{vector_cat}{Single logical value. If \code{TRUE} print a vector of length > 1 using \code{cat()} instead of \code{capture.output()}. Otherwise (default \code{FALSE}) the opposite. Names of values are not printed when \code{TRUE}}
+\item{vector_cat}{Single logical value. If \code{TRUE}, print a vector of length > 1 using \code{cat()} instead of \code{capture.output()}. Otherwise (default \code{FALSE}) print a vector of length > 1 using \code{capture.output()}. Names of values are not printed when \code{TRUE}.}
 
-\item{noquote}{Single logical value. If \code{TRUE} no quote are present for the characters.}
+\item{noquote}{Single logical value. If \code{TRUE} no quote are added to the returned character strings.}
 
-\item{sep}{Single non null and positive integer representing the number of empty lines after printed data.}
+\item{sep}{Single non null and positive integer representing the number of empty lines added in the output file after the printed data.}
 
 \item{safer_check}{Single logical value. Perform some "safer" checks? If \code{TRUE}, checkings are performed before main code running (see \href{https://github.com/safer-r}{safer-r project}): 1) correct \code{lib_path} argument value 2) required functions and related packages effectively present in local R libraries and 3) R classical operators (like \code{"<-"}) not overwritten by another package because of the R scope. Must be set to \code{FALSE} if this function is used inside another "safer" function to avoid pointless multiple checkings.}
 
@@ -42,25 +42,25 @@ report(
 \item{error_text}{Single character string used to add information in error messages returned by the function, notably if the function is inside other functions, which is practical for debugging. Example: \code{error_text = " INSIDE <PACKAGE_1>::<FUNCTION_1> INSIDE <PACKAGE_2>::<FUNCTION_2>."}. If \code{NULL}, converted into \code{""}.}
 }
 \value{
-Nothing.
+Nothing (implementation of an existing file) or a text file.
 }
 \description{
-Log file function: print a character string or a data object into a same output file.
+Print a character string or a data object into a same output file. Convenient for log file generation.
 }
 \examples{
 \dontrun{
 # Example that creates a file/folder in the working directory
-report(data = "THE FOLLOWING VECTOR IS:\n", output = "results.txt", path = ".", 
+saferDev::report(data = "THE FOLLOWING VECTOR IS:\n", output = "results.txt", path = ".", 
 overwrite = TRUE, sep = 1)
-report(data = 1:3, output = "results.txt", path = ".", overwrite = FALSE, 
+saferDev::report(data = 1:3, output = "results.txt", path = ".", overwrite = FALSE, 
 rownames_kept = FALSE, vector_cat = FALSE, noquote = FALSE, sep = 2)
-report(data = "THE FOLLOWING MATRIX IS:\n", output = "results.txt", path = ".", 
+saferDev::report(data = "THE FOLLOWING MATRIX IS:\n", output = "results.txt", path = ".", 
 overwrite = FALSE, sep = 1)
-report(data = matrix(1:5), output = "results.txt", path = ".", overwrite = FALSE, 
+saferDev::report(data = matrix(1:5), output = "results.txt", path = ".", overwrite = FALSE, 
 rownames_kept = FALSE, vector_cat = FALSE, noquote = FALSE, sep = 5)
-report(data = "THE FOLLOWING DATA FRAME IS:\n", output = "results.txt", path = ".", 
+saferDev::report(data = "THE FOLLOWING DATA FRAME IS:\n", output = "results.txt", path = ".", 
 overwrite = FALSE, sep = 1)
-report(data = data.frame(A = 1:8, B = letters[1:8]), output = "results.txt", path = ".", 
+saferDev::report(data = data.frame(A = 1:8, B = letters[1:8]), output = "results.txt", path = ".", 
 overwrite = FALSE, rownames_kept = FALSE, vector_cat = FALSE, noquote = FALSE, sep = 1)
 }
 }

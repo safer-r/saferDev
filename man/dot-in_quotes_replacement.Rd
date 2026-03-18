@@ -2,7 +2,7 @@
 % Please edit documentation in R/intern_.in_quotes_replacement.R
 \name{.in_quotes_replacement}
 \alias{.in_quotes_replacement}
-\title{Internal In Quotes Replacement}
+\title{Replacement Inside Quotes}
 \usage{
 .in_quotes_replacement(
   string,
@@ -19,11 +19,11 @@
 
 \item{pattern}{Single string indicating the pattern to detect. Warning: must be very simple pattern, like \code{"\\("}.}
 
-\item{no_regex_pattern}{Single string of the pattern to detect but without escape characters or list, etc.}
+\item{no_regex_pattern}{Same as \code{pattern} without escape characters or list, etc. Used for messages.}
 
-\item{replacement}{Single string for pattern replacement. Must have the same number of character then \code{no_regex_pattern}. Is not regex.}
+\item{replacement}{Single string for \code{pattern} replacement. Must have the same number of character than \code{no_regex_pattern}. Is not regex.}
 
-\item{perl}{Single logical value. Use Perl regex in pattern ?}
+\item{perl}{Single logical value. Use Perl regex in \code{pattern} ?}
 
 \item{lib_path}{Vector of characters specifying the absolute pathways of the directories containing the required packages for the function, if not in the default directories. Useful when R packages are not installed in the default directories because of lack of admin rights. More precisely, \code{lib_path} is passed through the \code{new} argument of \code{.libPaths()} so that the new library paths are \code{unique(c(new, .Library.site, .Library))}. Warning: \code{.libPaths()} is restored to the initial paths, after function execution. Ignored if \code{NULL} (default) or if the \code{safer_check} argument is \code{FALSE}: only the pathways specified by the current \code{.libPaths()} are used for package calling.}
 
@@ -37,14 +37,17 @@ A list containing:
 }
 }
 \description{
-Replace any pattern inside simple or double quotes by another replacement pattern and get the position of replacements
+Parse a string and replace any pattern inside simple or double quotes by another replacement pattern and get the position of replacements.
 }
 \details{
-The function works by notably replacing first: 1) the three consecutive characters \code{'"'} or \code{'"'} by three spaces, 2) \code{\"'} and \code{'\"'} by four spaces and 3) escape quotes like \code{\"} or \code{\'} by two spaces.
+The function works first by replacing in the code: 1) the three consecutive characters \code{'"'} or \code{'"'} by three spaces, 2) \code{"\"'"} and \code{'\'"'} by four spaces and 3) escape quotes like \code{\"} or \code{\'} by two spaces.
 
-Warning: must be very simple pattern, like \code{"\\("}.
-
-Warning: requires \code{saferDev::arg_check}, \code{saferDev:::.has_odd_number_of_quotes}. In main safer functions, in the section \code{"######## check of the required functions from the required packages"} add these functions when checking for the presence of \code{saferDev:::.in_quotes_replacement}.
+Warnings:
+\itemize{
+  \item Must be very simple pattern, like \code{"\\("}.
+  \item requires \code{saferDev::arg_check}, \code{saferDev:::.has_odd_number_of_quotes}.
+  \item In the safer Backbone section \code{"######## check of the required functions from the required packages"}, add also these 2 functions when checking for the presence of \code{saferDev:::.in_quotes_replacement}.
+}
 }
 \examples{
 \dontrun{

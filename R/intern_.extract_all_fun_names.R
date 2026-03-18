@@ -1,4 +1,4 @@
-#' @title Internal Extract All Function Names
+#' @title Extract All Function Names
 #' @description
 #' Extract all function names.
 #' @param text Single string.
@@ -11,7 +11,11 @@
 #'   \item \code{pos}: position of the first character of the function names in the input string
 #' }
 #' @details
-#' Warning: requires \code{saferDev::arg_check}. In main safer functions, in the section \code{"######## check of the required functions from the required packages"} add these functions when checking for the presence of \code{saferDev:::.extract_all_fun_names}.
+#' Warnings:
+#' \itemize{
+#'   \item requires \code{saferDev::arg_check}.
+#'   \item In the safer Backbone section \code{"######## check of the required functions from the required packages"}, add also \code{saferDev::arg_check} when checking for the presence of \code{saferDev:::.extract_all_fun_names}.
+#' }
 #' @author \href{mailto:gael.millot@pasteur.fr}{Gael Millot}
 #' @author \href{mailto:yushi.han2000@gmail.com}{Yushi Han}
 #' @author \href{mailto:wanghaiding442@gmail.com}{Haiding Wang}

@@ -1,11 +1,11 @@
-#' @title Internal In Quotes Replacement
+#' @title Replacement Inside Quotes
 #' @description
-#' Replace any pattern inside simple or double quotes by another replacement pattern and get the position of replacements
+#' Parse a string and replace any pattern inside simple or double quotes by another replacement pattern and get the position of replacements.
 #' @param string Single string.
 #' @param pattern Single string indicating the pattern to detect. Warning: must be very simple pattern, like \code{"\\("}.
-#' @param no_regex_pattern Single string of the pattern to detect but without escape characters or list, etc.
-#' @param replacement Single string for pattern replacement. Must have the same number of character then \code{no_regex_pattern}. Is not regex.
-#' @param perl Single logical value. Use Perl regex in pattern ?
+#' @param no_regex_pattern Same as \code{pattern} without escape characters or list, etc. Used for messages.
+#' @param replacement Single string for \code{pattern} replacement. Must have the same number of character than \code{no_regex_pattern}. Is not regex.
+#' @param perl Single logical value. Use Perl regex in \code{pattern} ?
 #' @param lib_path Vector of characters specifying the absolute pathways of the directories containing the required packages for the function, if not in the default directories. Useful when R packages are not installed in the default directories because of lack of admin rights. More precisely, \code{lib_path} is passed through the \code{new} argument of \code{.libPaths()} so that the new library paths are \code{unique(c(new, .Library.site, .Library))}. Warning: \code{.libPaths()} is restored to the initial paths, after function execution. Ignored if \code{NULL} (default) or if the \code{safer_check} argument is \code{FALSE}: only the pathways specified by the current \code{.libPaths()} are used for package calling.
 #' @param error_text Single character string used to add information in error messages returned by the function, notably if the function is inside other functions, which is practical for debugging. Example: \code{error_text = " INSIDE <PACKAGE_1>::<FUNCTION_1> INSIDE <PACKAGE_2>::<FUNCTION_2>."}. If \code{NULL}, converted into \code{""}.
 #' @returns A list containing:
@@ -14,11 +14,14 @@
 #'   \item \code{pos}: vector of the positions of the 1st character of the replaced pattern. \code{NULL} if no replaced pattern. In that case, \code{string} is identical to the input string.
 #' }
 #' @details
-#' The function works by notably replacing first: 1) the three consecutive characters \code{'"'} or \code{'"'} by three spaces, 2) \code{\"'} and \code{'\"'} by four spaces and 3) escape quotes like \code{\"} or \code{\'} by two spaces.
-#' 
-#' Warning: must be very simple pattern, like \code{"\\("}.
-#' 
-#' Warning: requires \code{saferDev::arg_check}, \code{saferDev:::.has_odd_number_of_quotes}. In main safer functions, in the section \code{"######## check of the required functions from the required packages"} add these functions when checking for the presence of \code{saferDev:::.in_quotes_replacement}.
+#' The function works first by replacing in the code: 1) the three consecutive characters \code{'"'} or \code{'"'} by three spaces, 2) \code{"\"'"} and \code{'\'"'} by four spaces and 3) escape quotes like \code{\"} or \code{\'} by two spaces.
+#'
+#' Warnings:
+#' \itemize{
+#'   \item Must be very simple pattern, like \code{"\\("}.
+#'   \item requires \code{saferDev::arg_check}, \code{saferDev:::.has_odd_number_of_quotes}.
+#'   \item In the safer Backbone section \code{"######## check of the required functions from the required packages"}, add also these 2 functions when checking for the presence of \code{saferDev:::.in_quotes_replacement}.
+#' }
 #' @author \href{mailto:gael.millot@pasteur.fr}{Gael Millot}
 #' @author \href{mailto:yushi.han2000@gmail.com}{Yushi Han}
 #' @author \href{mailto:wanghaiding442@gmail.com}{Haiding Wang}

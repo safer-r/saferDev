@@ -2,14 +2,14 @@
 % Please edit documentation in R/intern_.functions_detect.R
 \name{.functions_detect}
 \alias{.functions_detect}
-\title{Internal Functions Detection}
+\title{Functions Detection}
 \usage{
 .functions_detect(x, skipped_base, arg_user_setting2, lib_path, error_text)
 }
 \arguments{
-\item{x}{Function name, written without quotes and brackets.}
+\item{x}{Function name to test, written without quotes and brackets.}
 
-\item{skipped_base}{Vector of strings specifying the basic functions skipped from detection.}
+\item{skipped_base}{Vector of strings specifying the R basic functions skipped from detection.}
 
 \item{arg_user_setting2}{Argument user settings list.}
 
@@ -30,16 +30,10 @@ A list:
 }
 }
 \description{
-Detect all the functions names used inside a function.
+Detect all the functions names inside a function.
 }
 \details{
-Does not check if the functions inside the code exist.
 
-Use the regex pattern \code{"([a-zA-Z]|\\.[a-zA-Z._])[a-zA-Z0-9._]*\\s*\\("} to detect a function in the code.
-
-\code{all_basic_funs} are all the functions in \code{base::c("package:stats", "package:graphics",  "package:grDevices", "package:utils", "package:datasets", "package:methods", "Autoloads", "package:base")}.
-
-Warning: requires \code{saferDev::arg_check}, \code{saferDev:::.extract_all_fun_names}, \code{saferDev:::.has_odd_number_of_quotes}. In main safer functions, in the section \code{"######## check of the required functions from the required packages"} add these functions when checking for the presence of \code{saferDev:::.functions_detect}.
 }
 \examples{
 \dontrun{

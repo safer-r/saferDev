@@ -2,7 +2,7 @@
 % Please edit documentation in R/intern_.colons_check_message.R
 \name{.colons_check_message}
 \alias{.colons_check_message}
-\title{Internal Colons Check Message}
+\title{Colons Check Message}
 \usage{
 .colons_check_message(
   list_fun,
@@ -46,7 +46,11 @@ A list:
 Create the message for the \code{colons_check()} function.
 }
 \details{
-Warning: requires \code{saferDev::arg_check}, \code{saferDev:::.noclean_functions}. In main safer functions, in the section \code{"######## check of the required functions from the required packages"} add these functions when checking for the presence of \code{saferDev:::.colons_check_message}.
+Warnings:
+\itemize{
+  \item requires \code{saferDev::arg_check}, \code{saferDev:::.noclean_functions}.
+  \item In main safer functions, in the section \code{"######## check of the required functions from the required packages"}, add also these 2 functions when checking for the presence of \code{saferDev:::.colons_check_message}.
+}
 }
 \examples{
 \dontrun{
