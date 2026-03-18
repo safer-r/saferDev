@@ -2,7 +2,7 @@
 #' @description
 #' Verify that all the functions used inside a function are written with all their arguments. For instance: \code{base::paste0(letters[1:2], collapse = NULL, recycle0 = FALSE)} and not \code{paste0(letters[1:2])}.
 #' @param x Function name, written without quotes and brackets.
-#' @param export Single logical value. Export the data frame into a \code{.tsv} file? If \code{TRUE}, the data frame is not returned by the function but only exported.
+#' @param export Single logical value. Export the result data frame into a \code{.tsv} file? If \code{TRUE}, the data frame is not returned by the function but only exported.
 #' @param out_path Single character string indicating the absolute pathway of the folder where to export the data frame. \code{out_path = "."} means the R working directory set by the user. Ignored if export is \code{FALSE}.
 #' @param df_name Single character string indicating the name of the exported data frame file. Ignored if export is \code{FALSE}.
 #' @param overwrite Single logical value. Overwrite potential \code{df_name} file already existing in \code{out_path}? Ignored if export is \code{FALSE}.
@@ -44,7 +44,7 @@
 #' 
 #' Warnings:
 #' \enumerate{
-#'   \item The following R functions are skipped (as indicated by \code{"SKIPPED"} in the \code{DEF_ARGS} column of the returned data frame) for the indicated reason: \href{https://bugs.r-project.org/show_bug.cgi?id=18849}{\code{as.environment()}}.
+#'   \item The following R functions are also skipped (as indicated by \code{"SKIPPED"} in the \code{DEF_ARGS} column of the returned data frame): \href{https://bugs.r-project.org/show_bug.cgi?id=18849}{\code{as.environment()}}. Click to see the explanation.
 #'   \item Some functions, like \code{rownames()}, have different arguments depending on whether something is assigned to it (e.g., \code{rownames(x) <- "a"}) or not. The \code{all_args_here()} function always proposes the arguments defined in the help page without assignment, meaning that it cannot detect the assignment. A way to bypass this is to use the "exact" writing of the function. For instance, \code{base::"rownames<-"(x, "a")} instead of using \code{base::rownames(x) <- "a"}, and use \code{getAnywhere("rownames<-")} to see the arguments of the function.
 #'   \item The function could not properly work if any comma is present in default argument values. Please, report \href{https://github.com/safer-r/saferDev/issues}{here} if it is the case.
 #'   \item Proposals in the \code{STATUS} column are only suggestions, as it is difficult to anticipate all the exceptions with arguments writing.
@@ -55,18 +55,18 @@
 #' @examples
 #' \dontrun{
 #' # Example that returns an error
-#' all_args_here(mean) # Example that returns an error
+#' saferDev::all_args_here(mean) # Example that returns an error
 #' source("https://raw.githubusercontent.com/safer-r/saferDev/main/dev/other/test2.R")
-#' all_args_here(test2) # the checked function must be executable
+#' saferDev::all_args_here(test2) # the checked function must be executable
 #' }
 #' 
 #' FUN2 <- function(x, y){middle_bracket2 <- base::do.call(what = base::c, args = code_for_col, quote = FALSE, envir = base::parent.frame())}
-#' all_args_here(FUN2, safer_check = FALSE)
+#' saferDev::all_args_here(FUN2, safer_check = FALSE)
 #' 
 #' \dontrun{
 #' # Example that creates a file/folder in the working directory
 #' source("https://raw.githubusercontent.com/safer-r/.github/refs/heads/main/profile/backbone.R")
-#' all_args_here(BACKBONE, export = TRUE, safer_check = FALSE)
+#' saferDev::all_args_here(BACKBONE, export = TRUE, safer_check = FALSE)
 #' }
 #' 
 #' @export

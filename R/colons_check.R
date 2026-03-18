@@ -6,19 +6,19 @@
 #' @param lib_path Vector of characters specifying the absolute pathways of the directories containing the required packages for the function, if not in the default directories. Useful when R packages are not installed in the default directories because of lack of admin rights. More precisely, \code{lib_path} is passed through the \code{new} argument of \code{.libPaths()} so that the new library paths are \code{unique(c(new, .Library.site, .Library))}. Warning: \code{.libPaths()} is restored to the initial paths, after function execution. Ignored if \code{NULL} (default) or if the \code{safer_check} argument is \code{FALSE}: only the pathways specified by the current \code{.libPaths()} are used for package calling.
 #' @param error_text Single character string used to add information in error messages returned by the function, notably if the function is inside other functions, which is practical for debugging. Example: \code{error_text = " INSIDE <PACKAGE_1>::<FUNCTION_1> INSIDE <PACKAGE_2>::<FUNCTION_2>."}. If \code{NULL}, converted into \code{""}.
 #' @returns 
-#' A table-like message indicating the missing \code{::} or \code{:::} or a message saying that everything seems fine.
+#' A table-like text message indicating the missing \code{::} or \code{:::} or a message saying that everything seems fine.
 #' 
 #' Table-like: column 1, the line number in the function code (starting at the \code{"<- function"} line, i.e., without counting the \code{#'} header lines); column 2, the function name; column 3, the code preceding the function name.
 #' 
 #' With missing \code{::} or \code{:::}, the message also indicates if internal functions are created inside the checked function code, since these functions cannot have \code{::} or \code{:::}.
 #' @details
-#' Use the result to modify the code of the function like this: \code{<PACKAGE>::<FUNCTION>} (OR \code{<PACKAGE>:::<FUNCTION>} for function names starting by a dot)
+#' The result is used to modify the code inside the tested function like this: \code{<PACKAGE>::<FUNCTION>} (or \code{<PACKAGE>:::<FUNCTION>} for function names starting by a dot).
 #' 
-#' More precisely, \code{colons_check()} verifies that all the strings before an opening bracket \code{(} are preceded by \code{::} 
+#' More precisely, \code{colons_check()} verifies that all the strings before an opening bracket \code{(} are preceded by \code{::}.
 #' 
-#' \code{:::} are not checked per se, because incorrect writing, like \code{saferDev::.colons_check_message()} returns an error, and because \code{base:::sum()} is as ok as \code{base::sum()}. In the same manner, more than three colons are not checked because it returns an error.
+#' \code{:::} are not checked per se, because incorrect writing, like \code{saferDev::.colons_check_message()} returns an error when executing the tested function, and because \code{base:::sum()} is as ok as \code{base::sum()}. In the same manner, more than three colons are not checked because it returns an error when executing the tested function.
 #' 
-#' Warning: the function cannot check function names written without brackets, like in the \code{FUN} argument of some functions, e.g., \code{sapply(1:3, FUN = as.character)}.
+#' Warning: \code{colons_check()} cannot check function names written without brackets, like in the \code{FUN} argument of some functions, e.g., \code{sapply(1:3, FUN = as.character)}.
 #' 
 #' The perl regex used to detect a function name is: \code{"([a-zA-Z]|\\.[a-zA-Z._])[a-zA-Z0-9._]*\\s*\\("}.
 #' 
@@ -43,10 +43,10 @@
 #' @author \href{mailto:yushi.han2000@gmail.com}{Yushi Han}
 #' @author \href{mailto:wanghaiding442@gmail.com}{Haiding Wang}  
 #' @examples
-#' colons_check(mean)
-#' colons_check(colons_check)
+#' saferDev::colons_check(mean)
+#' saferDev::colons_check(colons_check)
 #' source("https://raw.githubusercontent.com/safer-r/saferDev/main/dev/other/test.R")
-#' colons_check(test)
+#' saferDev::colons_check(test)
 #' 
 #' @export
 colons_check <- function(
