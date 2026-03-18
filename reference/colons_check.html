@@ -83,7 +83,7 @@
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
     
 
-<p>A table-like message indicating the missing <code>::</code> or <code>:::</code> or a message saying that everything seems fine.</p>
+<p>A table-like text message indicating the missing <code>::</code> or <code>:::</code> or a message saying that everything seems fine.</p>
 
 
 <p>Table-like: column 1, the line number in the function code (starting at the <code>"&lt;- function"</code> line, i.e., without counting the <code>#'</code> header lines); column 2, the function name; column 3, the code preceding the function name.</p>
@@ -93,10 +93,10 @@
     </div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
-    <p>Use the result to modify the code of the function like this: <code>&lt;PACKAGE&gt;::&lt;FUNCTION&gt;</code> (OR <code>&lt;PACKAGE&gt;:::&lt;FUNCTION&gt;</code> for function names starting by a dot)</p>
-<p>More precisely, <code>colons_check()</code> verifies that all the strings before an opening bracket <code>(</code> are preceded by <code>::</code></p>
-<p><code>:::</code> are not checked per se, because incorrect writing, like <code><a href="dot-colons_check_message.html">saferDev::.colons_check_message()</a></code> returns an error, and because <code>base:::sum()</code> is as ok as <code><a href="https://rdrr.io/r/base/sum.html" class="external-link">base::sum()</a></code>. In the same manner, more than three colons are not checked because it returns an error.</p>
-<p>Warning: the function cannot check function names written without brackets, like in the <code>FUN</code> argument of some functions, e.g., <code>sapply(1:3, FUN = as.character)</code>.</p>
+    <p>The result is used to modify the code inside the tested function like this: <code>&lt;PACKAGE&gt;::&lt;FUNCTION&gt;</code> (or <code>&lt;PACKAGE&gt;:::&lt;FUNCTION&gt;</code> for function names starting by a dot).</p>
+<p>More precisely, <code>colons_check()</code> verifies that all the strings before an opening bracket <code>(</code> are preceded by <code>::</code>.</p>
+<p><code>:::</code> are not checked per se, because incorrect writing, like <code><a href="dot-colons_check_message.html">saferDev::.colons_check_message()</a></code> returns an error when executing the tested function, and because <code>base:::sum()</code> is as ok as <code><a href="https://rdrr.io/r/base/sum.html" class="external-link">base::sum()</a></code>. In the same manner, more than three colons are not checked because it returns an error when executing the tested function.</p>
+<p>Warning: <code>colons_check()</code> cannot check function names written without brackets, like in the <code>FUN</code> argument of some functions, e.g., <code>sapply(1:3, FUN = as.character)</code>.</p>
 <p>The perl regex used to detect a function name is: <code>"([a-zA-Z]|\.[a-zA-Z._])[a-zA-Z0-9._]*\s*\("</code>.</p>
 <p>Currently, <code>colons_check()</code> cannot detect functions written between quotes, like <code><a href="https://rdrr.io/r/base/Arithmetic.html" class="external-link">"+"()</a></code> or <code>"rownames&lt;-"(x, "a")</code>.</p>
 <p>Function names preceded by <code>$</code> are not considered.</p> 
@@ -120,7 +120,7 @@ checking dependencies in R code ... WARNING
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu">colons_check</span><span class="op">(</span><span class="va">mean</span><span class="op">)</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu">saferDev</span><span class="fu">::</span><span class="fu">colons_check</span><span class="op">(</span><span class="va">mean</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> INSIDE mean(), SOME :: OR ::: ARE MISSING BEFORE BASIC FUNCTIONS:</span>
@@ -128,14 +128,14 @@ checking dependencies in R code ... WARNING
 <span class="r-out co"><span class="r-pr">#&gt;</span> LINE	FUN		STRING_BEFORE</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 2	UseMethod		</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-in"><span><span class="fu">colons_check</span><span class="op">(</span><span class="va">colons_check</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">saferDev</span><span class="fu">::</span><span class="fu">colons_check</span><span class="op">(</span><span class="va">colons_check</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> AFTER RUNNING saferDev::colons_check().</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> INSIDE colons_check(), EVERYTHING SEEMS CLEAN.</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/source.html" class="external-link">source</a></span><span class="op">(</span><span class="st">"https://raw.githubusercontent.com/safer-r/saferDev/main/dev/other/test.R"</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu">colons_check</span><span class="op">(</span><span class="va">test</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">saferDev</span><span class="fu">::</span><span class="fu">colons_check</span><span class="op">(</span><span class="va">test</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> INSIDE test(), SOME :: OR ::: ARE MISSING BEFORE BASIC FUNCTIONS:</span>

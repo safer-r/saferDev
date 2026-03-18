@@ -103,11 +103,11 @@
 
 
 <dt>prop</dt>
-<dd><p>Single logical value. Are the numeric values between 0 and 1 (proportion)? If <code>TRUE</code>, can be used alone, without considering class, etc.</p></dd>
+<dd><p>Single logical value. Are the numeric values between 0 and 1 (proportion)? If <code>TRUE</code>, can be used alone, i.e., without checking the class, mode, etc., of the object to test.</p></dd>
 
 
 <dt>double_as_integer_allowed</dt>
-<dd><p>Single logical value. If <code>TRUE</code>, no error is reported in the checking message if argument is set to <code>typeof = "integer"</code> or <code>class = "integer"</code>, while the reality is <code>typeof == "double"</code> or <code>class == "numeric"</code> but the numbers strictly have zero as modulo (reminder of a division). This means that <code>i &lt;- 1</code>, which is <code>typeof(i) -&gt; "double"</code> is considered as integer with <code>double_as_integer_allowed = TRUE</code>. WARNING: <code>data %% 1 == 0L</code> but not <code>isTRUE(all.equal(data %% 1, 0))</code> is used here because the argument checks for integers stored as double (does not check for decimal numbers that are approximate integers).</p></dd>
+<dd><p>Single logical value. If <code>TRUE</code>, no error is reported in the checking message if argument is set to <code>typeof = "integer"</code> or <code>class = "integer"</code>, while the reality is <code>typeof == "double"</code> or <code>class == "numeric"</code> but with zero as modulo (reminder of a division). This means that <code>i &lt;- 1</code>, which is <code>typeof(i) == "double"</code> is considered as an integer when setting <code>double_as_integer_allowed = TRUE</code>. Warning: <code>double_as_integer_allowed = TRUE</code> uses <code>data %% 1 == 0L</code> but not <code>isTRUE(all.equal(data %% 1, 0))</code> is used here because the argument checks for integers stored as double (does not check for decimal numbers that are approximate integers).</p></dd>
 
 
 <dt>options</dt>
@@ -115,7 +115,7 @@
 
 
 <dt>all_options_in_data</dt>
-<dd><p>Single logical value. If <code>TRUE</code>, all of the options must be present at least once in the <code>data</code> argument, and nothing else. If <code>FALSE</code>, some or all of the options must be present in the <code>data</code> argument, and nothing else. Ignored if <code>options</code> is <code><a href="https://rdrr.io/r/base/NULL.html" class="external-link">base::is.null</a></code>.</p></dd>
+<dd><p>Single logical value. If <code>TRUE</code>, all of the options of the <code>options</code> argument must be present at least once in the <code>data</code> argument, and nothing else. If <code>FALSE</code>, some or all of the options must be present in the <code>data</code> argument, and nothing else. Ignored if the <code>options</code> argument is <code>NULL</code>.</p></dd>
 
 
 <dt>na_contain</dt>
@@ -123,15 +123,15 @@
 
 
 <dt>neg_values</dt>
-<dd><p>Single logical value. Are negative numeric values authorized? Warning: the default setting is <code>TRUE</code>, meaning that, in that case, no check is performed for the presence of negative values. The <code>neg_values</code> argument is activated only when set to <code>FALSE</code>. In addition, (1) <code>neg_values = FALSE</code> can only be used when <code>class</code>, <code>typeof</code> or <code>mode</code> arguments are not <code>NULL</code>, otherwise return an error message, (2) the presence of negative values is not checked with <code>neg_values = FALSE</code> if the tested object is a factor and the following checking message is returned <code>"OBJECT MUST BE MADE OF NON NEGATIVE VALUES BUT IS A FACTOR"</code>.</p></dd>
+<dd><p>Single logical value. Are negative numeric values authorized? Warning: the default setting is <code>TRUE</code>, meaning that, in that case, no check is performed for the presence of negative values. The <code>neg_values</code> argument is activated only when set to <code>FALSE</code>. In addition, (1) <code>neg_values = FALSE</code> can only be used when <code>class</code>, <code>typeof</code> or <code>mode</code> arguments are not <code>NULL</code>, otherwise an error message is returned, (2) the presence of negative values is not checked with <code>neg_values = FALSE</code> if the tested object is a factor. For the latter, a checking message is returned <code>"OBJECT MUST BE MADE OF NON NEGATIVE VALUES BUT IS A FACTOR"</code>.</p></dd>
 
 
 <dt>inf_values</dt>
-<dd><p>Single logical value. Are infinite numeric values authorized (<code>Inf</code> or <code>-Inf</code>)? Identical remarks as for the <code>neg_values</code> argument.</p></dd>
+<dd><p>Single logical value. Are infinite numeric values authorized (<code>Inf</code> or <code>-Inf</code>)? Same remarks as for the <code>neg_values</code> argument.</p></dd>
 
 
 <dt>print</dt>
-<dd><p>Single logical value. Print the message if <code>$problem</code> is <code>TRUE</code>? Warning: set by default to <code>FALSE</code>, which facilitates the control of the checking message output when using <code>arg_check()</code> inside functions. See the example section.</p></dd>
+<dd><p>Single logical value. Print the message if the <code>$problem</code> output is <code>TRUE</code>? Warning: set by default to <code>FALSE</code>, which facilitates the control of the checking message output when using <code>arg_check()</code> inside functions. See the example section.</p></dd>
 
 
 <dt>data_name</dt>
@@ -139,7 +139,7 @@
 
 
 <dt>data_arg</dt>
-<dd><p>Single logical value. Is the tested object a function argument? If <code>TRUE</code> (default), <code>"ARGUMENT"</code> is written in messages, otherwise <code>"OBJECT"</code>.</p></dd>
+<dd><p>Single logical value. Is the tested object a function argument? If <code>TRUE</code> (default), <code>"ARGUMENT"</code> is written in output messages, otherwise <code>"OBJECT"</code>.</p></dd>
 
 
 <dt>safer_check</dt>
@@ -166,9 +166,9 @@
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
     <p>If <code>options == NULL</code>, then at least <code>class</code> or <code>type</code> or <code>mode</code> or <code>length</code> argument must be non-null.</p> 
 <p>If <code>options</code> is non-null, then <code>class</code>, <code>type</code> and <code>mode</code> must be <code>NULL</code>, and <code>length</code> can be <code>NULL</code> or specified.</p> 
-<p>The function tests what is written in its arguments, even if what is written is incoherent. For instance, <code>arg_check(data = factor(1), class = "factor", mode = "character")</code> will return a problem, whatever the object tested in the <code>data</code> argument, because no object can be class <code>"factor"</code> and mode <code>"character"</code> (factors are class <code>"factor"</code> and mode <code>"numeric"</code>). Of note, length of object of class <code>"environment"</code> is always 0.</p> 
-<p>If the tested object <code><a href="https://rdrr.io/r/base/NULL.html" class="external-link">base::is.null</a></code>, then the function will always return a checking problem.</p> 
-<p>Argument <code>"class"</code> with value <code>"vector"</code> means that the object is tested for <code>class(data)</code> returning only <code>"numeric"</code>, <code>"integer"</code>, <code>"character"</code>, <code>"logical"</code>, <code>"complex"</code> or <code>"expression"</code>. Please, use another value of <code>class</code> (e.g., <code>class = "call"</code> or <code>class = "list"</code>) for other types and class of objects.</p> 
+<p>The function tests what is written in its arguments, even if what is written is incoherent. For instance, <code>arg_check(data = factor(1), class = "factor", mode = "character")</code> will return a problem, whatever the object tested in the <code>data</code> argument, because no object can be class <code>"factor"</code> and mode <code>"character"</code> (factors are class <code>"factor"</code> and mode <code>"numeric"</code>). Of note, the length of object of class <code>"environment"</code> is always 0.</p> 
+<p>If the tested object is <code>NULL</code>, then the function will always return a checking problem.</p> 
+<p>The argument <code>class</code> can be set to <code>"vector"</code>. This means that the object is tested for <code>class(data)</code> returning only <code>"numeric"</code>, <code>"integer"</code>, <code>"character"</code>, <code>"logical"</code>, <code>"complex"</code> or <code>"expression"</code>. Please, use another value of <code>class</code> (e.g., <code>class = "call"</code> or <code>class = "list"</code>) for other types and class of objects.</p> 
 <p>Since R &gt;= 4.0.0, <code>class(matrix())</code> returns <code>"matrix"</code> <code>"array"</code>, and not <code>"matrix"</code> alone as before. However, use argument <code>class = "matrix"</code> to check for matrix object (of class <code>"matrix"</code> <code>"array"</code> in R &gt;= 4.0.0) and use argument <code>class = "array"</code> to check for array object (of class <code>"array"</code> in R &gt;= 4.0.0).</p>
     </div>
     <div class="section level2">
@@ -187,9 +187,9 @@
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">test</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">3</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span></span>
 <span class="r-in"><span><span class="co"># Example that returns an error</span></span></span>
-<span class="r-in"><span><span class="fu">arg_check</span><span class="op">(</span>data <span class="op">=</span> <span class="va">test</span>, print <span class="op">=</span> <span class="cn">TRUE</span>, class <span class="op">=</span> <span class="st">"vector"</span>, mode <span class="op">=</span> <span class="st">"numeric"</span><span class="op">)</span>  <span class="co"># error: THE test ARGUMENT MUST BE CLASS vector</span></span></span>
+<span class="r-in"><span><span class="fu">saferDev</span><span class="fu">::</span><span class="fu">arg_check</span><span class="op">(</span>data <span class="op">=</span> <span class="va">test</span>, print <span class="op">=</span> <span class="cn">TRUE</span>, class <span class="op">=</span> <span class="st">"vector"</span>, mode <span class="op">=</span> <span class="st">"numeric"</span><span class="op">)</span>  <span class="co"># error: THE test ARGUMENT MUST BE CLASS vector</span></span></span>
 <span class="r-in"><span><span class="op">}</span></span></span>
-<span class="r-in"><span><span class="fu">arg_check</span><span class="op">(</span>data <span class="op">=</span> <span class="va">test</span>, print <span class="op">=</span> <span class="cn">TRUE</span>, class <span class="op">=</span> <span class="st">"matrix"</span>, mode <span class="op">=</span> <span class="st">"numeric"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">saferDev</span><span class="fu">::</span><span class="fu">arg_check</span><span class="op">(</span>data <span class="op">=</span> <span class="va">test</span>, print <span class="op">=</span> <span class="cn">TRUE</span>, class <span class="op">=</span> <span class="st">"matrix"</span>, mode <span class="op">=</span> <span class="st">"numeric"</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $problem</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] FALSE</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
@@ -199,7 +199,7 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span> $object.name</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "test"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-in"><span><span class="fu">arg_check</span><span class="op">(</span>data <span class="op">=</span> <span class="va">test</span>, print <span class="op">=</span> <span class="cn">TRUE</span>, class <span class="op">=</span> <span class="st">"matrix"</span>, mode <span class="op">=</span> <span class="st">"numeric"</span>, error_text <span class="op">=</span> <span class="st">" using saferDev::arg_check()"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">saferDev</span><span class="fu">::</span><span class="fu">arg_check</span><span class="op">(</span>data <span class="op">=</span> <span class="va">test</span>, print <span class="op">=</span> <span class="cn">TRUE</span>, class <span class="op">=</span> <span class="st">"matrix"</span>, mode <span class="op">=</span> <span class="st">"numeric"</span>, error_text <span class="op">=</span> <span class="st">" using saferDev::arg_check()"</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $problem</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] FALSE</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
