@@ -560,11 +560,11 @@ colons_check <- function(
     base::cat(base::paste0("\n\n", tempo_cat, "\n\n", collapse = NULL, recycle0 = FALSE), file = "", sep = " ", fill = FALSE, labels = NULL, append = FALSE)
     #### end main code
 
-    #### output
-    #### end output
-
     #### warning output
     #### end warning output
+
+    #### output
+    #### end output
 }
 
 

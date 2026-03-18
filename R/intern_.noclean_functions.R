@@ -326,8 +326,6 @@
     ######## end graphic device checking
 
     ######## other checkings
-
-    ######## end other checkings
     if( ! (base::length(x = col1) == base::length(x = col2) & base::length(x = col1) == base::length(x = col3))){
         tempo_cat <- base::paste0(
             error_text_start, 
@@ -354,6 +352,8 @@
         )
         base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL) # == in stop() to be able to add several messages between ==
     }
+    ######## end other checkings
+
     #### end second round of checking and data preparation
 
     #### main code
