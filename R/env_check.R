@@ -13,7 +13,7 @@
 #' @author \href{mailto:yushi.han2000@gmail.com}{Yushi Han}
 #' @author \href{mailto:wanghaiding442@gmail.com}{Haiding Wang}
 #' @examples
-#' # Warning: these examples do not work well when using the "Run examples" link.
+#' # Warning: these examples do not work well when using the "Run examples" link beacause of a particular environment. Please, copy-paste in a local environment.
 #' # Examples in the working environment
 #' # creation of the object mean with value 1 in the .GlobalEnv environment, 
 #' # knowing that the mean() function also exists in the environment base, above .GlobalEnv:
@@ -24,30 +24,30 @@
 #' search() # current R scope (order of the successive R environments).
 #' utils::find("mean") # where the objects with the name "mean" are present.
 #' utils::find("t.test") # where the objects with the name "mean" are present.
-#' a <- env_check(pos = 1) # test if any object name of the global environment are above environments 
+#' a <- saferDev::env_check(pos = 1) # test if any object name of the global environment are above environments 
 #' a # output string.
 #' cat(a)
 #' # test if any object of the stats environment (one step above .GlobalEnv) 
 #' # are in upper environments of stats. Returns NULL since no object names of stats are in upper environments:
-#' env_check(pos = 2) 
+#' saferDev::env_check(pos = 2) 
 #' rm(mean)
 #' rm(t.test)
 #' 
 #' # Examples inside a function
-#' # env_check() checks if the object names inside the fun1 function 
+#' # saferDev::env_check() checks if the object names inside the fun1 function 
 #' # exist in the .GlobalEnv environment and above:
 #' fun1 <- function() {
 #'   t.test <- 0
 #'   mean <- 5
-#'   env_check(pos = 1)
+#'   saferDev::env_check(pos = 1)
 #' }
 #' a <- fun1()
 #' cat(a) # Warning: cat(fun1()) creates an additional layer of environment.
-#' # env_check() checks if the object names inside the environment one step above fun2(), 
+#' # saferDev::env_check() checks if the object names inside the environment one step above fun2(), 
 #' # here .GlobalEnv, exist in the upper environments of .GlobalEnv:
 #' fun2 <- function() {
 #'   sum <- 0
-#'   env_check(pos = 2)
+#'   saferDev::env_check(pos = 2)
 #' }
 #' fun2() # Warning: cat(fun2()) does not return NULL, because the environment tested is not anymore .GlobalEnv but inside cat().
 #' a <- fun2() 
@@ -56,7 +56,7 @@
 #' fun3 <- function() {
 #'   t.test <- 0
 #'   mean <- 5
-#'   env_check(pos = 1, name = "fun3")
+#'   saferDev::env_check(pos = 1, name = "fun3")
 #' }
 #' a <- fun3() 
 #' cat(a)
@@ -67,7 +67,7 @@
 #'   t.test <- 0
 #'   mean <- 5
 #'   name <- as.character(sys.calls()[[length(sys.calls())]])
-#'   env_check(pos = 1, name = name)
+#'   saferDev::env_check(pos = 1, name = name)
 #' }
 #' a <- fun4() 
 #' cat(a)
@@ -82,7 +82,7 @@
 #'     } else {
 #'       search()[(1:length(search()))[test.pos - length(sys.calls())]]
 #'     }
-#'     env_check(pos = test.pos, name = name) 
+#'     saferDev::env_check(pos = test.pos, name = name) 
 #'   }
 #'   fun8()
 #' }

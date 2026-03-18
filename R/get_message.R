@@ -2,12 +2,12 @@
 #' @description
 #' Evaluate an instruction written between \code{""} and return the first of the error message, or the last of the warning or standard (non error non warning) messages if ever exist.
 #' 
-#' Using argument \code{print_no = FALSE}, return \code{NULL} if no message, which is convenient in some cases.
+#' Using argument \code{print_no = FALSE}, return \code{NULL} if nothing reported, which is convenient in some cases.
 #' @param data Single character string.
-#' @param kind Single character string. Either \code{"error"} to get error messages, or \code{"warning"} to get warning messages, or \code{"message"} to get non error and non warning messages.
+#' @param kind Single character string. Either \code{"error"} to get an error message, or \code{"warning"} to get a warning message, or \code{"message"} to get a non error and non warning messages.
 #' @param header Single logical value. Add a header in the returned message?
-#' @param print_no Single logical value. Print a message saying that no message reported?
-#' @param text Single character string added to the output message (even if no message exists and \code{print_no} is \code{TRUE}). Inactivated if the \code{header} argument is \code{FALSE}. Write \code{NULL} if not required.
+#' @param print_no Single logical value. Print a message saying that nothing (NULL output) reported?
+#' @param text Single character string added to the output message (even if nothing reported and \code{print_no} is \code{TRUE}). Inactivated if the \code{header} argument is \code{FALSE}. Write \code{NULL} if not required.
 #' @param env An object corresponding to an existing environment. Then the \code{data} argument value is evaluated only in the indicated environment. Write \code{NULL} if not required (R scope is used). Example \code{env = .GlobalEnv}.
 #' @param safer_check Single logical value. Perform some "safer" checks? If \code{TRUE}, checkings are performed before main code running (see \href{https://github.com/safer-r}{safer-r project}): 1) correct \code{lib_path} argument value 2) required functions and related packages effectively present in local R libraries and 3) R classical operators (like \code{"<-"}) not overwritten by another package because of the R scope. Must be set to \code{FALSE} if this function is used inside another "safer" function to avoid pointless multiple checkings.
 #' @param lib_path Vector of characters specifying the absolute pathways of the directories containing the required packages for the function, if not in the default directories. Useful when R packages are not installed in the default directories because of lack of admin rights. More precisely, \code{lib_path} is passed through the \code{new} argument of \code{.libPaths()} so that the new library paths are \code{unique(c(new, .Library.site, .Library))}. Warning: \code{.libPaths()} is restored to the initial paths, after function execution. Ignored if \code{NULL} (default) or if the \code{safer_check} argument is \code{FALSE}: only the pathways specified by the current \code{.libPaths()} are used for package calling.
@@ -21,39 +21,39 @@
 #' 
 #' The following message if 1) the \code{kind} argument is \code{"warning"} or \code{"message"} while an error message is returned and 2) the \code{print_no} argument is \code{TRUE}: \code{"NO POTENTIAL (WARNING|STANDARD) MESSAGE BECAUSE OF ERROR MESSAGE REPORTED"}.
 #' @details 
-#' \strong{WARNINGS}
-#' 
-#' Only the first standard/error/warning message is returned.
-#' 
-#' Always use the \code{env} argument when \code{get_message()} is used inside functions.
-#' 
-#' The function does not prevent printing, for instance if \code{print()} or \code{show()} is used inside the instruction tested. To prevent that, use \code{tempo <- utils::capture.output(error <- get_message(data = "arg_check(data = 'a', class = mean, neg_values = FALSE, print = TRUE)"))}. The return of \code{get_message()} is assigned into \code{error} and the printed messages are captured by \code{utils::capture.output()} and assigned into \code{tempo}. See the examples.
+#' Warnings:
+#' \itemize{
+#'   \item Only the first standard/error/warning message is returned.
+#'   \item Always use the \code{env} argument when \code{get_message()} is used inside functions.
+#'   \item The function does not prevent printing, for instance if \code{print()} or \code{show()} is used inside the instruction tested. To prevent that, use \code{tempo <- utils::capture.output(error <- get_message(data = "arg_check(data = 'a', class = mean, neg_values = FALSE, print = TRUE)"))}. The return of \code{get_message()} is assigned into \code{error} and the printed messages are captured by \code{utils::capture.output()} and assigned into \code{tempo}. See the examples.
+#' }
 #' @seealso \code{\link{try}}.
 #' @author \href{mailto:gael.millot@pasteur.fr}{Gael Millot}
 #' @author \href{mailto:yushi.han2000@gmail.com}{Yushi Han}
 #' @author \href{mailto:wanghaiding442@gmail.com}{Haiding Wang}
 #' @examples
-#' get_message(data = "wilcox.test(c(1,1,3), c(1, 2, 4), paired = TRUE)", kind = "error", 
+#' # Warning: these examples do not work well when using the "Run examples" link beacause of a particular environment. Please, copy-paste in a local environment.
+#' saferDev::get_message(data = "wilcox.test(c(1,1,3), c(1, 2, 4), paired = TRUE)", kind = "error", 
 #' header = TRUE, print_no = FALSE, text = NULL, env = NULL, safer_check = TRUE, 
 #' lib_path = NULL, error_text = "")
 #' 
-#' get_message(data = "wilcox.test(c(1,1,3), c(1, 2, 4), paired = TRUE)", kind = "warning", 
+#' saferDev::get_message(data = "wilcox.test(c(1,1,3), c(1, 2, 4), paired = TRUE)", kind = "warning", 
 #' print_no = TRUE, text = "IN A")
 #' 
-#' get_message(data = "wilcox.test(c(1,1,3), c(1, 2, 4), paired = TRUE)", kind = "message", 
+#' saferDev::get_message(data = "wilcox.test(c(1,1,3), c(1, 2, 4), paired = TRUE)", kind = "message", 
 #' print_no = TRUE, text = "IN A")
 #' 
-#' get_message(data = "wilcox.test()", kind = "message", print_no = TRUE, text = "IN A")
+#' saferDev::get_message(data = "wilcox.test()", kind = "message", print_no = TRUE, text = "IN A")
 #' 
-#' get_message(data = "wilcox.test()", kind = "error", print_no = TRUE, text = "IN A")
+#' saferDev::get_message(data = "wilcox.test()", kind = "error", print_no = TRUE, text = "IN A")
 #' 
-#' get_message(data = "sum(1)", kind = "error", print_no = TRUE, text = "IN A")
+#' saferDev::get_message(data = "sum(1)", kind = "error", print_no = TRUE, text = "IN A")
 #' 
-#' get_message(data = "message('ahah')", kind = "error", print_no = TRUE, text = "IN A")
+#' saferDev::get_message(data = "message('ahah')", kind = "error", print_no = TRUE, text = "IN A")
 #' 
-#' get_message(data = "message('ahah')", kind = "message", print_no = TRUE, text = "IN A")
+#' saferDev::get_message(data = "message('ahah')", kind = "message", print_no = TRUE, text = "IN A")
 #' 
-#' get_message(data = "ggplot2::ggplot(data = data.frame(X = 1:10, stringsAsFactors = TRUE), 
+#' saferDev::get_message(data = "ggplot2::ggplot(data = data.frame(X = 1:10, stringsAsFactors = TRUE), 
 #' mapping = ggplot2::aes(x = X)) + ggplot2::geom_histogram()", kind = "message", 
 #' print_no = TRUE, text = "IN INSTRUCTION 1")
 #' @importFrom ggplot2 ggplot_build
