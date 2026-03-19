@@ -6,11 +6,11 @@
 <!-- badges: start -->
 
 [![Codecov test coverage](https://codecov.io/github/safer-r/saferDev/coverage.svg?branch=master)](https://app.codecov.io/github/safer-r/saferDev?branch=master)
-[![CRAN_Status_Badge](https://www.r-pkg.org/badges/version/saferDev)](https://cran.r-project.org/package=saferDev)
+[![CRAN status](https://img.shields.io/cran/v/saferDev.svg)](https://cran.r-project.org/package=saferDev)
 [![downloads](https://cranlogs.r-pkg.org/badges/saferDev)](https://www.rdocumentation.org/trends)
 [![](https://img.shields.io/badge/license-GPL3.0-green.svg)](https://opensource.org/licenses/MITgpl-3-0)
 [![rworkflows](https://github.com/safer-r/saferDev/actions/workflows/rworkflows.yml/badge.svg)](https://github.com/safer-r/saferDev/actions/workflows/rworkflows.yml)
-[![Safer-R Status](https://img.shields.io/badge/Safer--R%20status-backbone%20v19.0-brightgreen)](https://github.com/safer-r/.github/blob/main/profile/backbone.R)
+[![safer-R Status](https://img.shields.io/badge/Safer--R%20status-backbone%20v19.0-brightgreen)](https://github.com/safer-r/.github/blob/main/profile/backbone.R)
 <!-- badges: end -->
 
 <br />
@@ -31,7 +31,7 @@
 
 ## Description
 
-Set of R functions for the development of R functions, written according to the [safer project](https://github.com/safer-r) specifications.
+Set of R functions for the development of R functions, written according to the [safer-R project](https://github.com/safer-r) specifications.
 
 <br />
 
