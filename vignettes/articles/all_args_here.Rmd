@@ -16,7 +16,7 @@ library(saferDev)
 ```
 <br>
 
-### Datasets
+### Dataset
 ```{r}
 source("https://raw.githubusercontent.com/safer-r/saferDev/main/dev/other/test2.R")
 source("https://raw.githubusercontent.com/safer-r/.github/refs/heads/main/profile/backbone.R")
@@ -58,6 +58,24 @@ all_args_here(
 ```
 <br>
 
+### Argument <code>safer_check</code>
+```{r}
+all_args_here(
+    x = FUN2, 
+    safer_check = TRUE, # perform some "safer" checks? Warning : always set this argument to FALSE if all_args_here() is used inside another safer function.
+)
+```
+<br>
+
+### Argument <code>lib_path</code> and <code>error_text</code>
+```{r}
+all_args_here(
+    x = FUN2, 
+    lib_path = ".", # absolute pathways of the directories containing the required packages if not in the default directories.
+    error_text = " === TEXT ADDED ===" # add information in error messages returned by the function.
+)
+```
+<br>
 
 ### All the arguments
 ```{r}
