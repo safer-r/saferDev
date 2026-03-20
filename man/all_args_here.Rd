@@ -78,8 +78,6 @@ Warnings:
 }
 }
 \examples{
-See more examples \href{https://safer-r.github.io/saferDev/articles/all_args_here.html}{here}.
-
 \dontrun{
 # Example that returns an error
 saferDev::all_args_here(mean) # Example that returns an error
@@ -95,8 +93,8 @@ saferDev::all_args_here(FUN2, safer_check = FALSE)
 source("https://raw.githubusercontent.com/safer-r/.github/refs/heads/main/profile/backbone.R")
 saferDev::all_args_here(BACKBONE, export = TRUE, safer_check = FALSE)
 }
-
 }
+See more examples \href{https://safer-r.github.io/saferDev/articles/all_args_here.html}{here}.
 \author{
 \href{mailto:gael.millot@pasteur.fr}{Gael Millot}
 
