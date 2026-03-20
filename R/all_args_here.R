@@ -55,7 +55,6 @@
 #' @author \href{yushi.han2000@gmail.com}{Yushi Han}
 #' @author \href{wanghaiding442@gmail.com}{Haiding Wang}  
 #' @examples
-#' # https://safer-r.github.io/saferDev/articles/all_args_here.html
 #' \dontrun{
 #' # Example that returns an error
 #' saferDev::all_args_here(mean) # Example that returns an error
@@ -71,6 +70,8 @@
 #' source("https://raw.githubusercontent.com/safer-r/.github/refs/heads/main/profile/backbone.R")
 #' saferDev::all_args_here(BACKBONE, export = TRUE, safer_check = FALSE)
 #' }
+#' 
+#' # See more examples here: https://safer-r.github.io/saferDev/articles/all_args_here.html
 #' 
 #' @export
 all_args_here <- function(
