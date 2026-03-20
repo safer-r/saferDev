@@ -80,7 +80,7 @@ Warnings:
 }
 }
 \examples{
-See more examples \href{https://safer-r.github.io/saferDev/articles/all_args_here.html}{here}.
+# See more examples \href{https://safer-r.github.io/saferDev/articles/all_args_here.html}{here}. https://safer-r.github.io/saferDev/articles/all_args_here.html
 \dontrun{
 # Example that returns an error
 saferDev::all_args_here(mean) # Example that returns an error
