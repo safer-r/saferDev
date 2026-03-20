@@ -38,15 +38,15 @@ FUN2 <- function(x, y){
 ```{r}
 # Examples that return an error
 all_args_here(mean)
+# Examples that return an error
 all_args_here(test2)
-# End of examples that return an error
 all_args_here(
     x = FUN2 # R function
 )
 ```
 <br>
 
-### Argument \code{export}, \code{out_path}, \code{df_name} and \code{overwrite}
+### Argument \`export\`, \`out_path\`, \`df_name\` and \`overwrite\`
 ```{r}
 all_args_here(
     x = FUN2, # R function
