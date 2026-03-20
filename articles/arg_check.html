@@ -92,7 +92,7 @@
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">saferDev</span><span class="op">)</span></span></code></pre></div>
 <p><br></p>
 <div class="section level3">
-<h3 id="datasets">Datasets<a class="anchor" aria-label="anchor" href="#datasets"></a>
+<h3 id="dataset">Dataset<a class="anchor" aria-label="anchor" href="#dataset"></a>
 </h3>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">vec1</span> <span class="op">&lt;-</span> <span class="op">-</span><span class="fl">1</span><span class="op">:</span><span class="fl">3</span> <span class="co"># vector of integers</span></span>
@@ -105,7 +105,7 @@
 <p><br></p>
 </div>
 <div class="section level3">
-<h3 id="datasets-info">Datasets info<a class="anchor" aria-label="anchor" href="#datasets-info"></a>
+<h3 id="dataset-info">Dataset info<a class="anchor" aria-label="anchor" href="#dataset-info"></a>
 </h3>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">vec1</span> <span class="co"># vector of integers</span></span></code></pre></div>
@@ -193,17 +193,12 @@
 <p><br></p>
 </div>
 <div class="section level3">
-<h3 id="arguments-class-typeof-mode-and-length-are-the-same-as-the-corresponding-r-function-except-class-which">Arguments class, typeof, mode and length are the same as the
-corresponding R function, except class which<a class="anchor" aria-label="anchor" href="#arguments-class-typeof-mode-and-length-are-the-same-as-the-corresponding-r-function-except-class-which"></a>
+<h3 id="arguments-class-typeof-mode-and-length">Arguments <code>class</code>, <code>typeof</code>, <code>mode</code>
+and <code>length</code><a class="anchor" aria-label="anchor" href="#arguments-class-typeof-mode-and-length"></a>
 </h3>
-<ul>
-<li><ol style="list-style-type: decimal">
-<li>has also “vector” and</li>
-</ol></li>
-<li><ol start="2" style="list-style-type: decimal">
-<li>remains “matrix” for matrices and not “matrix” “array”</li>
-</ol></li>
-</ul>
+<p>As value, they accept the classical kind of class, type, mode and
+legnth, respectively, except the <code>class</code> argument, which:
+</p>
 <div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Example</span></span>
 <span><span class="fu"><a href="../reference/arg_check.html">arg_check</a></span><span class="op">(</span></span>
@@ -266,7 +261,7 @@ corresponding R function, except class which<a class="anchor" aria-label="anchor
 <p><br></p>
 </div>
 <div class="section level3">
-<h3 id="argument-prop">Argument prop<a class="anchor" aria-label="anchor" href="#argument-prop"></a>
+<h3 id="argument-prop">Argument <code>prop</code><a class="anchor" aria-label="anchor" href="#argument-prop"></a>
 </h3>
 <div class="sourceCode" id="cb31"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/arg_check.html">arg_check</a></span><span class="op">(</span></span>
@@ -284,7 +279,7 @@ corresponding R function, except class which<a class="anchor" aria-label="anchor
 <p><br></p>
 </div>
 <div class="section level3">
-<h3 id="argument-double_as_integer_allowed">Argument double_as_integer_allowed<a class="anchor" aria-label="anchor" href="#argument-double_as_integer_allowed"></a>
+<h3 id="argument-double_as_integer_allowed">Argument <code>double_as_integer_allowed</code><a class="anchor" aria-label="anchor" href="#argument-double_as_integer_allowed"></a>
 </h3>
 <div class="sourceCode" id="cb33"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/arg_check.html">arg_check</a></span><span class="op">(</span></span>
@@ -303,7 +298,7 @@ corresponding R function, except class which<a class="anchor" aria-label="anchor
 <p><br></p>
 </div>
 <div class="section level3">
-<h3 id="argument-options">Argument options<a class="anchor" aria-label="anchor" href="#argument-options"></a>
+<h3 id="argument-options">Argument <code>options</code><a class="anchor" aria-label="anchor" href="#argument-options"></a>
 </h3>
 <div class="sourceCode" id="cb35"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/arg_check.html">arg_check</a></span><span class="op">(</span></span>
@@ -321,7 +316,7 @@ corresponding R function, except class which<a class="anchor" aria-label="anchor
 <p><br></p>
 </div>
 <div class="section level3">
-<h3 id="argument-all_options_in_data">Argument all_options_in_data<a class="anchor" aria-label="anchor" href="#argument-all_options_in_data"></a>
+<h3 id="argument-all_options_in_data">Argument <code>all_options_in_data</code><a class="anchor" aria-label="anchor" href="#argument-all_options_in_data"></a>
 </h3>
 <div class="sourceCode" id="cb37"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># No error</span></span>
@@ -371,7 +366,7 @@ corresponding R function, except class which<a class="anchor" aria-label="anchor
 <p><br></p>
 </div>
 <div class="section level3">
-<h3 id="argument-na_contain">Argument na_contain<a class="anchor" aria-label="anchor" href="#argument-na_contain"></a>
+<h3 id="argument-na_contain">Argument <code>na_contain</code><a class="anchor" aria-label="anchor" href="#argument-na_contain"></a>
 </h3>
 <div class="sourceCode" id="cb43"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/arg_check.html">arg_check</a></span><span class="op">(</span></span>
@@ -391,7 +386,7 @@ corresponding R function, except class which<a class="anchor" aria-label="anchor
 <p><br></p>
 </div>
 <div class="section level3">
-<h3 id="argument-neg_values">Argument neg_values<a class="anchor" aria-label="anchor" href="#argument-neg_values"></a>
+<h3 id="argument-neg_values">Argument <code>neg_values</code><a class="anchor" aria-label="anchor" href="#argument-neg_values"></a>
 </h3>
 <div class="sourceCode" id="cb45"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Warning: only considered if set to FALSE, to check for non negative values when class is set to "vector", "numeric", "matrix", "array", "data.frame", "table", or typeof is set to "double", "integer", or mode is set to "numeric"</span></span>
@@ -411,7 +406,7 @@ corresponding R function, except class which<a class="anchor" aria-label="anchor
 <p><br></p>
 </div>
 <div class="section level3">
-<h3 id="argument-inf_values">Argument inf_values<a class="anchor" aria-label="anchor" href="#argument-inf_values"></a>
+<h3 id="argument-inf_values">Argument <code>inf_values</code><a class="anchor" aria-label="anchor" href="#argument-inf_values"></a>
 </h3>
 <div class="sourceCode" id="cb47"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Warning: only considered if set to FALSE, to check for non infinite values when class is set to "vector", "numeric", "matrix", "array", "data.frame", "table", or typeof is set to "double", "integer", or mode is set to "numeric"</span></span>
@@ -431,7 +426,7 @@ corresponding R function, except class which<a class="anchor" aria-label="anchor
 <p><br></p>
 </div>
 <div class="section level3">
-<h3 id="argument-print">Argument print<a class="anchor" aria-label="anchor" href="#argument-print"></a>
+<h3 id="argument-print">Argument <code>print</code><a class="anchor" aria-label="anchor" href="#argument-print"></a>
 </h3>
 <div class="sourceCode" id="cb49"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># No error message printed because print is FALSE</span></span>
@@ -465,7 +460,7 @@ corresponding R function, except class which<a class="anchor" aria-label="anchor
 <p><br></p>
 </div>
 <div class="section level3">
-<h3 id="arguments-data_name">Arguments data_name<a class="anchor" aria-label="anchor" href="#arguments-data_name"></a>
+<h3 id="arguments-data_name">Arguments <code>data_name</code><a class="anchor" aria-label="anchor" href="#arguments-data_name"></a>
 </h3>
 <div class="sourceCode" id="cb52"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Example</span></span>
@@ -501,7 +496,7 @@ corresponding R function, except class which<a class="anchor" aria-label="anchor
 <p><br></p>
 </div>
 <div class="section level3">
-<h3 id="argument-safer_check">Argument safer_check<a class="anchor" aria-label="anchor" href="#argument-safer_check"></a>
+<h3 id="argument-safer_check">Argument <code>safer_check</code><a class="anchor" aria-label="anchor" href="#argument-safer_check"></a>
 </h3>
 <div class="sourceCode" id="cb56"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/arg_check.html">arg_check</a></span><span class="op">(</span></span>
@@ -520,7 +515,7 @@ corresponding R function, except class which<a class="anchor" aria-label="anchor
 <p><br></p>
 </div>
 <div class="section level3">
-<h3 id="argument-lib_path-and-error_text">Argument lib_path and error_text<a class="anchor" aria-label="anchor" href="#argument-lib_path-and-error_text"></a>
+<h3 id="argument-lib_path-and-error_text">Argument <code>lib_path</code> and <code>error_text</code><a class="anchor" aria-label="anchor" href="#argument-lib_path-and-error_text"></a>
 </h3>
 <div class="sourceCode" id="cb58"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/arg_check.html">arg_check</a></span><span class="op">(</span></span>

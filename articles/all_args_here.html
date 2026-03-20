@@ -92,7 +92,7 @@
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">saferDev</span><span class="op">)</span></span></code></pre></div>
 <p><br></p>
 <div class="section level3">
-<h3 id="datasets">Datasets<a class="anchor" aria-label="anchor" href="#datasets"></a>
+<h3 id="dataset">Dataset<a class="anchor" aria-label="anchor" href="#dataset"></a>
 </h3>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/source.html" class="external-link">source</a></span><span class="op">(</span><span class="st">"https://raw.githubusercontent.com/safer-r/saferDev/main/dev/other/test2.R"</span><span class="op">)</span></span>
@@ -181,9 +181,58 @@
 <p><br></p>
 </div>
 <div class="section level3">
-<h3 id="all-the-arguments">All the arguments<a class="anchor" aria-label="anchor" href="#all-the-arguments"></a>
+<h3 id="argument-safer_check">Argument <code>safer_check</code><a class="anchor" aria-label="anchor" href="#argument-safer_check"></a>
 </h3>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/all_args_here.html">all_args_here</a></span><span class="op">(</span></span>
+<span>    x <span class="op">=</span> <span class="va">FUN2</span>, </span>
+<span>    safer_check <span class="op">=</span> <span class="cn">TRUE</span>, <span class="co"># perform some "safer" checks? Warning : always set this argument to FALSE if all_args_here() is used inside another safer function.</span></span>
+<span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">## </span></span>
+<span><span class="co">## INSIDE FUN2(), ARGUMENTS ARE MISSING.</span></span></code></pre>
+<pre><code><span><span class="co">##   LINE_NB     FUN_NAME</span></span>
+<span><span class="co">## 1       2      do.call</span></span>
+<span><span class="co">## 2       2 parent.frame</span></span>
+<span><span class="co">##                                                                                    FUN_ARGS</span></span>
+<span><span class="co">## 1 do.call(what = base::c, args = code_for_col, quote = FALSE, envir = base::parent.frame())</span></span>
+<span><span class="co">## 2                                                                            parent.frame()</span></span>
+<span><span class="co">##   FUN_POS                                          DEF_ARGS MISSING_ARG_NAMES</span></span>
+<span><span class="co">## 1      26 what, args, quote = FALSE, envir = parent.frame()                  </span></span>
+<span><span class="co">## 2     100                                             n = 1                 n</span></span>
+<span><span class="co">##   MISSING_ARGS              STATUS</span></span>
+<span><span class="co">## 1                             GOOD</span></span>
+<span><span class="co">## 2        n = 1 parent.frame(n = 1)</span></span></code></pre>
+<p><br></p>
+</div>
+<div class="section level3">
+<h3 id="argument-lib_path-and-error_text">Argument <code>lib_path</code> and <code>error_text</code><a class="anchor" aria-label="anchor" href="#argument-lib_path-and-error_text"></a>
+</h3>
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/all_args_here.html">all_args_here</a></span><span class="op">(</span></span>
+<span>    x <span class="op">=</span> <span class="va">FUN2</span>, </span>
+<span>    lib_path <span class="op">=</span> <span class="st">"."</span>, <span class="co"># absolute pathways of the directories containing the required packages if not in the default directories.</span></span>
+<span>    error_text <span class="op">=</span> <span class="st">" === TEXT ADDED ==="</span> <span class="co"># add information in error messages returned by the function.</span></span>
+<span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">## Error: </span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## ================</span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## ERROR IN saferDev:::.pack_and_function_check() INSIDE saferDev::all_args_here() === TEXT ADDED ===</span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## REQUIRED PACKAGE:</span></span>
+<span><span class="co">## saferDev</span></span>
+<span><span class="co">## MUST BE INSTALLED IN ONE OF THESE FOLDERS:</span></span>
+<span><span class="co">## /__w/saferDev/saferDev/vignettes/articles</span></span>
+<span><span class="co">## /usr/local/lib/R/site-library</span></span>
+<span><span class="co">## /usr/local/lib/R/library</span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## ================</span></span></code></pre>
+<p><br></p>
+</div>
+<div class="section level3">
+<h3 id="all-the-arguments">All the arguments<a class="anchor" aria-label="anchor" href="#all-the-arguments"></a>
+</h3>
+<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/all_args_here.html">all_args_here</a></span><span class="op">(</span></span>
 <span>    x <span class="op">=</span> <span class="va">FUN1</span>, <span class="co"># R function</span></span>
 <span>    export <span class="op">=</span> <span class="cn">FALSE</span>, <span class="co"># export the data frame into a .tsv file?</span></span>
