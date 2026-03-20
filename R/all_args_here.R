@@ -42,6 +42,8 @@
 #' 
 #' The function works first by replacing in the code: 1) the three consecutive characters \code{'"'} or \code{'"'} by three spaces, 2) \code{"\"'"} and \code{'\'"'} by four spaces and 3) escape quotes like \code{\"} or \code{\'} by two spaces.
 #' 
+#' See more examples \href{https://safer-r.github.io/saferDev/articles/all_args_here.html}{here}.
+#' 
 #' Warnings:
 #' \enumerate{
 #'   \item The following R functions are also skipped (as indicated by \code{"SKIPPED"} in the \code{DEF_ARGS} column of the returned data frame): \href{https://bugs.r-project.org/show_bug.cgi?id=18849}{\code{as.environment()}}. Click to see the explanation.
@@ -53,6 +55,7 @@
 #' @author \href{yushi.han2000@gmail.com}{Yushi Han}
 #' @author \href{wanghaiding442@gmail.com}{Haiding Wang}  
 #' @examples
+#' See more examples \href{https://safer-r.github.io/saferDev/articles/all_args_here.html}{here}.
 #' \dontrun{
 #' # Example that returns an error
 #' saferDev::all_args_here(mean) # Example that returns an error
