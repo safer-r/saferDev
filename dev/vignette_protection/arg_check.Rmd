@@ -1,13 +1,13 @@
 ---
-title: "arg_check"
+title: "arg_check(): more examples"
 ---
 <br>
 
 ```{r, include = FALSE}
 knitr::opts_chunk$set(
     error = TRUE, 
-    collapse = TRUE,
-    comment = ">"
+    collapse = FALSE,
+    comment = "##"
 )
 ```
 
@@ -45,21 +45,28 @@ mat2 # matrix of proportions with NA
 
 ### Simple examples
 ```{r}
-# Check that vec1 is of class integer (means that it is also a vector) -> ok
+# Check that vec1 is of class integer
 arg_check(data = vec1, class = "integer")
+
+
 # Check that vec1 is a numeric vector -> error because vec1 is a vector of integers
 arg_check(data = vec1, class = "numeric")
+
+
 # Check that vec1 is an integer vector of length 3 without negative values and without NA -> error because of length 5 and negative values inside vec1
 arg_check(data = vec1, class = "vector", typeof = "integer", length = 3, neg_values = FALSE, na_contain = FALSE)
+
+
 # No result displayed because the output list is assigned into res (see below the print argument)
 res <- arg_check(data = vec1, class = "integer")
+
 
 # with data = NULL, the function systematically report a checking problem
 arg_check(data = NULL, class = "integer")
 ```
 <br>
 
-### Argument class, typeof, mode and length are the same as the corresponding R function, except class which 
+### Arguments class, typeof, mode and length are the same as the corresponding R function, except class which 
 - 1) has also "vector" and 
 - 2) remains "matrix" for matrices and not "matrix" "array"
 

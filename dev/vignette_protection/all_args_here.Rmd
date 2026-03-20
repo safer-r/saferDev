@@ -1,13 +1,13 @@
 ---
-title: "all_args_here"
+title: "all_args_here(): more examples"
 ---
 <br>
 
 ```{r, include = FALSE}
 knitr::opts_chunk$set(
     error = TRUE, 
-    collapse = TRUE,
-    comment = ">"
+    collapse = FALSE,
+    comment = "##"
 )
 ```
 
@@ -37,15 +37,16 @@ FUN2 <- function(x, y){
 ### Simple examples
 ```{r}
 # Examples that return an error
-# all_args_here(mean)
-# all_args_here(test2)
+all_args_here(mean)
+all_args_here(test2)
+# End of examples that return an error
 all_args_here(
     x = FUN2 # R function
 )
 ```
 <br>
 
-### Argument export (associated with argument out_path, df_name and overwrite)
+### Argument \code{export}, \code{out_path}, \code{df_name} and \code{overwrite}
 ```{r}
 all_args_here(
     x = FUN2, # R function
