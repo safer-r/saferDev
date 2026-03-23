@@ -19,152 +19,180 @@ library(saferDev)
 ### Dataset
 ```{r}
 string1 <- "THIS IS A LOG"
-vec1 <- 1:6 # vector of integers
-vec2 <- letters[1:9] # vector of characters
-mat1 <- matrix(vec1, nrow = 2, ncol = 3, byrow = TRUE) # matrix of integer having 2 rows and 3 columns
+vec1 <- 1:6 # vector of integers.
+vec2 <- letters[1:9] # vector of characters.
+mat1 <- matrix(vec1, nrow = 2, ncol = 3, byrow = TRUE) # matrix of integer having 2 rows and 3 columns.
 dimnames(mat1) <- list(c("Row 1","Row 2"), c("C1", "C2", "C3"))
 mat2 <- mat1
 mode(mat2) <- "character"
-t1 <- table(mat1) # 1D table
+t1 <- table(mat1) # 1D table.
 vec3 <- as.vector(t1)
-names(vec3) <- letters[1:6] # vector with names
-t2 <- table(vec2, vec2) # 2D table
-l1 <- list(vec1, vec2) # list
+names(vec3) <- letters[1:6] # vector with names.
+t2 <- table(vec2, vec2) # 2D table.
+l1 <- list(vec1, vec2) # list.
 ```
 <br>
 
 ### Dataset info
 ```{r}
-string1 # string
-vec1 # vector of integers
-vec2 # vector of characters
-vec3 # vector of integers with names. No more [1] in front of values
-mat1 # matrix of integers with the row names
-mat2 # matrix of characters with the row names
-t1 # 1D table
-t2 # 2D table
-l1 # list
+string1 # string.
+vec1 # vector of integers.
+vec2 # vector of characters.
+vec3 # vector of integers with names. No more [1] in front of values.
+mat1 # matrix of integers with the row names.
+mat2 # matrix of characters with the row names.
+t1 # 1D table.
+t2 # 2D table.
+l1 # list.
 ```
 <br>
 
 ### Simple examples
 ```{r}
-report(data = string1, path = ".") # print the input into the output file in the path
-report(data = vec1, path = ".") # idem
-report(data = vec2, path = ".") # idem
-report(data = vec3, path = ".") # idem
-report(data = mat1, path = ".") # idem
-report(data = mat2, path = ".") # idem. We cannot see that it is mode character (see noquote below)
-report(data = t1, path = ".") # idem
-report(data = t2, path = ".") # idem
-report(data = l1, path = ".") # idem
+# Print the input into the output file in the indicated path.
+report(data = string1, path = ".")
+# Idem.
+report(data = vec1, path = ".")
+# Idem.
+report(data = vec2, path = ".")
+# Idem.
+report(data = vec3, path = ".")
+# Idem.
+report(data = mat1, path = ".")
+# Idem. Of note, we cannot see that it is mode character (see noquote below).
+report(data = mat2, path = ".")
+# Idem.
+report(data = t1, path = ".")
+# Idem.
+report(data = t2, path = ".")
+# Idem.
+report(data = l1, path = ".")
 ```
 <br>
 
 ### Argument <code>output</code>
 ```{r, echo = TRUE, error = TRUE}
-report(data = vec1, output = "test.txt", path = ".") # print the vector vec1 into the output file named "test.txt" in the path
+# Print the vector vec1 into the output file named "test.txt" in the path.
+report(data = vec1, output = "test.txt", path = ".")
 ```
 <br>
 
 ### Argument <code>overwrite</code>
 ```{r, echo = TRUE, error = TRUE}
-report(data = vec2, overwrite = TRUE, output = "test.txt", path = ".") # if the file exists, the output file content will be erased before printing
+# If the file exists, the output file content will be erased before printing.
+report(data = vec2, overwrite = TRUE, output = "test.txt", path = ".")
 ```
 <br>
 
 ### Argument <code>rownames_kept</code>
 ```{r, echo = TRUE, error = TRUE}
+ # Keep the row names when print the matrix mat1 in the file.
 report(
   data = mat1, 
   rownames_kept = TRUE, 
   path = "."
-) # keep the row names when print the matrix mat1 in the file
-
+)
+# Remove the row names.
 report(
   data = mat1, 
   rownames_kept = FALSE, 
   path = "."
-) # remove the row names
-
+)
+# Keep the row names when printing the table t1 in the file.
 report(
   data = t1, 
   rownames_kept = TRUE, 
   path = "."
-) # keep the row names when print the table t1 in the file
-
+) 
+# Remove the row names.
 report(
   data = t1, 
   rownames_kept = FALSE, 
   path = "."
-) # remove the row names
-
+)
+# Keep the row names when print the table t2 in the file.
 report(
   data = t2, 
   rownames_kept = TRUE, 
   path = "."
-) # keep the row names when print the table t2 in the file
-
+)
+# Remove the row names.
 report(
   data = t2, 
   rownames_kept = FALSE, 
   path = "."
-) # remove the row names
+) 
 
 ```
 <br>
 
 ### Argument <code>vector_cat</code>
 ```{r, echo = TRUE, error = TRUE}
+# Print a vector of length > 1 using cat() instead of capture.output(). Names are lost.
 report(
   data = vec3, 
   vector_cat = TRUE, 
   path = "."
-) # print a vector of length > 1 using cat() instead of capture.output() : names are lost.
+)
 ```
 <br>
 
 ### Argument <code>noquote</code>
 ```{r, echo = TRUE, error = TRUE}
+# Quotes are kept for the characters.
 report(
   data = mat2, 
   noquote = FALSE, 
   path = "."
-) # quote are kept for the characters.
+)
 ```
 <br>
 
 ### Argument <code>sep</code>
 ```{r, echo = TRUE, error = TRUE}
+# 4 lines added after printed data.
 report(
   data = vec1, 
   sep = 4, 
   path = "."
-) # 4 lines after printed data
+)
 ```
 <br>
 
 ### Argument <code>safer_check</code>
 ```{r, echo = TRUE, error = TRUE}
+# Safer checkings are performed before main code running 
 report(
     data = vec1, 
     safer_check = TRUE
-) # check if the package is in the computer, safer_check = TRUE, checkings are performed before main code running 
-```
-<br>
-
-### Argument <code>lib_path</code> and <code>error_text</code>
-```{r}
-report(
-    data = vec1, 
-    lib_path = ".", # absolute pathways of the directories containing the required packages if not in the default directories.
-    error_text = "TEXT ADDED" # add information in error messages returned by the function.
 )
 ```
 <br>
 
-### All the arguments
+### Argument <code>lib_path</code>
+```{r}
+# Error returned because the R required packages are not in the "." path.
+report(
+    data = vec1, 
+    lib_path = "."
+)
+```
+<br>
+
+### Argument <code>error_text</code>
+```{r}
+# Add a text in error messages returned by report().
+report(
+    data = vec1, 
+    lib_path = ".", 
+    error_text = " === TEXT ADDED ==="
+)
+```
+<br>
+
+### All the arguments with their descriptions
 ```{r, echo = TRUE, error = TRUE}
+# matrix mat1 will be print in the file "text2.txt" in the path, with quote and row names being kept, and 4 lines after printing data
 report(
     data = mat2, 
     output = "test2.txt", 
@@ -178,6 +206,6 @@ report(
     lib_path = NULL, # absolute pathways of the directories containing the required packages if not in the default directories.
     error_text = "" # add information in error messages returned by the function.
 )
-# matrix mat1 will be print in the file "text2.txt" in the path, with quote and row names being kept, and 4 lines after printing data
+
 ```
 
