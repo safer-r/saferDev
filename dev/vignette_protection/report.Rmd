@@ -1,13 +1,13 @@
 ---
-title: "report"
+title: "report(): more examples"
 ---
 <br>
 
 ```{r, include = FALSE}
 knitr::opts_chunk$set(
     error = TRUE, 
-    collapse = TRUE,
-    comment = ">"
+    collapse = FALSE,
+    comment = "##"
 )
 ```
 
@@ -16,7 +16,7 @@ library(saferDev)
 ```
 <br>
 
-### Datasets
+### Dataset
 ```{r}
 string1 <- "THIS IS A LOG"
 vec1 <- 1:6 # vector of integers
@@ -33,7 +33,7 @@ l1 <- list(vec1, vec2) # list
 ```
 <br>
 
-### Datasets info
+### Dataset info
 ```{r}
 string1 # string
 vec1 # vector of integers
@@ -61,19 +61,19 @@ report(data = l1, path = ".") # idem
 ```
 <br>
 
-### Argument output
+### Argument <code>output</code>
 ```{r, echo = TRUE, error = TRUE}
 report(data = vec1, output = "test.txt", path = ".") # print the vector vec1 into the output file named "test.txt" in the path
 ```
 <br>
 
-### Argument overwrite
+### Argument <code>overwrite</code>
 ```{r, echo = TRUE, error = TRUE}
 report(data = vec2, overwrite = TRUE, output = "test.txt", path = ".") # if the file exists, the output file content will be erased before printing
 ```
 <br>
 
-### Argument rownames_kept
+### Argument <code>rownames_kept</code>
 ```{r, echo = TRUE, error = TRUE}
 report(
   data = mat1, 
@@ -114,7 +114,7 @@ report(
 ```
 <br>
 
-### Argument vector_cat
+### Argument <code>vector_cat</code>
 ```{r, echo = TRUE, error = TRUE}
 report(
   data = vec3, 
@@ -124,7 +124,7 @@ report(
 ```
 <br>
 
-### Argument noquote
+### Argument <code>noquote</code>
 ```{r, echo = TRUE, error = TRUE}
 report(
   data = mat2, 
@@ -134,7 +134,7 @@ report(
 ```
 <br>
 
-### Argument sep
+### Argument <code>sep</code>
 ```{r, echo = TRUE, error = TRUE}
 report(
   data = vec1, 
@@ -144,7 +144,7 @@ report(
 ```
 <br>
 
-### Argument safer_check
+### Argument <code>safer_check</code>
 ```{r, echo = TRUE, error = TRUE}
 report(
     data = vec1, 
@@ -153,7 +153,7 @@ report(
 ```
 <br>
 
-### Argument lib_path and error_text
+### Argument <code>lib_path</code> and <code>error_text</code>
 ```{r}
 report(
     data = vec1, 
@@ -174,7 +174,7 @@ report(
     vector_cat = TRUE, 
     noquote = FALSE, 
     sep = 4,
-    safer_check = TRUE, # perform some "safer" checks? Warning : always set this argument to FALSE if all_args_here() is used inside another safer function.
+    safer_check = TRUE, # Single logical value. Perform some "safer" checks (see https://github.com/safer-r)?
     lib_path = NULL, # absolute pathways of the directories containing the required packages if not in the default directories.
     error_text = "" # add information in error messages returned by the function.
 )

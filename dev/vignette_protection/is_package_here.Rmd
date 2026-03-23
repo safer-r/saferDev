@@ -1,13 +1,13 @@
 ---
-title: "is_package_here"
+title: "is_package_here(): more examples"
 ---
 <br>
 
 ```{r, include = FALSE}
 knitr::opts_chunk$set(
     error = TRUE, 
-    collapse = TRUE,
-    comment = ">"
+    collapse = FALSE,
+    comment = "##"
 )
 ```
 
@@ -30,13 +30,13 @@ path # character vector specifying the absolute pathways of the directories, thi
 ```
 <br>
 
-### Argument req_package
+### Argument <code>req_package</code>
 ```{r, echo = TRUE, error = TRUE}
 is_package_here(req_package = req.pkg) # check if the package is in the computer
 ```
 <br>
 
-### Argument safer_check
+### Argument <code>safer_check</code>
 ```{r, echo = TRUE, error = TRUE}
 is_package_here(
     req_package = req.pkg,
@@ -45,7 +45,7 @@ is_package_here(
 ```
 <br>
 
-### Argument lib_path and error_text
+### Argument <code>lib_path</code> and <code>error_text</code>
 ```{r}
 is_package_here(
     req_package = req.pkg,
@@ -59,7 +59,7 @@ is_package_here(
 ```{r, echo = TRUE, error = TRUE}
 is_package_here(
     req_package = req.pkg,
-    safer_check = TRUE, # perform some "safer" checks? Warning : always set this argument to FALSE if all_args_here() is used inside another safer function.
+    safer_check = TRUE, # Single logical value. Perform some "safer" checks (see https://github.com/safer-r)?
     lib_path = NULL, # absolute pathways of the directories containing the required packages if not in the default directories.
     error_text = "" # add information in error messages returned by the function.
 ) # check if the package is in the computer

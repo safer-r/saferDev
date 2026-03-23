@@ -1,13 +1,13 @@
 ---
-title: "is_function_here"
+title: "is_function_here(): more examples"
 ---
 <br>
 
 ```{r, include = FALSE}
 knitr::opts_chunk$set(
     error = TRUE, 
-    collapse = TRUE,
-    comment = ">"
+    collapse = FALSE,
+    comment = "##"
 )
 ```
 
@@ -30,22 +30,23 @@ path # character vector specifying the absolute pathways of the directories, thi
 ```
 <br>
 
-### Argument fun
+### Argument <code>fun</code>
 ```{r, echo = TRUE, error = TRUE}
 is_function_here(fun = f) # check if the package serpentine is in the computer
 ```
 <br>
 
-### Argument safer_check
+### Argument <code>safer_check</code>
 ```{r, echo = TRUE, error = TRUE}
+# check if the package is in the computer, safer_check = TRUE, checkings are performed before main code running 
 is_function_here(
     fun = f,
     safer_check = TRUE
-) # check if the package is in the computer, safer_check = TRUE, checkings are performed before main code running 
+) 
 ```
 <br>
 
-### Argument lib_path and error_text
+### Argument <code>lib_path</code> and <code>error_text</code>
 ```{r}
 is_function_here(
     fun = f,
@@ -57,12 +58,13 @@ is_function_here(
 
 ### All the arguments
 ```{r, echo = TRUE, error = TRUE}
+# check if the function is present in the package, returns an error because the path doesn't exist.
 is_function_here(
     fun = f,
-    safer_check = TRUE, # perform some "safer" checks? Warning : always set this argument to FALSE if all_args_here() is used inside another safer function.
+    safer_check = TRUE, # Single logical value. Perform some "safer" checks (see https://github.com/safer-r)?
     lib_path = NULL, # absolute pathways of the directories containing the required packages if not in the default directories.
     error_text = "" # add information in error messages returned by the function.
-) # check if the function is present in the package, returns an error because the path doesn't exist
+) 
 ```
 <br>
 

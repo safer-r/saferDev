@@ -1,13 +1,13 @@
 ---
-title: "colons_check"
+title: "colons_check(): more examples"
 ---
 <br>
 
 ```{r, include = FALSE}
 knitr::opts_chunk$set(
     error = TRUE, 
-    collapse = TRUE,
-    comment = ">"
+    collapse = FALSE,
+    comment = "##"
 )
 ```
 
@@ -16,7 +16,7 @@ library(saferDev)
 ```
 <br>
 
-### Datasets
+### Dataset
 
 ```{r}
 fun1 <- function(){
@@ -29,7 +29,7 @@ fun2 <- function(){
 ```
 <br>
 
-### Datasets info
+### Dataset info
 
 ```{r}
 fun1
@@ -37,19 +37,29 @@ fun2
 ```
 <br>
 
-### Argument x
+### Argument <code>x</code>
 ```{r, echo = TRUE, error = TRUE}
 colons_check(x = fun1) # a function name, written without quotes and brackets
 colons_check(x = fun2) # a function name, written without quotes and brackets
 ```
 <br>
 
-### Argument safer_chek 
+### Argument <code>safer_chek</code>
 ```{r, echo = TRUE, error = TRUE}
 colons_check(
-    x = fun1, 
-    afer_check = FALSE
+    x = fun1, # a function name, written without quotes and brackets
+    afer_check = FALSE # perform some "safer" checks?
 ) # Single logical value. Perform some "safer" checks (see https://github.com/safer-r) ?
+```
+<br>
+
+### Argument <code>lib_path</code> and <code>error_text</code>
+```{r}
+colons_check(
+    x = fun1, 
+    lib_path = ".", # absolute pathways of the directories containing the required packages if not in the default directories.
+    error_text = " === TEXT ADDED ===" # add information in error messages returned by the function.
+)
 ```
 <br>
 
@@ -57,7 +67,7 @@ colons_check(
 ```{r, echo = TRUE, error = TRUE}
 colons_check(
     x = fun1, # a function name, written without quotes and brackets
-    safer_check = TRUE, # perform some "safer" checks? Warning : always set this argument to FALSE if all_args_here() is used inside another safer function.
+    safer_check = TRUE, # Single logical value. Perform some "safer" checks (see https://github.com/safer-r)?
     lib_path = NULL, # absolute pathways of the directories containing the required packages if not in the default directories.
     error_text = "" # add information in error messages returned by the function.
 )
@@ -69,7 +79,7 @@ colons_check(
 source("https://raw.githubusercontent.com/safer-r/saferDev/main/dev/other/test.R")
 colons_check(
     x = test, # a function name, written without quotes and brackets
-    safer_check = TRUE # Single logical value. Perform some "safer" checks (see https://github.com/safer-r) ?
+    safer_check = TRUE # Single logical value. Perform some "safer" checks (see https://github.com/safer-r)?
 )
 ```
 <br>

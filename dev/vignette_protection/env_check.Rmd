@@ -1,13 +1,13 @@
 ---
-title: "env_check"
+title: "env_check(): more examples"
 ---
 <br>
 
 ```{r, include = FALSE}
 knitr::opts_chunk$set(
     error = TRUE, 
-    collapse = TRUE,
-    comment = ">"
+    collapse = FALSE,
+    comment = "##"
 )
 ```
 
@@ -16,61 +16,62 @@ library(saferDev)
 ```
 <br>
 
-### Datasets
+### Dataset
 ```{r}
 pos <- 2
 name <- "mean"
 ```
 <br>
 
-### Datasets info
+### Dataset info
 ```{r}
 pos # integer indicating the position of the environment checked
 name # character vector of the name of the function that will be checked
 ```
 <br>
 
-### Simple example
+### Simple examples
 ```{r}
-env_check(pos = 1)
-env_check(pos = 2)
+env_check(pos = 1) # position of the environment checked 
+env_check(pos = 2) # position of the environment checked 
 ```
 <br>
 
-### Argument pos
+### Argument <code>pos</code>
 ```{r}
 env_check(pos = 1) # check the object "NULL" in the environment one step above the env_check() environment
 ```
 <br>
 
-### Argument name
+### Argument <code>name</code>
 ```{r}
 env_check(name = "mean") # check if the object "mean" is in the environment one step above the env_check() environment, and if yes, returns if the same name exists in above environments
 ```
 <br>
 
-### Argument safer_check
+### Argument <code>safer_check</code>
 ```{r}
 env_check(safer_check = TRUE) # with TRUE, checkings are performed before main code running
 ```
 <br>
 
-### Argument lib_path and error_text
+### Argument <code>lib_path</code> and <code>error_text</code>
 ```{r}
 env_check(
-    lib_path = ".", # absolute pathways of the directories containing the required packages if not in the default directories.
-    error_text = "TEXT ADDED" # add information in error messages returned by the function.
+    lib_path = ".", # absolute pathways of the directories containing the required packages if not in the default directories
+    error_text = "TEXT ADDED" # add information in error messages returned by the function
 )
 ```
 
 ### All the arguments
 ```{r}
+# check if the object "mean" is in the environment one step above the env_check() environment, and if yes, returns if the same name exists in above environments.
 mean <- 2
 env_check(
     pos = 1,
     name = "mean",
-    safer_check = TRUE, # perform some "safer" checks? Warning : always set this argument to FALSE if all_args_here() is used inside another safer function.
+    safer_check = TRUE, # Single logical value. Perform some "safer" checks (see https://github.com/safer-r)?
     lib_path = NULL, # absolute pathways of the directories containing the required packages if not in the default directories.
     error_text = "" # add information in error messages returned by the function.
-) # check if the object "mean" is in the environment one step above the env_check() environment, and if yes, returns if the same name exists in above environments
+) 
 ```
