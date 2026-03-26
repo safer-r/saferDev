@@ -575,13 +575,22 @@
             }
             good_args <- final
             if(base::any(arg_full_symbol_type, na.rm = FALSE)){
+                # nocov start
+                # codecov inactivated because it is an internal control of code writing, impossible to cover with argument values.
                 tempo_cat <- base::paste0("INTERNAL ERROR 1 IN ", intern_error_text_end, "ARGUMENT WITHOUT OPTIONAL VALUES (MANDATORY ARGS) CANNOT REMAIN WITHOUT VALUE:\n\narg_full_symbol_type:\n", base::paste0(arg_full_symbol_type, collapse = "\n", recycle0 = FALSE), "\n\narg_full_names:\n", base::paste0(arg_full_names, collapse = "\n", recycle0 = FALSE), intern_error_text_end, collapse = NULL, recycle0 = FALSE) ; base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", base::ifelse(test = base::is.null(x = warn), yes = "", no = base::paste0("IN ADDITION\nWARNING", base::ifelse(test = warn_count > 1, yes = "S", no = ""), ":\n\n", warn, collapse = NULL, recycle0 = FALSE)), collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL)
+                # nocov end
             }
             if(( ! base::any(three_dots_log, na.rm = TRUE)) & base::any(missing_full_arg_name_log, na.rm =TRUE)){
+                # nocov start
+                # codecov inactivated because it is an internal control of code writing, impossible to cover with argument values.
                 tempo_cat <- base::paste0("INTERNAL ERROR 2 IN ", intern_error_text_start, "CANNOT HAVE OBS ARGUMENT NOT INCORPORATED YET IF ! base::any(three_dots_log, na.rm = TRUE) IS TRUE:\n\nthree_dots_log:\n", base::paste0(three_dots_log, collapse = " ", recycle0 = FALSE), "\n\nmissing_full_arg_name_log:\n", base::paste0(missing_full_arg_name_log, collapse = " ", recycle0 = FALSE), intern_error_text_end, collapse = NULL, recycle0 = FALSE) ; base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", base::ifelse(test = base::is.null(x = warn), yes = "", no = base::paste0("IN ADDITION\nWARNING", base::ifelse(test = warn_count > 1, yes = "S", no = ""), ":\n\n", warn, collapse = NULL, recycle0 = FALSE)), collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL)
+                # nocov end
             }
             if(count_good_args > base::length(x = tempo_split)){
+                # nocov start
+                # codecov inactivated because it is an internal control of code writing, impossible to cover with argument values.
                 tempo_cat <- base::paste0("INTERNAL ERROR 3 IN ", intern_error_text_start, "count_good_args + 1 CANNOT BE MORE THAN length(tempo_split):\n\nlength(tempo_split): ", base::length(x = tempo_split), "\n\ncount_good_args + 1: ", count_good_args + 1, intern_error_text_end, collapse = NULL, recycle0 = FALSE) ; base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", base::ifelse(test = base::is.null(x = warn), yes = "", no = base::paste0("IN ADDITION\nWARNING", base::ifelse(test = warn_count > 1, yes = "S", no = ""), ":\n\n", warn, collapse = NULL, recycle0 = FALSE)), collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL)
+                # nocov end
             }
             if(base::any(three_dots_log, na.rm = TRUE) & base::any(missing_full_arg_name_log, na.rm =TRUE)){ # obs values not yet in good_args
                 if(count_good_args + 1 <= base::length(x = tempo_split)){

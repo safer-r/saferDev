@@ -382,7 +382,10 @@
     # check the identical structure of list_fun and list_fun_pos
     ident_str <- function(list_fun, list_fun_pos, error_nb, intern_error_text_start, intern_error_text_end){
         if( ! (base::length(x = list_fun) == base::length(x = list_fun_pos) & base::all(base::sapply(X = list_fun, FUN = function(x){base::length(x = x)}, simplify = TRUE, USE.NAMES = TRUE) == base::sapply(X = list_fun_pos, FUN = function(x){base::length(x = x)}, simplify = TRUE, USE.NAMES = TRUE), na.rm = TRUE))){
+            # nocov start
+            # codecov inactivated because it is an internal control of code writing, impossible to cover with argument values.
             tempo_cat <- base::paste0("INTERNAL ERROR ", error_nb, " IN ", intern_error_text_start, "LISTS list_fun AND list_fun_pos SHOULD HAVE IDENTICAL STRUCTURES\nBUT LENGTHS ARE RESPECTIVELY:\n", base::length(x = list_fun), "\n", base::length(x = list_fun_pos), "\nAND NUMBER OF ELEMENT IN EACH COMPARTMENT ARE RESPECTIVELY:\n", base::paste0(base::sapply(X = list_fun, FUN = function(x){base::length(x = x)}, simplify = TRUE, USE.NAMES = TRUE), collapse = " ", recycle0 = FALSE), "\n", base::paste0(base::sapply(X = list_fun_pos, FUN = function(x){base::length(x = x)}, simplify = TRUE, USE.NAMES = TRUE), collapse = " ", recycle0 = FALSE), intern_error_text_end, collapse = NULL, recycle0 = FALSE) ; base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL)
+            # nocov end
         }
     }
     ident_str(
@@ -436,7 +439,10 @@
         # pattern3 <- base::paste(base::paste0("(?<![A-Za-z0-9._])", fun.uni, "\\s*\\($"), collapse = "|") # same as pattern2 but used to know if the seeked function is at the end of the string
         basic_ini <- ini[line_nb]
         if( ! (base::length(x = list_fun) == base::length(x = list_fun_pos) & base::length(x = list_fun) == base::length(x = line_nb) & base::length(x = list_fun) == base::length(x = basic_ini))){
+            # nocov start
+            # codecov inactivated because it is an internal control of code writing, impossible to cover with argument values.
             tempo_cat <- base::paste0("INTERNAL ERROR 3 IN ", intern_error_text_start, "LENGTHS SHOULD BE IDENTICAL\nlist_fun: ", base::length(x = list_fun), "\nlist_fun_pos: ", base::length(x = list_fun_pos), "\nline_nb: ", base::length(x = line_nb), "\nbasic_ini: ", base::length(x = basic_ini), intern_error_text_end, collapse = NULL, recycle0 = FALSE) ; base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL)
+            # nocov end
         }
         res <- list_fun_pos
         for(i1 in 1:base::length(x = basic_ini)){
@@ -452,18 +458,27 @@
         res2 <- base::lapply(X = res, FUN = function(x){base::substr(x = x, start = base::nchar(x = x, type = "chars", allowNA = FALSE, keepNA = NA)-1, stop = base::nchar(x = x, type = "chars", allowNA = FALSE, keepNA = NA))}) # base::nchar(x)-1 takes only :: if the strings ends by :::
         base::names(x = res2) <- NULL
         if( ! base::all(base::sapply(X = res2, FUN = function(x){base::length(x = x)}, simplify = TRUE, USE.NAMES = TRUE) == base::sapply(X = res, FUN = function(x){base::length(x = x)}, simplify = TRUE, USE.NAMES = TRUE), na.rm = TRUE)){
+            # nocov start
+            # codecov inactivated because it is an internal control of code writing, impossible to cover with argument values.
             tempo_cat <- base::paste0("INTERNAL ERROR 4 IN ", intern_error_text_start, "LENGTHS SHOULD BE IDENTICAL\nres2: ", base::paste0(base::sapply(X = res2, FUN = function(x){base::length(x = x)}, simplify = TRUE, USE.NAMES = TRUE), collapse = " ", recycle0 = FALSE), "\nres: ", base::paste0(base::sapply(X = res, FUN = function(x){base::length(x = x)}, simplify = TRUE, USE.NAMES = TRUE), collapse = " ", recycle0 = FALSE), intern_error_text_end, collapse = NULL, recycle0 = FALSE) : base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL)
+            # nocov end
         }
         colon_not_here <- base::lapply(X = res2, FUN = function(x){ ! x %in% "::"}) # no need to check for ":::" because base::nchar(x)-1 takes only :: if the strings ends by :::
         if( ! base::all(base::sapply(X = res2, FUN = function(x){base::length(x = x)}, simplify = TRUE, USE.NAMES = TRUE) == base::sapply(X = colon_not_here, FUN = function(x){base::length(x = x)}, simplify = TRUE, USE.NAMES = TRUE), na.rm = TRUE)){
+            # nocov start
+            # codecov inactivated because it is an internal control of code writing, impossible to cover with argument values.
             tempo_cat <- base::paste0("INTERNAL ERROR 5 IN ", intern_error_text_start, "LENGTHS SHOULD BE IDENTICAL\nres2: ", base::paste0(base::sapply(X = res2, FUN = function(x){base::length(x = x)}, simplify = TRUE, USE.NAMES = TRUE), collapse = " ", recycle0 = FALSE), "\ncolon_not_here: ", base::paste0(base::sapply(X = colon_not_here, FUN = function(x){base::length(x = x)}, simplify = TRUE, USE.NAMES = TRUE), collapse = " ", recycle0 = FALSE), intern_error_text_end, collapse = NULL, recycle0 = FALSE) ; base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL)
+            # nocov end
         }
         if(base::any(base::unlist(x = colon_not_here, recursive = TRUE, use.names = TRUE), na.rm = TRUE)){
             col1 <- base::as.vector(x = base::unlist(x = base::mapply(FUN = function(x, y){base::rep(x = y, base::sum(x, na.rm = TRUE))}, x = colon_not_here, y = line_nb, SIMPLIFY = TRUE, MoreArgs = NULL, USE.NAMES = TRUE), recursive = TRUE, use.names = TRUE), mode = "any")
             col2 <- base::as.vector(x = base::unlist(x = base::mapply(FUN = function(x, y){y[x]}, x = colon_not_here, y = list_fun, SIMPLIFY = TRUE, MoreArgs = NULL, USE.NAMES = TRUE), recursive = TRUE, use.names = TRUE), mode = "any")
             col3 <- base::as.vector(x = base::unlist(x = base::mapply(FUN = function(x, y){y[x]}, x = colon_not_here, y = res, SIMPLIFY = TRUE, MoreArgs = NULL, USE.NAMES = TRUE), recursive = TRUE, use.names = TRUE), mode = "any")
             if( ! (base::length(x = col1) == base::length(x = col2) & base::length(x = col1) == base::length(x = col3) & base::length(x = col2) == base::length(x = col3))){
+                # nocov start
+                # codecov inactivated because it is an internal control of code writing, impossible to cover with argument values.
                 tempo_cat <- base::paste0("INTERNAL ERROR 6 IN ", intern_error_text_start, "LENGTHS OF col1 (", base::length(x = col1), "), col2 (", base::length(x = col2), "), AND col3 (", base::length(x = col3), "), SHOULD BE EQUAL.", intern_error_text_end, collapse = NULL, recycle0 = FALSE) ; base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL)
+                # nocov end
             }
             # removal of functions between quotes and after $
             tempo.log <- saferDev:::.noclean_functions(

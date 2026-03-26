@@ -427,8 +427,11 @@ get_message <- function(
 
     ######## graphic device checking
     # check the number of graphic devices on exit
-    dev_list <- grDevices::dev.list() 
+    dev_list <- grDevices::dev.list()
+    # nocov start
+    # codecov inactivated because it is an internal control of code writing, impossible to cover with argument values.
     base::on.exit(expr = if(base::length(x = dev_list) != base::length(x = grDevices::dev.list())){tempo_cat <- base::paste0("INTERNAL ERROR IN THE BACKBONE PART OF ", intern_error_text_start, "SOME GRAPHIC DEVICES WERE OPENED BY ", function_name, " BUT NOT CLOSED BEFORE END OF EXECUTION.\n\nIF IT IS EXPECTED, JUST REMOVE THE CODE DISPLAYING THIS MESSAGE INSIDE ", function_name, ".\n\nOTHERWISE, THE PROBLEM COMES FROM OPENED GRAPHIC DEVICES BEFORE RUNNING ", function_name, " (n = ", base::length(x = dev_list), ") AND AFTER (n = ", base::length(x = grDevices::dev.list()), ").", intern_error_text_end, collapse = NULL, recycle0 = FALSE) ; base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL)}, add = TRUE, after = TRUE)
+    # nocov end
     # end check the number of graphic devices on exit
     # restore the graphic parameters on exit
     if(base::length(x = grDevices::dev.list()) > 0){

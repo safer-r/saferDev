@@ -451,6 +451,8 @@
     if( ! base::is.null(x = pos)){
         tempo <- base::substring(text = string, first =  pos, last =  pos)
         if( ! base::all(base::unique(x = tempo, incomparables = FALSE) == no_regex_pattern, na.rm = TRUE)){
+            # nocov start
+            # codecov inactivated because it is an internal control of code writing, impossible to cover with argument values.
             tempo_cat <- base::paste0(
                 "INTERNAL ERROR 1 IN ", 
                 intern_error_text_start, 
@@ -464,6 +466,7 @@
                 recycle0 = FALSE
             )
             base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL)
+            # nocov end
         }
     }
     #### end main code
