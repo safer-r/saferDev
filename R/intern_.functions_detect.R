@@ -476,9 +476,13 @@
     fun_name_pos_wo_op <- fun_name_pos_wo_op[ ! tempo.log]
     code_line_nb <- code_line_nb[( ! tempo.log) & ( ! comment_line.log) & ( ! empty_line.log)]
     if( ! (base::length(x = fun_name_wo_op) == base::length(x = fun_name_pos_wo_op) & base::length(x = fun_name_wo_op) == base::length(x = code_line_nb))){
+        # nocov start
         tempo_cat <- base::paste0("INTERNAL ERROR 2 IN ", intern_error_text_start,  "LENGTHS SHOULD BE IDENTICAL\nfun_name_wo_op: ",  base::length(x = fun_name_wo_op),  "\nfun_name_pos_wo_op: ",  base::length(x = fun_name_pos_wo_op),  "\ncode_line_nb: ",  base::length(x = code_line_nb),  intern_error_text_end,  collapse = NULL,  recycle0 = FALSE) ; base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL)
+        # nocov end
     }else if(base::any(base::is.na(x = code_line_nb), na.rm = TRUE)){
+        # nocov start
         tempo_cat <- base::paste0("INTERNAL ERROR 3 IN ", intern_error_text_start, "code_line_nb SHOULD NOT CONTAIN NA.\ncode_line_nb:\n", base::paste0(code_line_nb, collapse = "\n", recycle0 = FALSE), intern_error_text_end, collapse = NULL, recycle0 = FALSE) ; base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL)
+        # nocov end
     }else{
         # with that, now the code line of code is indicated in as compartment names
         base::names(x = fun_name_wo_op) <- base::paste0("c", code_line_nb, collapse = NULL, recycle0 = FALSE)
@@ -487,7 +491,9 @@
     # end removal of empty string
     test.log <- base::mapply(FUN = function(x, y){base::length(x = x) != base::length(x = y)}, x = fun_name_wo_op, y = fun_name_pos_wo_op, MoreArgs = NULL, SIMPLIFY = TRUE, USE.NAMES = TRUE)
     if(base::any(test.log, na.rm = TRUE)){
+        # nocov start
         tempo_cat <- base::paste0("INTERNAL ERROR 4 IN ", intern_error_text_start, "LENGTHS SHOULD BE IDENTICAL IN COMPARTMENTS ", base::paste0(base::which(x = test.log, arr.ind = FALSE, useNames = TRUE), collapse = ", ", recycle0 = FALSE), " OF fun_name_wo_op AND fun_name_pos_wo_op.", intern_error_text_end, collapse = NULL, recycle0 = FALSE) ; base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL)
+        # nocov end
     }
     # fun_name_wo_op_uni <- base::unlist(base::unique(fun_name_wo_op)) # in case
     # end all function names in x

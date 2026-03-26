@@ -18,15 +18,15 @@ library(saferDev)
 
 ### Dataset
 ```{r}
-source("https://raw.githubusercontent.com/safer-r/saferDev/main/dev/other/test2.R")
-source("https://raw.githubusercontent.com/safer-r/.github/refs/heads/main/profile/backbone.R")
-FUN1 <- function(x, y){
+source("https://raw.githubusercontent.com/safer-r/saferDev/main/dev/other/test2.R") # function.
+source("https://raw.githubusercontent.com/safer-r/.github/refs/heads/main/profile/backbone.R") # function.
+FUN1 <- function(x, y){ # vector of integers
     code_for_col <- base::as.vector(x = base::unlist(x = base::mapply(FUN = function(x, y){base::rep(x = y, base::length(x = x))}, x = x, y = y, MoreArgs = NULL, SIMPLIFY = TRUE, USE.NAMES = TRUE), recursive = TRUE, use.names = TRUE), mode = "any")
     code_for_col2 <- base::as.vector(x = base::unlist(x = base::mapply(FUN = function(x, y){base::rep(x = y, base::length(x = x))}, x = x, y = y)))
     middle_bracket <- base::do.call(what = base::c, args = code_for_col)
     middle_bracket2 <- base::do.call(what = base::c, args = code_for_col, quote = FALSE, envir = base::parent.frame())
 }
-FUN2 <- function(x, y){
+FUN2 <- function(x, y){ # function.
     middle_bracket2 <- base::do.call(what = base::c, args = code_for_col, quote = FALSE, envir = base::parent.frame())
 }
 ```
