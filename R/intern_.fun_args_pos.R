@@ -357,7 +357,7 @@
         if(base::length(x = x) != 1 | base::any(base::is.na(x = x), na.rm = TRUE) | base::is.null(x = x) | base::any(x < 0 , na.rm = TRUE)){
             # nocov start
             # codecov inactivated because it is an internal control of code writing, impossible to cover with argument values.
-            tempo_name <- base::paste0("check_pos_fun_args_pos_internal_error_", intern_error_nb, ".txt")
+            tempo_name <- base::paste0("check_pos_fun_args_pos_internal_error_", intern_error_nb, ".txt", collapse = NULL, recycle0 = FALSE)
             base::cat(text, file = tempo_name, sep = "", fill = FALSE, labels = NULL, append = FALSE)
             tempo_cat <- base::paste0(
                 "INTERNAL ERROR ", 
@@ -408,7 +408,7 @@
         if(count != 0){
             # nocov start
             # codecov inactivated because it is an internal control of code writing, impossible to cover with argument values.
-            tempo_name <- base::paste0("while_loop_fun_args_pos_internal_error_", intern_error_nb, ".txt") ; base::cat(text, file = tempo_name, sep = "", fill = FALSE, labels = NULL, append = FALSE) ; tempo_cat <- base::paste0("INTERNAL ERROR ", intern_error_nb, " IN ", intern_error_text_start, "INTERNAL FUNCTION DID NOT PROPERLY DETECT THE POSITION OF THE CLOSING BRACKET.\n", "\nstart: ", start, "\nall_pos: ", all_pos, "\nopen_pos: ", open_pos, "\nclose_pos: ", close_pos, "\ntext:\nSEE THE FILE ", tempo_name, "\npattern: ", base::paste0(pattern, collapse = "\n", recycle0 = FALSE), "\ncount: ", base::paste0(count, collapse = "\n", recycle0 = FALSE), intern_error_text_end, collapse = NULL, recycle0 = FALSE) ; base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL)
+            tempo_name <- base::paste0("while_loop_fun_args_pos_internal_error_", intern_error_nb, ".txt", collapse = NULL, recycle0 = FALSE) ; base::cat(text, file = tempo_name, sep = "", fill = FALSE, labels = NULL, append = FALSE) ; tempo_cat <- base::paste0("INTERNAL ERROR ", intern_error_nb, " IN ", intern_error_text_start, "INTERNAL FUNCTION DID NOT PROPERLY DETECT THE POSITION OF THE CLOSING BRACKET.\n", "\nstart: ", start, "\nall_pos: ", all_pos, "\nopen_pos: ", open_pos, "\nclose_pos: ", close_pos, "\ntext:\nSEE THE FILE ", tempo_name, "\npattern: ", base::paste0(pattern, collapse = "\n", recycle0 = FALSE), "\ncount: ", base::paste0(count, collapse = "\n", recycle0 = FALSE), intern_error_text_end, collapse = NULL, recycle0 = FALSE) ; base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL)
             # nocov end
         }else{
             base::return(final_pos)

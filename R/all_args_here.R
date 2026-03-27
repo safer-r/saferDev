@@ -553,7 +553,7 @@ all_args_here <- function(
     fun_1_line <- base::paste(out$code, collapse = " ", recycle0 = FALSE, sep = " ") # assemble the code of the tested  function (without comments) in a single line
     if(base::grepl(x = fun_1_line, pattern = reserved_words, ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE)){
         warn_count <- warn_count + 1
-        tempo_warn <- base::paste0("(", warn_count,") THE RESERVED WORD \"", base::paste(reserved_words, collapse = " ", recycle0 = FALSE), "\" HAS BEEN DETECTED IN THE CODE OF THE INPUT FUNCTION,\nWHICH COULD HAMPER THE ACCURACY OF THE OUTPUT TABLE.", collapse = NULL, recycle0 = FALSE)
+        tempo_warn <- base::paste0("(", warn_count,") THE RESERVED WORD \"", base::paste0(reserved_words, collapse = " ", recycle0 = FALSE), "\" HAS BEEN DETECTED IN THE CODE OF THE INPUT FUNCTION,\nWHICH COULD HAMPER THE ACCURACY OF THE OUTPUT TABLE.", collapse = NULL, recycle0 = FALSE)
         warn <- base::paste0(base::ifelse(test = base::is.null(x = warn), yes = tempo_warn, no = base::paste0(warn, "\n\n", tempo_warn, collapse = NULL, recycle0 = FALSE)), collapse = NULL, recycle0 = FALSE)
     }
     # cumulative nchar of each non empty lines of code 

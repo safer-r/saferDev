@@ -399,7 +399,7 @@ is_package_here <- function(
     #### end second round of checking and data preparation
 
     #### main code
-    pkg.log <- req_package %in% base::rownames(x = utils::installed.packages(lib.loc = lib_path, priority = NULL, noCache = FALSE, fields = NULL, subarch = .Platform$r_arch), do.NULL = TRUE, prefix = "row")
+    pkg.log <- req_package %in% base::rownames(x = utils::installed.packages(lib.loc = lib_path, priority = NULL, noCache = FALSE, fields = NULL, subarch = .Platform$r_arch, cache_user_dir = ), do.NULL = TRUE, prefix = "row")
     if( ! base::all(pkg.log, na.rm = TRUE)){
         tempo <- req_package[ ! pkg.log]
         tempo_cat <- base::paste0(

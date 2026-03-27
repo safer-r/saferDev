@@ -457,7 +457,7 @@
     tempo_log <- base::lapply(X = fun_name, FUN = function(x){ ! x %in% skipped_base})
     fun_name_wo_op <- base::mapply(FUN = function(x, y){x[y]}, x = fun_name, y = tempo_log, MoreArgs = NULL, SIMPLIFY = FALSE, USE.NAMES = TRUE)
     fun_name_pos_wo_op <- base::mapply(FUN = function(x, y){x[y]}, x = fun_name_pos, y = tempo_log, MoreArgs = NULL, SIMPLIFY = FALSE, USE.NAMES = TRUE)
-    if(base::length(x = unlist(fun_name_wo_op)) == 0 | base::length(x = unlist(fun_name_pos_wo_op)) == 0){
+    if(base::length(x = base::unlist(x = fun_name_wo_op, recursive = TRUE, use.names = TRUE)) == 0 | base::length(x = base::unlist(x = fun_name_pos_wo_op, recursive = TRUE, use.names = TRUE)) == 0){
         tempo_cat <- base::paste0(
             error_text_start, 
             "THE TESTED FUNCTION ", 
