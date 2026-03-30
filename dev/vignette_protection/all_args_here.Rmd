@@ -20,7 +20,7 @@ library(saferDev)
 ```{r}
 source("https://raw.githubusercontent.com/safer-r/saferDev/main/dev/other/test2.R") # function.
 source("https://raw.githubusercontent.com/safer-r/.github/refs/heads/main/profile/backbone.R") # function.
-FUN1 <- function(x, y){ # vector of integers
+FUN1 <- function(x, y){ # function.
     code_for_col <- base::as.vector(x = base::unlist(x = base::mapply(FUN = function(x, y){base::rep(x = y, base::length(x = x))}, x = x, y = y, MoreArgs = NULL, SIMPLIFY = TRUE, USE.NAMES = TRUE), recursive = TRUE, use.names = TRUE), mode = "any")
     code_for_col2 <- base::as.vector(x = base::unlist(x = base::mapply(FUN = function(x, y){base::rep(x = y, base::length(x = x))}, x = x, y = y)))
     middle_bracket <- base::do.call(what = base::c, args = code_for_col)
@@ -36,10 +36,11 @@ FUN2 <- function(x, y){ # function.
 
 ### Simple examples
 ```{r}
-# Example that return an error.
+# Example that returns an error.
 all_args_here(mean)
-# Example that return an error.
+# Example that returns an error.
 all_args_here(test2)
+# Example indicating missing arguments.
 all_args_here(
     x = FUN2
 )
@@ -54,7 +55,7 @@ all_args_here(
     export = TRUE, 
     out_path = ".", 
     df_name = "res.tsv", 
-    overwrite = TRU
+    overwrite = TRUE
 )
 ```
 <br>
