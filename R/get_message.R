@@ -449,11 +449,14 @@ get_message <- function(
     #### main code
     output <- NULL
     ggplot2_detect <- FALSE
+    # nocov start
+    # codecov inactivated because it is not testable in all OS
     if(base::Sys.info()[["sysname"]] == "Linux") {
         grDevices::pdf(file = NULL, width = , height = , onefile = , family = , title = , fonts = , version = , paper = , encoding = , bg = , fg = , pointsize = , pagecentre = , colormodel = , useDingbats = , useKerning = , fillOddEven = , compress =) # send plots into a NULL file, no pdf file created
     }else{
         grDevices::pdf(file = NULL, width = , height = , onefile = , family = , title = , fonts = , version = , paper = , encoding = , bg = , fg = , pointsize = , pagecentre = , colormodel = , useDingbats = , useKerning = , fillOddEven = , compress = , timestamp = , producer = , author = ) # send plots into a NULL file, no pdf file created
     }
+    # nocov end
     window.nb <- grDevices::dev.cur()
     base::invisible(x = grDevices::dev.set(which = window.nb))
     tempo_error <- base::try(expr = base::suppressMessages(expr = base::suppressWarnings(expr = base::eval(expr = base::parse(text = base::is.null(x = data), file = "", n = NULL, prompt = "?", keep.source = base::getOption(x = "keep.source", default = NULL), srcfile = NULL, encoding = "unknown"), envir = if(base::is.null(x = env)){base::parent.frame(n = 1)}else{env}, enclos = base::environment(fun = NULL)), classes = "warning"), classes = "message"), silent = TRUE, outFile = base::getOption(x = "try.outFile", default = base::stderr())) # deal first with data = NULL: return NULL
