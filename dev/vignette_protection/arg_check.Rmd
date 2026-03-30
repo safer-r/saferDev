@@ -113,14 +113,14 @@ arg_check(
 arg_check(
     data = vec3, 
     typeof = "integer",
-    double_as_integer_allowed = TRUE # with TRUE, integers stored as double are accepted
+    double_as_integer_allowed = TRUE # with TRUE, integers stored as double are accepted.
 )
 ```
 <br>
 
 ### Argument <code>options</code>
 ```{r}
-# Check for the content among values.
+# Check for the content among values. Here no error detected because vec4 contains "pearson".
 arg_check(
     data = vec4, 
     options = c("pearson", "spearman", "kendall")
@@ -130,21 +130,21 @@ arg_check(
 
 ### Argument <code>all_options_in_data</code>
 ```{r}
-# Check for the presence of values.
+# Check for the content among values. Here no error detected because vec5 indeed contains at least one copy of "a" and "b" and nothing else.
 arg_check(
     data = vec5,
     options = c("a", "b"), 
     all_options_in_data = TRUE
 )
 
-# Check for the content among values.
+# Check for the content among values. Here no error detected because vec5 indeed contains at least one copy of "a" and "b", among other values.
 arg_check(
     data = vec5,
     options = c("a", "b", "c"), 
     all_options_in_data = FALSE
 )
 
-# Check for the presence of values.
+# Check for the content among values. Here an error is detected because vec5 must contain "a", "b" and "c", at least once each and nothing else.
 arg_check(
     data = vec5,
     options = c("a", "b", "c"), 
@@ -171,14 +171,14 @@ arg_check(
 arg_check(
     data = mat1, 
     class = "matrix",
-    neg_values = FALSE # with TRUE, integers stored as double are accepted.
+    neg_values = FALSE
 )
 ```
 <br>
 
 ### Argument <code>inf_values</code>
 ```{r}
-# Check for the absence of Inf/-Inf values. Warning: inf_values = TRUE means "no check". Thus, infinite numbers can be present or not. 
+# Check for the absence of Inf/-Inf values. Warning: inf_values = TRUE means "no check". Thus, infinite numbers can be present or not. Only type "double" can have Inf values (not integers).
 arg_check(
     data = mat1, 
     class = "matrix",
@@ -222,7 +222,7 @@ tempo <- arg_check(
 )
 tempo$text
 
-# In fact, these two arguments are interesting when check() is used inside functions
+# In fact, this argument is interesting when check() is used inside functions
 fun1 <- function(arg1){
     tempo <- arg_check(
                 data = arg1, 
@@ -248,13 +248,26 @@ arg_check(
 ```
 <br>
 
-### Argument <code>lib_path</code> and <code>error_text</code>
+### Argument <code>lib_path</code>
+```{r}
+# Error returned because the R required packages are not in the "." path.
 ```{r}
 arg_check(
     data = mat1, 
     class = "matrix", 
-    lib_path = ".", 
-    error_text = " === TEXT ADDED ===" 
+    lib_path = "."
+)
+```
+<br>
+
+### Argument <code>error_text</code>
+```{r}
+# Add a text in error messages returned by all_args_here().
+arg_check(
+    data = mat1, 
+    class = "matrix", 
+    lib_path = "."
+    error_text = " === TEXT ADDED ==="
 )
 ```
 <br>
@@ -263,23 +276,23 @@ arg_check(
 ```{r}
 # See the examples of fun_info() to test different classes of objects
 arg_check(
-    data = vec1, 
-    class = "integer", 
-    typeof = NULL, 
-    mode = NULL, 
-    length = NULL, 
-    prop = FALSE, 
-    double_as_integer_allowed = FALSE, 
-    options = NULL, 
-    all_options_in_data = FALSE, 
-    na_contain = FALSE, 
-    neg_values = TRUE, 
-    inf_values = TRUE, 
-    print = FALSE, 
-    data_name = NULL, 
-    data_arg = TRUE, 
-    safer_check = TRUE, 
-    lib_path = NULL,
-    error_text = "" 
+    data = vec1, # object to check.
+    class = "integer", # check the expected class.
+    typeof = NULL, # check the expected type.
+    mode = NULL,  # check the expected mode.
+    length = NULL,  # check the expected length.
+    prop = FALSE,  # check the expected proportion.
+    double_as_integer_allowed = FALSE,  # if set to TRUE, typeof = "double" or class = "numeric" would not return an error if the object contains integers recorded as double.
+    options = NULL,  # check all the possible option values.
+    all_options_in_data = FALSE,  # If TRUE, all of the options of the options argument must be present at least once in the data argument, and nothing else. If FALSE, some or all of the options must be present in the data argument, and nothing else.
+    na_contain = FALSE,  # can the data object contain NA (only tested if na_contain = FALSE)?
+    neg_values = TRUE,  # can the data object contain negative values (only tested if na_contain = FALSE)?
+    inf_values = TRUE,  # can the data object contain infinite values (only tested if na_contain = FALSE)?
+    print = FALSE,  # print a message if the $problem output is TRUE? 
+    data_name = NULL,  # name of the object to test.
+    data_arg = TRUE,  # is the tested object a function argument? If TRUE (default), "ARGUMENT" is written in output messages, otherwise "OBJECT".
+    safer_check = TRUE, # Single logical value. Perform some "safer" checks (see https://github.com/safer-r)?
+    lib_path = NULL, # absolute pathways of the directories containing the required packages if not in the default directories.
+    error_text = "" # add information in error messages returned by the function.
 )
 ```
