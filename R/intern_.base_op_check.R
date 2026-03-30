@@ -224,7 +224,7 @@
         "==", 
         ">", 
         ">=", 
-        # "\\", 
+        # "\\", # inactivated because otherwise the .in_quotes_replacement() function is too hard to write.
         "if", 
         "else", 
         "function",
