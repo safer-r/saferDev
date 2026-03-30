@@ -665,7 +665,7 @@ all_args_here <- function(
                     pattern = pattern2, 
                     lib_path = lib_path, 
                     error_text = embed_error_text
-                ) # positions of 1st letter of the function name and opening and closing brackets # Warning: fun_1_line_replace used because the input string must be cleaned form brackets between quotes
+                ) # positions of 1st letter of the function name and opening and closing brackets # Warning: tempo2$string used because the input string must be cleaned form brackets between quotes
                 if( ! base::is.null(x = tempo_pos$middle_bracket_pos)){ # I have to use if(){}, otherwise mid_bracket_pos_in_fun_1_line[[i1]][[i2]] disappears
                     mid_bracket_pos_in_col3[[i1]][[i2]] <- base::unlist(x = tempo_pos$middle_bracket_pos, recursive = TRUE, use.names = TRUE) # positions of the () inside a function
                 }

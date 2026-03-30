@@ -14,7 +14,7 @@
 #'   \item \code{pos}: vector of the positions of the 1st character of the replaced pattern. \code{NULL} if no replaced pattern. In that case, \code{string} is identical to the input string.
 #' }
 #' @details
-#' The function works first by replacing in the code: 1) the three consecutive characters \code{'"'} or \code{'"'} by three spaces, 2) \code{"\"'"} and \code{'\'"'} by four spaces and 3) escape quotes like \code{\"} or \code{\'} by two spaces.
+#' The function works first by replacing in the code: 1) the three consecutive characters \code{'"'} or \code{'"'} by three spaces, 2) \code{"\"'"} and \code{'\'"'} by four spaces and 3) escape quotes like \code{\"} or \code{\'} by two spaces, before looking for the pattern inside quotes.
 #'
 #' Warnings:
 #' \itemize{
@@ -53,6 +53,7 @@
     # string = 'paste0("IAGE((", paste0(1:3, collapse = " "), "A)B()")' ; pattern = "\\)" ; no_regex_pattern = ")" ; replacement = " " ; perl = FALSE ; lib_path = NULL ; error_text = " INSIDE P1::F1"
     # string = 'paste0("IAGE((", paste0(1:3, collapse = " "), "A)B()' ; pattern = "\\)" ; no_regex_pattern = ")" ; replacement = " " ; perl = FALSE ; lib_path = NULL ; error_text = " INSIDE P1::F1" # last is ) between strings because odds number in front of
     # string = '\"INTERNAL ERROR 4 IN \", function_name, \" OF THE \", package_name, \" PACKAGE\\nLENGTHS OF col1 (\", base::length(roc1()), \"), col2 (\", base::length(roc2), \"), AND col3 (\", base::length(roc3), \"), SHOULD BE EQUAL\\n\"' ; pattern = "," ; no_regex_pattern = "," ; replacement = " " ; perl = FALSE ; lib_path = NULL ; error_text = " INSIDE P1::F1"
+    # string = ' "a" ; c("\\") ; paste0("I)", collapse = " ")' ; pattern = "\\)" ; no_regex_pattern = ")" ; replacement = " " ; perl = TRUE ; lib_path = NULL ; error_text = NULL
 
     #### package name
     package_name <- "saferDev" # write NULL if the function developed is not in a package
@@ -395,6 +396,12 @@
         base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL)
     }
     # dealing with quotes (warning: the order is important)
+    # warning: in R, already escaped character are not over escaped when displayed While classical " are escaped. However, they are over escaped when captured by capture.output. . Example:
+    # string = 'c("\\") "\"a\""'
+    # > string
+    # [1] "c(\"\\\") \"\"a\"\""
+    # > capture.output(string)
+    # [1] "[1] \"c(\\\"\\\\\\\") \\\"\\\"a\\\"\\\"\""
     # removal of "\"'" and '\'"'
     # test with base::gsub( x = "a\"\\\"'\"a", pattern = '"\\\\"\'"', replacement = '     ')
     string <- base::gsub( x = string, pattern = '"\\\\"\'"', replacement = '     ', ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE)
