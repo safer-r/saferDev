@@ -95,35 +95,35 @@
 <h3 id="dataset">Dataset<a class="anchor" aria-label="anchor" href="#dataset"></a>
 </h3>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">vec1</span> <span class="op">&lt;-</span> <span class="op">-</span><span class="fl">1</span><span class="op">:</span><span class="fl">3</span> <span class="co"># vector of integers</span></span>
-<span><span class="va">vec2</span> <span class="op">&lt;-</span> <span class="fl">1</span><span class="op">:</span><span class="fl">3</span> <span class="op">/</span> <span class="fl">3</span> <span class="co"># vector of proportions</span></span>
-<span><span class="va">vec3</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">2</span>, <span class="fl">3</span><span class="op">)</span> <span class="co"># vector of integers but stored as "double"</span></span>
-<span><span class="va">vec4</span> <span class="op">&lt;-</span> <span class="st">"pearson"</span> <span class="co"># vector of characters</span></span>
-<span><span class="va">vec5</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"a"</span>, <span class="st">"b"</span>,<span class="st">"a"</span>, <span class="st">"b"</span><span class="op">)</span> <span class="co"># vector of characters</span></span>
-<span><span class="va">mat1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="va">vec1</span><span class="op">)</span> <span class="co"># matrix of integers</span></span>
-<span><span class="va">mat2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">3</span> <span class="op">/</span> <span class="fl">3</span>, <span class="cn">NA</span><span class="op">)</span><span class="op">)</span> <span class="co"># matrix of proportions with NA</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">vec1</span> <span class="op">&lt;-</span> <span class="op">-</span><span class="fl">1</span><span class="op">:</span><span class="fl">3</span> <span class="co"># vector of integers.</span></span>
+<span><span class="va">vec2</span> <span class="op">&lt;-</span> <span class="fl">1</span><span class="op">:</span><span class="fl">3</span> <span class="op">/</span> <span class="fl">3</span> <span class="co"># vector of positive proportions.</span></span>
+<span><span class="va">vec3</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">2</span>, <span class="fl">3</span><span class="op">)</span> <span class="co"># vector of positive integers but stored as "double".</span></span>
+<span><span class="va">vec4</span> <span class="op">&lt;-</span> <span class="st">"pearson"</span> <span class="co"># vector of characters.</span></span>
+<span><span class="va">vec5</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"a"</span>, <span class="st">"b"</span>,<span class="st">"a"</span>, <span class="st">"b"</span><span class="op">)</span> <span class="co"># vector of characters.</span></span>
+<span><span class="va">mat1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="va">vec1</span><span class="op">)</span> <span class="co"># matrix of integers.</span></span>
+<span><span class="va">mat2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">3</span> <span class="op">/</span> <span class="fl">3</span>, <span class="cn">NA</span><span class="op">)</span><span class="op">)</span> <span class="co"># matrix of proportions with NA.</span></span></code></pre></div>
 <p><br></p>
 </div>
 <div class="section level3">
 <h3 id="dataset-info">Dataset info<a class="anchor" aria-label="anchor" href="#dataset-info"></a>
 </h3>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">vec1</span> <span class="co"># vector of integers</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">vec1</span> <span class="co"># vector of integers.</span></span></code></pre></div>
 <pre><code><span><span class="co">## [1] -1  0  1  2  3</span></span></code></pre>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">vec2</span> <span class="co"># vector of proportions</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">vec2</span> <span class="co"># vector of proportions.</span></span></code></pre></div>
 <pre><code><span><span class="co">## [1] 0.3333333 0.6666667 1.0000000</span></span></code></pre>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">vec3</span> <span class="co"># vector of integers but stored as "double"</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">vec3</span> <span class="co"># vector of integers but stored as "double".</span></span></code></pre></div>
 <pre><code><span><span class="co">## [1] 1 2 3</span></span></code></pre>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">vec4</span> <span class="co"># vector of characters</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">vec4</span> <span class="co"># vector of characters.</span></span></code></pre></div>
 <pre><code><span><span class="co">## [1] "pearson"</span></span></code></pre>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">vec5</span> <span class="co"># vector of characters</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">vec5</span> <span class="co"># vector of characters.</span></span></code></pre></div>
 <pre><code><span><span class="co">## [1] "a" "b" "a" "b"</span></span></code></pre>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">mat1</span> <span class="co"># matrix of integers</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">mat1</span> <span class="co"># matrix of integers.</span></span></code></pre></div>
 <pre><code><span><span class="co">##      [,1]</span></span>
 <span><span class="co">## [1,]   -1</span></span>
 <span><span class="co">## [2,]    0</span></span>
@@ -131,7 +131,7 @@
 <span><span class="co">## [4,]    2</span></span>
 <span><span class="co">## [5,]    3</span></span></code></pre>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">mat2</span> <span class="co"># matrix of proportions with NA</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">mat2</span> <span class="co"># matrix of proportions with NA.</span></span></code></pre></div>
 <pre><code><span><span class="co">##           [,1]</span></span>
 <span><span class="co">## [1,] 0.3333333</span></span>
 <span><span class="co">## [2,] 0.6666667</span></span>
@@ -143,7 +143,7 @@
 <h3 id="simple-examples">Simple examples<a class="anchor" aria-label="anchor" href="#simple-examples"></a>
 </h3>
 <div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Check that vec1 is of class integer</span></span>
+<code class="sourceCode R"><span><span class="co"># Check that vec1 is class integer.</span></span>
 <span><span class="fu"><a href="../reference/arg_check.html">arg_check</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">vec1</span>, class <span class="op">=</span> <span class="st">"integer"</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## $problem</span></span>
 <span><span class="co">## [1] FALSE</span></span>
@@ -154,7 +154,7 @@
 <span><span class="co">## $object.name</span></span>
 <span><span class="co">## [1] "vec1"</span></span></code></pre>
 <div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Check that vec1 is a numeric vector -&gt; error because vec1 is a vector of integers</span></span>
+<code class="sourceCode R"><span><span class="co"># Check that vec1 is a numeric vector -&gt; error because vec1 is not class "numeric", but class "integer".</span></span>
 <span><span class="fu"><a href="../reference/arg_check.html">arg_check</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">vec1</span>, class <span class="op">=</span> <span class="st">"numeric"</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## $problem</span></span>
 <span><span class="co">## [1] TRUE</span></span>
@@ -165,7 +165,7 @@
 <span><span class="co">## $object.name</span></span>
 <span><span class="co">## [1] "vec1"</span></span></code></pre>
 <div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Check that vec1 is an integer vector of length 3 without negative values and without NA -&gt; error because of length 5 and negative values inside vec1</span></span>
+<code class="sourceCode R"><span><span class="co"># Check that vec1 is an integer vector of length 3 without negative values and without NA -&gt; error because of length 5 and negative values inside vec1.</span></span>
 <span><span class="fu"><a href="../reference/arg_check.html">arg_check</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">vec1</span>, class <span class="op">=</span> <span class="st">"vector"</span>, typeof <span class="op">=</span> <span class="st">"integer"</span>, length <span class="op">=</span> <span class="fl">3</span>, neg_values <span class="op">=</span> <span class="cn">FALSE</span>, na_contain <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## $problem</span></span>
 <span><span class="co">## [1] TRUE</span></span>
@@ -176,11 +176,11 @@
 <span><span class="co">## $object.name</span></span>
 <span><span class="co">## [1] "vec1"</span></span></code></pre>
 <div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># No result displayed because the output list is assigned into res (see below the print argument)</span></span>
+<code class="sourceCode R"><span><span class="co"># No result displayed because the output list is assigned into res (see below the print argument).</span></span>
 <span><span class="va">res</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/arg_check.html">arg_check</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">vec1</span>, class <span class="op">=</span> <span class="st">"integer"</span><span class="op">)</span></span>
 <span></span>
 <span></span>
-<span><span class="co"># with data = NULL, the function systematically report a checking problem</span></span>
+<span><span class="co"># With data = NULL, the function systematically report a checking problem.</span></span>
 <span><span class="fu"><a href="../reference/arg_check.html">arg_check</a></span><span class="op">(</span>data <span class="op">=</span> <span class="cn">NULL</span>, class <span class="op">=</span> <span class="st">"integer"</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## $problem</span></span>
 <span><span class="co">## [1] TRUE</span></span>
@@ -196,11 +196,13 @@
 <h3 id="arguments-class-typeof-mode-and-length">Arguments <code>class</code>, <code>typeof</code>, <code>mode</code>
 and <code>length</code><a class="anchor" aria-label="anchor" href="#arguments-class-typeof-mode-and-length"></a>
 </h3>
-<p>As value, they accept the classical kind of class, type, mode and
-legnth, respectively, except the <code>class</code> argument, which:
-</p>
+<p>These arguments accept as values the classical kind of class, type,
+mode and length, respectively, except the <code>class</code> argument,
+which: - has also accepts , (i.e., objects of class for R &lt; 4.5 and
+otherwise) or (i.e., objects of class for R &lt; 4.5 and otherwise) . -
+accepts “matrix” for matrices (and not “matrix” “array”).</p>
 <div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Example</span></span>
+<code class="sourceCode R"><span><span class="co"># Example.</span></span>
 <span><span class="fu"><a href="../reference/arg_check.html">arg_check</a></span><span class="op">(</span></span>
 <span>    data <span class="op">=</span> <span class="va">vec1</span>, </span>
 <span>    class <span class="op">=</span> <span class="st">"vector"</span>, </span>
@@ -217,11 +219,11 @@ legnth, respectively, except the <code>class</code> argument, which:
 <span><span class="co">## $object.name</span></span>
 <span><span class="co">## [1] "vec1"</span></span></code></pre>
 <div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Warning: the function does not check for inconsistencies between arguments. It just checks if everything is ok between arguments values and data</span></span>
+<code class="sourceCode R"><span><span class="co"># Warning: the function does not check for inconsistencies between arguments. It just checks if everything is ok between arguments values and the tested object.</span></span>
 <span><span class="fu"><a href="../reference/arg_check.html">arg_check</a></span><span class="op">(</span></span>
 <span>    data <span class="op">=</span> <span class="va">vec1</span>, </span>
 <span>    typeof <span class="op">=</span> <span class="st">"integer"</span>, </span>
-<span>    mode <span class="op">=</span> <span class="st">"character"</span>, <span class="co"># the mode "character" exists but is inconsistant with typeof "integer". However, this aspect is not signaled by the function</span></span>
+<span>    mode <span class="op">=</span> <span class="st">"character"</span>, <span class="co"># the mode "character" exists but is inconsistant with typeof "integer". However, this aspect is not signaled by the arg_check().</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## $problem</span></span>
 <span><span class="co">## [1] TRUE</span></span>
@@ -232,10 +234,10 @@ legnth, respectively, except the <code>class</code> argument, which:
 <span><span class="co">## $object.name</span></span>
 <span><span class="co">## [1] "vec1"</span></span></code></pre>
 <div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Error message due to wrong value in the class and length arguments</span></span>
+<code class="sourceCode R"><span><span class="co"># Bad mode argument value.</span></span>
 <span><span class="fu"><a href="../reference/arg_check.html">arg_check</a></span><span class="op">(</span></span>
 <span>    data <span class="op">=</span> <span class="va">vec1</span>, </span>
-<span>    mode <span class="op">=</span> <span class="st">"integer"</span>, <span class="co"># the mode "integer" does not exist in the mode() function of R</span></span>
+<span>    mode <span class="op">=</span> <span class="st">"integer"</span>,</span>
 <span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## Error: </span></span>
 <span><span class="co">## </span></span>
@@ -264,28 +266,30 @@ legnth, respectively, except the <code>class</code> argument, which:
 <h3 id="argument-prop">Argument <code>prop</code><a class="anchor" aria-label="anchor" href="#argument-prop"></a>
 </h3>
 <div class="sourceCode" id="cb31"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/arg_check.html">arg_check</a></span><span class="op">(</span></span>
-<span>    data <span class="op">=</span> <span class="va">mat2</span>, </span>
-<span>    prop <span class="op">=</span> <span class="cn">TRUE</span> <span class="co"># Check for values between 0 and 1 only</span></span>
+<code class="sourceCode R"><span><span class="co"># Check for values between 0 and 1 only.</span></span>
+<span><span class="fu"><a href="../reference/arg_check.html">arg_check</a></span><span class="op">(</span></span>
+<span>    data <span class="op">=</span> <span class="va">vec2</span>, </span>
+<span>    prop <span class="op">=</span> <span class="cn">TRUE</span> </span>
 <span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## $problem</span></span>
-<span><span class="co">## [1] TRUE</span></span>
+<span><span class="co">## [1] FALSE</span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## $text</span></span>
-<span><span class="co">## [1] "ERROR\n\nTHE mat2 ARGUMENT CONTAINS NA WHILE NOT AUTHORIZED."</span></span>
+<span><span class="co">## [1] "NO PROBLEM DETECTED FOR THE vec2 ARGUMENT."</span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## $object.name</span></span>
-<span><span class="co">## [1] "mat2"</span></span></code></pre>
+<span><span class="co">## [1] "vec2"</span></span></code></pre>
 <p><br></p>
 </div>
 <div class="section level3">
 <h3 id="argument-double_as_integer_allowed">Argument <code>double_as_integer_allowed</code><a class="anchor" aria-label="anchor" href="#argument-double_as_integer_allowed"></a>
 </h3>
 <div class="sourceCode" id="cb33"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/arg_check.html">arg_check</a></span><span class="op">(</span></span>
+<code class="sourceCode R"><span><span class="co"># Check for integers, even if numbers are stored as double.</span></span>
+<span><span class="fu"><a href="../reference/arg_check.html">arg_check</a></span><span class="op">(</span></span>
 <span>    data <span class="op">=</span> <span class="va">vec3</span>, </span>
 <span>    typeof <span class="op">=</span> <span class="st">"integer"</span>,</span>
-<span>    double_as_integer_allowed <span class="op">=</span> <span class="cn">TRUE</span> <span class="co"># with TRUE, integers stored as double are accepted</span></span>
+<span>    double_as_integer_allowed <span class="op">=</span> <span class="cn">TRUE</span> <span class="co"># with TRUE, integers stored as double are accepted.</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## $problem</span></span>
 <span><span class="co">## [1] FALSE</span></span>
@@ -301,7 +305,8 @@ legnth, respectively, except the <code>class</code> argument, which:
 <h3 id="argument-options">Argument <code>options</code><a class="anchor" aria-label="anchor" href="#argument-options"></a>
 </h3>
 <div class="sourceCode" id="cb35"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/arg_check.html">arg_check</a></span><span class="op">(</span></span>
+<code class="sourceCode R"><span><span class="co"># Check for the content among values. Here no error detected because vec4 contains "pearson".</span></span>
+<span><span class="fu"><a href="../reference/arg_check.html">arg_check</a></span><span class="op">(</span></span>
 <span>    data <span class="op">=</span> <span class="va">vec4</span>, </span>
 <span>    options <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"pearson"</span>, <span class="st">"spearman"</span>, <span class="st">"kendall"</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
@@ -319,7 +324,7 @@ legnth, respectively, except the <code>class</code> argument, which:
 <h3 id="argument-all_options_in_data">Argument <code>all_options_in_data</code><a class="anchor" aria-label="anchor" href="#argument-all_options_in_data"></a>
 </h3>
 <div class="sourceCode" id="cb37"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># No error</span></span>
+<code class="sourceCode R"><span><span class="co"># Check for the content among values. Here no error detected because vec5 indeed contains at least one copy of "a" and "b" and nothing else.</span></span>
 <span><span class="fu"><a href="../reference/arg_check.html">arg_check</a></span><span class="op">(</span></span>
 <span>    data <span class="op">=</span> <span class="va">vec5</span>,</span>
 <span>    options <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"a"</span>, <span class="st">"b"</span><span class="op">)</span>, </span>
@@ -334,7 +339,7 @@ legnth, respectively, except the <code>class</code> argument, which:
 <span><span class="co">## $object.name</span></span>
 <span><span class="co">## [1] "vec5"</span></span></code></pre>
 <div class="sourceCode" id="cb39"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># No error</span></span>
+<code class="sourceCode R"><span><span class="co"># Check for the content among values. Here no error detected because vec5 indeed contains at least one copy of "a" and "b", among other values.</span></span>
 <span><span class="fu"><a href="../reference/arg_check.html">arg_check</a></span><span class="op">(</span></span>
 <span>    data <span class="op">=</span> <span class="va">vec5</span>,</span>
 <span>    options <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"a"</span>, <span class="st">"b"</span>, <span class="st">"c"</span><span class="op">)</span>, </span>
@@ -349,7 +354,7 @@ legnth, respectively, except the <code>class</code> argument, which:
 <span><span class="co">## $object.name</span></span>
 <span><span class="co">## [1] "vec5"</span></span></code></pre>
 <div class="sourceCode" id="cb41"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Error</span></span>
+<code class="sourceCode R"><span><span class="co"># Check for the content among values. Here an error is detected because vec5 must contain "a", "b" and "c", at least once each and nothing else.</span></span>
 <span><span class="fu"><a href="../reference/arg_check.html">arg_check</a></span><span class="op">(</span></span>
 <span>    data <span class="op">=</span> <span class="va">vec5</span>,</span>
 <span>    options <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"a"</span>, <span class="st">"b"</span>, <span class="st">"c"</span><span class="op">)</span>, </span>
@@ -369,11 +374,12 @@ legnth, respectively, except the <code>class</code> argument, which:
 <h3 id="argument-na_contain">Argument <code>na_contain</code><a class="anchor" aria-label="anchor" href="#argument-na_contain"></a>
 </h3>
 <div class="sourceCode" id="cb43"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/arg_check.html">arg_check</a></span><span class="op">(</span></span>
+<code class="sourceCode R"><span><span class="co"># Check for the absence of NA. Warning: na_contain = TRUE means "no check". Thus, NA can be present or not. </span></span>
+<span><span class="fu"><a href="../reference/arg_check.html">arg_check</a></span><span class="op">(</span></span>
 <span>    data <span class="op">=</span> <span class="va">mat2</span>, </span>
 <span>    class <span class="op">=</span> <span class="st">"matrix"</span>, </span>
 <span>    prop <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>    na_contain <span class="op">=</span> <span class="cn">FALSE</span> <span class="co"># with TRUE, integers stored as double are accepted</span></span>
+<span>    na_contain <span class="op">=</span> <span class="cn">FALSE</span> </span>
 <span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## $problem</span></span>
 <span><span class="co">## [1] TRUE</span></span>
@@ -389,11 +395,11 @@ legnth, respectively, except the <code>class</code> argument, which:
 <h3 id="argument-neg_values">Argument <code>neg_values</code><a class="anchor" aria-label="anchor" href="#argument-neg_values"></a>
 </h3>
 <div class="sourceCode" id="cb45"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Warning: only considered if set to FALSE, to check for non negative values when class is set to "vector", "numeric", "matrix", "array", "data.frame", "table", or typeof is set to "double", "integer", or mode is set to "numeric"</span></span>
+<code class="sourceCode R"><span><span class="co"># Check for the absence of negative values. Warning: neg_values = TRUE means "no check". Thus, negative numbers can be present or not. </span></span>
 <span><span class="fu"><a href="../reference/arg_check.html">arg_check</a></span><span class="op">(</span></span>
 <span>    data <span class="op">=</span> <span class="va">mat1</span>, </span>
 <span>    class <span class="op">=</span> <span class="st">"matrix"</span>,</span>
-<span>    neg_values <span class="op">=</span> <span class="cn">FALSE</span> <span class="co"># with TRUE, integers stored as double are accepted</span></span>
+<span>    neg_values <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## $problem</span></span>
 <span><span class="co">## [1] TRUE</span></span>
@@ -409,7 +415,7 @@ legnth, respectively, except the <code>class</code> argument, which:
 <h3 id="argument-inf_values">Argument <code>inf_values</code><a class="anchor" aria-label="anchor" href="#argument-inf_values"></a>
 </h3>
 <div class="sourceCode" id="cb47"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Warning: only considered if set to FALSE, to check for non infinite values when class is set to "vector", "numeric", "matrix", "array", "data.frame", "table", or typeof is set to "double", "integer", or mode is set to "numeric"</span></span>
+<code class="sourceCode R"><span><span class="co"># Check for the absence of Inf/-Inf values. Warning: inf_values = TRUE means "no check". Thus, infinite numbers can be present or not. Only type "double" can have Inf values (not integers).</span></span>
 <span><span class="fu"><a href="../reference/arg_check.html">arg_check</a></span><span class="op">(</span></span>
 <span>    data <span class="op">=</span> <span class="va">mat1</span>, </span>
 <span>    class <span class="op">=</span> <span class="st">"matrix"</span>,</span>
@@ -429,13 +435,14 @@ legnth, respectively, except the <code>class</code> argument, which:
 <h3 id="argument-print">Argument <code>print</code><a class="anchor" aria-label="anchor" href="#argument-print"></a>
 </h3>
 <div class="sourceCode" id="cb49"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># No error message printed because print is FALSE</span></span>
+<code class="sourceCode R"><span><span class="co"># No error message printed because print is FALSE.</span></span>
 <span><span class="va">res</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/arg_check.html">arg_check</a></span><span class="op">(</span></span>
 <span>    data <span class="op">=</span> <span class="va">mat1</span>, </span>
 <span>    class <span class="op">=</span> <span class="st">"data.frame"</span>,</span>
 <span>    print <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">)</span></span>
-<span><span class="co"># Error message printed</span></span>
+<span></span>
+<span><span class="co"># Error message printed.</span></span>
 <span><span class="va">res</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/arg_check.html">arg_check</a></span><span class="op">(</span></span>
 <span>    data <span class="op">=</span> <span class="va">mat1</span>, </span>
 <span>    class <span class="op">=</span> <span class="st">"data.frame"</span>,</span>
@@ -451,7 +458,7 @@ legnth, respectively, except the <code>class</code> argument, which:
 <span><span class="co">## </span></span>
 <span><span class="co">## ================</span></span></code></pre>
 <div class="sourceCode" id="cb51"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Even if print is TRUE, no error message printed because no error</span></span>
+<code class="sourceCode R"><span><span class="co"># Even if print is TRUE, no error message printed because no error.</span></span>
 <span><span class="va">res</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/arg_check.html">arg_check</a></span><span class="op">(</span></span>
 <span>    data <span class="op">=</span> <span class="va">mat1</span>, </span>
 <span>    class <span class="op">=</span> <span class="st">"matrix"</span>,</span>
@@ -472,7 +479,7 @@ legnth, respectively, except the <code>class</code> argument, which:
 <span><span class="va">tempo</span><span class="op">$</span><span class="va">text</span></span></code></pre></div>
 <pre><code><span><span class="co">## [1] "NO PROBLEM DETECTED FOR THE OBSERVATION_1 ARGUMENT."</span></span></code></pre>
 <div class="sourceCode" id="cb54"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># In fact, these two arguments are interesting when check() is used inside functions</span></span>
+<code class="sourceCode R"><span><span class="co"># In fact, this argument is interesting when check() is used inside functions</span></span>
 <span><span class="va">fun1</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">arg1</span><span class="op">)</span><span class="op">{</span></span>
 <span>    <span class="va">tempo</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/arg_check.html">arg_check</a></span><span class="op">(</span></span>
 <span>                data <span class="op">=</span> <span class="va">arg1</span>, </span>
@@ -499,10 +506,11 @@ legnth, respectively, except the <code>class</code> argument, which:
 <h3 id="argument-safer_check">Argument <code>safer_check</code><a class="anchor" aria-label="anchor" href="#argument-safer_check"></a>
 </h3>
 <div class="sourceCode" id="cb56"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/arg_check.html">arg_check</a></span><span class="op">(</span></span>
+<code class="sourceCode R"><span><span class="co"># Safer checkings performed before main code running.</span></span>
+<span><span class="fu"><a href="../reference/arg_check.html">arg_check</a></span><span class="op">(</span></span>
 <span>    data <span class="op">=</span> <span class="va">mat1</span>, </span>
 <span>    class <span class="op">=</span> <span class="st">"matrix"</span>, </span>
-<span>    safer_check <span class="op">=</span> <span class="cn">TRUE</span>, <span class="co"># perform some "safer" checks? Warning : always set this argument to FALSE if all_args_here() is used inside another safer function.</span></span>
+<span>    safer_check <span class="op">=</span> <span class="cn">TRUE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## $problem</span></span>
 <span><span class="co">## [1] FALSE</span></span>
@@ -515,20 +523,21 @@ legnth, respectively, except the <code>class</code> argument, which:
 <p><br></p>
 </div>
 <div class="section level3">
-<h3 id="argument-lib_path-and-error_text">Argument <code>lib_path</code> and <code>error_text</code><a class="anchor" aria-label="anchor" href="#argument-lib_path-and-error_text"></a>
+<h3 id="argument-lib_path">Argument <code>lib_path</code><a class="anchor" aria-label="anchor" href="#argument-lib_path"></a>
 </h3>
 <div class="sourceCode" id="cb58"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Error returned because the R required packages are not in the "." path.</span></span></code></pre></div>
+<div class="sourceCode" id="cb59"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/arg_check.html">arg_check</a></span><span class="op">(</span></span>
 <span>    data <span class="op">=</span> <span class="va">mat1</span>, </span>
 <span>    class <span class="op">=</span> <span class="st">"matrix"</span>, </span>
-<span>    lib_path <span class="op">=</span> <span class="st">"."</span>, <span class="co"># absolute pathways of the directories containing the required packages if not in the default directories.</span></span>
-<span>    error_text <span class="op">=</span> <span class="st">" === TEXT ADDED ==="</span> <span class="co"># add information in error messages returned by the function.</span></span>
+<span>    lib_path <span class="op">=</span> <span class="st">"."</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## Error: </span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## ================</span></span>
 <span><span class="co">## </span></span>
-<span><span class="co">## ERROR IN saferDev:::.pack_and_function_check() INSIDE saferDev::arg_check() === TEXT ADDED ===</span></span>
+<span><span class="co">## ERROR IN saferDev:::.pack_and_function_check() INSIDE saferDev::arg_check().</span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## REQUIRED PACKAGE:</span></span>
 <span><span class="co">## saferDev</span></span>
@@ -541,29 +550,45 @@ legnth, respectively, except the <code>class</code> argument, which:
 <p><br></p>
 </div>
 <div class="section level3">
+<h3 id="argument-error_text">Argument <code>error_text</code><a class="anchor" aria-label="anchor" href="#argument-error_text"></a>
+</h3>
+<div class="sourceCode" id="cb61"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb61-1"><a href="#cb61-1" tabindex="-1"></a><span class="co"># Add a text in error messages returned by all_args_here().</span></span>
+<span id="cb61-2"><a href="#cb61-2" tabindex="-1"></a><span class="fu">arg_check</span>(</span>
+<span id="cb61-3"><a href="#cb61-3" tabindex="-1"></a>    <span class="at">data =</span> mat1, </span>
+<span id="cb61-4"><a href="#cb61-4" tabindex="-1"></a>    <span class="at">class =</span> <span class="st">"matrix"</span>, </span>
+<span id="cb61-5"><a href="#cb61-5" tabindex="-1"></a>    <span class="at">lib_path =</span> <span class="st">"."</span></span>
+<span id="cb61-6"><a href="#cb61-6" tabindex="-1"></a>    <span class="at">error_text =</span> <span class="st">" === TEXT ADDED ==="</span></span>
+<span id="cb61-7"><a href="#cb61-7" tabindex="-1"></a>)</span></code></pre></div>
+<pre><code><span><span class="co">## Error: &lt;text&gt;:6:5: unexpected symbol</span></span>
+<span><span class="co">## 5:     lib_path = "."</span></span>
+<span><span class="co">## 6:     error_text</span></span>
+<span><span class="co">##        ^</span></span></code></pre>
+<p><br></p>
+</div>
+<div class="section level3">
 <h3 id="all-the-arguments">All the arguments<a class="anchor" aria-label="anchor" href="#all-the-arguments"></a>
 </h3>
-<div class="sourceCode" id="cb60"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb63"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># See the examples of fun_info() to test different classes of objects</span></span>
 <span><span class="fu"><a href="../reference/arg_check.html">arg_check</a></span><span class="op">(</span></span>
-<span>    data <span class="op">=</span> <span class="va">vec1</span>, </span>
-<span>    class <span class="op">=</span> <span class="st">"integer"</span>, </span>
-<span>    typeof <span class="op">=</span> <span class="cn">NULL</span>, </span>
-<span>    mode <span class="op">=</span> <span class="cn">NULL</span>, </span>
-<span>    length <span class="op">=</span> <span class="cn">NULL</span>, </span>
-<span>    prop <span class="op">=</span> <span class="cn">FALSE</span>, </span>
-<span>    double_as_integer_allowed <span class="op">=</span> <span class="cn">FALSE</span>, </span>
-<span>    options <span class="op">=</span> <span class="cn">NULL</span>, </span>
-<span>    all_options_in_data <span class="op">=</span> <span class="cn">FALSE</span>, </span>
-<span>    na_contain <span class="op">=</span> <span class="cn">FALSE</span>, </span>
-<span>    neg_values <span class="op">=</span> <span class="cn">TRUE</span>, </span>
-<span>    inf_values <span class="op">=</span> <span class="cn">TRUE</span>, </span>
-<span>    print <span class="op">=</span> <span class="cn">FALSE</span>, </span>
-<span>    data_name <span class="op">=</span> <span class="cn">NULL</span>, </span>
-<span>    data_arg <span class="op">=</span> <span class="cn">TRUE</span>, </span>
-<span>    safer_check <span class="op">=</span> <span class="cn">TRUE</span>, </span>
-<span>    lib_path <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>    error_text <span class="op">=</span> <span class="st">""</span> </span>
+<span>    data <span class="op">=</span> <span class="va">vec1</span>, <span class="co"># object to check.</span></span>
+<span>    class <span class="op">=</span> <span class="st">"integer"</span>, <span class="co"># check the expected class.</span></span>
+<span>    typeof <span class="op">=</span> <span class="cn">NULL</span>, <span class="co"># check the expected type.</span></span>
+<span>    mode <span class="op">=</span> <span class="cn">NULL</span>,  <span class="co"># check the expected mode.</span></span>
+<span>    length <span class="op">=</span> <span class="cn">NULL</span>,  <span class="co"># check the expected length.</span></span>
+<span>    prop <span class="op">=</span> <span class="cn">FALSE</span>,  <span class="co"># check the expected proportion.</span></span>
+<span>    double_as_integer_allowed <span class="op">=</span> <span class="cn">FALSE</span>,  <span class="co"># if set to TRUE, typeof = "double" or class = "numeric" would not return an error if the object contains integers recorded as double.</span></span>
+<span>    options <span class="op">=</span> <span class="cn">NULL</span>,  <span class="co"># check all the possible option values.</span></span>
+<span>    all_options_in_data <span class="op">=</span> <span class="cn">FALSE</span>,  <span class="co"># sf TRUE, all of the options of the options argument must be present at least once in the data argument, and nothing else. If FALSE, some or all of the options must be present in the data argument, and nothing else.</span></span>
+<span>    na_contain <span class="op">=</span> <span class="cn">FALSE</span>,  <span class="co"># can the data object contain NA (only tested if na_contain = FALSE)?</span></span>
+<span>    neg_values <span class="op">=</span> <span class="cn">TRUE</span>,  <span class="co"># can the data object contain negative values (only tested if na_contain = FALSE)?</span></span>
+<span>    inf_values <span class="op">=</span> <span class="cn">TRUE</span>,  <span class="co"># can the data object contain infinite values (only tested if na_contain = FALSE)?</span></span>
+<span>    print <span class="op">=</span> <span class="cn">FALSE</span>,  <span class="co"># print a message if the $problem output is TRUE? </span></span>
+<span>    data_name <span class="op">=</span> <span class="cn">NULL</span>,  <span class="co"># name of the object to test.</span></span>
+<span>    data_arg <span class="op">=</span> <span class="cn">TRUE</span>,  <span class="co"># is the tested object a function argument? If TRUE (default), "ARGUMENT" is written in output messages, otherwise "OBJECT".</span></span>
+<span>    safer_check <span class="op">=</span> <span class="cn">TRUE</span>, <span class="co"># single logical value. Perform some "safer" checks (see https://github.com/safer-r)?</span></span>
+<span>    lib_path <span class="op">=</span> <span class="cn">NULL</span>, <span class="co"># absolute pathways of the directories containing the required packages if not in the default directories.</span></span>
+<span>    error_text <span class="op">=</span> <span class="st">""</span> <span class="co"># add information in error messages returned by the function.</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## $problem</span></span>
 <span><span class="co">## [1] FALSE</span></span>
