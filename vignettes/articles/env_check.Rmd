@@ -1,13 +1,13 @@
 ---
-title: "env_check"
+title: "env_check(): more examples"
 ---
 <br>
 
 ```{r, include = FALSE}
 knitr::opts_chunk$set(
     error = TRUE, 
-    collapse = TRUE,
-    comment = ">"
+    collapse = FALSE,
+    comment = "##"
 )
 ```
 
@@ -16,61 +16,70 @@ library(saferDev)
 ```
 <br>
 
-### Datasets
+### Argument <code>pos</code>
 ```{r}
-pos <- 2
-name <- "mean"
-```
-<br>
-
-### Datasets info
-```{r}
-pos # integer indicating the position of the environment checked
-name # character vector of the name of the function that will be checked
-```
-<br>
-
-### Simple example
-```{r}
+# Checking of the environment one step above \code{env_check()} local environment.
 env_check(pos = 1)
+
+# With the message correctly displayed.
+output <- env_check(pos = 1)
+cat(output)
+
+# Checking of the environment two steps above \code{env_check()} local environment.
+# NULL means that no object in the tested environment exists above.
 env_check(pos = 2)
 ```
 <br>
 
-### Argument pos
+### Argument <code>name</code>
 ```{r}
-env_check(pos = 1) # check the object "NULL" in the environment one step above the env_check() environment
+ # The name of the tested environment is replaced by "MY_ENV" in the message.
+env_check(pos = 1, name = "MY_ENV")
+
+# Inside a function
+fun1 <- function(){
+    mean <- 1
+    mes <- env_check(pos = 1, name = "fun1")
+    if( ! is.null(mes)){
+        cat(mes)
+    }
+}
+fun1()
+
 ```
 <br>
 
-### Argument name
-```{r}
-env_check(name = "mean") # check if the object "mean" is in the environment one step above the env_check() environment, and if yes, returns if the same name exists in above environments
+### Argument <code>safer_check</code> 
+```{r, echo = TRUE, error = TRUE}
+# Safer checkings are performed before main code running.
+env_check(safer_check = TRUE)
 ```
 <br>
 
-### Argument safer_check
+### Argument <code>lib_path</code>
 ```{r}
-env_check(safer_check = TRUE) # with TRUE, checkings are performed before main code running
+# Error returned because the R required packages are not in the "." path.
+env_check(lib_path = ".")
 ```
 <br>
 
-### Argument lib_path and error_text
+### Argument <code>error_text</code>
 ```{r}
+# Add a text in error messages returned by env_check().
 env_check(
-    lib_path = ".", # absolute pathways of the directories containing the required packages if not in the default directories.
-    error_text = "TEXT ADDED" # add information in error messages returned by the function.
+    lib_path = ".", 
+    error_text = " === TEXT ADDED ==="
 )
 ```
+<br>
 
 ### All the arguments
 ```{r}
-mean <- 2
 env_check(
-    pos = 1,
-    name = "mean",
-    safer_check = TRUE, # perform some "safer" checks? Warning : always set this argument to FALSE if all_args_here() is used inside another safer function.
+    pos = 1, # environment tested "pos" steps above \code{env_check()} local environment.
+    name = "MY_ENV", # name of the tested environment (used in the potnetial output message).
+    safer_check = TRUE, # perform some "safer" checks (see https://github.com/safer-r)?
     lib_path = NULL, # absolute pathways of the directories containing the required packages if not in the default directories.
     error_text = "" # add information in error messages returned by the function.
-) # check if the object "mean" is in the environment one step above the env_check() environment, and if yes, returns if the same name exists in above environments
+) 
 ```
