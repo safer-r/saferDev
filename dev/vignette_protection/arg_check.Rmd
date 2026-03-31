@@ -231,28 +231,47 @@ res <- arg_check(
 ```
 <br>
 
-### Arguments <code>data_name</code>
+### Argument <code>data_name</code>
 ```{r}
-# Example
-tempo <- arg_check(
+# Modification of the name of the tested object in the message
+arg_check(
     data = vec1, 
     class = "integer", 
     data_name = "OBSERVATION_1"
 )
-tempo$text
 
-# In fact, this argument is interesting when check() is used inside functions
-fun1 <- function(arg1){
-    tempo <- arg_check(
-                data = arg1, 
-                class = "integer", 
-                data_name = NULL # if NULL, the name displayed is arg1
-    )
-    if(tempo$problem == TRUE){
-        cat(paste0("\n\n================\n\n", tempo$text, "\n\n================\n\n"))
-    }
-}
-fun1(arg1 = vec4) # error message because arg1 requires a vector of integers.
+# This argument is interesting when data is not an object.
+x <- 1
+arg_check(
+    data = get("x"), 
+    class = "integer", 
+    data_name = "x"
+)
+
+# If "data_name" is not used.
+arg_check(
+    data = get("x"), 
+    class = "integer", 
+    data_name = NULL
+)
+```
+<br>
+
+### Arguments <code>data_arg</code>
+```{r}
+# Message with "argument". Useful when arg_check() is used inside a function to test its arguments.
+arg_check(
+    data = vec2, 
+    class = "integer", 
+    data_arg = TRUE
+)
+
+# Message with "object".
+arg_check(
+    data = vec2, 
+    class = "integer", 
+    data_arg = FALSE
+)
 ```
 <br>
 
