@@ -49,15 +49,25 @@ mat2 # matrix of proportions with NA.
 arg_check(data = vec1, class = "integer")
 
 
-# Check that vec1 is a numeric vector -> error because vec1 is not class "numeric", but class "integer".
+# Check that vec1 is a numeric vector -> error because vec1 is not class "numeric", 
+# but class "integer".
 arg_check(data = vec1, class = "numeric")
 
 
-# Check that vec1 is an integer vector of length 3 without negative values and without NA -> error because of length 5 and negative values inside vec1.
-arg_check(data = vec1, class = "vector", typeof = "integer", length = 3, neg_values = FALSE, na_contain = FALSE)
+# Check that vec1 is an integer vector of length 3 without negative values and 
+# without NA -> error because of length 5 and negative values inside vec1.
+arg_check(
+    data = vec1, 
+    class = "vector", 
+    typeof = "integer", 
+    length = 3, 
+    neg_values = FALSE, 
+    na_contain = FALSE
+)
 
 
-# No result displayed because the output list is assigned into res (see below the print argument).
+# No result displayed because the output list is assigned into res
+# (see below the print argument).
 res <- arg_check(data = vec1, class = "integer")
 
 
@@ -68,6 +78,7 @@ arg_check(data = NULL, class = "integer")
 
 ### Arguments <code>class</code>, <code>typeof</code>, <code>mode</code> and <code>length</code>
 These arguments accept as values the classical kind of class, type, mode and length, respectively, except the <code>class</code> argument, which:
+
 - has also accepts \code{"vector"}, \code{"ggplot2"} (i.e., objects of class \code{c("gg", "ggplot")} for R < 4.5 and \code{c("ggplot2::ggplot", "ggplot", "ggplot2::gg", "S7_object", "gg")} otherwise) or \code{"ggplot_built"} (i.e., objects of class \code{"ggplot_built"} for R < 4.5 and \code{c("ggplot2::ggplot_built", "ggplot_built", "ggplot2::gg", "S7_object")} otherwise) .
 - accepts "matrix" for matrices (and not "matrix" "array").
 
@@ -82,11 +93,13 @@ arg_check(
     length = 5, 
 )
 
-# Warning: the function does not check for inconsistencies between arguments. It just checks if everything is ok between arguments values and the tested object.
+# Warning: the function does not check for inconsistencies between arguments.
+# It just checks if everything is ok between arguments values and the tested object.
+# Here the mode "character" exists, is inconsistant with typeof "integer", but is not signaled.
 arg_check(
     data = vec1, 
     typeof = "integer", 
-    mode = "character", # the mode "character" exists but is inconsistant with typeof "integer". However, this aspect is not signaled by the arg_check().
+    mode = "character"
 )
 
 # Bad mode argument value.
@@ -110,10 +123,11 @@ arg_check(
 ### Argument <code>double_as_integer_allowed</code>
 ```{r}
 # Check for integers, even if numbers are stored as double.
+# With double_as_integer_allowed = TRUE # with TRUE, integers stored as double are accepted.
 arg_check(
     data = vec3, 
     typeof = "integer",
-    double_as_integer_allowed = TRUE # with TRUE, integers stored as double are accepted.
+    double_as_integer_allowed = TRUE
 )
 ```
 <br>
@@ -130,21 +144,22 @@ arg_check(
 
 ### Argument <code>all_options_in_data</code>
 ```{r}
-# Check for the content among values. Here no error detected because vec5 indeed contains at least one copy of "a" and "b" and nothing else.
+# Check for the content among values.
+# Here no error detected because vec5 indeed contains at least one copy of "a" and "b" and nothing else.
 arg_check(
     data = vec5,
     options = c("a", "b"), 
     all_options_in_data = TRUE
 )
 
-# Check for the content among values. Here no error detected because vec5 indeed contains at least one copy of "a" and "b", among other values.
+# Here no error detected because vec5 indeed contains at least one copy of "a" and "b", among other values.
 arg_check(
     data = vec5,
     options = c("a", "b", "c"), 
     all_options_in_data = FALSE
 )
 
-# Check for the content among values. Here an error is detected because vec5 must contain "a", "b" and "c", at least once each and nothing else.
+# Here an error is detected because vec5 must contain "a", "b" and "c", at least once each and nothing else.
 arg_check(
     data = vec5,
     options = c("a", "b", "c"), 
@@ -155,7 +170,8 @@ arg_check(
 
 ### Argument <code>na_contain</code>
 ```{r}
-# Check for the absence of NA. Warning: na_contain = TRUE means "no check". Thus, NA can be present or not. 
+# Check for the absence of NA.
+# Warning: na_contain = TRUE means "no check". Thus, NA can be present or not. 
 arg_check(
     data = mat2, 
     class = "matrix", 
@@ -167,7 +183,8 @@ arg_check(
 
 ### Argument <code>neg_values</code>
 ```{r}
-# Check for the absence of negative values. Warning: neg_values = TRUE means "no check". Thus, negative numbers can be present or not. 
+# Check for the absence of negative values.
+# Warning: neg_values = TRUE means "no check". Thus, negative numbers can be present or not. 
 arg_check(
     data = mat1, 
     class = "matrix",
@@ -178,7 +195,9 @@ arg_check(
 
 ### Argument <code>inf_values</code>
 ```{r}
-# Check for the absence of Inf/-Inf values. Warning: inf_values = TRUE means "no check". Thus, infinite numbers can be present or not. Only type "double" can have Inf values (not integers).
+# Check for the absence of Inf/-Inf values.
+# Warning: inf_values = TRUE means "no check". Thus, infinite numbers can be present or not.
+# Only type "double" can have Inf values (not integers).
 arg_check(
     data = mat1, 
     class = "matrix",
@@ -233,7 +252,7 @@ fun1 <- function(arg1){
         cat(paste0("\n\n================\n\n", tempo$text, "\n\n================\n\n"))
     }
 }
-fun1(arg1 = vec4) # error message because arg1 requires a vector of integers
+fun1(arg1 = vec4) # error message because arg1 requires a vector of integers.
 ```
 <br>
 
@@ -274,7 +293,6 @@ arg_check(
 
 ### All the arguments
 ```{r}
-# See the examples of fun_info() to test different classes of objects
 arg_check(
     data = vec1, # object to check.
     class = "integer", # check the expected class.
@@ -291,7 +309,7 @@ arg_check(
     print = FALSE,  # print a message if the $problem output is TRUE? 
     data_name = NULL,  # name of the object to test.
     data_arg = TRUE,  # is the tested object a function argument? If TRUE (default), "ARGUMENT" is written in output messages, otherwise "OBJECT".
-    safer_check = TRUE, # single logical value. Perform some "safer" checks (see https://github.com/safer-r)?
+    safer_check = TRUE, # Perform some "safer" checks (see https://github.com/safer-r)?
     lib_path = NULL, # absolute pathways of the directories containing the required packages if not in the default directories.
     error_text = "" # add information in error messages returned by the function.
 )

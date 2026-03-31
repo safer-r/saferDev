@@ -21,13 +21,38 @@ library(saferDev)
 source("https://raw.githubusercontent.com/safer-r/saferDev/main/dev/other/test2.R") # function.
 source("https://raw.githubusercontent.com/safer-r/.github/refs/heads/main/profile/backbone.R") # function.
 FUN1 <- function(x, y){ # function.
-    code_for_col <- base::as.vector(x = base::unlist(x = base::mapply(FUN = function(x, y){base::rep(x = y, base::length(x = x))}, x = x, y = y, MoreArgs = NULL, SIMPLIFY = TRUE, USE.NAMES = TRUE), recursive = TRUE, use.names = TRUE), mode = "any")
-    code_for_col2 <- base::as.vector(x = base::unlist(x = base::mapply(FUN = function(x, y){base::rep(x = y, base::length(x = x))}, x = x, y = y)))
+    code_for_col <- base::as.vector(
+        x = base::unlist(
+            x = base::mapply(
+                FUN = function(x, y){
+                    base::rep(
+                        x = y, 
+                        base::length(x = x)
+                    )
+                }, 
+                x = x, 
+                y = y, 
+                MoreArgs = NULL, 
+                SIMPLIFY = TRUE, 
+                USE.NAMES = TRUE
+            ), 
+            recursive = TRUE, 
+            use.names = TRUE
+        ), 
+        mode = "any"
+    )
+    # The code below is written without carriage return on purpose.
+    code_for_col2 <- base::as.vector(x = base::unlist(x = base::mapply(FUN = function(x, y){base::rep(x = y, base::length(x = x))}, x = x, y = y))) 
     middle_bracket <- base::do.call(what = base::c, args = code_for_col)
     middle_bracket2 <- base::do.call(what = base::c, args = code_for_col, quote = FALSE, envir = base::parent.frame())
 }
 FUN2 <- function(x, y){ # function.
-    middle_bracket2 <- base::do.call(what = base::c, args = code_for_col, quote = FALSE, envir = base::parent.frame())
+    middle_bracket2 <- base::do.call(
+        what = base::c, 
+        args = code_for_col, 
+        quote = FALSE, 
+        envir = base::parent.frame()
+    )
 }
 ```
 <br>
@@ -49,7 +74,8 @@ all_args_here(
 
 ### Arguments <code>export</code>, <code>out_path</code>, <code>df_name</code> and <code>overwrite</code>
 ```{r}
-# Print the results into the res.tsv file written in the "." path, and overwrite if res.tsv already exists in ".".
+# Print the results into the res.tsv file written in the "." path, 
+# and overwrite if res.tsv already exists in ".".
 all_args_here(
     x = FUN2, 
     export = TRUE, 
@@ -62,7 +88,7 @@ all_args_here(
 
 ### Argument <code>safer_check</code>
 ```{r, echo = TRUE, error = TRUE}
-# Safer checkings are performed before main code running 
+# Safer checkings are performed before main code running.
 all_args_here(
     x = FUN2, 
     safer_check = TRUE
@@ -99,7 +125,7 @@ all_args_here(
     out_path = ".", # pathway of the folder where to export the data frame.
     df_name = "res.tsv", # name of the exported data frame file.
     overwrite = FALSE, # Overwrite potential df_name file already existing in out_path?
-    safer_check = TRUE, # Single logical value. Perform some "safer" checks (see https://github.com/safer-r)?
+    safer_check = TRUE, # Perform some "safer" checks (see https://github.com/safer-r)?
     lib_path = NULL, # absolute pathways of the directories containing the required packages if not in the default directories.
     error_text = "" # add information in error messages returned by the function.
 )
