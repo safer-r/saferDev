@@ -16,76 +16,83 @@ library(saferDev)
 ```
 <br>
 
-#### get_message() 
-
-#### return error/warning/other messages of an expression (that can be exported)
-<br>
-
 ### Dataset
 
 ```{r}
-char1 <- "wilcox.test(c(1,1,3), c(1, 2, 4), paired = TRUE)" # single character string of a command to evaluate
-char2 <- "message('ahah')" # single character string single character string of a command to evaluate
+char1 <- "wilcox.test(c(1,1,3), c(1, 2, 4), paired = TRUE)" # single character string of a command to evaluate -> warning message
+char2 <- "message('ahah')" # idem -> standard message
+char3 <- "NOTGOOD" # idem -> error message
+char4 <- "mean(2)" # idem -> no message
 ```
 <br>
 
 ### Dataset info
 ```{r}
-char1 # single character string
-char2 # single character string
+char1
+char2
+char3
 ```
 <br>
 
 ### Simple example
 ```{r}
-get_message(data = char1) # single character string of a command to evaluate
-get_message(data = char2) # single character string of a command to evaluate
+# By default, get_message() returns the first error message of the evaluated string.
+# Here no error message
+get_message(data = char1)
+
+# Here no error message
+get_message(data = char2)
+
+# Error message
+get_message(data = char3)
 ```
 <br>
 
 ### Argument <code>kind</code>
 ```{r}
-get_message(data = char1, kind = "warning") # to get the first warning message of the wilcox test
+# To get the first potential warning message
+get_message(data = char1, kind = "warning")
+
+# To get the first potential standart message (neither error nor warning)
+get_message(data = char2, kind = "message")
 ```
 <br>
 
 ### Argument <code>header</code>
 ```{r}
-get_message(data = char1, header = FALSE) # to get error messages (by default) without header
+# To get the output message without header.
+get_message(data = char3, header = FALSE)
+
+# To get the output message with header (by default).
+get_message(data = char3, header = TRUE) 
 ```
 <br>
 
 ### Argument <code>print_no</code>
 ```{r}
-get_message(data = char1, print_no = TRUE) # print a message when no error reported
+# Print a message when no "kind" message returned.
+get_message(data = char1, print_no = TRUE)
+
+# Example with potential returned warning message.
+get_message(data = char2, kind = "warning", print_no = TRUE) 
 ```
 <br>
 
 ### Argument <code>text</code>
 ```{r}
-get_message(
-    data = char2, # single character string of a command to evaluate
-    print_no = TRUE, # print a message when no error reported
-    text = "IN A" # single character string added to the output message (even if nothing reported)
-) 
+# String added to the output message, even if nothing reported (when print_no = TRUE).
+# Useful when used inside a function to name it.
+get_message(data = char3, text = "IN MY EXECUTION") 
 ```
 <br>
 
-### Argument <code>kind</code>, <code>header</code>, <code>print_no</code> and <code>text</code>
-```{r}
-get_message(
-    data = char1, 
-    kind = "warning", # to get the first warning message
-    header = FALSE, # to get error messages (by default) without header
-    print_no = TRUE, # print a message when no error reported
-    text = "IN A" # single character string added to the output message (even if nothing reported)
-) # print the warning message in text
-```
-<br>
 
 ### Argument <code>env</code>
 ```{r}
-get_message(data = char1, env = 2) # object corresponding to an existing environment. Then the \code{data} argument value is evaluated only in the indicated environment. Write \code{NULL} if not required (R scope is used). Example \code{env = .GlobalEnv}.
+# Evaluation only in the indicated environment.
+get_message(data = char1, env = .GlobalEnv)
+get_message(data = char1, kind = "warning", env = asNamespace("stats"))
+
 ```
 <br>
 
