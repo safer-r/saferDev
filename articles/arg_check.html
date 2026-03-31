@@ -210,10 +210,15 @@ and <code>length</code><a class="anchor" aria-label="anchor" href="#arguments-cl
 mode and length, respectively, except the <code>class</code> argument,
 which:</p>
 <ul>
-<li>has also accepts , (i.e., objects of class for R &lt; 4.5 and
-otherwise) or (i.e., objects of class for R &lt; 4.5 and otherwise)
-.</li>
-<li>accepts “matrix” for matrices (and not “matrix” “array”).</li>
+<li>also accepts <code>“vector”</code>, <code>“ggplot2”</code> (i.e.,
+objects of class <code>c(“gg”, “ggplot”)</code> for R &lt; 4.5 and
+<code>c(“ggplot2::ggplot”, “ggplot”, “ggplot2::gg”, “S7_object”,
+“gg”)</code> otherwise) or <code>“ggplot_built”</code> (i.e., objects of
+class <code>“ggplot_built”</code> for R &lt; 4.5 and
+<code>c(“ggplot2::ggplot_built”, “ggplot_built”, “ggplot2::gg”,
+“S7_object”)</code> otherwise) .</li>
+<li>accepts <code>“matrix”</code> for matrices (objects of class
+<code>c(“matrix” “array”)</code>).</li>
 </ul>
 <div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Example.</span></span>
