@@ -18,15 +18,15 @@ library(saferDev)
 
 ### Dataset
 ```{r}
-source("https://raw.githubusercontent.com/safer-r/saferDev/main/dev/other/test2.R")
-source("https://raw.githubusercontent.com/safer-r/.github/refs/heads/main/profile/backbone.R")
-FUN1 <- function(x, y){
+source("https://raw.githubusercontent.com/safer-r/saferDev/main/dev/other/test2.R") # function.
+source("https://raw.githubusercontent.com/safer-r/.github/refs/heads/main/profile/backbone.R") # function.
+FUN1 <- function(x, y){ # function.
     code_for_col <- base::as.vector(x = base::unlist(x = base::mapply(FUN = function(x, y){base::rep(x = y, base::length(x = x))}, x = x, y = y, MoreArgs = NULL, SIMPLIFY = TRUE, USE.NAMES = TRUE), recursive = TRUE, use.names = TRUE), mode = "any")
     code_for_col2 <- base::as.vector(x = base::unlist(x = base::mapply(FUN = function(x, y){base::rep(x = y, base::length(x = x))}, x = x, y = y)))
     middle_bracket <- base::do.call(what = base::c, args = code_for_col)
     middle_bracket2 <- base::do.call(what = base::c, args = code_for_col, quote = FALSE, envir = base::parent.frame())
 }
-FUN2 <- function(x, y){
+FUN2 <- function(x, y){ # function.
     middle_bracket2 <- base::do.call(what = base::c, args = code_for_col, quote = FALSE, envir = base::parent.frame())
 }
 ```
@@ -36,43 +36,57 @@ FUN2 <- function(x, y){
 
 ### Simple examples
 ```{r}
-# Examples that return an error
+# Example that returns an error.
 all_args_here(mean)
-# Examples that return an error
+# Example that returns an error.
 all_args_here(test2)
+# Example indicating missing arguments.
 all_args_here(
-    x = FUN2 # R function
+    x = FUN2
 )
 ```
 <br>
 
 ### Arguments <code>export</code>, <code>out_path</code>, <code>df_name</code> and <code>overwrite</code>
 ```{r}
+# Print the results into the res.tsv file written in the "." path, and overwrite if res.tsv already exists in ".".
 all_args_here(
-    x = FUN2, # R function
-    export = TRUE, # export the data frame into a .tsv file?
-    out_path = ".", # pathway of the folder where to export the data frame
-    df_name = "res.tsv", # name of the exported data frame file
-    overwrite = TRUE # Overwrite potential df_name file already existing in out_path?
+    x = FUN2, 
+    export = TRUE, 
+    out_path = ".", 
+    df_name = "res.tsv", 
+    overwrite = TRUE
 )
 ```
 <br>
 
 ### Argument <code>safer_check</code>
-```{r}
+```{r, echo = TRUE, error = TRUE}
+# Safer checkings are performed before main code running 
 all_args_here(
     x = FUN2, 
-    safer_check = TRUE, # perform some "safer" checks? Warning : always set this argument to FALSE if all_args_here() is used inside another safer function.
+    safer_check = TRUE
 )
 ```
 <br>
 
-### Argument <code>lib_path</code> and <code>error_text</code>
+### Argument <code>lib_path</code>
 ```{r}
+# Error returned because the R required packages are not in the "." path.
+all_args_here(
+    x = FUN2,  
+    lib_path = "."
+)
+```
+<br>
+
+### Argument <code>error_text</code>
+```{r}
+# Add a text in error messages returned by all_args_here().
 all_args_here(
     x = FUN2, 
-    lib_path = ".", # absolute pathways of the directories containing the required packages if not in the default directories.
-    error_text = " === TEXT ADDED ===" # add information in error messages returned by the function.
+    lib_path = ".", 
+    error_text = " === TEXT ADDED ==="
 )
 ```
 <br>
@@ -80,12 +94,12 @@ all_args_here(
 ### All the arguments
 ```{r}
 all_args_here(
-    x = FUN1, # R function
+    x = FUN1, # R function.
     export = FALSE, # export the data frame into a .tsv file?
     out_path = ".", # pathway of the folder where to export the data frame.
-    df_name = "res.tsv", # name of the exported data frame file
+    df_name = "res.tsv", # name of the exported data frame file.
     overwrite = FALSE, # Overwrite potential df_name file already existing in out_path?
-    safer_check = TRUE, # perform some "safer" checks? Warning : always set this argument to FALSE if all_args_here() is used inside another safer function.
+    safer_check = TRUE, # Single logical value. Perform some "safer" checks (see https://github.com/safer-r)?
     lib_path = NULL, # absolute pathways of the directories containing the required packages if not in the default directories.
     error_text = "" # add information in error messages returned by the function.
 )

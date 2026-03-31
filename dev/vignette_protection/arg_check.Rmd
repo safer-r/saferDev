@@ -45,7 +45,7 @@ mat2 # matrix of proportions with NA.
 
 ### Simple examples
 ```{r}
-# Check that vec1 is of class integer.
+# Check that vec1 is class integer.
 arg_check(data = vec1, class = "integer")
 
 
@@ -284,14 +284,14 @@ arg_check(
     prop = FALSE,  # check the expected proportion.
     double_as_integer_allowed = FALSE,  # if set to TRUE, typeof = "double" or class = "numeric" would not return an error if the object contains integers recorded as double.
     options = NULL,  # check all the possible option values.
-    all_options_in_data = FALSE,  # If TRUE, all of the options of the options argument must be present at least once in the data argument, and nothing else. If FALSE, some or all of the options must be present in the data argument, and nothing else.
+    all_options_in_data = FALSE,  # sf TRUE, all of the options of the options argument must be present at least once in the data argument, and nothing else. If FALSE, some or all of the options must be present in the data argument, and nothing else.
     na_contain = FALSE,  # can the data object contain NA (only tested if na_contain = FALSE)?
     neg_values = TRUE,  # can the data object contain negative values (only tested if na_contain = FALSE)?
     inf_values = TRUE,  # can the data object contain infinite values (only tested if na_contain = FALSE)?
     print = FALSE,  # print a message if the $problem output is TRUE? 
     data_name = NULL,  # name of the object to test.
     data_arg = TRUE,  # is the tested object a function argument? If TRUE (default), "ARGUMENT" is written in output messages, otherwise "OBJECT".
-    safer_check = TRUE, # Single logical value. Perform some "safer" checks (see https://github.com/safer-r)?
+    safer_check = TRUE, # single logical value. Perform some "safer" checks (see https://github.com/safer-r)?
     lib_path = NULL, # absolute pathways of the directories containing the required packages if not in the default directories.
     error_text = "" # add information in error messages returned by the function.
 )
