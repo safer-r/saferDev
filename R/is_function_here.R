@@ -240,7 +240,7 @@ is_function_here <- function(
 
     ######## check of lib_path
     # must be before any :: or ::: non basic package calling
-    if(safer_check == TRUE){
+    # if(safer_check == TRUE){ # inactivated because required also with safer_check == FALSE
         if( ! base::is.null(x = lib_path)){ #  is.null(NA) returns FALSE so OK.
             if( ! base::all(base::typeof(x = lib_path) == "character", na.rm = TRUE)){ # na.rm = TRUE but no NA returned with typeof (typeof(NA) == "character" returns FALSE)
                 if(base::all(base::mode(x = lib_path) == "function", na.rm = TRUE)){
@@ -273,13 +273,13 @@ is_function_here <- function(
             }else{
                 ini_lib_path <- base:::.libPaths(new = , include.site = TRUE) # normal to have empty new argument
                 base::on.exit(expr = base:::.libPaths(new = ini_lib_path, include.site = TRUE), add = TRUE, after = TRUE) # return to the previous libPaths()
-                base:::.libPaths(new = base::sub(x = lib_path, pattern = "/$|\\\\$", replacement = "", ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE), include.site = TRUE) # base:::.libPaths(new = ) add path to default path. BEWARE: base:::.libPaths() does not support / at the end of a submitted path. The reason of the check and replacement of the last / or \\ in path
+                base:::.libPaths(new = base::sub(x = base::c(ini_lib_path, lib_path), pattern = "/$|\\\\$", replacement = "", ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE), include.site = TRUE) # base:::.libPaths(new = ) add path to default path. BEWARE: base:::.libPaths() does not support / at the end of a submitted path. The reason of the check and replacement of the last / or \\ in path
                 lib_path <- base:::.libPaths(new = , include.site = TRUE) # normal to have empty new argument
             }
         }else{
             lib_path <- base:::.libPaths(new = , include.site = TRUE) # normal to have empty new argument # base:::.libPaths(new = lib_path) # or base:::.libPaths(new = base::c(base:::.libPaths(), lib_path))
         }
-    }
+    # }
     ######## end check of lib_path
 
     ######## check of the required functions from the required packages
