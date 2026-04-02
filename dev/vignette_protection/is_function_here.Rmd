@@ -19,50 +19,56 @@ library(saferDev)
 ### Datasets
 ```{r}
 f <- "ggplot2::geom_point"
-path <- "blablabla"
 ```
 <br>
 
 ### Datasets info
 ```{r}
-f # Character vector of function name
-path # character vector specifying the absolute pathways of the directories, this lib_path will return an error
+f # function name between quotes.
 ```
 <br>
 
 ### Argument <code>fun</code>
 ```{r, echo = TRUE, error = TRUE}
-is_function_here(fun = f) # check if the package serpentine is in the computer
+# check if the ggplot2::geom_point function is in the default library folder.
+is_function_here(fun = f) 
 ```
 <br>
 
 ### Argument <code>safer_check</code>
 ```{r, echo = TRUE, error = TRUE}
-# check if the package is in the computer, safer_check = TRUE, checkings are performed before main code running 
-is_function_here(
-    fun = f,
-    safer_check = TRUE
-) 
+# Safer checkings are performed before main code running.
+is_function_here(fun = f, safer_check = TRUE)
 ```
 <br>
 
-### Argument <code>lib_path</code> and <code>error_text</code>
+### Argument <code>lib_path</code>
 ```{r}
+# Error returned because the ggplot2::geom_point function is not in the "." path.
+is_function_here(fun = f, lib_path = ".")
+
+# The ggplot2::geom_point function is in the default path (.libPaths()).
+is_function_here(fun = f, lib_path = NULL)
+```
+<br>
+
+### Argument <code>error_text</code>
+```{r}
+# Add a text in error messages returned by is_function_here().
 is_function_here(
-    fun = f,
-    lib_path = ".", # absolute pathways of the directories containing the required packages if not in the default directories.
-    error_text = "TEXT ADDED" # add information in error messages returned by the function.
+    fun = f, 
+    lib_path = ".", 
+    error_text = " === TEXT ADDED ==="
 )
 ```
 <br>
 
 ### All the arguments
 ```{r, echo = TRUE, error = TRUE}
-# check if the function is present in the package, returns an error because the path doesn't exist.
 is_function_here(
-    fun = f,
-    safer_check = TRUE, # Single logical value. Perform some "safer" checks (see https://github.com/safer-r)?
-    lib_path = NULL, # absolute pathways of the directories containing the required packages if not in the default directories.
+    fun = f, # function name string (between quotes), with the associated package.
+    safer_check = TRUE, # perform some "safer" checks (see https://github.com/safer-r)?
+    lib_path = NULL, # where the required packages are if not in the default directories.
     error_text = "" # add information in error messages returned by the function.
 ) 
 ```

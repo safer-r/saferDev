@@ -19,38 +19,46 @@ library(saferDev)
 ### Datasets
 ```{r}
 req.pkg <- "ggplot2"
-path <- "blablabla"
 ```
 <br>
 
 ### Datasets info
 ```{r}
-req.pkg # Character vector of package names
-path # character vector specifying the absolute pathways of the directories, this lib_path will return an error
+req.pkg # package name between quotes.
 ```
 <br>
 
 ### Argument <code>req_package</code>
 ```{r, echo = TRUE, error = TRUE}
-is_package_here(req_package = req.pkg) # check if the package is in the computer
+# check if the ggplot2 package is in the default library folder.
+is_package_here(req_package = req.pkg) 
 ```
 <br>
 
 ### Argument <code>safer_check</code>
 ```{r, echo = TRUE, error = TRUE}
-is_package_here(
-    req_package = req.pkg,
-    safer_check = TRUE
-) # check if the package is in the computer, safer_check = TRUE, checkings are performed before main code running 
+# Safer checkings are performed before main code running.
+is_package_here(req_package = req.pkg, safer_check = TRUE)
 ```
 <br>
 
-### Argument <code>lib_path</code> and <code>error_text</code>
+### Argument <code>lib_path</code>
 ```{r}
+# Error returned because the ggplot2 package is not in the "." path.
+is_package_here(req_package = req.pkg, lib_path = ".")
+
+# The ggplot2 package is in the default path (.libPaths()).
+is_package_here(req_package = req.pkg, lib_path = NULL)
+```
+<br>
+
+### Argument <code>error_text</code>
+```{r}
+# Add a text in error messages returned by is_package_here().
 is_package_here(
-    req_package = req.pkg,
-    lib_path = ".", # absolute pathways of the directories containing the required packages if not in the default directories.
-    error_text = "TEXT ADDED" # add information in error messages returned by the function.
+    req_package = req.pkg, 
+    lib_path = ".", 
+    error_text = " === TEXT ADDED ==="
 )
 ```
 <br>
@@ -58,10 +66,10 @@ is_package_here(
 ### All the arguments
 ```{r, echo = TRUE, error = TRUE}
 is_package_here(
-    req_package = req.pkg,
-    safer_check = TRUE, # Single logical value. Perform some "safer" checks (see https://github.com/safer-r)?
-    lib_path = NULL, # absolute pathways of the directories containing the required packages if not in the default directories.
+    req_package = req.pkg, # package name string (between quotes).
+    safer_check = TRUE, # perform some "safer" checks (see https://github.com/safer-r)?
+    lib_path = NULL, # where the required packages are if not in the default directories.
     error_text = "" # add information in error messages returned by the function.
-) # check if the package is in the computer
+) 
 ```
 ```

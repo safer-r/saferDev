@@ -19,7 +19,7 @@ library(saferDev)
 ### Dataset
 
 ```{r}
-char1 <- "wilcox.test(c(1,1,3), c(1, 2, 4), paired = TRUE)" # single character string of a command to evaluate -> warning message
+char1 <- "wilcox.test(c(1,1,3), c(1, 2, 4), paired = TRUE)" # string of a command to evaluate -> warning message
 char2 <- "message('ahah')" # idem -> standard message
 char3 <- "NOTGOOD" # idem -> error message
 char4 <- "mean(2)" # idem -> no message

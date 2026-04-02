@@ -4,7 +4,7 @@
 #' @param data Object to print in the output file. If \code{NULL}, nothing is done, with no warning.
 #' @param output Single character string. Name of the output file.
 #' @param path Single character string indicating the path where to write the output file.
-#' @param overwrite Single logical value. If the output file already exists and \code{overwrite} is \code{TRUE}, an error message is returned (no overwrite of existing file). Otherwise, the printing is appended (and the output file is created if it does not exist yet).
+#' @param append Single logical value. If the output file already exists and \code{append} is \code{FALSE}, an error message is returned (no overwrite of existing file). Otherwise, the printing is appended (and the output file is created if it does not exist yet).
 #' @param rownames_kept Single logical value. Defines whether row names have to be removed or not in 2D objects. Warning: in 1D tables, names over the values are taken as row names, and are thus removed if \code{rownames_kept} is \code{FALSE}.
 #' @param vector_cat Single logical value. If \code{TRUE}, print a vector of length > 1 using \code{cat()} instead of \code{capture.output()}. Otherwise (default \code{FALSE}) print a vector of length > 1 using \code{capture.output()}. Names of values are not printed when \code{TRUE}.
 #' @param noquote Single logical value. If \code{TRUE} no quote are added to the returned character strings.
@@ -24,24 +24,24 @@
 #' \dontrun{
 #' # Example that creates a file/folder in the working directory
 #' saferDev::report(data = "THE FOLLOWING VECTOR IS:\n", output = "results.txt", path = ".", 
-#' overwrite = TRUE, sep = 1)
-#' saferDev::report(data = 1:3, output = "results.txt", path = ".", overwrite = FALSE, 
+#' append = TRUE, sep = 1)
+#' saferDev::report(data = 1:3, output = "results.txt", path = ".", append = TRUE, 
 #' rownames_kept = FALSE, vector_cat = FALSE, noquote = FALSE, sep = 2)
 #' saferDev::report(data = "THE FOLLOWING MATRIX IS:\n", output = "results.txt", path = ".", 
-#' overwrite = FALSE, sep = 1)
-#' saferDev::report(data = matrix(1:5), output = "results.txt", path = ".", overwrite = FALSE, 
+#' append = TRUE, sep = 1)
+#' saferDev::report(data = matrix(1:5), output = "results.txt", path = ".", append = TRUE, 
 #' rownames_kept = FALSE, vector_cat = FALSE, noquote = FALSE, sep = 5)
 #' saferDev::report(data = "THE FOLLOWING DATA FRAME IS:\n", output = "results.txt", path = ".", 
-#' overwrite = FALSE, sep = 1)
+#' append = TRUE, sep = 1)
 #' saferDev::report(data = data.frame(A = 1:8, B = letters[1:8]), output = "results.txt", path = ".", 
-#' overwrite = FALSE, rownames_kept = FALSE, vector_cat = FALSE, noquote = FALSE, sep = 1)
+#' append = TRUE, rownames_kept = FALSE, vector_cat = FALSE, noquote = FALSE, sep = 1)
 #' }
 #' @export
 report <- function(
     data, 
     output = "log.txt", 
-    path, # no value to do not create unwanted files anywhere
-    overwrite = FALSE, 
+    path, # no value to do not create unwanted files anywhere.
+    append = FALSE, #t odo not overwrite existing file.
     rownames_kept = FALSE, 
     vector_cat = FALSE, 
     noquote = TRUE, 
@@ -51,7 +51,7 @@ report <- function(
     error_text = ""
 ){
     # DEBUGGING
-    # vec1 = letters[1:9] ;  data = table(vec1, vec1) ; output = "log.txt" ; path = "C:/Users/gmillot/Desktop" ; overwrite = TRUE ; rownames_kept = TRUE ; vector_cat = FALSE ; noquote = FALSE ; sep = 2 ; safer_check = TRUE # for function debugging
+    # vec1 = letters[1:9] ;  data = table(vec1, vec1) ; output = "log.txt" ; path = "C:/Users/gmillot/Desktop" ; append = TRUE ; rownames_kept = TRUE ; vector_cat = FALSE ; noquote = FALSE ; sep = 2 ; safer_check = TRUE # for function debugging
     #### package name
     package_name <- "saferDev" # write NULL if the function developed is not in a package
     #### end package name
@@ -155,7 +155,7 @@ report <- function(
         # "data", # inactivate because can be NULL 
         "output", 
         "path",
-        "overwrite", 
+        "append", 
         "rownames_kept", 
         "vector_cat", 
         "noquote",
@@ -184,7 +184,7 @@ report <- function(
         "data", 
         "output", 
         "path",
-        "overwrite", 
+        "append", 
         "rownames_kept", 
         "vector_cat", 
         "noquote",
@@ -350,7 +350,7 @@ report <- function(
     # add as many lines as below, for each of your arguments of your function in development
     tempo <- saferDev::arg_check(data = output, class = "character", typeof = NULL, mode ="character", length = 1, prop = FALSE, double_as_integer_allowed = TRUE, options = NULL, all_options_in_data = FALSE, na_contain = FALSE, neg_values = TRUE, inf_values = TRUE, print = FALSE, data_name = NULL, data_arg = TRUE, safer_check = FALSE, lib_path = lib_path, error_text = embed_error_text) ; base::eval(expr = ee, envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL))
     tempo <- saferDev::arg_check(data = path, class = "vector", typeof = NULL, mode = "character", length = 1, prop = FALSE, double_as_integer_allowed = TRUE, options = NULL, all_options_in_data = FALSE, na_contain = FALSE, neg_values = TRUE, inf_values = TRUE, print = FALSE, data_name = NULL, data_arg = TRUE, safer_check = FALSE, lib_path = lib_path, error_text = embed_error_text) ; base::eval(expr = ee, envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL))
-    tempo <- saferDev::arg_check(data = overwrite, class = "logical", typeof = NULL, mode = "logical", length = 1, prop = FALSE, double_as_integer_allowed = TRUE, options = NULL, all_options_in_data = FALSE, na_contain = FALSE, neg_values = TRUE, inf_values = TRUE, print = FALSE, data_name = NULL, data_arg = TRUE, safer_check = FALSE, lib_path = lib_path, error_text = embed_error_text) ; base::eval(expr = ee, envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL))
+    tempo <- saferDev::arg_check(data = append, class = "logical", typeof = NULL, mode = "logical", length = 1, prop = FALSE, double_as_integer_allowed = TRUE, options = NULL, all_options_in_data = FALSE, na_contain = FALSE, neg_values = TRUE, inf_values = TRUE, print = FALSE, data_name = NULL, data_arg = TRUE, safer_check = FALSE, lib_path = lib_path, error_text = embed_error_text) ; base::eval(expr = ee, envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL))
     tempo <- saferDev::arg_check(data = rownames_kept, class = "logical", typeof = NULL, mode = "logical", length = 1, prop = FALSE, double_as_integer_allowed = TRUE, options = NULL, all_options_in_data = FALSE, na_contain = FALSE, neg_values = TRUE, inf_values = TRUE, print = FALSE, data_name = NULL, data_arg = TRUE, safer_check = FALSE, lib_path = lib_path, error_text = embed_error_text) ; base::eval(expr = ee, envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL))
     tempo <- saferDev::arg_check(data = vector_cat, class = "logical", typeof = NULL, mode = "logical", length = 1, prop = FALSE, double_as_integer_allowed = TRUE, options = NULL, all_options_in_data = FALSE, na_contain = FALSE, neg_values = TRUE, inf_values = TRUE, print = FALSE, data_name = NULL, data_arg = TRUE, safer_check = FALSE, lib_path = lib_path, error_text = embed_error_text) ; base::eval(expr = ee, envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL))
     tempo <- saferDev::arg_check(data = noquote, class = "logical", typeof = NULL, mode = "logical", length = 1, prop = FALSE, double_as_integer_allowed = TRUE, options = NULL, all_options_in_data = FALSE, na_contain = FALSE, neg_values = TRUE, inf_values = TRUE, print = FALSE, data_name = NULL, data_arg = TRUE, safer_check = FALSE, lib_path = lib_path, error_text = embed_error_text) ; base::eval(expr = ee, envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL))
@@ -427,12 +427,12 @@ report <- function(
         )
         base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL)
     }
-    if(base::file.exists(paths = base::paste0(path, "/", output, collapse = NULL, recycle0 = FALSE)) & overwrite == TRUE){
+    if(base::file.exists(paths = base::paste0(path, "/", output, collapse = NULL, recycle0 = FALSE)) & append == FALSE){
         tempo_cat <- base::paste0(
             error_text_start, 
             "FILE DEFINED BY THE path AND output ARGUMENTS\n",
             base::paste0(path, "/", output, collapse = NULL, recycle0 = FALSE),
-            "\nALREADY EXISTS AND CANNOT BE OVERWRITTEN.\nPLEASE:\nREMOVE THE FILE\nOR CHANGE THE NAME OF THE output ARGUMENT\nOR SET THE overwrite ARGUMENT TO FALSE TO APPEND IN THE EXISTING FILE.\n", 
+            "\nALREADY EXISTS AND CANNOT BE OVERWRITTEN.\nPLEASE:\nREMOVE THE FILE\nOR CHANGE THE NAME OF THE output ARGUMENT\nOR SET THE append ARGUMENT TO TRUE TO APPEND IN THE EXISTING FILE.\n", 
             collapse = NULL, 
             recycle0 = FALSE
         )
@@ -455,31 +455,31 @@ report <- function(
                 for(i in 1:length.rows){ # replace the rownames of the first 4 rows by increasing number of spaces (because identical row names not allowed in data frames). This method cannot be extended to more rows as the printed data frame is shifted on the right because of "big empty rownames"
                     rownames.output.tables <- base::c(rownames.output.tables, base::paste0(rownames.output.tables[i]," ", collapse = "", recycle0 = FALSE))
                 }
-                base::row.names(x = data) <- rownames.output.tables[1:length.rows]
+                data <- base::"rownames<-"(x = data, value = rownames.output.tables[1:length.rows])
             }else if(rownames_kept == FALSE & (base::all(base::class(x = data) == "table", na.rm = TRUE) | base::all(base::class(x = data) %in% base::c("matrix", "array"), na.rm = TRUE))){ # before R4.0.0, it was  & base::all(base::class(data) %in% base::c("matrix", "table"))
-                base::"rownames<-"(x = data, value = base::rep(x = "", times = base::nrow(x = data))) # identical row names allowed in matrices and tables
+                data <- base::"rownames<-"(x = data, value = base::rep(x = "", times = base::nrow(x = data))) # identical row names allowed in matrices and tables
             }
             if(noquote == TRUE){
-                utils::capture.output(base::noquote(obj = data, right = FALSE), file = out_path, append = ! overwrite, type = NULL, split = FALSE)
+                utils::capture.output(base::noquote(obj = data, right = FALSE), file = out_path, append = append, type = NULL, split = FALSE)
             }else{
-                utils::capture.output(data, file=out_path, append = ! overwrite, type = NULL, split = FALSE)
+                utils::capture.output(data, file = out_path, append = append, type = NULL, split = FALSE)
             }
         }else if(base::is.vector(x = data, mode = "any") & base::all(base::class(x = data) != "list", na.rm = TRUE) & (base::length(x = data) == 1L | vector_cat == TRUE)){
             if(noquote == TRUE){
-                base::cat(base::noquote(obj = data, right = FALSE), file= out_path, append = ! overwrite, type = NULL, sep =  , fill = FALSE, labels = NULL)
-                sep <- base::ifelse(test = sep == 0, yes = 0, no = sep - 1) # because with cat(), R add an additionnal space
+                base::cat(base::noquote(obj = data, right = FALSE), file= out_path, append = append, type = NULL, sep =  , fill = FALSE, labels = NULL)
+                sep <- base::ifelse(test = sep == 0, yes = 0, no = sep + 1) # because with cat(), no carriage return
             }else{
-                base::cat(data, file= out_path, append = ! overwrite, type = NULL, sep =  , fill = FALSE, labels = NULL)
-                sep <- base::ifelse(test = sep == 0, yes = 0, no = sep - 1) # because with cat(), R add an additionnal space
+                base::cat(data, file= out_path, append = append, type = NULL, sep = , fill = FALSE, labels = NULL)
+                sep <- base::ifelse(test = sep == 0, yes = 0, no = sep + 1) # because with cat(), no carriage return
             }
         }else if(base::all(base::mode(x = data) == "character", na.rm = TRUE)){ # characters (array, list, factor or vector with vector_cat = FALSE)
             if(noquote == TRUE){
-                utils::capture.output(base::noquote(obj = data, right = FALSE), file=out_path, append = ! overwrite, type = NULL, split = FALSE)
+                utils::capture.output(base::noquote(obj = data, right = FALSE), file=out_path, append = append, type = NULL, split = FALSE)
             }else{
-                utils::capture.output(data, file=out_path, append = ! overwrite, type = NULL, split = FALSE)
+                utils::capture.output(data, file=out_path, append = append, type = NULL, split = FALSE)
             }
         }else{ # other object (S4 for instance, which do not like base::noquote()
-            utils::capture.output(data, file=out_path, append = ! overwrite, type = NULL, split = FALSE)
+            utils::capture.output(data, file=out_path, append = append, type = NULL, split = FALSE)
         }
         # deal with sep
         if( ! (

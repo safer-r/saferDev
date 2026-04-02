@@ -1,13 +1,13 @@
 ---
-title: "report"
+title: "report(): more examples"
 ---
 <br>
 
 ```{r, include = FALSE}
 knitr::opts_chunk$set(
     error = TRUE, 
-    collapse = TRUE,
-    comment = ">"
+    collapse = FALSE,
+    comment = "##"
 )
 ```
 
@@ -16,168 +16,241 @@ library(saferDev)
 ```
 <br>
 
-### Datasets
+### Dataset
 ```{r}
-string1 <- "THIS IS A LOG"
-vec1 <- 1:6 # vector of integers
-vec2 <- letters[1:9] # vector of characters
-mat1 <- matrix(vec1, nrow = 2, ncol = 3, byrow = TRUE) # matrix of integer having 2 rows and 3 columns
-dimnames(mat1) <- list(c("Row 1","Row 2"), c("C1", "C2", "C3"))
+string1 <- "THIS IS A LOG" # string.
+vec1 <- 1:6 # vector of integers.
+vec2 <- letters[1:9] # vector of characters.
+mat1 <- matrix(vec1, nrow = 2, ncol = 3, byrow = TRUE) # 2x3 matrix of integers.
+dimnames(mat1) <- list(c("Row_1","Row_2"), c("C1", "C2", "C3")) # mat1 matrix with column and row names.
 mat2 <- mat1
-mode(mat2) <- "character"
-t1 <- table(mat1) # 1D table
-vec3 <- as.vector(t1)
-names(vec3) <- letters[1:6] # vector with names
-t2 <- table(vec2, vec2) # 2D table
-l1 <- list(vec1, vec2) # list
+mode(mat2) <- "character" # as mat1 but made of characters.
+t1 <- table(mat1) # 1D table.
+vec3 <- as.vector(t1) # vector of intergers
+names(vec3) <- letters[1:6] # vector with names.
+t2 <- table(vec2, vec2) # 2D table.
+l1 <- list(vec1, vec2) # list.
 ```
 <br>
 
-### Datasets info
+### Dataset info
 ```{r}
-string1 # string
-vec1 # vector of integers
-vec2 # vector of characters
-vec3 # vector of integers with names. No more [1] in front of values
-mat1 # matrix of integers with the row names
-mat2 # matrix of characters with the row names
-t1 # 1D table
-t2 # 2D table
-l1 # list
+string1 # string.
+vec1 # vector of integers.
+vec2 # vector of characters.
+vec3 # vector of integers with names. No more [1] in front of values.
+mat1 # 2x3 matrix of integers with column and row names.
+mat2 # as mat1 but made of characters.
+t1 # 1D table.
+t2 # 2D table.
+l1 # list.
 ```
 <br>
 
 ### Simple examples
 ```{r}
-report(data = string1, path = ".") # print the input into the output file in the path
-report(data = vec1, path = ".") # idem
-report(data = vec2, path = ".") # idem
-report(data = vec3, path = ".") # idem
-report(data = mat1, path = ".") # idem
-report(data = mat2, path = ".") # idem. We cannot see that it is mode character (see noquote below)
-report(data = t1, path = ".") # idem
-report(data = t2, path = ".") # idem
-report(data = l1, path = ".") # idem
+# Print the value of "data" into the log.txt output file in the indicated path.
+report(data = string1, append = TRUE, path = ".")
+
+# Idem.
+report(data = vec1, append = TRUE, path = ".")
+
+# Idem.
+report(data = vec2, append = TRUE, path = ".")
+
+# Idem.
+report(data = vec3, append = TRUE, path = ".")
+
+# Idem.
+report(data = mat1, append = TRUE, path = ".")
+
+# Idem. Of note, we cannot see in the log.txt file that mat2 is mode character (see noquote below).
+report(data = mat2, append = TRUE, path = ".")
+
+# Idem.
+report(data = t1,, append = TRUE, path = ".")
+
+# Idem.
+report(data = t2, append = TRUE, path = ".")
+
+# Idem.
+report(data = l1, append = TRUE, path = ".")
 ```
 <br>
 
-### Argument output
+### Argument <code>output</code>
 ```{r, echo = TRUE, error = TRUE}
-report(data = vec1, output = "test.txt", path = ".") # print the vector vec1 into the output file named "test.txt" in the path
+# Print the value of vec1 into the test.txt file in the indicated path.
+report(data = vec1, output = "test.txt", append = TRUE, path = ".")
 ```
 <br>
 
-### Argument overwrite
+### Argument <code>append</code>
 ```{r, echo = TRUE, error = TRUE}
-report(data = vec2, overwrite = TRUE, output = "test.txt", path = ".") # if the file exists, the output file content will be erased before printing
+# Error returned because the test.txt file already exists.
+report(data = vec2, append = FALSE, output = "test.txt", path = ".")
 ```
 <br>
 
-### Argument rownames_kept
+### Argument <code>rownames_kept</code>
 ```{r, echo = TRUE, error = TRUE}
+ # Keep the row names when print the matrix mat1 in log.txt.
 report(
   data = mat1, 
   rownames_kept = TRUE, 
+  append = TRUE, 
   path = "."
-) # keep the row names when print the matrix mat1 in the file
+)
 
+# Remove the row names.
 report(
   data = mat1, 
   rownames_kept = FALSE, 
+  append = TRUE, 
   path = "."
-) # remove the row names
+)
 
+# Keep the row names when printing the table t1 in log.txt.
 report(
   data = t1, 
   rownames_kept = TRUE, 
+  append = TRUE, 
   path = "."
-) # keep the row names when print the table t1 in the file
+) 
 
+# Remove the row names.
 report(
   data = t1, 
   rownames_kept = FALSE, 
+  append = TRUE, 
   path = "."
-) # remove the row names
+)
 
+# Keep the row names when print the table t2 in log.txt.
 report(
   data = t2, 
   rownames_kept = TRUE, 
+  append = TRUE, 
   path = "."
-) # keep the row names when print the table t2 in the file
+)
 
+# Remove the row names.
 report(
   data = t2, 
   rownames_kept = FALSE, 
+  append = TRUE, 
   path = "."
-) # remove the row names
+) 
 
 ```
 <br>
 
-### Argument vector_cat
+### Argument <code>vector_cat</code>
 ```{r, echo = TRUE, error = TRUE}
+# Print a vector of length > 1 using cat() instead of capture.output().
+# Names are lost.
 report(
   data = vec3, 
   vector_cat = TRUE, 
+  append = TRUE, 
   path = "."
-) # print a vector of length > 1 using cat() instead of capture.output() : names are lost.
+)
+
+# Names are not lost.
+report(
+  data = vec3, 
+  vector_cat = FALSE, 
+  append = TRUE, 
+  path = "."
+)
 ```
 <br>
 
-### Argument noquote
+### Argument <code>noquote</code>
 ```{r, echo = TRUE, error = TRUE}
+# Quotes are kept for the characters.
 report(
   data = mat2, 
   noquote = FALSE, 
+  append = TRUE, 
   path = "."
-) # quote are kept for the characters.
+)
 ```
 <br>
 
-### Argument sep
+### Argument <code>sep</code>
 ```{r, echo = TRUE, error = TRUE}
+# 4 empty lines added after printed data.
 report(
   data = vec1, 
   sep = 4, 
+  append = TRUE, 
   path = "."
-) # 4 lines after printed data
-```
-<br>
+)
 
-### Argument safer_check
-```{r, echo = TRUE, error = TRUE}
+#Error returned because at least 1 empty lines between printings.
 report(
-    data = vec1, 
-    safer_check = TRUE
-) # check if the package is in the computer, safer_check = TRUE, checkings are performed before main code running 
-```
-<br>
-
-### Argument lib_path and error_text
-```{r}
-report(
-    data = vec1, 
-    lib_path = ".", # absolute pathways of the directories containing the required packages if not in the default directories.
-    error_text = "TEXT ADDED" # add information in error messages returned by the function.
+  data = vec1, 
+  sep = 0, 
+  append = TRUE, 
+  path = "."
 )
 ```
 <br>
 
-### All the arguments
+### Argument <code>safer_check</code>
 ```{r, echo = TRUE, error = TRUE}
+# Safer checkings are performed before main code running 
 report(
-    data = mat2, 
-    output = "test2.txt", 
+    data = vec1, 
+    safer_check = TRUE, 
+    append = TRUE, 
+    path = "."
+)
+```
+<br>
+
+### Argument <code>lib_path</code>
+```{r}
+# Error returned because the R required packages are not in the "." path.
+report(
+    data = vec1, 
+    append = TRUE, 
     path = ".", 
-    overwrite = TRUE, 
-    rownames_kept = TRUE, 
-    vector_cat = TRUE, 
-    noquote = FALSE, 
-    sep = 4,
-    safer_check = TRUE, # perform some "safer" checks? Warning : always set this argument to FALSE if all_args_here() is used inside another safer function.
-    lib_path = NULL, # absolute pathways of the directories containing the required packages if not in the default directories.
+    lib_path = "."
+)
+```
+<br>
+
+### Argument <code>error_text</code>
+```{r}
+# Add a text in error messages returned by report().
+report(
+    data = vec1, 
+    append = TRUE, 
+    path = ".", 
+    lib_path = ".", 
+    error_text = " === TEXT ADDED ==="
+)
+```
+<br>
+
+### All the arguments with their descriptions
+```{r, echo = TRUE, error = TRUE}
+# matrix mat1 will be print in the file "text2.txt" in the path, with quote and row names being kept, and 4 lines after printing data
+report(
+    data = mat2, # object to print.
+    output = "test2.txt", # name of the output file.
+    path = ".", # path of the output file.
+    append = TRUE, # append in the output file?
+    rownames_kept = TRUE, # keep row names?
+    vector_cat = TRUE, # use cat() instead of capture.output() to print vectors?
+    noquote = FALSE, # print quotes for characters?
+    sep = 4, # empty lines after the printed data.
+    safer_check = TRUE, # perform some "safer" checks (see https://github.com/safer-r)?
+    lib_path = NULL, # where the required packages are if not in the default directories.
     error_text = "" # add information in error messages returned by the function.
 )
-# matrix mat1 will be print in the file "text2.txt" in the path, with quote and row names being kept, and 4 lines after printing data
+
 ```
 
