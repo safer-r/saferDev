@@ -319,17 +319,17 @@ arg_check(
     mode = NULL,  # check the expected mode.
     length = NULL,  # check the expected length.
     prop = FALSE,  # check the expected proportion.
-    double_as_integer_allowed = FALSE,  # if set to TRUE, typeof = "double" or class = "numeric" would not return an error if the object contains integers recorded as double.
+    double_as_integer_allowed = FALSE,  # can integers be typeof = "double" or class = "numeric"?
     options = NULL,  # check all the possible option values.
-    all_options_in_data = FALSE,  # sf TRUE, all of the options of the options argument must be present at least once in the data argument, and nothing else. If FALSE, some or all of the options must be present in the data argument, and nothing else.
-    na_contain = FALSE,  # can the data object contain NA (only tested if na_contain = FALSE)?
-    neg_values = TRUE,  # can the data object contain negative values (only tested if na_contain = FALSE)?
-    inf_values = TRUE,  # can the data object contain infinite values (only tested if na_contain = FALSE)?
+    all_options_in_data = FALSE,  # all the options argument values must be present at least once in the data argument, and nothing else?
+    na_contain = FALSE,  # can data contain NA? Only tested if FALSE.
+    neg_values = TRUE,  # can data contain negative values? Only tested if FALSE.
+    inf_values = TRUE,  # can data contain infinite values? Only tested if FALSE.
     print = FALSE,  # print a message if the $problem output is TRUE? 
     data_name = NULL,  # name of the object to test.
-    data_arg = TRUE,  # is the tested object a function argument? If TRUE (default), "ARGUMENT" is written in output messages, otherwise "OBJECT".
+    data_arg = TRUE,  # If TRUE, "ARGUMENT" is written in output messages, otherwise "OBJECT".
     safer_check = TRUE, # perform some "safer" checks (see https://github.com/safer-r)?
-    lib_path = NULL, # absolute pathways of the directories containing the required packages if not in the default directories.
+    lib_path = NULL, # where the required packages are if not in the default directories.
     error_text = "" # add information in error messages returned by the function.
 )
 ```

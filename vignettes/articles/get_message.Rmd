@@ -1,13 +1,13 @@
 ---
-title: "get_message"
+title: "get_message(): more examples"
 ---
 <br>
 
 ```{r, include = FALSE}
 knitr::opts_chunk$set(
     error = TRUE, 
-    collapse = TRUE,
-    comment = ">"
+    collapse = FALSE,
+    comment = "##"
 )
 ```
 
@@ -16,101 +16,129 @@ library(saferDev)
 ```
 <br>
 
-#### get_message() 
-
-#### return error/warning/other messages of an expression (that can be exported)
-<br>
-
-### Datasets
+### Dataset
 
 ```{r}
-char1 <- "wilcox.test(c(1,1,3), c(1, 2, 4), paired = TRUE)" # single character string
-char2 <- "message('ahah')" # single character string
+char1 <- "wilcox.test(c(1,1,3), c(1, 2, 4), paired = TRUE)" # single character string of a command to evaluate -> warning message
+char2 <- "message('ahah')" # idem -> standard message
+char3 <- "NOTGOOD" # idem -> error message
+char4 <- "mean(2)" # idem -> no message
 ```
 <br>
 
-### Datasets info
+### Dataset info
 ```{r}
-char1 # single character string
-char2 # single character string
+char1
+char2
+char3
 ```
 <br>
 
 ### Simple example
 ```{r}
+# By default, get_message() returns the first error message of the evaluated string.
+# Here no error message
 get_message(data = char1)
+
+# Here no error message
 get_message(data = char2)
+
+# Error message
+get_message(data = char3)
 ```
 <br>
 
-### Argument kind
+### Argument <code>kind</code>
 ```{r}
-get_message(data = char1, kind = "warning") # to get warning messages of the wilcox test
+# To get the last potential warning message.
+get_message(data = char1, kind = "warning")
+
+# See that 2 warning messages are returned when evaluating char1.
+ eval(parse(text = char1))
+
+# To get the last potential standart message (neither error nor warning).
+get_message(data = char2, kind = "message")
 ```
 <br>
 
-### Argument header
+### Argument <code>header</code>
 ```{r}
-get_message(data = char1, header = FALSE) # to get error messages (by default) without header
+# To get the output message without header.
+get_message(data = char3, header = FALSE)
+
+# To get the output message with header (by default).
+get_message(data = char3, header = TRUE) 
 ```
 <br>
 
-### Argument print_no
+### Argument <code>print_no</code>
 ```{r}
-get_message(data = char1, print_no = TRUE) # print a message saying that no message reported
+# Print a message when no "kind" message returned.
+get_message(data = char1, print_no = TRUE)
+
+# Example with potential returned warning message.
+get_message(data = char2, kind = "warning", print_no = TRUE) 
 ```
 <br>
 
-### Argument text
+### Argument <code>text</code>
 ```{r}
+# String added to the output message, even if nothing reported (when print_no = TRUE).
+# Useful when used inside a function to name it.
+get_message(data = char3, text = "IN MY EXECUTION") 
+```
+<br>
+
+
+### Argument <code>env</code>
+```{r}
+# Evaluation only in the indicated environment.
+get_message(data = char1, env = .GlobalEnv)
+get_message(data = char1, kind = "warning", env = asNamespace("stats"))
+
+```
+<br>
+
+
+### Argument <code>safer_check</code> 
+```{r, echo = TRUE, error = TRUE}
+# Safer checkings are performed before main code running.
+get_message(data = char2, safer_check = TRUE)
+```
+<br>
+
+### Argument <code>lib_path</code>
+```{r}
+# Error returned because the R required packages are not in the "." path.
+get_message(data = char2, lib_path = ".")
+```
+<br>
+
+### Argument <code>error_text</code>
+```{r}
+# Add a text in error messages returned by get_message().
 get_message(
     data = char2, 
-    print_no = TRUE, 
-    text = "IN A"
-) # print a message even if the argument print_no is TRUE
-```
-<br>
-
-### Argument kind, header, print_no, text
-```{r}
-get_message(
-    data = char1, 
-    kind = "warning", 
-    header = FALSE, 
-    print_no = TRUE, 
-    text = "IN A"
-) # print the warning message in text
-```
-<br>
-
-### Argument safer_check
-```{r}
-get_message(data = char2, safer_check = TRUE) # with TRUE, checkings are performed before main code running
-```
-<br>
-
-### Argument lib_path and error_text
-```{r}
-get_message(
-    lib_path = ".", # absolute pathways of the directories containing the required packages if not in the default directories.
-    error_text = "TEXT ADDED" # add information in error messages returned by the function.
+    lib_path = ".", 
+    error_text = " === TEXT ADDED ==="
 )
 ```
+<br>
 
 
 ### All the arguments
 ```{r}
 get_message(
-    data = char1, 
-    kind = "warning", 
-    header = FALSE,
-    print_no = TRUE, 
-    text = "IN A",
-    env = NULL,
-    safer_check = TRUE, # perform some "safer" checks? Warning : always set this argument to FALSE if all_args_here() is used inside another safer function.
-    lib_path = NULL, # absolute pathways of the directories containing the required packages if not in the default directories.
+    data = char1, # instruction to evaluate.
+    kind = "warning", # kind of message to report.
+    header = FALSE, # add a header in the returned message?
+    print_no = TRUE, # print a message saying that nothing has to be reported?
+    text = "IN A", # string added to the output message (even if nothing reported).
+    env = NULL, # existing environment where to evaluate the instruction.
+    safer_check = TRUE, # perform some "safer" checks (see https://github.com/safer-r)?
+    lib_path = NULL, # where the required packages are if not in the default directories.
     error_text = "" # add information in error messages returned by the function.
-) # print the warning message in text in the environment R_GlobalEnv
+)
 ```
 
 

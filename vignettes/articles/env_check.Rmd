@@ -76,10 +76,10 @@ env_check(
 ### All the arguments
 ```{r}
 env_check(
-    pos = 1, # environment tested "pos" steps above \code{env_check()} local environment.
-    name = "MY_ENV", # name of the tested environment (used in the potnetial output message).
+    pos = 1, # environment tested "pos" steps above the env_check() local environment.
+    name = "MY_ENV", # name of the tested environment (used in the potential output message).
     safer_check = TRUE, # perform some "safer" checks (see https://github.com/safer-r)?
-    lib_path = NULL, # absolute pathways of the directories containing the required packages if not in the default directories.
+    lib_path = NULL, # where the required packages are if not in the default directories.
     error_text = "" # add information in error messages returned by the function.
 ) 
 ```
