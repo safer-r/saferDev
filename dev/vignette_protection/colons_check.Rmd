@@ -83,9 +83,9 @@ colons_check(
 ### All the arguments
 ```{r, echo = TRUE, error = TRUE}
 colons_check(
-    x = fun1, # function name to test, written without quotes and brackets
+    x = fun1, # function name to test.
     safer_check = TRUE, # perform some "safer" checks (see https://github.com/safer-r)?
-    lib_path = NULL, # absolute pathways of the directories containing the required packages if not in the default directories.
+    lib_path = NULL, # where the required packages are if not in the default directories.
     error_text = "" # add information in error messages returned by the function.
 )
 ```

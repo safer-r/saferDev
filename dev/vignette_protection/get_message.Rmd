@@ -50,10 +50,13 @@ get_message(data = char3)
 
 ### Argument <code>kind</code>
 ```{r}
-# To get the first potential warning message
+# To get the last potential warning message.
 get_message(data = char1, kind = "warning")
 
-# To get the first potential standart message (neither error nor warning)
+# See that 2 warning messages are returned when evaluating char1.
+ eval(parse(text = char1))
+
+# To get the last potential standart message (neither error nor warning).
 get_message(data = char2, kind = "message")
 ```
 <br>
@@ -96,34 +99,46 @@ get_message(data = char1, kind = "warning", env = asNamespace("stats"))
 ```
 <br>
 
-### Argument <code>safer_check</code>
-```{r}
-get_message(data = char2, safer_check = TRUE) # with TRUE, checkings are performed before main code running
+
+### Argument <code>safer_check</code> 
+```{r, echo = TRUE, error = TRUE}
+# Safer checkings are performed before main code running.
+get_message(data = char2, safer_check = TRUE)
 ```
 <br>
 
-### Argument <code>lib_path</code> and <code>error_text</code>
+### Argument <code>lib_path</code>
 ```{r}
+# Error returned because the R required packages are not in the "." path.
+get_message(data = char2, lib_path = ".")
+```
+<br>
+
+### Argument <code>error_text</code>
+```{r}
+# Add a text in error messages returned by get_message().
 get_message(
-    lib_path = ".", # absolute pathways of the directories containing the required packages if not in the default directories.
-    error_text = "TEXT ADDED" # add information in error messages returned by the function.
+    data = char2, 
+    lib_path = ".", 
+    error_text = " === TEXT ADDED ==="
 )
 ```
+<br>
 
 
 ### All the arguments
 ```{r}
 get_message(
-    data = char1, 
-    kind = "warning", # to get the first warning message
-    header = FALSE, # to get error messages (by default) without header
-    print_no = TRUE, # print a message when no error reported
-    text = "IN A", # single character string added to the output message (even if nothing reported)
-    env = NULL,
-    safer_check = TRUE, # Single logical value. Perform some "safer" checks (see https://github.com/safer-r)?
-    lib_path = NULL, # absolute pathways of the directories containing the required packages if not in the default directories.
+    data = char1, # instruction to evaluate.
+    kind = "warning", # kind of message to report.
+    header = FALSE, # add a header in the returned message?
+    print_no = TRUE, # print a message saying that nothing has to be reported?
+    text = "IN A", # string added to the output message (even if nothing reported).
+    env = NULL, # existing environment where to evaluate the instruction.
+    safer_check = TRUE, # perform some "safer" checks (see https://github.com/safer-r)?
+    lib_path = NULL, # where the required packages are if not in the default directories.
     error_text = "" # add information in error messages returned by the function.
-) # print the warning message in text in the environment R_GlobalEnv
+)
 ```
 
 

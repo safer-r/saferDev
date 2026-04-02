@@ -3,12 +3,12 @@
 #' Evaluate an instruction written between \code{""} and return the first of the error message, or the last of the warning or standard (non error non warning) messages if ever exist.
 #' 
 #' Using argument \code{print_no = FALSE}, return \code{NULL} if nothing reported, which is convenient in some cases.
-#' @param data Single character string.
-#' @param kind Single character string. Either \code{"error"} to get an error message, or \code{"warning"} to get a warning message, or \code{"message"} to get a non error and non warning messages.
+#' @param data Single character string of an instruction to evaluate
+#' @param kind Single character string. Either \code{"error"} to get a potential error message, or \code{"warning"} to get a potential warning message, or \code{"message"} to get a potential standard (non error and non warning) message.
 #' @param header Single logical value. Add a header in the returned message?
-#' @param print_no Single logical value. Print a message saying that nothing (NULL output) reported?
+#' @param print_no Single logical value. Print a message saying that nothing (\code{NULL} output) has to be reported?
 #' @param text Single character string added to the output message, even if nothing reported (\code{print_no} is \code{TRUE}). Inactivated if the \code{header} argument is \code{FALSE}. Write \code{NULL} if not required.
-#' @param env An object corresponding to an existing environment. Then the \code{data} argument value is evaluated only in the indicated environment. Write \code{NULL} if not required (R scope is used). Example \code{env = .GlobalEnv}.
+#' @param env An object corresponding to an existing environment. Then the \code{data} argument value is evaluated only in the indicated environment. Write \code{NULL} if not required (R scope is used). Example \code{env = .GlobalEnv}. Example \code{env = asNamespace("stats")}.
 #' @param safer_check Single logical value. Perform some "safer" checks? If \code{TRUE}, checkings are performed before main code running (see the \href{https://github.com/safer-r}{safer-r project}): 1) correct \code{lib_path} argument value 2) required functions and related packages effectively present in local R libraries and 3) R classical operators (like \code{"<-"}) not overwritten by another package because of the R scope. Must be set to \code{FALSE} if this function is used inside another "safer" function to avoid pointless multiple checkings.
 #' @param lib_path Vector of characters specifying the absolute pathways of the directories containing the required packages for the function, if not in the default directories. Useful when R packages are not installed in the default directories because of lack of admin rights. More precisely, \code{lib_path} is passed through the \code{new} argument of \code{.libPaths()} so that the new library paths are \code{unique(c(new, .Library.site, .Library))}. Warning: \code{.libPaths()} is restored to the initial paths, after function execution. Ignored if \code{NULL} (default) or if the \code{safer_check} argument is \code{FALSE}: only the pathways specified by the current \code{.libPaths()} are used for package calling.
 #' @param error_text Single character string used to add information in error messages returned by the function, notably if the function is inside other functions, which is practical for debugging. Example: \code{error_text = " INSIDE <PACKAGE_1>::<FUNCTION_1> INSIDE <PACKAGE_2>::<FUNCTION_2>."}. If \code{NULL}, converted into \code{""}.
@@ -23,7 +23,7 @@
 #' @details 
 #' Warnings:
 #' \itemize{
-#'   \item Only the first standard/error/warning message is returned.
+#'   \item Only the first error or last warning/standard message is returned.
 #'   \item Always use the \code{env} argument when \code{get_message()} is used inside functions.
 #'   \item The function does not prevent printing, for instance if \code{print()} or \code{show()} is used inside the instruction tested. To prevent that, use \code{tempo <- utils::capture.output(error <- get_message(data = "arg_check(data = 'a', class = mean, neg_values = FALSE, print = TRUE)"))}. The return of \code{get_message()} is assigned into \code{error} and the printed messages are captured by \code{utils::capture.output()} and assigned into \code{tempo}. See the examples.
 #' }
@@ -32,13 +32,14 @@
 #' @author \href{mailto:yushi.han2000@gmail.com}{Yushi Han}
 #' @author \href{mailto:wanghaiding442@gmail.com}{Haiding Wang}
 #' @examples
-#' # Warning: these examples do not work well when using the "Run examples" link beacause of a particular environment. Please, copy-paste in a local environment.
-#' saferDev::get_message(data = "wilcox.test(c(1,1,3), c(1, 2, 4), paired = TRUE)", kind = "error", 
-#' header = TRUE, print_no = FALSE, text = NULL, env = NULL, safer_check = TRUE, 
-#' lib_path = NULL, error_text = "")
+#' # Warning: these examples do not work well when using the "Run examples" link 
+#' because of a particular environment. Please, copy-paste in a local environment.
+#' See also https://safer-r.github.io/saferDev/articles/get_message.html
 #' 
-#' saferDev::get_message(data = "wilcox.test(c(1,1,3), c(1, 2, 4), paired = TRUE)", kind = "warning", 
-#' print_no = TRUE, text = "IN A")
+#' Report error message by default. Here no error to report:
+#' saferDev::get_message(data = "wilcox.test(c(1,1,3), c(1, 2, 4), paired = TRUE)")
+#' 
+#' saferDev::get_message(data = "wilcox.test(c(1,1,3), c(1, 2, 4), paired = TRUE)", kind = "warning")
 #' 
 #' saferDev::get_message(data = "wilcox.test(c(1,1,3), c(1, 2, 4), paired = TRUE)", kind = "message", 
 #' print_no = TRUE, text = "IN A")
