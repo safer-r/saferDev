@@ -11,6 +11,9 @@
 #' @author \href{mailto:yushi.han2000@gmail.com}{Yushi Han}
 #' @author \href{mailto:wanghaiding442@gmail.com}{Haiding Wang}
 #' @examples
+#' # Warning: these examples may not work well when using the "Run examples" link 
+#' because of a particular environment. Please, copy-paste in a local environment.
+#' See also https://safer-r.github.io/saferDev/articles/is_package_here.html
 #' \dontrun{
 #' # Example that returns an error
 #' is_package_here(req_package = "nopackage", error_text = " INSIDE P1::F1")

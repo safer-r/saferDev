@@ -11,6 +11,9 @@
 #' @author \href{mailto:yushi.han2000@gmail.com}{Yushi Han}
 #' @author \href{mailto:wanghaiding442@gmail.com}{Haiding Wang}
 #' @examples
+#' # Warning: these examples may not work well when using the "Run examples" link 
+#' because of a particular environment. Please, copy-paste in a local environment.
+#' See also https://safer-r.github.io/saferDev/articles/is_function_here.html
 #' \dontrun{
 #' # Example that returns an error
 #' saferDev::is_function_here(fun = "ggplot2::notgood", error_text = " INSIDE P1::F1") # commented because this example returns an error

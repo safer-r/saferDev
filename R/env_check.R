@@ -13,7 +13,9 @@
 #' @author \href{mailto:yushi.han2000@gmail.com}{Yushi Han}
 #' @author \href{mailto:wanghaiding442@gmail.com}{Haiding Wang}
 #' @examples
-#' # Warning: these examples do not work well when using the "Run examples" link beacause of a particular environment. Please, copy-paste in a local environment.
+#' # Warning: these examples may not work well when using the "Run examples" link 
+#' because of a particular environment. Please, copy-paste in a local environment.
+#' See also https://safer-r.github.io/saferDev/articles/env_check.html
 #' # Examples in the working environment
 #' # creation of the object mean with value 1 in the .GlobalEnv environment, 
 #' # knowing that the mean() function also exists in the environment base, above .GlobalEnv:

@@ -7,7 +7,7 @@
 #' @param kind Single character string. Either \code{"error"} to get a potential error message, or \code{"warning"} to get a potential warning message, or \code{"message"} to get a potential standard (non error and non warning) message.
 #' @param header Single logical value. Add a header in the returned message?
 #' @param print_no Single logical value. Print a message saying that nothing (\code{NULL} output) has to be reported?
-#' @param text Single character string added to the output message, even if nothing reported (\code{print_no} is \code{TRUE}). Inactivated if the \code{header} argument is \code{FALSE}. Write \code{NULL} if not required.
+#' @param text Single character string added to the header of the output message, even if nothing reported (\code{print_no} is \code{TRUE}). Ignored if the \code{header} argument is \code{FALSE}. Write \code{NULL} if not required.
 #' @param env An object corresponding to an existing environment. Then the \code{data} argument value is evaluated only in the indicated environment. Write \code{NULL} if not required (R scope is used). Example \code{env = .GlobalEnv}. Example \code{env = asNamespace("stats")}.
 #' @param safer_check Single logical value. Perform some "safer" checks? If \code{TRUE}, checkings are performed before main code running (see the \href{https://github.com/safer-r}{safer-r project}): 1) correct \code{lib_path} argument value 2) required functions and related packages effectively present in local R libraries and 3) R classical operators (like \code{"<-"}) not overwritten by another package because of the R scope. Must be set to \code{FALSE} if this function is used inside another "safer" function to avoid pointless multiple checkings.
 #' @param lib_path Vector of characters specifying the absolute pathways of the directories containing the required packages for the function, if not in the default directories. Useful when R packages are not installed in the default directories because of lack of admin rights. More precisely, \code{lib_path} is passed through the \code{new} argument of \code{.libPaths()} so that the new library paths are \code{unique(c(new, .Library.site, .Library))}. Warning: \code{.libPaths()} is restored to the initial paths, after function execution. Ignored if \code{NULL} (default) or if the \code{safer_check} argument is \code{FALSE}: only the pathways specified by the current \code{.libPaths()} are used for package calling.
@@ -32,7 +32,7 @@
 #' @author \href{mailto:yushi.han2000@gmail.com}{Yushi Han}
 #' @author \href{mailto:wanghaiding442@gmail.com}{Haiding Wang}
 #' @examples
-#' # Warning: these examples do not work well when using the "Run examples" link 
+#' # Warning: these examples may not work well when using the "Run examples" link 
 #' because of a particular environment. Please, copy-paste in a local environment.
 #' See also https://safer-r.github.io/saferDev/articles/get_message.html
 #' 

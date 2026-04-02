@@ -46,6 +46,9 @@
 #' @author \href{mailto:yushi.han2000@gmail.com}{Yushi Han}
 #' @author \href{mailto:wanghaiding442@gmail.com}{Haiding Wang}
 #' @examples
+#' # Warning: these examples may not work well when using the "Run examples" link 
+#' because of a particular environment. Please, copy-paste in a local environment.
+#' See also https://safer-r.github.io/saferDev/articles/arg_check.html
 #' test <- matrix(1:3)
 #' \dontrun{
 #' # Example that returns an error
