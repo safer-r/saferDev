@@ -44,8 +44,8 @@ is_function_here(fun = f, safer_check = TRUE)
 
 ### Argument <code>lib_path</code>
 ```{r}
-# Error returned because the ggplot2::geom_point function is not in the "." path.
-is_function_here(fun = f, lib_path = ".")
+# The "NOTGOOD" path does not exists.
+is_function_here(fun = f, lib_path = "NOTGOOD")
 
 # The ggplot2::geom_point function is in the default path (.libPaths()).
 is_function_here(fun = f, lib_path = NULL)
@@ -57,7 +57,7 @@ is_function_here(fun = f, lib_path = NULL)
 # Add a text in error messages returned by is_function_here().
 is_function_here(
     fun = f, 
-    lib_path = ".", 
+    lib_path = "NOTGOOD", 
     error_text = " === TEXT ADDED ==="
 )
 ```

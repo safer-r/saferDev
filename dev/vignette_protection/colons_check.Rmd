@@ -61,10 +61,10 @@ colons_check(
 
 ### Argument <code>lib_path</code>
 ```{r}
-# Error returned because the R required packages are not in the "." path.
+# The "NOTGOOD" path does not exists.
 colons_check(
     x = fun1,  
-    lib_path = "."
+    lib_path = "NOTGOOD"
 )
 ```
 <br>
@@ -74,7 +74,7 @@ colons_check(
 # Add a text in error messages returned by colons_check().
 colons_check(
     x = fun1, 
-    lib_path = ".", 
+    lib_path = "NOTGOOD", 
     error_text = " === TEXT ADDED ==="
 )
 ```

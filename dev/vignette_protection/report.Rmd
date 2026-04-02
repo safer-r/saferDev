@@ -212,12 +212,12 @@ report(
 
 ### Argument <code>lib_path</code>
 ```{r}
-# Error returned because the R required packages are not in the "." path.
+# The "NOTGOOD" path does not exists.
 report(
     data = vec1, 
     append = TRUE, 
     path = ".", 
-    lib_path = "."
+    lib_path = "NOTGOOD"
 )
 ```
 <br>
@@ -229,7 +229,7 @@ report(
     data = vec1, 
     append = TRUE, 
     path = ".", 
-    lib_path = ".", 
+    lib_path = "NOTGOOD", 
     error_text = " === TEXT ADDED ==="
 )
 ```

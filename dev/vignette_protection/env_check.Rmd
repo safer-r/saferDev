@@ -58,8 +58,8 @@ env_check(safer_check = TRUE)
 
 ### Argument <code>lib_path</code>
 ```{r}
-# Error returned because the R required packages are not in the "." path.
-env_check(lib_path = ".")
+# The "NOTGOOD" path does not exists.
+env_check(lib_path = "NOTGOOD")
 ```
 <br>
 
@@ -67,7 +67,7 @@ env_check(lib_path = ".")
 ```{r}
 # Add a text in error messages returned by env_check().
 env_check(
-    lib_path = ".", 
+    lib_path = "NOTGOOD", 
     error_text = " === TEXT ADDED ==="
 )
 ```

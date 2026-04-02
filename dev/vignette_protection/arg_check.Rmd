@@ -288,12 +288,11 @@ arg_check(
 
 ### Argument <code>lib_path</code>
 ```{r}
-# Error returned because the R required packages are not in the "." path.
-```{r}
+# The "NOTGOOD" path does not exists.
 arg_check(
     data = mat1, 
     class = "matrix", 
-    lib_path = "."
+    lib_path = "NOTGOOD"
 )
 ```
 <br>
@@ -304,7 +303,7 @@ arg_check(
 arg_check(
     data = mat1, 
     class = "matrix", 
-    lib_path = "."
+    lib_path = "NOTGOOD",
     error_text = " === TEXT ADDED ==="
 )
 ```

@@ -100,10 +100,10 @@ all_args_here(
 
 ### Argument <code>lib_path</code>
 ```{r}
-# Error returned because the R required packages are not in the "." path.
+# The "NOTGOOD" path does not exists.
 all_args_here(
     x = FUN2,  
-    lib_path = "."
+    lib_path = "NOTGOOD"
 )
 ```
 <br>
@@ -113,7 +113,7 @@ all_args_here(
 # Add a text in error messages returned by all_args_here().
 all_args_here(
     x = FUN2, 
-    lib_path = ".", 
+    lib_path = "NOTGOOD", 
     error_text = " === TEXT ADDED ==="
 )
 ```

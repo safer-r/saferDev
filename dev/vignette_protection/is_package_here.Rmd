@@ -44,11 +44,14 @@ is_package_here(req_package = req.pkg, safer_check = TRUE)
 
 ### Argument <code>lib_path</code>
 ```{r}
-# Error returned because the ggplot2 package is not in the "." path.
+# The ggplot2 package is in one of the paths c(".", .libPaths()).
 is_package_here(req_package = req.pkg, lib_path = ".")
 
 # The ggplot2 package is in the default path (.libPaths()).
 is_package_here(req_package = req.pkg, lib_path = NULL)
+
+# The "NOTGOOD" path does not exists.
+is_package_here(req_package = req.pkg, lib_path = "NOTGOOD")
 ```
 <br>
 
@@ -57,7 +60,7 @@ is_package_here(req_package = req.pkg, lib_path = NULL)
 # Add a text in error messages returned by is_package_here().
 is_package_here(
     req_package = req.pkg, 
-    lib_path = ".", 
+    lib_path = "NOTGOOD", 
     error_text = " === TEXT ADDED ==="
 )
 ```
