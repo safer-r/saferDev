@@ -56,8 +56,8 @@
 #' @author \href{wanghaiding442@gmail.com}{Haiding Wang}  
 #' @examples
 #' # Warning: these examples may not work well when using the "Run examples" link 
-#' because of a particular environment. Please, copy-paste in a local environment.
-#' See also https://safer-r.github.io/saferDev/articles/all_args_here.html
+#' # because of a particular environment. Please, copy-paste in a local environment.
+#' # See also https://safer-r.github.io/saferDev/articles/all_args_here.html
 #' \dontrun{
 #' # Example that returns an error
 #' saferDev::all_args_here(mean) # Example that returns an error

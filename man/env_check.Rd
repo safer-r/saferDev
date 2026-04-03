@@ -15,7 +15,7 @@ env_check(
 \arguments{
 \item{pos}{Single non null positive integer indicating the position of the environment checked (argument \code{n} of the \code{parent.frame()} function). Value \code{1} means one step above the \code{env_check()} local environment (by default). This means that when \code{env_check(pos = 1)} is used inside a function A, it checks if the name of any object in the local environment of this function A is also present in above environments, following R Scope, starting by the just above environment. When \code{env_check(pos = 1)} is used in the working (Global) environment (named \code{.GlobalEnv}), it checks the object names of this \code{.GlobalEnv} environment, in the above environments. See the examples below.}
 
-\item{name}{Single character string indicating a string that changes the name of the checked env in the output string.}
+\item{name}{Single character string of the name of the checked environment (used in the output string only, where the name of the ckecked env is replaced by the name value). Can be used when \code{env_check()} is used inside a function "A" to specify that the environment of "A" is checked.}
 
 \item{safer_check}{Single logical value. Perform some "safer" checks? If \code{TRUE}, checkings are performed before main code running (see the \href{https://github.com/safer-r}{safer-r project}): 1) correct \code{lib_path} argument value 2) required functions and related packages effectively present in local R libraries and 3) R classical operators (like \code{"<-"}) not overwritten by another package because of the R scope. Must be set to \code{FALSE} if this function is used inside another "safer" function to avoid pointless multiple checkings.}
 
@@ -30,7 +30,9 @@ A character string indicating the object names of the tested environment that ma
 Verify that object names in the environment defined by the \code{pos} parameter are identical or not to object names in the above environments (following R Scope). This can be used to verify that names used for objects inside a function or in the working environment do not override names of objects already present in the above R environments, following the R scope.
 }
 \examples{
-# Warning: these examples do not work well when using the "Run examples" link beacause of a particular environment. Please, copy-paste in a local environment.
+# Warning: these examples may not work well when using the "Run examples" link 
+# because of a particular environment. Please, copy-paste in a local environment.
+# See also https://safer-r.github.io/saferDev/articles/env_check.html
 # Examples in the working environment
 # creation of the object mean with value 1 in the .GlobalEnv environment, 
 # knowing that the mean() function also exists in the environment base, above .GlobalEnv:

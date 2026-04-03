@@ -8,7 +8,7 @@ report(
   data,
   output = "log.txt",
   path,
-  overwrite = FALSE,
+  append = FALSE,
   rownames_kept = FALSE,
   vector_cat = FALSE,
   noquote = TRUE,
@@ -25,7 +25,7 @@ report(
 
 \item{path}{Single character string indicating the path where to write the output file.}
 
-\item{overwrite}{Single logical value. If the output file already exists and \code{overwrite} is \code{TRUE}, an error message is returned (no overwrite of existing file). Otherwise, the printing is appended (and the output file is created if it does not exist yet).}
+\item{append}{Single logical value. If the output file already exists and \code{append} is \code{FALSE}, an error message is returned (no overwrite of existing file). Otherwise, the printing is appended (and the output file is created if it does not exist yet).}
 
 \item{rownames_kept}{Single logical value. Defines whether row names have to be removed or not in 2D objects. Warning: in 1D tables, names over the values are taken as row names, and are thus removed if \code{rownames_kept} is \code{FALSE}.}
 
@@ -48,20 +48,23 @@ Nothing (implementation of an existing file) or a text file.
 Print a character string or a data object into a same output file. Convenient for log file generation.
 }
 \examples{
+# Warning: these examples may not work well when using the "Run examples" link 
+# because of a particular environment. Please, copy-paste in a local environment.
+# See also https://safer-r.github.io/saferDev/articles/report.html
 \dontrun{
 # Example that creates a file/folder in the working directory
 saferDev::report(data = "THE FOLLOWING VECTOR IS:\n", output = "results.txt", path = ".", 
-overwrite = TRUE, sep = 1)
-saferDev::report(data = 1:3, output = "results.txt", path = ".", overwrite = FALSE, 
+append = TRUE, sep = 1)
+saferDev::report(data = 1:3, output = "results.txt", path = ".", append = TRUE, 
 rownames_kept = FALSE, vector_cat = FALSE, noquote = FALSE, sep = 2)
 saferDev::report(data = "THE FOLLOWING MATRIX IS:\n", output = "results.txt", path = ".", 
-overwrite = FALSE, sep = 1)
-saferDev::report(data = matrix(1:5), output = "results.txt", path = ".", overwrite = FALSE, 
+append = TRUE, sep = 1)
+saferDev::report(data = matrix(1:5), output = "results.txt", path = ".", append = TRUE, 
 rownames_kept = FALSE, vector_cat = FALSE, noquote = FALSE, sep = 5)
 saferDev::report(data = "THE FOLLOWING DATA FRAME IS:\n", output = "results.txt", path = ".", 
-overwrite = FALSE, sep = 1)
+append = TRUE, sep = 1)
 saferDev::report(data = data.frame(A = 1:8, B = letters[1:8]), output = "results.txt", path = ".", 
-overwrite = FALSE, rownames_kept = FALSE, vector_cat = FALSE, noquote = FALSE, sep = 1)
+append = TRUE, rownames_kept = FALSE, vector_cat = FALSE, noquote = FALSE, sep = 1)
 }
 }
 \seealso{

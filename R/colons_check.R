@@ -44,8 +44,8 @@
 #' @author \href{mailto:wanghaiding442@gmail.com}{Haiding Wang}  
 #' @examples
 #' # Warning: these examples may not work well when using the "Run examples" link 
-#' because of a particular environment. Please, copy-paste in a local environment.
-#' See also https://safer-r.github.io/saferDev/articles/colons_check.html
+#' # because of a particular environment. Please, copy-paste in a local environment.
+#' # See also https://safer-r.github.io/saferDev/articles/colons_check.html
 #' saferDev::colons_check(mean)
 #' saferDev::colons_check(colons_check)
 #' source("https://raw.githubusercontent.com/safer-r/saferDev/main/dev/other/test.R")

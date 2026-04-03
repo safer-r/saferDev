@@ -85,8 +85,13 @@ If the tested object is \code{NULL}, then the function will always return a chec
 The argument \code{class} can be set to \code{"vector"}. This means that the object is tested for \code{class(data)} returning only \code{"numeric"}, \code{"integer"}, \code{"character"}, \code{"logical"}, \code{"complex"} or \code{"expression"}. Please, use another value of \code{class} (e.g., \code{class = "call"} or \code{class = "list"}) for other types and class of objects.
  
 Since R >= 4.0.0, \code{class(matrix())} returns \code{"matrix"} \code{"array"}, and not \code{"matrix"} alone as before. However, use argument \code{class = "matrix"} to check for matrix object (of class \code{"matrix"} \code{"array"} in R >= 4.0.0) and use argument \code{class = "array"} to check for array object (of class \code{"array"} in R >= 4.0.0).
+
+See more examples \href{https://safer-r.github.io/saferDev/articles/all_args_here.html}{here}.
 }
 \examples{
+# Warning: these examples may not work well when using the "Run examples" link 
+# because of a particular environment. Please, copy-paste in a local environment.
+# See also https://safer-r.github.io/saferDev/articles/arg_check.html
 test <- matrix(1:3)
 \dontrun{
 # Example that returns an error
@@ -94,6 +99,9 @@ saferDev::arg_check(data = test, print = TRUE, class = "vector", mode = "numeric
 }
 saferDev::arg_check(data = test, print = TRUE, class = "matrix", mode = "numeric")
 saferDev::arg_check(data = test, print = TRUE, class = "matrix", mode = "numeric", error_text = " using saferDev::arg_check()")
+
+# See more examples here: https://safer-r.github.io/saferDev/articles/all_args_here.html
+
 }
 \seealso{
 \code{\link{match.arg}}.

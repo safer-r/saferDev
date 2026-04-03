@@ -33,27 +33,35 @@
 #' @author \href{mailto:wanghaiding442@gmail.com}{Haiding Wang}
 #' @examples
 #' # Warning: these examples may not work well when using the "Run examples" link 
-#' because of a particular environment. Please, copy-paste in a local environment.
-#' See also https://safer-r.github.io/saferDev/articles/get_message.html
+#' # because of a particular environment. Please, copy-paste in a local environment.
+#' # See also https://safer-r.github.io/saferDev/articles/get_message.html
 #' 
-#' Report error message by default. Here no error to report:
+#' # Report error message by default. Here no error to report:
 #' saferDev::get_message(data = "wilcox.test(c(1,1,3), c(1, 2, 4), paired = TRUE)")
 #' 
+#' # Warning message to report:
 #' saferDev::get_message(data = "wilcox.test(c(1,1,3), c(1, 2, 4), paired = TRUE)", kind = "warning")
 #' 
+#' # No standard message to report:
 #' saferDev::get_message(data = "wilcox.test(c(1,1,3), c(1, 2, 4), paired = TRUE)", kind = "message", 
 #' print_no = TRUE, text = "IN A")
 #' 
+#' # Standard message cannot be caught because wilcox.test() returns an error message:
 #' saferDev::get_message(data = "wilcox.test()", kind = "message", print_no = TRUE, text = "IN A")
 #' 
+#' # Text added in warning message to report:
 #' saferDev::get_message(data = "wilcox.test()", kind = "error", print_no = TRUE, text = "IN A")
 #' 
+#' # No error message to report with text added:
 #' saferDev::get_message(data = "sum(1)", kind = "error", print_no = TRUE, text = "IN A")
 #' 
+#' # No error message to report with text added:
 #' saferDev::get_message(data = "message('ahah')", kind = "error", print_no = TRUE, text = "IN A")
 #' 
+#' # Standard message reported with text added:
 #' saferDev::get_message(data = "message('ahah')", kind = "message", print_no = TRUE, text = "IN A")
 #' 
+#' # Messages from ggplot2 functions caugth:
 #' saferDev::get_message(data = "ggplot2::ggplot(data = data.frame(X = 1:10, stringsAsFactors = TRUE), 
 #' mapping = ggplot2::aes(x = X)) + ggplot2::geom_histogram()", kind = "message", 
 #' print_no = TRUE, text = "IN INSTRUCTION 1")

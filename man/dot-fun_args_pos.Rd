@@ -40,9 +40,12 @@ Warnings:
 \dontrun{
 # Example that shouldn't be run because this is an internal function (not found by devtools::check())
 # Warning : examples only with strings that must be cleaned from brackets between quotes
-saferDev:::.fun_args_pos(text = ' "a" ; paste0("I", paste0(sum(1:3), collapse = " "), min(1) ) ; range(2)', 
-pattern = paste0("paste0", "[\\\\s\\\\r\\\\n]*\\\\("), lib_path = NULL, 
-error_text = " INSIDE P1::F1")
+saferDev:::.fun_args_pos(
+    text = ' "a" ; paste0("I", paste0(sum(1:3), collapse = " "), min(1) ) ; range(2)', 
+    pattern = paste0("paste0", "[\\\\s\\\\r\\\\n]*\\\\("), 
+    lib_path = NULL, 
+    error_text = " INSIDE P1::F1"
+)
 }
 
 

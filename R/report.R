@@ -19,8 +19,8 @@
 #' @author \href{mailto:wanghaiding442@gmail.com}{Haiding Wang}
 #' @examples
 #' # Warning: these examples may not work well when using the "Run examples" link 
-#' because of a particular environment. Please, copy-paste in a local environment.
-#' See also https://safer-r.github.io/saferDev/articles/report.html
+#' # because of a particular environment. Please, copy-paste in a local environment.
+#' # See also https://safer-r.github.io/saferDev/articles/report.html
 #' \dontrun{
 #' # Example that creates a file/folder in the working directory
 #' saferDev::report(data = "THE FOLLOWING VECTOR IS:\n", output = "results.txt", path = ".", 
@@ -41,7 +41,7 @@ report <- function(
     data, 
     output = "log.txt", 
     path, # no value to do not create unwanted files anywhere.
-    append = FALSE, #t odo not overwrite existing file.
+    append = FALSE, # to do not overwrite existing file.
     rownames_kept = FALSE, 
     vector_cat = FALSE, 
     noquote = TRUE, 
