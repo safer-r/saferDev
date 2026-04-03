@@ -32,9 +32,9 @@
     <a class="dropdown-item" href="../articles/colons_check.html">colons_check: more examples</a>
     <a class="dropdown-item" href="../articles/env_check.html">env_check(): more examples</a>
     <a class="dropdown-item" href="../articles/get_message.html">get_message(): more examples</a>
-    <a class="dropdown-item" href="../articles/is_function_here.html">is_function_here</a>
-    <a class="dropdown-item" href="../articles/is_package_here.html">is_package_here</a>
-    <a class="dropdown-item" href="../articles/report.html">report</a>
+    <a class="dropdown-item" href="../articles/is_function_here.html">is_function_here(): more examples</a>
+    <a class="dropdown-item" href="../articles/is_package_here.html">is_package_here(): more examples</a>
+    <a class="dropdown-item" href="../articles/report.html">report(): more examples</a>
   </div>
 </li>
       </ul><form class="form-inline my-2 my-lg-0" role="search">
@@ -170,6 +170,7 @@
 <p>If the tested object is <code>NULL</code>, then the function will always return a checking problem.</p> 
 <p>The argument <code>class</code> can be set to <code>"vector"</code>. This means that the object is tested for <code>class(data)</code> returning only <code>"numeric"</code>, <code>"integer"</code>, <code>"character"</code>, <code>"logical"</code>, <code>"complex"</code> or <code>"expression"</code>. Please, use another value of <code>class</code> (e.g., <code>class = "call"</code> or <code>class = "list"</code>) for other types and class of objects.</p> 
 <p>Since R &gt;= 4.0.0, <code>class(matrix())</code> returns <code>"matrix"</code> <code>"array"</code>, and not <code>"matrix"</code> alone as before. However, use argument <code>class = "matrix"</code> to check for matrix object (of class <code>"matrix"</code> <code>"array"</code> in R &gt;= 4.0.0) and use argument <code>class = "array"</code> to check for array object (of class <code>"array"</code> in R &gt;= 4.0.0).</p>
+<p>See more examples <a href="https://safer-r.github.io/saferDev/articles/all_args_here.html" class="external-link">here</a>.</p>
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
@@ -184,7 +185,10 @@
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">test</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">3</span><span class="op">)</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># Warning: these examples may not work well when using the "Run examples" link </span></span></span>
+<span class="r-in"><span><span class="co"># because of a particular environment. Please, copy-paste in a local environment.</span></span></span>
+<span class="r-in"><span><span class="co"># See also https://safer-r.github.io/saferDev/articles/arg_check.html</span></span></span>
+<span class="r-in"><span><span class="va">test</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">3</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span></span>
 <span class="r-in"><span><span class="co"># Example that returns an error</span></span></span>
 <span class="r-in"><span><span class="fu">saferDev</span><span class="fu">::</span><span class="fu">arg_check</span><span class="op">(</span>data <span class="op">=</span> <span class="va">test</span>, print <span class="op">=</span> <span class="cn">TRUE</span>, class <span class="op">=</span> <span class="st">"vector"</span>, mode <span class="op">=</span> <span class="st">"numeric"</span><span class="op">)</span>  <span class="co"># error: THE test ARGUMENT MUST BE CLASS vector</span></span></span>
@@ -209,6 +213,9 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span> $object.name</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "test"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># See more examples here: https://safer-r.github.io/saferDev/articles/all_args_here.html</span></span></span>
+<span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>

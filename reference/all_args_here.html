@@ -32,9 +32,9 @@
     <a class="dropdown-item" href="../articles/colons_check.html">colons_check: more examples</a>
     <a class="dropdown-item" href="../articles/env_check.html">env_check(): more examples</a>
     <a class="dropdown-item" href="../articles/get_message.html">get_message(): more examples</a>
-    <a class="dropdown-item" href="../articles/is_function_here.html">is_function_here</a>
-    <a class="dropdown-item" href="../articles/is_package_here.html">is_package_here</a>
-    <a class="dropdown-item" href="../articles/report.html">report</a>
+    <a class="dropdown-item" href="../articles/is_function_here.html">is_function_here(): more examples</a>
+    <a class="dropdown-item" href="../articles/is_package_here.html">is_package_here(): more examples</a>
+    <a class="dropdown-item" href="../articles/report.html">report(): more examples</a>
   </div>
 </li>
       </ul><form class="form-inline my-2 my-lg-0" role="search">
@@ -97,7 +97,7 @@
 
 
 <dt>lib_path</dt>
-<dd><p>Vector of characters specifying the absolute pathways of the directories containing the required packages for the function, if not in the default directories. Useful when R packages are not installed in the default directories because of lack of admin rights. More precisely, <code>lib_path</code> is passed through the <code>new</code> argument of <code><a href="https://rdrr.io/r/base/libPaths.html" class="external-link">.libPaths()</a></code> so that the new library paths are <code>unique(c(new, .Library.site, .Library))</code>. Warning: <code><a href="https://rdrr.io/r/base/libPaths.html" class="external-link">.libPaths()</a></code> is restored to the initial paths, after function execution. Ignored if <code>NULL</code> (default) or if the <code>safer_check</code> argument is <code>FALSE</code>. In these 2 cases, only the pathways specified by the current <code><a href="https://rdrr.io/r/base/libPaths.html" class="external-link">.libPaths()</a></code> are used for package calling.</p></dd>
+<dd><p>Vector of characters specifying the absolute pathways of the directories containing the required packages for the function, if not in the default directories. Useful when R packages are not installed in the default directories because of lack of admin rights. More precisely, <code>lib_path</code> is passed through the <code>new</code> argument of <code><a href="https://rdrr.io/r/base/libPaths.html" class="external-link">.libPaths()</a></code> so that the new library paths are <code>c(lib_path, .libPaths())</code>. Warning: <code><a href="https://rdrr.io/r/base/libPaths.html" class="external-link">.libPaths()</a></code> is restored to the initial paths, after function execution. Ignored if <code>NULL</code> (default) or if the <code>safer_check</code> argument is <code>FALSE</code>: only the pathways specified by the current <code><a href="https://rdrr.io/r/base/libPaths.html" class="external-link">.libPaths()</a></code> are used for package calling.</p></dd>
 
 
 <dt>error_text</dt>
@@ -145,7 +145,9 @@ Column descriptions:</p><ul><li><p><code>$LINE_NB</code>: the line number in the
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># See more examples \href{https://safer-r.github.io/saferDev/articles/all_args_here.html}{here}. https://safer-r.github.io/saferDev/articles/all_args_here.html</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># Warning: these examples may not work well when using the "Run examples" link </span></span></span>
+<span class="r-in"><span><span class="co"># because of a particular environment. Please, copy-paste in a local environment.</span></span></span>
+<span class="r-in"><span><span class="co"># See also https://safer-r.github.io/saferDev/articles/all_args_here.html</span></span></span>
 <span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span></span>
 <span class="r-in"><span><span class="co"># Example that returns an error</span></span></span>
 <span class="r-in"><span><span class="fu">saferDev</span><span class="fu">::</span><span class="fu">all_args_here</span><span class="op">(</span><span class="va">mean</span><span class="op">)</span> <span class="co"># Example that returns an error</span></span></span>
@@ -176,6 +178,8 @@ Column descriptions:</p><ul><li><p><code>$LINE_NB</code>: the line number in the
 <span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/source.html" class="external-link">source</a></span><span class="op">(</span><span class="st">"https://raw.githubusercontent.com/safer-r/.github/refs/heads/main/profile/backbone.R"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu">saferDev</span><span class="fu">::</span><span class="fu">all_args_here</span><span class="op">(</span><span class="va">BACKBONE</span>, export <span class="op">=</span> <span class="cn">TRUE</span>, safer_check <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">}</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># See more examples here: https://safer-r.github.io/saferDev/articles/all_args_here.html</span></span></span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>

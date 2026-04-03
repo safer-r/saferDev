@@ -32,9 +32,9 @@
     <a class="dropdown-item" href="../articles/colons_check.html">colons_check: more examples</a>
     <a class="dropdown-item" href="../articles/env_check.html">env_check(): more examples</a>
     <a class="dropdown-item" href="../articles/get_message.html">get_message(): more examples</a>
-    <a class="dropdown-item" href="../articles/is_function_here.html">is_function_here</a>
-    <a class="dropdown-item" href="../articles/is_package_here.html">is_package_here</a>
-    <a class="dropdown-item" href="../articles/report.html">report</a>
+    <a class="dropdown-item" href="../articles/is_function_here.html">is_function_here(): more examples</a>
+    <a class="dropdown-item" href="../articles/is_package_here.html">is_package_here(): more examples</a>
+    <a class="dropdown-item" href="../articles/report.html">report(): more examples</a>
   </div>
 </li>
       </ul><form class="form-inline my-2 my-lg-0" role="search">
@@ -74,7 +74,7 @@
 
 
 <dt>name</dt>
-<dd><p>Single character string indicating a string that changes the name of the checked env in the output string.</p></dd>
+<dd><p>Single character string of the name of the checked environment (used in the output string only, where the name of the ckecked env is replaced by the name value). Can be used when <code>env_check()</code> is used inside a function "A" to specify that the environment of "A" is checked.</p></dd>
 
 
 <dt>safer_check</dt>
@@ -108,7 +108,9 @@
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># Warning: these examples do not work well when using the "Run examples" link beacause of a particular environment. Please, copy-paste in a local environment.</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># Warning: these examples may not work well when using the "Run examples" link </span></span></span>
+<span class="r-in"><span><span class="co"># because of a particular environment. Please, copy-paste in a local environment.</span></span></span>
+<span class="r-in"><span><span class="co"># See also https://safer-r.github.io/saferDev/articles/env_check.html</span></span></span>
 <span class="r-in"><span><span class="co"># Examples in the working environment</span></span></span>
 <span class="r-in"><span><span class="co"># creation of the object mean with value 1 in the .GlobalEnv environment, </span></span></span>
 <span class="r-in"><span><span class="co"># knowing that the mean() function also exists in the environment base, above .GlobalEnv:</span></span></span>

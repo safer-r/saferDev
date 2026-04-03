@@ -32,9 +32,9 @@
     <a class="dropdown-item" href="../articles/colons_check.html">colons_check: more examples</a>
     <a class="dropdown-item" href="../articles/env_check.html">env_check(): more examples</a>
     <a class="dropdown-item" href="../articles/get_message.html">get_message(): more examples</a>
-    <a class="dropdown-item" href="../articles/is_function_here.html">is_function_here</a>
-    <a class="dropdown-item" href="../articles/is_package_here.html">is_package_here</a>
-    <a class="dropdown-item" href="../articles/report.html">report</a>
+    <a class="dropdown-item" href="../articles/is_function_here.html">is_function_here(): more examples</a>
+    <a class="dropdown-item" href="../articles/is_package_here.html">is_package_here(): more examples</a>
+    <a class="dropdown-item" href="../articles/report.html">report(): more examples</a>
   </div>
 </li>
       </ul><form class="form-inline my-2 my-lg-0" role="search">
@@ -108,7 +108,7 @@
 </ul></div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
-    <p>The function works first by replacing in the code: 1) the three consecutive characters <code>'"'</code> or <code>'"'</code> by three spaces, 2) <code>"\"'"</code> and <code>'\'"'</code> by four spaces and 3) escape quotes like <code>\"</code> or <code>\'</code> by two spaces.</p>
+    <p>The function works first by replacing in the code: 1) the three consecutive characters <code>'"'</code> or <code>'"'</code> by three spaces, 2) <code>"\"'"</code> and <code>'\'"'</code> by four spaces and 3) escape quotes like <code>\"</code> or <code>\'</code> by two spaces, before looking for the pattern inside quotes.</p>
 <p>Warnings:</p><ul><li><p>Must be very simple pattern, like <code>"\("</code>.</p></li>
 <li><p>requires <code><a href="arg_check.html">saferDev::arg_check</a></code>, <code>saferDev:::.has_odd_number_of_quotes</code>.</p></li>
 <li><p>In the safer Backbone section <code>"######## check of the required functions from the required packages"</code>, add also these 2 functions when checking for the presence of <code>saferDev:::.in_quotes_replacement</code>.</p></li>

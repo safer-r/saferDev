@@ -34,9 +34,9 @@ Using argument print_no = FALSE, return NULL if nothing reported, which is conve
     <a class="dropdown-item" href="../articles/colons_check.html">colons_check: more examples</a>
     <a class="dropdown-item" href="../articles/env_check.html">env_check(): more examples</a>
     <a class="dropdown-item" href="../articles/get_message.html">get_message(): more examples</a>
-    <a class="dropdown-item" href="../articles/is_function_here.html">is_function_here</a>
-    <a class="dropdown-item" href="../articles/is_package_here.html">is_package_here</a>
-    <a class="dropdown-item" href="../articles/report.html">report</a>
+    <a class="dropdown-item" href="../articles/is_function_here.html">is_function_here(): more examples</a>
+    <a class="dropdown-item" href="../articles/is_package_here.html">is_package_here(): more examples</a>
+    <a class="dropdown-item" href="../articles/report.html">report(): more examples</a>
   </div>
 </li>
       </ul><form class="form-inline my-2 my-lg-0" role="search">
@@ -77,11 +77,11 @@ Using argument print_no = FALSE, return NULL if nothing reported, which is conve
     <div class="section level2">
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
     <dl><dt>data</dt>
-<dd><p>Single character string.</p></dd>
+<dd><p>Single character string of an instruction to evaluate</p></dd>
 
 
 <dt>kind</dt>
-<dd><p>Single character string. Either <code>"error"</code> to get an error message, or <code>"warning"</code> to get a warning message, or <code>"message"</code> to get a non error and non warning messages.</p></dd>
+<dd><p>Single character string. Either <code>"error"</code> to get a potential error message, or <code>"warning"</code> to get a potential warning message, or <code>"message"</code> to get a potential standard (non error and non warning) message.</p></dd>
 
 
 <dt>header</dt>
@@ -89,15 +89,15 @@ Using argument print_no = FALSE, return NULL if nothing reported, which is conve
 
 
 <dt>print_no</dt>
-<dd><p>Single logical value. Print a message saying that nothing (NULL output) reported?</p></dd>
+<dd><p>Single logical value. Print a message saying that nothing (<code>NULL</code> output) has to be reported?</p></dd>
 
 
 <dt>text</dt>
-<dd><p>Single character string added to the output message (even if nothing reported and <code>print_no</code> is <code>TRUE</code>). Inactivated if the <code>header</code> argument is <code>FALSE</code>. Write <code>NULL</code> if not required.</p></dd>
+<dd><p>Single character string added to the header of the output message, even if nothing reported (<code>print_no</code> is <code>TRUE</code>). Ignored if the <code>header</code> argument is <code>FALSE</code>. Write <code>NULL</code> if not required.</p></dd>
 
 
 <dt>env</dt>
-<dd><p>An object corresponding to an existing environment. Then the <code>data</code> argument value is evaluated only in the indicated environment. Write <code>NULL</code> if not required (R scope is used). Example <code>env = .GlobalEnv</code>.</p></dd>
+<dd><p>An object corresponding to an existing environment. Then the <code>data</code> argument value is evaluated only in the indicated environment. Write <code>NULL</code> if not required (R scope is used). Example <code>env = .GlobalEnv</code>. Example <code>env = asNamespace("stats")</code>.</p></dd>
 
 
 <dt>safer_check</dt>
@@ -129,7 +129,7 @@ Using argument print_no = FALSE, return NULL if nothing reported, which is conve
     </div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
-    <p>Warnings:</p><ul><li><p>Only the first standard/error/warning message is returned.</p></li>
+    <p>Warnings:</p><ul><li><p>Only the first error or last warning/standard message is returned.</p></li>
 <li><p>Always use the <code>env</code> argument when <code>get_message()</code> is used inside functions.</p></li>
 <li><p>The function does not prevent printing, for instance if <code><a href="https://rdrr.io/r/base/print.html" class="external-link">print()</a></code> or <code>show()</code> is used inside the instruction tested. To prevent that, use <code>tempo &lt;- utils::capture.output(error &lt;- get_message(data = "arg_check(data = 'a', class = mean, neg_values = FALSE, print = TRUE)"))</code>. The return of <code>get_message()</code> is assigned into <code>error</code> and the printed messages are captured by <code><a href="https://rdrr.io/r/utils/capture.output.html" class="external-link">utils::capture.output()</a></code> and assigned into <code>tempo</code>. See the examples.</p></li>
 </ul></div>
@@ -146,36 +146,45 @@ Using argument print_no = FALSE, return NULL if nothing reported, which is conve
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># Warning: these examples do not work well when using the "Run examples" link beacause of a particular environment. Please, copy-paste in a local environment.</span></span></span>
-<span class="r-in"><span><span class="fu">saferDev</span><span class="fu">::</span><span class="fu">get_message</span><span class="op">(</span>data <span class="op">=</span> <span class="st">"wilcox.test(c(1,1,3), c(1, 2, 4), paired = TRUE)"</span>, kind <span class="op">=</span> <span class="st">"error"</span>, </span></span>
-<span class="r-in"><span>header <span class="op">=</span> <span class="cn">TRUE</span>, print_no <span class="op">=</span> <span class="cn">FALSE</span>, text <span class="op">=</span> <span class="cn">NULL</span>, env <span class="op">=</span> <span class="cn">NULL</span>, safer_check <span class="op">=</span> <span class="cn">TRUE</span>, </span></span>
-<span class="r-in"><span>lib_path <span class="op">=</span> <span class="cn">NULL</span>, error_text <span class="op">=</span> <span class="st">""</span><span class="op">)</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># Warning: these examples may not work well when using the "Run examples" link </span></span></span>
+<span class="r-in"><span><span class="co"># because of a particular environment. Please, copy-paste in a local environment.</span></span></span>
+<span class="r-in"><span><span class="co"># See also https://safer-r.github.io/saferDev/articles/get_message.html</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Report error message by default. Here no error to report:</span></span></span>
+<span class="r-in"><span><span class="fu">saferDev</span><span class="fu">::</span><span class="fu">get_message</span><span class="op">(</span>data <span class="op">=</span> <span class="st">"wilcox.test(c(1,1,3), c(1, 2, 4), paired = TRUE)"</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> NULL</span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="fu">saferDev</span><span class="fu">::</span><span class="fu">get_message</span><span class="op">(</span>data <span class="op">=</span> <span class="st">"wilcox.test(c(1,1,3), c(1, 2, 4), paired = TRUE)"</span>, kind <span class="op">=</span> <span class="st">"warning"</span>, </span></span>
-<span class="r-in"><span>print_no <span class="op">=</span> <span class="cn">TRUE</span>, text <span class="op">=</span> <span class="st">"IN A"</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "WARNING MESSAGE REPORTED IN A:\nIn wilcox.test.default(c(1, 1, 3), c(1, 2, 4), paired = TRUE): cannot compute exact p-value with zeroes\n"</span>
+<span class="r-in"><span><span class="co"># Warning message to report:</span></span></span>
+<span class="r-in"><span><span class="fu">saferDev</span><span class="fu">::</span><span class="fu">get_message</span><span class="op">(</span>data <span class="op">=</span> <span class="st">"wilcox.test(c(1,1,3), c(1, 2, 4), paired = TRUE)"</span>, kind <span class="op">=</span> <span class="st">"warning"</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "WARNING MESSAGE REPORTED:\nIn wilcox.test.default(c(1, 1, 3), c(1, 2, 4), paired = TRUE): cannot compute exact p-value with zeroes\n"</span>
 <span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># No standard message to report:</span></span></span>
 <span class="r-in"><span><span class="fu">saferDev</span><span class="fu">::</span><span class="fu">get_message</span><span class="op">(</span>data <span class="op">=</span> <span class="st">"wilcox.test(c(1,1,3), c(1, 2, 4), paired = TRUE)"</span>, kind <span class="op">=</span> <span class="st">"message"</span>, </span></span>
 <span class="r-in"><span>print_no <span class="op">=</span> <span class="cn">TRUE</span>, text <span class="op">=</span> <span class="st">"IN A"</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "NO STANDARD MESSAGE REPORTED IN A"</span>
 <span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Standard message cannot be caught because wilcox.test() returns an error message:</span></span></span>
 <span class="r-in"><span><span class="fu">saferDev</span><span class="fu">::</span><span class="fu">get_message</span><span class="op">(</span>data <span class="op">=</span> <span class="st">"wilcox.test()"</span>, kind <span class="op">=</span> <span class="st">"message"</span>, print_no <span class="op">=</span> <span class="cn">TRUE</span>, text <span class="op">=</span> <span class="st">"IN A"</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "NO POTENTIAL STANDARD MESSAGE BECAUSE OF ERROR MESSAGE REPORTED IN A"</span>
 <span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Text added in warning message to report:</span></span></span>
 <span class="r-in"><span><span class="fu">saferDev</span><span class="fu">::</span><span class="fu">get_message</span><span class="op">(</span>data <span class="op">=</span> <span class="st">"wilcox.test()"</span>, kind <span class="op">=</span> <span class="st">"error"</span>, print_no <span class="op">=</span> <span class="cn">TRUE</span>, text <span class="op">=</span> <span class="st">"IN A"</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "ERROR MESSAGE REPORTED IN A:\nIn wilcox.test.default() : argument \"x\" is missing, with no default\n"</span>
 <span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># No error message to report with text added:</span></span></span>
 <span class="r-in"><span><span class="fu">saferDev</span><span class="fu">::</span><span class="fu">get_message</span><span class="op">(</span>data <span class="op">=</span> <span class="st">"sum(1)"</span>, kind <span class="op">=</span> <span class="st">"error"</span>, print_no <span class="op">=</span> <span class="cn">TRUE</span>, text <span class="op">=</span> <span class="st">"IN A"</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "NO ERROR MESSAGE REPORTED IN A"</span>
 <span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># No error message to report with text added:</span></span></span>
 <span class="r-in"><span><span class="fu">saferDev</span><span class="fu">::</span><span class="fu">get_message</span><span class="op">(</span>data <span class="op">=</span> <span class="st">"message('ahah')"</span>, kind <span class="op">=</span> <span class="st">"error"</span>, print_no <span class="op">=</span> <span class="cn">TRUE</span>, text <span class="op">=</span> <span class="st">"IN A"</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "NO ERROR MESSAGE REPORTED IN A"</span>
 <span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Standard message reported with text added:</span></span></span>
 <span class="r-in"><span><span class="fu">saferDev</span><span class="fu">::</span><span class="fu">get_message</span><span class="op">(</span>data <span class="op">=</span> <span class="st">"message('ahah')"</span>, kind <span class="op">=</span> <span class="st">"message"</span>, print_no <span class="op">=</span> <span class="cn">TRUE</span>, text <span class="op">=</span> <span class="st">"IN A"</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> ahah</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "NO STANDARD MESSAGE REPORTED IN A"</span>
 <span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Messages from ggplot2 functions caugth:</span></span></span>
 <span class="r-in"><span><span class="fu">saferDev</span><span class="fu">::</span><span class="fu">get_message</span><span class="op">(</span>data <span class="op">=</span> <span class="st">"ggplot2::ggplot(data = data.frame(X = 1:10, stringsAsFactors = TRUE), </span></span></span>
 <span class="r-in"><span><span class="st">mapping = ggplot2::aes(x = X)) + ggplot2::geom_histogram()"</span>, kind <span class="op">=</span> <span class="st">"message"</span>, </span></span>
 <span class="r-in"><span>print_no <span class="op">=</span> <span class="cn">TRUE</span>, text <span class="op">=</span> <span class="st">"IN INSTRUCTION 1"</span><span class="op">)</span></span></span>
