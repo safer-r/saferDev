@@ -8,8 +8,8 @@
 #' @param length Single numeric value indicating the length of the object. Not considered if \code{NULL}.
 #' @param prop Single logical value. Are the numeric values between 0 and 1 (proportion)? If \code{TRUE}, can be used alone, i.e., without necessarily checking the class, mode, etc., of the object to test.
 #' @param double_as_integer_allowed Single logical value. If \code{TRUE}, no error is reported in the checking message if the \code{typeof} argument is set to \code{"integer"}, while the reality is type \code{"double"} but with zero as modulo (reminder of a division). This means that \code{i <- 1}, which is \code{typeof(i) == "double"} is considered as an integer when setting \code{double_as_integer_allowed = TRUE}. Warning: \code{double_as_integer_allowed = TRUE} uses \code{data \%\% 1 == 0L} but not \code{isTRUE(all.equal(data \%\% 1, 0))} is used here because the argument checks for integers stored as double (does not check for decimal numbers that are approximate integers).
-#' @param options Vector of character strings or integers indicating all the possible option values for the \code{data} argument, or \code{NULL}. Numbers of type \code{"double"} are accepted if they have a 0 modulo.
-#' @param all_options_in_data Single logical value. If \code{TRUE}, all of the options of the \code{options} argument must be present at least once in the \code{data} argument, and nothing else. If \code{FALSE}, some or all of the options must be present in the \code{data} argument, and nothing else. Ignored if the \code{options} argument is \code{NULL}.
+#' @param options Vector of character strings or integers indicating all the possible option values for the \code{data} argument, or \code{NULL}. Numbers of type \code{"double"} are accepted if they have a 0 modulo (i.e., are integer like).
+#' @param all_options_in_data Single logical value. If \code{FALSE}, the tested object must be made of at least one of the options and nothing else. Example returing no error: \code{data = c(1, 1, 2)} and \code{options = c(1, 2, 3)}. Example returning an error: \code{data = c(1, 4)} and \code{options = c(1, 2, 3)}. If \code{TRUE}, the tested object must contain all of the options, at least once, and nothing else. Example returing no error: \code{data = c(1, 1, 2, 3} and \code{options = c(1, 2, 3)}. Example returing an error (missing 3): \code{data = c(1, 1, 2} and \code{options = c(1, 2, 3)}. Example returing an error (unwanted 4): \code{data = c(1, 1, 4} and \code{options = c(1, 2, 3)}. Ignored if the \code{options} argument is \code{NULL}.
 #' @param na_contain Single logical value. Can the \code{data} argument contain \code{NA}?
 #' @param neg_values Single logical value. Are negative numeric values authorized? Warning: the default setting is \code{TRUE}, meaning that, in that case, no check is performed for the presence of negative values. The checking is activated only when set to \code{FALSE}. In addition, \code{FALSE} can only be used when the \code{typeof} argument is set to \code{"double"} or \code{"integer"}, or the \code{mode} argument to \code{"numeric"}. Otherwise an error message is returned. Finally, the presence of negative values is not checked with \code{FALSE} if the tested object is a factor and a message is returned: \code{"OBJECT MUST BE MADE OF NON NEGATIVE VALUES BUT IS A FACTOR"}.
 #' @param inf_values Single logical value. Are infinite \code{Inf} or \code{-Inf} values authorized? Warning: the default setting is \code{TRUE}, meaning that, in that case, no check is performed for the presence of infinite values. The checking is activated only when set to \code{FALSE}. In addition, \code{FALSE} can only be used when the \code{typeof} argument is set to \code{"double"}, or the \code{mode} argument to \code{"numeric"}. Otherwise an error message is returned. Finally, the presence of infinite values is not checked with \code{FALSE} if the tested object is a factor and a message is returned: \code{"OBJECT MUST BE MADE OF NON NEGATIVE VALUES BUT IS A FACTOR"}.
@@ -577,6 +577,42 @@ arg_check <- function(
         )
         base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL)
     }
+    if( ! base::is.null(x = options)){
+        if( ! base::all(base::typeof(x = options) %in% c("character", "integer", "double"), na.rm = TRUE)){
+            tempo_cat <- base::paste0(
+                error_text_start, 
+                "THE options ARGUMENT MUST BE TYPE \"character\", \"integer\", OR \"double\".",
+                collapse = NULL, 
+                recycle0 = FALSE
+            )
+            base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL)
+        }
+        if(base::all(base::typeof(x = options) == "double", na.rm = TRUE)){
+            if( ! base::isTRUE(
+                x = base::all.equal.numeric(
+                    target = base::rep(x = 0L, times = base::length(x = options)), 
+                    current = options %% 1, 
+                    tolerance = base::sqrt(x = base::.Machine$double.eps), 
+                    scale = NULL, 
+                    countEQ = FALSE, 
+                    formatFUN = , 
+                    check.attributes = TRUE, 
+                    check.class = TRUE, 
+                    giveErr = FALSE
+                )
+            )){
+                tempo_cat <- base::paste0(
+                    error_text_start, 
+                    "IF THE options ARGUMENT IS TYPE \"double\", IT MUST BE MADE OF INTEGER VALUES, NOT DECIMAL VALUES.",
+                    collapse = NULL, 
+                    recycle0 = FALSE
+                )
+                base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL)
+            }else{
+                options <- base::as.integer(x = options)
+            }
+        }
+    }
     if(neg_values == FALSE & base::is.null(x = typeof) & base::is.null(x = mode)){
         tempo_cat <- base::paste0(
             error_text_start, 
@@ -699,6 +735,7 @@ arg_check <- function(
             }
         }
     }
+
     # data_name and error_text tested at the beginning
     # end other checkings of the arguments by order
     ######## end other checkings
@@ -714,33 +751,55 @@ arg_check <- function(
     text <- text_ok
     if(( ! base::is.null(x = options)) & (base::all(base::typeof(x = data) == "character", na.rm = TRUE) | base::all(base::typeof(x = data) == "integer", na.rm = TRUE) | base::all(base::typeof(x = data) == "double", na.rm = TRUE))){ # base::all() without na.rm -> ok because base::typeof() never returns NA
         test.log <- TRUE
-        if(base::all(base::typeof(x = data) == "double", na.rm = TRUE)){
-            if( ! base::all(data %% 1 == 0L, na.rm = TRUE)){ # double but integer like ?
+        tempo_data_opt <- data # for the options argument only
+        if(base::all(base::typeof(x = tempo_data_opt) == "double", na.rm = TRUE)){
+            if( ! base::isTRUE(
+                x = base::all.equal.numeric(
+                    target = base::rep(x = 0L, times = base::length(x = tempo_data_opt)), 
+                    current = tempo_data_opt %% 1, 
+                    tolerance = base::sqrt(x = base::.Machine$double.eps), 
+                    scale = NULL, 
+                    countEQ = FALSE, 
+                    formatFUN = , 
+                    check.attributes = TRUE, 
+                    check.class = TRUE, 
+                    giveErr = FALSE
+                )
+            )){
                 problem <- TRUE
+                if(base::identical(x = text, y = text_ok, num.eq = TRUE, single.NA = TRUE, attrib.as.set = TRUE, ignore.bytecode = TRUE, ignore.environment = FALSE, ignore.srcref = TRUE, extptr.as.ref = FALSE)){
+                    text <- base::paste0("ERROR", base::ifelse(test = error_text == "", yes = "", no = error_text), "\n\n", collapse = NULL, recycle0 = FALSE)
+                }else{
+                    text <- base::paste0(text, " AND ", collapse = NULL, recycle0 = FALSE)
+                }
                 text <- base::paste0(
-                    "ERROR",
-                     base::ifelse(test = error_text == "", yes = "", no = error_text), 
-                     "\n\nTHE ", 
+                    text, 
+                    "THE ",  
                     data_name, 
                     " ", 
                     base::ifelse(test = data_arg, yes = "ARGUMENT", no = "OBJECT"), 
                     " MUST BE SOME OF THESE OPTIONS:\n", 
                     base::paste0(options, collapse = "\n", recycle0 = FALSE), 
-                    "\nBUT IS NOT EVEN TYPE CHARACTER OR INTEGER.",
+                    "\nBUT IS NOT EVEN TYPE CHARACTER OR INTEGER, OR TYPE DOUBLE WITH A 0 MODULO.",
                     collapse = NULL, 
                     recycle0 = FALSE
                 )
                 test.log <- FALSE
+            }else{
+                tempo_data_opt <- base::as.integer(x = tempo_data_opt)
             }
         }
         if(test.log == TRUE){
-            text <- ""
-            if( ! base::all(data %in% options, na.rm = TRUE)){ # no need of na.rm = TRUE for base::all() because %in% does not output NA
+            if( ! base::all(tempo_data_opt %in% options, na.rm = TRUE)){ # no need of na.rm = TRUE for base::all() because %in% does not output NA
                 problem <- TRUE
+                if(base::identical(x = text, y = text_ok, num.eq = TRUE, single.NA = TRUE, attrib.as.set = TRUE, ignore.bytecode = TRUE, ignore.environment = FALSE, ignore.srcref = TRUE, extptr.as.ref = FALSE)){
+                    text <- base::paste0("ERROR", base::ifelse(test = error_text == "", yes = "", no = error_text), "\n\n", collapse = NULL, recycle0 = FALSE)
+                }else{
+                    text <- base::paste0(text, " AND ", collapse = NULL, recycle0 = FALSE)
+                }
                 text <- base::paste0(
-                    "ERROR",
-                     base::ifelse(test = error_text == "", yes = "", no = error_text), 
-                     "\n\nTHE ", 
+                    text, 
+                    "THE ", 
                      data_name, 
                      " ", 
                      base::ifelse(test = data_arg, yes = "ARGUMENT", no = "OBJECT"), 
@@ -749,62 +808,59 @@ arg_check <- function(
                      "\nTHE PROBLEMATIC ELEMENTS OF ", 
                      data_name, 
                      " ARE:\n", 
-                     base::paste0(base::unique(x = data[ ! (data %in% options)], incomparables = FALSE), collapse = "\n", recycle0 = FALSE), 
+                     base::paste0(base::unique(x = tempo_data_opt[ ! (tempo_data_opt %in% options)], incomparables = FALSE), collapse = "\n", recycle0 = FALSE), 
                      collapse = NULL, 
                      recycle0 = FALSE
                 )
             }
             if(all_options_in_data == TRUE){
-                if( ! base::all(options %in% data, na.rm = TRUE)){ # no need of na.rm = TRUE for base::all() because %in% does not output NA
+                if( ! base::all(options %in% tempo_data_opt, na.rm = TRUE)){ # no need of na.rm = TRUE for base::all() because %in% does not output NA
                     problem <- TRUE
+                    if(base::identical(x = text, y = text_ok, num.eq = TRUE, single.NA = TRUE, attrib.as.set = TRUE, ignore.bytecode = TRUE, ignore.environment = FALSE, ignore.srcref = TRUE, extptr.as.ref = FALSE)){
+                        text <- base::paste0("ERROR", base::ifelse(test = error_text == "", yes = "", no = error_text), "\n\n", collapse = NULL, recycle0 = FALSE)
+                    }else{
+                        text <- base::paste0(text, " AND ", collapse = NULL, recycle0 = FALSE)
+                    }
                     text <- base::paste0(
-                        base::ifelse(test = text == "", yes = "", no = base::paste0(text, "\n", collapse = NULL, recycle0 = FALSE)), 
-                        base::ifelse(test = error_text == "", yes = "ERROR", no = base::paste0("ERROR IN ", error_text, collapse = NULL, recycle0 = FALSE)), 
-                        "\nTHE ", 
+                        text, 
+                        "THE ", 
                         data_name, 
                         " ", 
                         base::ifelse(test = data_arg, yes = "ARGUMENT", no = "OBJECT"), 
                         " MUST BE MADE OF ALL THESE OPTIONS:\n", 
                         base::paste0(options, collapse = "\n", recycle0 = FALSE), 
                         "\nTHE MISSING ELEMENTS OF THE options ARGUMENT ARE:\n",  
-                        base::paste0(base::unique(x = options[ ! (options %in% data)], incomparables = FALSE), collapse = "\n", recycle0 = FALSE),
+                        base::paste0(base::unique(x = options[ ! (options %in% tempo_data_opt)], incomparables = FALSE), collapse = "\n", recycle0 = FALSE),
                         collapse = NULL, 
                         recycle0 = FALSE
                     )
                 }
             }
             if( ! base::is.null(x = length)){
-                if(base::length(x = data) != length){
+                if(base::length(x = tempo_data_opt) != length){
                     problem <- TRUE
+                    if(base::identical(x = text, y = text_ok, num.eq = TRUE, single.NA = TRUE, attrib.as.set = TRUE, ignore.bytecode = TRUE, ignore.environment = FALSE, ignore.srcref = TRUE, extptr.as.ref = FALSE)){
+                        text <- base::paste0("ERROR", base::ifelse(test = error_text == "", yes = "", no = error_text), "\n\n", collapse = NULL, recycle0 = FALSE)
+                    }else{
+                        text <- base::paste0(text, " AND ", collapse = NULL, recycle0 = FALSE)
+                    }
                     text <- base::paste0(
-                        base::ifelse(test = text == "", yes = "", no = base::paste0(text, "\n", collapse = NULL, recycle0 = FALSE)), 
-                        base::ifelse(test = error_text == "", yes = "ERROR", no = base::paste0("ERROR IN ", error_text, collapse = NULL, recycle0 = FALSE)), 
-                        "\nTHE LENGTH OF ", 
+                        text, 
+                        "THE LENGTH OF ", 
                         data_name, 
                         " MUST BE ", 
                         length, 
                         " AND NOT ", 
-                        base::length(x = data),
+                        base::length(x = tempo_data_opt),
                         collapse = NULL, 
                         recycle0 = FALSE
                     )
                 }
             }
-            if(text == ""){
-                text <- base::paste0(
-                    "NO PROBLEM DETECTED FOR THE ", 
-                    data_name, 
-                    " ", 
-                    base::ifelse(test = data_arg, yes = "ARGUMENT", no = "OBJECT"), 
-                    base::ifelse(test = error_text == "", yes = ".", no = error_text), 
-                    collapse = NULL, 
-                    recycle0 = FALSE
-                )
-            }
         }
     }else if( ! base::is.null(x = options)){
         problem <- TRUE
-        text <- base::paste0("ERROR", base::ifelse(test = error_text == "", yes = "", no = error_text), "\n\nTHE ", data_name, " ", base::ifelse(test = data_arg, yes = "ARGUMENT", no = "OBJECT"), " MUST BE SOME OF THESE OPTIONS:\n", base::paste0(options, collapse = "\n", recycle0 = FALSE), "\nBUT IS NOT EVEN TYPE CHARACTER OR INTEGER.", collapse = NULL, recycle0 = FALSE)
+        text <- base::paste0("ERROR", base::ifelse(test = error_text == "", yes = "", no = error_text), "\n\nTHE ", data_name, " ", base::ifelse(test = data_arg, yes = "ARGUMENT", no = "OBJECT"), " MUST BE SOME OF THESE OPTIONS:\n", base::paste0(options, collapse = "\n", recycle0 = FALSE), "\nBUT IS NOT EVEN TYPE CHARACTER OR INTEGER, OR TYPE DOUBLE WITH A 0 MODULO.", collapse = NULL, recycle0 = FALSE)
     }
     arg.names <- base::c("class", "typeof", "mode", "length")
     if( ! base::is.null(x = class)){
