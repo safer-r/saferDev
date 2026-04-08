@@ -769,8 +769,6 @@ arg_check <- function(
                 problem <- TRUE
                 if(base::identical(x = text, y = text_ok, num.eq = TRUE, single.NA = TRUE, attrib.as.set = TRUE, ignore.bytecode = TRUE, ignore.environment = FALSE, ignore.srcref = TRUE, extptr.as.ref = FALSE)){
                     text <- base::paste0("ERROR", base::ifelse(test = error_text == "", yes = "", no = error_text), "\n\n", collapse = NULL, recycle0 = FALSE)
-                }else{
-                    text <- base::paste0(text, " AND ", collapse = NULL, recycle0 = FALSE)
                 }
                 text <- base::paste0(
                     text, 
@@ -794,23 +792,24 @@ arg_check <- function(
                 problem <- TRUE
                 if(base::identical(x = text, y = text_ok, num.eq = TRUE, single.NA = TRUE, attrib.as.set = TRUE, ignore.bytecode = TRUE, ignore.environment = FALSE, ignore.srcref = TRUE, extptr.as.ref = FALSE)){
                     text <- base::paste0("ERROR", base::ifelse(test = error_text == "", yes = "", no = error_text), "\n\n", collapse = NULL, recycle0 = FALSE)
-                }else{
-                    text <- base::paste0(text, " AND ", collapse = NULL, recycle0 = FALSE)
                 }
+                tempo_res <- tempo_data_opt[ ! (tempo_data_opt %in% options)]
                 text <- base::paste0(
                     text, 
                     "THE ", 
-                     data_name, 
-                     " ", 
-                     base::ifelse(test = data_arg, yes = "ARGUMENT", no = "OBJECT"), 
-                     " MUST BE SOME OF THESE OPTIONS:\n", 
-                     base::paste0(options, collapse = "\n", recycle0 = FALSE), 
-                     "\nTHE PROBLEMATIC ELEMENTS OF ", 
-                     data_name, 
-                     " ARE:\n", 
-                     base::paste0(base::unique(x = tempo_data_opt[ ! (tempo_data_opt %in% options)], incomparables = FALSE), collapse = "\n", recycle0 = FALSE), 
-                     collapse = NULL, 
-                     recycle0 = FALSE
+                    data_name, 
+                    " ", 
+                    base::ifelse(test = data_arg, yes = "ARGUMENT", no = "OBJECT"), 
+                    " MUST BE SOME OF THESE OPTIONS:\n", 
+                    base::paste0(options, collapse = "\n", recycle0 = FALSE), 
+                    "\nTHE PROBLEMATIC ELEMENT",
+                    base::ifelse(test = base::length(x = tempo_res) == 1, yes = "", no = "S"), 
+                    " OF ", 
+                    data_name, 
+                    base::ifelse(test = base::length(x = tempo_res) == 1, yes = " IS:\n", no = " ARE:\n"),  
+                    base::paste0(base::unique(x = tempo_res, incomparables = FALSE), collapse = "\n", recycle0 = FALSE), 
+                    collapse = NULL, 
+                    recycle0 = FALSE
                 )
             }
             if(all_options_in_data == TRUE){
@@ -821,6 +820,7 @@ arg_check <- function(
                     }else{
                         text <- base::paste0(text, " AND ", collapse = NULL, recycle0 = FALSE)
                     }
+                    tempo_res <- options[ ! (options %in% tempo_data_opt)]
                     text <- base::paste0(
                         text, 
                         "THE ", 
@@ -829,8 +829,12 @@ arg_check <- function(
                         base::ifelse(test = data_arg, yes = "ARGUMENT", no = "OBJECT"), 
                         " MUST BE MADE OF ALL THESE OPTIONS:\n", 
                         base::paste0(options, collapse = "\n", recycle0 = FALSE), 
-                        "\nTHE MISSING ELEMENTS OF THE options ARGUMENT ARE:\n",  
-                        base::paste0(base::unique(x = options[ ! (options %in% tempo_data_opt)], incomparables = FALSE), collapse = "\n", recycle0 = FALSE),
+                        "\nTHE MISSING ELEMENT", 
+                        base::ifelse(test = base::length(x = tempo_res) == 1, yes = "", no = "S"), 
+                        " IN ", 
+                        data_name, 
+                        base::ifelse(test = base::length(x = tempo_res) == 1, yes = " IS:\n", no = " ARE:\n"), 
+                        base::paste0(base::unique(x = tempo_res, incomparables = FALSE), collapse = "\n", recycle0 = FALSE),
                         collapse = NULL, 
                         recycle0 = FALSE
                     )
