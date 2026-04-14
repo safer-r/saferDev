@@ -2,7 +2,7 @@
 #' @description
 #' Check expected values of an argument of functions: class, type, mode, length, restricted values panel, kind of numeric values (in addition to the distinction between \code{'integer'} and \code{'double'})? Proportion only? Inf values authorized? negative values authorized? Integers of type \code{'double'}?
 #' @param data Object to test.
-#' @param class Single character string among \code{"vector"}, \code{"matrix"}, \code{"array"}, \code{"data.frame"}, \code{"list"}, \code{"factor"}, \code{"table"}, \code{"expression"}, \code{"name"}, \code{"symbol"}, \code{"function"}, \code{"uneval"}, \code{"environment"}, \code{"ggplot2"}, \code{"ggplot_built"}, \code{"call"}. simplified version of checking the class of the tested object using \code{class(data)} (see the details below). Write NULL to do not test the class.
+#' @param class Single character string among \code{"vector"}, \code{"matrix"}, \code{"array"}, \code{"data.frame"}, \code{"list"}, \code{"factor"}, \code{"table"}, \code{"expression"}, \code{"name"}, \code{"symbol"}, \code{"function"}, \code{"uneval"}, \code{"environment"}, \code{"ggplot2"}, \code{"ggplot_built"}, \code{"call"}. simplified version of \code{class(data)} (see the details below). Write NULL to do not test the class.
 #' @param typeof Single character string among \code{"logical"}, \code{"integer"}, \code{"double"}, \code{"complex"}, \code{"character"}, \code{"list"}, \code{"expression"}, \code{"symbol"}, \code{"closure"}, \code{"special"}, \code{"builtin"}, \code{"environment"}, \code{"S4"}, \code{"language"}, \code{"object"}. Simplified version of checking the type of the tested object using \code{typeof(data)}. Write NULL to do not test the type.
 #' @param mode Single character string among \code{"logical"}, \code{"numeric"}, \code{"complex"}, \code{"character"}, \code{"list"}, \code{"expression"}, \code{"name"}, \code{"symbol"}, \code{"function"}, \code{"environment"}, \code{"S4"}, \code{"call"}, \code{"object"}. Simplified version of checking the type of the tested object using \code{mode(data)}. Write NULL to do not test the mode.
 #' @param length Single numeric value indicating the length of the object. Not considered if \code{NULL}.
@@ -35,7 +35,7 @@
 #'  
 #' If the tested object is \code{NULL}, then the function will always return a checking problem.
 #'  
-#' The \code{class} argument is a simplified version of checking the class of the tested object using \code{class(data)}:
+#' The \code{class} argument is a simplified version of \code{class(data)}:
 #' \itemize{
 #'   \item \code{"vector"} tests objects of class \code{"numeric"}, \code{"integer"}, \code{"character"}, \code{"logical"}, \code{"complex"} or \code{"expression"} (no error if \code{class(data)} returns one of these values).
 #'   \item \code{"matrix"} tests objects of class \code{"matrix"} for R < 4.0.0 and \code{c(""matrix", "array"")} otherwise.

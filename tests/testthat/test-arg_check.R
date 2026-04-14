@@ -569,12 +569,17 @@ testthat::test_that("arg_check()", {
     result <- arg_check(data = ggplot2::ggplot_build(ggplot2::ggplot()), options = 1)
     expect <- list(problem = TRUE, text = "ERROR\n\nTHE ggplot2::ggplot_build(ggplot2::ggplot()) ARGUMENT MUST BE SOME OF THESE OPTIONS:\n1\nBUT IS NOT EVEN TYPE CHARACTER OR INTEGER, OR TYPE DOUBLE WITH A 0 MODULO.", object.name = "ggplot2::ggplot_build(ggplot2::ggplot())")
     testthat::expect_equal(result, expect)
+    testthat::expect_error(arg_check(data = ggplot2::ggplot_build(ggplot2::ggplot()), class = "ggplot_built", options = 1))
+    testthat::expect_no_error(arg_check(data = ggplot2::ggplot_build(ggplot2::ggplot()), class = "ggplot_built"))
     # if( ! base::is.null(x = length)){
     result <- arg_check(data = vec1, length = 5)
     expect <- list(problem = FALSE, text = "NO PROBLEM DETECTED FOR THE vec1 ARGUMENT.", object.name = "vec1")
     testthat::expect_equal(result, expect)
     result <- arg_check(data = vec1, length = 2)
     expect <- list(problem = TRUE, text = "ERROR\n\nTHE vec1 ARGUMENT MUST BE LENGTH 2", object.name = "vec1")
+    testthat::expect_equal(result, expect)
+    result <- arg_check(data = vec1, length = 2, error_text = " IN ADDED_TEXT")
+    expect <- list(problem = TRUE, text = "ERROR IN ADDED_TEXT\n\nTHE vec1 ARGUMENT MUST BE LENGTH 2", object.name = "vec1")
     testthat::expect_equal(result, expect)
     # end if( ! base::is.null(x = length)){
 

@@ -77,11 +77,9 @@ arg_check(data = NULL, typeof = "integer")
 <br>
 
 ### Arguments <code>class</code>, <code>typeof</code>, <code>mode</code> and <code>length</code>
-These arguments accept as values the classical kind of class, type, mode and length, respectively, except the <code>class</code> argument, which:
-
-- also accepts <code>"vector"</code>, <code>"ggplot2"</code> (i.e., objects of class <code>c("gg", "ggplot")</code> for R < 4.5 and <code>c("ggplot2::ggplot", "ggplot", "ggplot2::gg", "S7_object", "gg")</code> otherwise) or <code>"ggplot_built"</code> (i.e., objects of class <code>"ggplot_built"</code> for R < 4.5 and <code>c("ggplot2::ggplot_built", "ggplot_built", "ggplot2::gg", "S7_object")</code> otherwise) .
-- accepts <code>"matrix"</code> for matrices (objects of class <code>c("matrix" "array")</code>).
-
+These arguments accept as values the classical kind of type, mode and length, respectively,
+except the <code>class</code> argument, which is simplified version of <code>class(data)</code>.
+See the help of <code>arg_check</code>.
 
 ```{r, echo = TRUE, error = TRUE}
 # Example.
