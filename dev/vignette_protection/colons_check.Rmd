@@ -54,7 +54,7 @@ colons_check(x = fun2)
 # Safer checkings are performed before main code running.
 colons_check(
     x = fun1, 
-    afer_check = TRUE
+    safer_check = TRUE
 )
 ```
 <br>
