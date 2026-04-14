@@ -581,6 +581,9 @@ testthat::test_that("arg_check()", {
     result <- arg_check(data = vec1, length = 2, error_text = " IN ADDED_TEXT")
     expect <- list(problem = TRUE, text = "ERROR IN ADDED_TEXT\n\nTHE vec1 ARGUMENT MUST BE LENGTH 2", object.name = "vec1")
     testthat::expect_equal(result, expect)
+    result <- arg_check(data = vec4, options = c("pearson", "spearman"), length = 2)
+    expect <- list(problem = TRUE, text =   "ERROR\n\nTHE LENGTH OF vec4 MUST BE 2 AND NOT 1", object.name = "vec4")
+    testthat::expect_equal(result, expect)
     # end if( ! base::is.null(x = length)){
 
     # end if(( ! base::is.null(options)) & (base::all(base::typeof(data) == "character") | base::all(base::typeof(data) == "integer") | base::all(base::typeof(data) == "double"))){
@@ -652,6 +655,10 @@ testthat::test_that("arg_check()", {
     }
     expect <- list(problem = FALSE, text = "NO PROBLEM DETECTED FOR THE ggplot2::ggplot_build(ggplot2::ggplot()) ARGUMENT.", object.name = "ggplot2::ggplot_build(ggplot2::ggplot())")
     testthat::expect_equal(result, expect)
+    result <- arg_check(data = list(), class = "ggplot_built")
+    expect <- list(problem = TRUE, text = "ERROR\n\nTHE list() ARGUMENT MUST BE CLASS ggplot_built", object.name = "list()")
+    testthat::expect_equal(result, expect)
+
     # end test of class == "ggplot2" # end }else if(arg.names[i2] == "class" & base::all(base::get(arg.names[i2], envir = base::sys.nframe(), inherits = FALSE) == "ggplot2") & ! base::all(base::class(data) %in% base::c("gg", "ggplot"))){
     # end for class
     # for typeof
