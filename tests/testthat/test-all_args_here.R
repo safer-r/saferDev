@@ -43,6 +43,10 @@ testthat::test_that("all_args_here()", {
     fun13 <- function(x){
         base::as.environment(x)
     }
+    fun14 <- function(a) {
+        if(a > 0) base::return(TRUE)  # 'if' is a special primitive with no formals
+        base::return(FALSE)
+    }
     test <- function(
             text, 
             pattern
@@ -353,6 +357,8 @@ testthat::test_that("all_args_here()", {
     # a <- file.remove("./res.tsv") # but inactivated to test overwrite = TRUE below
     testthat::expect_no_error(all_args_here(x = fun2, export = TRUE, out_path = ".", df_name = "res.tsv", overwrite = TRUE, safer_check = TRUE, lib_path = NULL, error_text = ""))
     a <- file.remove("./res.tsv")
+
+    testthat::expect_no_error(all_args_here(x = fun14))
 
     #### end main code
 

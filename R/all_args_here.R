@@ -698,7 +698,10 @@ all_args_here <- function(
                 if(base::grepl(x = y, pattern = base::paste0("^", x, "[\\s\\r\\n]*\\(.*\\)$", collapse = NULL, recycle0 = FALSE), ignore.case = FALSE, perl = TRUE, fixed = FALSE, useBytes = FALSE) | base::grepl(x = y, pattern = base::paste0("^", reserved_words, "$", collapse = NULL, recycle0 = FALSE), ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE)){
                     base::return(FALSE)
                 }else{
+                    # nocov start
+                    # codecov inactivated because it is an internal control of code writing, impossible to cover with argument values.
                     base::return(TRUE) # TRUE = problem: does not start by what is expected, i.e., base::paste0("^", x, "[\\s\\r\\n]*\\(.*\\)$" # related to internal error 3. Thus, cannot be code covered.
+                    # nocov end
                 }
             }else{
                 base::return(FALSE)
