@@ -159,7 +159,20 @@ testthat::test_that("is_package_here()", {
 
     #### main code
     testthat::expect_error(is_package_here(req_package = str2, safer_check = TRUE, lib_path = NULL, error_text = ""))
-    testthat::expect_error(is_package_here(req_package = str2, safer_check = TRUE, lib_path ="C:\\Users\\gmillot\\Desktop", error_text = ""))
+    testthat::expect_error(is_package_here(req_package = str2, safer_check = FALSE, lib_path ="C:\\Users\\gmillot\\Desktop", error_text = ""))
+
+empty_dir <- base::tempdir()
+# Ensure it exists but contains no R packages
+# (Do not install anything there)
+
+ testthat::expect_no_error(is_package_here(
+    req_package = "ggplot2",  # Any valid package name
+    lib_path = empty_dir,           # Must exist AND be empty of packages
+    safer_check = FALSE,            # Avoid dependency on saferDev checks
+    error_text = ""
+))
+
+
 
     # below cannot be used because difficult to determine .libPath() in CI
     # result <- saferDev::get_message('is_package_here(req_package = str2, safer_check = TRUE, lib_path = NULL, error_text = "")', kind = "error", print_no = TRUE, text = NULL, safer_check = FALSE) 
