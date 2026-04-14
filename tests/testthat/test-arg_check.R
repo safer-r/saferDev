@@ -211,8 +211,8 @@ testthat::test_that("arg_check()", {
     # end management of special classes
     # authorized modes for the arguments
     testthat::expect_error(arg_check(data = vec1, double_as_integer_allowed = function(){}))
-    testthat::expect_error(arg_check(arg_check(data = vec1, options = TRUE))
-    testthat::expect_error(arg_check(arg_check(data = vec1, options = 1.2))
+    testthat::expect_error(arg_check(data = vec1, options = TRUE))
+    testthat::expect_error(arg_check(data = vec1, options = 1.2))
     # end authorized modes for the arguments
     # management of the logical arguments
     # prop tested below
