@@ -28,27 +28,27 @@ arg_check(
 \arguments{
 \item{data}{Object to test.}
 
-\item{class}{Single character string. Either one of the \code{class()} result or \code{"vector"} or \code{"ggplot2"} (i.e., objects of class \code{c("gg", "ggplot")} for R < 4.5 and \code{c("ggplot2::ggplot", "ggplot", "ggplot2::gg", "S7_object", "gg")} otherwise) or \code{"ggplot_built"} (i.e., objects of class \code{"ggplot_built"} for R < 4.5 and \code{c("ggplot2::ggplot_built", "ggplot_built", "ggplot2::gg", "S7_object")} otherwise) or \code{NULL}. See the warning section below.}
+\item{class}{Single character string among \code{"vector"}, \code{"matrix"}, \code{"array"}, \code{"data.frame"}, \code{"list"}, \code{"factor"}, \code{"table"}, \code{"expression"}, \code{"name"}, \code{"symbol"}, \code{"function"}, \code{"uneval"}, \code{"environment"}, \code{"ggplot2"}, \code{"ggplot_built"}, \code{"call"}. simplified version of \code{class(data)} (see the details below). Write NULL to do not test the class.}
 
-\item{typeof}{Single character string. Either one of the \code{typeof()} result or \code{NULL}.}
+\item{typeof}{Single character string among \code{"logical"}, \code{"integer"}, \code{"double"}, \code{"complex"}, \code{"character"}, \code{"list"}, \code{"expression"}, \code{"symbol"}, \code{"closure"}, \code{"special"}, \code{"builtin"}, \code{"environment"}, \code{"S4"}, \code{"language"}, \code{"object"}. Simplified version of checking the type of the tested object using \code{typeof(data)}. Write NULL to do not test the type.}
 
-\item{mode}{Single character string. Either one of the \code{mode()} result (for non-vector object) or \code{NULL}.}
+\item{mode}{Single character string among \code{"logical"}, \code{"numeric"}, \code{"complex"}, \code{"character"}, \code{"list"}, \code{"expression"}, \code{"name"}, \code{"symbol"}, \code{"function"}, \code{"environment"}, \code{"S4"}, \code{"call"}, \code{"object"}. Simplified version of checking the type of the tested object using \code{mode(data)}. Write NULL to do not test the mode.}
 
 \item{length}{Single numeric value indicating the length of the object. Not considered if \code{NULL}.}
 
-\item{prop}{Single logical value. Are the numeric values between 0 and 1 (proportion)? If \code{TRUE}, can be used alone, i.e., without checking the class, mode, etc., of the object to test.}
+\item{prop}{Single logical value. Are the numeric values between 0 and 1 (proportion)? If \code{TRUE}, can be used alone, i.e., without necessarily checking the class, mode, etc., of the object to test.}
 
-\item{double_as_integer_allowed}{Single logical value. If \code{TRUE}, no error is reported in the checking message if argument is set to \code{typeof = "integer"} or \code{class = "integer"}, while the reality is \code{typeof == "double"} or \code{class == "numeric"} but with zero as modulo (reminder of a division). This means that \code{i <- 1}, which is \code{typeof(i) == "double"} is considered as an integer when setting \code{double_as_integer_allowed = TRUE}. Warning: \code{double_as_integer_allowed = TRUE} uses \code{data \%\% 1 == 0L} but not \code{isTRUE(all.equal(data \%\% 1, 0))} is used here because the argument checks for integers stored as double (does not check for decimal numbers that are approximate integers).}
+\item{double_as_integer_allowed}{Single logical value. If \code{TRUE}, no error is reported in the checking message if the \code{typeof} argument is set to \code{"integer"}, while the reality is type \code{"double"} but with zero as modulo (reminder of a division). This means that \code{i <- 1}, which is \code{typeof(i) == "double"} is considered as an integer when setting \code{double_as_integer_allowed = TRUE}. Warning: \code{double_as_integer_allowed = TRUE} uses \code{data \%\% 1 == 0L} but not \code{isTRUE(all.equal(data \%\% 1, 0))} is used here because the argument checks for integers stored as double (does not check for decimal numbers that are approximate integers).}
 
-\item{options}{Vector of character strings or integers indicating all the possible option values for the \code{data} argument, or \code{NULL}. Numbers of type \code{"double"} are accepted if they have a 0 modulo.}
+\item{options}{Vector of character strings or integers indicating all the possible option values for the \code{data} argument, or \code{NULL}. Numbers of type \code{"double"} are accepted if they have a 0 modulo (i.e., are integer like).}
 
-\item{all_options_in_data}{Single logical value. If \code{TRUE}, all of the options of the \code{options} argument must be present at least once in the \code{data} argument, and nothing else. If \code{FALSE}, some or all of the options must be present in the \code{data} argument, and nothing else. Ignored if the \code{options} argument is \code{NULL}.}
+\item{all_options_in_data}{Single logical value. If \code{FALSE}, the tested object must be made of at least one of the options and nothing else. Example returing no error: \code{data = c(1, 1, 2)} and \code{options = c(1, 2, 3)}. Example returning an error: \code{data = c(1, 4)} and \code{options = c(1, 2, 3)}. If \code{TRUE}, the tested object must contain all of the options, at least once, and nothing else. Example returing no error: \code{data = c(1, 1, 2, 3} and \code{options = c(1, 2, 3)}. Example returing an error (missing 3): \code{data = c(1, 1, 2} and \code{options = c(1, 2, 3)}. Example returing an error (unwanted 4): \code{data = c(1, 1, 4} and \code{options = c(1, 2, 3)}. Ignored if the \code{options} argument is \code{NULL}.}
 
 \item{na_contain}{Single logical value. Can the \code{data} argument contain \code{NA}?}
 
-\item{neg_values}{Single logical value. Are negative numeric values authorized? Warning: the default setting is \code{TRUE}, meaning that, in that case, no check is performed for the presence of negative values. The \code{neg_values} argument is activated only when set to \code{FALSE}. In addition, (1) \code{neg_values = FALSE} can only be used when \code{class}, \code{typeof} or \code{mode} arguments are not \code{NULL}, otherwise an error message is returned, (2) the presence of negative values is not checked with \code{neg_values = FALSE} if the tested object is a factor. For the latter, a checking message is returned \code{"OBJECT MUST BE MADE OF NON NEGATIVE VALUES BUT IS A FACTOR"}.}
+\item{neg_values}{Single logical value. Are negative numeric values authorized? Warning: the default setting is \code{TRUE}, meaning that, in that case, no check is performed for the presence of negative values. The checking is activated only when set to \code{FALSE}. In addition, \code{FALSE} can only be used when the \code{typeof} argument is set to \code{"double"} or \code{"integer"}, or the \code{mode} argument to \code{"numeric"}. Otherwise an error message is returned. Finally, the presence of negative values is not checked with \code{FALSE} if the tested object is a factor and a message is returned: \code{"OBJECT MUST BE MADE OF NON NEGATIVE VALUES BUT IS A FACTOR"}.}
 
-\item{inf_values}{Single logical value. Are infinite numeric values authorized (\code{Inf} or \code{-Inf})? Same remarks as for the \code{neg_values} argument.}
+\item{inf_values}{Single logical value. Are infinite \code{Inf} or \code{-Inf} values authorized? Warning: the default setting is \code{TRUE}, meaning that, in that case, no check is performed for the presence of infinite values. The checking is activated only when set to \code{FALSE}. In addition, \code{FALSE} can only be used when the \code{typeof} argument is set to \code{"double"}, or the \code{mode} argument to \code{"numeric"}. Otherwise an error message is returned. Finally, the presence of infinite values is not checked with \code{FALSE} if the tested object is a factor and a message is returned: \code{"OBJECT MUST BE MADE OF NON NEGATIVE VALUES BUT IS A FACTOR"}.}
 
 \item{print}{Single logical value. Print the message if the \code{$problem} output is \code{TRUE}? Warning: set by default to \code{FALSE}, which facilitates the control of the checking message output when using \code{arg_check()} inside functions. See the example section.}
 
@@ -71,7 +71,7 @@ A list containing:
 }
 }
 \description{
-Check expected values of an argument of functions: class, type, mode, length, restricted values panel, kind of numeric values in addition to the distinction between \code{'integer'} and \code{'double'} (proportion only? Inf values authorized? negative values authorized? Integers of type \code{'double'}?)
+Check expected values of an argument of functions: class, type, mode, length, restricted values panel, kind of numeric values (in addition to the distinction between \code{'integer'} and \code{'double'})? Proportion only? Inf values authorized? negative values authorized? Integers of type \code{'double'}?
 }
 \details{
 If \code{options == NULL}, then at least \code{class} or \code{type} or \code{mode} or \code{length} argument must be non-null.
@@ -82,11 +82,13 @@ The function tests what is written in its arguments, even if what is written is 
  
 If the tested object is \code{NULL}, then the function will always return a checking problem.
  
-The argument \code{class} can be set to \code{"vector"}. This means that the object is tested for \code{class(data)} returning only \code{"numeric"}, \code{"integer"}, \code{"character"}, \code{"logical"}, \code{"complex"} or \code{"expression"}. Please, use another value of \code{class} (e.g., \code{class = "call"} or \code{class = "list"}) for other types and class of objects.
- 
-Since R >= 4.0.0, \code{class(matrix())} returns \code{"matrix"} \code{"array"}, and not \code{"matrix"} alone as before. However, use argument \code{class = "matrix"} to check for matrix object (of class \code{"matrix"} \code{"array"} in R >= 4.0.0) and use argument \code{class = "array"} to check for array object (of class \code{"array"} in R >= 4.0.0).
-
-See more examples \href{https://safer-r.github.io/saferDev/articles/all_args_here.html}{here}.
+The \code{class} argument is a simplified version of \code{class(data)}:
+\itemize{
+  \item \code{"vector"} tests objects of class \code{"numeric"}, \code{"integer"}, \code{"character"}, \code{"logical"}, \code{"complex"} or \code{"expression"} (no error if \code{class(data)} returns one of these values).
+  \item \code{"matrix"} tests objects of class \code{"matrix"} for R < 4.0.0 and \code{c(""matrix", "array"")} otherwise.
+  \item \code{"ggplot2"} tests objects of class \code{c("gg", "ggplot")} for R < 4.5 and \code{c("ggplot2::ggplot", "ggplot", "ggplot2::gg", "S7_object", "gg")} otherwise.
+  \item \code{"ggplot2"} tests objects of class \code{"ggplot_built"} for R < 4.5 and \code{c("ggplot2::ggplot_built", "ggplot_built", "ggplot2::gg", "S7_object")} otherwise.
+}
 }
 \examples{
 # Warning: these examples may not work well when using the "Run examples" link 
@@ -99,8 +101,6 @@ saferDev::arg_check(data = test, print = TRUE, class = "vector", mode = "numeric
 }
 saferDev::arg_check(data = test, print = TRUE, class = "matrix", mode = "numeric")
 saferDev::arg_check(data = test, print = TRUE, class = "matrix", mode = "numeric", error_text = " using saferDev::arg_check()")
-
-# See more examples here: https://safer-r.github.io/saferDev/articles/all_args_here.html
 
 }
 \seealso{
