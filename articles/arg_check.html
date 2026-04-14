@@ -206,20 +206,10 @@
 <h3 id="arguments-class-typeof-mode-and-length">Arguments <code>class</code>, <code>typeof</code>, <code>mode</code>
 and <code>length</code><a class="anchor" aria-label="anchor" href="#arguments-class-typeof-mode-and-length"></a>
 </h3>
-<p>These arguments accept as values the classical kind of class, type,
-mode and length, respectively, except the <code>class</code> argument,
-which:</p>
-<ul>
-<li>also accepts <code>“vector”</code>, <code>“ggplot2”</code> (i.e.,
-objects of class <code>c(“gg”, “ggplot”)</code> for R &lt; 4.5 and
-<code>c(“ggplot2::ggplot”, “ggplot”, “ggplot2::gg”, “S7_object”,
-“gg”)</code> otherwise) or <code>“ggplot_built”</code> (i.e., objects of
-class <code>“ggplot_built”</code> for R &lt; 4.5 and
-<code>c(“ggplot2::ggplot_built”, “ggplot_built”, “ggplot2::gg”,
-“S7_object”)</code> otherwise) .</li>
-<li>accepts <code>“matrix”</code> for matrices (objects of class
-<code>c(“matrix” “array”)</code>).</li>
-</ul>
+<p>These arguments accept as values the classical kind of type, mode and
+length, respectively, except the <code>class</code> argument, which is
+simplified version of <code>class(data)</code>. See the help of
+<code>arg_check</code>.</p>
 <div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Example.</span></span>
 <span><span class="fu"><a href="../reference/arg_check.html">arg_check</a></span><span class="op">(</span></span>
