@@ -16,6 +16,9 @@ library(saferDev)
 ```
 <br>
 
+These examples may not work well here because of a particular environment. Please, copy-paste in a local environment.
+<br>
+
 ### Argument <code>pos</code>
 ```{r}
 # Checking of the environment one step above \code{env_check()} local environment.

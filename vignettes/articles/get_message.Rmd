@@ -16,6 +16,9 @@ library(saferDev)
 ```
 <br>
 
+These examples may not work well here because of a particular environment. Please, copy-paste in a local environment.
+<br>
+
 ### Dataset
 
 ```{r}
