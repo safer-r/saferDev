@@ -404,7 +404,10 @@ is_package_here <- function(
     #### main code
     pack_list <- base::rownames(x = utils::installed.packages(lib.loc = lib_path, priority = NULL, noCache = FALSE, fields = NULL, subarch = .Platform$r_arch, cache_user_dir = ), do.NULL = TRUE, prefix = "row")
     if(base::length(x = pack_list) == 0){
+        # nocov start
+        # codecov inactivated because it is an internal control of code writing, impossible to cover with argument values, because pack_list is never empty
         pkg.log <- FALSE
+        # nocov end
     }else{
         pkg.log <- req_package %in% pack_list
     }
