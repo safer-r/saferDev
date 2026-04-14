@@ -444,7 +444,7 @@ arg_check <- function(
         "character"
     )
     tempo.arg.base <- base::c( # no base::names(base::formals(fun = base::sys.function(base::sys.parent(n = 2)))) used with arg_check() to be sure to deal with the correct environment
-        "class", 
+        # "class", 
         "typeof", 
         "mode", 
         "length", 
@@ -463,7 +463,6 @@ arg_check <- function(
         # "error_text" # already checked above
     )
     tempo.mode <- base::list( # no base::get() used to be sure to deal with the correct environment
-        base::mode(x = mode), 
         base::mode(x = typeof), 
         base::mode(x = mode), 
         base::mode(x = length), 
@@ -485,7 +484,7 @@ arg_check <- function(
         tempo.sep <- base::sapply(X = base::mapply(x = " ", y = base::max(base::nchar(x = tempo_cat1, type = "chars", allowNA = FALSE, keepNA = NA), na.rm = TRUE) - base::nchar(x = tempo_cat1, type = "chars", allowNA = FALSE, keepNA = NA) + 3, FUN = function(x, y){base::rep(x = x, times = y)}, MoreArgs = NULL, SIMPLIFY = FALSE, USE.NAMES = TRUE), FUN = function(x){base::paste0(x, collapse = "", recycle0 = FALSE)}, simplify = TRUE, USE.NAMES = TRUE)
         tempo_cat <- base::paste0(
             error_text_start, 
-            "ANY ARGUMENT EXCEPT data MUST BE MODE \"logical\", \"integer\", \"numeric\", \"character\" OR NULL.\nPROBLEMATIC ARGUMENT", 
+            "ANY ARGUMENT EXCEPT data AND class MUST BE MODE \"logical\", \"integer\", \"numeric\", \"character\" OR NULL.\nPROBLEMATIC ARGUMENT", 
             base::ifelse(test = base::length(x = tempo_cat1) > 1, yes = "S", no = ""), 
             " AND ASSOCIATED MODE", 
             base::ifelse(test = base::length(x = tempo_cat1) > 1, yes = "ES ARE", no = " IS"), 

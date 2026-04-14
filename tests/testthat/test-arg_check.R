@@ -209,6 +209,11 @@ testthat::test_that("arg_check()", {
     testthat::expect_error(arg_check(data = vec1, mode = "numeric", safer_check = mat3))
     testthat::expect_no_error(arg_check(data = vec1, mode = "numeric", error_text = mat3))
     # end management of special classes
+    # authorized modes for the arguments
+    testthat::expect_error(arg_check(data = vec1, double_as_integer_allowed = function(){}))
+    testthat::expect_error(arg_check(arg_check(data = vec1, options = TRUE))
+    testthat::expect_error(arg_check(arg_check(data = vec1, options = 1.2))
+    # end authorized modes for the arguments
     # management of the logical arguments
     # prop tested below
     # double_as_integer_allowed
@@ -561,22 +566,16 @@ testthat::test_that("arg_check()", {
     result <- arg_check(data = vec1, options = 8, all_options_in_data = FALSE)
     expect <- list(problem = TRUE, text = "ERROR\n\nTHE vec1 ARGUMENT MUST BE SOME OF THESE OPTIONS:\n8\nTHE PROBLEMATIC ELEMENTS OF vec1 ARE:\n-1\n0\n1\n2\n3", object.name = "vec1")
     testthat::expect_equal(result, expect)
-
-
+    result <- arg_check(data = ggplot2::ggplot_build(ggplot2::ggplot()), options = 1)
+    expect <- list(problem = TRUE, text = "ERROR\n\nTHE ggplot2::ggplot_build(ggplot2::ggplot()) ARGUMENT MUST BE SOME OF THESE OPTIONS:\n1\nBUT IS NOT EVEN TYPE CHARACTER OR INTEGER, OR TYPE DOUBLE WITH A 0 MODULO.", object.name = "ggplot2::ggplot_build(ggplot2::ggplot())")
+    testthat::expect_equal(result, expect)
     # if( ! base::is.null(x = length)){
-
-
-
-
-
-
-
-
-
-
-
-
-
+    result <- arg_check(data = vec1, length = 5)
+    expect <- list(problem = FALSE, text = "NO PROBLEM DETECTED FOR THE vec1 ARGUMENT.", object.name = "vec1")
+    testthat::expect_equal(result, expect)
+    result <- arg_check(data = vec1, length = 2)
+    expect <- list(problem = TRUE, text = "ERROR\n\nTHE vec1 ARGUMENT MUST BE LENGTH 2", object.name = "vec1")
+    testthat::expect_equal(result, expect)
     # end if( ! base::is.null(x = length)){
 
     # end if(( ! base::is.null(options)) & (base::all(base::typeof(data) == "character") | base::all(base::typeof(data) == "integer") | base::all(base::typeof(data) == "double"))){
