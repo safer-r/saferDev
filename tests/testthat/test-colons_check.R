@@ -26,6 +26,16 @@ testthat::test_that("colons_check()", {
     fun8 <- function(x){
         return(NULL)
     }
+    # A function calling only non-base functions (assuming dplyr is available)
+    fun_non_base <- function(data){
+        dplyr::filter(data, mpg > 20)  # 'filter' is not a base function
+    }
+
+    # OR a function calling only user-defined functions (not in base)
+    my_helper <- function(x) x * 2
+    fun_custom <- function(){
+        my_helper(5)  # 'my_helper' is not a base R function
+    }
     test <- function(
             text, 
             pattern
@@ -209,6 +219,11 @@ testthat::test_that("colons_check()", {
     testthat::expect_no_error(colons_check(x = fun7, safer_check = TRUE, lib_path = NULL, error_text = ""))
 
     testthat::expect_no_error(colons_check(x = fun8, safer_check = FALSE, lib_path = NULL, error_text = ""))
+
+
+    colons_check(x = fun fun_non_base)  # Reaches line 476
+    colons_check(x = fun_custom)     # Reaches line 476
+
 
     #### end main code
 

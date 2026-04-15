@@ -475,6 +475,7 @@ colons_check <- function(
         }else{
             log_basic <- FALSE
             cat_basic <- NULL
+            print("caca")
         }
         # end analyse of :: before basic functions in x
     }else{
