@@ -440,6 +440,23 @@ testthat::test_that("get_message()", {
     rm(stats_env)
     # end env test
 
+
+    # This reaches line 540 (evaluates the expression with warning capture setup)
+    result <- get_message(data = "wilcox.test(c(1,1,3), c(1,2,4), paired = TRUE)", kind = "warning")
+    expected <-  "WARNING MESSAGE REPORTED:\nIn wilcox.test.default(c(1, 1, 3), c(1, 2, 4), paired = TRUE): cannot compute exact p-value with zeroes\n"
+    testthat::expect_equal(result, expected)
+    result <- get_message(data = "1 + 1", kind = "warning")  # Also reaches it, even though no warning occurs
+    expected <-  NULL
+    testthat::expect_equal(result, expected)
+    # end This reaches line 540 (evaluates the expression with warning capture setup)
+
+    # Reaches lines 569-570 (header = TRUE by default)
+    get_message(data = "message('Hello world')", kind = "message", header = TRUE)
+    # end Reaches lines 569-570 (header = TRUE by default)
+    # Reaches lines 571-572 (else branch with header = FALSE)
+    get_message(data = "message('Hello world')", kind = "message", header = FALSE)
+    # end Reaches lines 571-572 (else branch with header = FALSE)
+
     ## end other tests
     rm(list = ls()) # to avoid a warning that block CRAN tests 
 })
