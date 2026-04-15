@@ -23,6 +23,9 @@ testthat::test_that("colons_check()", {
         ggplot()
         print()
     }
+    fun8 <- function(x){
+        return(NULL)
+    }
     test <- function(
             text, 
             pattern
@@ -204,6 +207,9 @@ testthat::test_that("colons_check()", {
     testthat::expect_no_error(colons_check(x = fun4, safer_check = TRUE, lib_path = NULL, error_text = ""))
     testthat::expect_no_error(colons_check(x = fun6, safer_check = TRUE, lib_path = NULL, error_text = ""))
     testthat::expect_no_error(colons_check(x = fun7, safer_check = TRUE, lib_path = NULL, error_text = ""))
+
+    testthat::expect_no_error(colons_check(x = fun8, safer_check = FALSE, lib_path = NULL, error_text = ""))
+
     #### end main code
 
     ## end tests (ordered by arg appearance and conditions in the code)
