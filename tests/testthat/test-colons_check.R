@@ -28,7 +28,7 @@ testthat::test_that("colons_check()", {
     }
     # A function calling only non-base functions (assuming dplyr is available)
     fun_non_base <- function(data){
-        dplyr::filter(data, mpg > 20)  # 'filter' is not a base function
+        ggplot2::ggplot(mtcars, aes(x = mpg, y = wt)) + ggplot2::geom_point()  # 'filter' is not a base function
     }
 
     # OR a function calling only user-defined functions (not in base)
