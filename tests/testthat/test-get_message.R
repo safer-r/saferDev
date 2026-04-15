@@ -452,11 +452,15 @@ testthat::test_that("get_message()", {
 
     # Reaches lines 569-570 (header = TRUE by default)
     result <- get_message(data = "message('Hello world')", kind = "message", header = TRUE)
+    print("caca0")
+    print(result)
     expected <-  "STANDARD MESSAGE REPORTED:\nHello world"
     testthat::expect_equal(result, expected)
     # end Reaches lines 569-570 (header = TRUE by default)
     # Reaches lines 571-572 (else branch with header = FALSE)
     result <- get_message(data = "message('Hello world')", kind = "message", header = FALSE)
+    print("caca1")
+    print(result)
     expected <-  "Hello world"
     testthat::expect_equal(result, expected)
     # end Reaches lines 571-572 (else branch with header = FALSE)
