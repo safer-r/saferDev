@@ -473,9 +473,11 @@ colons_check <- function(
             log_basic <- tempo$colon_not_here
             cat_basic <- tempo$output.cat
         }else{
+            # nocov start
+            # codecov inactivated because it is an internal control of code writing, impossible to cover with argument values. Because empty function, etc., are already checked above
             log_basic <- FALSE
             cat_basic <- NULL
-            print("caca")
+            # nocov end
         }
         # end analyse of :: before basic functions in x
     }else{
@@ -519,8 +521,11 @@ colons_check <- function(
             log_other <- tempo$colon_not_here
             cat_other <- tempo$output.cat
         }else{
+            # nocov start
+            # codecov inactivated because it is an internal control of code writing, impossible to cover with argument values. Because if(base::length(x = base::unlist(x = in_other_fun, recursive = TRUE, use.names = TRUE)) != 0) already checks that there are other functions above
             log_other <- FALSE
             cat_other <- NULL
+            # nocov end
         }
     }else{
         log_other <- FALSE
