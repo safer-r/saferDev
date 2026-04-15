@@ -221,7 +221,7 @@ testthat::test_that("colons_check()", {
     testthat::expect_no_error(colons_check(x = fun8, safer_check = FALSE, lib_path = NULL, error_text = ""))
 
 
-    colons_check(x = fun fun_non_base)  # Reaches line 476
+    colons_check(x = fun_non_base)  # Reaches line 476
     colons_check(x = fun_custom)     # Reaches line 476
 
 
