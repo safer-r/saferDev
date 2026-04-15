@@ -26,6 +26,10 @@ testthat::test_that("colons_check()", {
     fun8 <- function(x){
         return(NULL)
     }
+    fun9 <- function(x){
+        b <- c("a", "b")
+    }
+
     # A function calling only non-base functions (assuming dplyr is available)
     fun_non_base <- function(data){
         ggplot2::ggplot(mtcars, aes(x = mpg, y = wt)) + ggplot2::geom_point()  # 'filter' is not a base function
@@ -221,8 +225,8 @@ testthat::test_that("colons_check()", {
     testthat::expect_no_error(colons_check(x = fun8, safer_check = FALSE, lib_path = NULL, error_text = ""))
 
 
-    colons_check(x = fun_non_base)  # Reaches line 476
-    colons_check(x = fun_custom)     # Reaches line 476
+    testthat::expect_no_error(colons_check(x = fun_non_base))  
+    testthat::expect_no_error(colons_check(x = fun_custom))    
 
 
     #### end main code
