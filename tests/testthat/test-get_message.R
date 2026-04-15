@@ -441,7 +441,7 @@ testthat::test_that("get_message()", {
     # end env test
 
 
-    # This reaches line 540 (evaluates the expression with warning capture setup)
+    # This reaches line 540 (evaluates the expression with warning capture setup), but locally only
     result <- get_message(data = "wilcox.test(c(1,1,3), c(1,2,4), paired = TRUE)", kind = "warning")
     expected <-  "WARNING MESSAGE REPORTED:\nIn wilcox.test.default(c(1, 1, 3), c(1, 2, 4), paired = TRUE): cannot compute exact p-value with zeroes\n"
     testthat::expect_equal(result, expected)
