@@ -451,10 +451,14 @@ testthat::test_that("get_message()", {
     # end This reaches line 540 (evaluates the expression with warning capture setup)
 
     # Reaches lines 569-570 (header = TRUE by default)
-    get_message(data = "message('Hello world')", kind = "message", header = TRUE)
+    result <- get_message(data = "message('Hello world')", kind = "message", header = TRUE)
+    expected <-  "STANDARD MESSAGE REPORTED:\nHello world"
+    testthat::expect_equal(result, expected)
     # end Reaches lines 569-570 (header = TRUE by default)
     # Reaches lines 571-572 (else branch with header = FALSE)
-    get_message(data = "message('Hello world')", kind = "message", header = FALSE)
+    result <- get_message(data = "message('Hello world')", kind = "message", header = FALSE)
+    expected <-  "Hello world"
+    testthat::expect_equal(result, expected)
     # end Reaches lines 571-572 (else branch with header = FALSE)
 
     ## end other tests
