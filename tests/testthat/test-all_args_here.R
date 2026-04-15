@@ -47,6 +47,12 @@ testthat::test_that("all_args_here()", {
         if(a > 0) base::return(TRUE)  # 'if' is a special primitive with no formals
         base::return(FALSE)
     }
+    fun15 <- function(x) {
+        base::length(x)  # 'if' is a special primitive with no formals
+    }
+    fun16 <- function(x) {
+        base::getwd()  # 'if' is a special primitive with no formals
+    }
     test <- function(
             text, 
             pattern
@@ -359,7 +365,8 @@ testthat::test_that("all_args_here()", {
     a <- file.remove("./res.tsv")
 
     testthat::expect_no_error(all_args_here(x = fun14))
-
+    testthat::expect_no_error(all_args_here(x = fun15))
+    testthat::expect_no_error(all_args_here(x = fun16))
     #### end main code
 
     ## end tests (ordered by arg appearance and conditions in the code)
