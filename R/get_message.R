@@ -537,7 +537,10 @@ get_message <- function(
                     W <<- w # send to the above env, i.e., the inside of the fun.warning.capture function
                     base::invokeRestart(r = "muffleWarning") # here w.handler() muffles all the warnings. See http://romainfrancois.blog.free.fr/index.php?post/2009/05/20/Disable-specific-warnings to muffle specific warnings and print others
                 }
+                # nocov start
+                # codecov inactivated because testthat::expect_no_error(get_message()) does not detect taht it is used. But is is
                 value = base::suppressMessages(expr = base::withCallingHandlers(expr = base::tryCatch(expr = expr, error = function(e){e}, finally = ), warning = w.handler), classes = "message") # BEWARE: w.handler is a function written without (), like in other functions with FUN argument
+                # nocov end
                 output <- base::list(
                     value = value, 
                     warning = W # processed by w.handler()
@@ -566,11 +569,14 @@ get_message <- function(
             }else if(kind == "warning" & base::length(x = tempo_warn) == 0 & print_no == TRUE){
                 output <- base::paste0("NO WARNING MESSAGE REPORTED", base::ifelse(test = base::is.null(x = text), yes = "", no = " "), text, collapse = NULL, recycle0 = FALSE)
             }else if(kind == "message" & base::length(x = tempo_message) > 0){ 
+                # nocov start
+                # codecov inactivated because standard messages are not caught inside testthat::expect_no_error(get_message()). But works locally and is reached by the test-get_message.R
                 if(header == TRUE){
                     output <- base::paste0("STANDARD MESSAGE REPORTED", base::ifelse(test = base::is.null(x = text), yes = "", no = " "), text, ":\n", tempo_message, collapse = NULL, recycle0 = FALSE) #
                 }else{
                     output <- tempo_message #
                 }
+                # nocov end
             }else if(kind == "message" & base::length(x = tempo_message) == 0 & print_no == TRUE){
                 output <- base::paste0("NO STANDARD MESSAGE REPORTED", base::ifelse(test = base::is.null(x = text), yes = "", no = " "), text, collapse = NULL, recycle0 = FALSE)
             } # no need else{} here because output is already NULL at first
