@@ -53,6 +53,12 @@ testthat::test_that("all_args_here()", {
     fun16 <- function(x) {
         base::getwd()  # 'if' is a special primitive with no formals
     }
+    fun17 <- function(x) {
+        base::gc(x)  # 'if' is a special primitive with no formals
+    }
+    fun18 <- function(x) {
+        base::quote(x)  # 'if' is a special primitive with no formals
+    }
     test <- function(
             text, 
             pattern
@@ -367,6 +373,8 @@ testthat::test_that("all_args_here()", {
     testthat::expect_no_error(all_args_here(x = fun14))
     testthat::expect_no_error(all_args_here(x = fun15))
     testthat::expect_no_error(all_args_here(x = fun16))
+    testthat::expect_no_error(all_args_here(x = fun17))
+    testthat::expect_no_error(all_args_here(x = fun18))
     #### end main code
 
     ## end tests (ordered by arg appearance and conditions in the code)
