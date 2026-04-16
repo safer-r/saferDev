@@ -291,7 +291,7 @@
     # check of lib_path
     # full check already done in the main function
     if(base::is.null(x = lib_path)){
-        lib_path <- base:::.libPaths(new = , include.site = TRUE) # base::.libPaths(new = lib_path) # or base::.libPaths(new = c(base::.libPaths(), lib_path))
+        lib_path <- base::.libPaths(new = , include.site = TRUE) # base::.libPaths(new = lib_path) # or base::.libPaths(new = c(base::.libPaths(), lib_path))
     }
     # end check of lib_path
     ######## end other checkings
