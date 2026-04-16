@@ -17,7 +17,7 @@ Check if critical operators of R are not present in other packages or in the glo
 }
 \examples{
 \dontrun{
-# Example that shouldn't be run because this is an internal function (not found by devtools::check())
+# Example that shouldn't be run because this is an internal function.
 saferDev:::.base_op_check(error_text = " INSIDE fun1.") # nothing should happen
 assign("!", 1)
 assign("+", 2)

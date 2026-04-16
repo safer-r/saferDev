@@ -54,10 +54,16 @@
 #' test <- matrix(1:3)
 #' \dontrun{
 #' # Example that returns an error
-#' saferDev::arg_check(data = test, print = TRUE, class = "vector", mode = "numeric")  # error: THE test ARGUMENT MUST BE CLASS vector
+#' saferDev::arg_check(data = test, print = TRUE, class = "vector", mode = "numeric")
 #' }
 #' saferDev::arg_check(data = test, print = TRUE, class = "matrix", mode = "numeric")
-#' saferDev::arg_check(data = test, print = TRUE, class = "matrix", mode = "numeric", error_text = " using saferDev::arg_check()")
+#' saferDev::arg_check(
+#'     data = test, 
+#'     print = TRUE, 
+#'     class = "matrix", 
+#'     mode = "numeric", 
+#'     error_text = " using saferDev::arg_check()"
+#' )
 #' 
 #' @export
 arg_check <- function(

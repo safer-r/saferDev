@@ -21,7 +21,7 @@
 #' @author \href{mailto:wanghaiding442@gmail.com}{Haiding Wang}
 #' @examples
 #' \dontrun{
-#' # Example that shouldn't be run because this is an internal function (not found by devtools::check())
+#' # Example that shouldn't be run because this is an internal function.
 #' saferDev:::.extract_all_fun_names(text = 'This is a test string with sum()', 
 #' pattern = "([a-zA-Z]|\\.[a-zA-Z._])[a-zA-Z0-9._]*\\s*\\(", 
 #' lib_path = NULL, error_text = " INSIDE P1::F1")

@@ -25,7 +25,7 @@
 #' @author \href{mailto:wanghaiding442@gmail.com}{Haiding Wang}
 #' @examples
 #' \dontrun{
-#' # Example that shouldn't be run because this is an internal function (not found by devtools::check())
+#' # Example that shouldn't be run because this is an internal function.
 #' # Warning : examples only with strings that must be cleaned from brackets between quotes
 #' saferDev:::.fun_args_pos(
 #'     text = ' "a" ; paste0("I", paste0(sum(1:3), collapse = " "), min(1) ) ; range(2)', 

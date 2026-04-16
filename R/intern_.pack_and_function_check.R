@@ -11,16 +11,24 @@
 #' @author \href{mailto:wanghaiding442@gmail.com}{Haiding Wang}
 #' @examples
 #' \dontrun{
-#' # Example that shouldn't be run because this is an internal function (not found by devtools::check())
-#' saferDev:::.pack_and_function_check(fun = 1, lib_path = NULL, error_text = " INSIDE F1.") # this example returns an error
-#' saferDev:::.pack_and_function_check(fun = "ggplot2::notgood", lib_path = base::.libPaths(), error_text = " INSIDE P1::F1") # this example returns an error
+#' # Example that shouldn't be run because this is an internal function.
+#' # this example returns an error
+#' saferDev:::.pack_and_function_check(
+#'     fun = 1, 
+#'     lib_path = NULL, 
+#'     error_text = " INSIDE F1."
+#' ) 
+#' saferDev:::.pack_and_function_check(
+#'     fun = "ggplot2::notgood", 
+#'     lib_path = base::.libPaths(), 
+#'     error_text = " INSIDE P1::F1"
+#' ) # this example returns an error
 #' saferDev:::.pack_and_function_check(
 #'     fun = c("ggplot2::geom_point", "grid::gpar"), 
 #'     lib_path = base::.libPaths(), 
 #'     error_text = " INSIDE P1::F1"
 #' )  # nothing should happen
 #' }
-#' 
 #' 
 #' @keywords internal
 .pack_and_function_check <- function(

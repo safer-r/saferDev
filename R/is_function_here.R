@@ -16,7 +16,7 @@
 #' # See also https://safer-r.github.io/saferDev/articles/is_function_here.html
 #' \dontrun{
 #' # Example that returns an error
-#' saferDev::is_function_here(fun = "ggplot2::notgood", error_text = " INSIDE P1::F1") # commented because this example returns an error
+#' saferDev::is_function_here(fun = "ggplot2::notgood", error_text = " INSIDE P1::F1")
 #' saferDev::is_function_here(fun = c("ggplot2::geom_point", "grid::gpar"))
 #' saferDev::is_function_here(fun = "c")
 #' }

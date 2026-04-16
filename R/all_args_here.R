@@ -65,7 +65,14 @@
 #' saferDev::all_args_here(test2) # the checked function must be executable
 #' }
 #' 
-#' FUN2 <- function(x, y){middle_bracket2 <- base::do.call(what = base::c, args = code_for_col, quote = FALSE, envir = base::parent.frame())}
+#' FUN2 <- function(x, y){
+#'     middle_bracket2 <- base::do.call(
+#'         what = base::c, 
+#'         args = code_for_col, 
+#'         quote = FALSE, 
+#'         envir = base::parent.frame()
+#'     )
+#' }
 #' saferDev::all_args_here(FUN2, safer_check = FALSE)
 #' 
 #' \dontrun{

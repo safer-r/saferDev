@@ -28,7 +28,7 @@
 #' }
 #' @examples
 #' \dontrun{
-#' # Example that shouldn't be run because this is an internal function (not found by devtools::check())
+#' # Example that shouldn't be run because this is an internal function.
 #' saferDev:::.all_args_here_fill(arg_full = list(x = quote(expr = )), arg_full_names = "x", 
 #' tempo_split = "x", three_dots_log = FALSE, i2 = 1, col1_i2 = 1, col2_i2 = "length", 
 #' arg_user_setting_x = "\"FUN1\"", warn = NULL, warn_count = 0, lib_path = NULL, 

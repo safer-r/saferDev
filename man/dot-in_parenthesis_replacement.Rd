@@ -55,10 +55,19 @@ Warnings:
 }
 \examples{
 \dontrun{
-# Example that shouldn't be run because this is an internal function (not found by devtools::check())
-saferDev:::.in_parenthesis_replacement(string = "pattern = base::paste0(pattern, \"\\\\\\\\(#\"), text = text", 
-pattern = ",", no_regex_pattern = ",", replacement = " ", perl = TRUE, open_pos = 23, 
-close_pos = 39, lib_path = NULL, error_text = " INSIDE P1::F1")
+# Example that shouldn't be run because this is an internal function.
+saferDev:::.in_parenthesis_replacement(
+    string = "pattern = base::paste0(pattern, \"\\\\\\\\(#\"), 
+    text = text", 
+    pattern = ",", 
+    no_regex_pattern = ",", 
+    replacement = " ", 
+    perl = TRUE, 
+    open_pos = 23, 
+    close_pos = 39, 
+    lib_path = NULL, 
+    error_text = " INSIDE P1::F1"
+)
 }
 
 

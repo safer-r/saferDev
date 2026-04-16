@@ -26,11 +26,13 @@
 #' search() # current R scope (order of the successive R environments).
 #' utils::find("mean") # where the objects with the name "mean" are present.
 #' utils::find("t.test") # where the objects with the name "mean" are present.
-#' a <- saferDev::env_check(pos = 1) # test if any object name of the global environment are above environments 
+#' # test if any object name of the global environment are above environments:
+#' a <- saferDev::env_check(pos = 1) 
 #' a # output string.
 #' cat(a)
 #' # test if any object of the stats environment (one step above .GlobalEnv) 
-#' # are in upper environments of stats. Returns NULL since no object names of stats are in upper environments:
+#' # are in upper environments of stats. Returns NULL since no object names of 
+#' # stats are in upper environments:
 #' saferDev::env_check(pos = 2) 
 #' rm(mean)
 #' rm(t.test)
@@ -51,7 +53,9 @@
 #'   sum <- 0
 #'   saferDev::env_check(pos = 2)
 #' }
-#' fun2() # Warning: cat(fun2()) does not return NULL, because the environment tested is not anymore .GlobalEnv but inside cat().
+#' fun2()
+#' # Warning: cat(fun2()) does not return NULL, because the environment tested is not 
+#' # anymore .GlobalEnv but inside cat().
 #' a <- fun2() 
 #' cat(a) # nothing displayed because fun2() returns NULL
 #' # With the name of the function fun3 indicated in the message:

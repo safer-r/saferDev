@@ -34,7 +34,7 @@ Warnings:
 }
 \examples{
 \dontrun{
-# Example that shouldn't be run because this is an internal function (not found by devtools::check())
+# Example that shouldn't be run because this is an internal function.
 source("https://raw.githubusercontent.com/safer-r/saferDev/main/dev/other/test.R")
 saferDev:::.noclean_functions(col1 = c(15, 17), col2 = c("gregexpr", "regmatches"), 
 col3 = c("matches <- ", "matched_strings <- "), 

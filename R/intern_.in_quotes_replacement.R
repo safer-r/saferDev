@@ -27,7 +27,7 @@
 #' @author \href{mailto:wanghaiding442@gmail.com}{Haiding Wang}
 #' @examples
 #' \dontrun{
-#' # Example that shouldn't be run because this is an internal function (not found by devtools::check())
+#' # Example that shouldn't be run because this is an internal function.
 #' source("https://raw.githubusercontent.com/safer-r/saferDev/main/dev/other/test.R")
 #' saferDev:::.in_quotes_replacement(string = paste(deparse(test), collapse = ""), 
 #' pattern = "\\)", no_regex_pattern = ")", replacement = " ", perl = TRUE, 

@@ -24,7 +24,7 @@
 #' }
 #' @examples
 #' \dontrun{
-#' # Example that shouldn't be run because this is an internal function (not found by devtools::check())
+#' # Example that shouldn't be run because this is an internal function.
 #' saferDev:::.colons_check_message(list_fun = list(c2 = "UseMethod"), 
 #' list_fun_pos = list(c2 = 1), line_nb = 2, 
 #' ini = c("function (x, ...) ", "UseMethod(\"mean\")"), 

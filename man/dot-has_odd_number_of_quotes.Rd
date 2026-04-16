@@ -32,7 +32,7 @@ Warnings:
 }
 \examples{
 \dontrun{
-# Example that shouldn't be run because this is an internal function (not found by devtools::check())
+# Example that shouldn't be run because this is an internal function.
 saferDev:::.has_odd_number_of_quotes(
 input_string = 'This is a "test" string with "even" quotes', 
 pattern = '"', 
