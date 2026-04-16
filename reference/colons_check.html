@@ -97,7 +97,7 @@
 <p>More precisely, <code>colons_check()</code> verifies that all the strings before an opening bracket <code>(</code> are preceded by <code>::</code>.</p>
 <p><code>:::</code> are not checked per se, because incorrect writing, like <code><a href="dot-colons_check_message.html">saferDev::.colons_check_message()</a></code> returns an error when executing the tested function, and because <code>base:::sum()</code> is as ok as <code><a href="https://rdrr.io/r/base/sum.html" class="external-link">base::sum()</a></code>. In the same manner, more than three colons are not checked because it returns an error when executing the tested function.</p>
 <p>Warning: <code>colons_check()</code> cannot check function names written without brackets, like in the <code>FUN</code> argument of some functions, e.g., <code>sapply(1:3, FUN = as.character)</code>.</p>
-<p>The perl regex used to detect a function name is: <code>"([a-zA-Z]|\.[a-zA-Z._])[a-zA-Z0-9._]*\s*\("</code>.</p>
+<p>The Perl regex used to detect a function name is: <code>"([a-zA-Z]|\.[a-zA-Z._])[a-zA-Z0-9._]*\s*\("</code>.</p>
 <p>Currently, <code>colons_check()</code> cannot detect functions written between quotes, like <code><a href="https://rdrr.io/r/base/Arithmetic.html" class="external-link">"+"()</a></code> or <code>"rownames&lt;-"(x, "a")</code>.</p>
 <p>Function names preceded by <code>$</code> are not considered.</p> 
 <p>The following R functions are skipped: <code>"function"</code>, <code>"if"</code>, <code>"for"</code>, <code>"while"</code>, <code>"repeat"</code> and <code>"else"</code>.</p>
@@ -168,7 +168,7 @@ checking dependencies in R code ... WARNING
 
 
     <footer><div class="pkgdown-footer-left">
-  <p>Developed by <a href="https://github.com/Tintin2710" class="external-link">Haiding Wang</a>, Gael Millot.</p>
+  <p>Developed by <a href="https://github.com/Tintin2710" class="external-link">Haiding Wang</a>, <a href="https://github.com/yushiHn" class="external-link">Yushi Han</a>, Gael Millot.</p>
 </div>
 
 <div class="pkgdown-footer-right">

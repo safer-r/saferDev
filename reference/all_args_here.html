@@ -123,7 +123,7 @@ Column descriptions:</p><ul><li><p><code>$LINE_NB</code>: the line number in the
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
     <p>More precisely, <code>all_args_here()</code> verifies that all the strings before an opening bracket <code>(</code> are written with all their arguments. Thus, it cannot check function names written without brackets, like in the <code>FUN</code> argument of some functions, e.g., <code>sapply(1:3, FUN = as.character)</code>.</p>
-<p>The perl regex used to detect a function name is: <code>"([a-zA-Z]|\.[a-zA-Z._])[a-zA-Z0-9._]*\s*\("</code>.</p>
+<p>The Perl regex used to detect a function name is: <code>"([a-zA-Z]|\.[a-zA-Z._])[a-zA-Z0-9._]*\s*\("</code>.</p>
 <p>Currently, <code>all_args_here()</code> cannot detect functions written between quotes, like <code><a href="https://rdrr.io/r/base/Arithmetic.html" class="external-link">"+"()</a></code> or <code>"rownames&lt;-"(x, "a")</code>.</p>
 <p>Function names preceded by <code>$</code> are not considered.</p> 
 <p>The following R functions are skipped: <code>function</code>, <code>if</code>, <code>for</code>, <code>while</code>, <code>repeat</code> and <code>else</code>.</p>
@@ -179,8 +179,6 @@ Column descriptions:</p><ul><li><p><code>$LINE_NB</code>: the line number in the
 <span class="r-in"><span><span class="fu">saferDev</span><span class="fu">::</span><span class="fu">all_args_here</span><span class="op">(</span><span class="va">BACKBONE</span>, export <span class="op">=</span> <span class="cn">TRUE</span>, safer_check <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">}</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># See more examples here: https://safer-r.github.io/saferDev/articles/all_args_here.html</span></span></span>
-<span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
@@ -188,7 +186,7 @@ Column descriptions:</p><ul><li><p><code>$LINE_NB</code>: the line number in the
 
 
     <footer><div class="pkgdown-footer-left">
-  <p>Developed by <a href="https://github.com/Tintin2710" class="external-link">Haiding Wang</a>, Gael Millot.</p>
+  <p>Developed by <a href="https://github.com/Tintin2710" class="external-link">Haiding Wang</a>, <a href="https://github.com/yushiHn" class="external-link">Yushi Han</a>, Gael Millot.</p>
 </div>
 
 <div class="pkgdown-footer-right">
