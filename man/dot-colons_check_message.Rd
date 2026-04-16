@@ -25,7 +25,7 @@
 
 \item{ini}{Vector of strings of the initial function code analyzed.}
 
-\item{arg_user_setting2}{List of arg user settings.}
+\item{arg_user_setting2}{List of argument user settings.}
 
 \item{text}{Either \code{"BASIC"} or \code{"OTHER"}.}
 

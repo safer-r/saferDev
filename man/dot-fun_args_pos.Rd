@@ -9,7 +9,7 @@
 \arguments{
 \item{text}{Single string.}
 
-\item{pattern}{Single string of a perl regex to extract function name and \code{()}, using generally \code{paste0(<FUNCTION_NAME>, "[\\s\\r\\n]*\\(")}.}
+\item{pattern}{Single string of a Perl regex to extract function name and \code{()}, using generally \code{paste0(<FUNCTION_NAME>, "[\\s\\r\\n]*\\(")}.}
 
 \item{lib_path}{Vector of characters specifying the absolute pathways of the directories containing the required packages for the function, if not in the default directories. Useful when R packages are not installed in the default directories because of lack of admin rights. More precisely, \code{lib_path} is passed through the \code{new} argument of \code{.libPaths()} so that the new library paths are \code{unique(c(new, .Library.site, .Library))}. Warning: \code{.libPaths()} is restored to the initial paths, after function execution. Ignored if \code{NULL} (default) or if the \code{safer_check} argument is \code{FALSE}: only the pathways specified by the current \code{.libPaths()} are used for package calling.}
 

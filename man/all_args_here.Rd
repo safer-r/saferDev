@@ -55,7 +55,7 @@ Verify that all the functions used inside a function are written with all their 
 \details{
 More precisely, \code{all_args_here()} verifies that all the strings before an opening bracket \code{(} are written with all their arguments. Thus, it cannot check function names written without brackets, like in the \code{FUN} argument of some functions, e.g., \code{sapply(1:3, FUN = as.character)}.
 
-The perl regex used to detect a function name is: \code{"([a-zA-Z]|\\.[a-zA-Z._])[a-zA-Z0-9._]*\\s*\\("}.
+The Perl regex used to detect a function name is: \code{"([a-zA-Z]|\\.[a-zA-Z._])[a-zA-Z0-9._]*\\s*\\("}.
 
 Currently, \code{all_args_here()} cannot detect functions written between quotes, like \code{"+"()} or \code{"rownames<-"(x, "a")}.
 
@@ -98,8 +98,6 @@ saferDev::all_args_here(FUN2, safer_check = FALSE)
 source("https://raw.githubusercontent.com/safer-r/.github/refs/heads/main/profile/backbone.R")
 saferDev::all_args_here(BACKBONE, export = TRUE, safer_check = FALSE)
 }
-
-# See more examples here: https://safer-r.github.io/saferDev/articles/all_args_here.html
 
 }
 \author{

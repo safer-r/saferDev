@@ -20,7 +20,7 @@
 #' 
 #' Warning: \code{colons_check()} cannot check function names written without brackets, like in the \code{FUN} argument of some functions, e.g., \code{sapply(1:3, FUN = as.character)}.
 #' 
-#' The perl regex used to detect a function name is: \code{"([a-zA-Z]|\\.[a-zA-Z._])[a-zA-Z0-9._]*\\s*\\("}.
+#' The Perl regex used to detect a function name is: \code{"([a-zA-Z]|\\.[a-zA-Z._])[a-zA-Z0-9._]*\\s*\\("}.
 #' 
 #' Currently, \code{colons_check()} cannot detect functions written between quotes, like \code{"+"()} or \code{"rownames<-"(x, "a")}.
 #' 

@@ -2,7 +2,7 @@
 #' @description
 #' Return the positions of 1st letter of the first function name in a string, as well as its own opening and closing parenthesis, as well as positions of all the internal parenthesis (inside the own parenthesis).
 #' @param text Single string.
-#' @param pattern Single string of a perl regex to extract function name and \code{()}, using generally \code{paste0(<FUNCTION_NAME>, "[\\s\\r\\n]*\\(")}.
+#' @param pattern Single string of a Perl regex to extract function name and \code{()}, using generally \code{paste0(<FUNCTION_NAME>, "[\\s\\r\\n]*\\(")}.
 #' @param lib_path Vector of characters specifying the absolute pathways of the directories containing the required packages for the function, if not in the default directories. Useful when R packages are not installed in the default directories because of lack of admin rights. More precisely, \code{lib_path} is passed through the \code{new} argument of \code{.libPaths()} so that the new library paths are \code{unique(c(new, .Library.site, .Library))}. Warning: \code{.libPaths()} is restored to the initial paths, after function execution. Ignored if \code{NULL} (default) or if the \code{safer_check} argument is \code{FALSE}: only the pathways specified by the current \code{.libPaths()} are used for package calling.
 #' @param error_text Single character string used to add information in error messages returned by the function, notably if the function is inside other functions, which is practical for debugging. Example: \code{error_text = " INSIDE <PACKAGE_1>::<FUNCTION_1> INSIDE <PACKAGE_2>::<FUNCTION_2>."}. If \code{NULL}, converted into \code{""}.
 #' @returns A list containing positions:

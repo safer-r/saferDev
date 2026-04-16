@@ -26,7 +26,7 @@ A list:
   \item \code{fun_names_pos}: list of position of the first character of each \code{fun_names}. Compartment names indicate the code line number of the functions in \code{code}.
   \item \code{code_line_nb}: vector of integers of the code line numbers of code for each non empty compartment of \code{fun_names} and \code{fun_names_pos}.
   \item \code{internal_fun_names}: vector of string of names of internal functions in the code of the tested function.
-  \item \code{arg_user_setting}: list of arg user settings of the tested function.
+  \item \code{arg_user_setting}: list of argument user settings of the tested function.
 }
 }
 \description{
