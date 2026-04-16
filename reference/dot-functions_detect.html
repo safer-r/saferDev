@@ -97,10 +97,12 @@
 </ul></div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
-    
-
-
-    </div>
+    <p>Does not check if the functions inside the code exist.</p>
+<p>Use the regex pattern <code>"([a-zA-Z]|\.[a-zA-Z._])[a-zA-Z0-9._]*\s*\("</code> to detect a function in the code.</p>
+<p>The result in <code>all_basic_funs</code> are all the functions in <code>base::c("package:stats", "package:graphics",  "package:grDevices", "package:utils", "package:datasets", "package:methods", "Autoloads", "package:base")</code>.</p>
+<p>Warnings:</p><ul><li><p>Requires <code><a href="arg_check.html">saferDev::arg_check</a></code>, <code>saferDev:::.extract_all_fun_names</code>, <code>saferDev:::.has_odd_number_of_quotes</code>.</p></li>
+<li><p>In the safer Backbone section <code>"######## check of the required functions from the required packages"</code>, add also these 3 functions when checking for the presence of <code>saferDev:::.functions_detect</code>.</p></li>
+</ul></div>
     <div class="section level2">
     <h2 id="author">Author<a class="anchor" aria-label="anchor" href="#author"></a></h2>
     <p><a href="mailto:gael.millot@pasteur.fr">Gael Millot</a></p>
@@ -111,7 +113,7 @@
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span></span>
-<span class="r-in"><span><span class="co"># Example that shouldn't be run because this is an internal function (not found by devtools::check())</span></span></span>
+<span class="r-in"><span><span class="co"># Example that shouldn't be run because this is an internal function.</span></span></span>
 <span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/source.html" class="external-link">source</a></span><span class="op">(</span><span class="st">"C:\\Users\\gmillot\\Documents\\Git_projects\\safer-r\\saferDev\\dev\\other\\test.R"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu">saferDev</span><span class="fu">:::</span><span class="fu">.functions_detect</span><span class="op">(</span>x <span class="op">=</span> <span class="va">test</span>, </span></span>
 <span class="r-in"><span>arg_user_setting2 <span class="op">=</span> <span class="fu">base</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/name.html" class="external-link">as.name</a></span><span class="op">(</span>x <span class="op">=</span> <span class="st">"test"</span><span class="op">)</span><span class="op">)</span>, </span></span>

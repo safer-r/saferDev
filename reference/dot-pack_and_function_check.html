@@ -94,16 +94,24 @@ Simplified version of <code><a href="is_function_here.html">saferDev::is_functio
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span></span>
-<span class="r-in"><span><span class="co"># Example that shouldn't be run because this is an internal function (not found by devtools::check())</span></span></span>
-<span class="r-in"><span><span class="fu">saferDev</span><span class="fu">:::</span><span class="fu">.pack_and_function_check</span><span class="op">(</span>fun <span class="op">=</span> <span class="fl">1</span>, lib_path <span class="op">=</span> <span class="cn">NULL</span>, error_text <span class="op">=</span> <span class="st">" INSIDE F1."</span><span class="op">)</span> <span class="co"># this example returns an error</span></span></span>
-<span class="r-in"><span><span class="fu">saferDev</span><span class="fu">:::</span><span class="fu">.pack_and_function_check</span><span class="op">(</span>fun <span class="op">=</span> <span class="st">"ggplot2::notgood"</span>, lib_path <span class="op">=</span> <span class="fu">base</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/base/libPaths.html" class="external-link">.libPaths</a></span><span class="op">(</span><span class="op">)</span>, error_text <span class="op">=</span> <span class="st">" INSIDE P1::F1"</span><span class="op">)</span> <span class="co"># this example returns an error</span></span></span>
+<span class="r-in"><span><span class="co"># Example that shouldn't be run because this is an internal function.</span></span></span>
+<span class="r-in"><span><span class="co"># this example returns an error</span></span></span>
+<span class="r-in"><span><span class="fu">saferDev</span><span class="fu">:::</span><span class="fu">.pack_and_function_check</span><span class="op">(</span></span></span>
+<span class="r-in"><span>    fun <span class="op">=</span> <span class="fl">1</span>, </span></span>
+<span class="r-in"><span>    lib_path <span class="op">=</span> <span class="cn">NULL</span>, </span></span>
+<span class="r-in"><span>    error_text <span class="op">=</span> <span class="st">" INSIDE F1."</span></span></span>
+<span class="r-in"><span><span class="op">)</span> </span></span>
+<span class="r-in"><span><span class="fu">saferDev</span><span class="fu">:::</span><span class="fu">.pack_and_function_check</span><span class="op">(</span></span></span>
+<span class="r-in"><span>    fun <span class="op">=</span> <span class="st">"ggplot2::notgood"</span>, </span></span>
+<span class="r-in"><span>    lib_path <span class="op">=</span> <span class="fu">base</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/base/libPaths.html" class="external-link">.libPaths</a></span><span class="op">(</span><span class="op">)</span>, </span></span>
+<span class="r-in"><span>    error_text <span class="op">=</span> <span class="st">" INSIDE P1::F1"</span></span></span>
+<span class="r-in"><span><span class="op">)</span> <span class="co"># this example returns an error</span></span></span>
 <span class="r-in"><span><span class="fu">saferDev</span><span class="fu">:::</span><span class="fu">.pack_and_function_check</span><span class="op">(</span></span></span>
 <span class="r-in"><span>    fun <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"ggplot2::geom_point"</span>, <span class="st">"grid::gpar"</span><span class="op">)</span>, </span></span>
 <span class="r-in"><span>    lib_path <span class="op">=</span> <span class="fu">base</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/base/libPaths.html" class="external-link">.libPaths</a></span><span class="op">(</span><span class="op">)</span>, </span></span>
 <span class="r-in"><span>    error_text <span class="op">=</span> <span class="st">" INSIDE P1::F1"</span></span></span>
 <span class="r-in"><span><span class="op">)</span>  <span class="co"># nothing should happen</span></span></span>
 <span class="r-in"><span><span class="op">}</span></span></span>
-<span class="r-in"><span></span></span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>

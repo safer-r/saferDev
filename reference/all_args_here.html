@@ -155,20 +155,27 @@ Column descriptions:</p><ul><li><p><code>$LINE_NB</code>: the line number in the
 <span class="r-in"><span><span class="fu">saferDev</span><span class="fu">::</span><span class="fu">all_args_here</span><span class="op">(</span><span class="va">test2</span><span class="op">)</span> <span class="co"># the checked function must be executable</span></span></span>
 <span class="r-in"><span><span class="op">}</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="va">FUN2</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span>, <span class="va">y</span><span class="op">)</span><span class="op">{</span><span class="va">middle_bracket2</span> <span class="op">&lt;-</span> <span class="fu">base</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/base/do.call.html" class="external-link">do.call</a></span><span class="op">(</span>what <span class="op">=</span> <span class="fu">base</span><span class="fu">::</span><span class="va"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span>, args <span class="op">=</span> <span class="va">code_for_col</span>, quote <span class="op">=</span> <span class="cn">FALSE</span>, envir <span class="op">=</span> <span class="fu">base</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/base/sys.parent.html" class="external-link">parent.frame</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span><span class="op">}</span></span></span>
+<span class="r-in"><span><span class="va">FUN2</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span>, <span class="va">y</span><span class="op">)</span><span class="op">{</span></span></span>
+<span class="r-in"><span>    <span class="va">middle_bracket2</span> <span class="op">&lt;-</span> <span class="fu">base</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/base/do.call.html" class="external-link">do.call</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>        what <span class="op">=</span> <span class="fu">base</span><span class="fu">::</span><span class="va"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span>, </span></span>
+<span class="r-in"><span>        args <span class="op">=</span> <span class="va">code_for_col</span>, </span></span>
+<span class="r-in"><span>        quote <span class="op">=</span> <span class="cn">FALSE</span>, </span></span>
+<span class="r-in"><span>        envir <span class="op">=</span> <span class="fu">base</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/base/sys.parent.html" class="external-link">parent.frame</a></span><span class="op">(</span><span class="op">)</span></span></span>
+<span class="r-in"><span>    <span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">}</span></span></span>
 <span class="r-in"><span><span class="fu">saferDev</span><span class="fu">::</span><span class="fu">all_args_here</span><span class="op">(</span><span class="va">FUN2</span>, safer_check <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> INSIDE FUN2(), ARGUMENTS ARE MISSING.</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   LINE_NB     FUN_NAME</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1       1      do.call</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2       1 parent.frame</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                                                                    FUN_ARGS</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1 do.call(what = base::c, args = code_for_col, quote = FALSE, envir = base::parent.frame())</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2                                                                            parent.frame()</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1       2      do.call</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2       6 parent.frame</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                                                                         FUN_ARGS</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 do.call( what = base::c,  args = code_for_col,  quote = FALSE,  envir = base::parent.frame() )</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2                                                                                 parent.frame()</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   FUN_POS                                          DEF_ARGS MISSING_ARG_NAMES</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1      41 what, args, quote = FALSE, envir = parent.frame()                  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2     115                                             n = 1                 n</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1      26 what, args, quote = FALSE, envir = parent.frame()                  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2      15                                             n = 1                 n</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   MISSING_ARGS              STATUS</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1                             GOOD</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 2        n = 1 parent.frame(n = 1)</span>
