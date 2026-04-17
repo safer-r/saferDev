@@ -9,7 +9,6 @@ Authors@R: c(
     person(given = "Mia", family = "Legras", role = "ctb"),
     person(given = "Gael", family = "Millot",  email = "gael.millot@pasteur.fr", role = c("cre", "aut", "ctb"), comment = c(ORCID = "0000-0002-0591-3509"))
   )
-Author: Haiding Wang [ctb], Yushi Han [ctb], Mia Legras [ctb], Gael Millot [cre, aut, ctb]
 Encoding: UTF-8
 Maintainer: Gael Millot <gael.millot@pasteur.fr>
 Description: Function and Pipeline Development.

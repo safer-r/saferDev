@@ -110,7 +110,7 @@ saferDev::all_args_here(BACKBONE, export = TRUE, safer_check = FALSE)
 \author{
 \href{mailto:gael.millot@pasteur.fr}{Gael Millot}
 
-\href{yushi.han2000@gmail.com}{Yushi Han}
+Haiding Wang
 
-\href{wanghaiding442@gmail.com}{Haiding Wang}
+Yushi Han
 }

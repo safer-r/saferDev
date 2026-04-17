@@ -115,7 +115,7 @@ saferDev::arg_check(
 \author{
 \href{mailto:gael.millot@pasteur.fr}{Gael Millot}
 
-\href{mailto:yushi.han2000@gmail.com}{Yushi Han}
+Haiding Wang
 
-\href{mailto:wanghaiding442@gmail.com}{Haiding Wang}
+Yushi Han
 }
