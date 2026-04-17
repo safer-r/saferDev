@@ -390,11 +390,13 @@ testthat::test_that("get_message()", {
                 testthat::expect_no_error(get_message(data = str5, kind = "message", header = FALSE, print_no = FALSE, text = NULL, env = NULL, safer_check = TRUE, lib_path = NULL, error_text = ""))
                 result <- get_message(data = str5, kind = "message", header = FALSE, print_no = FALSE, text = NULL, env = NULL, safer_check = TRUE, lib_path = NULL, error_text = "")
                 #  testthat::skip_on_os("windows")  # or "linux", "mac"
-                expected <- if (base::Sys.info()[["sysname"]] == "Linux") {
-                    "`stat_bin()` using `bins = 30`. Pick better value `binwidth`."
+                r_version <- as.numeric_version(paste0(R.version$major, ".", R.version$minor))
+                if (r_version >= "4.5.0") {
+                    expected <- "`stat_bin()` using `bins = 30`. Pick better value `binwidth`."
                 } else {
-                    "`stat_bin()` using `bins = 30`. Pick better value `binwidth`."
+                    expected <- "`stat_bin()` using `bins = 30`. Pick better value with `binwidth`."
                 }
+                testthat::expect_equal(result, expected)
                 # expected <- "`stat_bin()` using `bins = 30`. Pick better value with `binwidth`."
                 testthat::expect_message(object = get_message(data = str5, kind = "message", header = FALSE, print_no = FALSE, text = NULL, env = NULL, safer_check = TRUE, lib_path = NULL, error_text = ""), fixed = TRUE, inherit = FALSE, regexp = expected)
                 # testthat::expect_equal(result, expected) # does not work. See https://github.com/r-lib/testthat/issues/2078#issuecomment-3096762198

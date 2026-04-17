@@ -641,13 +641,20 @@ testthat::test_that("arg_check()", {
     result <- arg_check(data = ggplot2::ggplot_build(ggplot2::ggplot()), class = "ggplot_built", options = NULL)
     expect <- list(problem = FALSE, text = "NO PROBLEM DETECTED FOR THE ggplot2::ggplot_build(ggplot2::ggplot()) ARGUMENT.", object.name = "ggplot2::ggplot_build(ggplot2::ggplot())")
     testthat::expect_equal(result, expect)
-    if (base::Sys.info()[["sysname"]] == "Linux") {
+    r_version <- as.numeric_version(paste0(R.version$major, ".", R.version$minor))
+    if (r_version >= "4.5.0"){
         result <- arg_check(data = ggplot2::ggplot_build(ggplot2::ggplot()), class = "ggplot_built", mode = "object")
     }else{
-        result <- arg_check(data = ggplot2::ggplot_build(ggplot2::ggplot()), class = "ggplot_built", mode = "object")
+        result <- arg_check(data = ggplot2::ggplot_build(ggplot2::ggplot()), class = "ggplot_built", mode = "list")
     }
     expect <- list(problem = FALSE, text = "NO PROBLEM DETECTED FOR THE ggplot2::ggplot_build(ggplot2::ggplot()) ARGUMENT.", object.name = "ggplot2::ggplot_build(ggplot2::ggplot())")
-    print(result)
+    testthat::expect_equal(result, expect)
+    if (r_version >= "4.5.0"){
+        result <- arg_check(data = ggplot2::ggplot_build(ggplot2::ggplot()), class = "ggplot_built", typeof = "object")
+    }else{
+        result <- arg_check(data = ggplot2::ggplot_build(ggplot2::ggplot()), class = "ggplot_built", typeof = "list")
+    }
+    expect <- list(problem = FALSE, text = "NO PROBLEM DETECTED FOR THE ggplot2::ggplot_build(ggplot2::ggplot()) ARGUMENT.", object.name = "ggplot2::ggplot_build(ggplot2::ggplot())")
     testthat::expect_equal(result, expect)
     result <- arg_check(data = list(), class = "ggplot_built")
     expect <- list(problem = TRUE, text = "ERROR\n\nTHE list() ARGUMENT MUST BE CLASS ggplot_built", object.name = "list()")
