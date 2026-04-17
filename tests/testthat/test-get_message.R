@@ -19,15 +19,12 @@ testthat::test_that("get_message()", {
     ## environment detection
     detect_environment <- function() {
         # Check for GitHub Actions
-        if(Sys.getenv("GITHUB_ACTIONS") == "true"){  # String "true", not TRUE
-            return("github")
-        }else if(identical(Sys.getenv("NOT_CRAN"), "true")){
-        # Check for CRAN
-        # On CRAN: NOT_CRAN is "" (empty)
-        # On local/devtools: NOT_CRAN is "true" outside devtools, it is ""
-            return("cran")  # NOT_CRAN="treu" means NOT on CRAN
-        }else{
-            return("local")   # NOT_CRAN="" means ON CRAN
+        if(Sys.getenv("GITHUB_ACTIONS") == "true") {
+            "github"
+        } else if(identical(Sys.getenv("NOT_CRAN"), "true")) {
+            "local"      # NOT_CRAN="true" -> not on CRAN
+        } else {
+            "cran"       # NOT_CRAN="" -> on CRAN
         }
     }
     detect_environment <- detect_environment()
@@ -410,11 +407,12 @@ testthat::test_that("get_message()", {
                 result <- get_message(data = str5, kind = "message", header = FALSE, print_no = FALSE, text = NULL, env = NULL, safer_check = TRUE, lib_path = NULL, error_text = "")
                 #  testthat::skip_on_os("windows")  # or "linux", "mac"
                 r_version <- as.numeric_version(paste0(R.version$major, ".", R.version$minor))
-
                 if(detect_environment == "cran"){
                     expected <- NULL
-                }else if(detect_environment == "github"){
+                }else if(detect_environment == "github" && base::Sys.info()[["sysname"]] == "Linux"){
                     expected <- "`stat_bin()` using `bins = 30`. Pick better value with `binwidth`." # this one is for the git push
+                }else if(detect_environment == "github" && base::Sys.info()[["sysname"]] != "Linux"){
+                    expected <- "`stat_bin()` using `bins = 30`. Pick better value `binwidth`." # this one is for the git push
                 }else if(detect_environment == "local"){
                     expected <- "`stat_bin()` using `bins = 30`. Pick better value `binwidth`."
                 }
