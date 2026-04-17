@@ -17,16 +17,35 @@ testthat::test_that("get_message()", {
     ## end data argument values
 
     ## environment detection
-    detect_environment <- function() {
-        # Check for GitHub Actions
+    detect_environment <- function(){
+        # GitHub Actions
         if(Sys.getenv("GITHUB_ACTIONS") == "true"){
-            "github"
-        }else if(nzchar(Sys.getenv("_R_CHECK_PACKAGE_NAME_"))){
-            "rcmd"
-        }else if(identical(Sys.getenv("NOT_CRAN"), "true")){
-            "local"      # NOT_CRAN="true" -> not on CRAN
-        }else{
-            "cran"       # NOT_CRAN="" -> on CRAN
+            return("github")
+        }
+        
+        # R CMD check
+        if(nzchar(Sys.getenv("_R_CHECK_PACKAGE_NAME_"))){
+            return("rcmd")
+        }
+        
+        # Check if inside test_that by examining call stack
+        calls <- sys.calls()
+        call_names <- vapply(calls, function(x) {
+            if(is.call(x)) deparse(x[[1]]) else ""
+        }, character(1))
+        
+        # Match with or without namespace prefix
+        is_inside_test_that <- any(grepl("test_that", call_names))
+        
+        # Interactive context
+        if(interactive()) {
+            if(is_inside_test_that) {
+                return("local_source")    # source() - inside test_that()
+            } else {
+                return("local_copypaste") # copy-paste - outside test_that()
+            }
+        } else {
+            return("cran")
         }
     }
     detect_environment <- detect_environment()
@@ -415,8 +434,10 @@ testthat::test_that("get_message()", {
                     expected <- "`stat_bin()` using `bins = 30`. Pick better value with `binwidth`." # this one is for the git push
                 }else if(detect_environment == "github" && base::Sys.info()[["sysname"]] != "Linux"){
                     expected <- "`stat_bin()` using `bins = 30`. Pick better value `binwidth`." # this one is for the git push
-                }else if(detect_environment == "local"){
+                }else if(detect_environment == "local_copypaste"){
                     expected <- "`stat_bin()` using `bins = 30`. Pick better value `binwidth`."
+                }else if(detect_environment == "local_source"){
+                    expected <- NULL
                 }
                 testthat::expect_equal(result, expected)
                 # expected <- "`stat_bin()` using `bins = 30`. Pick better value with `binwidth`."
@@ -462,7 +483,9 @@ testthat::test_that("get_message()", {
         expected <- "ERROR MESSAGE REPORTED:\nIn get_message(data = str6, kind = \"warning\", header = TRUE, print_no = FALSE,  : \n  could not find function \"get_message\"\n" # eval only in stat()
     }else if(detect_environment == "github"){
         expected <- "ERROR MESSAGE REPORTED:\nIn base::eval(expr = base::parse(text = data, file = \"\", n = NULL,  : \n  object 'stats_env' not found\n" # this one is for the git push
-    }else if(detect_environment == "local"){
+    }else if(detect_environment == "local_copypaste"){
+        expected <- "ERROR MESSAGE REPORTED:\nIn get_message(data = str6, kind = \"warning\", header = TRUE, print_no = FALSE,  : \n  could not find function \"get_message\"\n"
+    }else if(detect_environment == "local_source"){
         expected <- "ERROR MESSAGE REPORTED:\nIn get_message(data = str6, kind = \"warning\", header = TRUE, print_no = FALSE,  : \n  could not find function \"get_message\"\n"
     }
     testthat::expect_equal(result, expected)
@@ -485,8 +508,10 @@ testthat::test_that("get_message()", {
         expected <- NULL
     }else if(detect_environment == "github"){
         expected <- NULL # this one is for the git push
-    }else if(detect_environment == "local"){
+    }else if(detect_environment == "local_copypaste"){
         expected <- "STANDARD MESSAGE REPORTED:\nHello world"
+    }else if(detect_environment == "local_source"){
+        expected <- NULL
     }
     testthat::expect_equal(result, expected)
     # end Reaches lines 569-570 (header = TRUE by default)
@@ -496,8 +521,10 @@ testthat::test_that("get_message()", {
         expected <- NULL
     }else if(detect_environment == "github"){
         expected <- NULL # this one is for the git push
-    }else if(detect_environment == "local"){
+    }else if(detect_environment == "local_copypaste"){
         expected <- "Hello world"
+    }else if(detect_environment == "local_source"){
+        expected <- NULL
     }
     testthat::expect_equal(result, expected)
     # end Reaches lines 571-572 (else branch with header = FALSE)
