@@ -16,6 +16,25 @@ testthat::test_that("get_message()", {
     fun1 <- function(x){x = 1}
     ## end data argument values
 
+    ## environment detection
+    detect_environment <- function() {
+        # Check for GitHub Actions
+        if(Sys.getenv("GITHUB_ACTIONS") == "true"){  # String "true", not TRUE
+            return("github")
+        }else if(identical(Sys.getenv("NOT_CRAN"), "true")){
+        # Check for CRAN
+        # On CRAN: NOT_CRAN is "" (empty)
+        # On local/devtools: NOT_CRAN is "true" outside devtools, it is ""
+            return("cran")  # NOT_CRAN="treu" means NOT on CRAN
+        }else{
+            return("local")   # NOT_CRAN="" means ON CRAN
+        }
+    }
+    detect_environment <- detect_environment()
+    print(paste0("ENVIR OF testthat::test_that() for get_message(): ", paste0(detect_environment, collapse = " ")))
+    ## end environment detection
+
+
     ## initialization of tests
     testthat::expect_error(get_message(caca = 1)) # to test for the absence of ...
     testthat::expect_no_error(get_message(data = str1, kind = "error", header = TRUE, print_no = FALSE, text = NULL, env = NULL, safer_check = TRUE, lib_path = NULL, error_text = "")) # to test that this example works
@@ -391,10 +410,13 @@ testthat::test_that("get_message()", {
                 result <- get_message(data = str5, kind = "message", header = FALSE, print_no = FALSE, text = NULL, env = NULL, safer_check = TRUE, lib_path = NULL, error_text = "")
                 #  testthat::skip_on_os("windows")  # or "linux", "mac"
                 r_version <- as.numeric_version(paste0(R.version$major, ".", R.version$minor))
-                if (r_version >= "4.5.0") {
+
+                if(detect_environment == "cran"){
+                    expected <- NULL
+                }else if(detect_environment == "github"){
+                    expected <- "`stat_bin()` using `bins = 30`. Pick better value with `binwidth`." # this one is for the git push
+                }else if(detect_environment == "local"){
                     expected <- "`stat_bin()` using `bins = 30`. Pick better value `binwidth`."
-                } else {
-                    expected <- "`stat_bin()` using `bins = 30`. Pick better value with `binwidth`."
                 }
                 testthat::expect_equal(result, expected)
                 # expected <- "`stat_bin()` using `bins = 30`. Pick better value with `binwidth`."
@@ -436,8 +458,13 @@ testthat::test_that("get_message()", {
     result <- get_message(data = 'get_message(data = str6, kind = "warning", header = TRUE, print_no = FALSE, text = "IN FUN1", env = stats_env, safer_check = TRUE, lib_path = NULL, error_text = "")', kind = "error", header = TRUE, print_no = FALSE, text = NULL, env = stats_env, safer_check = TRUE, lib_path = NULL, error_text = "")
     # expected <- "ERROR MESSAGE REPORTED:\nError : \n\n================\n\nERROR IN saferDev::get_message().\n\nTHE data ARGUMENT MUST BE A SINGLE CHARACTER STRING.\n\n================\n\n\n" # eval only in stat(). str6 not found
     # expected <- "ERROR MESSAGE REPORTED:\nIn get_message(data = str6, kind = \"warning\", header = TRUE, print_no = FALSE,  : \n  could not find function \"get_message\"\n" # this one is for the local testing # eval only in stat(). get_message() not found
-    # expected <- "ERROR MESSAGE REPORTED:\nIn get_message(data = str6, kind = \"warning\", header = TRUE, print_no = FALSE,  : \n  object 'stats_env' not found\n" # eval only in stat(). stats_env not found
-    expected <- "ERROR MESSAGE REPORTED:\nIn base::eval(expr = base::parse(text = data, file = \"\", n = NULL,  : \n  object 'stats_env' not found\n" # this one is for the git push
+    if(detect_environment == "cran"){
+        expected <- "ERROR MESSAGE REPORTED:\nIn get_message(data = str6, kind = \"warning\", header = TRUE, print_no = FALSE,  : \n  could not find function \"get_message\"\n" # eval only in stat()
+    }else if(detect_environment == "github"){
+        expected <- "ERROR MESSAGE REPORTED:\nIn base::eval(expr = base::parse(text = data, file = \"\", n = NULL,  : \n  object 'stats_env' not found\n" # this one is for the git push
+    }else if(detect_environment == "local"){
+        expected <- "ERROR MESSAGE REPORTED:\nIn get_message(data = str6, kind = \"warning\", header = TRUE, print_no = FALSE,  : \n  could not find function \"get_message\"\n"
+    }
     testthat::expect_equal(result, expected)
     rm(stats_env)
     # end env test
@@ -454,14 +481,24 @@ testthat::test_that("get_message()", {
 
     # Reaches lines 569-570 (header = TRUE by default)
     result <- get_message(data = "message('Hello world')", kind = "message", header = TRUE)
-    # expected <-  "STANDARD MESSAGE REPORTED:\nHello world" # local
-    expected <- NULL # puch
+    if(detect_environment == "cran"){
+        expected <- NULL
+    }else if(detect_environment == "github"){
+        expected <- NULL # this one is for the git push
+    }else if(detect_environment == "local"){
+        expected <- "STANDARD MESSAGE REPORTED:\nHello world"
+    }
     testthat::expect_equal(result, expected)
     # end Reaches lines 569-570 (header = TRUE by default)
     # Reaches lines 571-572 (else branch with header = FALSE)
     result <- get_message(data = "message('Hello world')", kind = "message", header = FALSE)
-    # expected <- "Hello world" # local
-    expected <- NULL # puch
+    if(detect_environment == "cran"){
+        expected <- NULL
+    }else if(detect_environment == "github"){
+        expected <- NULL # this one is for the git push
+    }else if(detect_environment == "local"){
+        expected <- "Hello world"
+    }
     testthat::expect_equal(result, expected)
     # end Reaches lines 571-572 (else branch with header = FALSE)
 
