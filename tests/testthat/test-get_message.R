@@ -438,6 +438,8 @@ testthat::test_that("get_message()", {
                     expected <- "`stat_bin()` using `bins = 30`. Pick better value `binwidth`."
                 }else if(detect_environment == "local_source"){
                     expected <- NULL
+                }else if(detect_environment == "rcmd"){
+                    expected <- NULL
                 }
                 testthat::expect_equal(result, expected)
                 # expected <- "`stat_bin()` using `bins = 30`. Pick better value with `binwidth`."
@@ -487,6 +489,8 @@ testthat::test_that("get_message()", {
         expected <- "ERROR MESSAGE REPORTED:\nIn get_message(data = str6, kind = \"warning\", header = TRUE, print_no = FALSE,  : \n  could not find function \"get_message\"\n"
     }else if(detect_environment == "local_source"){
         expected <- "ERROR MESSAGE REPORTED:\nIn get_message(data = str6, kind = \"warning\", header = TRUE, print_no = FALSE,  : \n  could not find function \"get_message\"\n"
+    }else if(detect_environment == "rcmd"){
+        expected <- "ERROR MESSAGE REPORTED:\nIn base::eval(expr = base::parse(text = data, file = \"\", n = NULL,  : \n  object 'stats_env' not found\n" # this one is for the git push
     }
     testthat::expect_equal(result, expected)
     rm(stats_env)
@@ -512,6 +516,8 @@ testthat::test_that("get_message()", {
         expected <- "STANDARD MESSAGE REPORTED:\nHello world"
     }else if(detect_environment == "local_source"){
         expected <- NULL
+    }else if(detect_environment == "rcmd"){
+        expected <- NULL
     }
     testthat::expect_equal(result, expected)
     # end Reaches lines 569-570 (header = TRUE by default)
@@ -524,6 +530,8 @@ testthat::test_that("get_message()", {
     }else if(detect_environment == "local_copypaste"){
         expected <- "Hello world"
     }else if(detect_environment == "local_source"){
+        expected <- NULL
+    }else if(detect_environment == "rcmd"){
         expected <- NULL
     }
     testthat::expect_equal(result, expected)
