@@ -7,8 +7,8 @@
 #' @param error_text Single character string used to add information in error messages returned by the function, notably if the function is inside other functions, which is practical for debugging. Example: \code{error_text = " INSIDE <PACKAGE_1>::<FUNCTION_1> INSIDE <PACKAGE_2>::<FUNCTION_2>."}. If \code{NULL}, converted into \code{""}.
 #' @returns An error message if at least one of the checked packages is missing in \code{lib_path}, or if at least one of the checked functions is missing in the required package, nothing otherwise.
 #' @author \href{mailto:gael.millot@pasteur.fr}{Gael Millot}
-#' @author \href{mailto:yushi.han2000@gmail.com}{Yushi Han}
-#' @author \href{mailto:wanghaiding442@gmail.com}{Haiding Wang}
+#' @author Haiding Wang  
+#' @author Yushi Han
 #' @examples
 #' \dontrun{
 #' # Example that shouldn't be run because this is an internal function.

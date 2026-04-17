@@ -52,8 +52,8 @@
 #'   \item Proposals in the \code{STATUS} column are only suggestions, as it is difficult to anticipate all the exceptions with arguments writing.
 #' }
 #' @author \href{mailto:gael.millot@pasteur.fr}{Gael Millot}
-#' @author \href{yushi.han2000@gmail.com}{Yushi Han}
-#' @author \href{wanghaiding442@gmail.com}{Haiding Wang}  
+#' @author Haiding Wang  
+#' @author Yushi Han
 #' @examples
 #' # Warning: these examples may not work well when using the "Run examples" link 
 #' # because of a particular environment. Please, copy-paste in a local environment.

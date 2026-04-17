@@ -1,6 +1,6 @@
 Package: saferTool2
 Type: Package
-Title: Sophisticated tools
+Title: Sophisticated Tools
 Version: 1.0
 Date: 2023-12-20
 Authors@R: c(

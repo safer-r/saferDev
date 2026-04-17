@@ -8,8 +8,8 @@
 #' @returns An error message if at least one of the checked packages is missing in \code{lib_path}, or if at least one of the checked functions is missing in the required package, nothing otherwise.
 #' @seealso \code{\link{exists}} and \code{\link{findFunction}}
 #' @author \href{mailto:gael.millot@pasteur.fr}{Gael Millot}
-#' @author \href{mailto:yushi.han2000@gmail.com}{Yushi Han}
-#' @author \href{mailto:wanghaiding442@gmail.com}{Haiding Wang}
+#' @author Haiding Wang  
+#' @author Yushi Han
 #' @examples
 #' # Warning: these examples may not work well when using the "Run examples" link 
 #' # because of a particular environment. Please, copy-paste in a local environment.

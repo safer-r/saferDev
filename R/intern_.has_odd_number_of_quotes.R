@@ -15,8 +15,8 @@
 #'   \item In the safer Backbone section \code{"######## check of the required functions from the required packages"}, add also \code{saferDev::arg_check} when checking for the presence of \code{saferDev:::.has_odd_number_of_quotes}.
 #' }
 #' @author \href{mailto:gael.millot@pasteur.fr}{Gael Millot}
-#' @author \href{mailto:yushi.han2000@gmail.com}{Yushi Han}
-#' @author \href{mailto:wanghaiding442@gmail.com}{Haiding Wang}
+#' @author Haiding Wang  
+#' @author Yushi Han
 #' @examples
 #' \dontrun{
 #' # Example that shouldn't be run because this is an internal function.

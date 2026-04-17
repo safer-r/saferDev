@@ -15,8 +15,8 @@
 #' @returns Nothing (implementation of an existing file) or a text file.
 #' @seealso \code{\link{capture.output}}.
 #' @author \href{mailto:gael.millot@pasteur.fr}{Gael Millot}
-#' @author \href{mailto:yushi.han2000@gmail.com}{Yushi Han}
-#' @author \href{mailto:wanghaiding442@gmail.com}{Haiding Wang}
+#' @author Haiding Wang  
+#' @author Yushi Han
 #' @examples
 #' # Warning: these examples may not work well when using the "Run examples" link 
 #' # because of a particular environment. Please, copy-paste in a local environment.

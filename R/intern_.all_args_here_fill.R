@@ -35,8 +35,8 @@
 #' error_text = " INSIDE P1::F1")
 #' }
 #' @author \href{mailto:gael.millot@pasteur.fr}{Gael Millot}
-#' @author \href{yushi.han2000@gmail.com}{Yushi Han}
-#' @author \href{wanghaiding442@gmail.com}{Haiding Wang}  
+#' @author Haiding Wang  
+#' @author Yushi Han
 #' @keywords internal
 .all_args_here_fill <- function(
     # in internal functions, all arguments are without value on purpose

@@ -649,7 +649,7 @@ testthat::test_that("arg_check()", {
     expect <- list(problem = FALSE, text = "NO PROBLEM DETECTED FOR THE ggplot2::ggplot_build(ggplot2::ggplot()) ARGUMENT.", object.name = "ggplot2::ggplot_build(ggplot2::ggplot())")
     testthat::expect_equal(result, expect)
     if (base::Sys.info()[["sysname"]] == "Linux") {
-        result <- arg_check(data = ggplot2::ggplot_build(ggplot2::ggplot()), class = "ggplot_built", typeof = "list")
+        result <- arg_check(data = ggplot2::ggplot_build(ggplot2::ggplot()), class = "ggplot_built", typeof = "object")
     }else{
         result <- arg_check(data = ggplot2::ggplot_build(ggplot2::ggplot()), class = "ggplot_built", typeof = "object")
     }

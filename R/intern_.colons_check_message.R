@@ -33,8 +33,8 @@
 #' error_text = " INSIDE P1::F1")
 #' }
 #' @author \href{mailto:gael.millot@pasteur.fr}{Gael Millot}
-#' @author \href{mailto:yushi.han2000@gmail.com}{Yushi Han}
-#' @author \href{mailto:wanghaiding442@gmail.com}{Haiding Wang}
+#' @author Haiding Wang  
+#' @author Yushi Han
 #' 
 #' 
 #' @keywords internal

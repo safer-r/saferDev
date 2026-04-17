@@ -1,5 +1,5 @@
 
-# saferDev <a href="">[<img src="man/figures/new_saferDev.png" align="right" height="140" />](https://safer-r.github.io/saferDev)</a>
+# saferDev <a href="">[<img src="man/figures/new_saferDev.png" align="right" height="140" />](https://safer-r.github.io/saferDev/)</a>
 
 <br />
 
@@ -8,7 +8,7 @@
 [![Codecov test coverage](https://codecov.io/github/safer-r/saferDev/coverage.svg?branch=master)](https://app.codecov.io/github/safer-r/saferDev?branch=master)
 [![CRAN status](https://img.shields.io/cran/v/saferDev.svg)](https://cran.r-project.org/package=saferDev)
 [![downloads](https://cranlogs.r-pkg.org/badges/saferDev)](https://www.rdocumentation.org/trends)
-[![](https://img.shields.io/badge/license-GPL3.0-green.svg)](https://opensource.org/licenses/MITgpl-3-0)
+[![](https://img.shields.io/badge/license-GPL3.0-green.svg)](https://opensource.org/license/gpl-3.0)
 [![rworkflows](https://github.com/safer-r/saferDev/actions/workflows/rworkflows.yml/badge.svg)](https://github.com/safer-r/saferDev/actions/workflows/rworkflows.yml)
 [![safer-R Status](https://img.shields.io/badge/Safer--R%20status-backbone%20v19.3-brightgreen)](https://github.com/safer-r/.github/blob/main/profile/backbone.R)
 <!-- badges: end -->
@@ -31,7 +31,7 @@
 
 ## Description
 
-Set of R functions for the development of R functions, written according to the [safer-R project](https://github.com/safer-r) specifications.
+Set of functions for the development of R functions and pipelines, written according to the [safer-R project](https://github.com/safer-r) specifications.
 
 <br />
 
@@ -117,6 +117,7 @@ The developers & maintainers of the mentioned softwares and packages, including:
 - [R](https://www.r-project.org/)
 - [Git](https://git-scm.com/)
 - [GitHub](https://github.com/)
-
+- [rworkflows](https://github.com/neurogenomics/rworkflows)
+- [tidyverse](https://ggplot2.tidyverse.org/)
 
 
