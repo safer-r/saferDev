@@ -19,11 +19,13 @@ testthat::test_that("get_message()", {
     ## environment detection
     detect_environment <- function() {
         # Check for GitHub Actions
-        if(Sys.getenv("GITHUB_ACTIONS") == "true") {
+        if(Sys.getenv("GITHUB_ACTIONS") == "true"){
             "github"
-        } else if(identical(Sys.getenv("NOT_CRAN"), "true")) {
+        }else if(nzchar(Sys.getenv("_R_CHECK_PACKAGE_NAME_"))){
+            "rcmd"
+        }else if(identical(Sys.getenv("NOT_CRAN"), "true")){
             "local"      # NOT_CRAN="true" -> not on CRAN
-        } else {
+        }else{
             "cran"       # NOT_CRAN="" -> on CRAN
         }
     }
