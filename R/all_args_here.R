@@ -40,7 +40,7 @@
 #' 
 #' The returned line numbers are indicative, depending on which source is checked. For instance, \code{saferDev::report} (compiled) has not the same line numbers as its \href{https://github.com/safer-r/saferDev/blob/main/R/report.R}{source file}. Notably, compiled functions do not have comments anymore, compared to the same source function sourced into the working environment. In addition, the counting starts at the \code{"<- function"} line, i.e., without counting the \code{#'} header lines potentially present in source files.
 #' 
-#' The function works first by replacing in the code: 1) the three consecutive characters \code{'"'} or \code{'"'} by three spaces, 2) \code{"\\"'"} and \code{'\\'"'} by four spaces and 3) escape quotes like \code{\\"} or \code{\\'} by two spaces.
+#' The function works first by replacing in the code: 1) the three consecutive characters \code{'"'} or \code{'"'} by three spaces, 2) \code{"\"'"} and \code{'\'"'} by four spaces and 3) escape quotes like \code{\"} or \code{\'} by two spaces.
 #' 
 #' See more examples \href{https://safer-r.github.io/saferDev/articles/all_args_here.html}{here}.
 #' 

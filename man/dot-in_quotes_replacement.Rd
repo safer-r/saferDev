@@ -40,7 +40,7 @@ A list containing:
 Parse a string and replace any pattern inside simple or double quotes by another replacement pattern and get the position of replacements.
 }
 \details{
-The function works first by replacing in the code: 1) the three consecutive characters \code{'"'} or \code{'"'} by three spaces, 2) \code{"\"'"} and \code{'\\'"'} by four spaces and 3) escape quotes like \code{\"} or \code{\\'} by two spaces, before looking for the pattern inside quotes.
+The function works first by replacing in the code: 1) the three consecutive characters \code{'"'} or \code{'"'} by three spaces, 2) \code{"\"'"} and \code{'\'"'} by four spaces and 3) escape quotes like \code{\"} or \code{\'} by two spaces, before looking for the pattern inside quotes.
 
 Warnings:
 \itemize{

@@ -13,10 +13,3 @@ Encoding: UTF-8
 Maintainer: Gael Millot <gael.millot@pasteur.fr>
 Description: Function and Pipeline Development.
 License: GPL-3
-Imports: 
-    ggplot2
-Suggests: 
-    knitr,
-    rmarkdown,
-    testthat (>= 3.0.0)
-VignetteBuilder: knitr

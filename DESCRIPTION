@@ -13,6 +13,7 @@ Encoding: UTF-8
 Maintainer: Gael Millot <gael.millot@pasteur.fr>
 Description: Function and Pipeline Development.
 License: GPL-3
+RoxygenNote: 7.3.3
 Imports: 
     ggplot2
 Suggests: 
@@ -20,4 +21,3 @@ Suggests:
     rmarkdown,
     testthat (>= 3.0.0)
 VignetteBuilder: knitr
-RoxygenNote: 7.3.3
