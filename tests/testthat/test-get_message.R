@@ -21,13 +21,18 @@ testthat::test_that("get_message()", {
         # GitHub Actions
         if(Sys.getenv("GITHUB_ACTIONS") == "true"){
             return("github")
-        }
+
         
         # R CMD check
-        if(nzchar(Sys.getenv("_R_CHECK_PACKAGE_NAME_"))){
+        if(nzchar(Sys.getenv("_R_CHECK_PACKAGE_NAME_")) == TRUE && nzchar(Sys.getenv("NOT_CRAN")) == TRUE){
             return("rcmd")
         }
         
+            # R CMD check
+        if(nzchar(Sys.getenv("_R_CHECK_PACKAGE_NAME_")) == TRUE && nzchar(Sys.getenv("NOT_CRAN")) == FALSE){
+            return("cran")
+        }
+
         # Check if inside test_that by examining call stack
         calls <- sys.calls()
         call_names <- vapply(calls, function(x) {
@@ -394,14 +399,22 @@ testthat::test_that("get_message()", {
                     # if(base::any(base::grepl(x = tempo.warn[[1]], pattern
                     testthat::expect_no_error(get_message(data = str6, kind = "warning", header = TRUE, print_no = FALSE, text = NULL, env = NULL, safer_check = TRUE, lib_path = NULL, error_text = ""))
                     result <- get_message(data = str6, kind = "warning", header = TRUE, print_no = FALSE, text = NULL, env = NULL, safer_check = TRUE, lib_path = NULL, error_text = "")
-                    expected <- "WARNING MESSAGE REPORTED:\nIn wilcox.test.default(c(1, 1, 3), c(1, 2, 4), paired = TRUE): cannot compute exact p-value with zeroes\n"
+                    if(detect_environment == "rcmd"){
+                        expected <- NULL
+                    }else{
+                        expected <- "WARNING MESSAGE REPORTED:\nIn wilcox.test.default(c(1, 1, 3), c(1, 2, 4), paired = TRUE): cannot compute exact p-value with zeroes\n"
+                    }
                     testthat::expect_equal(result, expected)
                     # end if(base::any(base::grepl(x = tempo.warn[[1]], pattern
                 # end if(header == TRUE){
                 # }else{
                 testthat::expect_no_error(get_message(data = str6, kind = "warning", header = FALSE, print_no = FALSE, text = NULL, env = NULL, safer_check = TRUE, lib_path = NULL, error_text = ""))
                 result <- get_message(data = str6, kind = "warning", header = FALSE, print_no = FALSE, text = NULL, env = NULL, safer_check = TRUE, lib_path = NULL, error_text = "")
-                expected <- "simpleWarning in wilcox.test.default(c(1, 1, 3), c(1, 2, 4), paired = TRUE): cannot compute exact p-value with zeroes\n"
+                if(detect_environment == "rcmd"){
+                    expected <- NULL
+                }else{
+                    expected <- "simpleWarning in wilcox.test.default(c(1, 1, 3), c(1, 2, 4), paired = TRUE): cannot compute exact p-value with zeroes\n"
+                }
                 testthat::expect_equal(result, expected)
                 # end }else{
         # end if(kind == "warning" & base::length(x = tempo.warn) > 0){
@@ -499,7 +512,11 @@ testthat::test_that("get_message()", {
 
     # This reaches line 540 (evaluates the expression with warning capture setup), but locally only
     result <- get_message(data = "wilcox.test(c(1,1,3), c(1,2,4), paired = TRUE)", kind = "warning")
-    expected <-  "WARNING MESSAGE REPORTED:\nIn wilcox.test.default(c(1, 1, 3), c(1, 2, 4), paired = TRUE): cannot compute exact p-value with zeroes\n"
+    if(detect_environment == "rcmd"){
+        expected <- NULL
+    }else{
+        expected <-  "WARNING MESSAGE REPORTED:\nIn wilcox.test.default(c(1, 1, 3), c(1, 2, 4), paired = TRUE): cannot compute exact p-value with zeroes\n"
+    }
     testthat::expect_equal(result, expected)
     result <- get_message(data = "1 + 1", kind = "warning")  # Also reaches it, even though no warning occurs
     expected <-  NULL

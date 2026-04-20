@@ -1,3 +1,3 @@
-# saferDev 1.0
+# saferDev 1.0.0
 
 * Initial CRAN submission.
