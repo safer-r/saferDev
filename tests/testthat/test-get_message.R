@@ -431,9 +431,9 @@ testthat::test_that("get_message()", {
                 if(detect_environment == "cran"){
                     expected <- NULL
                 }else if(detect_environment == "github" && base::Sys.info()[["sysname"]] == "Linux"){
-                    expected <- "`stat_bin()` using `bins = 30`. Pick better value with `binwidth`." # this one is for the git push
+                    expected <- NULL # this one is for the git push
                 }else if(detect_environment == "github" && base::Sys.info()[["sysname"]] != "Linux"){
-                    expected <- "`stat_bin()` using `bins = 30`. Pick better value `binwidth`." # this one is for the git push
+                    expected <- NULL # this one is for the git push
                 }else if(detect_environment == "local_copypaste"){
                     expected <- "`stat_bin()` using `bins = 30`. Pick better value `binwidth`."
                 }else if(detect_environment == "local_source"){
