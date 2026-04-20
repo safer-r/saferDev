@@ -14,7 +14,7 @@
 #'   \item \code{pos}: vector of the positions of the 1st character of the replaced pattern. \code{NULL} if no replaced pattern. In that case, \code{string} is identical to the input string.
 #' }
 #' @details
-#' The function works first by replacing in the code: 1) the three consecutive characters \code{'"'} or \code{'"'} by three spaces, 2) \code{"\"'"} and \code{'\'"'} by four spaces and 3) escape quotes like \code{\"} or \code{\'} by two spaces, before looking for the pattern inside quotes.
+#' The function works first by replacing in the code: 1) the three consecutive characters \code{'"'} or \code{'"'} by three spaces, 2) \code{"\"'"} and \code{'\\'"'} by four spaces and 3) escape quotes like \code{\"} or \code{\\'} by two spaces, before looking for the pattern inside quotes.
 #'
 #' Warnings:
 #' \itemize{

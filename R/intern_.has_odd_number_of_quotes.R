@@ -7,7 +7,7 @@
 #' @param error_text Single character string used to add information in error messages returned by the function, notably if the function is inside other functions, which is practical for debugging. Example: \code{error_text = " INSIDE <PACKAGE_1>::<FUNCTION_1> INSIDE <PACKAGE_2>::<FUNCTION_2>."}. If \code{NULL}, converted into \code{""}.
 #' @returns \code{TRUE} or \code{FALSE}.
 #' @details
-#'  The function considers any present \code{'} (\code{pattern = "'\''"}) or \code{"} (\code{pattern = '"'}). Meaning that it does not treat special situation, like escape quotes \code{\"}, or situation like this \code{"'"}. All these must be removed from the \code{input_string} if necessary, using for instance: \code{input_string <- gsub( x = input_string, pattern = '"\'"', replacement = '   ')}
+#'  The function considers any present \code{'} (\code{pattern = "'\\''"}) or \code{"} (\code{pattern = '"'}). Meaning that it does not treat special situation, like escape quotes \code{\\"}, or situation like this \code{"'"}. All these must be removed from the \code{input_string} if necessary, using for instance: \code{input_string <- gsub( x = input_string, pattern = '"\\'"', replacement = '   ')}
 #' 
 #' Warnings:
 #' \itemize{

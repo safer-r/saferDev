@@ -31,7 +31,7 @@ Return the positions of 1st letter of the first function name in a string, as we
 Warnings:
 \itemize{
   \item The tested string must be cleaned form brackets between quotes. Use \code{.in_quotes_replacement()} for that.
-  \item Quotes in strings are escaped, so that position of \code{(} in \code{\"a(} is 3, not 4.
+  \item Quotes in strings are escaped, so that position of \code{(} in \code{\\"a(} is 3, not 4.
   \item requires \code{saferDev::arg_check}.
   \item In the safer Backbone section \code{"######## check of the required functions from the required packages"}, add also \code{saferDev::arg_check} when checking for the presence of \code{saferDev:::.fun_args_pos}.
 }

@@ -22,7 +22,7 @@
 Determine if a string has a odd number of quotes.
 }
 \details{
-The function considers any present \code{'} (\code{pattern = "'\''"}) or \code{"} (\code{pattern = '"'}). Meaning that it does not treat special situation, like escape quotes \code{\"}, or situation like this \code{"'"}. All these must be removed from the \code{input_string} if necessary, using for instance: \code{input_string <- gsub( x = input_string, pattern = '"\'"', replacement = '   ')}
+The function considers any present \code{'} (\code{pattern = "'\\''"}) or \code{"} (\code{pattern = '"'}). Meaning that it does not treat special situation, like escape quotes \code{\\"}, or situation like this \code{"'"}. All these must be removed from the \code{input_string} if necessary, using for instance: \code{input_string <- gsub( x = input_string, pattern = '"\\'"', replacement = '   ')}
 
 Warnings:
 \itemize{
