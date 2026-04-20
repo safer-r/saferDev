@@ -441,9 +441,6 @@ testthat::test_that("get_message()", {
                 }else if(detect_environment == "rcmd"){
                     expected <- NULL
                 }
-                print("caca")
-                print(paste0("dectect envir is:", detect_environment))
-                print(paste0("result is:", result))
                 testthat::expect_equal(result, expected)
                 # expected <- "`stat_bin()` using `bins = 30`. Pick better value with `binwidth`."
                 testthat::expect_message(object = get_message(data = str5, kind = "message", header = FALSE, print_no = FALSE, text = NULL, env = NULL, safer_check = TRUE, lib_path = NULL, error_text = ""), fixed = TRUE, inherit = FALSE, regexp = expected)

@@ -56,6 +56,8 @@ Warnings:
   \item Always use the \code{env} argument when \code{get_message()} is used inside functions.
   \item The function does not prevent printing, for instance if \code{print()} or \code{show()} is used inside the instruction tested. To prevent that, use \code{tempo <- utils::capture.output(error <- get_message(data = "arg_check(data = 'a', class = mean, neg_values = FALSE, print = TRUE)"))}. The return of \code{get_message()} is assigned into \code{error} and the printed messages are captured by \code{utils::capture.output()} and assigned into \code{tempo}. See the examples.
 }
+
+The \code{env} argument is used as value for the \code{envir} argument of the \code{base::eval()} function.
 }
 \examples{
 # Warning: these examples may not work well when using the "Run examples" link 
