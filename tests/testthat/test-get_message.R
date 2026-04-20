@@ -29,7 +29,7 @@ testthat::test_that("get_message()", {
         }
         
             # R CMD check
-        if(nzchar(Sys.getenv("_R_CHECK_PACKAGE_NAME_")) == TRUE && nzchar(Sys.getenv("NOT_CRAN")) == FALSE){
+        if(nzchar(Sys.getenv("_R_CHECK_PACKAGE_NAME_")) == TRUE && (nzchar(Sys.getenv("NOT_CRAN")) == FALSE || Sys.getenv("NOT_CRAN") == "false")){ # nzchar(Sys.getenv("NOT_CRAN")) == FALSE means Sys.getenv("NOT_CRAN") == ""
             return("cran")
         }
 
@@ -399,7 +399,7 @@ testthat::test_that("get_message()", {
                     # if(base::any(base::grepl(x = tempo.warn[[1]], pattern
                     testthat::expect_no_error(get_message(data = str6, kind = "warning", header = TRUE, print_no = FALSE, text = NULL, env = NULL, safer_check = TRUE, lib_path = NULL, error_text = ""))
                     result <- get_message(data = str6, kind = "warning", header = TRUE, print_no = FALSE, text = NULL, env = NULL, safer_check = TRUE, lib_path = NULL, error_text = "")
-                    if(detect_environment == "rcmd"){
+                    if(detect_environment == "cran"){
                         expected <- NULL
                     }else{
                         expected <- "WARNING MESSAGE REPORTED:\nIn wilcox.test.default(c(1, 1, 3), c(1, 2, 4), paired = TRUE): cannot compute exact p-value with zeroes\n"
@@ -410,7 +410,7 @@ testthat::test_that("get_message()", {
                 # }else{
                 testthat::expect_no_error(get_message(data = str6, kind = "warning", header = FALSE, print_no = FALSE, text = NULL, env = NULL, safer_check = TRUE, lib_path = NULL, error_text = ""))
                 result <- get_message(data = str6, kind = "warning", header = FALSE, print_no = FALSE, text = NULL, env = NULL, safer_check = TRUE, lib_path = NULL, error_text = "")
-                if(detect_environment == "rcmd"){
+                if(detect_environment == "cran"){
                     expected <- NULL
                 }else{
                     expected <- "simpleWarning in wilcox.test.default(c(1, 1, 3), c(1, 2, 4), paired = TRUE): cannot compute exact p-value with zeroes\n"
