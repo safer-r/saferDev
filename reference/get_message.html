@@ -135,7 +135,8 @@ Using argument print_no = FALSE, return NULL if nothing reported, which is conve
     <p>Warnings:</p><ul><li><p>Only the first error or last warning/standard message is returned.</p></li>
 <li><p>Always use the <code>env</code> argument when <code>get_message()</code> is used inside functions.</p></li>
 <li><p>The function does not prevent printing, for instance if <code><a href="https://rdrr.io/r/base/print.html" class="external-link">print()</a></code> or <code>show()</code> is used inside the instruction tested. To prevent that, use <code>tempo &lt;- utils::capture.output(error &lt;- get_message(data = "arg_check(data = 'a', class = mean, neg_values = FALSE, print = TRUE)"))</code>. The return of <code>get_message()</code> is assigned into <code>error</code> and the printed messages are captured by <code><a href="https://rdrr.io/r/utils/capture.output.html" class="external-link">utils::capture.output()</a></code> and assigned into <code>tempo</code>. See the examples.</p></li>
-</ul></div>
+</ul><p>The <code>env</code> argument is used as value for the <code>envir</code> argument of the <code><a href="https://rdrr.io/r/base/eval.html" class="external-link">base::eval()</a></code> function.</p>
+    </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
     <div class="dont-index"><p><code><a href="https://rdrr.io/r/base/try.html" class="external-link">try</a></code>.</p></div>

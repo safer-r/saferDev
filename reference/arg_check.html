@@ -175,7 +175,8 @@
 <li><p><code>"matrix"</code> tests objects of class <code>"matrix"</code> for R &lt; 4.0.0 and <code>c(""matrix", "array"")</code> otherwise.</p></li>
 <li><p><code>"ggplot2"</code> tests objects of class <code>c("gg", "ggplot")</code> for R &lt; 4.5 and <code>c("ggplot2::ggplot", "ggplot", "ggplot2::gg", "S7_object", "gg")</code> otherwise.</p></li>
 <li><p><code>"ggplot2"</code> tests objects of class <code>"ggplot_built"</code> for R &lt; 4.5 and <code>c("ggplot2::ggplot_built", "ggplot_built", "ggplot2::gg", "S7_object")</code> otherwise.</p></li>
-</ul></div>
+</ul><p>Regarding <code>typeof</code>, the value "object" comes from the fact that if an object has type OBJSXP and has the S4 object flag set (IS_S4_OBJECT(x) is true), typeof() returns "S4". If an object has type OBJSXP without the S4 flag set, typeof() returns "object".</p>
+    </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
     <div class="dont-index"><p><code><a href="https://rdrr.io/r/base/match.arg.html" class="external-link">match.arg</a></code>.</p></div>
