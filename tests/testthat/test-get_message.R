@@ -21,7 +21,7 @@ testthat::test_that("get_message()", {
         # GitHub Actions
         if(Sys.getenv("GITHUB_ACTIONS") == "true"){
             return("github")
-
+        }
         
         # R CMD check
         if(nzchar(Sys.getenv("_R_CHECK_PACKAGE_NAME_")) == TRUE && nzchar(Sys.getenv("NOT_CRAN")) == TRUE){
