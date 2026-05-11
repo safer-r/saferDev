@@ -495,7 +495,7 @@ testthat::test_that("get_message()", {
     # expected <- "ERROR MESSAGE REPORTED:\nError : \n\n================\n\nERROR IN saferDev::get_message().\n\nTHE data ARGUMENT MUST BE A SINGLE CHARACTER STRING.\n\n================\n\n\n" # eval only in stat(). str6 not found
     # expected <- "ERROR MESSAGE REPORTED:\nIn get_message(data = str6, kind = \"warning\", header = TRUE, print_no = FALSE,  : \n  could not find function \"get_message\"\n" # this one is for the local testing # eval only in stat(). get_message() not found
     if(detect_environment == "cran"){
-        expected <- "ERROR MESSAGE REPORTED:\nIn get_message(data = str6, kind = \"warning\", header = TRUE, print_no = FALSE,  : \n  could not find function \"get_message\"\n" # eval only in stat()
+        expected <- "ERROR MESSAGE REPORTED:\nIn base::eval(expr = base::parse(text = data, file = \"\", n = NULL,  : \n  object 'stats_env' not found\n" # eval only in stat()
     }else if(detect_environment == "github"){
         expected <- "ERROR MESSAGE REPORTED:\nIn base::eval(expr = base::parse(text = data, file = \"\", n = NULL,  : \n  object 'stats_env' not found\n" # this one is for the git push
     }else if(detect_environment == "local_copypaste"){
