@@ -379,7 +379,8 @@ all_args_here <- function(
 
     ######## check of the required functions from the required packages
     if(safer_check == TRUE){
-        saferDev:::.pack_and_function_check(
+        .pack_and_function_check <- utils::getFromNamespace(x = ".pack_and_function_check", ns = "saferDev", pos = , envir = )
+        .pack_and_function_check(
             fun = base::c(
                 # functions required in this code
                 "saferDev::arg_check", # also in internal functions
@@ -404,9 +405,22 @@ all_args_here <- function(
     }
     ######## end check of the required functions from the required packages
 
+    ######## escaping CRAN submission NOTE for internal functions
+
+    .base_op_check <- utils::getFromNamespace(x = ".base_op_check", ns = "saferDev", pos = , envir = )
+    .functions_detect <- utils::getFromNamespace(x = ".functions_detect", ns = "saferDev", pos = , envir = )
+    .in_quotes_replacement <- utils::getFromNamespace(x = ".in_quotes_replacement", ns = "saferDev", pos = , envir = )
+    .fun_args_pos <- utils::getFromNamespace(x = ".fun_args_pos", ns = "saferDev", pos = , envir = )
+    .extract_all_fun_names <- utils::getFromNamespace(x = ".extract_all_fun_names", ns = "saferDev", pos = , envir = )
+    .in_parenthesis_replacement <- utils::getFromNamespace(x = ".in_parenthesis_replacement", ns = "saferDev", pos = , envir = )
+    .all_args_here_fill <- utils::getFromNamespace(x = ".all_args_here_fill", ns = "saferDev", pos = , envir = )
+    .has_odd_number_of_quotes <- utils::getFromNamespace(x = ".has_odd_number_of_quotes", ns = "saferDev", pos = , envir = )
+
+    ######## end escaping CRAN submission NOTE for internal functions
+
     ######## critical operator checking
     if(safer_check == TRUE){
-        saferDev:::.base_op_check(
+        .base_op_check(
             error_text = embed_error_text
         )
     }
@@ -546,7 +560,7 @@ all_args_here <- function(
     # arg_user_setting$x <- base::as.character(arg_user_setting$x)
     arg_user_setting$x <- base::deparse(expr = arg_user_setting$x, width.cutoff = 60L, backtick = FALSE, control = base::c("keepNA", "keepInteger", "niceNames", "showAttributes"), nlines = -1L) # because arg_user_setting$x is str(arg_user_setting$x) "language saferDev::colons_check". When I use it as string, like as.character(arg_user_setting$x), it splits  "::"           "saferDev"     "colons_check"
     out_path <- base::paste0(out_path, "/", df_name, collapse = NULL, recycle0 = FALSE)
-    out <- saferDev:::.functions_detect(
+    out <- .functions_detect(
         x = x, 
         skipped_base = skipped_base, 
         arg_user_setting2 = arg_user_setting, 
@@ -570,7 +584,7 @@ all_args_here <- function(
     cum_nchar_code_line <- cum_nchar_code_line[code_line_nb]
     # end cumulative nchar of each non empty lines of code 
     # replacement of all the ) between quotes
-    tempo <- saferDev:::.in_quotes_replacement(
+    tempo <- .in_quotes_replacement(
         string = fun_1_line, 
         pattern = "\\)", 
         no_regex_pattern = ")", 
@@ -583,7 +597,7 @@ all_args_here <- function(
     pos_rep <- tempo$pos # replaced positions in fun_1_line
     # end replacement of all the ) between quotes
     # replacement of all the ( between quotes
-    tempo <- saferDev:::.in_quotes_replacement(
+    tempo <- .in_quotes_replacement(
         string = fun_1_line_replace, 
         pattern = "\\(", 
         no_regex_pattern = "(", 
@@ -614,7 +628,7 @@ all_args_here <- function(
             }
             tempo_str_after <- base::substr(x = fun_1_line_replace, start = fun_pos_stop + 1, stop = base::nchar(x = fun_1_line_replace, type = "chars", allowNA = FALSE, keepNA = NA))
             if(base::grepl(x = tempo_str_after, pattern = "^[\\s\\r\\n]*\\(", ignore.case = FALSE, perl = TRUE, fixed = FALSE, useBytes = FALSE)){ # detection that it is a function of interest because ( after function name not removed
-                tempo_pos <- saferDev:::.fun_args_pos(
+                tempo_pos <- .fun_args_pos(
                     text = fun_1_line_replace, 
                     pattern = base::paste0(fun_names[[i1]][i2], "[\\s\\r\\n]*\\(", collapse = NULL, recycle0 = FALSE), 
                     lib_path = lib_path, 
@@ -650,7 +664,7 @@ all_args_here <- function(
             # pattern2 <- paste0("[a-zA-Z.][a-zA-Z0-9._]* *\\$ *", fun_names[[i1]][i2], "[\\s\\r\\n]*\\(") # function like a$fun()
             if(base::grepl(x = arg_string_for_col3[[i1]][i2], pattern = pattern2, ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE)){ # because of "NOT_CONSIDERED" in some cases
                 # detection of inside () between quotes
-                tempo1 <- saferDev:::.in_quotes_replacement(
+                tempo1 <- .in_quotes_replacement(
                     string = arg_string_for_col3[[i1]][i2], 
                     pattern = "\\(", 
                     no_regex_pattern = "(", 
@@ -659,7 +673,7 @@ all_args_here <- function(
                     lib_path = lib_path, 
                     error_text = embed_error_text
                 )
-                tempo2 <- saferDev:::.in_quotes_replacement(
+                tempo2 <- .in_quotes_replacement(
                     string =tempo1$string, 
                     pattern = "\\)", 
                     no_regex_pattern = ")", 
@@ -668,7 +682,7 @@ all_args_here <- function(
                     lib_path = lib_path, 
                     error_text = embed_error_text
                 )
-                tempo_pos <- saferDev:::.fun_args_pos(
+                tempo_pos <- .fun_args_pos(
                     text = tempo2$string, 
                     pattern = pattern2, 
                     lib_path = lib_path, 
@@ -793,7 +807,7 @@ all_args_here <- function(
                         base::stop(base::paste0("\n\n================\n\n", tempo_cat_fun_exists, "\n\n================\n\n", base::ifelse(test = base::is.null(x = warn), yes = "", no = base::paste0("IN ADDITION\nWARNING", base::ifelse(test = warn_count > 1, yes = "S", no = ""), ":\n\n", warn, collapse = NULL, recycle0 = FALSE)), collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL)
                     }
                     tempo_string <- base::substr(x = code_for_col[i2], start = 1, stop = col4[i2] - 1)
-                    tempo_package_name_colons <- saferDev:::.extract_all_fun_names(
+                    tempo_package_name_colons <- .extract_all_fun_names(
                         text = tempo_string, 
                         pattern = "[a-zA-Z][a-zA-Z0-9.]*:{2,3}$",
                         lib_path = lib_path, 
@@ -850,7 +864,7 @@ all_args_here <- function(
                         # end all arguments of the function with default value in col5
                         # arguments: replacement of all the commas between quotes
                         tempo_col3 <- col3[i2]
-                        tempo <- saferDev:::.in_quotes_replacement(
+                        tempo <- .in_quotes_replacement(
                             string = tempo_col3, 
                             pattern = ",", 
                             no_regex_pattern = ",", 
@@ -871,7 +885,7 @@ all_args_here <- function(
                                 # nocov end
                             }
                             for(i6 in 1:base::length(x = middle_bracket_open_in_col3[[i2]])){
-                                tempo <- saferDev:::.in_parenthesis_replacement(
+                                tempo <- .in_parenthesis_replacement(
                                     string = tempo_col3, 
                                     pattern = ",", 
                                     no_regex_pattern = ",", 
@@ -941,7 +955,7 @@ all_args_here <- function(
                             # nocov end
                         }
                         # end checking
-                        tempo_out <- saferDev:::.all_args_here_fill(
+                        tempo_out <- .all_args_here_fill(
                             arg_full = arg_full, 
                             arg_full_names = arg_full_names, 
                             tempo_split = tempo_split, 
