@@ -284,7 +284,8 @@ is_function_here <- function(
 
     ######## check of the required functions from the required packages
     if(safer_check == TRUE){
-        saferDev:::.pack_and_function_check(
+        .pack_and_function_check <- utils::getFromNamespace(x = ".pack_and_function_check", ns = "saferDev", pos = , envir = )
+        .pack_and_function_check(
             fun = base::c(
                 "saferDev::arg_check", # write each function preceeded by their package name
                 "saferDev:::.base_op_check"
@@ -295,9 +296,15 @@ is_function_here <- function(
     }
     ######## end check of the required functions from the required packages
 
+    ######## escaping CRAN submission NOTE for internal functions
+
+    .base_op_check <- utils::getFromNamespace(x = ".base_op_check", ns = "saferDev", pos = , envir = )
+
+    ######## end escaping CRAN submission NOTE for internal functions
+
     ######## critical operator checking
     if(safer_check == TRUE){
-        saferDev:::.base_op_check(
+        .base_op_check(
             error_text = embed_error_text
         )
     }

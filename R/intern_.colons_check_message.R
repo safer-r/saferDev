@@ -275,6 +275,12 @@
     # but check already done in the main safer function
     ######## end check of the required functions from the required packages
 
+    ######## escaping CRAN submission NOTE for internal functions
+
+    .noclean_functions <- utils::getFromNamespace(x = ".noclean_functions", ns = "saferDev", pos = , envir = )
+
+    ######## end escaping CRAN submission NOTE for internal functions
+
     ######## critical operator checking
     # check already done in the main safer function
     ######## end critical operator checking
@@ -499,7 +505,7 @@
                 # nocov end
             }
             # removal of functions between quotes and after $
-            tempo.log <- saferDev:::.noclean_functions(
+            tempo.log <- .noclean_functions(
                 col1 = col1, 
                 col2 = col2, 
                 col3 = col3, 

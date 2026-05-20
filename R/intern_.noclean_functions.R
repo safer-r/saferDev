@@ -254,6 +254,12 @@
     # but check already done in the main safer function
     ######## end check of the required functions from the required packages
 
+    ######## escaping CRAN submission NOTE for internal functions
+
+    .has_odd_number_of_quotes <- utils::getFromNamespace(x = ".has_odd_number_of_quotes", ns = "saferDev", pos = , envir = )
+
+    ######## end escaping CRAN submission NOTE for internal functions
+
     ######## critical operator checking
     # check already done in the main safer function
     ######## end critical operator checking
@@ -400,13 +406,13 @@
             pattern1 <- base::paste0(tempo.col2[i2], " *\\(", collapse = NULL, recycle0 = FALSE)
             lines.split <- base::strsplit(x = tempo.ini[tempo.col1[i2]], split = pattern1, fixed = FALSE, perl = FALSE, useBytes = FALSE)[[1]][1]
             # if odds number of quotes, it means that # has broken the string in the middle of a quoted part
-            double.quote.test <- saferDev:::.has_odd_number_of_quotes(
+            double.quote.test <- .has_odd_number_of_quotes(
                 input_string = lines.split, 
                 pattern = '"', 
                 lib_path = lib_path, 
                 error_text = embed_error_text
             ) # here FALSE means even number of quotes, thus that the function is not between quotes, thus has to be kept. TRUE means that the function is between quotes, thus has to be removed
-            simple.quote.test <- saferDev:::.has_odd_number_of_quotes(
+            simple.quote.test <- .has_odd_number_of_quotes(
                 input_string = lines.split, 
                 pattern = "'", 
                 lib_path = lib_path, 

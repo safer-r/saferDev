@@ -270,6 +270,12 @@
     # but check already done in the main safer function
     ######## end check of the required functions from the required packages
 
+    ######## escaping CRAN submission NOTE for internal functions
+
+    .has_odd_number_of_quotes <- utils::getFromNamespace(x = ".has_odd_number_of_quotes", ns = "saferDev", pos = , envir = )
+
+    ######## end escaping CRAN submission NOTE for internal functions
+
     ######## critical operator checking
     # check already done in the main safer function
     ######## end critical operator checking
@@ -424,13 +430,13 @@
         while(count < base::length(x = string_split)){
             count <- count + 1
             # if odds number of quotes, it means that # has broken the string in the middle of a quoted part
-            double.quote.test <- saferDev:::.has_odd_number_of_quotes(
+            double.quote.test <- .has_odd_number_of_quotes(
                 input_string = string_out, 
                 pattern = '"', 
                 lib_path = lib_path, 
                 error_text = embed_error_text
             ) # here FALSE means even number of quotes, thus that ")" is not between quotes, thus has to be kept. TRUE means that ")" is between quotes, thus has to be removed
-            simple.quote.test <- saferDev:::.has_odd_number_of_quotes(
+            simple.quote.test <- .has_odd_number_of_quotes(
                 input_string = string_out, 
                 pattern = "'", 
                 lib_path = lib_path, 
@@ -447,13 +453,13 @@
         }
     }
     if(base::nchar(x = string, type = "chars", allowNA = FALSE, keepNA = NA) == base::nchar(x = string_out, type = "chars", allowNA = FALSE, keepNA = NA) + 1){ # this is when the pattern is the last character of string. strsplit("a)", split = "\\)") gives "a". Should also deal when while loop has run, i.e., when several pattern in string including the last one: "a)vb)"
-        double.quote.test <- saferDev:::.has_odd_number_of_quotes(
+        double.quote.test <- .has_odd_number_of_quotes(
             input_string = string_out, 
             pattern = '"', 
             lib_path = lib_path, 
             error_text = embed_error_text
         ) # here FALSE means even number of quotes, thus that ")" is not between quotes, thus has to be kept. TRUE means that ")" is between quotes, thus has to be removed
-        simple.quote.test <- saferDev:::.has_odd_number_of_quotes(
+        simple.quote.test <- .has_odd_number_of_quotes(
             input_string = string_out, 
             pattern = "'", 
             lib_path = lib_path, 

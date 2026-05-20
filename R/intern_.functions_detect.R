@@ -270,6 +270,13 @@
     # but check already done in the main safer function
     ######## end check of the required functions from the required packages
 
+    ######## escaping CRAN submission NOTE for internal functions
+
+    .extract_all_fun_names <- utils::getFromNamespace(x = ".extract_all_fun_names", ns = "saferDev", pos = , envir = )
+    .has_odd_number_of_quotes <- utils::getFromNamespace(x = ".has_odd_number_of_quotes", ns = "saferDev", pos = , envir = )
+
+    ######## end escaping CRAN submission NOTE for internal functions
+
     ######## critical operator checking
     # check already done in the main safer function
     ######## end critical operator checking
@@ -376,13 +383,13 @@
             while.loop <- TRUE
             while(while.loop == TRUE & count < base::length(x = lines.split)){
                 # if odds number of quotes, it means that # has broken the string in the middle of a quoted part
-                double.quote.test <- saferDev:::.has_odd_number_of_quotes(
+                double.quote.test <- .has_odd_number_of_quotes(
                     input_string = tempo.line, 
                     pattern = '"', 
                     lib_path = lib_path, 
                     error_text = embed_error_text
                 ) # here FALSE means even number of quotes, thus that # is not between quotes, thus has to be removed. TRUE means that # is between quotes, thus has to be kept
-                simple.quote.test <- saferDev:::.has_odd_number_of_quotes(
+                simple.quote.test <- .has_odd_number_of_quotes(
                     input_string = tempo.line, 
                     pattern = "'", 
                     lib_path = lib_path, 
@@ -444,7 +451,7 @@
     fun_name <- base::list()
     fun_name_pos <- base::list()
     for(i1 in 1:base::length(x = code)){
-        tempo <- saferDev:::.extract_all_fun_names(
+        tempo <- .extract_all_fun_names(
             text = code[i1], 
             pattern = pattern1, 
             lib_path = lib_path, 

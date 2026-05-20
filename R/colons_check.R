@@ -322,7 +322,8 @@ colons_check <- function(
 
     ######## check of the required functions from the required packages
     if(safer_check == TRUE){
-        saferDev:::.pack_and_function_check(
+        .pack_and_function_check <- utils::getFromNamespace(x = ".pack_and_function_check", ns = "saferDev", pos = , envir = )
+        .pack_and_function_check(
             fun = base::c(
                 # functions required in this code
                 "saferDev::arg_check", # also in internal functions
@@ -344,9 +345,20 @@ colons_check <- function(
     }
     ######## end check of the required functions from the required packages
 
+    ######## escaping CRAN submission NOTE for internal functions
+
+    .base_op_check <- utils::getFromNamespace(x = ".base_op_check", ns = "saferDev", pos = , envir = )
+    .functions_detect <- utils::getFromNamespace(x = ".functions_detect", ns = "saferDev", pos = , envir = )
+    .colons_check_message <- utils::getFromNamespace(x = ".colons_check_message", ns = "saferDev", pos = , envir = )
+    .extract_all_fun_names <- utils::getFromNamespace(x = ".extract_all_fun_names", ns = "saferDev", pos = , envir = )
+    .has_odd_number_of_quotes <- utils::getFromNamespace(x = ".has_odd_number_of_quotes", ns = "saferDev", pos = , envir = )
+    .noclean_functions <- utils::getFromNamespace(x = ".noclean_functions", ns = "saferDev", pos = , envir = )
+
+    ######## end escaping CRAN submission NOTE for internal functions
+
     ######## critical operator checking
     if(safer_check == TRUE){
-        saferDev:::.base_op_check(
+        .base_op_check(
             error_text = embed_error_text
         )
     }
@@ -423,7 +435,7 @@ colons_check <- function(
         )
     }
     # end modification of arg_user_setting$x for clean messages
-    out <- saferDev:::.functions_detect(
+    out <- .functions_detect(
         x = x, 
         skipped_base = skipped_base, 
         arg_user_setting2 = arg_user_setting, 
@@ -459,7 +471,7 @@ colons_check <- function(
         # end basic function names in x
         # analyse of :: before basic functions in x
         if(base::length(x = in_basic_fun_uni) > 0){
-            tempo <- saferDev:::.colons_check_message(
+            tempo <- .colons_check_message(
                 list_fun = in_basic_fun, 
                 list_fun_pos = in_basic_fun_names_pos, 
                 line_nb = in_basic_code_line_nb, 
@@ -507,7 +519,7 @@ colons_check <- function(
         # end other function names in x
         # analyse of :: before other functions in x
         if(base::length(x = in_other_fun_uni) > 0){
-            tempo <- saferDev:::.colons_check_message(
+            tempo <- .colons_check_message(
                 list_fun = in_other_fun, 
                 list_fun_pos = in_other_fun_names_pos, 
                 line_nb = in_other_code_line_nb, 
