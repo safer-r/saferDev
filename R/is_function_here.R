@@ -408,9 +408,9 @@ is_function_here <- function(
         )
         base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL)
     }
-    tempo.log <- base::grepl(x = fun, pattern = "^[a-zA-Z][a-zA-Z0-9.]*(:{2}[a-zA-Z]|:{3}[a-zA-Z._])[a-zA-Z0-9._]*$", ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE)
+    tempo.log <- base::grepl(x = fun, pattern = "^[a-zA-Z][a-zA-Z0-9.]*(:{2}[a-zA-Z.]|:{3}[a-zA-Z._])[a-zA-Z0-9._]*$", ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE)
     # [a-zA-Z][a-zA-Z0-9.]+ means any single alphabet character (package name cannot start by dot or underscore or num), then any alphanum and dots
-    # (:{2}[a-zA-Z]|:{3}\\.[a-zA-Z._]) means either double colon and any single alphabet character or triple colon followed by a dot and any single alphabet character or dot (because .. is ok for function name) or underscore (because ._ is ok for function name). Starting "dot and num" or underscore is not authorized for function name
+    # (:{2}[a-zA-Z.]|:{3}\\.[a-zA-Z._]) means either double colon and any single alphabet character or dot (for base::.libPaths), or triple colon followed by a dot and any single alphabet character or dot (because .. is ok for function name) or underscore (because ._ is ok for function name). Starting "dot and num" or underscore is not authorized for function name
     # [a-zA-Z0-9._]* means any several of these characters or nothing
     if( ! base::all(tempo.log, na.rm = TRUE)){
         tempo_cat <- base::paste0(
@@ -424,7 +424,7 @@ is_function_here <- function(
     }
     pkg.fun.name.list <- base::strsplit(x = fun, split = ":{2,3}", fixed = FALSE, perl = FALSE, useBytes = FALSE) # package in 1 and function in 2
     pkg.name <- base::sapply(X = pkg.fun.name.list, FUN = function(x){x[1]}, simplify = TRUE, USE.NAMES = TRUE)
-    pkg.log <- pkg.name %in% base::rownames(x = utils::installed.packages(lib.loc = lib_path, priority = NULL, noCache = FALSE, fields = NULL, subarch =  base::.Platform$r_arch, cache_user_dir = ), do.NULL = TRUE, prefix = "row")
+    pkg.log <- pkg.name %in% base::gsub(x = base::find.package(package = pkg.name, lib.loc = lib_path, quiet = TRUE, verbose = FALSE), pattern = "^.*/", replacement = "", ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE)
     if( ! base::all(pkg.log, na.rm = TRUE)){
         tempo <- base::unique(x = pkg.name[ ! pkg.log], incomparables = FALSE)
         tempo_cat <- base::paste0(

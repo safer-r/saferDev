@@ -12,23 +12,11 @@
 #' Warnings:
 #' \itemize{
 #'   \item requires \code{saferDev::arg_check}.
-#'   \item In the safer Backbone section \code{"######## check of the required functions from the required packages"}, add also \code{saferDev::arg_check} when checking for the presence of \code{saferDev:::.has_odd_number_of_quotes}.
+#'   \item In the safer Backbone section \code{"######## check of the required functions from the required packages"}, add also \code{saferDev::arg_check} when checking for the presence of \code{.has_odd_number_of_quotes}.
 #' }
 #' @author \href{mailto:gael.millot@pasteur.fr}{Gael Millot}
 #' @author Haiding Wang  
 #' @author Yushi Han
-#' @examples
-#' \dontrun{
-#' # Example that shouldn't be run because this is an internal function.
-#' saferDev:::.has_odd_number_of_quotes(
-#' input_string = 'This is a "test" string with "even" quotes', 
-#' pattern = '"', 
-#' lib_path = NULL, 
-#' error_text = " INSIDE P1::F1"
-#' )
-#' }
-#' 
-#' 
 #' @keywords internal
 .has_odd_number_of_quotes <- function(
     input_string, 
@@ -36,6 +24,8 @@
     lib_path, # required because of saferDev::arg_check()
     error_text # warning: in internal functions, error_text without default value returns a R classical non traced error message (specific of internal functions since classical functions are error_text = "")
 ){
+    # EXAMPLE (because the CRAN does not accept examples for unexported functions)
+    # .has_odd_number_of_quotes(input_string = 'This is a "test" string with "even" quotes', pattern = '"', lib_path = NULL, error_text = " INSIDE P1::F1")
     # DEBUGGING
     # input_string = 'This is a "test" string with "even" quotes' ; pattern = '"' ; lib_path = NULL ; error_text = " INSIDE P1::F1"
     # input_string = "This is a 'test' string with 'even' quotes" ; pattern = "'" ; lib_path = NULL ; error_text = " INSIDE P1::F1"

@@ -755,7 +755,7 @@ all_args_here <- function(
     # end preparation of columns
     # two new columns for arg proposal
     if( (base::length(x = col1) == 0)){
-        base::cat(base::paste0("\n\nINSIDE ", base::as.character(x = out$arg_user_setting$x), "(), EVERYTHING SEEMS CLEAN, AS NO ANALYSABLE FUNCTION DETECTED.\n\n", collapse = NULL, recycle0 = FALSE), file = "", sep = " ", fill = FALSE, labels = NULL, append = FALSE)
+        base::message(base::paste0("\n\nINSIDE ", base::as.character(x = out$arg_user_setting$x), "(), EVERYTHING SEEMS CLEAN, AS NO ANALYSABLE FUNCTION DETECTED.\n\n", collapse = NULL, recycle0 = FALSE), domain = NULL, appendLF = TRUE)
         #### warning output
         if( ! base::is.null(x = warn)){
             base::on.exit(
@@ -989,13 +989,13 @@ all_args_here <- function(
                 tempo_cat <- base::paste0("RESULT EXPORTED IN:\n", out_path, "\nBUT ", tempo_cat, collapse = NULL, recycle0 = FALSE)
             }
             tempo_cat <- base::paste0("AFTER RUNNING ", function_name, " OF THE ", package_name, " PACKAGE:\n", tempo_cat, collapse = NULL, recycle0 = FALSE)
-            base::on.exit(expr = base::cat(base::paste0("\n", tempo_cat, "\n\n", collapse = NULL, recycle0 = FALSE), file = "", sep = " ", fill = FALSE, labels = NULL, append = FALSE), add = TRUE, after = TRUE)
+            base::on.exit(expr = base::message(base::paste0("\n", tempo_cat, "\n\n", collapse = NULL, recycle0 = FALSE), domain = NULL, appendLF = TRUE), add = TRUE, after = TRUE)
         }else{
             tempo_cat <- base::paste0("INSIDE ", base::as.character(x = out$arg_user_setting$x), "(), ARGUMENTS ARE MISSING.", collapse = NULL, recycle0 = FALSE)
             if(export == TRUE){
                 tempo_cat <- base::paste0(tempo_cat, "\nRESULT EXPORTED IN:\n", out_path, collapse = NULL, recycle0 = FALSE)
             }
-            base::on.exit(expr = base::cat(base::paste0("\n", tempo_cat, "\n\n", collapse = NULL, recycle0 = FALSE), file = "", sep = " ", fill = FALSE, labels = NULL, append = FALSE), add = TRUE, after = TRUE)
+            base::on.exit(expr = base::message(base::paste0("\n", tempo_cat, "\n\n", collapse = NULL, recycle0 = FALSE), domain = NULL, appendLF = TRUE), add = TRUE, after = TRUE)
         }
         #### end main code
 

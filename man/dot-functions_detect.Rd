@@ -41,18 +41,8 @@ The result in \code{all_basic_funs} are all the functions in \code{base::c("pack
 
 Warnings:
 \itemize{
-  \item Requires \code{saferDev::arg_check}, \code{saferDev:::.extract_all_fun_names}, \code{saferDev:::.has_odd_number_of_quotes}. 
-  \item In the safer Backbone section \code{"######## check of the required functions from the required packages"}, add also these 3 functions when checking for the presence of \code{saferDev:::.functions_detect}.
-}
-}
-\examples{
-\dontrun{
-# Example that shouldn't be run because this is an internal function.
-source("C:\\\\Users\\\\gmillot\\\\Documents\\\\Git_projects\\\\safer-r\\\\saferDev\\\\dev\\\\other\\\\test.R")
-saferDev:::.functions_detect(x = test, 
-arg_user_setting2 = base::list(x = as.name(x = "test")), 
-skipped_base = c("function", "if", "for", "while", "repeat", "else"), 
-lib_path = NULL, error_text = " INSIDE P1::F1")
+  \item Requires \code{saferDev::arg_check}, \code{.extract_all_fun_names}, \code{.has_odd_number_of_quotes}. 
+  \item In the safer Backbone section \code{"######## check of the required functions from the required packages"}, add also these 3 functions when checking for the presence of \code{.functions_detect}.
 }
 }
 \author{

@@ -45,23 +45,9 @@ The function works first by replacing in the code: 1) the three consecutive char
 Warnings:
 \itemize{
   \item Must be very simple pattern, like \code{"\\("}.
-  \item requires \code{saferDev::arg_check}, \code{saferDev:::.has_odd_number_of_quotes}.
-  \item In the safer Backbone section \code{"######## check of the required functions from the required packages"}, add also these 2 functions when checking for the presence of \code{saferDev:::.in_quotes_replacement}.
+  \item requires \code{saferDev::arg_check}, \code{.has_odd_number_of_quotes}.
+  \item In the safer Backbone section \code{"######## check of the required functions from the required packages"}, add also these 2 functions when checking for the presence of \code{.in_quotes_replacement}.
 }
-}
-\examples{
-\dontrun{
-# Example that shouldn't be run because this is an internal function.
-source("https://raw.githubusercontent.com/safer-r/saferDev/main/dev/other/test.R")
-saferDev:::.in_quotes_replacement(string = paste(deparse(test), collapse = ""), 
-pattern = "\\\\)", no_regex_pattern = ")", replacement = " ", perl = TRUE, 
-lib_path = NULL, error_text = " INSIDE P1::F1")
-saferDev:::.in_quotes_replacement(string = 'paste0("IAGE((", paste0(1:3, collapse = " "), "A)B()")', 
-pattern = "\\\\)", no_regex_pattern = ")", replacement = " ", perl = TRUE, 
-lib_path = NULL, error_text = " INSIDE P1::F1")
-}
-
-
 }
 \author{
 \href{mailto:gael.millot@pasteur.fr}{Gael Millot}

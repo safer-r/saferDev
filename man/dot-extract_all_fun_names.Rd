@@ -29,18 +29,8 @@ Extract all function names.
 Warnings:
 \itemize{
   \item requires \code{saferDev::arg_check}.
-  \item In the safer Backbone section \code{"######## check of the required functions from the required packages"}, add also \code{saferDev::arg_check} when checking for the presence of \code{saferDev:::.extract_all_fun_names}.
+  \item In the safer Backbone section \code{"######## check of the required functions from the required packages"}, add also \code{saferDev::arg_check} when checking for the presence of \code{.extract_all_fun_names}.
 }
-}
-\examples{
-\dontrun{
-# Example that shouldn't be run because this is an internal function.
-saferDev:::.extract_all_fun_names(text = 'This is a test string with sum()', 
-pattern = "([a-zA-Z]|\\\\.[a-zA-Z._])[a-zA-Z0-9._]*\\\\s*\\\\(", 
-lib_path = NULL, error_text = " INSIDE P1::F1")
-}
-
-
 }
 \author{
 \href{mailto:gael.millot@pasteur.fr}{Gael Millot}

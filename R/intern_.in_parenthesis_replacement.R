@@ -20,29 +20,11 @@
 #' \itemize{
 #'   \item Must be very simple pattern, like \code{"\\("}.
 #'   \item requires \code{saferDev::arg_check}.
-#'   \item In the safer Backbone section \code{"######## check of the required functions from the required packages"}, add also \code{saferDev::arg_check} when checking for the presence of \code{saferDev:::.in_parenthesis_replacement}.
+#'   \item In the safer Backbone section \code{"######## check of the required functions from the required packages"}, add also \code{saferDev::arg_check} when checking for the presence of \code{.in_parenthesis_replacement}.
 #' }
 #' @author \href{mailto:gael.millot@pasteur.fr}{Gael Millot}
 #' @author Haiding Wang  
 #' @author Yushi Han
-#' @examples
-#' \dontrun{
-#' # Example that shouldn't be run because this is an internal function.
-#' saferDev:::.in_parenthesis_replacement(
-#'     string = "pattern = base::paste0(pattern, \"\\\\(#\"), 
-#'     text = text", 
-#'     pattern = ",", 
-#'     no_regex_pattern = ",", 
-#'     replacement = " ", 
-#'     perl = TRUE, 
-#'     open_pos = 23, 
-#'     close_pos = 39, 
-#'     lib_path = NULL, 
-#'     error_text = " INSIDE P1::F1"
-#' )
-#' }
-#' 
-#' 
 #' @keywords internal
 .in_parenthesis_replacement <- function(
     string, 
@@ -55,6 +37,8 @@
     lib_path, # required because of saferDev::arg_check()
     error_text # warning: in internal functions, error_text without default value returns a R classical non traced error message (specific of internal functions since classical functions are error_text = "")
 ){
+    # EXAMPLE (because the CRAN does not accept examples for unexported functions)
+    # .in_parenthesis_replacement(    string = "pattern = base::paste0(pattern, \"\\\\(#\"),     text = text",     pattern = ",",     no_regex_pattern = ",",     replacement = " ",     perl = TRUE,     open_pos = 23,     close_pos = 39,     lib_path = NULL,     error_text = " INSIDE P1::F1")
     # DEBUGGING
     # string = "pattern = base::paste0(pattern, \"\\\\(#\"), text = text" ; pattern = "," ; no_regex_pattern = "," ; replacement = " " ; perl = TRUE ; open_pos = 23 ; close_pos = 39 ; lib_path = NULL ; error_text = " INSIDE P1::F1"
 

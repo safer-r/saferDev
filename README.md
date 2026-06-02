@@ -51,7 +51,7 @@ Set of functions for the development of R functions and pipelines, written accor
 
 <br />
 
-Read `vignette("saferDev")` for more details.
+Read this [webpage](https://safer-r.github.io/saferDev") for more details.
 
 <br />
 

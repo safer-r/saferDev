@@ -392,9 +392,6 @@ is_package_here <- function(
 
     ######## other checkings
     tempo.log <- base::grepl(x = req_package, pattern = ":{2,3}", ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE)
-    # [a-zA-Z][a-zA-Z0-9.]+ means any single alphabet character (package name cannot start by dot or underscore or num), then any alphanum and dots
-    # (:{2}[a-zA-Z]|:{3}\\.[a-zA-Z._]) means either double colon and any single alphabet character or triple colon followed by a dot and any single alphabet character or dot (because .. is ok for function name) or underscore (because ._ is ok for function name). Starting "dot and num" or underscore is not authorized for function name
-    # [a-zA-Z0-9._]* means any several of these characters or nothing
     if(base::all(tempo.log, na.rm = TRUE)){
         tempo_cat <- base::paste0(
             error_text_start, 
@@ -410,15 +407,7 @@ is_package_here <- function(
     #### end second round of checking and data preparation
 
     #### main code
-    pack_list <- base::rownames(x = utils::installed.packages(lib.loc = lib_path, priority = NULL, noCache = FALSE, fields = NULL, subarch = .Platform$r_arch, cache_user_dir = ), do.NULL = TRUE, prefix = "row")
-    if(base::length(x = pack_list) == 0){
-        # nocov start
-        # codecov inactivated because it is an internal control of code writing, impossible to cover with argument values, because pack_list is never empty
-        pkg.log <- FALSE
-        # nocov end
-    }else{
-        pkg.log <- req_package %in% pack_list
-    }
+    pkg.log <- req_package %in% base::gsub(x = base::find.package(package = req_package, lib.loc = lib_path, quiet = TRUE, verbose = FALSE), pattern = "^.*/", replacement = "", ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE)
     if( ! base::all(pkg.log, na.rm = TRUE)){
         tempo <- req_package[ ! pkg.log]
         tempo_cat <- base::paste0(

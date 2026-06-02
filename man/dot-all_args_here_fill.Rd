@@ -59,16 +59,7 @@ Get the \code{$MISSING_ARG_NAMES}, \code{$MISSING_ARGS} and \code{$NEW} of \code
 Warnings:
 \itemize{
   \item requires \code{saferDev::arg_check}.
-  \item In the safer Backbone section \code{"######## check of the required functions from the required packages"}, add also \code{saferDev::arg_check} when checking for the presence of \code{saferDev:::.all_args_here_fill}.
-}
-}
-\examples{
-\dontrun{
-# Example that shouldn't be run because this is an internal function.
-saferDev:::.all_args_here_fill(arg_full = list(x = quote(expr = )), arg_full_names = "x", 
-tempo_split = "x", three_dots_log = FALSE, i2 = 1, col1_i2 = 1, col2_i2 = "length", 
-arg_user_setting_x = "\"FUN1\"", warn = NULL, warn_count = 0, lib_path = NULL, 
-error_text = " INSIDE P1::F1")
+  \item In the safer Backbone section \code{"######## check of the required functions from the required packages"}, add also \code{saferDev::arg_check} when checking for the presence of \code{.all_args_here_fill}.
 }
 }
 \author{

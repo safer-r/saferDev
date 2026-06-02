@@ -15,19 +15,6 @@ An error message if at least one of the checked operator is present in the R sco
 \description{
 Check if critical operators of R are not present in other packages or in the global env.
 }
-\examples{
-\dontrun{
-# Example that shouldn't be run because this is an internal function.
-saferDev:::.base_op_check(error_text = " INSIDE fun1.") # nothing should happen
-assign("!", 1)
-assign("+", 2)
-saferDev:::.base_op_check(error_text = " INSIDE fun1.") # this example returns an error
-rm("!")
-rm("+") 
-}
-
-
-}
 \author{
 \href{mailto:gael.millot@pasteur.fr}{Gael Millot}
 

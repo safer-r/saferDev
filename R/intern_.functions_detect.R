@@ -26,23 +26,12 @@
 #' 
 #' Warnings:
 #' \itemize{
-#'   \item Requires \code{saferDev::arg_check}, \code{saferDev:::.extract_all_fun_names}, \code{saferDev:::.has_odd_number_of_quotes}. 
-#'   \item In the safer Backbone section \code{"######## check of the required functions from the required packages"}, add also these 3 functions when checking for the presence of \code{saferDev:::.functions_detect}.
-#' }
-#' @examples
-#' \dontrun{
-#' # Example that shouldn't be run because this is an internal function.
-#' source("C:\\Users\\gmillot\\Documents\\Git_projects\\safer-r\\saferDev\\dev\\other\\test.R")
-#' saferDev:::.functions_detect(x = test, 
-#' arg_user_setting2 = base::list(x = as.name(x = "test")), 
-#' skipped_base = c("function", "if", "for", "while", "repeat", "else"), 
-#' lib_path = NULL, error_text = " INSIDE P1::F1")
+#'   \item Requires \code{saferDev::arg_check}, \code{.extract_all_fun_names}, \code{.has_odd_number_of_quotes}. 
+#'   \item In the safer Backbone section \code{"######## check of the required functions from the required packages"}, add also these 3 functions when checking for the presence of \code{.functions_detect}.
 #' }
 #' @author \href{mailto:gael.millot@pasteur.fr}{Gael Millot}
 #' @author Haiding Wang  
 #' @author Yushi Han
-#' 
-#' 
 #' @keywords internal
 .functions_detect <- function(
     # in internal functions, all arguments are without value on purpose
@@ -52,6 +41,8 @@
     lib_path, # required because of saferDev::arg_check()
     error_text # warning: in internal functions, error_text without default value returns a R classical non traced error message (specific of internal functions since classical functions are error_text = "")
 ){
+    # EXAMPLE (because the CRAN does not accept examples for unexported functions)
+    # .functions_detect(x = test, arg_user_setting2 = base::list(x = as.name(x = "test")), skipped_base = c("function", "if", "for", "while", "repeat", "else"), lib_path = NULL, error_text = " INSIDE P1::F1")
     # DEBUGGING
     # x = x ; skipped_base = base::c("function", "if", "for", "while", "repeat", "else") ; arg_user_setting2 = arg_user_setting ; lib_path = lib_path ; error_text = ""
     # source("C:\\Users\\gmillot\\Documents\\Git_projects\\safer-r\\saferDev\\dev\\other\\test2.R") ; x = test2 ; skipped_base = base::c("function", "if", "for", "while", "repeat", "else") ; arg_user_setting2 = base::list(x = as.name(x = "test2"), skipped_base = base::c("function", "if", "for", "while", "repeat", "else"), lib_path = NULL, error_text = " INSIDE P1::F1") ; lib_path = NULL ; error_text = " INSIDE P1::F1"
@@ -265,8 +256,8 @@
 
     ######## check of the required functions from the required packages
     # saferDev::arg_check is required here
-    # saferDev:::.extract_all_fun_names is required here
-    # saferDev:::.has_odd_number_of_quotes is required here
+    # .extract_all_fun_names is required here
+    # .has_odd_number_of_quotes is required here
     # but check already done in the main safer function
     ######## end check of the required functions from the required packages
 
@@ -460,7 +451,7 @@
         fun_name <- base::c(fun_name, base::list(tempo$string))
         fun_name_pos <- base::c(fun_name_pos, base::list(tempo$pos))
     }
-    # tempo <- base::lapply(code, FUN = function(x){saferDev:::.extract_all_fun_names(text = x, pattern = pattern1)})
+    # tempo <- base::lapply(code, FUN = function(x){.extract_all_fun_names(text = x, pattern = pattern1)})
     # removal of special functions
     tempo_log <- base::lapply(X = fun_name, FUN = function(x){ ! x %in% skipped_base})
     fun_name_wo_op <- base::mapply(FUN = function(x, y){x[y]}, x = fun_name, y = tempo_log, MoreArgs = NULL, SIMPLIFY = FALSE, USE.NAMES = TRUE)

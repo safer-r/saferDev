@@ -14,20 +14,11 @@
 #' Warnings:
 #' \itemize{
 #'   \item requires \code{saferDev::arg_check}.
-#'   \item In the safer Backbone section \code{"######## check of the required functions from the required packages"}, add also \code{saferDev::arg_check} when checking for the presence of \code{saferDev:::.extract_all_fun_names}.
+#'   \item In the safer Backbone section \code{"######## check of the required functions from the required packages"}, add also \code{saferDev::arg_check} when checking for the presence of \code{.extract_all_fun_names}.
 #' }
 #' @author \href{mailto:gael.millot@pasteur.fr}{Gael Millot}
 #' @author Haiding Wang  
 #' @author Yushi Han
-#' @examples
-#' \dontrun{
-#' # Example that shouldn't be run because this is an internal function.
-#' saferDev:::.extract_all_fun_names(text = 'This is a test string with sum()', 
-#' pattern = "([a-zA-Z]|\\.[a-zA-Z._])[a-zA-Z0-9._]*\\s*\\(", 
-#' lib_path = NULL, error_text = " INSIDE P1::F1")
-#' }
-#' 
-#' 
 #' @keywords internal
 .extract_all_fun_names <- function(
     text, 
@@ -35,6 +26,8 @@
     lib_path, # required because of saferDev::arg_check()
     error_text # warning: in internal functions, error_text without default value returns a R classical non traced error message (specific of internal functions since classical functions are error_text = "")
 ){
+    # EXAMPLE (because the CRAN does not accept examples for unexported functions)
+    # .extract_all_fun_names(text = 'This is a test string with sum()', pattern = "([a-zA-Z]|\\.[a-zA-Z._])[a-zA-Z0-9._]*\\s*\\(", lib_path = NULL, error_text = " INSIDE P1::F1")
     # DEBUGGING
     # text = 'base::ifelse(test = error_text == "", yes = ".", no = error_text), ' ; pattern = "(" ; lib_path = NULL ; error_text = " INSIDE P1::F1"
     # # function_name <- ".extract_all_fun_names" ; arg_user_setting = base::list(text = 'base::ifelse(test = error_text == "", yes = ".", no = error_text), ', pattern = "(", lib_path = NULL, error_text = " INSIDE P1::F1") ; arg_names <- c("text", "pattern",  "path_out", "lib_path", "error_text")

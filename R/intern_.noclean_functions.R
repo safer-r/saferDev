@@ -11,23 +11,12 @@
 #' @details
 #' Warnings:
 #' \itemize{
-#'   \item requires \code{saferDev::arg_check}, \code{saferDev:::.has_odd_number_of_quotes}.
-#'   \item In the safer Backbone section \code{"######## check of the required functions from the required packages"}, add also these 2 functions when checking for the presence of \code{saferDev:::.noclean_functions}.
+#'   \item requires \code{saferDev::arg_check}, \code{.has_odd_number_of_quotes}.
+#'   \item In the safer Backbone section \code{"######## check of the required functions from the required packages"}, add also these 2 functions when checking for the presence of \code{.noclean_functions}.
 #' }
 #' @author \href{mailto:gael.millot@pasteur.fr}{Gael Millot}
 #' @author Haiding Wang  
 #' @author Yushi Han
-#' @examples
-#' \dontrun{
-#' # Example that shouldn't be run because this is an internal function.
-#' source("https://raw.githubusercontent.com/safer-r/saferDev/main/dev/other/test.R")
-#' saferDev:::.noclean_functions(col1 = c(15, 17), col2 = c("gregexpr", "regmatches"), 
-#' col3 = c("matches <- ", "matched_strings <- "), 
-#' ini = utils::capture.output(test), lib_path = NULL, 
-#' error_text = " INSIDE P1::F1")
-#' }
-#' 
-#' 
 #' @keywords internal
 .noclean_functions <- function(
     col1, 
@@ -37,6 +26,8 @@
     lib_path, # required because of saferDev::arg_check()
     error_text # warning: in internal functions, error_text without default value returns a R classical non traced error message (specific of internal functions since classical functions are error_text = "")
 ){
+    # EXAMPLE (because the CRAN does not accept examples for unexported functions)
+    # .noclean_functions(col1 = c(15, 17), col2 = c("gregexpr", "regmatches"), col3 = c("matches <- ", "matched_strings <- "), ini = utils::capture.output(test), lib_path = NULL, error_text = " INSIDE P1::F1")
     # DEBUGGING
     # source("https://raw.githubusercontent.com/safer-r/saferDev/main/dev/other/test.R") ; col1 = c(15, 17) ; col2 = c("gregexpr", "regmatches") ; col3 = c("matches <- ",  "matched_strings <- " ) ; ini = utils::capture.output(test) ; lib_path = NULL ; error_text = " INSIDE P1::F1"
     # source("https://raw.githubusercontent.com/safer-r/saferDev/main/dev/other/test.R") ; col1 = c(15, 22, 22) ; col2 = c("gregexpr", "col1", "roc1") ; col3 = c("matches <- ",  "matched_strings <- " ) ; ini = utils::capture.output(test) ; lib_path = NULL ; error_text = " INSIDE P1::F1"
@@ -250,7 +241,7 @@
 
     ######## check of the required functions from the required packages
     # saferDev::arg_check is required here
-    # saferDev:::.has_odd_number_of_quotes is required here
+    # .has_odd_number_of_quotes is required here
     # but check already done in the main safer function
     ######## end check of the required functions from the required packages
 

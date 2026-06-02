@@ -599,7 +599,7 @@ get_message <- function(
     #### end warning output
 
     #### output
-    base::return(output) # do not use base::cat() because the idea is to reuse the message
+    base::return(output) # do not use base::message() because the idea is to reuse the message
     #### end output
     
 }

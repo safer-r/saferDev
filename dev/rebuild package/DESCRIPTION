@@ -2,7 +2,7 @@ Package: saferDev
 Type: Package
 Title: Function and Pipeline Development
 Version: 1.0.0
-Date: 2026-04-15
+Date: 2026-06-02
 Authors@R: c(
     person(given = "Haiding", family = "Wang", role = "ctb"),
     person(given = "Yushi", family = "Han", role = "ctb"),
@@ -11,5 +11,6 @@ Authors@R: c(
   )
 Encoding: UTF-8
 Maintainer: Gael Millot <gael.millot@pasteur.fr>
-Description: Function and Pipeline Development.
+Description: Set of functions that perform checks according to the safer-r project recommendations for R function development (see <https://github.com/safer-r>). This includes checking argument values, ensuring correct specification of all mandatory arguments for embedded functions, as well as their explicit package namespace qualification, among other things.
+URL: <https://github.com/safer-r/saferDev>, <https://safer-r.github.io/saferDev/>
 License: GPL-3

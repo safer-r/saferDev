@@ -48,19 +48,8 @@ Create the message for the \code{colons_check()} function.
 \details{
 Warnings:
 \itemize{
-  \item requires \code{saferDev::arg_check}, \code{saferDev:::.noclean_functions}.
-  \item In main safer functions, in the section \code{"######## check of the required functions from the required packages"}, add also these 2 functions when checking for the presence of \code{saferDev:::.colons_check_message}.
-}
-}
-\examples{
-\dontrun{
-# Example that shouldn't be run because this is an internal function.
-saferDev:::.colons_check_message(list_fun = list(c2 = "UseMethod"), 
-list_fun_pos = list(c2 = 1), line_nb = 2, 
-ini = c("function (x, ...) ", "UseMethod(\"mean\")"), 
-arg_user_setting2 = list(x = "mean"), text = "BASIC", 
-internal_fun_names = NULL, lib_path = NULL, 
-error_text = " INSIDE P1::F1")
+  \item requires \code{saferDev::arg_check}, \code{.noclean_functions}.
+  \item In main safer functions, in the section \code{"######## check of the required functions from the required packages"}, add also these 2 functions when checking for the presence of \code{.colons_check_message}.
 }
 }
 \author{

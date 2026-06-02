@@ -6,22 +6,18 @@
 #' @author \href{mailto:gael.millot@pasteur.fr}{Gael Millot}
 #' @author Haiding Wang  
 #' @author Yushi Han
-#' @examples
-#' \dontrun{
-#' # Example that shouldn't be run because this is an internal function.
-#' saferDev:::.base_op_check(error_text = " INSIDE fun1.") # nothing should happen
-#' assign("!", 1)
-#' assign("+", 2)
-#' saferDev:::.base_op_check(error_text = " INSIDE fun1.") # this example returns an error
-#' rm("!")
-#' rm("+") 
-#' }
-#' 
-#' 
 #' @keywords internal
 .base_op_check <- function(
     error_text # warning: in internal functions, error_text without default value returns a R classical non traced error message (specific of internal functions since classical functions are error_text = "")
 ){
+    # EXAMPLE (because the CRAN does not accept examples for unexported functions)
+    # .base_op_check(error_text = " INSIDE fun1.") # nothing should happen
+    # assign("!", 1)
+    # assign("+", 2)
+    # .base_op_check(error_text = " INSIDE fun1.") # this example returns an error
+    # rm("!")
+    # rm("+") 
+
     #### package name
     package_name <- "saferDev" # write NULL if the function developed is not in a package
     #### end package name

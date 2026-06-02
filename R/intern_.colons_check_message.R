@@ -19,24 +19,12 @@
 #' @details
 #' Warnings:
 #' \itemize{
-#'   \item requires \code{saferDev::arg_check}, \code{saferDev:::.noclean_functions}.
-#'   \item In main safer functions, in the section \code{"######## check of the required functions from the required packages"}, add also these 2 functions when checking for the presence of \code{saferDev:::.colons_check_message}.
-#' }
-#' @examples
-#' \dontrun{
-#' # Example that shouldn't be run because this is an internal function.
-#' saferDev:::.colons_check_message(list_fun = list(c2 = "UseMethod"), 
-#' list_fun_pos = list(c2 = 1), line_nb = 2, 
-#' ini = c("function (x, ...) ", "UseMethod(\"mean\")"), 
-#' arg_user_setting2 = list(x = "mean"), text = "BASIC", 
-#' internal_fun_names = NULL, lib_path = NULL, 
-#' error_text = " INSIDE P1::F1")
+#'   \item requires \code{saferDev::arg_check}, \code{.noclean_functions}.
+#'   \item In main safer functions, in the section \code{"######## check of the required functions from the required packages"}, add also these 2 functions when checking for the presence of \code{.colons_check_message}.
 #' }
 #' @author \href{mailto:gael.millot@pasteur.fr}{Gael Millot}
 #' @author Haiding Wang  
 #' @author Yushi Han
-#' 
-#' 
 #' @keywords internal
 .colons_check_message <- function(
     # in internal functions, all arguments are without value on purpose
@@ -50,6 +38,8 @@
     lib_path, # required because of saferDev::arg_check()
     error_text # warning: in internal functions, error_text without default value returns a R classical non traced error message (specific of internal functions since classical functions are error_text = "")
 ){
+    # EXAMPLE (because the CRAN does not accept examples for unexported functions)
+    # .colons_check_message(list_fun = list(c2 = "UseMethod"), list_fun_pos = list(c2 = 1), line_nb = 2, ini = c("function (x, ...) ", "UseMethod(\"mean\")"), arg_user_setting2 = list(x = "mean"), text = "BASIC", internal_fun_names = NULL, lib_path = NULL, error_text = " INSIDE P1::F1")
     # DEBUGGING
     # list_fun = in_basic_fun ; list_fun_pos = in_basic_fun_names_pos ; line_nb = in_basic_code_line_nb ; ini = out$code ; arg_user_setting2 = out$arg_user_setting ; text = "BASIC" ; internal_fun_names = out$internal_fun_names ; lib_path = lib_path ; error_text = " INSIDE P1::F1" 
     # list_fun = in_other_fun ; list_fun_pos = in_other_fun_names_pos ; line_nb = in_other_code_line_nb ; ini = out$code ; arg_user_setting2 = out$arg_user_setting ;  text = "OTHER" ; internal_fun_names = out$internal_fun_names ; lib_path = lib_path ; error_text = " INSIDE P1::F1" 

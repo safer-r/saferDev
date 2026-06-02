@@ -587,7 +587,7 @@ colons_check <- function(
             recycle0 = FALSE
         )
     }
-    base::cat(base::paste0("\n\n", tempo_cat, "\n\n", collapse = NULL, recycle0 = FALSE), file = "", sep = " ", fill = FALSE, labels = NULL, append = FALSE)
+    base::message(base::paste0("\n\n", tempo_cat, "\n\n", collapse = NULL, recycle0 = FALSE), domain = NULL, appendLF = TRUE)
     #### end main code
 
     #### warning output

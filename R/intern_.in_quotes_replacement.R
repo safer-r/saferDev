@@ -19,25 +19,12 @@
 #' Warnings:
 #' \itemize{
 #'   \item Must be very simple pattern, like \code{"\\("}.
-#'   \item requires \code{saferDev::arg_check}, \code{saferDev:::.has_odd_number_of_quotes}.
-#'   \item In the safer Backbone section \code{"######## check of the required functions from the required packages"}, add also these 2 functions when checking for the presence of \code{saferDev:::.in_quotes_replacement}.
+#'   \item requires \code{saferDev::arg_check}, \code{.has_odd_number_of_quotes}.
+#'   \item In the safer Backbone section \code{"######## check of the required functions from the required packages"}, add also these 2 functions when checking for the presence of \code{.in_quotes_replacement}.
 #' }
 #' @author \href{mailto:gael.millot@pasteur.fr}{Gael Millot}
 #' @author Haiding Wang  
 #' @author Yushi Han
-#' @examples
-#' \dontrun{
-#' # Example that shouldn't be run because this is an internal function.
-#' source("https://raw.githubusercontent.com/safer-r/saferDev/main/dev/other/test.R")
-#' saferDev:::.in_quotes_replacement(string = paste(deparse(test), collapse = ""), 
-#' pattern = "\\)", no_regex_pattern = ")", replacement = " ", perl = TRUE, 
-#' lib_path = NULL, error_text = " INSIDE P1::F1")
-#' saferDev:::.in_quotes_replacement(string = 'paste0("IAGE((", paste0(1:3, collapse = " "), "A)B()")', 
-#' pattern = "\\)", no_regex_pattern = ")", replacement = " ", perl = TRUE, 
-#' lib_path = NULL, error_text = " INSIDE P1::F1")
-#' }
-#' 
-#' 
 #' @keywords internal
 .in_quotes_replacement <- function(
     string, 
@@ -48,6 +35,10 @@
     lib_path, # required because of saferDev::arg_check()
     error_text # warning: in internal functions, error_text without default value returns a R classical non traced error message (specific of internal functions since classical functions are error_text = "")
 ){
+    # EXAMPLE (because the CRAN does not accept examples for unexported functions)
+    # source("https://raw.githubusercontent.com/safer-r/saferDev/main/dev/other/test.R")
+    # .in_quotes_replacement(string = paste(deparse(test), collapse = ""), pattern = "\\)", no_regex_pattern = ")", replacement = " ", perl = TRUE, lib_path = NULL, error_text = " INSIDE P1::F1")
+    # .in_quotes_replacement(string = 'paste0("IAGE((", paste0(1:3, collapse = " "), "A)B()")', pattern = "\\)", no_regex_pattern = ")", replacement = " ", perl = TRUE, lib_path = NULL, error_text = " INSIDE P1::F1")
     # DEBUGGING
     # source("https://raw.githubusercontent.com/safer-r/saferDev/main/dev/other/test.R") ; string = paste(deparse(test), collapse = "") ; pattern = "\\)" ; no_regex_pattern = ")" ; replacement = " " ; perl = FALSE ; lib_path = NULL ; error_text = " INSIDE P1::F1"
     # string = 'paste0("IAGE((", paste0(1:3, collapse = " "), "A)B()")' ; pattern = "\\)" ; no_regex_pattern = ")" ; replacement = " " ; perl = FALSE ; lib_path = NULL ; error_text = " INSIDE P1::F1"

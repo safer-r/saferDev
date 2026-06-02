@@ -20,28 +20,6 @@ An error message if at least one of the checked packages is missing in \code{lib
 Check if 1) required functions are present in required packages and 2) required packages are installed locally.
 Simplified version of \code{saferDev::is_function_here()}, used as internal function for the other functions of the saferDev package.
 }
-\examples{
-\dontrun{
-# Example that shouldn't be run because this is an internal function.
-# this example returns an error
-saferDev:::.pack_and_function_check(
-    fun = 1, 
-    lib_path = NULL, 
-    error_text = " INSIDE F1."
-) 
-saferDev:::.pack_and_function_check(
-    fun = "ggplot2::notgood", 
-    lib_path = base::.libPaths(), 
-    error_text = " INSIDE P1::F1"
-) # this example returns an error
-saferDev:::.pack_and_function_check(
-    fun = c("ggplot2::geom_point", "grid::gpar"), 
-    lib_path = base::.libPaths(), 
-    error_text = " INSIDE P1::F1"
-)  # nothing should happen
-}
-
-}
 \author{
 \href{mailto:gael.millot@pasteur.fr}{Gael Millot}
 

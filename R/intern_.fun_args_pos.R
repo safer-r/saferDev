@@ -18,24 +18,11 @@
 #'   \item The tested string must be cleaned form brackets between quotes. Use \code{.in_quotes_replacement()} for that.
 #'   \item Quotes in strings are escaped, so that position of \code{(} in \code{\"a(} is 3, not 4.
 #'   \item requires \code{saferDev::arg_check}.
-#'   \item In the safer Backbone section \code{"######## check of the required functions from the required packages"}, add also \code{saferDev::arg_check} when checking for the presence of \code{saferDev:::.fun_args_pos}.
+#'   \item In the safer Backbone section \code{"######## check of the required functions from the required packages"}, add also \code{saferDev::arg_check} when checking for the presence of \code{.fun_args_pos}.
 #' }
 #' @author \href{mailto:gael.millot@pasteur.fr}{Gael Millot}
 #' @author Haiding Wang  
 #' @author Yushi Han
-#' @examples
-#' \dontrun{
-#' # Example that shouldn't be run because this is an internal function.
-#' # Warning : examples only with strings that must be cleaned from brackets between quotes
-#' saferDev:::.fun_args_pos(
-#'     text = ' "a" ; paste0("I", paste0(sum(1:3), collapse = " "), min(1) ) ; range(2)', 
-#'     pattern = paste0("paste0", "[\\s\\r\\n]*\\("), 
-#'     lib_path = NULL, 
-#'     error_text = " INSIDE P1::F1"
-#' )
-#' }
-#' 
-#' 
 #' @keywords internal
 .fun_args_pos <- function(
     text, 
@@ -43,6 +30,9 @@
     lib_path, # required because of saferDev::arg_check()
     error_text # warning: in internal functions, error_text without default value returns a R classical non traced error message (specific of internal functions since classical functions are error_text = "")
 ){
+    # EXAMPLE (because the CRAN does not accept examples for unexported functions)
+    # Warning : examples only with strings that must be cleaned from brackets between quotes
+    # .fun_args_pos(text = ' "a" ; paste0("I", paste0(sum(1:3), collapse = " "), min(1) ) ; range(2)', pattern = paste0("paste0", "[\\s\\r\\n]*\\("), lib_path = NULL, error_text = " INSIDE P1::F1")
     # DEBUGGING
     # source("https://raw.githubusercontent.com/safer-r/saferDev/main/dev/other/test.R")
     # text = ' "a" ; paste0("I", paste0(sum(1:3), collapse = " "), min(1) ) ; range(2)' ; pattern = paste0("paste0", "[\\s\\r\\n]*\\(") ; lib_path = NULL ; error_text = " INSIDE P1::F1"
