@@ -39,6 +39,10 @@ Set of functions for the development of R functions and pipelines, written accor
 ## Content
 <br />
 
+Read this [webpage](https://safer-r.github.io/saferDev) for more details.
+
+<br />
+
 | Function | Description |
 | :--- | :--- |
 | **all_args_here()** | Verify that all the functions used inside a function are written with all their arguments. For instance: `base::paste0(letters[1:2], collapse = NULL, recycle0 = FALSE)` and not `base::paste0(letters[1:2])`. |
@@ -49,10 +53,6 @@ Set of functions for the development of R functions and pipelines, written accor
 | **is_function_here()** | Check if required functions are present in installed packages. This controls for instance modifications of function names depending on package versions. |
 | **is_package_here()** | Check if required packages are installed locally. |
 | **report()** | Print a character string or a data object into a same log file. |
-
-<br />
-
-Read this [webpage](https://safer-r.github.io/saferDev) for more details.
 
 <br />
 
