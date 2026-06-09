@@ -22,6 +22,7 @@
    - [Content](#content)
    - [Versions](#versions)
    - [Installation](#installation)
+   - [Docker](#docker)
    - [Licence](#licence)
    - [Citations](#citations)
    - [Credits](#credits)
@@ -74,6 +75,13 @@ Older versions can be installed like this:
 v <- "v1.0" # desired tag version
 remotes::install_github(paste0("https://github.com/safer-r/saferDev", "/tree/", v))
 ```
+
+## Docker image
+
+SaferDev alone in R 4.6.0: [gmillot/r_v4.6.0_safer_v1.0:gitlab_v11.7](https://hub.docker.com/repository/docker/gmillot/r_v4.6.0_safer_v1.0/general)
+
+
+SaferDev and 295 packages in R 4.6.0: [gmillot/r_v4.6.0_extended_v1.0:gitlab_v11.7](https://hub.docker.com/repository/docker/gmillot/r_v4.6.0_extended_v1.0/general)
 
 <br />
 
