@@ -81,7 +81,7 @@ remotes::install_github(paste0("https://github.com/safer-r/saferDev", "/tree/", 
 SaferDev alone in R 4.6.0: [gmillot/r_v4.6.0_safer_v1.0:gitlab_v11.7](https://hub.docker.com/repository/docker/gmillot/r_v4.6.0_safer_v1.0/general)
 
 
-SaferDev and 295 packages in R 4.6.0: [gmillot/r_v4.6.0_extended_v1.0:gitlab_v11.7](https://hub.docker.com/repository/docker/gmillot/r_v4.6.0_extended_v1.0/general)
+SaferDev and [295 other packages](https://gitlab.pasteur.fr/gmillot/dockerfiles/-/blob/master/R/v4.6.0/extended/v1.0/installed_r_packages.csv) in R 4.6.0: [gmillot/r_v4.6.0_extended_v1.0:gitlab_v11.7](https://hub.docker.com/repository/docker/gmillot/r_v4.6.0_extended_v1.0/general)
 
 <br />
 
