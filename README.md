@@ -22,7 +22,7 @@
    - [Content](#content)
    - [Versions](#versions)
    - [Installation](#installation)
-   - [Docker](#docker)
+   - [Docker](#docker-image)
    - [Licence](#licence)
    - [Citations](#citations)
    - [Credits](#credits)
