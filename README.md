@@ -116,7 +116,7 @@ If you are using functions of *saferDev*, please cite:
 
 <br />
 
-## acknowledgments
+## Acknowledgments
 
 The developers & maintainers of the mentioned softwares and packages, including:
 

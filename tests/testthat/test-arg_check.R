@@ -11,8 +11,10 @@ testthat::test_that("arg_check()", {
     mat1 <- base::matrix(vec1)
     mat2 <- base::matrix(base::c(1:3 / 3, NA))
     mat3 <- base::matrix(vec5)
+    arr1 <- base::array(mat1)
     number <- 1
     factor1 <- base::as.factor(vec5)
+    ord_factor1 <- ordered(factor1)
     expr1 <- expression(1)
     fun1 <- function(x){x = 1}
     ## end data argument values
@@ -801,6 +803,28 @@ testthat::test_that("arg_check()", {
     expect <- list(problem = TRUE, text = "ERROR\n\nTHE vec8 ARGUMENT MUST BE MODE character", object.name = "vec8")
     testthat::expect_equal(result, expect)
     # end if(print == TRUE & problem == TRUE){
+    # if( ! base::is.null(x = base::get(x = arg.names[i2], pos = -1L, envir = base::as.environment(-1), mode = "any", inherits = FALSE))){
+    testthat::expect_no_error(arg_check(data = arr1, class = "array"))
+    result <- arg_check(data = mat1, class = "array", print = TRUE)
+    expect <- list(problem = TRUE, text = "ERROR\n\nTHE mat1 ARGUMENT MUST BE CLASS array", object.name = "mat1")
+    testthat::expect_equal(result, expect)
+    # Problem here: see https://github.com/safer-r/saferDev/issues/100
+    testthat::expect_no_error(arg_check(data = mat1, class = "matrix"))
+    result <- arg_check(data = arr1, class = "matrix", print = TRUE)
+    expect <- list(problem = TRUE, text = "ERROR\n\nTHE arr1 ARGUMENT MUST BE CLASS array", object.name = "arr1")
+    testthat::expect_equal(result, expect)
+
+    testthat::expect_no_error(arg_check(data = ord_factor1, class = "factor"))
+    result <- arg_check(data = ord_factor1, class = "factor", print = TRUE)
+    expect <- list(problem = FALSE, text = "NO PROBLEM DETECTED FOR THE ord_factor1 ARGUMENT.", object.name = "ord_factor1")
+    testthat::expect_equal(result, expect)
+    result <- arg_check(data = ord_factor1, class = "vector", print = TRUE)
+    expect <- list(problem = TRUE, text = "ERROR\n\nTHE ord_factor1 ARGUMENT MUST BE CLASS vector", object.name = "ord_factor1")
+    testthat::expect_equal(result, expect)
+
+    # end if( ! base::is.null(x = base::get(x = arg.names[i2], pos = -1L, envir = base::as.environment(-1), mode = "any", inherits = FALSE))){
+                
+
 
     #### end main code
 

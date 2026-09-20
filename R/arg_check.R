@@ -660,7 +660,7 @@ arg_check <- function(
         if( ! (base::all(typeof %in% base::c("logical", "integer", "double", "complex", "character", "list", "expression", "symbol", "closure", "special", "builtin", "environment", "S4", "language", "object"), na.rm = TRUE) & base::length(x = typeof) == 1L)){ # "language" is the type of object of class "call" # base::all() without na.rm -> ok because typeof cannot be NA (tested above)
             tempo_cat <- base::paste0(
                 error_text_start, 
-                "THE typeof ARGUMENT MUST BE ONE OF THESE VALUE:\n\"logical\"\n\"integer\"\n\"double\"\n\"complex\"\n\"character\"\n\"list\"\n\"expression\"\n\"name\"\n\"symbol\"\n\"closure\"\n\"special\"\n\"builtin\"\n\"environment\"\n\"S4\"\n\"language\", \"object\"",
+                "THE typeof ARGUMENT MUST BE ONE OF THESE VALUE:\n\"logical\"\n\"integer\"\n\"double\"\n\"complex\"\n\"character\"\n\"list\"\n\"expression\"\n\"name\"\n\"symbol\"\n\"closure\"\n\"special\"\n\"builtin\"\n\"environment\"\n\"S4\"\n\"language\"\n\"object\"",
                 collapse = NULL, 
                 recycle0 = FALSE
             )
@@ -899,7 +899,20 @@ arg_check <- function(
                     }else{
                         text <- base::paste0(text, " AND ", collapse = NULL, recycle0 = FALSE) ; 
                     }
-                    text <- base::paste0(text, base::toupper(arg.names[i2]), " ", if(base::all(base::get(x = arg.names[i2], pos = -1L, envir = base::as.environment(-1), mode = "any", inherits = FALSE) %in% base::c("matrix", "array"), na.rm = TRUE)){"matrix"}else if(base::all(base::get(x = arg.names[i2], pos = -1L, envir = base::as.environment(-1), mode = "any", inherits = FALSE) %in% base::c("factor", "ordered"), na.rm = TRUE)){"factor"}else{base::get(x = arg.names[i2], pos = -1L, envir = base::as.environment(-1), mode = "any", inherits = FALSE)}, collapse = NULL, recycle0 = FALSE)
+                    text <- base::paste0(
+                        text, 
+                        base::toupper(arg.names[i2]), 
+                        " ", 
+                        if(base::all(base::c("matrix", "array") %in% base::get(x = arg.names[i2], pos = -1L, envir = base::as.environment(-1), mode = "any", inherits = FALSE), na.rm = TRUE)){
+                            "matrix"
+                        }else if(base::all(base::c("factor", "ordered") %in% base::get(x = arg.names[i2], pos = -1L, envir = base::as.environment(-1), mode = "any", inherits = FALSE), na.rm = TRUE)){
+                            "factor"
+                        }else{
+                            base::get(x = arg.names[i2], pos = -1L, envir = base::as.environment(-1), mode = "any", inherits = FALSE)
+                        }, 
+                        collapse = NULL, 
+                        recycle0 = FALSE
+                    )
                 '
                 # no need of na.rm = TRUE for base::all() because %in% does not output NA
                 # end script to execute
