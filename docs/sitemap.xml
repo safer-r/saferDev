@@ -1,81 +1,44 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url>
-    <loc>/404.html</loc>
-  </url>
-  <url>
-    <loc>/articles/arg_check.html</loc>
-  </url>
-  <url>
-    <loc>/articles/arg_test.html</loc>
-  </url>
-  <url>
-    <loc>/articles/cuteDev.html</loc>
-  </url>
-  <url>
-    <loc>/articles/env_check.html</loc>
-  </url>
-  <url>
-    <loc>/articles/exemples.html</loc>
-  </url>
-  <url>
-    <loc>/articles/get_message.html</loc>
-  </url>
-  <url>
-    <loc>/articles/index.html</loc>
-  </url>
-  <url>
-    <loc>/articles/is_function_here.html</loc>
-  </url>
-  <url>
-    <loc>/articles/is_package_here.html</loc>
-  </url>
-  <url>
-    <loc>/articles/is_python_package_here.html</loc>
-  </url>
-  <url>
-    <loc>/articles/report.html</loc>
-  </url>
-  <url>
-    <loc>/articles/saferDev.html</loc>
-  </url>
-  <url>
-    <loc>/authors.html</loc>
-  </url>
-  <url>
-    <loc>/index.html</loc>
-  </url>
-  <url>
-    <loc>/reference/arg_check.html</loc>
-  </url>
-  <url>
-    <loc>/reference/arg_test.html</loc>
-  </url>
-  <url>
-    <loc>/reference/env_check.html</loc>
-  </url>
-  <url>
-    <loc>/reference/get_message.html</loc>
-  </url>
-  <url>
-    <loc>/reference/index.html</loc>
-  </url>
-  <url>
-    <loc>/reference/internal_function.html</loc>
-  </url>
-  <url>
-    <loc>/reference/is_function_here.html</loc>
-  </url>
-  <url>
-    <loc>/reference/is_package_here.html</loc>
-  </url>
-  <url>
-    <loc>/reference/is_python_package_here.html</loc>
-  </url>
-  <url>
-    <loc>/reference/python_pkg_check.html</loc>
-  </url>
-  <url>
-    <loc>/reference/report.html</loc>
-  </url>
+<urlset xmlns = 'http://www.sitemaps.org/schemas/sitemap/0.9'>
+<url><loc>/404.html</loc></url>
+<url><loc>/articles/all_args_here.html</loc></url>
+<url><loc>/articles/arg_check.html</loc></url>
+<url><loc>/articles/arg_test.html</loc></url>
+<url><loc>/articles/colons_check.html</loc></url>
+<url><loc>/articles/cuteDev.html</loc></url>
+<url><loc>/articles/env_check.html</loc></url>
+<url><loc>/articles/exemples.html</loc></url>
+<url><loc>/articles/get_message.html</loc></url>
+<url><loc>/articles/index.html</loc></url>
+<url><loc>/articles/is_function_here.html</loc></url>
+<url><loc>/articles/is_package_here.html</loc></url>
+<url><loc>/articles/report.html</loc></url>
+<url><loc>/articles/saferDev.html</loc></url>
+<url><loc>/authors.html</loc></url>
+<url><loc>/index.html</loc></url>
+<url><loc>/news/index.html</loc></url>
+<url><loc>/reference/all_args_here.html</loc></url>
+<url><loc>/reference/arg_check.html</loc></url>
+<url><loc>/reference/arg_test.html</loc></url>
+<url><loc>/reference/colons_check.html</loc></url>
+<url><loc>/reference/dot-all_args_here_fill.html</loc></url>
+<url><loc>/reference/dot-base_op_check.html</loc></url>
+<url><loc>/reference/dot-colons_check_message.html</loc></url>
+<url><loc>/reference/dot-extract_all_fun_names.html</loc></url>
+<url><loc>/reference/dot-functions_detect.html</loc></url>
+<url><loc>/reference/dot-fun_args_pos.html</loc></url>
+<url><loc>/reference/dot-has_odd_number_of_quotes.html</loc></url>
+<url><loc>/reference/dot-in_parenthesis_replacement.html</loc></url>
+<url><loc>/reference/dot-in_quotes_replacement.html</loc></url>
+<url><loc>/reference/dot-noclean_functions.html</loc></url>
+<url><loc>/reference/dot-pack_and_function_check.html</loc></url>
+<url><loc>/reference/env_check.html</loc></url>
+<url><loc>/reference/get_message.html</loc></url>
+<url><loc>/reference/index.html</loc></url>
+<url><loc>/reference/internal_function.html</loc></url>
+<url><loc>/reference/is_function_here.html</loc></url>
+<url><loc>/reference/is_package_here.html</loc></url>
+<url><loc>/reference/is_python_package_here.html</loc></url>
+<url><loc>/reference/python_pkg_check.html</loc></url>
+<url><loc>/reference/report.html</loc></url>
 </urlset>
+

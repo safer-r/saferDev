@@ -51,14 +51,14 @@ arg_check(data = vec1, typeof = "integer")
 
 # Check that vec1 is a vector of type double -> error because vec1 is not type "double", 
 # but type "integer".
-arg_check(data = vec1, class = "vector", typeof = "double")
+arg_check(data = vec1, class = "integer", typeof = "double")
 
 
 # Check that vec1 is an integer vector of length 3 without negative values and 
 # without NA -> error because of length 5 and negative values inside vec1.
 arg_check(
     data = vec1, 
-    class = "vector", 
+    class = "integer", 
     typeof = "integer", 
     length = 3, 
     neg_values = FALSE, 
@@ -77,15 +77,16 @@ arg_check(data = NULL, typeof = "integer")
 <br>
 
 ### Arguments <code>class</code>, <code>typeof</code>, <code>mode</code> and <code>length</code>
-These arguments accept as values the classical kind of type, mode and length, respectively,
-except the <code>class</code> argument, which is simplified version of <code>class(data)</code>.
-See the help of <code>arg_check</code>.
+These arguments accept any character strings (single or vector of character strings), tested 
+exactly (same values, in the same order) against <code>class(data)</code>, <code>typeof(data)</code> 
+and <code>mode(data)</code>, respectively. Since R 4.0.0, matrices have class <code>c("matrix", "array")</code>, 
+and ordered factors have class <code>c("ordered", "factor")</code>. See the help of <code>arg_check</code>.
 
 ```{r, echo = TRUE, error = TRUE}
 # Example.
 arg_check(
     data = vec1, 
-    class = "vector", 
+    class = "integer", 
     typeof = "integer", 
     mode = "numeric", 
     length = 5, 
@@ -104,6 +105,21 @@ arg_check(
 arg_check(
     data = vec1, 
     mode = "integer",
+)
+
+# Vector class values are also possible, tested exactly (same values, same order).
+# Here, error because class(mat1) is c("matrix", "array"), matching exactly the class argument.
+arg_check(
+    data = mat1, 
+    class = c("matrix", "array"), 
+    typeof = "integer"
+)
+
+# Error here, because the written values must be identical, element per element, in the same order.
+arg_check(
+    data = mat1, 
+    class = c("array", "matrix"), 
+    typeof = "integer"
 )
 ```
 <br>
@@ -172,7 +188,7 @@ arg_check(
 # Warning: na_contain = TRUE means "no check". Thus, NA can be present or not. 
 arg_check(
     data = mat2, 
-    class = "matrix", 
+    class = c("matrix", "array"), 
     prop = TRUE,
     na_contain = FALSE 
 )
@@ -192,7 +208,7 @@ arg_check(
 # Warning: neg_values = FALSE cannot be used if typeof and mode are NULL. 
 arg_check(
     data = mat1, 
-    class = "matrix",
+    class = c("matrix", "array"),
     neg_values = FALSE
 )
 ```
@@ -218,7 +234,7 @@ arg_check(
 # Warning: inf_values = FALSE cannot be used if typeof and mode are NULL. 
 arg_check(
     data = mat1, 
-    class = "matrix",
+    class = c("matrix", "array"),
     inf_values = FALSE
 )
 ```
@@ -243,7 +259,7 @@ res <- arg_check(
 # Even if print is TRUE, no error message printed because no error.
 res <- arg_check(
     data = mat1, 
-    class = "matrix",
+    class = c("matrix", "array"),
     print = TRUE
 )
 ```
@@ -320,7 +336,7 @@ arg_check(
 # Add a text in error messages returned by all_args_here().
 arg_check(
     data = mat1, 
-    class = "matrix", 
+    class = c("matrix", "array"), 
     lib_path = "NOTGOOD",
     error_text = " === TEXT ADDED ==="
 )
@@ -331,7 +347,7 @@ arg_check(
 ```{r}
 arg_check(
     data = vec1, # object to check.
-    class = "vector", # check the expected class.
+    class = "integer", # check the expected class (tested exactly, same values, same order).
     typeof = "integer", # check the expected type.
     mode = NULL,  # check the expected mode.
     length = NULL,  # check the expected length.

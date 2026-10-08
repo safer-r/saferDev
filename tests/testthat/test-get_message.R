@@ -6,7 +6,7 @@ testthat::test_that("get_message()", {
     str3 <- "message('ahah'); warning('ohoh')" # message and warning
     str4 <- "sum(1, 2, 3)" # nothing
     str5 <- "ggplot2::ggplot(data = data.frame(X = 1:10, stringsAsFactors = TRUE), mapping = ggplot2::aes(x = X)) + ggplot2::geom_histogram()" # ggplot and message
-    str6 <- "wilcox.test(c(1, 1, 3), c(1, 2, 4), paired = TRUE)" # warning
+    str6 <- "1+factor(1)" # warning
     str7 <- "ggplot2::ggplot(data = data.frame(X = c(1:10, NA), stringsAsFactors = TRUE), mapping = ggplot2::aes(x = X)) + ggplot2::geom_histogram()" # ggplot and warning
     str8 <-  "1+factor(1)" # warning message
     str9 <- "ggplot2::ggplot(data = data.frame(X = 'a', stringsAsFactors = FALSE), mapping = ggplot2::aes(x = X)) + ggplot2::geom_histogram()" # ggplot and error
@@ -399,26 +399,14 @@ testthat::test_that("get_message()", {
                     # if(base::any(base::grepl(x = tempo.warn[[1]], pattern
                     testthat::expect_no_error(get_message(data = str6, kind = "warning", header = TRUE, print_no = FALSE, text = NULL, env = NULL, safer_check = TRUE, lib_path = NULL, error_text = ""))
                     result <- get_message(data = str6, kind = "warning", header = TRUE, print_no = FALSE, text = NULL, env = NULL, safer_check = TRUE, lib_path = NULL, error_text = "")
-                    if(detect_environment == "cran"){
-                        expected <- NULL
-                    }else if(detect_environment == "github" && base::Sys.info()[["sysname"]] != "Linux"){
-                        expected <- NULL
-                    }else{
-                        expected <- "WARNING MESSAGE REPORTED:\nIn wilcox.test.default(c(1, 1, 3), c(1, 2, 4), paired = TRUE): cannot compute exact p-value with zeroes\n"
-                    }
+                    expected <- "WARNING MESSAGE REPORTED:\nIn Ops.factor(1, factor(1)): '+' not meaningful for factors\n"
                     testthat::expect_equal(result, expected)
                     # end if(base::any(base::grepl(x = tempo.warn[[1]], pattern
                 # end if(header == TRUE){
                 # }else{
                 testthat::expect_no_error(get_message(data = str6, kind = "warning", header = FALSE, print_no = FALSE, text = NULL, env = NULL, safer_check = TRUE, lib_path = NULL, error_text = ""))
                 result <- get_message(data = str6, kind = "warning", header = FALSE, print_no = FALSE, text = NULL, env = NULL, safer_check = TRUE, lib_path = NULL, error_text = "")
-                if(detect_environment == "cran"){
-                    expected <- NULL
-                }else if(detect_environment == "github" && base::Sys.info()[["sysname"]] != "Linux"){
-                    expected <- NULL
-                }else{
-                    expected <- "simpleWarning in wilcox.test.default(c(1, 1, 3), c(1, 2, 4), paired = TRUE): cannot compute exact p-value with zeroes\n"
-                }
+                expected <- "simpleWarning in Ops.factor(1, factor(1)): '+' not meaningful for factors\n"
                 testthat::expect_equal(result, expected)
                 # end }else{
         # end if(kind == "warning" & base::length(x = tempo.warn) > 0){
@@ -515,14 +503,8 @@ testthat::test_that("get_message()", {
 
 
     # This reaches line 540 (evaluates the expression with warning capture setup), but locally only
-    result <- get_message(data = "wilcox.test(c(1,1,3), c(1,2,4), paired = TRUE)", kind = "warning")
-    if(detect_environment == "cran"){
-        expected <- NULL
-    }else if(detect_environment == "github" && base::Sys.info()[["sysname"]] != "Linux"){
-        expected <- NULL
-    }else{
-        expected <-  "WARNING MESSAGE REPORTED:\nIn wilcox.test.default(c(1, 1, 3), c(1, 2, 4), paired = TRUE): cannot compute exact p-value with zeroes\n"
-    }
+    result <- get_message(data = "1+factor(1)", kind = "warning")
+    expected <-  "WARNING MESSAGE REPORTED:\nIn Ops.factor(1, factor(1)): '+' not meaningful for factors\n"
     testthat::expect_equal(result, expected)
     result <- get_message(data = "1 + 1", kind = "warning")  # Also reaches it, even though no warning occurs
     expected <-  NULL

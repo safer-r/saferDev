@@ -193,9 +193,16 @@ testthat::test_that("arg_check()", {
 
     ######## other checkings
     # management of special classes
-    testthat::expect_error(arg_check(data = vec1, class = mat3, typeof = "integer"))
-    testthat::expect_error(arg_check(data = vec1, mode = "numeric", typeof = mat3))
-    testthat::expect_error(arg_check(data = vec1, mode = "numeric", mode = mat3))
+    result <- arg_check(data = vec1, class = mat3, typeof = "integer") # mat3 is a matrix of characters: now accepted as a vector of class strings (any string allowed), returning a problem because class(vec1) is "integer"
+    expect <- list(problem = TRUE, text = "ERROR\n\nTHE vec1 ARGUMENT MUST BE CLASS a, b, a, b", object.name = "vec1")
+    testthat::expect_equal(result, expect)
+    result <- arg_check(data = vec1, mode = "numeric", typeof = mat3) # mat3 is a matrix of characters: now accepted as a vector of typeof strings (any string allowed), returning a problem because typeof(vec1) is a single string. Note that mode = "numeric" now matches exactly mode(vec1)
+    expect <- list(problem = TRUE, text = "ERROR\n\nTHE vec1 ARGUMENT MUST BE TYPEOF a, b, a, b", object.name = "vec1")
+    testthat::expect_equal(result, expect)
+    testthat::expect_error(arg_check(data = vec1, mode = "numeric", mode = mat3)) # R itself errors because the formal argument "mode" is matched by multiple actual arguments. Replaced by the two lines below
+    result <- arg_check(data = vec1, mode = mat3) # mat3 is a matrix of characters: now accepted as a vector of mode strings (any string allowed), returning a problem because mode(vec1) is a single string
+    expect <- list(problem = TRUE, text = "ERROR\n\nTHE vec1 ARGUMENT MUST BE MODE a, b, a, b", object.name = "vec1")
+    testthat::expect_equal(result, expect)
     testthat::expect_error(arg_check(data = vec1, mode = "numeric", length = mat3))
     testthat::expect_error(arg_check(data = vec1, mode = "numeric", prop = mat3))
     testthat::expect_error(arg_check(data = vec1, mode = "numeric", double_as_integer_allowed = mat3))
@@ -360,8 +367,8 @@ testthat::test_that("arg_check()", {
     result <- arg_check(data = vec1, options = "a", class = NULL, typeof = NULL, mode = NULL, prop = FALSE)
     expect <- list(problem = TRUE, text = "ERROR\n\nTHE vec1 ARGUMENT MUST BE SOME OF THESE OPTIONS:\na\nTHE PROBLEMATIC ELEMENTS OF vec1 ARE:\n-1\n0\n1\n2\n3", object.name = "vec1")
     testthat::expect_equal(result, expect)
-    result <- arg_check(data = vec1, options = NULL, class = "vector", typeof = "double", mode = "numeric", prop = TRUE)
-    expect <- list(problem = TRUE, text = "ERROR\n\nTHE vec1 ARGUMENT MUST BE TYPEOF double AND THE vec1 ARGUMENT MUST BE DECIMAL VALUES BETWEEN 0 AND 1.", object.name = "vec1")
+    result <- arg_check(data = vec1, options = NULL, class = "vector", typeof = "double", mode = "numeric", prop = TRUE) # class = "vector" is not a shorthand anymore: class(vec1) is "integer"
+    expect <- list(problem = TRUE, text = "ERROR\n\nTHE vec1 ARGUMENT MUST BE CLASS vector AND TYPEOF double AND THE vec1 ARGUMENT MUST BE DECIMAL VALUES BETWEEN 0 AND 1.", object.name = "vec1")
     testthat::expect_equal(result, expect)
     # end THE class, typeof, mode ARGUMENTS MUST BE NULL, AND prop FALSE, IF THE options ARGUMENT IS SPECIFIED\nTHE options ARGUMENT MUST BE NULL IF THE class AND/OR typeof AND/OR mode AND/OR prop ARGUMENT IS SPECIFIED.
     # THE neg_values ARGUMENT CANNOT BE SWITCHED FROM TRUE (DEFAULT VALUE) TO FALSE IF class, typeof AND mode ARGUMENTS ARE NULL.
@@ -370,42 +377,66 @@ testthat::test_that("arg_check()", {
     # THE inf_values ARGUMENT CANNOT BE SWITCHED FROM TRUE (DEFAULT VALUE) TO FALSE IF class, typeof AND mode ARGUMENTS ARE NULL.
     testthat::expect_error(arg_check(data = vec1, class = NULL, typeof = NULL, mode = NULL, inf_values = FALSE, prop = TRUE))
     # end THE inf_values ARGUMENT CANNOT BE SWITCHED FROM TRUE (DEFAULT VALUE) TO FALSE IF class, typeof AND mode ARGUMENTS ARE NULL.
-    #  ! base::is.null(class)
+    #  ! base::is.null(class) # the class argument is free now: any character strings (single or vector) tested exactly against class(data). See the main code below
     testthat::expect_error(arg_check(data = vec5, class = NULL))
     testthat::expect_error(arg_check(data = vec5, class = NA))
     testthat::expect_error(arg_check(data = vec5, class = 1))
-    testthat::expect_error(arg_check(data = vec5, class = "NOTGOOD"))
-    testthat::expect_error(arg_check(data = vec5, class = c("vector", "list")))
-    testthat::expect_error(arg_check(data = vec5, class = "vector", neg_values = FALSE))
+    result <- arg_check(data = vec5, class = "NOTGOOD") # no error thrown: any string is allowed. Returns a problem because class(vec5) is "character"
+    expect <- list(problem = TRUE, text = "ERROR\n\nTHE vec5 ARGUMENT MUST BE CLASS NOTGOOD", object.name = "vec5")
+    testthat::expect_equal(result, expect)
+    result <- arg_check(data = vec5, class = c("character", "NOTGOOD")) # no error thrown: any string is allowed. Returns a problem because class(vec5) is "character"
+    expect <- list(problem = TRUE, text = "ERROR\n\nTHE vec5 ARGUMENT MUST BE CLASS character, NOTGOOD", object.name = "vec5")
+    testthat::expect_equal(result, expect)
+    result <- arg_check(data = vec5, class = "character")
+    expect <- list(problem = FALSE, text = "NO PROBLEM DETECTED FOR THE vec5 ARGUMENT.", object.name = "vec5")
+    testthat::expect_equal(result, expect)
+    result <- arg_check(data = vec5, class = c("character", "character")) # no error thrown: any string is allowed. Returns a problem because class(vec5) is a single string and cannot be equal to a vector of 2 values
+    expect <- list(problem = TRUE, text = "ERROR\n\nTHE vec5 ARGUMENT MUST BE CLASS character, character", object.name = "vec5")
+    testthat::expect_equal(result, expect)
+    testthat::expect_error(arg_check(data = vec5, class = "vector", neg_values = FALSE)) # error because typeof and mode are NULL and class is not NULL. Note that class = "vector" is not a shorthand anymore
     testthat::expect_no_error(arg_check(data = vec5, class = "vector", neg_values = TRUE)) # neg_values is inactivated
     testthat::expect_error(arg_check(data = vec5, class = "vector", inf_values = FALSE))
     testthat::expect_error(arg_check(data = vec5, class = "integer", inf_values = FALSE))
     testthat::expect_no_error(arg_check(data = vec5, class = "vector", inf_values = TRUE)) # inf_values is inactivated
     # end  ! base::is.null(class)
-    #  ! base::is.null(typeof)
+    #  ! base::is.null(typeof) # the typeof argument is free now: any character strings (single or vector) tested exactly against typeof(data). See the main code below
     testthat::expect_error(arg_check(data = vec1, typeof = NULL))
     testthat::expect_error(arg_check(data = vec1, typeof = NA))
     testthat::expect_error(arg_check(data = vec1, typeof = 1))
-    testthat::expect_error(arg_check(data = vec1, typeof = "NOTGOOD"))
-    testthat::expect_error(arg_check(data = vec1, typeof = c("character", "list")))
-    testthat::expect_error(arg_check(data = vec1, typeof = "character", neg_values = FALSE))
+    result <- arg_check(data = vec1, typeof = "NOTGOOD") # no error thrown: any string is allowed. Returns a problem because typeof(vec1) is "integer"
+    expect <- list(problem = TRUE, text = "ERROR\n\nTHE vec1 ARGUMENT MUST BE TYPEOF NOTGOOD", object.name = "vec1")
+    testthat::expect_equal(result, expect)
+    result <- arg_check(data = vec1, typeof = c("integer", "NOTGOOD")) # no error thrown: any string is allowed. Returns a problem because typeof(vec1) is "integer"
+    expect <- list(problem = TRUE, text = "ERROR\n\nTHE vec1 ARGUMENT MUST BE TYPEOF integer, NOTGOOD", object.name = "vec1")
+    testthat::expect_equal(result, expect)
+    result <- arg_check(data = vec1, typeof = c("integer", "integer")) # no error thrown: any string is allowed. Returns a problem because typeof(vec1) is a single string and cannot be equal to a vector of 2 values
+    expect <- list(problem = TRUE, text = "ERROR\n\nTHE vec1 ARGUMENT MUST BE TYPEOF integer, integer", object.name = "vec1")
+    testthat::expect_equal(result, expect)
+    testthat::expect_error(arg_check(data = vec1, typeof = "character", neg_values = FALSE)) # error because neg_values FALSE requires a single "double" or "integer" typeof value
     testthat::expect_no_error(arg_check(data = vec1, typeof = "double", neg_values = FALSE))
     testthat::expect_no_error(arg_check(data = vec1, typeof = "character", neg_values = TRUE)) # neg_values is inactivated
-    testthat::expect_error(arg_check(data = vec1, typeof = "character", inf_values = FALSE))
+    testthat::expect_error(arg_check(data = vec1, typeof = "character", inf_values = FALSE)) # error because inf_values FALSE requires a single "double" typeof value
     testthat::expect_error(arg_check(data = vec1, typeof = "integer", inf_values = FALSE))
     testthat::expect_no_error(arg_check(data = vec1, typeof = "double", inf_values = FALSE))
     testthat::expect_no_error(arg_check(data = vec1, typeof = "character", inf_values = TRUE)) # inf_values is inactivated
     # end  ! base::is.null(typeof)
-    #  ! base::is.null(mode)
+    #  ! base::is.null(mode) # the mode argument is free now: any character strings (single or vector) tested exactly against mode(data). See the main code below
     testthat::expect_error(arg_check(data = vec1, mode = NULL))
     testthat::expect_error(arg_check(data = vec1, mode = NA))
     testthat::expect_error(arg_check(data = vec1, mode = 1))
-    testthat::expect_error(arg_check(data = vec1, mode = "NOTGOOD"))
-    testthat::expect_error(arg_check(data = vec1, mode = c("character", "list")))
-    testthat::expect_error(arg_check(data = vec1, mode = "character", neg_values = FALSE))
+    result <- arg_check(data = vec1, mode = "NOTGOOD") # no error thrown: any string is allowed. Returns a problem because mode(vec1) is "numeric"
+    expect <- list(problem = TRUE, text = "ERROR\n\nTHE vec1 ARGUMENT MUST BE MODE NOTGOOD", object.name = "vec1")
+    testthat::expect_equal(result, expect)
+    result <- arg_check(data = vec1, mode = c("numeric", "NOTGOOD")) # no error thrown: any string is allowed. Returns a problem because mode(vec1) is "numeric"
+    expect <- list(problem = TRUE, text = "ERROR\n\nTHE vec1 ARGUMENT MUST BE MODE numeric, NOTGOOD", object.name = "vec1")
+    testthat::expect_equal(result, expect)
+    result <- arg_check(data = vec1, mode = c("numeric", "numeric")) # no error thrown: any string is allowed. Returns a problem because mode(vec1) is a single string and cannot be equal to a vector of 2 values
+    expect <- list(problem = TRUE, text = "ERROR\n\nTHE vec1 ARGUMENT MUST BE MODE numeric, numeric", object.name = "vec1")
+    testthat::expect_equal(result, expect)
+    testthat::expect_error(arg_check(data = vec1, mode = "character", neg_values = FALSE)) # error because neg_values FALSE requires a single "numeric" mode value
     testthat::expect_no_error(arg_check(data = vec1, mode = "numeric", neg_values = FALSE))
     testthat::expect_no_error(arg_check(data = vec1, mode = "character", neg_values = TRUE)) # neg_values is inactivated
-    testthat::expect_error(arg_check(data = vec1, mode = "character", inf_values = FALSE))
+    testthat::expect_error(arg_check(data = vec1, mode = "character", inf_values = FALSE)) # error because inf_values FALSE requires a single "numeric" mode value
     testthat::expect_error(arg_check(data = vec1, mode = "integer", inf_values = FALSE))
     testthat::expect_no_error(arg_check(data = vec1, mode = "numeric", inf_values = FALSE))
     testthat::expect_no_error(arg_check(data = vec1, mode = "character", inf_values = TRUE)) # inf_values is inactivated
@@ -629,7 +660,10 @@ testthat::test_that("arg_check()", {
     result <- arg_check(data = mat1, class = "vector", length = 1, options = NULL)
     expect <- list(problem = TRUE, text = "ERROR\n\nTHE mat1 ARGUMENT MUST BE CLASS vector AND LENGTH 1", object.name = "mat1")
     testthat::expect_equal(result, expect)
-    result <- arg_check(data = vec1, class = "vector", options = NULL)
+    result <- arg_check(data = vec1, class = "vector", options = NULL) # class = "vector" is not a shorthand anymore: class(vec1) is "integer", so a problem is returned
+    expect <- list(problem = TRUE, text = "ERROR\n\nTHE vec1 ARGUMENT MUST BE CLASS vector", object.name = "vec1")
+    testthat::expect_equal(result, expect)
+    result <- arg_check(data = vec1, class = "integer", options = NULL)
     expect <- list(problem = FALSE, text = "NO PROBLEM DETECTED FOR THE vec1 ARGUMENT.", object.name = "vec1")
     testthat::expect_equal(result, expect)
     # end test of class == "vector" # }else if(arg.names[i2] == "class" & base::all(base::get(arg.names[i2], envir = base::sys.nframe(), inherits = FALSE) == "vector") & ! (base::all(base::class(data) %in% "numeric") | base::all(base::class(data) %in% "integer") | base::all(base::class(data) %in% "character") | base::all(base::class(data) %in% "logical") | base::all(base::class(data) %in% "complex") | base::all(base::class(data) %in% "expression"))){ # test class == "vector". base::all(base::get(arg.names[i2], envir = base::sys.nframe(), inherits = FALSE) check if user has used the argument class = "vector". If TRUE and base::length(data) > 1, the class "numeric" "integer" "character" "logical" "complex" "expression" should be returned. No need of na.rm = TRUE for base::all() because %in% does not output NA # no need of na.rm = TRUE for base::all() because == does not output NA if no NA in left of ==, which is the case for arg.names. Other classes "list", "name", "symbol", "function", "environment", "S4", "call" return a list if length of data > 1
@@ -637,24 +671,27 @@ testthat::test_that("arg_check()", {
     result <- arg_check(data = mat1, class = "ggplot2", options = NULL)
     expect <- list(problem = TRUE, text = "ERROR\n\nTHE mat1 ARGUMENT MUST BE CLASS ggplot2", object.name = "mat1")
     testthat::expect_equal(result, expect)
-    result <- arg_check(data = ggplot2::ggplot(), class = "ggplot2", options = NULL)
+    result <- arg_check(data = ggplot2::ggplot(), class = c("ggplot2::ggplot", "ggplot", "ggplot2::gg", "S7_object", "gg"), options = NULL) # class = "ggplot2" is not a shorthand anymore: it must match class(data) exactly
     expect <- list(problem = FALSE, text = "NO PROBLEM DETECTED FOR THE ggplot2::ggplot() ARGUMENT.", object.name = "ggplot2::ggplot()")
     testthat::expect_equal(result, expect)
-    result <- arg_check(data = ggplot2::ggplot_build(ggplot2::ggplot()), class = "ggplot_built", options = NULL)
+    result <- arg_check(data = ggplot2::ggplot(), class = "ggplot2", options = NULL) # class(data) of a ggplot object is not the single string "ggplot2"
+    expect <- list(problem = TRUE, text = "ERROR\n\nTHE ggplot2::ggplot() ARGUMENT MUST BE CLASS ggplot2", object.name = "ggplot2::ggplot()")
+    testthat::expect_equal(result, expect)
+    result <- arg_check(data = ggplot2::ggplot_build(ggplot2::ggplot()), class = c("ggplot2::ggplot_built", "ggplot_built", "ggplot2::gg", "S7_object"), options = NULL)
     expect <- list(problem = FALSE, text = "NO PROBLEM DETECTED FOR THE ggplot2::ggplot_build(ggplot2::ggplot()) ARGUMENT.", object.name = "ggplot2::ggplot_build(ggplot2::ggplot())")
     testthat::expect_equal(result, expect)
     r_version <- as.numeric_version(paste0(R.version$major, ".", R.version$minor))
     if (r_version >= "4.5.0"){
-        result <- arg_check(data = ggplot2::ggplot_build(ggplot2::ggplot()), class = "ggplot_built", mode = "object")
+        result <- arg_check(data = ggplot2::ggplot_build(ggplot2::ggplot()), class = c("ggplot2::ggplot_built", "ggplot_built", "ggplot2::gg", "S7_object"), mode = "object")
     }else{
-        result <- arg_check(data = ggplot2::ggplot_build(ggplot2::ggplot()), class = "ggplot_built", mode = "list")
+        result <- arg_check(data = ggplot2::ggplot_build(ggplot2::ggplot()), class = c("ggplot2::ggplot_built", "ggplot_built", "ggplot2::gg", "S7_object"), mode = "list")
     }
     expect <- list(problem = FALSE, text = "NO PROBLEM DETECTED FOR THE ggplot2::ggplot_build(ggplot2::ggplot()) ARGUMENT.", object.name = "ggplot2::ggplot_build(ggplot2::ggplot())")
     testthat::expect_equal(result, expect)
     if (r_version >= "4.5.0"){
-        result <- arg_check(data = ggplot2::ggplot_build(ggplot2::ggplot()), class = "ggplot_built", typeof = "object")
+        result <- arg_check(data = ggplot2::ggplot_build(ggplot2::ggplot()), class = c("ggplot2::ggplot_built", "ggplot_built", "ggplot2::gg", "S7_object"), typeof = "object")
     }else{
-        result <- arg_check(data = ggplot2::ggplot_build(ggplot2::ggplot()), class = "ggplot_built", typeof = "list")
+        result <- arg_check(data = ggplot2::ggplot_build(ggplot2::ggplot()), class = c("ggplot2::ggplot_built", "ggplot_built", "ggplot2::gg", "S7_object"), typeof = "list")
     }
     expect <- list(problem = FALSE, text = "NO PROBLEM DETECTED FOR THE ggplot2::ggplot_build(ggplot2::ggplot()) ARGUMENT.", object.name = "ggplot2::ggplot_build(ggplot2::ggplot())")
     testthat::expect_equal(result, expect)
@@ -768,8 +805,8 @@ testthat::test_that("arg_check()", {
     result <- arg_check(data = vec5, mode = "numeric", length = 1, neg_values = FALSE)
     expect <- list(problem = TRUE, text = "ERROR\n\nTHE vec5 ARGUMENT MUST BE MODE numeric AND LENGTH 1 AND THE vec5 ARGUMENT MUST BE MADE OF NON NEGATIVE VALUES BUT IS NOT EVEN NUMERIC.", object.name = "vec5")
     testthat::expect_equal(result, expect)
-    result <- arg_check(data = vec5, mode = "numeric", class = "vector", typeof = "integer", length = 1, neg_values = FALSE)
-    expect <- list(problem = TRUE, text = "ERROR\n\nTHE vec5 ARGUMENT MUST BE TYPEOF integer AND MODE numeric AND LENGTH 1 AND THE vec5 ARGUMENT MUST BE MADE OF NON NEGATIVE VALUES BUT IS NOT EVEN NUMERIC.", object.name = "vec5")
+    result <- arg_check(data = vec5, mode = "numeric", class = "vector", typeof = "integer", length = 1, neg_values = FALSE) # class = "vector" is not a shorthand anymore: class(vec5) is "character"
+    expect <- list(problem = TRUE, text = "ERROR\n\nTHE vec5 ARGUMENT MUST BE CLASS vector AND TYPEOF integer AND MODE numeric AND LENGTH 1 AND THE vec5 ARGUMENT MUST BE MADE OF NON NEGATIVE VALUES BUT IS NOT EVEN NUMERIC.", object.name = "vec5")
     testthat::expect_equal(result, expect)
     # end if(neg_values == FALSE & base::all(base::mode(data) %in% "numeric") & ! base::any(base::class(data) %in% "factor")){
     # if(inf_values == FALSE & base::all(base::typeof(data) %in% "double") & ! base::any(base::class(data) %in% "factor")){
@@ -794,8 +831,8 @@ testthat::test_that("arg_check()", {
     result <- arg_check(data = vec5, mode = "numeric", length = 1, inf_values = FALSE)
     expect <- list(problem = TRUE, text = "ERROR\n\nTHE vec5 ARGUMENT MUST BE MODE numeric AND LENGTH 1 AND THE vec5 ARGUMENT MUST BE MADE OF NON INFINITE VALUES BUT IS NOT EVEN MODE NUMERIC OR TYPE DOUBLE.", object.name = "vec5")
     testthat::expect_equal(result, expect)
-    result <- arg_check(data = vec5, class = "vector", mode = "numeric", typeof = "double", length = 1, inf_values = FALSE)
-    expect <- list(problem = TRUE, text = "ERROR\n\nTHE vec5 ARGUMENT MUST BE TYPEOF double AND MODE numeric AND LENGTH 1 AND THE vec5 ARGUMENT MUST BE MADE OF NON INFINITE VALUES BUT IS NOT EVEN MODE NUMERIC OR TYPE DOUBLE.", object.name = "vec5")
+    result <- arg_check(data = vec5, class = "vector", mode = "numeric", typeof = "double", length = 1, inf_values = FALSE) # class = "vector" is not a shorthand anymore: class(vec5) is "character"
+    expect <- list(problem = TRUE, text = "ERROR\n\nTHE vec5 ARGUMENT MUST BE CLASS vector AND TYPEOF double AND MODE numeric AND LENGTH 1 AND THE vec5 ARGUMENT MUST BE MADE OF NON INFINITE VALUES BUT IS NOT EVEN MODE NUMERIC OR TYPE DOUBLE.", object.name = "vec5")
     testthat::expect_equal(result, expect)
     # end if(inf_values == FALSE & base::all(base::typeof(data) %in% "double") & ! base::any(base::class(data) %in% "factor")){
     # if(print == TRUE & problem == TRUE){
@@ -803,20 +840,20 @@ testthat::test_that("arg_check()", {
     expect <- list(problem = TRUE, text = "ERROR\n\nTHE vec8 ARGUMENT MUST BE MODE character", object.name = "vec8")
     testthat::expect_equal(result, expect)
     # end if(print == TRUE & problem == TRUE){
-    # if( ! base::is.null(x = base::get(x = arg.names[i2], pos = -1L, envir = base::as.environment(-1), mode = "any", inherits = FALSE))){
+    # if( ! base::is.null(x = base::get(x = arg.names[i2], pos = -1L, envir = base::as.environment(-1), mode = "any", inherits = FALSE))){ # exact matching of class(data) now
     testthat::expect_no_error(arg_check(data = arr1, class = "array"))
     result <- arg_check(data = mat1, class = "array", print = TRUE)
     expect <- list(problem = TRUE, text = "ERROR\n\nTHE mat1 ARGUMENT MUST BE CLASS array", object.name = "mat1")
     testthat::expect_equal(result, expect)
-    # Problem here: see https://github.com/safer-r/saferDev/issues/100
-    testthat::expect_no_error(arg_check(data = mat1, class = "matrix"))
+    result <- arg_check(data = mat1, class = "matrix", print = TRUE) # since R 4.0.0, class(mat1) is c("matrix", "array"), so class = "matrix" alone returns a problem. This is the fix of https://github.com/safer-r/saferDev/issues/100
+    expect <- list(problem = TRUE, text = "ERROR\n\nTHE mat1 ARGUMENT MUST BE CLASS matrix", object.name = "mat1")
+    testthat::expect_equal(result, expect)
     result <- arg_check(data = arr1, class = "matrix", print = TRUE)
-    expect <- list(problem = TRUE, text = "ERROR\n\nTHE arr1 ARGUMENT MUST BE CLASS array", object.name = "arr1")
+    expect <- list(problem = TRUE, text = "ERROR\n\nTHE arr1 ARGUMENT MUST BE CLASS matrix", object.name = "arr1")
     testthat::expect_equal(result, expect)
 
-    testthat::expect_no_error(arg_check(data = ord_factor1, class = "factor"))
-    result <- arg_check(data = ord_factor1, class = "factor", print = TRUE)
-    expect <- list(problem = FALSE, text = "NO PROBLEM DETECTED FOR THE ord_factor1 ARGUMENT.", object.name = "ord_factor1")
+    result <- arg_check(data = ord_factor1, class = "factor", print = TRUE) # class(ord_factor1) is c("ordered", "factor"), so class = "factor" alone returns a problem
+    expect <- list(problem = TRUE, text = "ERROR\n\nTHE ord_factor1 ARGUMENT MUST BE CLASS factor", object.name = "ord_factor1")
     testthat::expect_equal(result, expect)
     result <- arg_check(data = ord_factor1, class = "vector", print = TRUE)
     expect <- list(problem = TRUE, text = "ERROR\n\nTHE ord_factor1 ARGUMENT MUST BE CLASS vector", object.name = "ord_factor1")
@@ -865,7 +902,7 @@ testthat::test_that("arg_check()", {
     testthat::expect_equal(result25, expect25)
     result26 <- arg_check(
         data = vec1, 
-        class = "vector", 
+        class = "integer", 
         typeof = "integer", 
         mode = NULL, 
         length = NULL, 

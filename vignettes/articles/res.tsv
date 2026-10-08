@@ -1,0 +1,3 @@
+LINE_NB	FUN_NAME	FUN_ARGS	FUN_POS	DEF_ARGS	MISSING_ARG_NAMES	MISSING_ARGS	STATUS
+3	do.call	do.call(what = base::c, args = code_for_col,  quote = FALSE, envir = base::parent.frame())	26	what, args, quote = FALSE, envir = parent.frame()			GOOD
+4	parent.frame	parent.frame()	30	n = 1	n	n = 1	parent.frame(n = 1)

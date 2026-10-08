@@ -1,0 +1,5 @@
+# cuteDev
+
+``` r
+library(cuteDev)
+```

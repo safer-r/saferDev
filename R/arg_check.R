@@ -2,9 +2,9 @@
 #' @description
 #' Check expected values of an argument of functions: class, type, mode, length, restricted values panel, kind of numeric values (in addition to the distinction between \code{'integer'} and \code{'double'})? Proportion only? Inf values authorized? negative values authorized? Integers of type \code{'double'}?
 #' @param data Object to test.
-#' @param class Single character string among \code{"vector"}, \code{"matrix"}, \code{"array"}, \code{"data.frame"}, \code{"list"}, \code{"factor"}, \code{"table"}, \code{"expression"}, \code{"name"}, \code{"symbol"}, \code{"function"}, \code{"uneval"}, \code{"environment"}, \code{"ggplot2"}, \code{"ggplot_built"}, \code{"call"}. simplified version of \code{class(data)} (see the details below). Write NULL to do not test the class.
-#' @param typeof Single character string among \code{"logical"}, \code{"integer"}, \code{"double"}, \code{"complex"}, \code{"character"}, \code{"list"}, \code{"expression"}, \code{"symbol"}, \code{"closure"}, \code{"special"}, \code{"builtin"}, \code{"environment"}, \code{"S4"}, \code{"language"}, \code{"object"}. Simplified version of checking the type of the tested object using \code{typeof(data)}. Write NULL to do not test the type.
-#' @param mode Single character string among \code{"logical"}, \code{"numeric"}, \code{"complex"}, \code{"character"}, \code{"list"}, \code{"expression"}, \code{"name"}, \code{"symbol"}, \code{"function"}, \code{"environment"}, \code{"S4"}, \code{"call"}, \code{"object"}. Simplified version of checking the type of the tested object using \code{mode(data)}. Write NULL to do not test the mode.
+#' @param class Character string or vector of character strings, tested exactly (same values, in the same order) against \code{class(data)}. Thus, \code{class = c("matrix", "array")} is required for matrices since R 4.0.0 and \code{class = c("ordered", "factor")} for ordered factors (see the details below). Write NULL to do not test the class.
+#' @param typeof Character string or vector of character strings, tested exactly (same values, in the same order) against \code{typeof(data)}. Since \code{typeof(data)} always returns a single string, a vector of more than one value in the \code{typeof} argument always returns a problem. Write NULL to do not test the type.
+#' @param mode Character string or vector of character strings, tested exactly (same values, in the same order) against \code{mode(data)}. Since \code{mode(data)} always returns a single string, a vector of more than one value in the \code{mode} argument always returns a problem. Write NULL to do not test the mode.
 #' @param length Single numeric value indicating the length of the object. Not considered if \code{NULL}.
 #' @param prop Single logical value. Are the numeric values between 0 and 1 (proportion)? If \code{TRUE}, can be used alone, i.e., without necessarily checking the class, mode, etc., of the object to test.
 #' @param double_as_integer_allowed Single logical value. If \code{TRUE}, no error is reported in the checking message if the \code{typeof} argument is set to \code{"integer"}, while the reality is type \code{"double"} but with zero as modulo (reminder of a division). This means that \code{i <- 1}, which is \code{typeof(i) == "double"} is considered as an integer when setting \code{double_as_integer_allowed = TRUE}. Warning: \code{double_as_integer_allowed = TRUE} uses \code{data \%\% 1 == 0L} but not \code{isTRUE(all.equal(data \%\% 1, 0))} is used here because the argument checks for integers stored as double (does not check for decimal numbers that are approximate integers).
@@ -35,17 +35,9 @@
 #'  
 #' If the tested object is \code{NULL}, then the function will always return a checking problem.
 #'  
-#' The \code{class} argument is a simplified version of \code{class(data)}:
-#' \itemize{
-#'   \item \code{"vector"} tests objects of class \code{"numeric"}, \code{"integer"}, \code{"character"}, \code{"logical"}, \code{"complex"} or \code{"expression"} (no error if \code{class(data)} returns one of these values).
-#'   \item \code{"matrix"} tests objects of class \code{"matrix"} for R < 4.0.0 and \code{c(""matrix", "array"")} otherwise.
-#'   \item \code{"ggplot2"} tests objects of class \code{c("gg", "ggplot")} for R < 4.5 and \code{c("ggplot2::ggplot", "ggplot", "ggplot2::gg", "S7_object", "gg")} otherwise.
-#'   \item \code{"ggplot2"} tests objects of class \code{"ggplot_built"} for R < 4.5 and \code{c("ggplot2::ggplot_built", "ggplot_built", "ggplot2::gg", "S7_object")} otherwise.
-#' }
+#' The \code{class}, \code{typeof} and \code{mode} arguments are compared to \code{class(data)}, \code{typeof(data)} and \code{mode(data)} exactly: the written values must be identical, element per element, in the same order. Since \code{typeof(data)} and \code{mode(data)} return a single string, passing several values in the \code{typeof} or \code{mode} arguments always returns a problem. In addition, since \code{class(data)} of objects of class \code{"matrix"} is \code{c("matrix", "array")} since R 4.0.0, \code{class = "matrix"} alone always returns a problem for matrices (use \code{class = c("matrix", "array")}). Similarly, \code{class = "factor"} alone always returns a problem for ordered factors (use \code{class = c("ordered", "factor")}), and \code{class = "vector"} is no longer a shortcut for the classes \code{"numeric"}, \code{"integer"}, \code{"character"}, \code{"logical"}, \code{"complex"} or \code{"expression"}: write the exact class instead, or nothing.
 #' 
-#' Regarding \code{typeof}, the value "object" comes from the fact that if an object has type OBJSXP and has the S4 object flag set (IS_S4_OBJECT(x) is true), typeof() returns "S4". If an object has type OBJSXP without the S4 flag set, typeof() returns "object".
-#' 
-#' @seealso \code{\link{match.arg}}.
+#' @seealso \code{\link{class}}.
 #' @author \href{mailto:gael.millot@pasteur.fr}{Gael Millot}
 #' @author Haiding Wang  
 #' @author Yushi Han
@@ -55,14 +47,16 @@
 #' # See also https://safer-r.github.io/saferDev/articles/arg_check.html
 #' test <- matrix(1:3)
 #' \dontrun{
-#' # Example that returns an error
+#' # Example that returns an error (since R 4.0.0, class(matrix(1:3)) is c("matrix", "array"))
 #' saferDev::arg_check(data = test, print = TRUE, class = "vector", mode = "numeric")
-#' }
+#' # Example that returns an error as well, because class = "matrix" must match class(data) exactly
 #' saferDev::arg_check(data = test, print = TRUE, class = "matrix", mode = "numeric")
+#' }
+#' saferDev::arg_check(data = test, print = TRUE, class = c("matrix", "array"), mode = "numeric")
 #' saferDev::arg_check(
 #'     data = test, 
 #'     print = TRUE, 
-#'     class = "matrix", 
+#'     class = c("matrix", "array"), 
 #'     mode = "numeric", 
 #'     error_text = " using saferDev::arg_check()"
 #' )
@@ -645,69 +639,44 @@ arg_check <- function(
         )
         base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL)
     }
-    if( ! base::is.null(x = class)){ # may add "formula" and "Date" as in https://renenyffenegger.ch/notes/development/languages/R/functions/class
-        if( ! base::all(class %in% base::c("vector", "matrix", "array", "data.frame", "list", "factor", "table", "expression", "name", "symbol", "function", "uneval", "environment", "ggplot2", "ggplot_built", "call") & base::length(x = class) == 1L, na.rm = TRUE)){ # length == 1L here because of base::class(base::matrix()) since R4.0.0  # base::all() without na.rm -> ok because class cannot be NA (tested above)
+    if(neg_values == FALSE & ! base::is.null(x = typeof)){ # combination checking: negative values can only be checked for numeric data (single "double" or "integer" typeof value), whatever the strings written in the typeof argument
+        if( ! (base::all(typeof %in% base::c("double", "integer"), na.rm = TRUE) & base::length(x = typeof) == 1L)){
             tempo_cat <- base::paste0(
                 error_text_start, 
-                "THE class ARGUMENT MUST BE ONE OF THESE VALUE:\n\"vector\"\n\"matrix\"\n\"array\"\n\"data.frame\"\n\"list\"\n\"factor\"\n\"table\"\n\"expression\"\n\"name\"\n\"symbol\"\n\"function\"\n\"environment\"\n\"ggplot2\"\n\"ggplot_built\"\n\"call\"",
+                "THE typeof ARGUMENT MUST BE A SINGLE \"double\" OR \"integer\" VALUE IF ABSENCE OF NEGATIVE VALUES IS CONTROLED BY SWITCHING THE neg_values ARGUMENT FROM TRUE (DEFAULT VALUE) TO FALSE.",
                 collapse = NULL, 
                 recycle0 = FALSE
             )
             base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL)
         }
     }
-    if( ! base::is.null(x = typeof)){ # all the types are here: https://renenyffenegger.ch/notes/development/languages/R/functions/typeof
-        if( ! (base::all(typeof %in% base::c("logical", "integer", "double", "complex", "character", "list", "expression", "symbol", "closure", "special", "builtin", "environment", "S4", "language", "object"), na.rm = TRUE) & base::length(x = typeof) == 1L)){ # "language" is the type of object of class "call" # base::all() without na.rm -> ok because typeof cannot be NA (tested above)
+    if(inf_values == FALSE & ! base::is.null(x = typeof)){ # combination checking: infinite values can only be checked for double data (single "double" typeof value), whatever the strings written in the typeof argument. "integer" is not allowed because objects with infinite values are not integers
+        if( ! (base::all(typeof %in% "double", na.rm = TRUE) & base::length(x = typeof) == 1L)){
             tempo_cat <- base::paste0(
                 error_text_start, 
-                "THE typeof ARGUMENT MUST BE ONE OF THESE VALUE:\n\"logical\"\n\"integer\"\n\"double\"\n\"complex\"\n\"character\"\n\"list\"\n\"expression\"\n\"name\"\n\"symbol\"\n\"closure\"\n\"special\"\n\"builtin\"\n\"environment\"\n\"S4\"\n\"language\"\n\"object\"",
-                collapse = NULL, 
-                recycle0 = FALSE
-            )
-            base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL)
-        }
-        if(neg_values == FALSE & ! typeof %in% base::c("double", "integer")){
-            tempo_cat <- base::paste0(
-                error_text_start, 
-                "THE typeof ARGUMENT CANNOT BE OTHER THAN \"double\" OR \"integer\" IF ABSENCE OF NEGATIVE VALUES IS CONTROLED BY SWITCHING THE neg_values ARGUMENT FROM TRUE (DEFAULT VALUE) TO FALSE.",
-                collapse = NULL, 
-                recycle0 = FALSE
-            )
-            base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL)
-        }
-        if(inf_values == FALSE & typeof != "double"){
-            tempo_cat <- base::paste0(
-                error_text_start, 
-                "THE typeof ARGUMENT CANNOT BE OTHER THAN \"double\" IF ABSENCE OF INFINITE VALUE ARE CONTROLED BY SWITCHING THE inf_values ARGUMENT FROM TRUE (DEFAULT VALUE) TO FALSE.\n\"integer\" IS NOT ALLOWED BECAUSE OBJECTS WITH INFINITE VALUES ARE NOT INTEGERS.",
+                "THE typeof ARGUMENT MUST BE A SINGLE \"double\" VALUE IF ABSENCE OF INFINITE VALUES IS CONTROLED BY SWITCHING THE inf_values ARGUMENT FROM TRUE (DEFAULT VALUE) TO FALSE.\n\"integer\" IS NOT ALLOWED BECAUSE OBJECTS WITH INFINITE VALUES ARE NOT INTEGERS.",
                 collapse = NULL, 
                 recycle0 = FALSE
             )
             base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL)
         }
     }
-    if( ! base::is.null(x = mode)){ # all the types are here: https://renenyffenegger.ch/notes/development/languages/R/functions/typeof
-        if( ! (base::all(mode %in% base::c("logical", "numeric", "complex", "character", "list", "expression", "name", "symbol", "function", "environment", "S4", "call", "object"), na.rm = TRUE) & base::length(x = mode) == 1L)){ # base::all() without na.rm -> ok because mode cannot be NA (tested above)
+    if(neg_values == FALSE & ! base::is.null(x = mode)){ # combination checking: negative values can only be checked for numeric data (single "numeric" mode value), whatever the strings written in the mode argument
+        if( ! (base::all(mode %in% "numeric", na.rm = TRUE) & base::length(x = mode) == 1L)){
             tempo_cat <- base::paste0(
                 error_text_start, 
-                "THE mode ARGUMENT MUST BE ONE OF THESE VALUE:\n\"logical\"\n\"numeric\"\n\"complex\"\n\"character\"\n\"list\"\n\"expression\"\n\"name\"\n\"symbol\"\n\"function\"\n\"environment\"\n\"S4\"\n\"call\", \"object\"",
+                "THE mode ARGUMENT MUST BE A SINGLE \"numeric\" VALUE IF ABSENCE OF NEGATIVE VALUES IS CONTROLED BY SWITCHING THE neg_values ARGUMENT FROM TRUE (DEFAULT VALUE) TO FALSE.",
                 collapse = NULL, 
                 recycle0 = FALSE
             )
             base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL)
         }
-        if(neg_values == FALSE & mode != "numeric"){
+    }
+    if(inf_values == FALSE & ! base::is.null(x = mode)){ # combination checking: infinite values can only be checked for numeric data (single "numeric" mode value), whatever the strings written in the mode argument
+        if( ! (base::all(mode %in% "numeric", na.rm = TRUE) & base::length(x = mode) == 1L)){
             tempo_cat <- base::paste0(
                 error_text_start, 
-                "THE mode ARGUMENT CANNOT BE OTHER THAN \"numeric\" IF ABSENCE OF NEGATIVE VALUES IS CONTROLED BY SWITCHING THE neg_values ARGUMENT FROM TRUE (DEFAULT VALUE) TO FALSE.",
-                collapse = NULL, 
-                recycle0 = FALSE
-            )
-            base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL)
-        }
-        if(inf_values == FALSE & mode != "numeric"){
-            tempo_cat <- base::paste0(
-                error_text_start, 
-                "THE mode ARGUMENT CANNOT BE OTHER THAN \"numeric\" IF ABSENCE OF INFINITE VALUE ARE CONTROLED BY SWITCHING THE inf_values ARGUMENT FROM TRUE (DEFAULT VALUE) TO FALSE.\nOTHER VALUES ARE NOT ALLOWED BECAUSE OBJECTS WITH INFINITE VALUES ARE ONLY \"numeric\".",
+                "THE mode ARGUMENT MUST BE A SINGLE \"numeric\" VALUE IF ABSENCE OF INFINITE VALUES IS CONTROLED BY SWITCHING THE inf_values ARGUMENT FROM TRUE (DEFAULT VALUE) TO FALSE.\nOTHER VALUES ARE NOT ALLOWED BECAUSE OBJECTS WITH INFINITE VALUES ARE ONLY \"numeric\".",
                 collapse = NULL, 
                 recycle0 = FALSE
             )
@@ -727,7 +696,7 @@ arg_check <- function(
     }
     if(prop == TRUE){
         if( ! base::is.null(x = mode)){
-            if(mode != "numeric"){
+            if( ! base::all(mode == "numeric", na.rm = TRUE) | base::length(x = mode) != 1L){ # only a single "numeric" is compatible with the prop checking of decimal values
                 tempo_cat <- base::paste0(
                     error_text_start, 
                     "THE mode ARGUMENT CANNOT BE OTHER THAN NULL OR \"numeric\" IF prop ARGUMENT IS TRUE.",
@@ -738,7 +707,7 @@ arg_check <- function(
             }
         }
         if( ! base::is.null(x = typeof)){
-            if(typeof != "double"){
+            if( ! base::all(typeof == "double", na.rm = TRUE) | base::length(x = typeof) != 1L){ # only a single "double" is compatible with the prop checking of decimal values
                 tempo_cat <- base::paste0(
                     error_text_start, 
                     "THE typeof ARGUMENT CANNOT BE OTHER THAN NULL OR \"double\" IF prop ARGUMENT IS TRUE.",
@@ -881,13 +850,6 @@ arg_check <- function(
         text <- base::paste0("ERROR", base::ifelse(test = error_text == "", yes = "", no = error_text), "\n\nTHE ", data_name, " ", base::ifelse(test = data_arg, yes = "ARGUMENT", no = "OBJECT"), " MUST BE SOME OF THESE OPTIONS:\n", base::paste0(options, collapse = "\n", recycle0 = FALSE), "\nBUT IS NOT EVEN TYPE CHARACTER OR INTEGER, OR TYPE DOUBLE WITH A 0 MODULO.", collapse = NULL, recycle0 = FALSE)
     }
     arg.names <- base::c("class", "typeof", "mode", "length")
-    if( ! base::is.null(x = class)){
-        if(class == "matrix"){ # because of base::class(base::matrix()) since R4.0.0
-            class <- base::c("matrix", "array")
-        }else if(class == "factor" & base::all(base::class(x = data) %in% base::c("factor", "ordered"), na.rm = TRUE)){ # to deal with ordered factors # base::all() without na.rm -> ok because base::class(NA) is "logical"
-            class <- base::c("factor", "ordered")
-        }
-    }
     if(base::is.null(x = options)){
         for(i2 in 1:base::length(x = arg.names)){
             if( ! base::is.null(x = base::get(x = arg.names[i2], pos = -1L, envir = base::as.environment(-1), mode = "any", inherits = FALSE))){
@@ -903,13 +865,7 @@ arg_check <- function(
                         text, 
                         base::toupper(arg.names[i2]), 
                         " ", 
-                        if(base::all(base::c("matrix", "array") %in% base::get(x = arg.names[i2], pos = -1L, envir = base::as.environment(-1), mode = "any", inherits = FALSE), na.rm = TRUE)){
-                            "matrix"
-                        }else if(base::all(base::c("factor", "ordered") %in% base::get(x = arg.names[i2], pos = -1L, envir = base::as.environment(-1), mode = "any", inherits = FALSE), na.rm = TRUE)){
-                            "factor"
-                        }else{
-                            base::get(x = arg.names[i2], pos = -1L, envir = base::as.environment(-1), mode = "any", inherits = FALSE)
-                        }, 
+                        base::paste0(base::get(x = arg.names[i2], pos = -1L, envir = base::as.environment(-1), mode = "any", inherits = FALSE), collapse = ", ", recycle0 = FALSE),
                         collapse = NULL, 
                         recycle0 = FALSE
                     )
@@ -920,13 +876,21 @@ arg_check <- function(
                     if( ! base::all(data %% 1 == 0L, na.rm = TRUE)){ # to check integers (use %%, meaning the remaining of a division): see the precedent line. base::isTRUE(base::all.equal(data%%1, base::rep(0, base::length(data)))) not used because we strictly need zero as a result. Warning: na.rm = TRUE required here for base::all()
                         base::eval(expr = base::parse(text = tempo.script, file = "", n = NULL, prompt = "?", keep.source = base::getOption(x = "keep.source", default = NULL), srcfile = NULL, encoding = "unknown"), envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL)) # execute tempo.script
                     }
-                }else if( ! base::any(base::all(base::get(x = arg.names[i2], pos = -1L, envir = base::as.environment(-1), mode = "any", inherits = FALSE) %in% base::c("vector", "ggplot2", "ggplot_built"), na.rm = TRUE), na.rm = TRUE) & ! base::all(base::eval(expr = base::parse(text = base::paste0(arg.names[i2], "(data)", collapse = NULL, recycle0 = FALSE), file = "", n = NULL, prompt = "?", keep.source = base::getOption(x = "keep.source", default = NULL), srcfile = NULL, encoding = "unknown"), envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL)) %in% base::get(x = arg.names[i2], pos = -1L, envir = base::as.environment(-1), mode = "any", inherits = FALSE), na.rm = TRUE)){ # test the four base::c("class", "typeof", "mode", "length") arguments with their corresponding function. No need of na.rm = TRUE for base::all() because %in% does not output NA # no need of na.rm = TRUE for base::all() because %in% does not output NA # no need of na.rm = TRUE for base::any() because get base::get(arg.names) does not contain NA
-                    base::eval(expr = base::parse(text = tempo.script, file = "", n = NULL, prompt = "?", keep.source = base::getOption(x = "keep.source", default = NULL), srcfile = NULL, encoding = "unknown"), envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL)) # execute tempo.script
-                }else if(arg.names[i2] == "class" & base::all(base::get(x = arg.names[i2], pos = -1L, envir = base::as.environment(-1), mode = "any", inherits = FALSE) == "vector", na.rm = TRUE) & ! (base::all(base::class(x = data) %in% "numeric", na.rm = TRUE) | base::all(base::class(x = data) %in% "integer", na.rm = TRUE) | base::all(base::class(x = data) %in% "character", na.rm = TRUE) | base::all(base::class(x = data) %in% "logical", na.rm = TRUE) | base::all(base::class(x = data) %in% "complex", na.rm = TRUE) | base::all(base::class(x = data) %in% "expression", na.rm = TRUE))){ # test class == "vector". base::all(base::get(arg.names[i2], envir = base::sys.nframe(), inherits = FALSE) check if user has used the argument class = "vector". If TRUE and base::length(data) > 1, the class "numeric" "integer" "character" "logical" "complex" "expression" should be returned. No need of na.rm = TRUE for base::all() because %in% does not output NA # no need of na.rm = TRUE for base::all() because == does not output NA if no NA in left of ==, which is the case for arg.names. Other classes "list", "name", "symbol", "function", "environment", "S4", "call" return a list if length of data > 1
-                    base::eval(expr = base::parse(text = tempo.script, file = "", n = NULL, prompt = "?", keep.source = base::getOption(x = "keep.source", default = NULL), srcfile = NULL, encoding = "unknown"), envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL)) # execute tempo.script
-                }else if(arg.names[i2] == "class" & base::all(base::get(x = arg.names[i2], pos = -1L, envir = base::as.environment(-1), mode = "any", inherits = FALSE) == "ggplot2", na.rm = TRUE) & ! (base::all(base::class(x = data) %in% base::c("gg", "ggplot"), na.rm = TRUE) | base::all(base::class(x = data) %in% base::c("ggplot2::ggplot", "ggplot", "ggplot2::gg", "S7_object", "gg"), na.rm = TRUE))){ # test ggplot object (before and after Rv4.5.2) # no need of na.rm = TRUE for base::all() because == does not output NA if no NA in left of ==, which is the case for arg.names # no need of na.rm = TRUE for base::all() because %in% does not output NA
-                    base::eval(expr = base::parse(text = tempo.script, file = "", n = NULL, prompt = "?", keep.source = base::getOption(x = "keep.source", default = NULL), srcfile = NULL, encoding = "unknown"), envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL)) # execute tempo.script
-                }else if(arg.names[i2] == "class" & base::all(base::get(x = arg.names[i2], pos = -1L, envir = base::as.environment(-1), mode = "any", inherits = FALSE) == "ggplot_built", na.rm = TRUE) & ! (base::all(base::class(x = data) %in% base::c("ggplot_built"), na.rm = TRUE) | base::all(base::class(x = data) %in% base::c("ggplot2::ggplot_built", "ggplot_built", "ggplot2::gg", "S7_object"), na.rm = TRUE))){ # test ggplot_built object (before and after Rv4.5.2) # no need of na.rm = TRUE for base::all() because == does not output NA if no NA in left of ==, which is the case for arg.names # no need of na.rm = TRUE for base::all() because %in% does not output NA
+                }else if(arg.names[i2] == "length"){
+                    if( ! (base::length(x = data) == base::get(x = arg.names[i2], pos = -1L, envir = base::as.environment(-1), mode = "any", inherits = FALSE))){ # numeric comparison for the length argument (single integer value, checked above)
+                        base::eval(expr = base::parse(text = tempo.script, file = "", n = NULL, prompt = "?", keep.source = base::getOption(x = "keep.source", default = NULL), srcfile = NULL, encoding = "unknown"), envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL)) # execute tempo.script
+                    }
+                }else if( ! base::identical(
+                    x = base::as.character(x = base::eval(expr = base::parse(text = base::paste0(arg.names[i2], "(data)", collapse = NULL, recycle0 = FALSE), file = "", n = NULL, prompt = "?", keep.source = base::getOption(x = "keep.source", default = NULL), srcfile = NULL, encoding = "unknown"), envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL))), 
+                    y = base::as.character(x = base::get(x = arg.names[i2], pos = -1L, envir = base::as.environment(-1), mode = "any", inherits = FALSE)), 
+                    num.eq = TRUE, 
+                    single.NA = TRUE, 
+                    attrib.as.set = TRUE, 
+                    ignore.bytecode = TRUE, 
+                    ignore.environment = FALSE, 
+                    ignore.srcref = TRUE, 
+                    extptr.as.ref = FALSE
+                )){ # test the three base::c("class", "typeof", "mode") arguments with their corresponding function, exactly (same values, in the same order). base::as.character() used on both sides to remove any potential attribute of class(data), typeof(data) and mode(data). No need of na.rm = TRUE because base::as.character() is used
                     base::eval(expr = base::parse(text = tempo.script, file = "", n = NULL, prompt = "?", keep.source = base::getOption(x = "keep.source", default = NULL), srcfile = NULL, encoding = "unknown"), envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL)) # execute tempo.script
                 }
             }
@@ -965,7 +929,7 @@ arg_check <- function(
             text <- base::paste0(text, "THE ", data_name, " ", base::ifelse(test = data_arg, yes = "ARGUMENT", no = "OBJECT"), " CONTAINS NA WHILE NOT AUTHORIZED.", collapse = NULL, recycle0 = FALSE)
         }
     }
-    if(( ! is.null(x = mode) && mode == "numeric") | ( ! is.null(x = typeof) && typeof %in% base::c("double", "integer"))){
+    if(( ! is.null(x = mode) && base::all(mode == "numeric", na.rm = TRUE) && base::length(x = mode) == 1L) | ( ! is.null(x = typeof) && base::all(typeof %in% base::c("double", "integer"), na.rm = TRUE) && base::length(x = typeof) == 1L)){
         if(neg_values == FALSE & ! base::any(base::class(x = data) %in% "factor", na.rm = TRUE) & (base::all(base::mode(x = data) %in% "numeric", na.rm = TRUE) | base::all(base::typeof(x = data) %in% base::c("double", "integer"), na.rm = TRUE))){ # no need of na.rm = TRUE for base::all() because %in% does not output NA
             if(base::any(data < 0, na.rm = TRUE)){ # Warning: na.rm = TRUE required here for base::any()
                 problem <- TRUE
@@ -986,7 +950,7 @@ arg_check <- function(
             text <- base::paste0(text, "THE ", data_name, " ", base::ifelse(test = data_arg, yes = "ARGUMENT", no = "OBJECT"), " MUST BE MADE OF NON NEGATIVE VALUES BUT IS ", base::ifelse(test = base::any(base::class(x = data) %in% "factor", na.rm = TRUE), yes = "A FACTOR", no = "NOT EVEN NUMERIC."), collapse = NULL, recycle0 = FALSE) # no need of na.rm = TRUE
         }
     }
-    if(( ! is.null(x = mode) && mode == "numeric") | ( ! is.null(x = typeof) && typeof == "double")){
+    if(( ! is.null(x = mode) && base::all(mode == "numeric", na.rm = TRUE) && base::length(x = mode) == 1L) | ( ! is.null(x = typeof) && base::all(typeof %in% "double", na.rm = TRUE) && base::length(x = typeof) == 1L)){
         if(inf_values == FALSE & ! base::any(base::class(x = data) %in% "factor", na.rm = TRUE) & (base::all(base::mode(x = data) %in% "numeric", na.rm = TRUE) | base::all(base::typeof(x = data) %in% "double", na.rm = TRUE))){ # no need of na.rm = TRUE for base::all() because %in% does not output NA
             if(base::any(base::is.infinite(x = data), na.rm = TRUE)){ # Warning: na.rm = TRUE required here for base::any()
                 problem <- TRUE

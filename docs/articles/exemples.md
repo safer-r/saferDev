@@ -1,0 +1,5 @@
+# exemples
+
+``` r
+library(cuteDev)
+```

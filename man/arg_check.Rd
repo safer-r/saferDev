@@ -28,11 +28,11 @@ arg_check(
 \arguments{
 \item{data}{Object to test.}
 
-\item{class}{Single character string among \code{"vector"}, \code{"matrix"}, \code{"array"}, \code{"data.frame"}, \code{"list"}, \code{"factor"}, \code{"table"}, \code{"expression"}, \code{"name"}, \code{"symbol"}, \code{"function"}, \code{"uneval"}, \code{"environment"}, \code{"ggplot2"}, \code{"ggplot_built"}, \code{"call"}. simplified version of \code{class(data)} (see the details below). Write NULL to do not test the class.}
+\item{class}{Character string or vector of character strings, tested exactly (same values, in the same order) against \code{class(data)}. Thus, \code{class = c("matrix", "array")} is required for matrices since R 4.0.0 and \code{class = c("ordered", "factor")} for ordered factors (see the details below). Write NULL to do not test the class.}
 
-\item{typeof}{Single character string among \code{"logical"}, \code{"integer"}, \code{"double"}, \code{"complex"}, \code{"character"}, \code{"list"}, \code{"expression"}, \code{"symbol"}, \code{"closure"}, \code{"special"}, \code{"builtin"}, \code{"environment"}, \code{"S4"}, \code{"language"}, \code{"object"}. Simplified version of checking the type of the tested object using \code{typeof(data)}. Write NULL to do not test the type.}
+\item{typeof}{Character string or vector of character strings, tested exactly (same values, in the same order) against \code{typeof(data)}. Since \code{typeof(data)} always returns a single string, a vector of more than one value in the \code{typeof} argument always returns a problem. Write NULL to do not test the type.}
 
-\item{mode}{Single character string among \code{"logical"}, \code{"numeric"}, \code{"complex"}, \code{"character"}, \code{"list"}, \code{"expression"}, \code{"name"}, \code{"symbol"}, \code{"function"}, \code{"environment"}, \code{"S4"}, \code{"call"}, \code{"object"}. Simplified version of checking the type of the tested object using \code{mode(data)}. Write NULL to do not test the mode.}
+\item{mode}{Character string or vector of character strings, tested exactly (same values, in the same order) against \code{mode(data)}. Since \code{mode(data)} always returns a single string, a vector of more than one value in the \code{mode} argument always returns a problem. Write NULL to do not test the mode.}
 
 \item{length}{Single numeric value indicating the length of the object. Not considered if \code{NULL}.}
 
@@ -82,15 +82,7 @@ The function tests what is written in its arguments, even if what is written is 
  
 If the tested object is \code{NULL}, then the function will always return a checking problem.
  
-The \code{class} argument is a simplified version of \code{class(data)}:
-\itemize{
-  \item \code{"vector"} tests objects of class \code{"numeric"}, \code{"integer"}, \code{"character"}, \code{"logical"}, \code{"complex"} or \code{"expression"} (no error if \code{class(data)} returns one of these values).
-  \item \code{"matrix"} tests objects of class \code{"matrix"} for R < 4.0.0 and \code{c(""matrix", "array"")} otherwise.
-  \item \code{"ggplot2"} tests objects of class \code{c("gg", "ggplot")} for R < 4.5 and \code{c("ggplot2::ggplot", "ggplot", "ggplot2::gg", "S7_object", "gg")} otherwise.
-  \item \code{"ggplot2"} tests objects of class \code{"ggplot_built"} for R < 4.5 and \code{c("ggplot2::ggplot_built", "ggplot_built", "ggplot2::gg", "S7_object")} otherwise.
-}
-
-Regarding \code{typeof}, the value "object" comes from the fact that if an object has type OBJSXP and has the S4 object flag set (IS_S4_OBJECT(x) is true), typeof() returns "S4". If an object has type OBJSXP without the S4 flag set, typeof() returns "object".
+The \code{class}, \code{typeof} and \code{mode} arguments are compared to \code{class(data)}, \code{typeof(data)} and \code{mode(data)} exactly: the written values must be identical, element per element, in the same order. Since \code{typeof(data)} and \code{mode(data)} return a single string, passing several values in the \code{typeof} or \code{mode} arguments always returns a problem. In addition, since \code{class(data)} of objects of class \code{"matrix"} is \code{c("matrix", "array")} since R 4.0.0, \code{class = "matrix"} alone always returns a problem for matrices (use \code{class = c("matrix", "array")}). Similarly, \code{class = "factor"} alone always returns a problem for ordered factors (use \code{class = c("ordered", "factor")}), and \code{class = "vector"} is no longer a shortcut for the classes \code{"numeric"}, \code{"integer"}, \code{"character"}, \code{"logical"}, \code{"complex"} or \code{"expression"}: write the exact class instead, or nothing.
 }
 \examples{
 # Warning: these examples may not work well when using the "Run examples" link 
@@ -98,21 +90,23 @@ Regarding \code{typeof}, the value "object" comes from the fact that if an objec
 # See also https://safer-r.github.io/saferDev/articles/arg_check.html
 test <- matrix(1:3)
 \dontrun{
-# Example that returns an error
+# Example that returns an error (since R 4.0.0, class(matrix(1:3)) is c("matrix", "array"))
 saferDev::arg_check(data = test, print = TRUE, class = "vector", mode = "numeric")
-}
+# Example that returns an error as well, because class = "matrix" must match class(data) exactly
 saferDev::arg_check(data = test, print = TRUE, class = "matrix", mode = "numeric")
+}
+saferDev::arg_check(data = test, print = TRUE, class = c("matrix", "array"), mode = "numeric")
 saferDev::arg_check(
     data = test, 
     print = TRUE, 
-    class = "matrix", 
+    class = c("matrix", "array"), 
     mode = "numeric", 
     error_text = " using saferDev::arg_check()"
 )
 
 }
 \seealso{
-\code{\link{match.arg}}.
+\code{\link{class}}.
 }
 \author{
 \href{mailto:gael.millot@pasteur.fr}{Gael Millot}
