@@ -1,8 +1,8 @@
 Package: saferDev
 Type: Package
 Title: Function and Pipeline Development
-Version: 1.0.0
-Date: 2026-06-02
+Version: 2.0.0
+Date: 2026-10-12
 Authors@R: c(
     person(given = "Haiding", family = "Wang", role = "ctb"),
     person(given = "Yushi", family = "Han", role = "ctb"),
@@ -14,7 +14,7 @@ Maintainer: Gael Millot <gael.millot@pasteur.fr>
 Description: Set of functions that perform checks according to the safer-r project recommendations for R function development (see <https://github.com/safer-r>). This includes checking argument values, ensuring correct specification of all mandatory arguments for embedded functions, as well as their explicit package namespace qualification, among other things.
 URL: <https://github.com/safer-r/saferDev>, <https://safer-r.github.io/saferDev/>
 License: GPL-3
-RoxygenNote: 7.3.3
+Config/roxygen2/version: 8.0.0
 Imports: 
     ggplot2
 Suggests: 
@@ -22,4 +22,3 @@ Suggests:
     rmarkdown,
     testthat (>= 3.0.0)
 VignetteBuilder: knitr
-
