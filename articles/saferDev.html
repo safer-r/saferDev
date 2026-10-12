@@ -33,7 +33,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">saferDev</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">2.0.0</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -122,10 +122,11 @@ and not <code>paste0(letters[1:2])</code>.</td>
 <tr class="even">
 <td align="left"><strong>arg_check()</strong></td>
 <td align="left">Check expected values of arguments of functions: class,
-type, mode, length, restricted values panel, kind of numeric values in
-addition to the distinction between ‘integer’ and ‘double’ (proportion
-only? Inf values authorized? negative values authorized? Integers of
-type ‘double’?).</td>
+type, mode, length (each tested exactly, same values, in the same
+order), restricted values panel, kind of numeric values in addition to
+the distinction between ‘integer’ and ‘double’ (proportion only? Inf
+values authorized? negative values authorized? Integers of type
+‘double’?).</td>
 </tr>
 <tr class="odd">
 <td align="left"><strong>colons_check()</strong></td>
@@ -133,7 +134,8 @@ type ‘double’?).</td>
 are all referenced by their package attribution. For instance:
 <code><a href="https://rdrr.io/r/base/mean.html" class="external-link">base::mean()</a></code> and not <code><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean()</a></code>, or
 <code>saferDev:::.base_op_check()</code> and not
-<code><a href="../reference/dot-base_op_check.html">.base_op_check()</a></code>.</td>
+<code><a href="../reference/dot-base_op_check.html">.base_op_check()</a></code>. Use <a href="https://github.com/dreamrs/prefixer" class="external-link">prefixer</a> to directly
+modify yor code.</td>
 </tr>
 <tr class="even">
 <td align="left"><strong>env_check()</strong></td>
