@@ -681,21 +681,25 @@ testthat::test_that("arg_check()", {
     result <- arg_check(data = ggplot2::ggplot(), class = "ggplot2", options = NULL) # class(data) of a ggplot object is not the single string "ggplot2"
     expect <- list(problem = TRUE, text = "ERROR\n\nTHE ggplot2::ggplot() ARGUMENT MUST BE CLASS ggplot2", object.name = "ggplot2::ggplot()")
     testthat::expect_equal(result, expect)
-    result <- arg_check(data = ggplot2::ggplot_build(ggplot2::ggplot()), class = c("ggplot2::ggplot_built", "ggplot_built", "ggplot2::gg", "S7_object"), options = NULL)
-    expect <- list(problem = FALSE, text = "NO PROBLEM DETECTED FOR THE ggplot2::ggplot_build(ggplot2::ggplot()) ARGUMENT.", object.name = "ggplot2::ggplot_build(ggplot2::ggplot())")
-    testthat::expect_equal(result, expect)
     r_version <- as.numeric_version(paste0(R.version$major, ".", R.version$minor))
-    if (r_version >= "4.5.0"){
-        result <- arg_check(data = ggplot2::ggplot_build(ggplot2::ggplot()), class = c("ggplot2::ggplot_built", "ggplot_built", "ggplot2::gg", "S7_object"), mode = "object")
+    if (utils::packageVersion("ggplot2") >= "4.0.0"){
+        result <- arg_check(data = ggplot2::ggplot_build(ggplot2::ggplot()), class = c("ggplot2::ggplot_built", "ggplot_built", "ggplot2::gg", "S7_object"), options = NULL)
     }else{
-        result <- arg_check(data = ggplot2::ggplot_build(ggplot2::ggplot()), class = c("ggplot2::ggplot_built", "ggplot_built", "ggplot2::gg", "S7_object"), mode = "list")
+        result <- arg_check(data = ggplot2::ggplot_build(ggplot2::ggplot()), class = "ggplot_built", options = NULL) # before ggplot2 4.0.0, class(ggplot_build()) is the single string "ggplot_built"
     }
     expect <- list(problem = FALSE, text = "NO PROBLEM DETECTED FOR THE ggplot2::ggplot_build(ggplot2::ggplot()) ARGUMENT.", object.name = "ggplot2::ggplot_build(ggplot2::ggplot())")
     testthat::expect_equal(result, expect)
-    if (r_version >= "4.5.0"){
+    if (r_version >= "4.5.0" && utils::packageVersion("ggplot2") >= "4.0.0"){
+        result <- arg_check(data = ggplot2::ggplot_build(ggplot2::ggplot()), class = c("ggplot2::ggplot_built", "ggplot_built", "ggplot2::gg", "S7_object"), mode = "object")
+    }else{
+        result <- arg_check(data = ggplot2::ggplot_build(ggplot2::ggplot()), class = "ggplot_built", mode = "list")
+    }
+    expect <- list(problem = FALSE, text = "NO PROBLEM DETECTED FOR THE ggplot2::ggplot_build(ggplot2::ggplot()) ARGUMENT.", object.name = "ggplot2::ggplot_build(ggplot2::ggplot())")
+    testthat::expect_equal(result, expect)
+    if (r_version >= "4.5.0" && utils::packageVersion("ggplot2") >= "4.0.0"){
         result <- arg_check(data = ggplot2::ggplot_build(ggplot2::ggplot()), class = c("ggplot2::ggplot_built", "ggplot_built", "ggplot2::gg", "S7_object"), typeof = "object")
     }else{
-        result <- arg_check(data = ggplot2::ggplot_build(ggplot2::ggplot()), class = c("ggplot2::ggplot_built", "ggplot_built", "ggplot2::gg", "S7_object"), typeof = "list")
+        result <- arg_check(data = ggplot2::ggplot_build(ggplot2::ggplot()), class = "ggplot_built", typeof = "list")
     }
     expect <- list(problem = FALSE, text = "NO PROBLEM DETECTED FOR THE ggplot2::ggplot_build(ggplot2::ggplot()) ARGUMENT.", object.name = "ggplot2::ggplot_build(ggplot2::ggplot())")
     testthat::expect_equal(result, expect)
