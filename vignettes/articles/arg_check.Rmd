@@ -108,7 +108,7 @@ arg_check(
 )
 
 # Vector class values are also possible, tested exactly (same values, same order).
-# Here, error because class(mat1) is c("matrix", "array"), matching exactly the class argument.
+# Here, no problem because class(mat1) is c("matrix", "array"), matching exactly the class argument.
 arg_check(
     data = mat1, 
     class = c("matrix", "array"), 
@@ -314,7 +314,7 @@ arg_check(
 # Safer checkings performed before main code running.
 arg_check(
     data = mat1, 
-    class = "matrix", 
+    class = c("matrix", "array"), 
     safer_check = TRUE
 )
 ```
@@ -325,7 +325,7 @@ arg_check(
 # The "NOTGOOD" path does not exists.
 arg_check(
     data = mat1, 
-    class = "matrix", 
+    class = c("matrix", "array"), 
     lib_path = "NOTGOOD"
 )
 ```
@@ -347,7 +347,7 @@ arg_check(
 ```{r}
 arg_check(
     data = vec1, # object to check.
-    class = "integer", # check the expected class (tested exactly, same values, same order).
+    class = NULL, # check the expected class (tested exactly, same values, same order).
     typeof = "integer", # check the expected type.
     mode = NULL,  # check the expected mode.
     length = NULL,  # check the expected length.

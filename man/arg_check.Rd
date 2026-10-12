@@ -80,8 +80,8 @@ If \code{options == NULL}, then at least \code{class} or \code{type} or \code{mo
  
 If \code{options} is non-null, then \code{class}, \code{type} and \code{mode} must be \code{NULL}, and \code{length} can be \code{NULL} or specified.
  
-The function tests what is written in its arguments, even if what is written is incoherent. For instance, \code{arg_check(data = factor(1), class = "factor", mode = "character")} will return a problem, whatever the object tested in the \code{data} argument, because no object can be class \code{"factor"} and mode \code{"character"} (factors are class \code{"factor"} and mode \code{"numeric"}). Of note, the length of object of class \code{"environment"} is always 0.
- 
+The function tests what is written in its arguments, even if what is written is incoherent. For instance with \code{arg_check(data = factor(1), class = "factor", mode = "character")}, the function tests that data is class \code{"factor"} and mode \code{"character"}, even if no factor object can be class \code{"factor"} and mode \code{"character"} (factors are class \code{"factor"} and mode \code{"numeric"}). Thus, \code{arg_check(data = factor(1), class = "factor", mode = "character")} will return a problem.
+
 If the tested object is \code{NULL}, then the function will always return a checking problem.
  
 The \code{class}, \code{typeof} and \code{mode} arguments are compared to \code{class(data)}, \code{typeof(data)} and \code{mode(data)} exactly: the written values must be identical, element per element, in the same order. Since \code{typeof(data)} and \code{mode(data)} return a single string, passing several values in the \code{typeof} or \code{mode} arguments always returns a problem. In addition, since \code{class(data)} of objects of class \code{"matrix"} is \code{c("matrix", "array")} since R 4.0.0, \code{class = "matrix"} alone always returns a problem for matrices (use \code{class = c("matrix", "array")}). Similarly, \code{class = "factor"} alone always returns a problem for ordered factors (use \code{class = c("ordered", "factor")}), and \code{class = "vector"} is no longer a shortcut for the classes \code{"numeric"}, \code{"integer"}, \code{"character"}, \code{"logical"}, \code{"complex"} or \code{"expression"}: write the exact class instead, or nothing.
@@ -106,6 +106,8 @@ if(tempo1$problem == TRUE & tempo2$problem == TRUE & tempo3$problem == TRUE)\{
     print("data ARGUMENT MUST BE (1) A VECTOR OF STRINGS, (2) A FACTOR OR (3) A VECTOR OF INTEGERS")
 \}
 }
+
+Of note, the length of object of class \code{"environment"} is always 0.
 }
 \examples{
 # Warning: these examples may not work well when using the "Run examples" link 
