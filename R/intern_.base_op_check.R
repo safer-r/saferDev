@@ -86,6 +86,41 @@
 
     #### argument primary checking
 
+    ######## arg ... forbidden
+    # nocov start
+    # codecov inactivated because it is an internal control of code writing, impossible to cover with argument values.
+    if("..." %in% arg_names) {
+        # This check is here in case the developer has not correctly written the argument of its function
+        tempo_cat <- base::paste0(
+            error_text_start, 
+            "ARGUMENT ... IS NOT ALLOWED IN SAFER-R FUNCTIONS.\n\nPLEASE, REWRITE YOUR FUNCTION CORRECTLY.", 
+            collapse = NULL, 
+            recycle0 = FALSE
+        )
+        base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL)
+    }
+    # nocov end
+    ######## end arg ... forbidden
+
+    ######## mandatory arg of safer-r functions
+    # personalized for internal functions: only error_text exists as safer-r mandatory arg here (no lib_path in this function)
+    mandat_args <- base::c("error_text")
+    tempo_log <- ! mandat_args %in% arg_names
+    if(base::any(x = tempo_log, na.rm = TRUE)) {
+        # This check is here in case the developer has not correctly written the argument of its function
+        tempo_cat <- base::paste0(
+            error_text_start, 
+            "FOLLOWING ARGUMENT", 
+            base::ifelse(test = base::sum(tempo_log, na.rm = TRUE) > 1, yes = "S ARE", no = " IS"), 
+            " MANDATORY IN SAFER-R FUNCTIONS:\n", 
+            base::paste0(mandat_args[tempo_log], collapse = "\n", recycle0 = FALSE), 
+            collapse = NULL, 
+            recycle0 = FALSE
+        )
+        base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL)
+    }
+    ######## end mandatory arg of safer-r functions
+
     ######## arg with no default values
     # no rrequired because error_text already used above. Specific of my internal functions that error_text has no default value
     ######## end arg with no default values
