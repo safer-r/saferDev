@@ -42,8 +42,8 @@
 #' Example of code that overcomes the problem of R versions, with a matrix object:
 #' 
 #' \preformatted{
-#' tempo1 <- saferDev::arg_check(data = data, class = "matrix", typeof = NULL, mode = NULL, length = NULL, prop = FALSE, double_as_integer_allowed = FALSE, options = NULL, all_options_in_data = FALSE, na_contain = FALSE, neg_values = TRUE, inf_values = TRUE, print = FALSE, data_name = NULL, data_arg = TRUE, safer_check = FALSE, lib_path = lib_path, error_text = embed_error_text) # before R 4.0.0
-#' tempo2 <- saferDev::arg_check(data = data, class = c("matrix", "array"), typeof = NULL, mode = NULL, length = NULL, prop = FALSE, double_as_integer_allowed = FALSE, options = NULL, all_options_in_data = FALSE, na_contain = FALSE, neg_values = TRUE, inf_values = TRUE, print = FALSE, data_name = NULL, data_arg = TRUE, safer_check = FALSE, lib_path = lib_path, error_text = embed_error_text) # since R 4.0.0
+#' tempo1 <- saferDev::arg_check(data = data, class = "matrix") # before R 4.0.0
+#' tempo2 <- saferDev::arg_check(data = data, class = c("matrix", "array")) # since R 4.0.0
 #' if(tempo1$problem == TRUE & tempo2$problem == TRUE)\{
 #'     print("data ARGUMENT MUST BE A MATRIX")
 #' \}
@@ -52,11 +52,11 @@
 #' To test several possibilities for the tested object:
 #' 
 #' \preformatted{
-#' tempo1 <- saferDev::arg_check(data = data, class = NULL, typeof = NULL, mode = "character", length = NULL, prop = FALSE, double_as_integer_allowed = FALSE, options = NULL, all_options_in_data = FALSE, na_contain = FALSE, neg_values = TRUE, inf_values = TRUE, print = FALSE, data_name = NULL, data_arg = TRUE, safer_check = FALSE, lib_path = lib_path, error_text = embed_error_text)
-#' tempo2 <- saferDev::arg_check(data = data, class = "factor", typeof = NULL, mode = NULL, length = 1, prop = FALSE, double_as_integer_allowed = FALSE, options = NULL, all_options_in_data = FALSE, na_contain = TRUE, neg_values = TRUE, inf_values = TRUE, print = FALSE, data_name = NULL, data_arg = TRUE, safer_check = FALSE, lib_path = lib_path, error_text = embed_error_text)
-#' tempo3 <- saferDev::arg_check(data = data, class = "integer", typeof = NULL, mode = NULL, length = 1, prop = FALSE, double_as_integer_allowed = FALSE, options = NULL, all_options_in_data = FALSE, na_contain = TRUE, neg_values = TRUE, inf_values = TRUE, print = FALSE, data_name = NULL, data_arg = TRUE, safer_check = FALSE, lib_path = lib_path, error_text = embed_error_text) # not need to test inf with integers
+#' tempo1 <- saferDev::arg_check(data = data, mode = "character")
+#' tempo2 <- saferDev::arg_check(data = data, class = "factor")
+#' tempo3 <- saferDev::arg_check(data = data, class = "integer")
 #' if(tempo1$problem == TRUE & tempo2$problem == TRUE & tempo3$problem == TRUE)\{
-#'     print("data ARGUMENT MUST BE (1) A VECTOR OF STRINGS, (2) A FACTOR OR (3) A VECTOR OF INTEGERS")
+#'     print("data ARGUMENT MUST BE A VECTOR OF (1) STRINGS, (2) FACTORS OR (3) INTEGERS")
 #' \}
 #' }
 #' 
