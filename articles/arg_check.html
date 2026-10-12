@@ -266,7 +266,7 @@ class <code>c(“matrix”, “array”)</code>, and ordered factors have class
 <span><span class="co">## [1] "vec1"</span></span></code></pre>
 <div class="sourceCode" id="cb31"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Vector class values are also possible, tested exactly (same values, same order).</span></span>
-<span><span class="co"># Here, error because class(mat1) is c("matrix", "array"), matching exactly the class argument.</span></span>
+<span><span class="co"># Here, no problem because class(mat1) is c("matrix", "array"), matching exactly the class argument.</span></span>
 <span><span class="fu"><a href="../reference/arg_check.html">arg_check</a></span><span class="op">(</span></span>
 <span>    data <span class="op">=</span> <span class="va">mat1</span>, </span>
 <span>    class <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"matrix"</span>, <span class="st">"array"</span><span class="op">)</span>, </span>
@@ -648,14 +648,14 @@ class <code>c(“matrix”, “array”)</code>, and ordered factors have class
 <code class="sourceCode R"><span><span class="co"># Safer checkings performed before main code running.</span></span>
 <span><span class="fu"><a href="../reference/arg_check.html">arg_check</a></span><span class="op">(</span></span>
 <span>    data <span class="op">=</span> <span class="va">mat1</span>, </span>
-<span>    class <span class="op">=</span> <span class="st">"matrix"</span>, </span>
+<span>    class <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"matrix"</span>, <span class="st">"array"</span><span class="op">)</span>, </span>
 <span>    safer_check <span class="op">=</span> <span class="cn">TRUE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## $problem</span></span>
-<span><span class="co">## [1] TRUE</span></span>
+<span><span class="co">## [1] FALSE</span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## $text</span></span>
-<span><span class="co">## [1] "ERROR\n\nTHE mat1 ARGUMENT MUST BE CLASS matrix"</span></span>
+<span><span class="co">## [1] "NO PROBLEM DETECTED FOR THE mat1 ARGUMENT."</span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## $object.name</span></span>
 <span><span class="co">## [1] "mat1"</span></span></code></pre>
@@ -668,7 +668,7 @@ class <code>c(“matrix”, “array”)</code>, and ordered factors have class
 <code class="sourceCode R"><span><span class="co"># The "NOTGOOD" path does not exists.</span></span>
 <span><span class="fu"><a href="../reference/arg_check.html">arg_check</a></span><span class="op">(</span></span>
 <span>    data <span class="op">=</span> <span class="va">mat1</span>, </span>
-<span>    class <span class="op">=</span> <span class="st">"matrix"</span>, </span>
+<span>    class <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"matrix"</span>, <span class="st">"array"</span><span class="op">)</span>, </span>
 <span>    lib_path <span class="op">=</span> <span class="st">"NOTGOOD"</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## Error: </span></span>
@@ -712,7 +712,7 @@ class <code>c(“matrix”, “array”)</code>, and ordered factors have class
 <div class="sourceCode" id="cb78"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/arg_check.html">arg_check</a></span><span class="op">(</span></span>
 <span>    data <span class="op">=</span> <span class="va">vec1</span>, <span class="co"># object to check.</span></span>
-<span>    class <span class="op">=</span> <span class="st">"integer"</span>, <span class="co"># check the expected class (tested exactly, same values, same order).</span></span>
+<span>    class <span class="op">=</span> <span class="cn">NULL</span>, <span class="co"># check the expected class (tested exactly, same values, same order).</span></span>
 <span>    typeof <span class="op">=</span> <span class="st">"integer"</span>, <span class="co"># check the expected type.</span></span>
 <span>    mode <span class="op">=</span> <span class="cn">NULL</span>,  <span class="co"># check the expected mode.</span></span>
 <span>    length <span class="op">=</span> <span class="cn">NULL</span>,  <span class="co"># check the expected length.</span></span>
