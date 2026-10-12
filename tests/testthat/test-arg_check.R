@@ -671,10 +671,10 @@ testthat::test_that("arg_check()", {
     result <- arg_check(data = mat1, class = "ggplot2", options = NULL)
     expect <- list(problem = TRUE, text = "ERROR\n\nTHE mat1 ARGUMENT MUST BE CLASS ggplot2", object.name = "mat1")
     testthat::expect_equal(result, expect)
-    if (base::packageVersion("ggplot2") >= "4.0.0"){
+    if (utils::packageVersion("ggplot2") >= "4.0.0"){
         result <- arg_check(data = ggplot2::ggplot(), class = c("ggplot2::ggplot", "ggplot", "ggplot2::gg", "S7_object", "gg"), options = NULL) # class = "ggplot2" is not a shorthand anymore: it must match class(data) exactly
     }else{
-        result <- arg_check(data = ggplot2::ggplot(), class = c("gg"), options = NULL) # or c("gg", "ggplot") depending on what arg_check should accept
+        result <- arg_check(data = ggplot2::ggplot(), class = c("gg", "ggplot"), options = NULL) # or c("gg", "ggplot") depending on what arg_check should accept
     }
     expect <- list(problem = FALSE, text = "NO PROBLEM DETECTED FOR THE ggplot2::ggplot() ARGUMENT.", object.name = "ggplot2::ggplot()")
     testthat::expect_equal(result, expect)
