@@ -66,7 +66,7 @@ is_function_here <- function(
         arg_user_setting_eval <- NULL
     }
     # end evaluation of values if they are expression, call, etc.
-    arg_names <- base::names(x = base::formals(fun = base::sys.function(which = base::sys.parent(n = 2)), envir = base::parent.frame(n = 1))) # names of all the arguments
+    arg_names <- base::names(x = base::formals(fun = base::sys.function(which = base::sys.parent(n = 0)), envir = base::parent.frame(n = 1))) # names of all the arguments
     #### end arguments settings
 
     #### error_text initiation
@@ -277,7 +277,6 @@ is_function_here <- function(
     ######## check of lib_path
     # must be before any :: or ::: non basic package calling
     # if(safer_check == TRUE){ # inactivated because required also with safer_check == FALSE
-    if(safer_check == TRUE){ # this line must be inactivated if you want to use lib_path in the main code (other than in safer functions present in the main code) 
         if( ! base::is.null(x = lib_path)){ #  is.null(NA) returns FALSE so OK.
             if( ! base::all(base::typeof(x = lib_path) == "character", na.rm = TRUE)){ # na.rm = TRUE but no NA returned with typeof (typeof(NA) == "character" returns FALSE)
                 if(base::all(base::mode(x = lib_path) == "function", na.rm = TRUE)){
@@ -316,7 +315,6 @@ is_function_here <- function(
         }else{
             lib_path <- base::.libPaths(new = , include.site = TRUE) # normal to have empty new argument # base::.libPaths(new = lib_path) # or base::.libPaths(new = base::c(base:::.libPaths(), lib_path))
         }
-    }  # this line must be inactivated if you want to use lib_path in the main code (other than in safer functions present in the main code) 
     # }
     ######## end check of lib_path
 
