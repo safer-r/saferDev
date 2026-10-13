@@ -646,7 +646,7 @@ arg_check <- function(
         base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL)
     }
     if( ! base::is.null(x = options)){
-        if( ! base::all(base::typeof(x = options) %in% c("character", "integer", "double"), na.rm = TRUE)){
+        if( ! base::all(base::typeof(x = options) %in% base::c("character", "integer", "double"), na.rm = TRUE)){
             tempo_cat <- base::paste0(
                 error_text_start, 
                 "THE options ARGUMENT MUST BE TYPE \"character\", \"integer\", OR \"double\".",
@@ -989,7 +989,7 @@ arg_check <- function(
             text <- base::paste0(text, "THE ", data_name, " ", base::ifelse(test = data_arg, yes = "ARGUMENT", no = "OBJECT"), " CONTAINS NA WHILE NOT AUTHORIZED.", collapse = NULL, recycle0 = FALSE)
         }
     }
-    if(( ! is.null(x = mode) && base::all(mode == "numeric", na.rm = TRUE) && base::length(x = mode) == 1L) | ( ! is.null(x = typeof) && base::all(typeof %in% base::c("double", "integer"), na.rm = TRUE) && base::length(x = typeof) == 1L)){
+    if(( ! base::is.null(x = mode) && base::all(mode == "numeric", na.rm = TRUE) && base::length(x = mode) == 1L) | ( ! base::is.null(x = typeof) && base::all(typeof %in% base::c("double", "integer"), na.rm = TRUE) && base::length(x = typeof) == 1L)){
         if(neg_values == FALSE & ! base::any(base::class(x = data) %in% "factor", na.rm = TRUE) & (base::all(base::mode(x = data) %in% "numeric", na.rm = TRUE) | base::all(base::typeof(x = data) %in% base::c("double", "integer"), na.rm = TRUE))){ # no need of na.rm = TRUE for base::all() because %in% does not output NA
             if(base::any(data < 0, na.rm = TRUE)){ # Warning: na.rm = TRUE required here for base::any()
                 problem <- TRUE
@@ -1010,7 +1010,7 @@ arg_check <- function(
             text <- base::paste0(text, "THE ", data_name, " ", base::ifelse(test = data_arg, yes = "ARGUMENT", no = "OBJECT"), " MUST BE MADE OF NON NEGATIVE VALUES BUT IS ", base::ifelse(test = base::any(base::class(x = data) %in% "factor", na.rm = TRUE), yes = "A FACTOR", no = "NOT EVEN NUMERIC."), collapse = NULL, recycle0 = FALSE) # no need of na.rm = TRUE
         }
     }
-    if(( ! is.null(x = mode) && base::all(mode == "numeric", na.rm = TRUE) && base::length(x = mode) == 1L) | ( ! is.null(x = typeof) && base::all(typeof %in% "double", na.rm = TRUE) && base::length(x = typeof) == 1L)){
+    if(( ! base::is.null(x = mode) && base::all(mode == "numeric", na.rm = TRUE) && base::length(x = mode) == 1L) | ( ! base::is.null(x = typeof) && base::all(typeof %in% "double", na.rm = TRUE) && base::length(x = typeof) == 1L)){
         if(inf_values == FALSE & ! base::any(base::class(x = data) %in% "factor", na.rm = TRUE) & (base::all(base::mode(x = data) %in% "numeric", na.rm = TRUE) | base::all(base::typeof(x = data) %in% "double", na.rm = TRUE))){ # no need of na.rm = TRUE for base::all() because %in% does not output NA
             if(base::any(base::is.infinite(x = data), na.rm = TRUE)){ # Warning: na.rm = TRUE required here for base::any()
                 problem <- TRUE
