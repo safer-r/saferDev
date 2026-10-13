@@ -507,7 +507,7 @@ get_message <- function(
     # nocov start
     # codecov inactivated because it is not testable in all OS
     if(base::Sys.info()[["sysname"]] == "Linux") {
-        grDevices::pdf(file = NULL, width = , height = , onefile = , family = , title = , fonts = , version = , paper = , encoding = , bg = , fg = , pointsize = , pagecentre = , colormodel = , useDingbats = , useKerning = , fillOddEven = , compress =) # send plots into a NULL file, no pdf file created
+        grDevices::pdf(file = NULL, width = , height = , onefile = , family = , title = , fonts = , version = , paper = , encoding = , bg = , fg = , pointsize = , pagecentre = , colormodel = , useDingbats = , useKerning = , fillOddEven = , compress = , timestamp = , producer = , author = ) # send plots into a NULL file, no pdf file created
     }else{
         grDevices::pdf(file = NULL, width = , height = , onefile = , family = , title = , fonts = , version = , paper = , encoding = , bg = , fg = , pointsize = , pagecentre = , colormodel = , useDingbats = , useKerning = , fillOddEven = , compress = , timestamp = , producer = , author = ) # send plots into a NULL file, no pdf file created
     }
