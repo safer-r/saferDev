@@ -377,6 +377,7 @@ testthat::test_that("get_message()", {
             # warning message
             testthat::expect_no_error(get_message(data = str6, kind = "warning", header = TRUE, print_no = FALSE, text = "IN FUN1", env = NULL, safer_check = TRUE, lib_path = NULL, error_text = ""))
             stats_env <- as.environment("package:stats")
+            on.exit(expr = if(base::exists(x = "stats_env", inherits = FALSE)){base::rm(stats_env)}, add = TRUE, after = FALSE) # guarantee the removal of stats_env even if an expectation above fails
             testthat::expect_no_error(get_message(data = str6, kind = "warning", header = TRUE, print_no = FALSE, text = "IN FUN1", env = stats_env, safer_check = TRUE, lib_path = NULL, error_text = "")) # env
             rm(stats_env)
             testthat::expect_no_error(get_message(data = str7, kind = "warning", header = TRUE, print_no = FALSE, text = "IN FUN1", env = NULL, safer_check = TRUE, lib_path = NULL, error_text = "")) # ggplot2
@@ -384,6 +385,7 @@ testthat::test_that("get_message()", {
             # message
             testthat::expect_no_error(get_message(data = str2, kind = "message", header = TRUE, print_no = FALSE, text = "IN FUN1", env = NULL, safer_check = TRUE, lib_path = NULL, error_text = ""))
             stats_env <- as.environment("package:stats")
+            on.exit(expr = if(base::exists(x = "stats_env", inherits = FALSE)){base::rm(stats_env)}, add = TRUE, after = FALSE) # guarantee the removal of stats_env even if an expectation above fails
             testthat::expect_no_error(get_message(data = str2, kind = "message", header = TRUE, print_no = FALSE, text = "IN FUN1", env =  stats_env, safer_check = TRUE, lib_path = NULL, error_text = ""))
             rm(stats_env)
             testthat::expect_no_error(get_message(data = str5, kind = "message", header = TRUE, print_no = FALSE, text = "IN FUN1", env = NULL, safer_check = TRUE, lib_path = NULL, error_text = "")) # ggplot2
@@ -391,6 +393,7 @@ testthat::test_that("get_message()", {
         # if(base::any(base::class(x = tempo) %in% base::c("gg", "ggplot"), na.rm = TRUE)){
         testthat::expect_no_error(get_message(data = str7, kind = "warning", header = TRUE, print_no = FALSE, text = "IN FUN1", env = NULL, safer_check = TRUE, lib_path = NULL, error_text = ""))
         stats_env <- as.environment("package:stats")
+        on.exit(expr = if(base::exists(x = "stats_env", inherits = FALSE)){base::rm(stats_env)}, add = TRUE, after = FALSE) # guarantee the removal of stats_env even if an expectation above fails
         testthat::expect_no_error(get_message(data = str7, kind = "warning", header = TRUE, print_no = FALSE, text = "IN FUN1", env = stats_env, safer_check = TRUE, lib_path = NULL, error_text = ""))
         rm(stats_env)
         # end }else if(base::is.null(x = tempo.error)){
@@ -480,6 +483,7 @@ testthat::test_that("get_message()", {
     expected <-  "ERROR MESSAGE REPORTED:\nIn wilcox.test(letters, c(1, 2, 4)) : \n  could not find function \"wilcox.test\"\n" # eval only in baseenv()
     testthat::expect_equal(result, expected)
     stats_env <- as.environment("package:stats")
+    on.exit(expr = if(base::exists(x = "stats_env", inherits = FALSE)){base::rm(stats_env)}, add = TRUE, after = FALSE) # guarantee the removal of stats_env even if an expectation above fails
     result <- get_message(data = str1, kind = "error", header = TRUE, print_no = FALSE, text = "IN FUN1", env = stats_env, safer_check = TRUE, lib_path = NULL, error_text = "")
     expected <-  "ERROR MESSAGE REPORTED IN FUN1:\nIn wilcox.test.default(letters, c(1, 2, 4)) : 'x' must be numeric\n" # eval only in stat(), str1 not found
     testthat::expect_equal(result, expected)
