@@ -2,3 +2,5 @@ inst/doc
 
 # MS Office temporary lock files (~$ prefix)
 ~$*
+AGENTS.md
+/dev/manuscript
