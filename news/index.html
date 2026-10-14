@@ -45,7 +45,9 @@
 
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="2.0.0" id="saferdev-200">saferDev 2.0.0<a class="anchor" aria-label="anchor" href="#saferdev-200"></a></h2>
-<ul><li>arg_check() with a new behavior for its three arguments class, type and mode.</li>
+<ul><li>arg_check(): new behavior for the class, typeof and mode arguments. Values are now compared exactly (same values, same order) to class(data), typeof(data) and mode(data). Thus, class = “matrix” alone always returns a problem since R 4.0.0 (use class = c(“matrix”, “array”)), class = “factor” alone always returns a problem for ordered factors (use class = c(“ordered”, “factor”)), and class = “vector” is no longer a shortcut for numeric, integer, character, logical, complex or expression classes. In addition, double_as_integer_allowed = TRUE now also rescues class = “integer” when the tested object is a double with zero as modulo.</li>
+<li>All the safer-r functions now check that the … argument is not used, and that the reserved lib_path, safer_check and error_text arguments are present.</li>
+<li>R (&gt;= 4.5.0) is now required.</li>
 </ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="1.0.0" id="saferdev-100">saferDev 1.0.0<a class="anchor" aria-label="anchor" href="#saferdev-100"></a></h2><p class="text-muted">CRAN release: 2026-06-08</p>
