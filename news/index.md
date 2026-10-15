@@ -2,6 +2,8 @@
 
 ## saferDev 2.0.0
 
+CRAN release: 2026-10-14
+
 - arg_check(): new behavior for the class, typeof and mode arguments.
   Values are now compared exactly (same values, same order) to
   class(data), typeof(data) and mode(data). Thus, class = “matrix” alone
