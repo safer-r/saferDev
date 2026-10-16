@@ -451,7 +451,7 @@ colons_check <- function(
     #### end second round of checking and data preparation
 
     #### main code
-    skipped_base <- base::c("function", "if", "for", "while", "repeat", "else") # skipped function
+    skipped_base <- base::c("function", "if", "for", "while", "repeat", "else", "in") # skipped function and elements. in must be here because for(j in (n - 1L):2L) breaks the code
     # modification of arg_user_setting$x for clean messages
     if(base::as.character(x = arg_user_setting$x)[1] == "::" | base::as.character(x = arg_user_setting$x)[1] == ":::"){
         arg_user_setting$x <- base::paste0(
