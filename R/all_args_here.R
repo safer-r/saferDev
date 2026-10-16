@@ -548,6 +548,7 @@ all_args_here <- function(
     ######## warning initiation
     ini_warning_length <- base::options()$warning.length # required to have the max characters of output messages
     base::options(warning.length = 8170)
+    base::on.exit(expr = base::options(warning.length = ini_warning_length), add = TRUE, after = TRUE) # registered here so that warning.length is restored even if an error occurs before the warning-output on.exit() registrations below
     warn <- NULL
     warn_count <- 0
     ######## end warning initiation
@@ -592,7 +593,7 @@ all_args_here <- function(
     #### end second round of checking and data preparation
 
     #### main code
-    skipped_base <- base::c("function", "if", "for", "while", "repeat", "else") # skipped function
+    skipped_base <- base::c("function", "if", "for", "while", "repeat", "else", "in") # skipped function
     skipped_other <- base::c("as.environment") # skipped function. Write "" if no function to skip 
 
     # arg_user_setting$x <- base::as.character(arg_user_setting$x)

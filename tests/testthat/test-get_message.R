@@ -36,7 +36,7 @@ testthat::test_that("get_message()", {
         # Check if inside test_that by examining call stack
         calls <- sys.calls()
         call_names <- vapply(calls, function(x) {
-            if(is.call(x)) deparse(x[[1]]) else ""
+            if(is.call(x)) {deparse(x[[1]])} else {""}
         }, character(1))
         
         # Match with or without namespace prefix

@@ -38,13 +38,13 @@ testthat::test_that("all_args_here()", {
     }
     fun12 <- function(x){
         base::gregexpr(pattern = base::paste0(pattern, "\\(#"), text = text)
-        repeat(x)
+        repeat{ (x)}
     }
     fun13 <- function(x){
         base::as.environment(x)
     }
     fun14 <- function(a) {
-        if(a > 0) base::return(TRUE)  # 'if' is a special primitive with no formals
+        if(a > 0) {base::return(TRUE)}  # 'if' is a special primitive with no formals
         base::return(FALSE)
     }
     fun15 <- function(x) {

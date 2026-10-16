@@ -41,3 +41,6 @@ reference:
 - title: "colons_check"
   contents: 
   - colons_check
+- title: "curl_bracket_check"
+  contents: 
+  - curl_bracket_check

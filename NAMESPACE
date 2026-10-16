@@ -3,6 +3,7 @@
 export(all_args_here)
 export(arg_check)
 export(colons_check)
+export(curl_bracket_check)
 export(env_check)
 export(get_message)
 export(is_function_here)

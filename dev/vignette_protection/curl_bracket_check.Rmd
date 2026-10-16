@@ -1,0 +1,128 @@
+---
+title: "curl_bracket_check: more examples"
+---
+<br>
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+    error = TRUE, 
+    collapse = FALSE,
+    comment = "##"
+)
+```
+
+```{r setup}
+library(saferDev)
+```
+<br>
+
+### Datasets
+
+```{r}
+# Function with all the bodies delimited by curly brackets.
+fun1 <- function(x){
+    if(x > 1){
+        base::return(x)
+    }else{
+        base::return(0)
+    }
+    for(i in 1:3){
+        base::print(i)
+    }
+    while(x > 1){
+        x <- x - 1
+    }
+    repeat{
+        x <- x + 1
+    }
+    base::sapply(X = 1:3, FUN = function(y){
+        y * 2
+    })
+}
+# Function with some bodies not delimited by curly brackets.
+fun2 <- function(x){
+    if(x > 1)
+        base::return(x)
+    else
+        base::return(0)
+    for(i in 1:3)
+        base::print(i)
+    while(x > 1)
+        x <- x - 1
+    repeat
+        x <- x + 1
+    base::sapply(X = 1:3, FUN = function(y) y * 2)
+}
+```
+<br>
+
+### Datasets info
+
+```{r}
+fun1 # Function.
+fun2 # Function.
+```
+<br>
+
+### Argument <code>x</code>
+```{r, echo = TRUE, error = TRUE}
+# Test if all the bodies of fun1 are delimited by curly brackets.
+# Here everything is fine.
+curl_bracket_check(x = fun1)
+
+# Here some bodies are not delimited by curly brackets.
+curl_bracket_check(x = fun2)
+```
+<br>
+
+### Argument <code>safer_check</code> 
+```{r, echo = TRUE, error = TRUE}
+# Safer checkings are performed before main code running.
+curl_bracket_check(
+    x = fun1, 
+    safer_check = TRUE
+)
+```
+<br>
+
+### Argument <code>lib_path</code>
+```{r}
+# The "NOTGOOD" path does not exists.
+curl_bracket_check(
+    x = fun1,  
+    lib_path = "NOTGOOD"
+)
+```
+<br>
+
+### Argument <code>error_text</code>
+```{r}
+# Add a text in error messages returned by curl_bracket_check().
+curl_bracket_check(
+    x = fun1, 
+    lib_path = "NOTGOOD", 
+    error_text = " === TEXT ADDED ==="
+)
+```
+<br>
+
+### All the arguments
+```{r, echo = TRUE, error = TRUE}
+curl_bracket_check(
+    x = fun1, # function name to test.
+    safer_check = TRUE, # perform some "safer" checks (see https://github.com/safer-r)?
+    lib_path = NULL, # where the required packages are if not in the default directories.
+    error_text = "" # add information in error messages returned by the function.
+)
+```
+<br>
+
+### Sophisticated example
+```{r, echo = TRUE, error = TRUE}
+# The body of a primitive function cannot be delimited by curly brackets: skipped.
+curl_bracket_check(x = base::`+`)
+
+# The body of base::mean() is UseMethod("mean"): reported.
+curl_bracket_check(x = base::mean)
+```
+<br>

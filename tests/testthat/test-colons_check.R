@@ -36,7 +36,7 @@ testthat::test_that("colons_check()", {
     }
 
     # OR a function calling only user-defined functions (not in base)
-    my_helper <- function(x) x * 2
+    my_helper <- function(x) {x * 2}
     fun_custom <- function(){
         my_helper(5)  # 'my_helper' is not a base R function
     }
