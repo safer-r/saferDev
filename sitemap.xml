@@ -3,6 +3,7 @@
 <url><loc>/articles/all_args_here.html</loc></url>
 <url><loc>/articles/arg_check.html</loc></url>
 <url><loc>/articles/colons_check.html</loc></url>
+<url><loc>/articles/curl_bracket_check.html</loc></url>
 <url><loc>/articles/env_check.html</loc></url>
 <url><loc>/articles/get_message.html</loc></url>
 <url><loc>/articles/index.html</loc></url>
@@ -16,6 +17,7 @@
 <url><loc>/reference/all_args_here.html</loc></url>
 <url><loc>/reference/arg_check.html</loc></url>
 <url><loc>/reference/colons_check.html</loc></url>
+<url><loc>/reference/curl_bracket_check.html</loc></url>
 <url><loc>/reference/dot-all_args_here_fill.html</loc></url>
 <url><loc>/reference/dot-base_op_check.html</loc></url>
 <url><loc>/reference/dot-colons_check_message.html</loc></url>

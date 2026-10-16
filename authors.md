@@ -14,12 +14,12 @@
 ## Citation
 
 Millot G (2026). *saferDev: Function and Pipeline Development*. R
-package version 2.0.0, <https://github.com/safer-r/saferDev>.
+package version 2.1.0, <https://github.com/safer-r/saferDev>.
 
     @Manual{,
       title = {saferDev: Function and Pipeline Development},
       author = {Gael Millot},
       year = {2026},
-      note = {R package version 2.0.0},
+      note = {R package version 2.1.0},
       url = {https://github.com/safer-r/saferDev},
     }

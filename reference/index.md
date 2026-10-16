@@ -31,3 +31,7 @@
 ## colons_check
 
 - [`colons_check()`](colons_check.md) : Colons Check
+
+## curl_bracket_check
+
+- [`curl_bracket_check()`](curl_bracket_check.md) : Curl Brackets Check

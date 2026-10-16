@@ -1,5 +1,12 @@
 # Changelog
 
+## saferDev 2.1.0
+
+- curl_bracket_check(): new function. Verifies that all the bodies of
+  the if, else, for, while, repeat and function (including lambda (x))
+  constructs of a function are delimited by curly brackets {}, according
+  to the safer-r recommendation.
+
 ## saferDev 2.0.0
 
 CRAN release: 2026-10-14

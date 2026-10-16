@@ -5,10 +5,11 @@ articles:
   articles/all_args_here: all_args_here.html
   articles/arg_check: arg_check.html
   articles/colons_check: colons_check.html
+  articles/curl_bracket_check: curl_bracket_check.html
   articles/env_check: env_check.html
   articles/get_message: get_message.html
   articles/is_function_here: is_function_here.html
   articles/is_package_here: is_package_here.html
   articles/report: report.html
   saferDev: saferDev.html
-last_built: 2026-10-16T08:53Z
+last_built: 2026-10-16T18:13Z
