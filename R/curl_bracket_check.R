@@ -432,17 +432,19 @@ curl_bracket_check <- function(
             depth <- 0
             lp <- NULL
             rp <- NULL
-            for(j in (i + 1):base::length(x = term_rows)){
-                if(pd$token[term_rows[j]] == "'('"){
-                    depth <- depth + 1
-                    if(depth == 1){
-                        lp <- term_rows[j]
-                    }
-                }else if(pd$token[term_rows[j]] == "')'"){
-                    depth <- depth - 1
-                    if(depth == 0){
-                        rp <- term_rows[j]
-                        break
+            if(i < base::length(x = term_rows)){ # guard to avoid a descending sequence in the for() below if the keyword token were the last terminal token (unreachable with parseable R code, but secured)
+                for(j in (i + 1):base::length(x = term_rows)){
+                    if(pd$token[term_rows[j]] == "'('"){
+                        depth <- depth + 1
+                        if(depth == 1){
+                            lp <- term_rows[j]
+                        }
+                    }else if(pd$token[term_rows[j]] == "')'"){
+                        depth <- depth - 1
+                        if(depth == 0){
+                            rp <- term_rows[j]
+                            break
+                        }
                     }
                 }
             }
@@ -465,12 +467,41 @@ curl_bracket_check <- function(
         }
         ft_token <- pd$token[term_rows[body_start_pos + 1]] # first terminal token (comments excluded) of the body
         ft_text <- pd$text[term_rows[body_start_pos + 1]]
+        # detection of bodies made of a single .Primitive() call: these bodies are skipped, because primitive functions cannot be delimited by curly brackets. The .Primitive() call must be the whole body: the terminal token following the ) of the .Primitive() call must belong to another expr (otherwise, the body contains more code, like in function(x) .Primitive('+') + 1, which must be reported)
+        prim_log <- FALSE
         if((pd$token[kid] == "FUNCTION" || pd$token[kid] == "LAMBDA" || pd$token[kid] == "'\\\\'") && ft_token == "SYMBOL_FUNCTION_CALL" && ft_text == ".Primitive"){
-            # bodies made of a single .Primitive() call are skipped, because primitive functions cannot be delimited by curly brackets
-        }else if(ft_token != "'{'"){
-            findings_line <- base::c(findings_line, pd$line1[kid], recursive = TRUE, use.names = TRUE)
-            findings_kind <- base::c(findings_kind, base::ifelse(test = pd$token[kid] %in% base::c("LAMBDA", "'\\\\'"), yes = "function", no = pd$text[kid]), recursive = TRUE, use.names = TRUE)
-            findings_code <- base::c(findings_code, base::trimws(x = code[pd$line1[kid]], which = "left", whitespace = "[ \\t]"), recursive = TRUE, use.names = TRUE)
+            prim_call_close_pos <- body_start_pos + 1
+            depth <- 1
+            k <- body_start_pos + 2
+            while(k <= base::length(x = term_rows) && depth > 0){
+                if(pd$token[term_rows[k]] == "'('"){
+                    depth <- depth + 1
+                }else if(pd$token[term_rows[k]] == "')'"){
+                    depth <- depth - 1
+                    if(depth == 0){
+                        prim_call_close_pos <- k
+                    }
+                }
+                k <- k + 1
+            }
+            if(depth != 0){ # nocov start
+                # codecov inactivated because it is an internal control of code writing, impossible to cover with argument values (R code with unbalanced parentheses cannot be parsed).
+                tempo_cat <- base::paste0("INTERNAL ERROR 5 IN ", intern_error_text_start, "UNBALANCED PARENTHESES DETECTED AFTER .Primitive", intern_error_text_end, collapse = NULL, recycle0 = FALSE) ; base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL)
+                # nocov end
+            }else if(prim_call_close_pos == base::length(x = term_rows)){ # the ) of .Primitive() is the last terminal token of the whole code: the body is exactly the .Primitive() call
+                prim_log <- TRUE
+            }else if(pd$parent[term_rows[body_start_pos + 1]] == pd$parent[term_rows[prim_call_close_pos + 1]]){ # the expr owning the first body terminal token is also owning the terminal token following the ) of .Primitive(): the body contains more code after the .Primitive() call
+                prim_log <- FALSE
+            }else{
+                prim_log <- TRUE
+            }
+        }
+        if(prim_log == FALSE){
+            if(ft_token != "'{'"){
+                findings_line <- base::c(findings_line, pd$line1[kid], recursive = TRUE, use.names = TRUE)
+                findings_kind <- base::c(findings_kind, base::ifelse(test = pd$token[kid] %in% base::c("LAMBDA", "'\\\\'"), yes = "function", no = pd$text[kid]), recursive = TRUE, use.names = TRUE)
+                findings_code <- base::c(findings_code, base::trimws(x = code[pd$line1[kid]], which = "left", whitespace = "[ \\t]"), recursive = TRUE, use.names = TRUE)
+            }
         }
         # else branch of if(), detected through the parse tree (the else of an if is a sibling token of this if). Warning: an else followed by an if() is not reported, because the chained if() is checked on its own
         if(pd$token[kid] == "IF"){
@@ -495,6 +526,25 @@ curl_bracket_check <- function(
             }
         }
     }
+    # modification of arg_user_setting$x for clean messages
+    if(base::as.character(x = arg_user_setting$x)[1] == "::" | base::as.character(x = arg_user_setting$x)[1] == ":::"){
+        arg_user_setting$x <- base::paste0(
+            base::as.character(x = arg_user_setting$x)[2], 
+            base::as.character(x = arg_user_setting$x)[1], 
+            base::as.character(x = arg_user_setting$x)[3], 
+            "()",
+            collapse = NULL, 
+            recycle0 = FALSE
+        )
+    }else{
+        arg_user_setting$x <- base::paste0(
+            arg_user_setting$x, 
+            "()",
+            collapse = NULL, 
+            recycle0 = FALSE
+        )
+    }
+    # end modification of arg_user_setting$x for clean messages
     # message
     tempo_cat <- base::paste0(
         "AFTER RUNNING ", 
