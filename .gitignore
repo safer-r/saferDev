@@ -4,3 +4,9 @@ inst/doc
 ~$*
 AGENTS.md
 /dev/manuscript
+
+# Test-run artifacts (removed at the end of each test run by tests/testthat/teardown-cleanup.R)
+/tests/testthat/Rplots.pdf
+/tests/testthat/results.txt
+/tests/testthat/*_internal_error_*.txt
+/tests/testthat/_snaps/
