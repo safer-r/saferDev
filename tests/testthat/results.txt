@@ -1,0 +1,131 @@
+  A B
+1 1 a
+2 2 b
+3 3 c
+4 4 d
+5 5 e
+6 6 f
+7 7 g
+8 8 h
+
+  A B
+1 1 a
+2 2 b
+3 3 c
+4 4 d
+5 5 e
+6 6 f
+7 7 g
+8 8 h
+
+  A B
+1 1 a
+2 2 b
+3 3 c
+4 4 d
+5 5 e
+6 6 f
+7 7 g
+8 8 h
+
+  A B
+1 1 a
+2 2 b
+3 3 c
+4 4 d
+5 5 e
+6 6 f
+7 7 g
+8 8 h
+
+  A B
+1 1 a
+2 2 b
+3 3 c
+4 4 d
+5 5 e
+6 6 f
+7 7 g
+8 8 h
+
+  A B
+1 1 a
+2 2 b
+3 3 c
+4 4 d
+5 5 e
+6 6 f
+7 7 g
+8 8 h
+
+  A B
+1 1 a
+2 2 b
+3 3 c
+4 4 d
+5 5 e
+6 6 f
+7 7 g
+8 8 h
+
+  A B
+1 1 a
+2 2 b
+3 3 c
+4 4 d
+5 5 e
+6 6 f
+7 7 g
+8 8 h
+
+  A B
+1 1 a
+2 2 b
+3 3 c
+4 4 d
+5 5 e
+6 6 f
+7 7 g
+8 8 h
+
+  A B
+1 1 a
+2 2 b
+3 3 c
+4 4 d
+5 5 e
+6 6 f
+7 7 g
+8 8 h
+
+  A B
+1 1 a
+2 2 b
+3 3 c
+4 4 d
+5 5 e
+6 6 f
+7 7 g
+8 8 h
+
+1
+
+
+[1]  TRUE FALSE
+
+ [,1]
+   -1
+    0
+    1
+    2
+    3
+
+[1] FUN1
+Levels: FUN1
+
+1
+
+
+function(x){x = 1}
+<environment: 0x000001e06ce9ef20>
+

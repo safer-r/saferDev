@@ -40,7 +40,8 @@ The returned line numbers are indicative, depending on which source is checked. 
 # Warning: these examples may not work well when using the "Run examples" link 
 # because of a particular environment. Please, copy-paste in a local environment.
 # See also https://safer-r.github.io/saferDev/articles/curl_bracket_check.html
-fun1 <- function(x){ if(x > 1){ base::return(x) } else { base::return(0) } } ; saferDev::curl_bracket_check(fun1)
+fun1 <- function(x){ if(x > 1){ base::return(x) } else { base::return(0) } }
+saferDev::curl_bracket_check(fun1)
 fun2 <- function(x){ if(x > 1) base::return(x) } ; saferDev::curl_bracket_check(fun2)
 saferDev::curl_bracket_check(mean)
 

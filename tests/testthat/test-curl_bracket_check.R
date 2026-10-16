@@ -50,6 +50,8 @@ testthat::test_that("curl_bracket_check()", {
     }
     fun25 <- base::`+`
     fun26 <- base::mean
+    fun27 <- function(x) .Primitive('+') + 1 # body starting with .Primitive() but containing more code: must be reported
+    fun28 <- function(x){ .Primitive('+') + 1 } # braced body containing .Primitive(): clean
     ## end data argument values
 
     ## initialization of tests
@@ -225,6 +227,10 @@ testthat::test_that("curl_bracket_check()", {
     testthat::expect_message(regexp = "SOME CURLY BRACKETS {} ARE MISSING AFTER", fixed = TRUE, {curl_bracket_check(x = fun23, safer_check = TRUE, lib_path = NULL, error_text = "")})
     testthat::expect_message(curl_bracket_check(x = fun24, safer_check = TRUE, lib_path = NULL, error_text = ""), regexp = "SOME CURLY BRACKETS {} ARE MISSING AFTER", fixed = TRUE)
     testthat::expect_message(curl_bracket_check(x = fun26, safer_check = TRUE, lib_path = NULL, error_text = ""), regexp = "SOME CURLY BRACKETS {} ARE MISSING AFTER", fixed = TRUE) # UseMethod body flagged
+    testthat::expect_message(curl_bracket_check(x = fun27, safer_check = TRUE, lib_path = NULL, error_text = ""), regexp = "SOME CURLY BRACKETS {} ARE MISSING AFTER", fixed = TRUE) # body starting with .Primitive() but containing more code: reported
+    testthat::expect_message(curl_bracket_check(x = fun28, safer_check = TRUE, lib_path = NULL, error_text = ""), regexp = "EVERYTHING SEEMS CLEAN", fixed = TRUE) # braced body containing .Primitive(): clean
+    testthat::expect_message(curl_bracket_check(x = base::mean, safer_check = TRUE, lib_path = NULL, error_text = ""), regexp = "INSIDE mean(), SOME CURLY BRACKETS", fixed = TRUE) # message normalization of pkg::fun and bare names
+    testthat::expect_message(curl_bracket_check(x = fun20, safer_check = TRUE, lib_path = NULL, error_text = ""), regexp = "INSIDE fun20(), SOME CURLY BRACKETS", fixed = TRUE) # message normalization of anonymous-like names
     # exact findings for a representative case (only the LINE and CONSTRUCT columns are compared, because the CODE column depends on the srcref presence of the checked function). Warning: utils::capture.output(type = "message") does not work inside testthat (the message connection is redirected), so testthat::capture_messages() is used
     msgs <- testthat::capture_messages(curl_bracket_check(x = fun14, safer_check = FALSE, lib_path = NULL, error_text = ""))
     res <- base::unlist(x = base::strsplit(x = msgs, split = "\n", fixed = TRUE), recursive = TRUE, use.names = FALSE)

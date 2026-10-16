@@ -73,8 +73,8 @@ install.packages("saferDev")
 Older versions can be installed like this:
 
 ```r
-v <- "v1.0" # desired tag version
-remotes::install_github(paste0("https://github.com/safer-r/saferDev", "/tree/", v))
+v <- "v1.0.0" # desired tag version
+remotes::install_github(paste0("https://github.com/safer-r/saferDev@CRAN_/", v))
 ```
 
 ## Docker image

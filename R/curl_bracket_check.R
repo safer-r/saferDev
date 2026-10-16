@@ -28,7 +28,8 @@
 #' # Warning: these examples may not work well when using the "Run examples" link 
 #' # because of a particular environment. Please, copy-paste in a local environment.
 #' # See also https://safer-r.github.io/saferDev/articles/curl_bracket_check.html
-#' fun1 <- function(x){ if(x > 1){ base::return(x) } else { base::return(0) } } ; saferDev::curl_bracket_check(fun1)
+#' fun1 <- function(x){ if(x > 1){ base::return(x) } else { base::return(0) } }
+#' saferDev::curl_bracket_check(fun1)
 #' fun2 <- function(x){ if(x > 1) base::return(x) } ; saferDev::curl_bracket_check(fun2)
 #' saferDev::curl_bracket_check(mean)
 #' 
@@ -471,15 +472,16 @@ curl_bracket_check <- function(
         prim_log <- FALSE
         if((pd$token[kid] == "FUNCTION" || pd$token[kid] == "LAMBDA" || pd$token[kid] == "'\\\\'") && ft_token == "SYMBOL_FUNCTION_CALL" && ft_text == ".Primitive"){
             prim_call_close_pos <- body_start_pos + 1
-            depth <- 1
-            k <- body_start_pos + 2
-            while(k <= base::length(x = term_rows) && depth > 0){
+            depth <- 0
+            k <- body_start_pos + 1 # the scan includes the .Primitive token itself, so that the ( of the call is found
+            while(k <= base::length(x = term_rows)){
                 if(pd$token[term_rows[k]] == "'('"){
                     depth <- depth + 1
                 }else if(pd$token[term_rows[k]] == "')'"){
                     depth <- depth - 1
                     if(depth == 0){
                         prim_call_close_pos <- k
+                        break
                     }
                 }
                 k <- k + 1
@@ -488,12 +490,12 @@ curl_bracket_check <- function(
                 # codecov inactivated because it is an internal control of code writing, impossible to cover with argument values (R code with unbalanced parentheses cannot be parsed).
                 tempo_cat <- base::paste0("INTERNAL ERROR 5 IN ", intern_error_text_start, "UNBALANCED PARENTHESES DETECTED AFTER .Primitive", intern_error_text_end, collapse = NULL, recycle0 = FALSE) ; base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL)
                 # nocov end
-            }else if(prim_call_close_pos == base::length(x = term_rows)){ # the ) of .Primitive() is the last terminal token of the whole code: the body is exactly the .Primitive() call
-                prim_log <- TRUE
-            }else if(pd$parent[term_rows[body_start_pos + 1]] == pd$parent[term_rows[prim_call_close_pos + 1]]){ # the expr owning the first body terminal token is also owning the terminal token following the ) of .Primitive(): the body contains more code after the .Primitive() call
-                prim_log <- FALSE
             }else{
-                prim_log <- TRUE
+                # the whole body expr is the largest expr starting at the first body terminal token. If its end is the ) of the .Primitive() call, the body is exactly the .Primitive() call (e.g., function(x) .Primitive('+')). Otherwise, the body contains more code (e.g., function(x) .Primitive('+') + 1, which must be reported)
+                body_term_pos1 <- pd$line1[term_rows[body_start_pos + 1]] * 1000000 + pd$col1[term_rows[body_start_pos + 1]]
+                cand <- pd[base::which(x = pd$token == "expr" & pd$line1 * 1000000 + pd$col1 == body_term_pos1, arr.ind = FALSE, useNames = TRUE), ]
+                body_end_pos <- cand[base::order(x = cand$line2 * 1000000 + cand$col2, decreasing = TRUE), ][1, "line2"] * 1000000 + cand[base::order(x = cand$line2 * 1000000 + cand$col2, decreasing = TRUE), ][1, "col2"]
+                prim_log <- body_end_pos == pd$line1[term_rows[prim_call_close_pos]] * 1000000 + pd$col1[term_rows[prim_call_close_pos]]
             }
         }
         if(prim_log == FALSE){
