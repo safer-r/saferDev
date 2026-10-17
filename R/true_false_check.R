@@ -1,0 +1,626 @@
+#' @title True False Check
+#' @description
+#' Verify that the logical constants are always written in full, \code{TRUE} or \code{FALSE}, and never abbreviated as \code{T} or \code{F}, when used as values inside a function: in argument values, like \code{f(log = T)} or \code{f(T)}, in condition values, like \code{if(T)} or \code{while(T)}, in comparison values, like \code{x == T} (both sides), and in indexing values, like \code{n[T]}. The safer-r rule requires full logical names, because \code{T} and \code{F} can be overwritten by the user (e.g., \code{T <- 1}), contrary to \code{TRUE} and \code{FALSE}.
+#'
+#' Warning: the function first checks that all the functions used inside \code{x} are preceded by a package attribution (like \code{colons_check()} would do): if not, an error is returned, asking to run \code{colons_check()} first (like \code{all_args_here()} does). This pre-check must pass before the \code{T} or \code{F} scanning is performed.
+#' @param x a function name, written without quotes and brackets.
+#' @param safer_check Single logical value. Perform some "safer" checks? If \code{TRUE}, checkings are performed before main code running (see the \href{https://github.com/safer-r}{safer-r project}): 1) correct \code{lib_path} argument value 2) required functions and related packages effectively present in local R libraries and 3) R classical operators (like \code{"<-"}) not overwritten by another package because of the R scope. Must be set to \code{FALSE} if this function is used inside another "safer" function to avoid pointless multiple checkings.
+#' @param lib_path Vector of characters specifying the absolute pathways of the directories containing the required packages for the function, if not in the default directories. Useful when R packages are not installed in the default directories because of lack of admin rights. More precisely, \code{lib_path} is passed through the \code{new} argument of \code{.libPaths()} so that the new library paths are \code{unique(c(new, .Library.site, .Library))}. Warning: \code{.libPaths()} is restored to the initial paths, after function execution. Ignored if \code{NULL} (default) or if the \code{safer_check} argument is \code{FALSE}: only the pathways specified by the current \code{.libPaths()} are used for package calling.
+#' @param error_text Single character string used to add information in error messages returned by the function, notably if the function is inside other functions, which is practical for debugging. Example: \code{error_text = " INSIDE <PACKAGE_1>::<FUNCTION_1> INSIDE <PACKAGE_2>::<FUNCTION_2>."}. If \code{NULL}, converted into \code{""}.
+#' @returns
+#' A table-like text message indicating the \code{T} or \code{F} symbols that must be written \code{TRUE} or \code{FALSE} or a message saying that everything seems fine.
+#'
+#' Table-like: column 1, the line number in the function code (starting at the \code{"<- function"} line, i.e., without counting the \code{#'} header lines); column 2, the symbol (\code{T} or \code{F}); column 3, the code preceding the symbol.
+#' @details
+#' The result is used to modify the code inside the tested function like this: replace \code{T} by \code{TRUE} and \code{F} by \code{FALSE}.
+#'
+#' More precisely, \code{true_false_check()} reports every symbol \code{T} or \code{F} used as a value (see the \code{@description} section), but not the symbols used as names, because these are user-defined objects: definition target, like \code{T <- 1}, \code{T = 1} or \code{y -> T}; assignment value, like \code{x <- T} or \code{T -> x} (deliberately not reported, because such a symbol refers to a user-defined object); formal name, like \code{function(T)}; named-argument name, like \code{f(T = 1)}; component after \code{$} or slot after \code{@}, like \code{df$T} or \code{df@F}; loop variable, like \code{for(T in 1:3)}; function name, like \code{T()}; help topic, like \code{?T}, \code{?(T)}, \code{?((T))} or \code{??T}, at any parenthesis depth; formula symbol, like \code{y ~ T}, \code{T ~ y} or \code{y ~ x + T}, wherever it is located in the formula.
+#'
+#' If a name \code{T} or \code{F} is defined anywhere in the checked function code (formal name, loop variable, definition target), then all the value usages of this symbol are not reported, whatever the position in the code.
+#'
+#' The verification is performed on the R parser output (\code{base::parse()} + \code{utils::getParseData()}), so that strings (like \code{"T"}), comments and backquoted names (like \code{`T`}) are never reported. Contrary to \code{curl_bracket_check()}, function bodies reduced to a single \code{.Primitive(...)} call do not need to be skipped, because such bodies do not contain any \code{T} or \code{F} symbol.
+#'
+#' The package-association pre-check verifies that all the functions called with brackets (like \code{mean()}) in the code of the tested function are preceded by \code{::} or \code{:::}. Like \code{colons_check()}, it does not check function names written without brackets, like in the \code{FUN} argument of some functions, e.g., \code{sapply(1:3, FUN = as.character)}, and function names preceded by \code{$} are not considered. Contrary to \code{colons_check()}, the pre-check is performed on the R parser output, and functions without any function call (like \code{function(x)\{ x == TRUE \}}) are accepted, instead of returning the \code{colons_check()} "EMPTY OF FUNCTION" error. Functions like \code{base::mean} (body made of \code{UseMethod(...)}) can never pass the pre-check, exactly like they never pass \code{colons_check()}. Warning: internal functions defined with the arrow writing \code{function(...)} \code{->} \code{name} are not detected by the pre-check (the detection only supports \code{name <- function(...)} and \code{name <- utils::getFromNamespace(...)}), exactly like in \code{colons_check()} where the arrow writing is also flagged: please, use the standard writing.
+#'
+#' Warning: \code{true_false_check()} cannot check symbols written with backquotes, like \code{`T`}. Please, use the standard writing.
+#'
+#' The returned line numbers are indicative, depending on which source is checked. For instance, \code{saferDev::colons_check} (compiled) has not the same line numbers as its source file. Notably, compiled functions do not have comments anymore, compared to the same source function sourced into the working environment. In addition, the counting starts at the \code{"<- function"} line, i.e., without counting the \code{#'} header lines potentially present in source files.
+#' @author \href{mailto:gael.millot@pasteur.fr}{Gael Millot}
+#' @author Haiding Wang
+#' @author Yushi Han
+#' @examples
+#' # Warning: these examples may not work well when using the "Run examples" link
+#' # because of a particular environment. Please, copy-paste in a local environment.
+#' # See also https://safer-r.github.io/saferDev/articles/true_false_check.html
+#' fun1 <- function(x){ if(x > 1){ base::return(TRUE) } }
+#' saferDev::true_false_check(fun1)
+#' fun2 <- function(x){ if(x == T){ base::return(x) } }
+#' saferDev::true_false_check(fun2)
+#' fun3 <- function(x){ x } # no function call: accepted by the package-association pre-check
+#' saferDev::true_false_check(fun3)
+#'
+#' @export
+true_false_check <- function(
+    x,
+    safer_check = TRUE,
+    lib_path = NULL,
+    error_text = ""
+){
+    # DEBUGGING
+    # x = fun1 ; lib_path = NULL ; safer_check = TRUE ; error_text = " INSIDE A"
+    # function_name <- "true_false_check" ; arg_user_setting = base::list(x = as.name(x = "fun1"), lib_path = NULL , safer_check = TRUE, error_text = " INSIDE A")
+    # x = .base_op_check ; lib_path = NULL ; safer_check = TRUE ; error_text = " INSIDE A" # internal function with function body made of a single .Primitive() call
+    # source("C:\\Users\\gmillot\\Documents\\Git_projects\\safer-r\\saferDev\\R\\true_false_check.R") ; x = true_false_check ; lib_path = NULL ; safer_check = TRUE ; error_text = " INSIDE A" # Warning: x = saferDev::true_false_check does not return the same number of code lines
+
+    #### package name
+    package_name <- "saferDev" # write NULL if the function developed is not in a package
+    #### end package name
+
+    #### internal error report link
+    internal_error_report_link <- base::paste0("https://github.com/safer-r/", package_name, "/issues/new", collapse = NULL, recycle0 = FALSE) # link where to post an issue indicated in an internal error message. Write NULL if no link to propose, or no internal error message
+    #### end internal error report link
+
+    #### function name
+    tempo_settings <- base::as.list(x = base::match.call(definition = base::sys.function(which = base::sys.parent(n = 0)), call = base::sys.call(which = base::sys.parent(n = 0)), expand.dots = FALSE, envir = base::parent.frame(n = 2L))) # warning: I have written n = 0 to avoid error when a safer function is inside another functions. In addition, arguments values retrieved are not evaluated base::match.call, but this is solved with get() below
+    function_name <- base::paste0(tempo_settings[[1]], "()", collapse = NULL, recycle0 = FALSE)
+    # function name with "()" paste, which split into a vector of three: c("::()", "package ()", "function ()") if "package::function()" is used.
+    if(function_name[1] == "::()" | function_name[1] == ":::()"){
+        function_name <- function_name[3]
+    }
+    #### end function name
+
+    #### arguments settings
+    arg_user_setting <- tempo_settings[-1] # list of the argument settings (excluding default values not provided by the user). Always a list, even if 1 argument. So ok for lapply() usage (management of NA section)
+    arg_user_setting_names <- base::names(x = arg_user_setting)
+    # evaluation of values if they are expression, call, etc.
+    if(base::length(x = arg_user_setting) != 0){
+        arg_user_setting_eval <- base::lapply(
+            X = arg_user_setting_names,
+            FUN = function(x){
+                base::get(x = x, pos = -1L, envir = base::parent.frame(n = 2), mode = "any", inherits = TRUE) # n = 2 because of lapply(), inherit = TRUE to be sure to correctly evaluate
+            }
+        )
+        base::names(x = arg_user_setting_eval) <- arg_user_setting_names
+    }else{
+        arg_user_setting_eval <- NULL
+    }
+    # end evaluation of values if they are expression, call, etc.
+    arg_names <- base::names(x = base::formals(fun = base::sys.function(which = base::sys.parent(n = 0)), envir = base::parent.frame(n = 1))) # names of all the arguments
+    #### end arguments settings
+
+    #### error_text initiation
+
+    ######## basic error text start
+    error_text <- base::paste0(base::unlist(x = error_text, recursive = TRUE, use.names = TRUE), collapse = "", recycle0 = FALSE) # convert everything to string. if error_text is a string, changes nothing. If NULL or empty (even list) -> "" so no need to check for management of NULL or empty value
+    package_function_name <- base::paste0(
+        base::ifelse(test = base::is.null(x = package_name), yes = "", no = base::paste0(package_name, base::ifelse(test = base::grepl(x = function_name, pattern = "^\\.", ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE), yes = ":::", no = "::"), collapse = NULL, recycle0 = FALSE)),
+        function_name,
+        collapse = NULL,
+        recycle0 = FALSE
+    )
+    error_text_start <- base::paste0(
+        "ERROR IN ", # must not be changed, because this "ERROR IN " string is used for text replacement
+        package_function_name,
+        base::ifelse(test = error_text == "", yes = ".", no = error_text),
+        "\n\n",
+        collapse = NULL,
+        recycle0 = FALSE
+    )
+    ######## end basic error text start
+
+    ######## internal error text
+    intern_error_text_start <- base::paste0(
+        package_function_name,
+        base::ifelse(test = error_text == "", yes = ".", no = error_text),
+        "\n\n",
+        collapse = NULL,
+        recycle0 = FALSE
+    )
+    intern_error_text_end <- base::ifelse(test = base::is.null(x = internal_error_report_link), yes = "", no = base::paste0("\n\nPLEASE, REPORT THIS ERROR HERE: ", internal_error_report_link, ".", collapse = NULL, recycle0 = FALSE))
+    ######## end internal error text
+
+    ######## error text when embedding
+    # use this in the error_text of safer functions if present below
+    embed_error_text  <- base::sub(pattern = "^ERROR IN ", replacement = " INSIDE ", x = error_text_start, ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE)
+    embed_error_text  <- base::sub(pattern = "\n*$", replacement = "", x = embed_error_text, ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE) # remove all the trailing \n, because added later
+    ######## end error text when embedding
+
+    #### end error_text initiation
+
+    #### argument primary checking
+
+    ######## arg ... forbidden
+    # nocov start
+    # codecov inactivated because it is an internal control of code writing, impossible to cover with argument values.
+    if("..." %in% arg_names) {
+        # This check is here in case the developer has not correctly written the argument of its function
+        tempo_cat <- base::paste0(
+            error_text_start,
+            "ARGUMENT ... IS NOT ALLOWED IN SAFER-R FUNCTIONS.\n\nPLEASE, REWRITE YOUR FUNCTION CORRECTLY.",
+            collapse = NULL,
+            recycle0 = FALSE
+        )
+        base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL)
+    }
+    # nocov end
+    ######## end arg ... forbidden
+
+    ######## mandatory arg of safer-r functions
+    mandat_args <- base::c("lib_path", "safer_check", "error_text")
+    tempo_log <- ! mandat_args %in% arg_names
+    if(base::any(x = tempo_log, na.rm = TRUE)) {
+        # This check is here in case the developer has not correctly written the argument of its function
+        tempo_cat <- base::paste0(
+            error_text_start,
+            "FOLLOWING ARGUMENT",
+            base::ifelse(test = base::sum(tempo_log, na.rm = TRUE) > 1, yes = "S ARE", no = " IS"),
+            " MANDATORY IN SAFER-R FUNCTIONS:\n",
+            base::paste0(mandat_args[tempo_log], collapse = "\n", recycle0 = FALSE),
+            collapse = NULL,
+            recycle0 = FALSE
+        )
+        base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL)
+    }
+    ######## end mandatory arg of safer-r functions
+
+    ######## arg with no default values
+    # optional section: remove the code if none of your arguments has no default value
+    no_def_args <- base::c(
+        "x"
+    )
+    tempo <- base::eval(expr = base::parse(text = base::paste0("base::c(base::missing(", base::paste0(no_def_args, collapse = "),base::missing(", recycle0 = FALSE), "))", collapse = NULL, recycle0 = FALSE), file = "", n = NULL, prompt = "?", keep.source = base::getOption(x = "keep.source", default = NULL), srcfile = NULL, encoding = "unknown"), envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL))
+    if(base::any(tempo, na.rm = TRUE)){
+        tempo_cat <- base::paste0(
+            error_text_start,
+            "FOLLOWING ARGUMENT",
+            base::ifelse(test = base::sum(tempo, na.rm = TRUE) > 1, yes = "S HAVE", no = " HAS"),
+            " NO DEFAULT VALUE AND REQUIRE ONE:\n",
+            base::paste0(no_def_args[tempo], collapse = "\n", recycle0 = FALSE),
+            collapse = NULL,
+            recycle0 = FALSE
+        )
+        base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL)
+    }
+    ######## end arg with no default values
+
+    ######## management of NULL arguments
+    # before NA checking because is.na(NULL) return logical(0) and all(logical(0)) is TRUE (but secured with & base::length(x = x) > 0)
+    tempo_arg <-base::c(
+        "x",
+        # "lib_path", # inactivated because can be NULL
+        "safer_check"
+        # "error_text" # inactivated because NULL converted to "" above
+    )
+    tempo_log <- base::sapply(X = base::lapply(X = tempo_arg, FUN = function(x){base::get(x = x, pos = -1L, envir = base::parent.frame(n = 2), mode = "any", inherits = FALSE)}), FUN = function(x){base::is.null(x = x)}, simplify = TRUE, USE.NAMES = TRUE) # parent.frame(n = 2) because get() is evaluated inside the FUN closure of the inner lapply: parent.frame(n = 1) is lapply's frame, parent.frame(n = 2) is BACKBONE's frame.
+    if(base::any(tempo_log, na.rm = TRUE)){ # normally no NA with base::is.null()
+        tempo_cat <- base::paste0(
+            error_text_start,
+            base::ifelse(test = base::sum(tempo_log, na.rm = TRUE) > 1, yes = "THESE ARGUMENTS", no = "THIS ARGUMENT"),
+            " CANNOT BE NULL:\n",
+            base::paste0(tempo_arg[tempo_log], collapse = "\n", recycle0 = FALSE),
+            collapse = NULL,
+            recycle0 = FALSE
+        )
+        base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL)
+    }
+    ######## end management of NULL arguments
+
+    ######## management of empty non NULL arguments
+    # # before NA checking because is.na(logical()) is logical(0) (but secured with & base::length(x = x) > 0)
+    tempo_arg <-base::c(
+        "x",
+        "safer_check",
+        "lib_path"
+        # "error_text" # inactivated because empty value converted to "" above
+    )
+    tempo_arg_user_setting_eval <- arg_user_setting_eval[base::names(x = arg_user_setting_eval) %in% tempo_arg]
+    if(base::length(x = tempo_arg_user_setting_eval) != 0){
+        tempo_log <- base::suppressWarnings(
+            expr = base::sapply(
+                X = tempo_arg_user_setting_eval,
+                FUN = function(x){
+                    base::length(x = x) == 0 & ! base::is.null(x = x)
+                },
+                simplify = TRUE,
+                USE.NAMES = TRUE
+            ),
+            classes = "warning"
+        ) # no argument provided by the user can be empty non NULL object. Warning: would not work if arg_user_setting_eval is a vector (because treat each element as a compartment), but ok because it is always a list, even if 0 or 1 argument in the developed function
+        if(base::any(tempo_log, na.rm = TRUE)){
+            tempo_cat <- base::paste0(
+                error_text_start,
+                base::ifelse(test = base::sum(tempo_log, na.rm = TRUE) > 1, yes = "THESE ARGUMENTS", no = "THIS ARGUMENT"),
+                " CANNOT BE AN EMPTY NON NULL OBJECT:\n",
+                base::paste0(base::names(x = tempo_arg_user_setting_eval)[tempo_log], collapse = "\n", recycle0 = FALSE),
+                collapse = NULL,
+                recycle0 = FALSE
+            )
+            base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL)
+        }
+    }
+    ######## end management of empty non NULL arguments
+
+    ######## management of NA arguments
+    # Mandatory section : argument of safer-r functions cannot have NA as only value, to prevent all(, na.rm = TRUE) or any(, na.rm = TRUE) to return a logical value
+    if(base::length(x = arg_user_setting_eval) != 0){
+        tempo_log <- base::suppressWarnings(
+            expr = base::sapply(
+                X = base::lapply(
+                    X = arg_user_setting_eval,
+                    FUN = function(x){
+                        base::is.na(x = x) # if x is empty, return empty, but ok with below
+                    }
+                ),
+                FUN = function(x){
+                    base::all(x = x, na.rm = TRUE) & base::length(x = x) > 0 # if x is empty, return FALSE, so OK
+                },
+                simplify = TRUE,
+                USE.NAMES = TRUE
+            ),
+            classes = "warning"
+        ) # no argument provided by the user can be just made of NA. is.na(NULL) returns logical(0), the reason why base::length(x = x) > 0 is used # warning: all(x = x, na.rm = TRUE) but normally no NA because base::is.na() used here. Warning: would not work if arg_user_setting_eval is a vector (because treat each element as a compartment), but ok because it is always a list, even if 0 or 1 argument in the developed function
+        if(base::any(tempo_log, na.rm = TRUE)){
+            tempo_cat <- base::paste0(
+                error_text_start,
+                base::ifelse(test = base::sum(tempo_log, na.rm = TRUE) > 1, yes = "THESE ARGUMENTS", no = "THIS ARGUMENT"),
+                " CANNOT BE MADE OF NA ONLY:\n",
+                base::paste0(base::names(x = arg_user_setting_eval)[tempo_log], collapse = "\n", recycle0 = FALSE),
+                collapse = NULL,
+                recycle0 = FALSE
+            )
+            base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL)
+        }
+    }
+    ######## end management of NA arguments
+
+    #### end argument primary checking
+
+    #### environment checking
+
+    ######## safer_check argument checking
+    if( ! (base::all(base::typeof(x = safer_check) == "logical", na.rm = TRUE) & base::length(x = safer_check) == 1)){ # no need to test NA because NA only already managed above and base::length(x = safer_check) == 1)
+        if(base::all(base::mode(x = safer_check) == "function", na.rm = TRUE)){
+            safer_check <- base::deparse1(expr = safer_check, collapse = "", width.cutoff = 500L)
+        }
+        tempo_cat <- base::paste0(
+            error_text_start,
+            "THE safer_check ARGUMENT VALUE MUST BE A SINGLE LOGICAL VALUE (TRUE OR FALSE ONLY).\nHERE IT IS:\n",
+            base::ifelse(test = base::length(x = safer_check) == 0 | base::all(base::suppressWarnings(expr = safer_check == base::quote(expr = ), classes = "warning"), na.rm = TRUE) | base::all(safer_check == "", na.rm = TRUE), yes = "<NULL, \"\", EMPTY OBJECT OR EMPTY NAME>", no = base::paste0(safer_check, collapse = "\n", recycle0 = FALSE)),
+            collapse = NULL,
+            recycle0 = FALSE
+        )
+        base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL)
+    }
+    ######## end safer_check argument checking
+
+    ######## check of lib_path
+    # must be before any :: or ::: non basic package calling
+    # always executed: lib_path is always checked, whatever the value of safer_check
+    if( ! base::is.null(x = lib_path)){ #  is.null(NA) returns FALSE so OK.
+        if( ! base::all(base::typeof(x = lib_path) == "character", na.rm = TRUE)){ # na.rm = TRUE but no NA returned with typeof (typeof(NA) == "character" returns FALSE)
+            if(base::all(base::mode(x = lib_path) == "function", na.rm = TRUE)){
+                lib_path <- base::deparse1(expr = lib_path, collapse = "", width.cutoff = 500L)
+            }
+            tempo_cat <- base::paste0(
+                error_text_start,
+                "THE DIRECTORY PATH INDICATED IN THE lib_path ARGUMENT MUST BE A VECTOR OF CHARACTERS.\nHERE IT IS:\n",
+                base::ifelse(test = base::length(x = lib_path) == 0 | base::all(base::suppressWarnings(expr = lib_path == base::quote(expr = ), classes = "warning"), na.rm = TRUE), yes = "<NULL, EMPTY OBJECT OR EMPTY NAME>", no = base::paste0(lib_path, collapse = "\n", recycle0 = FALSE)),
+                collapse = NULL,
+                recycle0 = FALSE
+            )
+            base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL)
+        }else if( ! base::all(base::dir.exists(paths = lib_path), na.rm = TRUE)){ # separation to avoid the problem of tempo$problem == FALSE and lib_path == NA. dir.exists(paths = NA) returns an error, so ok. dir.exists(paths = "") returns FALSE so ok
+            tempo_log <- ! base::dir.exists(paths = lib_path)
+            tempo_cat_b <- lib_path[tempo_log] # here lib_path is character string
+            tempo_cat_b[tempo_cat_b == ""] <- "\"\""
+            tempo_cat <- base::paste0(
+                error_text_start,
+                "THE DIRECTORY PATH",
+                base::ifelse(test = base::sum(tempo_log, na.rm = TRUE) > 1, yes = "S", no = ""),
+                " INDICATED IN THE lib_path ARGUMENT DO",
+                base::ifelse(test = base::sum(tempo_log, na.rm = TRUE) > 1, yes = "", no = "ES"),
+                " NOT EXIST:\n",
+                base::paste0(tempo_cat_b, collapse = "\n", recycle0 = FALSE),
+                collapse = NULL,
+                recycle0 = FALSE
+            )
+            base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL)
+        }else{
+            ini_lib_path <- base::.libPaths(new = , include.site = TRUE) # normal to have empty new argument
+            base::on.exit(expr = base::.libPaths(new = ini_lib_path, include.site = TRUE), add = TRUE, after = TRUE) # return to the previous libPaths()
+            base::.libPaths(new = base::sub(x = base::c(ini_lib_path, lib_path), pattern = "/$|\\\\$", replacement = "", ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE), include.site = TRUE) # base::.libPaths(new = ) add path to default path. BEWARE: base::.libPaths() does not support / at the end of a submitted path. The reason of the check and replacement of the last / or \\ in path
+            lib_path <- base::.libPaths(new = , include.site = TRUE) # normal to have empty new argument
+        }
+    }else{
+        lib_path <- base::.libPaths(new = , include.site = TRUE) # normal to have empty new argument # base::.libPaths(new = lib_path) # or base::.libPaths(new = base::c(base:::.libPaths(), lib_path))
+    }
+    ######## end check of lib_path
+
+    ######## check of the required functions from the required packages
+    if(safer_check == TRUE){
+        .pack_and_function_check <- utils::getFromNamespace(x = ".pack_and_function_check", ns = "saferDev", pos = , envir = )
+        .pack_and_function_check(
+            fun = base::c(
+                # functions required in this code
+                "saferDev::arg_check",
+                # end functions required in this code
+                # internal functions required in this code
+                "saferDev:::.base_op_check"
+                # end internal functions required in this code
+            ),
+            lib_path = lib_path, # write NULL if your function does not have any lib_path argument
+            error_text = embed_error_text
+        )
+    }
+    ######## end check of the required functions from the required packages
+
+    ######## escaping CRAN submission NOTE for internal functions
+
+    .base_op_check <- utils::getFromNamespace(x = ".base_op_check", ns = "saferDev", pos = , envir = )
+
+    ######## end escaping CRAN submission NOTE for internal functions
+
+    ######## critical operator checking
+    if(safer_check == TRUE){
+        .base_op_check(
+            error_text = embed_error_text
+        )
+    }
+    ######## end critical operator checking
+
+    #### end environment checking
+
+    #### argument secondary checking
+
+    ######## argument checking with arg_check()
+    argum_check <- NULL
+    text_check <- NULL
+    checked_arg_names <- NULL # for function debbuging: used by r_debugging_tools
+    arg_check_error_text <- base::paste0("ERROR ", embed_error_text, "\n\n", collapse = NULL, recycle0 = FALSE) # must be used instead of error_text = embed_error_text when several arg_check are performed on the same argument (tempo1, tempo2, see below)
+    ee <- base::expression(argum_check <- base::c(argum_check, tempo$problem) , text_check <- base::c(text_check, tempo$text) , checked_arg_names <- base::c(checked_arg_names, tempo$object.name))
+    # add as many lines as below, for each of your arguments of your function in development
+    tempo <- saferDev::arg_check(data = x, class = "function", typeof = NULL, mode = NULL, length = NULL, prop = FALSE, options = NULL, double_as_integer_allowed = FALSE, all_options_in_data = FALSE, na_contain = FALSE, neg_values = TRUE, inf_values = TRUE, print = FALSE, data_name = NULL, data_arg = TRUE, safer_check = FALSE, lib_path = lib_path, error_text = embed_error_text) ; base::eval(expr = ee, envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL))
+    # lib_path already checked above
+    # safer_check already checked above
+    # error_text converted to single string above
+    if( ! base::is.null(x = argum_check)){
+        if(base::any(argum_check, na.rm = TRUE)){
+            base::stop(base::paste0("\n\n================\n\n", base::paste0(text_check[argum_check], collapse = "\n\n", recycle0 = FALSE), "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL)
+        }
+    }
+    # check with r_debugging_tools
+    # source("https://gitlab.pasteur.fr/gmillot/debugging_tools_for_r_dev/-/raw/v1.8/r_debugging_tools.R") ; eval(parse(text = str_basic_arg_check_dev)) ; eval(parse(text = str_arg_check_with_fun_check_dev)) # activate this line and use the function (with no arguments left as NULL) to check arguments status and if they have been checked using saferDev::arg_check()
+    # end check with r_debugging_tools
+    ######## end argument checking with arg_check()
+
+    ######## management of "" in arguments of mode character
+    # not required
+    ######## end management of "" in arguments of mode character
+
+    #### end argument secondary checking
+
+    #### second round of checking and data preparation
+
+    ######## reserved words
+    ######## end reserved words
+
+    ######## code that protects set.seed() in the global environment
+    ######## end code that protects set.seed() in the global environment
+
+    ######## warning initiation
+    ######## end warning initiation
+
+    ######## graphic device checking
+    ######## end graphic device checking
+
+    ######## other checkings
+    ######## end other checkings
+
+    #### end second round of checking and data preparation
+
+    #### main code
+    # recover the code of the checked function
+    code <- utils::capture.output(x = x, file = NULL, append = FALSE, type = NULL, split = FALSE)
+    # removal of the attribute lines printed for compiled functions (e.g., "<bytecode: 0x...>", "<environment: ...>", "<srcref: ...>"). Warning: the pattern cannot be simply a line starting by "<", because a valid R code line can start by "<" (binary operator continuation)
+    code <- code[ ! base::grepl(x = code, pattern = "^<(bytecode|environment|srcref): ", ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE)]
+    pd <- utils::getParseData(x = base::parse(text = base::paste0(code, collapse = "\n", recycle0 = FALSE), keep.source = TRUE))
+    # terminal tokens (comments excluded), sorted by source position
+    term_rows <- base::which(x = pd$terminal == TRUE & pd$token != "COMMENT", arr.ind = FALSE, useNames = TRUE)
+    term_rows <- term_rows[base::order(x = pd$line1[term_rows], pd$col1[term_rows])]
+    # modification of arg_user_setting$x for clean messages
+    if(base::as.character(x = arg_user_setting$x)[1] == "::" | base::as.character(x = arg_user_setting$x)[1] == ":::"){
+        arg_user_setting$x <- base::paste0(
+            base::as.character(x = arg_user_setting$x)[2],
+            base::as.character(x = arg_user_setting$x)[1],
+            base::as.character(x = arg_user_setting$x)[3],
+            "()",
+            collapse = NULL,
+            recycle0 = FALSE
+        )
+    }else{
+        arg_user_setting$x <- base::paste0(
+            arg_user_setting$x,
+            "()",
+            collapse = NULL,
+            recycle0 = FALSE
+        )
+    }
+    # end modification of arg_user_setting$x for clean messages
+    # package-association pre-check (like for all_args_here(), all the functions called with brackets in x must be preceded by :: or :::). Detection of the internal functions created inside the checked function code (name <- function or name <- utils::getFromNamespace), because these functions cannot have :: or ::: in their calls
+    internal_fun_names <- base::character(length = 0)
+    assign_pos <- base::which(x = pd$token[term_rows] %in% base::c("LEFT_ASSIGN", "EQ_ASSIGN", "RIGHT_ASSIGN"), arr.ind = FALSE, useNames = TRUE)
+    for(i in assign_pos){
+        k <- term_rows[i]
+        if(pd$token[k] == "RIGHT_ASSIGN"){
+            # function(...) -> name: the function definition is before the assignment operator, the name after it. Warning: this writing is never detected, because the token before -> or ->> is never the FUNCTION token itself (it is the last token of the function body), exactly like in colons_check() where the arrow writing is also flagged: see the roxygen @details section
+            next
+        }else{
+            # name <- function(...) or name <- utils::getFromNamespace(...): the name is before the assignment operator, the function definition after it. Warning: the name must not be a component or slot name, like in df$T <- function(...), which is not an internal function of the checked function: the token located two positions before the assignment operator (the token before the assigned name) must not be $ or @. Warning: the tokens $ and @ must be compared through their text (pd$text), because their token names are quoted ('$' and '@')
+            if(i > 1 & pd$token[term_rows[i - 1]] == "SYMBOL" & (i < 3 | ! (pd$text[term_rows[i - 2]] %in% base::c("$", "@")))){
+                if(i < base::length(x = term_rows)){
+                    if(pd$token[term_rows[i + 1]] == "FUNCTION"){
+                        internal_fun_names <- base::c(internal_fun_names, pd$text[term_rows[i - 1]], recursive = TRUE, use.names = TRUE)
+                    }else if(i + 3 <= base::length(x = term_rows) & pd$token[term_rows[i + 1]] == "SYMBOL_PACKAGE" & pd$text[term_rows[i + 1]] == "utils" & pd$token[term_rows[i + 2]] %in% base::c("NS_GET", "NS_GET_INT") & pd$token[term_rows[i + 3]] == "SYMBOL_FUNCTION_CALL" & pd$text[term_rows[i + 3]] == "getFromNamespace"){
+                        internal_fun_names <- base::c(internal_fun_names, pd$text[term_rows[i - 1]], recursive = TRUE, use.names = TRUE)
+                    }
+                }
+            }
+        }
+    }
+    # end detection of the internal functions created inside the checked function code
+    # detection of the function calls not preceded by :: or ::: (component or slot names preceded by $ or @ are not considered, like in colons_check())
+    bad_fun_names <- base::character(length = 0)
+    bad_fun_lines <- base::integer(length = 0)
+    fun_call_pos <- base::which(x = pd$token[term_rows] == "SYMBOL_FUNCTION_CALL", arr.ind = FALSE, useNames = TRUE)
+    for(i in fun_call_pos){
+        k <- term_rows[i]
+        # Warning: only the plain function names are checked, like in colons_check(), which cannot detect function names written between quotes (e.g., the help call ?fun() is a SYMBOL_FUNCTION_CALL token of text "`?`")
+        if( ! base::grepl(x = pd$text[k], pattern = "^([a-zA-Z]|\\.[a-zA-Z._])[a-zA-Z0-9._]*$", ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE)){
+            next
+        }
+        if(i > 1){
+            prev_tok <- pd$token[term_rows[i - 1]]
+            prev_txt <- pd$text[term_rows[i - 1]]
+            # Warning: $ and @ must be compared through their text (prev_txt), because their token names are quoted ('$' and '@')
+            if(prev_tok %in% base::c("NS_GET", "NS_GET_INT") | prev_txt %in% base::c("$", "@")){
+                next
+            }
+        }
+        if( ! (pd$text[k] %in% internal_fun_names)){
+            bad_fun_names <- base::c(bad_fun_names, pd$text[k], recursive = TRUE, use.names = TRUE)
+            bad_fun_lines <- base::c(bad_fun_lines, pd$line1[k], recursive = TRUE, use.names = TRUE)
+        }
+    }
+    # end detection of the function calls not preceded by :: or :::
+    if(base::length(x = bad_fun_names) != 0){
+        # like for all_args_here(), the function stops with an error: the package attributions must be corrected with colons_check() first, because the analysis of the function calls (and of the T or F symbols used as argument values) only makes sense once all the functions are properly associated to their package
+        tempo_cat <- base::paste0(
+            error_text_start,
+            "INSIDE ",
+            arg_user_setting$x,
+            ", SOME FUNCTIONS ARE NOT ASSOCIATED TO THEIR PACKAGE.\n\nPLEASE, RUN saferDev::colons_check(",
+            arg_user_setting$x,
+            ") FIRST,\nADD THE MISSING <PACKAGE>::<FUNCTION> (OR <PACKAGE>:::<FUNCTION> FOR FUNCTION STARTING BY A DOT)\nAND RERUN saferDev::true_false_check(",
+            arg_user_setting$x,
+            ").",
+            collapse = NULL,
+            recycle0 = FALSE
+        )
+        base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL)
+    }
+    # end package-association pre-check
+    # detection of the T and F symbols used as names in the checked function code (formal name, loop variable, definition target), because the value usages of these symbols refer to user-defined objects and are not reported. Warning: conservative rule: if a name T or F is defined anywhere in the checked function code, all the value usages of this symbol are not reported, whatever the position in the code
+    tf_names <- base::character(length = 0)
+    term_nb <- base::length(x = term_rows)
+    for(i in 1:term_nb){
+        k <- term_rows[i]
+        if(pd$text[k] %in% base::c("T", "F")){
+            # formal name: the symbol is defined as a formal of a function
+            if(pd$token[k] == "SYMBOL_FORMALS"){
+                tf_names <- base::c(tf_names, pd$text[k], recursive = TRUE, use.names = TRUE)
+            # definition target (T <- ... or T = ...) or loop variable (for(T in ...)): the symbol is defined as a name. Warning: the symbol must not be a component or slot name, like in df$T <- 1, which is not a definition of a variable named T. Warning: with the -> and ->> operators, the definition target is located after the assignment operator, like in y -> T. Warning: the tokens $ and @ must be compared through their text (pd$text), because their token names are quoted ('$' and '@')
+            }else if(pd$token[k] == "SYMBOL" & ((i < term_nb & pd$token[term_rows[i + 1]] %in% base::c("LEFT_ASSIGN", "EQ_ASSIGN", "IN")) | (i > 1 & pd$token[term_rows[i - 1]] == "RIGHT_ASSIGN")) & (i < 2 | ! (pd$text[term_rows[i - 1]] %in% base::c("$", "@")))){
+                tf_names <- base::c(tf_names, pd$text[k], recursive = TRUE, use.names = TRUE)
+            }
+        }
+    }
+    # end detection of the T and F symbols used as names in the checked function code
+    # scan of the T and F symbols used as values
+    findings_line <- base::integer(length = 0)
+    findings_symbol <- base::character(length = 0)
+    findings_code <- base::character(length = 0)
+    # detection of the formula symbols and help topics: all the symbols located inside the subtree of the formula expression (~) or of the help call (? or ??) are names, whatever their position (y ~ T, T ~ y, y ~ x + T, ?T, ?(T), ?((T)), etc.) and whatever the srcref presence (without srcrefs, ?T is deparsed as `?`(T) and ?(T) as `?`((T)), so that the topic is always inside the subtree of the ? call). Warning: the tokens ~ and ? must be compared through their text, because their token names are quoted ('~' and '?'). Warning: the parse tree is described by the pd$id and pd$parent columns, whose values must be converted into pd row numbers through a lookup vector, because the two numbering systems are different (the id numbering skips the non terminal rows)
+    id2row <- base::seq_len(length.out = base::nrow(x = pd))
+    base::names(x = id2row) <- base::as.character(x = pd$id)
+    parent_row <- id2row[base::as.character(x = pd$parent)] # row number of the parent of each parse tree node. Warning: NA for the top expressions (parent id 0) and for the root node
+    name_context_rows <- base::integer(length = 0)
+    special_rows <- base::which(x = pd$terminal == TRUE & pd$text %in% base::c("~", "?", "`?`", "??", "`??`"), arr.ind = FALSE, useNames = TRUE)
+    for(r in special_rows){
+        start_row <- parent_row[r]
+        if(pd$token[r] == "SYMBOL_FUNCTION_CALL" & ! base::is.na(x = start_row)){ # deparsed `?` call: the parent expression only contains the `?` symbol itself, the help topic is inside the call expression, i.e., the parent of the parent. Warning: start_row can only be NA (top expression) or a positive row number, because the parent id 0 is absent from the pd$id column
+            start_row <- parent_row[start_row]
+        }
+        if(base::is.na(x = start_row) | start_row == 0){
+            next
+        }
+        subtree_rows <- start_row
+        frontier_rows <- start_row
+        while(base::length(x = frontier_rows) != 0){
+            children_rows <- base::which(x = parent_row %in% frontier_rows, arr.ind = FALSE, useNames = TRUE)
+            children_rows <- children_rows[ ! children_rows %in% subtree_rows]
+            subtree_rows <- base::c(subtree_rows, children_rows, recursive = TRUE, use.names = TRUE)
+            frontier_rows <- children_rows
+        }
+        name_context_rows <- base::c(name_context_rows, subtree_rows, recursive = TRUE, use.names = TRUE)
+    }
+    # end detection of the formula symbols and help topics
+    tf_val_pos <- base::which(x = pd$token[term_rows] == "SYMBOL" & pd$text[term_rows] %in% base::c("T", "F"), arr.ind = FALSE, useNames = TRUE)
+    for(i in tf_val_pos){
+        k <- term_rows[i]
+        if(pd$text[k] %in% tf_names){ # symbol used as a name elsewhere in the code (formal name, loop variable, definition target): skipped, because the value usages refer to user-defined objects
+            next
+        }
+        prev_txt <- base::ifelse(test = i == 1, yes = "", no = pd$text[term_rows[i - 1]])
+        if(prev_txt %in% base::c("$", "@")){ # component or slot name: skipped, because these are names. Warning: compared through the text, because the token names of $ and @ are quoted ('$' and '@')
+            next
+        }
+        if(k %in% name_context_rows){ # formula symbol or help topic: skipped, because these are names
+            next
+        }
+        prev_tok <- base::ifelse(test = i == 1, yes = "", no = pd$token[term_rows[i - 1]])
+        next_tok <- base::ifelse(test = i == term_nb, yes = "", no = pd$token[term_rows[i + 1]])
+        if(prev_tok %in% base::c("LEFT_ASSIGN", "EQ_ASSIGN", "RIGHT_ASSIGN") | next_tok %in% base::c("LEFT_ASSIGN", "EQ_ASSIGN", "RIGHT_ASSIGN")){ # assignment value (x <- T or T -> x): skipped by user choice, because the symbol refers to a user-defined object. Warning: the definition targets (T <- x, T = x and y -> T) are already collected in tf_names above
+            next
+        }
+        findings_line <- base::c(findings_line, pd$line1[k], recursive = TRUE, use.names = TRUE)
+        findings_symbol <- base::c(findings_symbol, pd$text[k], recursive = TRUE, use.names = TRUE)
+        findings_code <- base::c(findings_code, base::trimws(x = code[pd$line1[k]], which = "left", whitespace = "[ \\t]"), recursive = TRUE, use.names = TRUE)
+    }
+    # end scan of the T and F symbols used as values
+    # message
+    tempo_cat <- base::paste0(
+        "AFTER RUNNING ",
+        base::ifelse(
+            test = base::is.null(x = package_name),
+            yes = "",
+            no = base::paste0(
+                package_name,
+                base::ifelse(test = base::grepl(x = function_name, pattern = "^\\.", ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE), yes = ":::", no = "::"),
+                collapse = NULL,
+                recycle0 = FALSE
+            )
+        ),
+        function_name,
+        ".",
+        collapse = NULL,
+        recycle0 = FALSE
+    )
+    if(base::length(x = findings_line) == 0){
+        tempo_cat <- base::paste0(
+            tempo_cat,
+            "\nINSIDE ",
+            base::as.character(x = arg_user_setting$x),
+            ", EVERYTHING SEEMS CLEAN.",
+            collapse = NULL,
+            recycle0 = FALSE
+        )
+    }else{
+        tempo_cat <- base::paste0(
+            "\nINSIDE ",
+            base::as.character(x = arg_user_setting$x),
+            ", SOME SYMBOLS T OR F MUST BE WRITTEN TRUE OR FALSE:\n\n",
+            "LINE\tSYMBOL\t\tCODE\n",
+            base::paste0(base::paste0(findings_line, "\t", findings_symbol, "\t\t", findings_code), collapse = "\n", recycle0 = FALSE),
+            collapse = NULL,
+            recycle0 = FALSE
+        )
+    }
+    base::message(base::paste0("\n\n", tempo_cat, "\n\n", collapse = NULL, recycle0 = FALSE), domain = NULL, appendLF = TRUE)
+    #### end main code
+
+    #### warning output
+    #### end warning output
+
+    #### output
+    #### end output
+}
