@@ -44,3 +44,6 @@ reference:
 - title: "curl_bracket_check"
   contents: 
   - curl_bracket_check
+- title: "true_false_check"
+  contents: 
+  - true_false_check
