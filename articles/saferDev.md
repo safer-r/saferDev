@@ -23,5 +23,6 @@ specifications.
 | **is_function_here()** | Check if required functions are present in installed packages. This controls for instance modifications of function names depending on package versions. |
 | **is_package_here()** | Check if required packages are installed locally. |
 | **report()** | Print a character string or a data object into a same log file. |
+| **true_false_check()** | Verify that the `TRUE` and `FALSE` logical constants are always written in full when used as values (argument values, conditions, comparisons, indexing) and never abbreviated as `T` or `F`, which can be overwritten by the user. Like [`all_args_here()`](../reference/all_args_here.md), an error asking to run [`colons_check()`](../reference/colons_check.md) first is returned if some functions are not associated to their package. |
 
 \
