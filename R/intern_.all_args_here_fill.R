@@ -446,10 +446,11 @@
     }
     # coherence between arg_full and arg_full_names: the real caller passes arg_full_names = base::names(arg_full), so arg_full_names must be non-NULL whenever arg_full is non-empty.
     # Without this check, the incoherent combination (arg_full_names = NULL while arg_full is non-empty) reaches the main code and crashes with a raw R error (missing value where TRUE/FALSE needed) instead of a proper internal error message.
-    if(base::length(x = arg_full) != 0L & base::is.null(x = arg_full_names)){
+    # The tempo_split part of the condition also prevents the silent dropping of written arguments when arg_full_names is NULL (a zero-formal called function cannot receive arguments: the caller guards this with INTERNAL ERROR 8, but the internal function must not silently ignore it either).
+    if((base::length(x = arg_full) != 0L | base::length(x = tempo_split) != 0L) & base::is.null(x = arg_full_names)){
         tempo_cat <- base::paste0(
             error_text_start,
-            "ARGUMENT arg_full_names CANNOT BE NULL IF ARGUMENT arg_full IS NOT EMPTY.\n",
+            "ARGUMENT arg_full_names CANNOT BE NULL IF ARGUMENT arg_full IS NOT EMPTY OR IF ARGUMENT tempo_split IS NOT EMPTY.\n",
             "arg_full (",
             base::length(x = arg_full),
             "):\n",
