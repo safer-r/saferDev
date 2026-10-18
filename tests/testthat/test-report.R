@@ -128,6 +128,7 @@ testthat::test_that("report()", {
 
     testthat::expect_error(report(data = data_1, output = output_1, path = path_1, append = TRUE, rownames_kept = FALSE, vector_cat = FALSE, noquote = FALSE, sep = 1, safer_check = TRUE, lib_path = character(), error_text = ""))
     testthat::expect_no_error(report(data = data_1, output = output_1, path = path_1, append = TRUE, rownames_kept = FALSE, vector_cat = FALSE, noquote = FALSE, sep = 1, safer_check = TRUE, lib_path = NULL, error_text = character())) # but error_text is converted to ""
+    testthat::expect_no_error(report(data = data_1, output = output_1, path = path_1, append = TRUE, rownames_kept = FALSE, vector_cat = FALSE, noquote = FALSE, sep = 1, safer_check = TRUE, lib_path = NULL, error_text = " INSIDE P1::F1")) # documented non-empty error_text usage (added to error messages)
     testthat::expect_no_error(report(data = data_1, output = output_1, path = path_1, append = TRUE, rownames_kept = FALSE, vector_cat = FALSE, noquote = FALSE, sep = 1, safer_check = TRUE, lib_path = NULL, error_text = ""))
     ######## end management of empty non NULL arguments
 

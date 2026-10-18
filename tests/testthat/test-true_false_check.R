@@ -100,6 +100,7 @@ testthat::test_that("true_false_check()", {
 
     testthat::expect_error(true_false_check(x = fun3, safer_check = TRUE, lib_path = character(), error_text = ""))
     testthat::expect_no_error(true_false_check(x = fun3, safer_check = TRUE, lib_path = NULL, error_text = character())) # but error_text is converted to ""
+    testthat::expect_no_error(true_false_check(x = fun3, safer_check = TRUE, lib_path = NULL, error_text = " INSIDE P1::F1")) # documented non-empty error_text usage (added to error messages)
     testthat::expect_no_error(true_false_check(x = fun3, safer_check = TRUE, lib_path = NULL, error_text = ""))
     ######## end management of empty non NULL arguments
 

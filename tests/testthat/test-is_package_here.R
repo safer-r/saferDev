@@ -57,6 +57,7 @@ testthat::test_that("is_package_here()", {
 
     testthat::expect_error(is_package_here(req_package = str1, safer_check = TRUE, lib_path = character(), error_text = ""))
     testthat::expect_no_error(is_package_here(req_package = str1, safer_check = TRUE, lib_path = NULL, error_text = character())) # but error_text is converted to ""
+    testthat::expect_no_error(is_package_here(req_package = str1, safer_check = TRUE, lib_path = NULL, error_text = " INSIDE P1::F1")) # documented non-empty error_text usage (added to error messages)
     testthat::expect_no_error(is_package_here(req_package = str1, safer_check = TRUE, lib_path = NULL, error_text = ""))
     ######## end management of empty non NULL arguments
 

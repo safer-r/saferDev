@@ -485,6 +485,9 @@ testthat::test_that("arg_check()", {
     #### main code
     # if(base::is.null(data_name)){
     testthat::expect_no_error(arg_check(data = vec1, class = "vector", data_name = NULL))
+    result <- arg_check(data = vec1, mode = "numeric", data_name = "my_obj") # valid non NULL data_name: used in the message and the returned object.name
+    expect <- list(problem = FALSE, text = "NO PROBLEM DETECTED FOR THE my_obj ARGUMENT.", object.name = "my_obj")
+    testthat::expect_equal(result, expect)
     # end if(base::is.null(data_name)){
     # if(( ! base::is.null(options)) & (base::all(base::typeof(data) == "character") | base::all(base::typeof(data) == "integer") | base::all(base::typeof(data) == "double"))){
     testthat::expect_no_error(arg_check(data = vec5, options = "a")) # data of typeof "character"
@@ -515,9 +518,13 @@ testthat::test_that("arg_check()", {
     result <- arg_check(data = vec3, options = 1:4, all_options_in_data = FALSE) # vec3 is double but integer like, options is integer
     expect <- list(problem = FALSE, text = "NO PROBLEM DETECTED FOR THE vec3 ARGUMENT.", object.name = "vec3")
     testthat::expect_equal(result, expect)
-    result <- arg_check(data = vec3, options = 1:4, all_options_in_data = FALSE) # vec3 is double but integer like, options is integer
+    result <- arg_check(data = vec3, options = c(1.0, 2.0, 3.0, 4.0), all_options_in_data = FALSE) # options written as doubles but with a 0 modulo: accepted as documented ("Numbers of type "double" are accepted if they have a 0 modulo")
     expect <- list(problem = FALSE, text = "NO PROBLEM DETECTED FOR THE vec3 ARGUMENT.", object.name = "vec3")
     testthat::expect_equal(result, expect)
+    result <- arg_check(data = vec3, options = c(1.0, 2.0, 3.0), all_options_in_data = TRUE) # options as doubles with 0 modulo, all present in data: accepted
+    expect <- list(problem = FALSE, text = "NO PROBLEM DETECTED FOR THE vec3 ARGUMENT.", object.name = "vec3")
+    testthat::expect_equal(result, expect)
+    testthat::expect_error(arg_check(data = vec3, options = c(1.5, 2.0), all_options_in_data = FALSE)) # options containing a real decimal (non zero modulo): error (stop) expected
     result <- arg_check(data = vec4, options = 1:4, all_options_in_data = FALSE) # vec3 is double but integer like, options is integer
     expect <- list(problem = TRUE, text = "ERROR\n\nTHE vec4 ARGUMENT MUST BE SOME OF THESE OPTIONS:\n1\n2\n3\n4\nTHE PROBLEMATIC ELEMENT OF vec4 IS:\npearson", object.name = "vec4")
     testthat::expect_equal(result, expect)
@@ -626,8 +633,16 @@ testthat::test_that("arg_check()", {
     testthat::expect_equal(result, expect)
     # end     }else if( ! base::is.null(options)){
     # if( ! base::is.null(class)){
-    testthat::expect_no_error(arg_check(data = mat1, class = "matrix"))
-    testthat::expect_no_error(arg_check(data = factor1, class = "factor"))
+    result <- arg_check(data = mat1, class = c("matrix", "array")) # since R 4.0.0, class(mat1) is c("matrix", "array"): this is the valid form of https://github.com/safer-r/saferDev/issues/100
+    expect <- list(problem = FALSE, text = "NO PROBLEM DETECTED FOR THE mat1 ARGUMENT.", object.name = "mat1")
+    testthat::expect_equal(result, expect)
+    result <- arg_check(data = factor1, class = "factor") # plain (non ordered) factor: class(factor1) is "factor", so class = "factor" alone is valid
+    expect <- list(problem = FALSE, text = "NO PROBLEM DETECTED FOR THE factor1 ARGUMENT.", object.name = "factor1")
+    testthat::expect_equal(result, expect)
+    result <- arg_check(data = ord_factor1, class = c("ordered", "factor")) # class(ord_factor1) is c("ordered", "factor"): this is the valid form of https://github.com/safer-r/saferDev/issues/100
+    expect <- list(problem = FALSE, text = "NO PROBLEM DETECTED FOR THE ord_factor1 ARGUMENT.", object.name = "ord_factor1")
+    testthat::expect_equal(result, expect)
+    # (a weak expect_no_error(arg_check(data = mat1, class = "matrix")) test was here before: it was misleading because arg_check() does not stop() on a problem, and class = "matrix" alone returns problem = TRUE since R 4.0.0. The correct assertion is made below in the exact-match section)
     # end if( ! base::is.null(class)){
     #     if(base::is.null(options)){ # work on the 4 "class", "typeof", "mode", "length" arguments
     # for class
@@ -640,6 +655,15 @@ testthat::test_that("arg_check()", {
     testthat::expect_equal(result, expect)
     result <- arg_check(data = vec3, typeof = "integer", options = NULL, double_as_integer_allowed = TRUE)
     expect <- list(problem = FALSE, text = "NO PROBLEM DETECTED FOR THE vec3 ARGUMENT.", object.name = "vec3")
+    testthat::expect_equal(result, expect)
+    result <- arg_check(data = vec3, class = "integer", options = NULL, double_as_integer_allowed = TRUE) # class path rescue: class(vec3) is "numeric" but vec3 is a 0 modulo double, so it is accepted as integer
+    expect <- list(problem = FALSE, text = "NO PROBLEM DETECTED FOR THE vec3 ARGUMENT.", object.name = "vec3")
+    testthat::expect_equal(result, expect)
+    result <- arg_check(data = vec3, class = "integer", options = NULL) # same without the rescue: problem expected because class(vec3) is "numeric", not "integer"
+    expect <- list(problem = TRUE, text = "ERROR\n\nTHE vec3 ARGUMENT MUST BE CLASS integer", object.name = "vec3")
+    testthat::expect_equal(result, expect)
+    result <- arg_check(data = vec7, class = "integer", options = NULL, double_as_integer_allowed = TRUE) # vec7 is a decimal double (non zero modulo): the rescue must NOT apply, problem expected
+    expect <- list(problem = TRUE, text = "ERROR\n\nTHE vec7 ARGUMENT MUST BE CLASS integer", object.name = "vec7")
     testthat::expect_equal(result, expect)
     # end data of type double & double_as_integer_allowed == TRUE and (class = "integer" | typeof = "integer") but finally, data is double but not made of integers # if(base::typeof(data) == "double" & double_as_integer_allowed == TRUE & ((arg.names[i2] == "class" & base::all(base::get(arg.names[i2], envir = base::sys.nframe(), inherits = FALSE) == "integer")) | (arg.names[i2] == "typeof" & base::all(base::get(arg.names[i2], envir = base::sys.nframe(), inherits = FALSE) == "integer")))){
     # test the four base::c("class", "typeof", "mode", "length") arguments with their corresponding function # }else if( ! base::any(base::all(base::get(arg.names[i2], envir = base::sys.nframe(), inherits = FALSE) %in% base::c("vector", "ggplot2"))) & ! base::all(base::eval(base::parse(text = base::paste0(arg.names[i2], "(data)"))) %in% base::get(arg.names[i2], envir = base::sys.nframe(), inherits = FALSE))){
@@ -865,6 +889,14 @@ testthat::test_that("arg_check()", {
     testthat::expect_equal(result, expect)
     result <- arg_check(data = ord_factor1, class = "vector", print = TRUE)
     expect <- list(problem = TRUE, text = "ERROR\n\nTHE ord_factor1 ARGUMENT MUST BE CLASS vector", object.name = "ord_factor1")
+    testthat::expect_equal(result, expect)
+
+    # valid exact-match forms of issue #100: the full class vector, in order
+    result <- arg_check(data = mat1, class = c("matrix", "array"), print = TRUE) # class(mat1) is c("matrix", "array"): exact match, valid
+    expect <- list(problem = FALSE, text = "NO PROBLEM DETECTED FOR THE mat1 ARGUMENT.", object.name = "mat1")
+    testthat::expect_equal(result, expect)
+    result <- arg_check(data = ord_factor1, class = c("ordered", "factor"), print = TRUE) # class(ord_factor1) is c("ordered", "factor"): exact match, valid
+    expect <- list(problem = FALSE, text = "NO PROBLEM DETECTED FOR THE ord_factor1 ARGUMENT.", object.name = "ord_factor1")
     testthat::expect_equal(result, expect)
 
     # end if( ! base::is.null(x = base::get(x = arg.names[i2], pos = -1L, envir = base::as.environment(-1), mode = "any", inherits = FALSE))){
