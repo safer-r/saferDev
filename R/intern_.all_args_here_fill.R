@@ -444,6 +444,22 @@
             )
             base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL) # == in stop() to be able to add several messages between ==
     }
+    # coherence between arg_full and arg_full_names: the real caller passes arg_full_names = base::names(arg_full), so arg_full_names must be non-NULL whenever arg_full is non-empty.
+    # Without this check, the incoherent combination (arg_full_names = NULL while arg_full is non-empty) reaches the main code and crashes with a raw R error (missing value where TRUE/FALSE needed) instead of a proper internal error message.
+    if(base::length(x = arg_full) != 0L & base::is.null(x = arg_full_names)){
+        tempo_cat <- base::paste0(
+            error_text_start,
+            "ARGUMENT arg_full_names CANNOT BE NULL IF ARGUMENT arg_full IS NOT EMPTY.\n",
+            "arg_full (",
+            base::length(x = arg_full),
+            "):\n",
+            base::paste0(base::vapply(X = arg_full, FUN = function(elt){base::paste(base::deparse(expr = elt, width.cutoff = 60L, backtick = FALSE, control = base::c("keepNA", "keepInteger", "niceNames", "showAttributes"), nlines = -1L), sep = " ", collapse = " ", recycle0 = FALSE)}, FUN.VALUE = base::character(length = 1)), collapse = "\n", recycle0 = FALSE),
+            intern_error_text_end,
+            collapse = NULL,
+            recycle0 = FALSE
+        )
+        base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL) # == in stop() to be able to add several messages between ==
+    }
     ######## end other checkings
 
     #### end second round of checking and data preparation
@@ -607,7 +623,7 @@
             count_good_args <- 0
             final <- NULL
             # missing_args <-  NULL # already above
-            for(i3 in 1:base::length(x = arg_full_names)){ # here I cannot have more args than base::length(arg_full_names)
+            for(i3 in base::seq_along(arg_full_names)){ # here I cannot have more args than base::length(arg_full_names) ; seq_along() instead of 1:base::length() avoids iterating over c(1, 0) when arg_full_names is NULL or empty
                 if(missing_arg_log[i3] == TRUE){
                     if(base::sum(missing_full_arg_name_log, na.rm = FALSE) > 0){ # this means that remains obs arg with no arg names written
                         tempo <- base::paste0(arg_full_names[i3], " = ", tempo_split[base::which(x = missing_full_arg_name_log == TRUE, arr.ind = FALSE, useNames = TRUE)[1]], collapse = NULL, recycle0 = FALSE)
