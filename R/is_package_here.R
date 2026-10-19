@@ -429,12 +429,12 @@ is_package_here <- function(
     ######## end graphic device checking
 
     ######## other checkings
-    tempo.log <- base::grepl(x = req_package, pattern = ":{2,3}", ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE)
-    if(base::all(tempo.log, na.rm = TRUE)){
+    tempo_log <- base::grepl(x = req_package, pattern = ":{2,3}", ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE)
+    if(base::all(tempo_log, na.rm = TRUE)){
         tempo_cat <- base::paste0(
             error_text_start, 
             "THE STRING IN req_package ARGUMENT MUST NOT CONTAIN \"::\" OR \":::\":\n", 
-            base::paste0(req_package[tempo.log], collapse = "\n", recycle0 = FALSE), 
+            base::paste0(req_package[tempo_log], collapse = "\n", recycle0 = FALSE), 
             collapse = NULL, 
             recycle0 = FALSE
         )

@@ -124,9 +124,9 @@ testthat::test_that(".pack_and_function_check()", {
     #### end second round of checking and data preparation
 
     #### main code
-    # if( ! base::all(tempo.log, na.rm = TRUE)){
+    # if( ! base::all(tempo_log, na.rm = TRUE)){
     testthat::expect_error(.pack_and_function_check(fun = char2_fun, lib_path = NULL, error_text = ""))
-    # end if( ! base::all(tempo.log, na.rm = TRUE)){
+    # end if( ! base::all(tempo_log, na.rm = TRUE)){
     # if( ! base::all(pkg.log, na.rm = TRUE)){
     testthat::expect_error(.pack_and_function_check(fun = char3_fun, lib_path = NULL, error_text = ""))
     # end if( ! base::all(pkg.log, na.rm = TRUE)){

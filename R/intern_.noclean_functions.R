@@ -413,12 +413,12 @@
     output <- base::vector(mode = "logical", length = 0) # here sum(output) = 0
     if(base::length(x = col1) > 0){
         # detection of a$fun() pattern
-        tempo.log <- base::grepl(x = col3, pattern = "([a-zA-Z]|\\.[a-zA-Z._])[a-zA-Z0-9._]* *\\$ *$", ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE)
+        tempo_log <- base::grepl(x = col3, pattern = "([a-zA-Z]|\\.[a-zA-Z._])[a-zA-Z0-9._]* *\\$ *$", ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE)
         # ([a-zA-Z]|\\.[a-zA-Z._]) is for the begining of R function name: either any single alphabet character or a dot and any single alphabet character or dot (because .. is ok for function name) or underscore (because ._ is ok for function name). Starting "dot and num" or underscore is not authorized for function name
         # [a-zA-Z0-9._]* is The rest of the function name: any several of these characters or nothing
         #  *\\$ *$ means end of the string is any space or not, a $ symbol and any space or not
-        if(base::any(tempo.log, na.rm = TRUE)){
-            output <- tempo.log
+        if(base::any(tempo_log, na.rm = TRUE)){
+            output <- tempo_log
         }else{
             output <- base::rep(x = FALSE, base::length(x = col1))
         }

@@ -655,7 +655,7 @@ testthat::test_that("arg_check()", {
     # end if( ! base::is.null(class)){
     #     if(base::is.null(options)){ # work on the 4 "class", "typeof", "mode", "length" arguments
     # for class
-    # data of type double & double_as_integer_allowed == TRUE and (class = "integer" | typeof = "integer") but finally, data is double but not made of integers # if(base::typeof(data) == "double" & double_as_integer_allowed == TRUE & ((arg.names[i2] == "class" & base::all(base::get(arg.names[i2], envir = base::sys.nframe(), inherits = FALSE) == "integer")) | (arg.names[i2] == "typeof" & base::all(base::get(arg.names[i2], envir = base::sys.nframe(), inherits = FALSE) == "integer")))){
+    # data of type double & double_as_integer_allowed == TRUE and (class = "integer" | typeof = "integer") but finally, data is double but not made of integers # if(base::typeof(data) == "double" & double_as_integer_allowed == TRUE & ((arg_names[i2] == "class" & base::all(base::get(arg_names[i2], envir = base::sys.nframe(), inherits = FALSE) == "integer")) | (arg_names[i2] == "typeof" & base::all(base::get(arg_names[i2], envir = base::sys.nframe(), inherits = FALSE) == "integer")))){
     result <- arg_check(data = vec7, typeof = "integer", options = NULL, double_as_integer_allowed = TRUE)
     expect <- list(problem = TRUE, text = "ERROR\n\nTHE vec7 ARGUMENT MUST BE TYPEOF integer", object_name = "vec7")
     testthat::expect_equal(result, expect)
@@ -674,8 +674,8 @@ testthat::test_that("arg_check()", {
     result <- arg_check(data = vec7, class = "integer", options = NULL, double_as_integer_allowed = TRUE) # vec7 is a decimal double (non zero modulo): the rescue must NOT apply, problem expected
     expect <- list(problem = TRUE, text = "ERROR\n\nTHE vec7 ARGUMENT MUST BE CLASS integer", object_name = "vec7")
     testthat::expect_equal(result, expect)
-    # end data of type double & double_as_integer_allowed == TRUE and (class = "integer" | typeof = "integer") but finally, data is double but not made of integers # if(base::typeof(data) == "double" & double_as_integer_allowed == TRUE & ((arg.names[i2] == "class" & base::all(base::get(arg.names[i2], envir = base::sys.nframe(), inherits = FALSE) == "integer")) | (arg.names[i2] == "typeof" & base::all(base::get(arg.names[i2], envir = base::sys.nframe(), inherits = FALSE) == "integer")))){
-    # test the four base::c("class", "typeof", "mode", "length") arguments with their corresponding function # }else if( ! base::any(base::all(base::get(arg.names[i2], envir = base::sys.nframe(), inherits = FALSE) %in% base::c("vector", "ggplot2"))) & ! base::all(base::eval(base::parse(text = base::paste0(arg.names[i2], "(data)"))) %in% base::get(arg.names[i2], envir = base::sys.nframe(), inherits = FALSE))){
+    # end data of type double & double_as_integer_allowed == TRUE and (class = "integer" | typeof = "integer") but finally, data is double but not made of integers # if(base::typeof(data) == "double" & double_as_integer_allowed == TRUE & ((arg_names[i2] == "class" & base::all(base::get(arg_names[i2], envir = base::sys.nframe(), inherits = FALSE) == "integer")) | (arg_names[i2] == "typeof" & base::all(base::get(arg_names[i2], envir = base::sys.nframe(), inherits = FALSE) == "integer")))){
+    # test the four base::c("class", "typeof", "mode", "length") arguments with their corresponding function # }else if( ! base::any(base::all(base::get(arg_names[i2], envir = base::sys.nframe(), inherits = FALSE) %in% base::c("vector", "ggplot2"))) & ! base::all(base::eval(base::parse(text = base::paste0(arg_names[i2], "(data)"))) %in% base::get(arg_names[i2], envir = base::sys.nframe(), inherits = FALSE))){
     result <- arg_check(data = vec7, typeof = "integer", options = NULL)
     expect <- list(problem = TRUE, text = "ERROR\n\nTHE vec7 ARGUMENT MUST BE TYPEOF integer", object_name = "vec7")
     testthat::expect_equal(result, expect)
@@ -685,8 +685,8 @@ testthat::test_that("arg_check()", {
     result <- arg_check(data = vec1, typeof = "integer", options = NULL)
     expect <- list(problem = FALSE, text = "NO PROBLEM DETECTED FOR THE vec1 ARGUMENT.", object_name = "vec1")
     testthat::expect_equal(result, expect)
-    # end test the four base::c("class", "typeof", "mode", "length") arguments with their corresponding function # }else if( ! base::any(base::all(base::get(arg.names[i2], envir = base::sys.nframe(), inherits = FALSE) %in% base::c("vector", "ggplot2"))) & ! base::all(base::eval(base::parse(text = base::paste0(arg.names[i2], "(data)"))) %in% base::get(arg.names[i2], envir = base::sys.nframe(), inherits = FALSE))){
-    # test of class == "vector" # }else if(arg.names[i2] == "class" & base::all(base::get(arg.names[i2], envir = base::sys.nframe(), inherits = FALSE) == "vector") & ! (base::all(base::class(data) %in% "numeric") | base::all(base::class(data) %in% "integer") | base::all(base::class(data) %in% "character") | base::all(base::class(data) %in% "logical") | base::all(base::class(data) %in% "complex") | base::all(base::class(data) %in% "expression"))){ # test class == "vector". base::all(base::get(arg.names[i2], envir = base::sys.nframe(), inherits = FALSE) check if user has used the argument class = "vector". If TRUE and base::length(data) > 1, the class "numeric" "integer" "character" "logical" "complex" "expression" should be returned. No need of na.rm = TRUE for base::all() because %in% does not output NA # no need of na.rm = TRUE for base::all() because == does not output NA if no NA in left of ==, which is the case for arg.names. Other classes "list", "name", "symbol", "function", "environment", "S4", "call" return a list if length of data > 1
+    # end test the four base::c("class", "typeof", "mode", "length") arguments with their corresponding function # }else if( ! base::any(base::all(base::get(arg_names[i2], envir = base::sys.nframe(), inherits = FALSE) %in% base::c("vector", "ggplot2"))) & ! base::all(base::eval(base::parse(text = base::paste0(arg_names[i2], "(data)"))) %in% base::get(arg_names[i2], envir = base::sys.nframe(), inherits = FALSE))){
+    # test of class == "vector" # }else if(arg_names[i2] == "class" & base::all(base::get(arg_names[i2], envir = base::sys.nframe(), inherits = FALSE) == "vector") & ! (base::all(base::class(data) %in% "numeric") | base::all(base::class(data) %in% "integer") | base::all(base::class(data) %in% "character") | base::all(base::class(data) %in% "logical") | base::all(base::class(data) %in% "complex") | base::all(base::class(data) %in% "expression"))){ # test class == "vector". base::all(base::get(arg_names[i2], envir = base::sys.nframe(), inherits = FALSE) check if user has used the argument class = "vector". If TRUE and base::length(data) > 1, the class "numeric" "integer" "character" "logical" "complex" "expression" should be returned. No need of na.rm = TRUE for base::all() because %in% does not output NA # no need of na.rm = TRUE for base::all() because == does not output NA if no NA in left of ==, which is the case for arg_names. Other classes "list", "name", "symbol", "function", "environment", "S4", "call" return a list if length of data > 1
     result <- arg_check(data = mat1, class = "vector", options = NULL)
     expect <- list(problem = TRUE, text = "ERROR\n\nTHE mat1 ARGUMENT MUST BE CLASS vector", object_name = "mat1")
     testthat::expect_equal(result, expect)
@@ -699,8 +699,8 @@ testthat::test_that("arg_check()", {
     result <- arg_check(data = vec1, class = "integer", options = NULL)
     expect <- list(problem = FALSE, text = "NO PROBLEM DETECTED FOR THE vec1 ARGUMENT.", object_name = "vec1")
     testthat::expect_equal(result, expect)
-    # end test of class == "vector" # }else if(arg.names[i2] == "class" & base::all(base::get(arg.names[i2], envir = base::sys.nframe(), inherits = FALSE) == "vector") & ! (base::all(base::class(data) %in% "numeric") | base::all(base::class(data) %in% "integer") | base::all(base::class(data) %in% "character") | base::all(base::class(data) %in% "logical") | base::all(base::class(data) %in% "complex") | base::all(base::class(data) %in% "expression"))){ # test class == "vector". base::all(base::get(arg.names[i2], envir = base::sys.nframe(), inherits = FALSE) check if user has used the argument class = "vector". If TRUE and base::length(data) > 1, the class "numeric" "integer" "character" "logical" "complex" "expression" should be returned. No need of na.rm = TRUE for base::all() because %in% does not output NA # no need of na.rm = TRUE for base::all() because == does not output NA if no NA in left of ==, which is the case for arg.names. Other classes "list", "name", "symbol", "function", "environment", "S4", "call" return a list if length of data > 1
-    # test of class == "ggplot2" # }else if(arg.names[i2] == "class" & base::all(base::get(arg.names[i2], envir = base::sys.nframe(), inherits = FALSE) == "ggplot2") & ! base::all(base::class(data) %in% base::c("gg", "ggplot"))){
+    # end test of class == "vector" # }else if(arg_names[i2] == "class" & base::all(base::get(arg_names[i2], envir = base::sys.nframe(), inherits = FALSE) == "vector") & ! (base::all(base::class(data) %in% "numeric") | base::all(base::class(data) %in% "integer") | base::all(base::class(data) %in% "character") | base::all(base::class(data) %in% "logical") | base::all(base::class(data) %in% "complex") | base::all(base::class(data) %in% "expression"))){ # test class == "vector". base::all(base::get(arg_names[i2], envir = base::sys.nframe(), inherits = FALSE) check if user has used the argument class = "vector". If TRUE and base::length(data) > 1, the class "numeric" "integer" "character" "logical" "complex" "expression" should be returned. No need of na.rm = TRUE for base::all() because %in% does not output NA # no need of na.rm = TRUE for base::all() because == does not output NA if no NA in left of ==, which is the case for arg_names. Other classes "list", "name", "symbol", "function", "environment", "S4", "call" return a list if length of data > 1
+    # test of class == "ggplot2" # }else if(arg_names[i2] == "class" & base::all(base::get(arg_names[i2], envir = base::sys.nframe(), inherits = FALSE) == "ggplot2") & ! base::all(base::class(data) %in% base::c("gg", "ggplot"))){
     result <- arg_check(data = mat1, class = "ggplot2", options = NULL)
     expect <- list(problem = TRUE, text = "ERROR\n\nTHE mat1 ARGUMENT MUST BE CLASS ggplot2", object_name = "mat1")
     testthat::expect_equal(result, expect)
@@ -740,10 +740,10 @@ testthat::test_that("arg_check()", {
     expect <- list(problem = TRUE, text = "ERROR\n\nTHE list() ARGUMENT MUST BE CLASS ggplot_built", object_name = "list()")
     testthat::expect_equal(result, expect)
 
-    # end test of class == "ggplot2" # end }else if(arg.names[i2] == "class" & base::all(base::get(arg.names[i2], envir = base::sys.nframe(), inherits = FALSE) == "ggplot2") & ! base::all(base::class(data) %in% base::c("gg", "ggplot"))){
+    # end test of class == "ggplot2" # end }else if(arg_names[i2] == "class" & base::all(base::get(arg_names[i2], envir = base::sys.nframe(), inherits = FALSE) == "ggplot2") & ! base::all(base::class(data) %in% base::c("gg", "ggplot"))){
     # end for class
     # for typeof
-    # data of type double & double_as_integer_allowed == TRUE and (class = "integer" | typeof = "integer") but finally, data is double but not made of integers # if(base::typeof(data) == "double" & double_as_integer_allowed == TRUE & ((arg.names[i2] == "class" & base::all(base::get(arg.names[i2], envir = base::sys.nframe(), inherits = FALSE) == "integer")) | (arg.names[i2] == "typeof" & base::all(base::get(arg.names[i2], envir = base::sys.nframe(), inherits = FALSE) == "integer")))){
+    # data of type double & double_as_integer_allowed == TRUE and (class = "integer" | typeof = "integer") but finally, data is double but not made of integers # if(base::typeof(data) == "double" & double_as_integer_allowed == TRUE & ((arg_names[i2] == "class" & base::all(base::get(arg_names[i2], envir = base::sys.nframe(), inherits = FALSE) == "integer")) | (arg_names[i2] == "typeof" & base::all(base::get(arg_names[i2], envir = base::sys.nframe(), inherits = FALSE) == "integer")))){
     result <- arg_check(data = vec7, typeof = "integer", options = NULL, double_as_integer_allowed = TRUE)
     expect <- list(problem = TRUE, text = "ERROR\n\nTHE vec7 ARGUMENT MUST BE TYPEOF integer", object_name = "vec7")
     testthat::expect_equal(result, expect)
@@ -753,8 +753,8 @@ testthat::test_that("arg_check()", {
     result <- arg_check(data = vec3, typeof = "integer", options = NULL, double_as_integer_allowed = TRUE)
     expect <- list(problem = FALSE, text = "NO PROBLEM DETECTED FOR THE vec3 ARGUMENT.", object_name = "vec3")
     testthat::expect_equal(result, expect)
-    # end data of type double & double_as_integer_allowed == TRUE and (class = "integer" | typeof = "integer") but finally, data is double but not made of integers # if(base::typeof(data) == "double" & double_as_integer_allowed == TRUE & ((arg.names[i2] == "class" & base::all(base::get(arg.names[i2], envir = base::sys.nframe(), inherits = FALSE) == "integer")) | (arg.names[i2] == "typeof" & base::all(base::get(arg.names[i2], envir = base::sys.nframe(), inherits = FALSE) == "integer")))){
-    # test the four base::c("class", "typeof", "mode", "length") arguments with their corresponding function # }else if( ! base::any(base::all(base::get(arg.names[i2], envir = base::sys.nframe(), inherits = FALSE) %in% base::c("vector", "ggplot2"))) & ! base::all(base::eval(base::parse(text = base::paste0(arg.names[i2], "(data)"))) %in% base::get(arg.names[i2], envir = base::sys.nframe(), inherits = FALSE))){
+    # end data of type double & double_as_integer_allowed == TRUE and (class = "integer" | typeof = "integer") but finally, data is double but not made of integers # if(base::typeof(data) == "double" & double_as_integer_allowed == TRUE & ((arg_names[i2] == "class" & base::all(base::get(arg_names[i2], envir = base::sys.nframe(), inherits = FALSE) == "integer")) | (arg_names[i2] == "typeof" & base::all(base::get(arg_names[i2], envir = base::sys.nframe(), inherits = FALSE) == "integer")))){
+    # test the four base::c("class", "typeof", "mode", "length") arguments with their corresponding function # }else if( ! base::any(base::all(base::get(arg_names[i2], envir = base::sys.nframe(), inherits = FALSE) %in% base::c("vector", "ggplot2"))) & ! base::all(base::eval(base::parse(text = base::paste0(arg_names[i2], "(data)"))) %in% base::get(arg_names[i2], envir = base::sys.nframe(), inherits = FALSE))){
     result <- arg_check(data = vec7, typeof = "integer", options = NULL)
     expect <- list(problem = TRUE, text = "ERROR\n\nTHE vec7 ARGUMENT MUST BE TYPEOF integer", object_name = "vec7")
     testthat::expect_equal(result, expect)
@@ -764,10 +764,10 @@ testthat::test_that("arg_check()", {
     result <- arg_check(data = vec1, typeof = "integer", options = NULL)
     expect <- list(problem = FALSE, text = "NO PROBLEM DETECTED FOR THE vec1 ARGUMENT.", object_name = "vec1")
     testthat::expect_equal(result, expect)
-    # end test the four base::c("class", "typeof", "mode", "length") arguments with their corresponding function # }else if( ! base::any(base::all(base::get(arg.names[i2], envir = base::sys.nframe(), inherits = FALSE) %in% base::c("vector", "ggplot2"))) & ! base::all(base::eval(base::parse(text = base::paste0(arg.names[i2], "(data)"))) %in% base::get(arg.names[i2], envir = base::sys.nframe(), inherits = FALSE))){
+    # end test the four base::c("class", "typeof", "mode", "length") arguments with their corresponding function # }else if( ! base::any(base::all(base::get(arg_names[i2], envir = base::sys.nframe(), inherits = FALSE) %in% base::c("vector", "ggplot2"))) & ! base::all(base::eval(base::parse(text = base::paste0(arg_names[i2], "(data)"))) %in% base::get(arg_names[i2], envir = base::sys.nframe(), inherits = FALSE))){
     # end for typeof
     # for mode
-    # test the four base::c("class", "typeof", "mode", "length") arguments with their corresponding function # }else if( ! base::any(base::all(base::get(arg.names[i2], envir = base::sys.nframe(), inherits = FALSE) %in% base::c("vector", "ggplot2"))) & ! base::all(base::eval(base::parse(text = base::paste0(arg.names[i2], "(data)"))) %in% base::get(arg.names[i2], envir = base::sys.nframe(), inherits = FALSE))){
+    # test the four base::c("class", "typeof", "mode", "length") arguments with their corresponding function # }else if( ! base::any(base::all(base::get(arg_names[i2], envir = base::sys.nframe(), inherits = FALSE) %in% base::c("vector", "ggplot2"))) & ! base::all(base::eval(base::parse(text = base::paste0(arg_names[i2], "(data)"))) %in% base::get(arg_names[i2], envir = base::sys.nframe(), inherits = FALSE))){
     result <- arg_check(data = vec7, mode = "character", options = NULL)
     expect <- list(problem = TRUE, text = "ERROR\n\nTHE vec7 ARGUMENT MUST BE MODE character", object_name = "vec7")
     testthat::expect_equal(result, expect)
@@ -777,10 +777,10 @@ testthat::test_that("arg_check()", {
     result <- arg_check(data = vec1, mode = "numeric", options = NULL)
     expect <- list(problem = FALSE, text = "NO PROBLEM DETECTED FOR THE vec1 ARGUMENT.", object_name = "vec1")
     testthat::expect_equal(result, expect)
-    # end test the four base::c("class", "typeof", "mode", "length") arguments with their corresponding function # }else if( ! base::any(base::all(base::get(arg.names[i2], envir = base::sys.nframe(), inherits = FALSE) %in% base::c("vector", "ggplot2"))) & ! base::all(base::eval(base::parse(text = base::paste0(arg.names[i2], "(data)"))) %in% base::get(arg.names[i2], envir = base::sys.nframe(), inherits = FALSE))){
+    # end test the four base::c("class", "typeof", "mode", "length") arguments with their corresponding function # }else if( ! base::any(base::all(base::get(arg_names[i2], envir = base::sys.nframe(), inherits = FALSE) %in% base::c("vector", "ggplot2"))) & ! base::all(base::eval(base::parse(text = base::paste0(arg_names[i2], "(data)"))) %in% base::get(arg_names[i2], envir = base::sys.nframe(), inherits = FALSE))){
     # end for mode
     # for length
-    # test the four base::c("class", "typeof", "mode", "length") arguments with their corresponding function # }else if( ! base::any(base::all(base::get(arg.names[i2], envir = base::sys.nframe(), inherits = FALSE) %in% base::c("vector", "ggplot2"))) & ! base::all(base::eval(base::parse(text = base::paste0(arg.names[i2], "(data)"))) %in% base::get(arg.names[i2], envir = base::sys.nframe(), inherits = FALSE))){
+    # test the four base::c("class", "typeof", "mode", "length") arguments with their corresponding function # }else if( ! base::any(base::all(base::get(arg_names[i2], envir = base::sys.nframe(), inherits = FALSE) %in% base::c("vector", "ggplot2"))) & ! base::all(base::eval(base::parse(text = base::paste0(arg_names[i2], "(data)"))) %in% base::get(arg_names[i2], envir = base::sys.nframe(), inherits = FALSE))){
     result <- arg_check(data = vec7, length = 1, options = NULL)
     expect <- list(problem = TRUE, text = "ERROR\n\nTHE vec7 ARGUMENT MUST BE LENGTH 1", object_name = "vec7")
     testthat::expect_equal(result, expect)
@@ -793,7 +793,7 @@ testthat::test_that("arg_check()", {
     result <- arg_check(data = vec1, length = 5, options = NULL)
     expect <- list(problem = FALSE, text = "NO PROBLEM DETECTED FOR THE vec1 ARGUMENT.", object_name = "vec1")
     testthat::expect_equal(result, expect)
-    # end test the four base::c("class", "typeof", "mode", "length") arguments with their corresponding function # }else if( ! base::any(base::all(base::get(arg.names[i2], envir = base::sys.nframe(), inherits = FALSE) %in% base::c("vector", "ggplot2"))) & ! base::all(base::eval(base::parse(text = base::paste0(arg.names[i2], "(data)"))) %in% base::get(arg.names[i2], envir = base::sys.nframe(), inherits = FALSE))){
+    # end test the four base::c("class", "typeof", "mode", "length") arguments with their corresponding function # }else if( ! base::any(base::all(base::get(arg_names[i2], envir = base::sys.nframe(), inherits = FALSE) %in% base::c("vector", "ggplot2"))) & ! base::all(base::eval(base::parse(text = base::paste0(arg_names[i2], "(data)"))) %in% base::get(arg_names[i2], envir = base::sys.nframe(), inherits = FALSE))){
     # end for length
     # end     if(base::is.null(options)){ # work on the 4 "class", "typeof", "mode", "length" arguments
 
@@ -881,7 +881,7 @@ testthat::test_that("arg_check()", {
     expect <- list(problem = TRUE, text = "ERROR\n\nTHE vec8 ARGUMENT MUST BE MODE character", object_name = "vec8")
     testthat::expect_equal(result, expect)
     # end if(print == TRUE & problem == TRUE){
-    # if( ! base::is.null(x = base::get(x = arg.names[i2], pos = -1L, envir = base::as.environment(-1), mode = "any", inherits = FALSE))){ # exact matching of class(data) now
+    # if( ! base::is.null(x = base::get(x = arg_names[i2], pos = -1L, envir = base::as.environment(-1), mode = "any", inherits = FALSE))){ # exact matching of class(data) now
     testthat::expect_no_error(arg_check(data = arr1, class = "array"))
     result <- arg_check(data = mat1, class = "array", print = TRUE)
     expect <- list(problem = TRUE, text = "ERROR\n\nTHE mat1 ARGUMENT MUST BE CLASS array", object_name = "mat1")
@@ -908,7 +908,7 @@ testthat::test_that("arg_check()", {
     expect <- list(problem = FALSE, text = "NO PROBLEM DETECTED FOR THE ord_factor1 ARGUMENT.", object_name = "ord_factor1")
     testthat::expect_equal(result, expect)
 
-    # end if( ! base::is.null(x = base::get(x = arg.names[i2], pos = -1L, envir = base::as.environment(-1), mode = "any", inherits = FALSE))){
+    # end if( ! base::is.null(x = base::get(x = arg_names[i2], pos = -1L, envir = base::as.environment(-1), mode = "any", inherits = FALSE))){
                 
 
 

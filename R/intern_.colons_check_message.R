@@ -501,10 +501,10 @@
             res[[i1]] <- base::mapply(FUN = function(x , y){z <- base::substr(x = x, start = 1, stop = y - 1)}, x = basic_ini[i1], y = list_fun_pos[[i1]], SIMPLIFY = TRUE, USE.NAMES = FALSE, MoreArgs = NULL)
         }
         # res <- base::strsplit(x = basic_ini, split = pattern2, perl = TRUE) # in res, all the strings should finish by ::
-        # tempo.log <- ! base::grepl(x = basic_ini, pattern = pattern3, perl = TRUE) # strings of basic_ini that does not finish by the function name
+        # tempo_log <- ! base::grepl(x = basic_ini, pattern = pattern3, perl = TRUE) # strings of basic_ini that does not finish by the function name
         # in each compartment of res, the last split section is removed because nothing to test at the end (end of code)
-        # if(base::sum(tempo.log, na.rm = TRUE) > 0){
-        #     res[tempo.log] <- base::lapply(X = res[tempo.log], FUN = function(x){x[-base::length(x = x)]})
+        # if(base::sum(tempo_log, na.rm = TRUE) > 0){
+        #     res[tempo_log] <- base::lapply(X = res[tempo_log], FUN = function(x){x[-base::length(x = x)]})
         # }
         # end in each compartment of res, the last split section is removed because nothing to test at the end (end of code)
         res2 <- base::lapply(X = res, FUN = function(x){base::substr(x = x, start = base::nchar(x = x, type = "chars", allowNA = FALSE, keepNA = NA)-1, stop = base::nchar(x = x, type = "chars", allowNA = FALSE, keepNA = NA))}) # base::nchar(x)-1 takes only :: if the strings ends by :::
@@ -533,7 +533,7 @@
                 # nocov end
             }
             # removal of functions between quotes and after $
-            tempo.log <- .noclean_functions(
+            tempo_log <- .noclean_functions(
                 col1 = col1, 
                 col2 = col2, 
                 col3 = col3, 
@@ -541,10 +541,10 @@
                 lib_path = lib_path, 
                 error_text = embed_error_text
             ) # function names are inside quotes or after $ ?
-            if(base::sum(tempo.log, na.rm = TRUE) > 0){
-                col1 <- col1[ ! tempo.log] # keep clean functions
-                col2 <- col2[ ! tempo.log] # keep clean functions
-                col3 <- col3[ ! tempo.log] # keep clean functions 
+            if(base::sum(tempo_log, na.rm = TRUE) > 0){
+                col1 <- col1[ ! tempo_log] # keep clean functions
+                col2 <- col2[ ! tempo_log] # keep clean functions
+                col3 <- col3[ ! tempo_log] # keep clean functions 
             }
             # end removal of functions between quotes and after $
             if(base::length(x = col1) > 0){

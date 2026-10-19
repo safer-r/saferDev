@@ -909,10 +909,10 @@ arg_check <- function(
         problem <- TRUE
         text <- base::paste0("ERROR", base::ifelse(test = error_text == "", yes = "", no = error_text), "\n\nTHE ", data_name, " ", base::ifelse(test = data_arg, yes = "ARGUMENT", no = "OBJECT"), " MUST BE SOME OF THESE OPTIONS:\n", base::paste0(options, collapse = "\n", recycle0 = FALSE), "\nBUT IS NOT EVEN TYPE CHARACTER OR INTEGER, OR TYPE DOUBLE WITH A 0 MODULO.", collapse = NULL, recycle0 = FALSE)
     }
-    arg.names <- base::c("class", "typeof", "mode", "length")
+    arg_names <- base::c("class", "typeof", "mode", "length")
     if(base::is.null(x = options)){
-        for(i2 in 1:base::length(x = arg.names)){
-            if( ! base::is.null(x = base::get(x = arg.names[i2], pos = -1L, envir = base::as.environment(-1), mode = "any", inherits = FALSE))){
+        for(i2 in 1:base::length(x = arg_names)){
+            if( ! base::is.null(x = base::get(x = arg_names[i2], pos = -1L, envir = base::as.environment(-1), mode = "any", inherits = FALSE))){
                 # script to execute
                 tempo_script <- '
                     problem <- TRUE ;
@@ -923,26 +923,26 @@ arg_check <- function(
                     }
                     text <- base::paste0(
                         text, 
-                        base::toupper(arg.names[i2]), 
+                        base::toupper(arg_names[i2]), 
                         " ", 
-                        base::paste0(base::get(x = arg.names[i2], pos = -1L, envir = base::as.environment(-1), mode = "any", inherits = FALSE), collapse = ", ", recycle0 = FALSE),
+                        base::paste0(base::get(x = arg_names[i2], pos = -1L, envir = base::as.environment(-1), mode = "any", inherits = FALSE), collapse = ", ", recycle0 = FALSE),
                         collapse = NULL, 
                         recycle0 = FALSE
                     )
                 '
                 # no need of na.rm = TRUE for base::all() because %in% does not output NA
                 # end script to execute
-                if(base::typeof(x = data) == "double" & double_as_integer_allowed == TRUE & ((arg.names[i2] == "class" & base::all(base::get(x = arg.names[i2], pos = -1L, envir = base::as.environment(-1), mode = "any", inherits = FALSE) == "integer", na.rm = TRUE)) | (arg.names[i2] == "typeof" & base::all(base::get(x = arg.names[i2], pos = -1L, envir = base::as.environment(-1), mode = "any", inherits = FALSE) == "integer", na.rm = TRUE)))){ # data of type double & double_as_integer_allowed == TRUE and (class = "integer" | typeof = "integer") # no need of na.rm = TRUE for base::all() because == does not output NA if no NA in left of ==, which is the case for arg.names # base::typeof(data) == "double" means no factor allowed
+                if(base::typeof(x = data) == "double" & double_as_integer_allowed == TRUE & ((arg_names[i2] == "class" & base::all(base::get(x = arg_names[i2], pos = -1L, envir = base::as.environment(-1), mode = "any", inherits = FALSE) == "integer", na.rm = TRUE)) | (arg_names[i2] == "typeof" & base::all(base::get(x = arg_names[i2], pos = -1L, envir = base::as.environment(-1), mode = "any", inherits = FALSE) == "integer", na.rm = TRUE)))){ # data of type double & double_as_integer_allowed == TRUE and (class = "integer" | typeof = "integer") # no need of na.rm = TRUE for base::all() because == does not output NA if no NA in left of ==, which is the case for arg_names # base::typeof(data) == "double" means no factor allowed
                     if( ! base::all(data %% 1 == 0L, na.rm = TRUE)){ # to check integers (use %%, meaning the remaining of a division): see the precedent line. base::isTRUE(base::all.equal(data%%1, base::rep(0, base::length(data)))) not used because we strictly need zero as a result. Warning: na.rm = TRUE required here for base::all()
                         base::eval(expr = base::parse(text = tempo_script, file = "", n = NULL, prompt = "?", keep.source = base::getOption(x = "keep.source", default = NULL), srcfile = NULL, encoding = "unknown"), envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL)) # execute tempo.script
                     }
-                }else if(arg.names[i2] == "length"){
-                    if( ! (base::length(x = data) == base::get(x = arg.names[i2], pos = -1L, envir = base::as.environment(-1), mode = "any", inherits = FALSE))){ # numeric comparison for the length argument (single integer value, checked above)
+                }else if(arg_names[i2] == "length"){
+                    if( ! (base::length(x = data) == base::get(x = arg_names[i2], pos = -1L, envir = base::as.environment(-1), mode = "any", inherits = FALSE))){ # numeric comparison for the length argument (single integer value, checked above)
                         base::eval(expr = base::parse(text = tempo_script, file = "", n = NULL, prompt = "?", keep.source = base::getOption(x = "keep.source", default = NULL), srcfile = NULL, encoding = "unknown"), envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL)) # execute tempo.script
                     }
                 }else if( ! base::identical(
-                    x = base::as.character(x = base::eval(expr = base::parse(text = base::paste0(arg.names[i2], "(data)", collapse = NULL, recycle0 = FALSE), file = "", n = NULL, prompt = "?", keep.source = base::getOption(x = "keep.source", default = NULL), srcfile = NULL, encoding = "unknown"), envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL))), 
-                    y = base::as.character(x = base::get(x = arg.names[i2], pos = -1L, envir = base::as.environment(-1), mode = "any", inherits = FALSE)), 
+                    x = base::as.character(x = base::eval(expr = base::parse(text = base::paste0(arg_names[i2], "(data)", collapse = NULL, recycle0 = FALSE), file = "", n = NULL, prompt = "?", keep.source = base::getOption(x = "keep.source", default = NULL), srcfile = NULL, encoding = "unknown"), envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL))), 
+                    y = base::as.character(x = base::get(x = arg_names[i2], pos = -1L, envir = base::as.environment(-1), mode = "any", inherits = FALSE)), 
                     num.eq = TRUE, 
                     single.NA = TRUE, 
                     attrib.as.set = TRUE, 

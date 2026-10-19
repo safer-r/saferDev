@@ -506,10 +506,10 @@
     }
     # end removal of special functions
     # removal of empty string
-    tempo.log <- base::sapply(X = fun_name_wo_op, FUN = function(x){base::length(x = x) == 0}, simplify = TRUE, USE.NAMES = TRUE) # detection of string with empty function names
-    fun_name_wo_op <- fun_name_wo_op[ ! tempo.log]
-    fun_name_pos_wo_op <- fun_name_pos_wo_op[ ! tempo.log]
-    code_line_nb <- code_line_nb[( ! tempo.log) & ( ! comment_line_log) & ( ! empty_line_log)]
+    tempo_log <- base::sapply(X = fun_name_wo_op, FUN = function(x){base::length(x = x) == 0}, simplify = TRUE, USE.NAMES = TRUE) # detection of string with empty function names
+    fun_name_wo_op <- fun_name_wo_op[ ! tempo_log]
+    fun_name_pos_wo_op <- fun_name_pos_wo_op[ ! tempo_log]
+    code_line_nb <- code_line_nb[( ! tempo_log) & ( ! comment_line_log) & ( ! empty_line_log)]
     if( ! (base::length(x = fun_name_wo_op) == base::length(x = fun_name_pos_wo_op) & base::length(x = fun_name_wo_op) == base::length(x = code_line_nb))){
         # nocov start
         # codecov inactivated because it is an internal control of code writing, impossible to cover with argument values.

@@ -263,24 +263,24 @@
         "while",
         "repeat"
     )
-    tempo.log <- base::sapply(X = reserved_objects, FUN = function(x){ 
+    tempo_log <- base::sapply(X = reserved_objects, FUN = function(x){ 
         if( ! base::all(utils::find(what = x, mode = "any", numeric = FALSE, simple.words = TRUE) == "package:base", na.rm = TRUE)){
             base::return(TRUE)
         }else{
             base::return(FALSE)
         }
     }, simplify = TRUE, USE.NAMES = TRUE)
-    if(base::any(tempo.log, na.rm = TRUE)){
-        tempo_name <-  reserved_objects[tempo.log]
+    if(base::any(tempo_log, na.rm = TRUE)){
+        tempo_name <-  reserved_objects[tempo_log]
         tempo_pos <- base::sapply(X = tempo_name, FUN = function(x){base::paste(utils::find(what = x, mode = "any", numeric = FALSE, simple.words = TRUE), collapse = " ",  sep =  " ", recycle0 = FALSE)}, simplify = TRUE, USE.NAMES = TRUE)
         tempo_cat <- base::paste0(
             error_text_start,
             "CRITICAL R OBJECT",
-            base::ifelse(test = base::length(x = tempo.log) == 1L, yes = " ", no = "S "), 
+            base::ifelse(test = base::length(x = tempo_log) == 1L, yes = " ", no = "S "), 
             "CANNOT BE PRESENT SOMEWHERE ELSE IN THE R SCOPE THAN IN \"package::base\".\nPROBLEM WITH:\n", 
             base::paste0(base::paste(tempo_name, tempo_pos, sep = "\t", collapse = NULL, recycle0 = FALSE), collapse = "\n", recycle0 = FALSE), 
             "\n\nSWITCH THE safer_check ARGUMENT TO FALSE IF ", 
-            base::ifelse(test = base::length(x = tempo.log) == 1L, yes = "THIS OBJECT ", no = "THESE OBJECTS "), 
+            base::ifelse(test = base::length(x = tempo_log) == 1L, yes = "THIS OBJECT ", no = "THESE OBJECTS "), 
             "CANNOT BE DELETED.\n\nOF NOTE, BASIC R OBJECT PROTECTED FROM OVERWRITING IN SAFER FUNCTIONS:\n",
             base::paste0(reserved_objects, collapse = "\n", recycle0 = FALSE),
             collapse = NULL, 

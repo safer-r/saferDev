@@ -486,16 +486,16 @@ colons_check <- function(
     }
     # basic function names in x
     # selection of basic functions
-    tempo.log <- base::lapply(X = out$fun_names, FUN = function(x){x %in% out$all_basic_funs}) #  are names basic functions used in x?
-    in_basic_fun <- base::mapply(FUN = function(x, y){x[y]}, x = out$fun_names, y = tempo.log, MoreArgs = NULL, SIMPLIFY = FALSE, USE.NAMES = TRUE)
-    in_basic_fun_names_pos <-  base::mapply(FUN = function(x, y){x[y]}, x = out$fun_names_pos, y = tempo.log, MoreArgs = NULL, SIMPLIFY = FALSE, USE.NAMES = TRUE)
+    tempo_log <- base::lapply(X = out$fun_names, FUN = function(x){x %in% out$all_basic_funs}) #  are names basic functions used in x?
+    in_basic_fun <- base::mapply(FUN = function(x, y){x[y]}, x = out$fun_names, y = tempo_log, MoreArgs = NULL, SIMPLIFY = FALSE, USE.NAMES = TRUE)
+    in_basic_fun_names_pos <-  base::mapply(FUN = function(x, y){x[y]}, x = out$fun_names_pos, y = tempo_log, MoreArgs = NULL, SIMPLIFY = FALSE, USE.NAMES = TRUE)
     # end selection of basic functions
     if(base::length(x = base::unlist(x = in_basic_fun, recursive = TRUE, use.names = TRUE)) != 0){ # check if basic fun present
         # removal of string with empty function names
-        tempo.log <- base::sapply(X = in_basic_fun, FUN = function(x){base::length(x = x) == 0}, simplify = TRUE, USE.NAMES = TRUE) # detection of string with empty function names
-        in_basic_fun <- in_basic_fun[ ! tempo.log] # removal of empty string
-        in_basic_fun_names_pos <- in_basic_fun_names_pos[ ! tempo.log]
-        in_basic_code_line_nb <- out$code_line_nb[ ! tempo.log]
+        tempo_log <- base::sapply(X = in_basic_fun, FUN = function(x){base::length(x = x) == 0}, simplify = TRUE, USE.NAMES = TRUE) # detection of string with empty function names
+        in_basic_fun <- in_basic_fun[ ! tempo_log] # removal of empty string
+        in_basic_fun_names_pos <- in_basic_fun_names_pos[ ! tempo_log]
+        in_basic_code_line_nb <- out$code_line_nb[ ! tempo_log]
         if( ! (base::length(x = in_basic_fun) == base::length(x = in_basic_fun_names_pos) & base::length(x = in_basic_fun) == base::length(x = in_basic_code_line_nb))){
             # nocov start
             # codecov inactivated because it is an internal control of code writing, impossible to cover with argument values.
@@ -534,16 +534,16 @@ colons_check <- function(
     }
     # other function names in x
     # selection of other functions
-    tempo.log <- base::lapply(X = out$fun_names, FUN = function(x){ ! x %in% base::c(out$all_basic_funs, out$arg_user_setting$x)}) #  names of all the other functions used in x, except the one tested (arg_user_setting$x), because can be in error messages
-    in_other_fun <- base::mapply(FUN = function(x, y){x[y]}, x = out$fun_names, y = tempo.log, MoreArgs = NULL, SIMPLIFY = FALSE, USE.NAMES = TRUE)
-    in_other_fun_names_pos <-  base::mapply(FUN = function(x, y){x[y]}, x = out$fun_names_pos, y = tempo.log, MoreArgs = NULL, SIMPLIFY = FALSE, USE.NAMES = TRUE)
+    tempo_log <- base::lapply(X = out$fun_names, FUN = function(x){ ! x %in% base::c(out$all_basic_funs, out$arg_user_setting$x)}) #  names of all the other functions used in x, except the one tested (arg_user_setting$x), because can be in error messages
+    in_other_fun <- base::mapply(FUN = function(x, y){x[y]}, x = out$fun_names, y = tempo_log, MoreArgs = NULL, SIMPLIFY = FALSE, USE.NAMES = TRUE)
+    in_other_fun_names_pos <-  base::mapply(FUN = function(x, y){x[y]}, x = out$fun_names_pos, y = tempo_log, MoreArgs = NULL, SIMPLIFY = FALSE, USE.NAMES = TRUE)
     # end selection of other functions
     if(base::length(x = base::unlist(x = in_other_fun, recursive = TRUE, use.names = TRUE)) != 0){ # check if other fun present
         # removal of string with empty function names
-        tempo.log <- base::sapply(X = in_other_fun, FUN = function(x){base::length(x = x) == 0}, simplify = TRUE, USE.NAMES = TRUE) # detection of string with empty function names
-        in_other_fun <- in_other_fun[ ! tempo.log] # removal of empty string
-        in_other_fun_names_pos <- in_other_fun_names_pos[ ! tempo.log]
-        in_other_code_line_nb <- out$code_line_nb[ ! tempo.log]
+        tempo_log <- base::sapply(X = in_other_fun, FUN = function(x){base::length(x = x) == 0}, simplify = TRUE, USE.NAMES = TRUE) # detection of string with empty function names
+        in_other_fun <- in_other_fun[ ! tempo_log] # removal of empty string
+        in_other_fun_names_pos <- in_other_fun_names_pos[ ! tempo_log]
+        in_other_code_line_nb <- out$code_line_nb[ ! tempo_log]
         if( ! (base::length(x = in_other_fun) == base::length(x = in_other_fun_names_pos) & base::length(x = in_other_fun) == base::length(x = in_other_code_line_nb))){
             # nocov start
             # codecov inactivated because it is an internal control of code writing, impossible to cover with argument values.
