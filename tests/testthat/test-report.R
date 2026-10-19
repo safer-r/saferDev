@@ -352,6 +352,36 @@ testthat::test_that("report()", {
             testthat::expect_no_error(report(data = data_7, output = output_1, path = path_1, append = TRUE, rownames_kept = FALSE, vector_cat = FALSE, noquote = FALSE, sep = 1, safer_check = TRUE, lib_path = NULL, error_text = ""))
             # end if(base::all(base::class(x = data) == "list", na.rm = TRUE)){
 
+            # rownames_kept = TRUE (untested half of the documented parameter): row names must be kept in 2D objects
+            # dedicated output file, removed before each write because report() with append = FALSE refuses to overwrite an existing file
+            output_rownames <- "results_rownames_test.txt"
+            base::unlink(x = base::file.path(path_1, output_rownames), recursive = TRUE, force = TRUE)
+            data_rownames <- base::matrix(1:4, nrow = 2, ncol = 2, dimnames = base::list(base::c("rowA", "rowB"), base::c("colA", "colB")))
+            # reference: rownames_kept = FALSE must strip the row names
+            testthat::expect_no_error(report(data = data_rownames, output = output_rownames, path = path_1, append = FALSE, rownames_kept = FALSE, vector_cat = FALSE, noquote = FALSE, sep = 1, safer_check = TRUE, lib_path = NULL, error_text = ""))
+            out_no_rownames <- base::readLines(con = base::file.path(path_1, output_rownames), ok = TRUE, warn = FALSE, skipNul = FALSE)
+            testthat::expect_false(object = base::any(base::grepl(x = out_no_rownames, pattern = "rowA", ignore.case = FALSE, perl = FALSE, fixed = TRUE, useBytes = FALSE), na.rm = TRUE))
+            testthat::expect_true(object = base::any(base::grepl(x = out_no_rownames, pattern = "colA", ignore.case = FALSE, perl = FALSE, fixed = TRUE, useBytes = FALSE), na.rm = TRUE)) # col names are not removed by rownames_kept (only row names are)
+            # rownames_kept = TRUE must keep them
+            base::unlink(x = base::file.path(path_1, output_rownames), recursive = TRUE, force = TRUE)
+            testthat::expect_no_error(report(data = data_rownames, output = output_rownames, path = path_1, append = FALSE, rownames_kept = TRUE, vector_cat = FALSE, noquote = FALSE, sep = 1, safer_check = TRUE, lib_path = NULL, error_text = ""))
+            out_with_rownames <- base::readLines(con = base::file.path(path_1, output_rownames), ok = TRUE, warn = FALSE, skipNul = FALSE)
+            testthat::expect_true(object = base::any(base::grepl(x = out_with_rownames, pattern = "rowA", ignore.case = FALSE, perl = FALSE, fixed = TRUE, useBytes = FALSE), na.rm = TRUE))
+            testthat::expect_true(object = base::any(base::grepl(x = out_with_rownames, pattern = "colA", ignore.case = FALSE, perl = FALSE, fixed = TRUE, useBytes = FALSE), na.rm = TRUE))
+            testthat::expect_true(object = base::any(base::grepl(x = out_with_rownames, pattern = "rowB", ignore.case = FALSE, perl = FALSE, fixed = TRUE, useBytes = FALSE), na.rm = TRUE))
+            testthat::expect_true(object = base::any(base::grepl(x = out_with_rownames, pattern = "colB", ignore.case = FALSE, perl = FALSE, fixed = TRUE, useBytes = FALSE), na.rm = TRUE))
+            # same on a data.frame with row names (nrow <= 4 branch: default FALSE replaces them by spaces)
+            df_rownames <- base::data.frame(A = 1:2, B = base::c("x", "y"), row.names = base::c("r1", "r2"), stringsAsFactors = TRUE)
+            base::unlink(x = base::file.path(path_1, output_rownames), recursive = TRUE, force = TRUE)
+            testthat::expect_no_error(report(data = df_rownames, output = output_rownames, path = path_1, append = FALSE, rownames_kept = TRUE, vector_cat = FALSE, noquote = FALSE, sep = 1, safer_check = TRUE, lib_path = NULL, error_text = ""))
+            out_df_true <- base::readLines(con = base::file.path(path_1, output_rownames), ok = TRUE, warn = FALSE, skipNul = FALSE)
+            testthat::expect_true(object = base::any(base::grepl(x = out_df_true, pattern = "r1", ignore.case = FALSE, perl = FALSE, fixed = TRUE, useBytes = FALSE), na.rm = TRUE))
+            base::unlink(x = base::file.path(path_1, output_rownames), recursive = TRUE, force = TRUE)
+            testthat::expect_no_error(report(data = df_rownames, output = output_rownames, path = path_1, append = FALSE, rownames_kept = FALSE, vector_cat = FALSE, noquote = FALSE, sep = 1, safer_check = TRUE, lib_path = NULL, error_text = ""))
+            out_df_false <- base::readLines(con = base::file.path(path_1, output_rownames), ok = TRUE, warn = FALSE, skipNul = FALSE)
+            testthat::expect_false(object = base::any(base::grepl(x = out_df_false, pattern = "r1", ignore.case = FALSE, perl = FALSE, fixed = TRUE, useBytes = FALSE), na.rm = TRUE))
+            base::unlink(x = base::file.path(path_1, output_rownames), recursive = TRUE, force = TRUE) # cleanup, same as the final unlink of output_1
+
 
     #### end main code
     ## end tests (ordered by arg appearance and conditions in the code)

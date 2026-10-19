@@ -24,7 +24,7 @@
 #' \itemize{
 #'   \item \code{problem}: logical. Is there any problem detected?
 #'   \item \code{text}: message indicating the details of the problem, or the absence of problem.
-#'   \item \code{object.name}: value of the \code{data_name} argument (i.e., name of the checked object if provided, \code{NULL} otherwise).
+#'   \item \code{object_name}: value of the \code{data_name} argument (i.e., name of the checked object if provided, \code{NULL} otherwise).
 #' }
 #' @details
 #' At least one of the \code{class}, \code{type}, \code{mode}, \code{length}, \code{prop} or \code{options} must be set by the user.
@@ -506,13 +506,13 @@ arg_check <- function(
     ######## other checkings
 
     # authorized modes for the arguments
-    basic.mode <- base::c(
+    basic_mode <- base::c(
         "NULL", # must be added here even if already dealt above
         "logical", 
         "numeric", 
         "character"
     )
-    tempo.arg.base <- base::c( # no base::names(base::formals(fun = base::sys.function(base::sys.parent(n = 2)))) used with arg_check() to be sure to deal with the correct environment
+    tempo_arg_base <- base::c( # no base::names(base::formals(fun = base::sys.function(base::sys.parent(n = 2)))) used with arg_check() to be sure to deal with the correct environment
         # "class", 
         "typeof", 
         "mode", 
@@ -531,7 +531,7 @@ arg_check <- function(
         # "lib_path", # already checked above
         # "error_text" # already checked above
     )
-    tempo.mode <- base::list( # no base::get() used to be sure to deal with the correct environment
+    tempo_mode <- base::list( # no base::get() used to be sure to deal with the correct environment
         base::mode(x = typeof), 
         base::mode(x = mode), 
         base::mode(x = length), 
@@ -546,11 +546,11 @@ arg_check <- function(
         base::mode(x = data_name),
         base::mode(x = data_arg)
     )
-    tempo <- ! base::sapply(X = base::lapply(X = tempo.mode, FUN = function(x){x %in% basic.mode}), FUN = function(x){base::all(x, na.rm = TRUE)}, simplify = TRUE, USE.NAMES = TRUE)
+    tempo <- ! base::sapply(X = base::lapply(X = tempo_mode, FUN = function(x){x %in% basic_mode}), FUN = function(x){base::all(x, na.rm = TRUE)}, simplify = TRUE, USE.NAMES = TRUE)
     if(base::any(tempo, na.rm = TRUE)){
-        tempo_cat1 <- tempo.arg.base[tempo]
-        tempo_cat2 <- base::sapply(X = tempo.mode[tempo], FUN = function(x){base::paste0(x, collapse = " ", recycle0 = FALSE)}, simplify = TRUE, USE.NAMES = TRUE)
-        tempo.sep <- base::sapply(X = base::mapply(x = " ", y = base::max(base::nchar(x = tempo_cat1, type = "chars", allowNA = FALSE, keepNA = NA), na.rm = TRUE) - base::nchar(x = tempo_cat1, type = "chars", allowNA = FALSE, keepNA = NA) + 3, FUN = function(x, y){base::rep(x = x, times = y)}, MoreArgs = NULL, SIMPLIFY = FALSE, USE.NAMES = TRUE), FUN = function(x){base::paste0(x, collapse = "", recycle0 = FALSE)}, simplify = TRUE, USE.NAMES = TRUE)
+        tempo_cat1 <- tempo_arg_base[tempo]
+        tempo_cat2 <- base::sapply(X = tempo_mode[tempo], FUN = function(x){base::paste0(x, collapse = " ", recycle0 = FALSE)}, simplify = TRUE, USE.NAMES = TRUE)
+        tempo_sep <- base::sapply(X = base::mapply(x = " ", y = base::max(base::nchar(x = tempo_cat1, type = "chars", allowNA = FALSE, keepNA = NA), na.rm = TRUE) - base::nchar(x = tempo_cat1, type = "chars", allowNA = FALSE, keepNA = NA) + 3, FUN = function(x, y){base::rep(x = x, times = y)}, MoreArgs = NULL, SIMPLIFY = FALSE, USE.NAMES = TRUE), FUN = function(x){base::paste0(x, collapse = "", recycle0 = FALSE)}, simplify = TRUE, USE.NAMES = TRUE)
         tempo_cat <- base::paste0(
             error_text_start, 
             "ANY ARGUMENT EXCEPT data AND class MUST BE MODE \"logical\", \"integer\", \"numeric\", \"character\" OR NULL.\nPROBLEMATIC ARGUMENT", 
@@ -558,7 +558,7 @@ arg_check <- function(
             " AND ASSOCIATED MODE", 
             base::ifelse(test = base::length(x = tempo_cat1) > 1, yes = "ES ARE", no = " IS"), 
             ":\n", 
-            base::paste0(tempo_cat1, tempo.sep, tempo_cat2, collapse = "\n", recycle0 = FALSE),
+            base::paste0(tempo_cat1, tempo_sep, tempo_cat2, collapse = "\n", recycle0 = FALSE),
             collapse = NULL, 
             recycle0 = FALSE
         )
@@ -793,7 +793,7 @@ arg_check <- function(
     text_ok <- base::paste0("NO PROBLEM DETECTED FOR THE ", data_name, base::ifelse(test = base::is.null(x = data_name), yes = "", no = " "), base::ifelse(test = data_arg, yes = "ARGUMENT", no = "OBJECT"), base::ifelse(test = error_text == "", yes = ".", no = error_text), collapse = NULL, recycle0 = FALSE)
     text <- text_ok
     if(( ! base::is.null(x = options)) & (base::all(base::typeof(x = data) == "character", na.rm = TRUE) | base::all(base::typeof(x = data) == "integer", na.rm = TRUE) | base::all(base::typeof(x = data) == "double", na.rm = TRUE))){ # base::all() without na.rm -> ok because base::typeof() never returns NA
-        test.log <- TRUE
+        test_log <- TRUE
         tempo_data_opt <- data # for the options argument only
         if(base::all(base::typeof(x = tempo_data_opt) == "double", na.rm = TRUE)){
             if( ! base::isTRUE(
@@ -825,12 +825,12 @@ arg_check <- function(
                     collapse = NULL, 
                     recycle0 = FALSE
                 )
-                test.log <- FALSE
+                test_log <- FALSE
             }else{
                 tempo_data_opt <- base::as.integer(x = tempo_data_opt)
             }
         }
-        if(test.log == TRUE){
+        if(test_log == TRUE){
             if( ! base::all(tempo_data_opt %in% options, na.rm = TRUE)){ # no need of na.rm = TRUE for base::all() because %in% does not output NA
                 problem <- TRUE
                 if(base::identical(x = text, y = text_ok, num.eq = TRUE, single.NA = TRUE, attrib.as.set = TRUE, ignore.bytecode = TRUE, ignore.environment = FALSE, ignore.srcref = TRUE, extptr.as.ref = FALSE)){
@@ -914,7 +914,7 @@ arg_check <- function(
         for(i2 in 1:base::length(x = arg.names)){
             if( ! base::is.null(x = base::get(x = arg.names[i2], pos = -1L, envir = base::as.environment(-1), mode = "any", inherits = FALSE))){
                 # script to execute
-                tempo.script <- '
+                tempo_script <- '
                     problem <- TRUE ;
                     if(base::identical(x = text, y = text_ok, num.eq = TRUE, single.NA = TRUE, attrib.as.set = TRUE, ignore.bytecode = TRUE, ignore.environment = FALSE, ignore.srcref = TRUE, extptr.as.ref = FALSE)){
                         text <- base::paste0("ERROR", base::ifelse(test = error_text == "", yes = "", no = error_text), "\n\nTHE ", data_name, " ", base::ifelse(test = data_arg, yes = "ARGUMENT", no = "OBJECT"), " MUST BE ", collapse = NULL, recycle0 = FALSE) ;
@@ -934,11 +934,11 @@ arg_check <- function(
                 # end script to execute
                 if(base::typeof(x = data) == "double" & double_as_integer_allowed == TRUE & ((arg.names[i2] == "class" & base::all(base::get(x = arg.names[i2], pos = -1L, envir = base::as.environment(-1), mode = "any", inherits = FALSE) == "integer", na.rm = TRUE)) | (arg.names[i2] == "typeof" & base::all(base::get(x = arg.names[i2], pos = -1L, envir = base::as.environment(-1), mode = "any", inherits = FALSE) == "integer", na.rm = TRUE)))){ # data of type double & double_as_integer_allowed == TRUE and (class = "integer" | typeof = "integer") # no need of na.rm = TRUE for base::all() because == does not output NA if no NA in left of ==, which is the case for arg.names # base::typeof(data) == "double" means no factor allowed
                     if( ! base::all(data %% 1 == 0L, na.rm = TRUE)){ # to check integers (use %%, meaning the remaining of a division): see the precedent line. base::isTRUE(base::all.equal(data%%1, base::rep(0, base::length(data)))) not used because we strictly need zero as a result. Warning: na.rm = TRUE required here for base::all()
-                        base::eval(expr = base::parse(text = tempo.script, file = "", n = NULL, prompt = "?", keep.source = base::getOption(x = "keep.source", default = NULL), srcfile = NULL, encoding = "unknown"), envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL)) # execute tempo.script
+                        base::eval(expr = base::parse(text = tempo_script, file = "", n = NULL, prompt = "?", keep.source = base::getOption(x = "keep.source", default = NULL), srcfile = NULL, encoding = "unknown"), envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL)) # execute tempo.script
                     }
                 }else if(arg.names[i2] == "length"){
                     if( ! (base::length(x = data) == base::get(x = arg.names[i2], pos = -1L, envir = base::as.environment(-1), mode = "any", inherits = FALSE))){ # numeric comparison for the length argument (single integer value, checked above)
-                        base::eval(expr = base::parse(text = tempo.script, file = "", n = NULL, prompt = "?", keep.source = base::getOption(x = "keep.source", default = NULL), srcfile = NULL, encoding = "unknown"), envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL)) # execute tempo.script
+                        base::eval(expr = base::parse(text = tempo_script, file = "", n = NULL, prompt = "?", keep.source = base::getOption(x = "keep.source", default = NULL), srcfile = NULL, encoding = "unknown"), envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL)) # execute tempo.script
                     }
                 }else if( ! base::identical(
                     x = base::as.character(x = base::eval(expr = base::parse(text = base::paste0(arg.names[i2], "(data)", collapse = NULL, recycle0 = FALSE), file = "", n = NULL, prompt = "?", keep.source = base::getOption(x = "keep.source", default = NULL), srcfile = NULL, encoding = "unknown"), envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL))), 
@@ -951,7 +951,7 @@ arg_check <- function(
                     ignore.srcref = TRUE, 
                     extptr.as.ref = FALSE
                 )){ # test the three base::c("class", "typeof", "mode") arguments with their corresponding function, exactly (same values, in the same order). base::as.character() used on both sides to remove any potential attribute of class(data), typeof(data) and mode(data). No need of na.rm = TRUE because base::as.character() is used
-                    base::eval(expr = base::parse(text = tempo.script, file = "", n = NULL, prompt = "?", keep.source = base::getOption(x = "keep.source", default = NULL), srcfile = NULL, encoding = "unknown"), envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL)) # execute tempo.script
+                    base::eval(expr = base::parse(text = tempo_script, file = "", n = NULL, prompt = "?", keep.source = base::getOption(x = "keep.source", default = NULL), srcfile = NULL, encoding = "unknown"), envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL)) # execute tempo.script
                 }
             }
         }
@@ -1040,7 +1040,7 @@ arg_check <- function(
     #### end warning output
 
     #### output
-    output <- base::list(problem = problem, text = text, object.name = data_name)
+    output <- base::list(problem = problem, text = text, object_name = data_name)
     base::return(output)
     # end output
 

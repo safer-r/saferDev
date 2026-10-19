@@ -43,7 +43,7 @@ t.test <- 1
 search() # current R scope (order of the successive R environments).
 utils::find("mean") # where the objects with the name "mean" are present.
 utils::find("t.test") # where the objects with the name "mean" are present.
-# test if any object name of the global environment are above environments:
+# test if any object_name of the global environment are above environments:
 a <- saferDev::env_check(pos = 1) 
 a # output string.
 cat(a)

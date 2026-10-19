@@ -340,11 +340,11 @@
         )
         base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL)
     }
-    pkg.fun.name.list <- base::strsplit(x = fun, split = ":{2,3}", fixed = FALSE, perl = FALSE, useBytes = FALSE) # package in 1 and function in 2
-    pkg.name <- base::sapply(X = pkg.fun.name.list, FUN = function(x){x[1]}, simplify = TRUE, USE.NAMES = TRUE)
-    pkg.log <- pkg.name %in% base::gsub(x = base::find.package(package = pkg.name, lib.loc = lib_path, quiet = TRUE, verbose = FALSE), pattern = "^.*/", replacement = "", ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE)
-    if( ! base::all(pkg.log, na.rm = TRUE)){
-        tempo <- base::unique(x = pkg.name[ ! pkg.log], incomparables = FALSE)
+    pkg_fun_name_list <- base::strsplit(x = fun, split = ":{2,3}", fixed = FALSE, perl = FALSE, useBytes = FALSE) # package in 1 and function in 2
+    pkg_name <- base::sapply(X = pkg_fun_name_list, FUN = function(x){x[1]}, simplify = TRUE, USE.NAMES = TRUE)
+    pkg_log <- pkg_name %in% base::gsub(x = base::find.package(package = pkg_name, lib.loc = lib_path, quiet = TRUE, verbose = FALSE), pattern = "^.*/", replacement = "", ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE)
+    if( ! base::all(pkg_log, na.rm = TRUE)){
+        tempo <- base::unique(x = pkg_name[ ! pkg_log], incomparables = FALSE)
         tempo_cat <- base::paste0(
             error_text_start,
             "REQUIRED PACKAGE", 
@@ -358,9 +358,9 @@
         )
         base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL)
     }
-    fun.log <- base::sapply(X = pkg.fun.name.list, FUN = function(x){base::exists(x = x[2], envir = base::getNamespace(name = x[1]), where = -1, frame = NULL, mode = "any", inherits = FALSE)}, simplify = TRUE, USE.NAMES = TRUE)
-    if( ! base::all(fun.log, na.rm = TRUE)){
-        tempo <- fun[ ! fun.log]
+    fun_log <- base::sapply(X = pkg_fun_name_list, FUN = function(x){base::exists(x = x[2], envir = base::getNamespace(name = x[1]), where = -1, frame = NULL, mode = "any", inherits = FALSE)}, simplify = TRUE, USE.NAMES = TRUE)
+    if( ! base::all(fun_log, na.rm = TRUE)){
+        tempo <- fun[ ! fun_log]
         tempo_cat <- base::paste0(
             error_text_start,
             "REQUIRED FUNCTION",

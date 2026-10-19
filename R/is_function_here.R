@@ -355,7 +355,7 @@ is_function_here <- function(
     text_check <- NULL
     checked_arg_names <- NULL # for function debbuging: used by r_debugging_tools
     arg_check_error_text <- base::paste0("ERROR ", embed_error_text, "\n\n", collapse = NULL, recycle0 = FALSE) # must be used instead of error_text = embed_error_text when several arg_check are performed on the same argument (tempo1, tempo2, see below)
-    ee <- base::expression(argum_check <- base::c(argum_check, tempo$problem) , text_check <- base::c(text_check, tempo$text) , checked_arg_names <- base::c(checked_arg_names, tempo$object.name))
+    ee <- base::expression(argum_check <- base::c(argum_check, tempo$problem) , text_check <- base::c(text_check, tempo$text) , checked_arg_names <- base::c(checked_arg_names, tempo$object_name))
     # add as many lines as below, for each of your arguments of your function in development
     tempo <- saferDev::arg_check(data = fun, class = NULL, typeof = NULL, mode = "character", length = NULL, prop = FALSE, options = NULL, double_as_integer_allowed = FALSE, all_options_in_data = FALSE, na_contain = TRUE, neg_values = TRUE, inf_values = TRUE, print = FALSE, data_name = NULL, data_arg = TRUE, safer_check = FALSE, lib_path = lib_path, error_text = embed_error_text) ; base::eval(expr = ee, envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL))
     # lib_path already checked above
@@ -460,11 +460,11 @@ is_function_here <- function(
         )
         base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL)
     }
-    pkg.fun.name.list <- base::strsplit(x = fun, split = ":{2,3}", fixed = FALSE, perl = FALSE, useBytes = FALSE) # package in 1 and function in 2
-    pkg.name <- base::sapply(X = pkg.fun.name.list, FUN = function(x){x[1]}, simplify = TRUE, USE.NAMES = TRUE)
-    pkg.log <- pkg.name %in% base::gsub(x = base::find.package(package = pkg.name, lib.loc = lib_path, quiet = TRUE, verbose = FALSE), pattern = "^.*/", replacement = "", ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE)
-    if( ! base::all(pkg.log, na.rm = TRUE)){
-        tempo <- base::unique(x = pkg.name[ ! pkg.log], incomparables = FALSE)
+    pkg_fun_name_list <- base::strsplit(x = fun, split = ":{2,3}", fixed = FALSE, perl = FALSE, useBytes = FALSE) # package in 1 and function in 2
+    pkg_name <- base::sapply(X = pkg_fun_name_list, FUN = function(x){x[1]}, simplify = TRUE, USE.NAMES = TRUE)
+    pkg_log <- pkg_name %in% base::gsub(x = base::find.package(package = pkg_name, lib.loc = lib_path, quiet = TRUE, verbose = FALSE), pattern = "^.*/", replacement = "", ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE)
+    if( ! base::all(pkg_log, na.rm = TRUE)){
+        tempo <- base::unique(x = pkg_name[ ! pkg_log], incomparables = FALSE)
         tempo_cat <- base::paste0(
             error_text_start,
             "REQUIRED PACKAGE", 
@@ -478,9 +478,9 @@ is_function_here <- function(
         )
         base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL)
     }
-    fun.log <- base::sapply(X = pkg.fun.name.list, FUN = function(x){base::exists(x = x[2], envir = base::getNamespace(name = x[1]), where = -1, frame = NULL, mode = "any", inherits = FALSE)}, simplify = TRUE, USE.NAMES = TRUE)
-    if( ! base::all(fun.log, na.rm = TRUE)){
-        tempo <- fun[ ! fun.log]
+    fun_log <- base::sapply(X = pkg_fun_name_list, FUN = function(x){base::exists(x = x[2], envir = base::getNamespace(name = x[1]), where = -1, frame = NULL, mode = "any", inherits = FALSE)}, simplify = TRUE, USE.NAMES = TRUE)
+    if( ! base::all(fun_log, na.rm = TRUE)){
+        tempo <- fun[ ! fun_log]
         tempo_cat <- base::paste0(
             error_text_start,
             "REQUIRED FUNCTION",

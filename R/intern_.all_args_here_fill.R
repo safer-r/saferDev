@@ -335,7 +335,7 @@
     text_check <- NULL
     checked_arg_names <- NULL # for function debbuging: used by r_debugging_tools
     arg_check_error_text <- base::paste0("ERROR ", embed_error_text, "\n\n", collapse = NULL, recycle0 = FALSE) # must be used instead of error_text = embed_error_text when several arg_check are performed on the same argument (tempo1, tempo2, see below)
-    ee <- base::expression(argum_check <- base::c(argum_check, tempo$problem) , text_check <- base::c(text_check, tempo$text) , checked_arg_names <- base::c(checked_arg_names, tempo$object.name))
+    ee <- base::expression(argum_check <- base::c(argum_check, tempo$problem) , text_check <- base::c(text_check, tempo$text) , checked_arg_names <- base::c(checked_arg_names, tempo$object_name))
     # add as many lines as below, for each of your arguments of your function in development
     tempo <-  saferDev::arg_check(data = arg_full, class = "list", typeof = NULL, mode = NULL, length = NULL, prop = FALSE, options = NULL, double_as_integer_allowed = FALSE, all_options_in_data = FALSE, na_contain = TRUE, neg_values = TRUE, inf_values = TRUE, print = FALSE, data_name = NULL, data_arg = TRUE, safer_check = FALSE, lib_path = lib_path, error_text = embed_error_text) ; base::eval(expr = ee, envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL))
     if( ! base::is.null(x = arg_full_names)){ # for all arguments that can be NULL, write like this:
@@ -492,7 +492,7 @@
             missing_args_names <- arg_full_names
         }else{
             missing_full_arg_name_log <- base::rep(x = TRUE, times = base::length(x = tempo_split)) # will help for counting the tempo_split args without arg name before. All the remaining TRUE will be values that need an arg name
-            for(i3 in 1:base::length(x = arg_full_names)){
+            for(i3 in base::seq_along(along.with = arg_full_names)){ # seq_along() instead of 1:base::length() avoids iterating over c(1, 0) when arg_full_names is NULL or empty (1:0 gives c(1, 0), which would index NA and run a spurious 0-iteration)
                 pattern3 <- base::paste0("^[\\s\\r\\n]*", arg_full_names[i3], "[\\s]*=", collapse = NULL, recycle0 = FALSE) # looking for the arg name
                 tempo.log <- base::grepl(x = tempo_split, pattern = pattern3, perl = TRUE, ignore.case = FALSE, fixed = FALSE, useBytes = FALSE)
                 if(base::sum(tempo.log, na.rm = TRUE) == 1){ # arg i3 has its names written in the args between ()
@@ -524,7 +524,7 @@
         supp_args_in_three_dots <- NULL
         if(base::any(three_dots_log, na.rm = TRUE)){
             if(base::length(x = missing_full_arg_name_log) != 0){ # no need to add & base::length(tempo_split) != 0 because both have the same length
-                for(i3 in 1:base::length(x = tempo_split)){
+                for(i3 in base::seq_along(along.with = tempo_split)){ # seq_along() instead of 1:base::length() avoids iterating over c(1, 0) when tempo_split is NULL or empty
                     if(base::grepl(x = tempo_split[i3], pattern = pattern1, perl = TRUE, ignore.case = FALSE, fixed = FALSE, useBytes = FALSE) & missing_full_arg_name_log[i3] == TRUE){ # missing_full_arg_name_log[i3] == TRUE means values that need an arg name but detection of a = with only arg name rule before
                         missing_full_arg_name_log[i3] <- FALSE # remove this arg from the args that need an arg name
                         supp_args_in_three_dots <- base::c(supp_args_in_three_dots, tempo_split[i3])
@@ -571,7 +571,7 @@
         }
         tempo_col8 <- NULL
         if(( ! base::is.null(x = missing_args_names)) & base::length(x = tempo_split) != 0){
-            for(i3 in 1:base::length(x = tempo_split)){
+            for(i3 in base::seq_along(along.with = tempo_split)){ # seq_along() instead of 1:base::length() avoids iterating over c(1, 0) when tempo_split is NULL or empty
                 if(base::grepl(x = tempo_split[i3], pattern = pattern1, perl = TRUE, ignore.case = FALSE, fixed = FALSE, useBytes = FALSE)){
                     tempo_arg_name <- base::strsplit(x = tempo_split[i3], split = "[\\s\\r\\n]*=", perl = TRUE, fixed = FALSE, useBytes = FALSE)[[1]][1]
                     tempo_arg_name <- base::gsub(pattern = "^[\\s]*", replacement = "", x = tempo_arg_name, ignore.case = FALSE, perl = TRUE, fixed = FALSE, useBytes = FALSE) # removing leading space

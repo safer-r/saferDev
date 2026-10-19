@@ -42,12 +42,12 @@ testthat::test_that("arg_check()", {
     ######## management of NULL arguments
     testthat::expect_error(arg_check(data = NULL))
     result <- arg_check(data = NULL, mode = "numeric")
-    expect <- list(problem = TRUE, text = "ERROR\n\nTHE NULL ARGUMENT MUST BE MODE numeric", object.name = "NULL")
+    expect <- list(problem = TRUE, text = "ERROR\n\nTHE NULL ARGUMENT MUST BE MODE numeric", object_name = "NULL")
     testthat::expect_equal(result, expect)
     testthat::expect_no_error(arg_check(data = vec1, class = NULL,  mode = "numeric"))
     testthat::expect_no_error(arg_check(data = vec1, class = "list", mode = NULL))
     result <- arg_check(data = vec1, class = "list", mode = NULL)
-    expect <- list(problem = TRUE, text = "ERROR\n\nTHE vec1 ARGUMENT MUST BE CLASS list", object.name = "vec1")
+    expect <- list(problem = TRUE, text = "ERROR\n\nTHE vec1 ARGUMENT MUST BE CLASS list", object_name = "vec1")
     testthat::expect_equal(result, expect)
     testthat::expect_no_error(arg_check(data = vec1, mode = "numeric", typeof = NULL))
     testthat::expect_no_error(arg_check(data = vec1, mode = "numeric", length = NULL))
@@ -127,10 +127,10 @@ testthat::test_that("arg_check()", {
     testthat::expect_error(arg_check(data = vec1, mode = "numeric", safer_check = expr1))
     testthat::expect_error(arg_check(data = vec1, mode = "numeric", safer_check = fun1))
     result <- arg_check(data = vec1, mode = "numeric", safer_check = TRUE)
-    expect <- list(problem = FALSE, text = "NO PROBLEM DETECTED FOR THE vec1 ARGUMENT.", object.name = "vec1")
+    expect <- list(problem = FALSE, text = "NO PROBLEM DETECTED FOR THE vec1 ARGUMENT.", object_name = "vec1")
     testthat::expect_equal(result, expect)
     result <- arg_check(data = vec1, mode = "numeric", safer_check = FALSE)
-    expect <- list(problem = FALSE, text = "NO PROBLEM DETECTED FOR THE vec1 ARGUMENT.", object.name = "vec1")
+    expect <- list(problem = FALSE, text = "NO PROBLEM DETECTED FOR THE vec1 ARGUMENT.", object_name = "vec1")
     testthat::expect_equal(result, expect)
     ######## end safer_check argument
 
@@ -146,14 +146,23 @@ testthat::test_that("arg_check()", {
     testthat::expect_error(arg_check(data = vec1, mode = "numeric", safer_check = TRUE, lib_path = fun1))
     testthat::expect_error(arg_check(data = vec1, mode = "numeric", safer_check = TRUE, lib_path = "PATH_NOT_GOOD"))
     result <- arg_check(data = vec1, mode = "numeric", safer_check = TRUE, lib_path = NULL)
-    expect <- list(problem = FALSE, text = "NO PROBLEM DETECTED FOR THE vec1 ARGUMENT.", object.name = "vec1")
+    expect <- list(problem = FALSE, text = "NO PROBLEM DETECTED FOR THE vec1 ARGUMENT.", object_name = "vec1")
     testthat::expect_equal(result, expect)
     result <- arg_check(data = vec1, mode = "numeric", safer_check = TRUE, lib_path = base::.libPaths())
-    expect <- list(problem = FALSE, text = "NO PROBLEM DETECTED FOR THE vec1 ARGUMENT.", object.name = "vec1")
+    expect <- list(problem = FALSE, text = "NO PROBLEM DETECTED FOR THE vec1 ARGUMENT.", object_name = "vec1")
     testthat::expect_equal(result, expect)
-    # ini_lib_path <- base:::.libPaths(new = , include.site = TRUE)
-    # testthat::expect_no_error(arg_check(data = vec1, mode = "numeric", safer_check = TRUE, lib_path = ".")) # lib_path = "." with safer_check = TRUE returns an error
-    # testthat::expect_equal(ini_lib_path, base:::.libPaths(new = , include.site = TRUE)) # .libPaths must not be changed by lib_path = "."
+    # lib_path restoration assertion (the .libPaths() must be restored after execution, as documented)
+    ini_lib_path <- base::.libPaths(new = , include.site = TRUE)
+    tempo_lib_dir <- base::file.path(base::tempdir(), "safer_dev_test_lib_dir")
+    base::dir.create(path = tempo_lib_dir, showWarnings = FALSE, recursive = TRUE, mode = "0777")
+    testthat::expect_no_error(arg_check(data = vec1, mode = "numeric", safer_check = TRUE, lib_path = tempo_lib_dir))
+    testthat::expect_equal(base::.libPaths(new = , include.site = TRUE), ini_lib_path) # .libPaths() must be restored after function execution
+    # same assertion after an error triggered inside the function (on.exit() must still restore)
+    # note: an error triggered before the .libPaths() modification (e.g. non-existing lib_path dir) would not exercise on.exit(), so an error AFTER the modification is used (invalid mode value caught by the secondary checking): the temp dir must still exist at this point
+    ini_lib_path2 <- base::.libPaths(new = , include.site = TRUE)
+    testthat::expect_error(arg_check(data = vec1, mode = 123, safer_check = TRUE, lib_path = tempo_lib_dir)) # invalid mode value: must stop after the .libPaths() modification
+    testthat::expect_equal(base::.libPaths(new = , include.site = TRUE), ini_lib_path2) # .libPaths() must be restored even after an internal error
+    base::unlink(x = tempo_lib_dir, recursive = TRUE, force = TRUE)
     ######## end lib_path argument
 
     ######## check of the required functions from the required packages
@@ -194,14 +203,14 @@ testthat::test_that("arg_check()", {
     ######## other checkings
     # management of special classes
     result <- arg_check(data = vec1, class = mat3, typeof = "integer") # mat3 is a matrix of characters: now accepted as a vector of class strings (any string allowed), returning a problem because class(vec1) is "integer"
-    expect <- list(problem = TRUE, text = "ERROR\n\nTHE vec1 ARGUMENT MUST BE CLASS a, b, a, b", object.name = "vec1")
+    expect <- list(problem = TRUE, text = "ERROR\n\nTHE vec1 ARGUMENT MUST BE CLASS a, b, a, b", object_name = "vec1")
     testthat::expect_equal(result, expect)
     result <- arg_check(data = vec1, mode = "numeric", typeof = mat3) # mat3 is a matrix of characters: now accepted as a vector of typeof strings (any string allowed), returning a problem because typeof(vec1) is a single string. Note that mode = "numeric" now matches exactly mode(vec1)
-    expect <- list(problem = TRUE, text = "ERROR\n\nTHE vec1 ARGUMENT MUST BE TYPEOF a, b, a, b", object.name = "vec1")
+    expect <- list(problem = TRUE, text = "ERROR\n\nTHE vec1 ARGUMENT MUST BE TYPEOF a, b, a, b", object_name = "vec1")
     testthat::expect_equal(result, expect)
     testthat::expect_error(arg_check(data = vec1, mode = "numeric", mode = mat3)) # R itself errors because the formal argument "mode" is matched by multiple actual arguments. Replaced by the two lines below
     result <- arg_check(data = vec1, mode = mat3) # mat3 is a matrix of characters: now accepted as a vector of mode strings (any string allowed), returning a problem because mode(vec1) is a single string
-    expect <- list(problem = TRUE, text = "ERROR\n\nTHE vec1 ARGUMENT MUST BE MODE a, b, a, b", object.name = "vec1")
+    expect <- list(problem = TRUE, text = "ERROR\n\nTHE vec1 ARGUMENT MUST BE MODE a, b, a, b", object_name = "vec1")
     testthat::expect_equal(result, expect)
     testthat::expect_error(arg_check(data = vec1, mode = "numeric", length = mat3))
     testthat::expect_error(arg_check(data = vec1, mode = "numeric", prop = mat3))
@@ -231,16 +240,16 @@ testthat::test_that("arg_check()", {
     testthat::expect_error(arg_check(data = vec1, mode = "numeric", double_as_integer_allowed = 1))
     testthat::expect_error(arg_check(data = vec1, mode = "numeric", double_as_integer_allowed = c(TRUE, FALSE)))
     result <- arg_check(data = vec1, mode = "numeric", double_as_integer_allowed = TRUE)
-    expect <- list(problem = FALSE, text = "NO PROBLEM DETECTED FOR THE vec1 ARGUMENT.", object.name = "vec1")
+    expect <- list(problem = FALSE, text = "NO PROBLEM DETECTED FOR THE vec1 ARGUMENT.", object_name = "vec1")
     testthat::expect_equal(result, expect)
     result <- arg_check(data = vec1, mode = "numeric", double_as_integer_allowed = FALSE)
-    expect <- list(problem = FALSE, text = "NO PROBLEM DETECTED FOR THE vec1 ARGUMENT.", object.name = "vec1")
+    expect <- list(problem = FALSE, text = "NO PROBLEM DETECTED FOR THE vec1 ARGUMENT.", object_name = "vec1")
     testthat::expect_equal(result, expect)
     result <- arg_check(data = vec3, typeof = "integer", double_as_integer_allowed = TRUE)
-    expect <- list(problem = FALSE, text = "NO PROBLEM DETECTED FOR THE vec3 ARGUMENT.", object.name = "vec3")
+    expect <- list(problem = FALSE, text = "NO PROBLEM DETECTED FOR THE vec3 ARGUMENT.", object_name = "vec3")
     testthat::expect_equal(result, expect)
     result <- arg_check(data = vec3, typeof = "integer", double_as_integer_allowed = FALSE)
-    expect <- list(problem = TRUE, text = "ERROR\n\nTHE vec3 ARGUMENT MUST BE TYPEOF integer", object.name = "vec3")
+    expect <- list(problem = TRUE, text = "ERROR\n\nTHE vec3 ARGUMENT MUST BE TYPEOF integer", object_name = "vec3")
     testthat::expect_equal(result, expect)
     # end double_as_integer_allowed
     # all_options_in_data
@@ -249,10 +258,10 @@ testthat::test_that("arg_check()", {
     testthat::expect_error(arg_check(data = vec1, mode = "numeric", all_options_in_data = 1))
     testthat::expect_error(arg_check(data = vec1, mode = "numeric", all_options_in_data = c(TRUE, FALSE)))
     result <- arg_check(data = vec1, mode = "numeric", all_options_in_data = TRUE)
-    expect <- list(problem = FALSE, text = "NO PROBLEM DETECTED FOR THE vec1 ARGUMENT.", object.name = "vec1")
+    expect <- list(problem = FALSE, text = "NO PROBLEM DETECTED FOR THE vec1 ARGUMENT.", object_name = "vec1")
     testthat::expect_equal(result, expect)
     result <- arg_check(data = vec1, mode = "numeric", all_options_in_data = FALSE)
-    expect <- list(problem = FALSE, text = "NO PROBLEM DETECTED FOR THE vec1 ARGUMENT.", object.name = "vec1")
+    expect <- list(problem = FALSE, text = "NO PROBLEM DETECTED FOR THE vec1 ARGUMENT.", object_name = "vec1")
     testthat::expect_equal(result, expect)
     # end all_options_in_data
     # na_contain
@@ -261,22 +270,22 @@ testthat::test_that("arg_check()", {
     testthat::expect_error(arg_check(data = vec1, mode = "numeric", na_contain = 1))
     testthat::expect_error(arg_check(data = vec1, mode = "numeric", na_contain = c(TRUE, FALSE)))
     result <- arg_check(data = vec1, mode = "numeric", na_contain = TRUE)
-    expect <- list(problem = FALSE, text = "NO PROBLEM DETECTED FOR THE vec1 ARGUMENT.", object.name = "vec1")
+    expect <- list(problem = FALSE, text = "NO PROBLEM DETECTED FOR THE vec1 ARGUMENT.", object_name = "vec1")
     testthat::expect_equal(result, expect)
     result <- arg_check(data = vec1, mode = "numeric", na_contain = FALSE)
-    expect <- list(problem = FALSE, text = "NO PROBLEM DETECTED FOR THE vec1 ARGUMENT.", object.name = "vec1")
+    expect <- list(problem = FALSE, text = "NO PROBLEM DETECTED FOR THE vec1 ARGUMENT.", object_name = "vec1")
     testthat::expect_equal(result, expect)
     result <- arg_check(data = mat2, mode = "numeric", na_contain = TRUE)
-    expect <- list(problem = FALSE, text = "NO PROBLEM DETECTED FOR THE mat2 ARGUMENT.", object.name = "mat2")
+    expect <- list(problem = FALSE, text = "NO PROBLEM DETECTED FOR THE mat2 ARGUMENT.", object_name = "mat2")
     testthat::expect_equal(result, expect)
     result <- arg_check(data = mat2, mode = "numeric", na_contain = FALSE)
-    expect <- list(problem = TRUE, text = "ERROR\n\nTHE mat2 ARGUMENT CONTAINS NA WHILE NOT AUTHORIZED.", object.name = "mat2")
+    expect <- list(problem = TRUE, text = "ERROR\n\nTHE mat2 ARGUMENT CONTAINS NA WHILE NOT AUTHORIZED.", object_name = "mat2")
     testthat::expect_equal(result, expect)
     result <- arg_check(data = vec5, mode = "numeric", na_contain = TRUE)
-    expect <- list(problem = TRUE, text = "ERROR\n\nTHE vec5 ARGUMENT MUST BE MODE numeric", object.name = "vec5")
+    expect <- list(problem = TRUE, text = "ERROR\n\nTHE vec5 ARGUMENT MUST BE MODE numeric", object_name = "vec5")
     testthat::expect_equal(result, expect)
     result <- arg_check(data = vec5, mode = "numeric", na_contain = FALSE)
-    expect <- list(problem = TRUE, text = "ERROR\n\nTHE vec5 ARGUMENT MUST BE MODE numeric", object.name = "vec5")
+    expect <- list(problem = TRUE, text = "ERROR\n\nTHE vec5 ARGUMENT MUST BE MODE numeric", object_name = "vec5")
     testthat::expect_equal(result, expect)
     # end na_contain
     # neg_values
@@ -285,16 +294,16 @@ testthat::test_that("arg_check()", {
     testthat::expect_error(arg_check(data = vec1, mode = "numeric", neg_values = 1))
     testthat::expect_error(arg_check(data = vec1, mode = "numeric", neg_values = c(TRUE, FALSE)))
     result <- arg_check(data = vec1, mode = "numeric", neg_values = TRUE)
-    expect <- list(problem = FALSE, text = "NO PROBLEM DETECTED FOR THE vec1 ARGUMENT.", object.name = "vec1")
+    expect <- list(problem = FALSE, text = "NO PROBLEM DETECTED FOR THE vec1 ARGUMENT.", object_name = "vec1")
     testthat::expect_equal(result, expect)
     result <- arg_check(data = vec1, mode = "numeric", neg_values = FALSE)
-    expect <- list(problem = TRUE, text = "ERROR\n\nTHE vec1 ARGUMENT MUST BE MADE OF NON NEGATIVE VALUES.", object.name = "vec1")
+    expect <- list(problem = TRUE, text = "ERROR\n\nTHE vec1 ARGUMENT MUST BE MADE OF NON NEGATIVE VALUES.", object_name = "vec1")
     testthat::expect_equal(result, expect)
     result <- arg_check(data = vec5, mode = "numeric", neg_values = TRUE)
-    expect <- list(problem = TRUE, text = "ERROR\n\nTHE vec5 ARGUMENT MUST BE MODE numeric", object.name = "vec5")
+    expect <- list(problem = TRUE, text = "ERROR\n\nTHE vec5 ARGUMENT MUST BE MODE numeric", object_name = "vec5")
     testthat::expect_equal(result, expect)
     result <- arg_check(data = vec5, mode = "numeric", neg_values = FALSE)
-    expect <- list(problem = TRUE, text = "ERROR\n\nTHE vec5 ARGUMENT MUST BE MODE numeric AND THE vec5 ARGUMENT MUST BE MADE OF NON NEGATIVE VALUES BUT IS NOT EVEN NUMERIC.", object.name = "vec5")
+    expect <- list(problem = TRUE, text = "ERROR\n\nTHE vec5 ARGUMENT MUST BE MODE numeric AND THE vec5 ARGUMENT MUST BE MADE OF NON NEGATIVE VALUES BUT IS NOT EVEN NUMERIC.", object_name = "vec5")
     testthat::expect_equal(result, expect)
     # end neg_values
     # inf_values
@@ -303,16 +312,16 @@ testthat::test_that("arg_check()", {
     testthat::expect_error(arg_check(data = vec1, mode = "numeric", inf_values = 1))
     testthat::expect_error(arg_check(data = vec1, mode = "numeric", inf_values = c(TRUE, FALSE)))
     result <- arg_check(data = vec8, mode = "numeric", inf_values = TRUE)
-    expect <- list(problem = FALSE, text = "NO PROBLEM DETECTED FOR THE vec8 ARGUMENT.", object.name = "vec8")
+    expect <- list(problem = FALSE, text = "NO PROBLEM DETECTED FOR THE vec8 ARGUMENT.", object_name = "vec8")
     testthat::expect_equal(result, expect)
     result <- arg_check(data = vec8, mode = "numeric", inf_values = FALSE)
-    expect <- list(problem = TRUE, text =  "ERROR\n\nTHE vec8 ARGUMENT MUST BE MADE OF NON INFINITE VALUES.", object.name = "vec8")
+    expect <- list(problem = TRUE, text =  "ERROR\n\nTHE vec8 ARGUMENT MUST BE MADE OF NON INFINITE VALUES.", object_name = "vec8")
     testthat::expect_equal(result, expect)
     result <- arg_check(data = vec5, mode = "numeric", inf_values = TRUE)
-    expect <- list(problem = TRUE, text = "ERROR\n\nTHE vec5 ARGUMENT MUST BE MODE numeric", object.name = "vec5")
+    expect <- list(problem = TRUE, text = "ERROR\n\nTHE vec5 ARGUMENT MUST BE MODE numeric", object_name = "vec5")
     testthat::expect_equal(result, expect)
     result <- arg_check(data = vec5, mode = "numeric", inf_values = FALSE)
-    expect <- list(problem = TRUE, text = "ERROR\n\nTHE vec5 ARGUMENT MUST BE MODE numeric AND THE vec5 ARGUMENT MUST BE MADE OF NON INFINITE VALUES BUT IS NOT EVEN MODE NUMERIC OR TYPE DOUBLE.", object.name = "vec5")
+    expect <- list(problem = TRUE, text = "ERROR\n\nTHE vec5 ARGUMENT MUST BE MODE numeric AND THE vec5 ARGUMENT MUST BE MADE OF NON INFINITE VALUES BUT IS NOT EVEN MODE NUMERIC OR TYPE DOUBLE.", object_name = "vec5")
     testthat::expect_equal(result, expect)
     # end inf_values
     # print
@@ -321,16 +330,16 @@ testthat::test_that("arg_check()", {
     testthat::expect_error(arg_check(data = vec1, mode = "numeric", print = 1))
     testthat::expect_error(arg_check(data = vec1, mode = "numeric", print = c(TRUE, FALSE)))
     result <- arg_check(data = vec1, mode = "numeric", print = TRUE) 
-    expect <- list(problem = FALSE, text = "NO PROBLEM DETECTED FOR THE vec1 ARGUMENT.", object.name = "vec1")
+    expect <- list(problem = FALSE, text = "NO PROBLEM DETECTED FOR THE vec1 ARGUMENT.", object_name = "vec1")
     testthat::expect_equal(result, expect)
     result <- arg_check(data = vec1, mode = "numeric", print = FALSE)
-    expect <- list(problem = FALSE, text = "NO PROBLEM DETECTED FOR THE vec1 ARGUMENT.", object.name = "vec1")
+    expect <- list(problem = FALSE, text = "NO PROBLEM DETECTED FOR THE vec1 ARGUMENT.", object_name = "vec1")
     testthat::expect_equal(result, expect)
     result <- arg_check(data = vec5, mode = "numeric", print = TRUE) # the error message is printed but it is not an arror, stopping the execution
-    expect <- list(problem = TRUE, text = "ERROR\n\nTHE vec5 ARGUMENT MUST BE MODE numeric", object.name = "vec5")
+    expect <- list(problem = TRUE, text = "ERROR\n\nTHE vec5 ARGUMENT MUST BE MODE numeric", object_name = "vec5")
     testthat::expect_equal(result, expect)
     result <- arg_check(data = vec5, mode = "numeric", print = FALSE)
-    expect <- list(problem = TRUE, text = "ERROR\n\nTHE vec5 ARGUMENT MUST BE MODE numeric", object.name = "vec5")
+    expect <- list(problem = TRUE, text = "ERROR\n\nTHE vec5 ARGUMENT MUST BE MODE numeric", object_name = "vec5")
     testthat::expect_equal(result, expect)
     # end print
     # data_arg
@@ -339,16 +348,16 @@ testthat::test_that("arg_check()", {
     testthat::expect_error(arg_check(data = vec1, mode = "numeric", data_arg = 1))
     testthat::expect_error(arg_check(data = vec1, mode = "numeric", data_arg = c(TRUE, FALSE)))
     result <- arg_check(data = vec1, mode = "numeric", data_arg = TRUE)
-    expect <- list(problem = FALSE, text = "NO PROBLEM DETECTED FOR THE vec1 ARGUMENT.", object.name = "vec1")
+    expect <- list(problem = FALSE, text = "NO PROBLEM DETECTED FOR THE vec1 ARGUMENT.", object_name = "vec1")
     testthat::expect_equal(result, expect)
     result <- arg_check(data = vec1, mode = "numeric", data_arg = FALSE)
-    expect <- list(problem = FALSE, text = "NO PROBLEM DETECTED FOR THE vec1 OBJECT.", object.name = "vec1")
+    expect <- list(problem = FALSE, text = "NO PROBLEM DETECTED FOR THE vec1 OBJECT.", object_name = "vec1")
     testthat::expect_equal(result, expect)
     result <- arg_check(data = vec5, mode = "numeric", data_arg = TRUE)
-    expect <- list(problem = TRUE, text = "ERROR\n\nTHE vec5 ARGUMENT MUST BE MODE numeric", object.name = "vec5")
+    expect <- list(problem = TRUE, text = "ERROR\n\nTHE vec5 ARGUMENT MUST BE MODE numeric", object_name = "vec5")
     testthat::expect_equal(result, expect)
     result <- arg_check(data = vec5, mode = "numeric", data_arg = FALSE)
-    expect <- list(problem = TRUE, text = "ERROR\n\nTHE vec5 OBJECT MUST BE MODE numeric", object.name = "vec5")
+    expect <- list(problem = TRUE, text = "ERROR\n\nTHE vec5 OBJECT MUST BE MODE numeric", object_name = "vec5")
     testthat::expect_equal(result, expect)
     # end data_arg
     # end management of the logical arguments
@@ -365,10 +374,10 @@ testthat::test_that("arg_check()", {
     testthat::expect_error(arg_check(data = vec1, options = "a", class = NULL, typeof = NULL, mode = "numeric", prop = FALSE))
     testthat::expect_error(arg_check(data = vec1, options = "a", class = NULL, typeof = NULL, mode = NULL, prop = TRUE))
     result <- arg_check(data = vec1, options = "a", class = NULL, typeof = NULL, mode = NULL, prop = FALSE)
-    expect <- list(problem = TRUE, text = "ERROR\n\nTHE vec1 ARGUMENT MUST BE SOME OF THESE OPTIONS:\na\nTHE PROBLEMATIC ELEMENTS OF vec1 ARE:\n-1\n0\n1\n2\n3", object.name = "vec1")
+    expect <- list(problem = TRUE, text = "ERROR\n\nTHE vec1 ARGUMENT MUST BE SOME OF THESE OPTIONS:\na\nTHE PROBLEMATIC ELEMENTS OF vec1 ARE:\n-1\n0\n1\n2\n3", object_name = "vec1")
     testthat::expect_equal(result, expect)
     result <- arg_check(data = vec1, options = NULL, class = "vector", typeof = "double", mode = "numeric", prop = TRUE) # class = "vector" is not a shorthand anymore: class(vec1) is "integer"
-    expect <- list(problem = TRUE, text = "ERROR\n\nTHE vec1 ARGUMENT MUST BE CLASS vector AND TYPEOF double AND THE vec1 ARGUMENT MUST BE DECIMAL VALUES BETWEEN 0 AND 1.", object.name = "vec1")
+    expect <- list(problem = TRUE, text = "ERROR\n\nTHE vec1 ARGUMENT MUST BE CLASS vector AND TYPEOF double AND THE vec1 ARGUMENT MUST BE DECIMAL VALUES BETWEEN 0 AND 1.", object_name = "vec1")
     testthat::expect_equal(result, expect)
     # end THE class, typeof, mode ARGUMENTS MUST BE NULL, AND prop FALSE, IF THE options ARGUMENT IS SPECIFIED\nTHE options ARGUMENT MUST BE NULL IF THE class AND/OR typeof AND/OR mode AND/OR prop ARGUMENT IS SPECIFIED.
     # THE neg_values ARGUMENT CANNOT BE SWITCHED FROM TRUE (DEFAULT VALUE) TO FALSE IF class, typeof AND mode ARGUMENTS ARE NULL.
@@ -382,16 +391,16 @@ testthat::test_that("arg_check()", {
     testthat::expect_error(arg_check(data = vec5, class = NA))
     testthat::expect_error(arg_check(data = vec5, class = 1))
     result <- arg_check(data = vec5, class = "NOTGOOD") # no error thrown: any string is allowed. Returns a problem because class(vec5) is "character"
-    expect <- list(problem = TRUE, text = "ERROR\n\nTHE vec5 ARGUMENT MUST BE CLASS NOTGOOD", object.name = "vec5")
+    expect <- list(problem = TRUE, text = "ERROR\n\nTHE vec5 ARGUMENT MUST BE CLASS NOTGOOD", object_name = "vec5")
     testthat::expect_equal(result, expect)
     result <- arg_check(data = vec5, class = c("character", "NOTGOOD")) # no error thrown: any string is allowed. Returns a problem because class(vec5) is "character"
-    expect <- list(problem = TRUE, text = "ERROR\n\nTHE vec5 ARGUMENT MUST BE CLASS character, NOTGOOD", object.name = "vec5")
+    expect <- list(problem = TRUE, text = "ERROR\n\nTHE vec5 ARGUMENT MUST BE CLASS character, NOTGOOD", object_name = "vec5")
     testthat::expect_equal(result, expect)
     result <- arg_check(data = vec5, class = "character")
-    expect <- list(problem = FALSE, text = "NO PROBLEM DETECTED FOR THE vec5 ARGUMENT.", object.name = "vec5")
+    expect <- list(problem = FALSE, text = "NO PROBLEM DETECTED FOR THE vec5 ARGUMENT.", object_name = "vec5")
     testthat::expect_equal(result, expect)
     result <- arg_check(data = vec5, class = c("character", "character")) # no error thrown: any string is allowed. Returns a problem because class(vec5) is a single string and cannot be equal to a vector of 2 values
-    expect <- list(problem = TRUE, text = "ERROR\n\nTHE vec5 ARGUMENT MUST BE CLASS character, character", object.name = "vec5")
+    expect <- list(problem = TRUE, text = "ERROR\n\nTHE vec5 ARGUMENT MUST BE CLASS character, character", object_name = "vec5")
     testthat::expect_equal(result, expect)
     testthat::expect_error(arg_check(data = vec5, class = "vector", neg_values = FALSE)) # error because typeof and mode are NULL and class is not NULL. Note that class = "vector" is not a shorthand anymore
     testthat::expect_no_error(arg_check(data = vec5, class = "vector", neg_values = TRUE)) # neg_values is inactivated
@@ -404,13 +413,13 @@ testthat::test_that("arg_check()", {
     testthat::expect_error(arg_check(data = vec1, typeof = NA))
     testthat::expect_error(arg_check(data = vec1, typeof = 1))
     result <- arg_check(data = vec1, typeof = "NOTGOOD") # no error thrown: any string is allowed. Returns a problem because typeof(vec1) is "integer"
-    expect <- list(problem = TRUE, text = "ERROR\n\nTHE vec1 ARGUMENT MUST BE TYPEOF NOTGOOD", object.name = "vec1")
+    expect <- list(problem = TRUE, text = "ERROR\n\nTHE vec1 ARGUMENT MUST BE TYPEOF NOTGOOD", object_name = "vec1")
     testthat::expect_equal(result, expect)
     result <- arg_check(data = vec1, typeof = c("integer", "NOTGOOD")) # no error thrown: any string is allowed. Returns a problem because typeof(vec1) is "integer"
-    expect <- list(problem = TRUE, text = "ERROR\n\nTHE vec1 ARGUMENT MUST BE TYPEOF integer, NOTGOOD", object.name = "vec1")
+    expect <- list(problem = TRUE, text = "ERROR\n\nTHE vec1 ARGUMENT MUST BE TYPEOF integer, NOTGOOD", object_name = "vec1")
     testthat::expect_equal(result, expect)
     result <- arg_check(data = vec1, typeof = c("integer", "integer")) # no error thrown: any string is allowed. Returns a problem because typeof(vec1) is a single string and cannot be equal to a vector of 2 values
-    expect <- list(problem = TRUE, text = "ERROR\n\nTHE vec1 ARGUMENT MUST BE TYPEOF integer, integer", object.name = "vec1")
+    expect <- list(problem = TRUE, text = "ERROR\n\nTHE vec1 ARGUMENT MUST BE TYPEOF integer, integer", object_name = "vec1")
     testthat::expect_equal(result, expect)
     testthat::expect_error(arg_check(data = vec1, typeof = "character", neg_values = FALSE)) # error because neg_values FALSE requires a single "double" or "integer" typeof value
     testthat::expect_no_error(arg_check(data = vec1, typeof = "double", neg_values = FALSE))
@@ -425,13 +434,13 @@ testthat::test_that("arg_check()", {
     testthat::expect_error(arg_check(data = vec1, mode = NA))
     testthat::expect_error(arg_check(data = vec1, mode = 1))
     result <- arg_check(data = vec1, mode = "NOTGOOD") # no error thrown: any string is allowed. Returns a problem because mode(vec1) is "numeric"
-    expect <- list(problem = TRUE, text = "ERROR\n\nTHE vec1 ARGUMENT MUST BE MODE NOTGOOD", object.name = "vec1")
+    expect <- list(problem = TRUE, text = "ERROR\n\nTHE vec1 ARGUMENT MUST BE MODE NOTGOOD", object_name = "vec1")
     testthat::expect_equal(result, expect)
     result <- arg_check(data = vec1, mode = c("numeric", "NOTGOOD")) # no error thrown: any string is allowed. Returns a problem because mode(vec1) is "numeric"
-    expect <- list(problem = TRUE, text = "ERROR\n\nTHE vec1 ARGUMENT MUST BE MODE numeric, NOTGOOD", object.name = "vec1")
+    expect <- list(problem = TRUE, text = "ERROR\n\nTHE vec1 ARGUMENT MUST BE MODE numeric, NOTGOOD", object_name = "vec1")
     testthat::expect_equal(result, expect)
     result <- arg_check(data = vec1, mode = c("numeric", "numeric")) # no error thrown: any string is allowed. Returns a problem because mode(vec1) is a single string and cannot be equal to a vector of 2 values
-    expect <- list(problem = TRUE, text = "ERROR\n\nTHE vec1 ARGUMENT MUST BE MODE numeric, numeric", object.name = "vec1")
+    expect <- list(problem = TRUE, text = "ERROR\n\nTHE vec1 ARGUMENT MUST BE MODE numeric, numeric", object_name = "vec1")
     testthat::expect_equal(result, expect)
     testthat::expect_error(arg_check(data = vec1, mode = "character", neg_values = FALSE)) # error because neg_values FALSE requires a single "numeric" mode value
     testthat::expect_no_error(arg_check(data = vec1, mode = "numeric", neg_values = FALSE))
@@ -445,10 +454,10 @@ testthat::test_that("arg_check()", {
     testthat::expect_error(arg_check(data = vec1, length = NULL))
     testthat::expect_error(arg_check(data = vec1, length = NA))
     result <- arg_check(data = vec1, length = 1)
-    expect <- list(problem = TRUE, text = "ERROR\n\nTHE vec1 ARGUMENT MUST BE LENGTH 1", object.name = "vec1")
+    expect <- list(problem = TRUE, text = "ERROR\n\nTHE vec1 ARGUMENT MUST BE LENGTH 1", object_name = "vec1")
     testthat::expect_equal(result, expect)
     result <- arg_check(data = vec1, mode = "numeric", length = NULL)
-    expect <- list(problem = FALSE, text = "NO PROBLEM DETECTED FOR THE vec1 ARGUMENT.", object.name = "vec1")
+    expect <- list(problem = FALSE, text = "NO PROBLEM DETECTED FOR THE vec1 ARGUMENT.", object_name = "vec1")
     testthat::expect_equal(result, expect)
     testthat::expect_error(arg_check(data = vec1, mode = "numeric", length = "a"))
     testthat::expect_error(arg_check(data = vec1, mode = "numeric", length = 1.1))
@@ -461,10 +470,10 @@ testthat::test_that("arg_check()", {
     testthat::expect_error(arg_check(data = vec1, mode = "numeric", prop = 1))
     testthat::expect_error(arg_check(data = vec1, mode = "numeric", prop = c(TRUE, FALSE)))
     result <- arg_check(data = vec1, mode = "numeric", prop = TRUE)
-    expect <- list(problem = TRUE, text = "ERROR\n\nTHE vec1 ARGUMENT MUST BE DECIMAL VALUES BETWEEN 0 AND 1.", object.name = "vec1")
+    expect <- list(problem = TRUE, text = "ERROR\n\nTHE vec1 ARGUMENT MUST BE DECIMAL VALUES BETWEEN 0 AND 1.", object_name = "vec1")
     testthat::expect_equal(result, expect)
     result <- arg_check(data = vec5, mode = "numeric", prop = TRUE)
-    expect <- list(problem = TRUE, text = "ERROR\n\nTHE vec5 ARGUMENT MUST BE MODE numeric AND THE vec5 ARGUMENT MUST BE DECIMAL VALUES BETWEEN 0 AND 1.", object.name = "vec5")
+    expect <- list(problem = TRUE, text = "ERROR\n\nTHE vec5 ARGUMENT MUST BE MODE numeric AND THE vec5 ARGUMENT MUST BE DECIMAL VALUES BETWEEN 0 AND 1.", object_name = "vec5")
     testthat::expect_equal(result, expect)
     testthat::expect_no_error(arg_check(data = vec1, class = "vector", prop = TRUE))
     testthat::expect_no_error(arg_check(data = vec1, class = "vector", prop = FALSE))
@@ -485,8 +494,8 @@ testthat::test_that("arg_check()", {
     #### main code
     # if(base::is.null(data_name)){
     testthat::expect_no_error(arg_check(data = vec1, class = "vector", data_name = NULL))
-    result <- arg_check(data = vec1, mode = "numeric", data_name = "my_obj") # valid non NULL data_name: used in the message and the returned object.name
-    expect <- list(problem = FALSE, text = "NO PROBLEM DETECTED FOR THE my_obj ARGUMENT.", object.name = "my_obj")
+    result <- arg_check(data = vec1, mode = "numeric", data_name = "my_obj") # valid non NULL data_name: used in the message and the returned object_name
+    expect <- list(problem = FALSE, text = "NO PROBLEM DETECTED FOR THE my_obj ARGUMENT.", object_name = "my_obj")
     testthat::expect_equal(result, expect)
     # end if(base::is.null(data_name)){
     # if(( ! base::is.null(options)) & (base::all(base::typeof(data) == "character") | base::all(base::typeof(data) == "integer") | base::all(base::typeof(data) == "double"))){
@@ -496,151 +505,151 @@ testthat::test_that("arg_check()", {
  # if(( ! base::is.null(x = options)) & (base::all(base::typeof(x = data) == "character", na.rm = TRUE) | base::all(base::typeof(x = data) == "integer", na.rm = TRUE) | base::all(base::typeof(x = data) == "double", na.rm = TRUE))){
     # if(base::all(base::typeof(x = tempo_data_opt) == "double", na.rm = TRUE)){
     result <- arg_check(data = vec7, options = 1:2, all_options_in_data = FALSE) # vec7 is double decimal
-    expect <- list(problem =  TRUE, text = "ERROR\n\nTHE vec7 ARGUMENT MUST BE SOME OF THESE OPTIONS:\n1\n2\nBUT IS NOT EVEN TYPE CHARACTER OR INTEGER, OR TYPE DOUBLE WITH A 0 MODULO.", object.name = "vec7")
+    expect <- list(problem =  TRUE, text = "ERROR\n\nTHE vec7 ARGUMENT MUST BE SOME OF THESE OPTIONS:\n1\n2\nBUT IS NOT EVEN TYPE CHARACTER OR INTEGER, OR TYPE DOUBLE WITH A 0 MODULO.", object_name = "vec7")
     testthat::expect_equal(result, expect)
     result <- arg_check(data = vec7, options = 1:2, all_options_in_data = TRUE) # vec7 is double decimal
-    expect <- list(problem =  TRUE, text = "ERROR\n\nTHE vec7 ARGUMENT MUST BE SOME OF THESE OPTIONS:\n1\n2\nBUT IS NOT EVEN TYPE CHARACTER OR INTEGER, OR TYPE DOUBLE WITH A 0 MODULO.", object.name = "vec7")
+    expect <- list(problem =  TRUE, text = "ERROR\n\nTHE vec7 ARGUMENT MUST BE SOME OF THESE OPTIONS:\n1\n2\nBUT IS NOT EVEN TYPE CHARACTER OR INTEGER, OR TYPE DOUBLE WITH A 0 MODULO.", object_name = "vec7")
     testthat::expect_equal(result, expect)
     # end if(base::all(base::typeof(x = tempo_data_opt) == "double", na.rm = TRUE)){
     # if( ! base::all(tempo_data_opt %in% options, na.rm = TRUE)){
     result <- arg_check(data = vec3, options = 1:2, all_options_in_data = FALSE) # vec3 is double but integer like, options is integer
-    expect <- list(problem =  TRUE, text = "ERROR\n\nTHE vec3 ARGUMENT MUST BE SOME OF THESE OPTIONS:\n1\n2\nTHE PROBLEMATIC ELEMENT OF vec3 IS:\n3", object.name = "vec3")
+    expect <- list(problem =  TRUE, text = "ERROR\n\nTHE vec3 ARGUMENT MUST BE SOME OF THESE OPTIONS:\n1\n2\nTHE PROBLEMATIC ELEMENT OF vec3 IS:\n3", object_name = "vec3")
     testthat::expect_equal(result, expect)
     result <- arg_check(data = vec3, options = c(1,2), all_options_in_data = FALSE) # vec3 is double but integer like, options is integer
-    expect <- list(problem =  TRUE, text = "ERROR\n\nTHE vec3 ARGUMENT MUST BE SOME OF THESE OPTIONS:\n1\n2\nTHE PROBLEMATIC ELEMENT OF vec3 IS:\n3", object.name = "vec3")
+    expect <- list(problem =  TRUE, text = "ERROR\n\nTHE vec3 ARGUMENT MUST BE SOME OF THESE OPTIONS:\n1\n2\nTHE PROBLEMATIC ELEMENT OF vec3 IS:\n3", object_name = "vec3")
     testthat::expect_equal(result, expect)
     result <- arg_check(data = vec3, options = c(1,2,4), all_options_in_data = FALSE) # vec3 is double but integer like, options is integer
-    expect <- list(problem =  TRUE, text = "ERROR\n\nTHE vec3 ARGUMENT MUST BE SOME OF THESE OPTIONS:\n1\n2\n4\nTHE PROBLEMATIC ELEMENT OF vec3 IS:\n3", object.name = "vec3")
+    expect <- list(problem =  TRUE, text = "ERROR\n\nTHE vec3 ARGUMENT MUST BE SOME OF THESE OPTIONS:\n1\n2\n4\nTHE PROBLEMATIC ELEMENT OF vec3 IS:\n3", object_name = "vec3")
     testthat::expect_equal(result, expect)
     result <- arg_check(data = vec3, options = 1, all_options_in_data = FALSE) # vec3 is double but integer like, options is integer
-    expect <- list(problem =  TRUE, text = "ERROR\n\nTHE vec3 ARGUMENT MUST BE SOME OF THESE OPTIONS:\n1\nTHE PROBLEMATIC ELEMENTS OF vec3 ARE:\n2\n3", object.name = "vec3")
+    expect <- list(problem =  TRUE, text = "ERROR\n\nTHE vec3 ARGUMENT MUST BE SOME OF THESE OPTIONS:\n1\nTHE PROBLEMATIC ELEMENTS OF vec3 ARE:\n2\n3", object_name = "vec3")
     testthat::expect_equal(result, expect)
     result <- arg_check(data = vec3, options = 1:4, all_options_in_data = FALSE) # vec3 is double but integer like, options is integer
-    expect <- list(problem = FALSE, text = "NO PROBLEM DETECTED FOR THE vec3 ARGUMENT.", object.name = "vec3")
+    expect <- list(problem = FALSE, text = "NO PROBLEM DETECTED FOR THE vec3 ARGUMENT.", object_name = "vec3")
     testthat::expect_equal(result, expect)
     result <- arg_check(data = vec3, options = c(1.0, 2.0, 3.0, 4.0), all_options_in_data = FALSE) # options written as doubles but with a 0 modulo: accepted as documented ("Numbers of type "double" are accepted if they have a 0 modulo")
-    expect <- list(problem = FALSE, text = "NO PROBLEM DETECTED FOR THE vec3 ARGUMENT.", object.name = "vec3")
+    expect <- list(problem = FALSE, text = "NO PROBLEM DETECTED FOR THE vec3 ARGUMENT.", object_name = "vec3")
     testthat::expect_equal(result, expect)
     result <- arg_check(data = vec3, options = c(1.0, 2.0, 3.0), all_options_in_data = TRUE) # options as doubles with 0 modulo, all present in data: accepted
-    expect <- list(problem = FALSE, text = "NO PROBLEM DETECTED FOR THE vec3 ARGUMENT.", object.name = "vec3")
+    expect <- list(problem = FALSE, text = "NO PROBLEM DETECTED FOR THE vec3 ARGUMENT.", object_name = "vec3")
     testthat::expect_equal(result, expect)
     testthat::expect_error(arg_check(data = vec3, options = c(1.5, 2.0), all_options_in_data = FALSE)) # options containing a real decimal (non zero modulo): error (stop) expected
     result <- arg_check(data = vec4, options = 1:4, all_options_in_data = FALSE) # vec3 is double but integer like, options is integer
-    expect <- list(problem = TRUE, text = "ERROR\n\nTHE vec4 ARGUMENT MUST BE SOME OF THESE OPTIONS:\n1\n2\n3\n4\nTHE PROBLEMATIC ELEMENT OF vec4 IS:\npearson", object.name = "vec4")
+    expect <- list(problem = TRUE, text = "ERROR\n\nTHE vec4 ARGUMENT MUST BE SOME OF THESE OPTIONS:\n1\n2\n3\n4\nTHE PROBLEMATIC ELEMENT OF vec4 IS:\npearson", object_name = "vec4")
     testthat::expect_equal(result, expect)
     result <- arg_check(data = vec4, options = c("pearson", "spearman"), all_options_in_data = FALSE) # vec4 is double but integer like, options is integer
-    expect <- list(problem = FALSE, text = "NO PROBLEM DETECTED FOR THE vec4 ARGUMENT.", object.name = "vec4")
+    expect <- list(problem = FALSE, text = "NO PROBLEM DETECTED FOR THE vec4 ARGUMENT.", object_name = "vec4")
     testthat::expect_equal(result, expect)
     # end if( ! base::all(tempo_data_opt %in% options, na.rm = TRUE)){
     # if(all_options_in_data == TRUE){
     result <- arg_check(data = vec3, options = 1:2, all_options_in_data = TRUE) # vec3 is double but integer like, options is integer
-    expect <- list(problem =  TRUE, text = "ERROR\n\nTHE vec3 ARGUMENT MUST BE SOME OF THESE OPTIONS:\n1\n2\nTHE PROBLEMATIC ELEMENT OF vec3 IS:\n3", object.name = "vec3")
+    expect <- list(problem =  TRUE, text = "ERROR\n\nTHE vec3 ARGUMENT MUST BE SOME OF THESE OPTIONS:\n1\n2\nTHE PROBLEMATIC ELEMENT OF vec3 IS:\n3", object_name = "vec3")
     testthat::expect_equal(result, expect)
     result <- arg_check(data = vec3, options = c(1,2), all_options_in_data = TRUE) # vec3 is double but integer like, options is integer
-    expect <- list(problem =  TRUE, text = "ERROR\n\nTHE vec3 ARGUMENT MUST BE SOME OF THESE OPTIONS:\n1\n2\nTHE PROBLEMATIC ELEMENT OF vec3 IS:\n3", object.name = "vec3")
+    expect <- list(problem =  TRUE, text = "ERROR\n\nTHE vec3 ARGUMENT MUST BE SOME OF THESE OPTIONS:\n1\n2\nTHE PROBLEMATIC ELEMENT OF vec3 IS:\n3", object_name = "vec3")
     testthat::expect_equal(result, expect)
     result <- arg_check(data = vec3, options = c(1,2,4), all_options_in_data = TRUE) # vec3 is double but integer like, options is integer
-    expect <- list(problem =  TRUE, text = "ERROR\n\nTHE vec3 ARGUMENT MUST BE SOME OF THESE OPTIONS:\n1\n2\n4\nTHE PROBLEMATIC ELEMENT OF vec3 IS:\n3 AND THE vec3 ARGUMENT MUST BE MADE OF ALL THESE OPTIONS:\n1\n2\n4\nTHE MISSING ELEMENT IN vec3 IS:\n4", object.name = "vec3")
+    expect <- list(problem =  TRUE, text = "ERROR\n\nTHE vec3 ARGUMENT MUST BE SOME OF THESE OPTIONS:\n1\n2\n4\nTHE PROBLEMATIC ELEMENT OF vec3 IS:\n3 AND THE vec3 ARGUMENT MUST BE MADE OF ALL THESE OPTIONS:\n1\n2\n4\nTHE MISSING ELEMENT IN vec3 IS:\n4", object_name = "vec3")
     testthat::expect_equal(result, expect)
     result <- arg_check(data = 1, options = c(1,2,4), all_options_in_data = TRUE) # vec3 is double but integer like, options is integer
-    expect <- list(problem =  TRUE, text = "ERROR\n\nTHE 1 ARGUMENT MUST BE MADE OF ALL THESE OPTIONS:\n1\n2\n4\nTHE MISSING ELEMENTS IN 1 ARE:\n2\n4", object.name = "1")
+    expect <- list(problem =  TRUE, text = "ERROR\n\nTHE 1 ARGUMENT MUST BE MADE OF ALL THESE OPTIONS:\n1\n2\n4\nTHE MISSING ELEMENTS IN 1 ARE:\n2\n4", object_name = "1")
     testthat::expect_equal(result, expect)
     result <- arg_check(data = vec3, options = 1, all_options_in_data = TRUE) # vec3 is double but integer like, options is integer
-    expect <- list(problem =  TRUE, text = "ERROR\n\nTHE vec3 ARGUMENT MUST BE SOME OF THESE OPTIONS:\n1\nTHE PROBLEMATIC ELEMENTS OF vec3 ARE:\n2\n3", object.name = "vec3")
+    expect <- list(problem =  TRUE, text = "ERROR\n\nTHE vec3 ARGUMENT MUST BE SOME OF THESE OPTIONS:\n1\nTHE PROBLEMATIC ELEMENTS OF vec3 ARE:\n2\n3", object_name = "vec3")
     testthat::expect_equal(result, expect)
     result <- arg_check(data = vec3, options = 1:4, all_options_in_data = TRUE) # vec3 is double but integer like, options is integer
-    expect <- list(problem = TRUE, text = "ERROR\n\nTHE vec3 ARGUMENT MUST BE MADE OF ALL THESE OPTIONS:\n1\n2\n3\n4\nTHE MISSING ELEMENT IN vec3 IS:\n4", object.name = "vec3")
+    expect <- list(problem = TRUE, text = "ERROR\n\nTHE vec3 ARGUMENT MUST BE MADE OF ALL THESE OPTIONS:\n1\n2\n3\n4\nTHE MISSING ELEMENT IN vec3 IS:\n4", object_name = "vec3")
     testthat::expect_equal(result, expect)
     result <- arg_check(data = vec3, options = 1:4, all_options_in_data = TRUE) # vec3 is double but integer like, options is integer
-    expect <- list(problem = TRUE, text = "ERROR\n\nTHE vec3 ARGUMENT MUST BE MADE OF ALL THESE OPTIONS:\n1\n2\n3\n4\nTHE MISSING ELEMENT IN vec3 IS:\n4", object.name = "vec3")
+    expect <- list(problem = TRUE, text = "ERROR\n\nTHE vec3 ARGUMENT MUST BE MADE OF ALL THESE OPTIONS:\n1\n2\n3\n4\nTHE MISSING ELEMENT IN vec3 IS:\n4", object_name = "vec3")
     testthat::expect_equal(result, expect)
     result <- arg_check(data = vec4, options = 1:4, all_options_in_data = TRUE) # vec3 is double but integer like, options is integer
-    expect <- list(problem = TRUE, text = "ERROR\n\nTHE vec4 ARGUMENT MUST BE SOME OF THESE OPTIONS:\n1\n2\n3\n4\nTHE PROBLEMATIC ELEMENT OF vec4 IS:\npearson AND THE vec4 ARGUMENT MUST BE MADE OF ALL THESE OPTIONS:\n1\n2\n3\n4\nTHE MISSING ELEMENTS IN vec4 ARE:\n1\n2\n3\n4", object.name = "vec4")
+    expect <- list(problem = TRUE, text = "ERROR\n\nTHE vec4 ARGUMENT MUST BE SOME OF THESE OPTIONS:\n1\n2\n3\n4\nTHE PROBLEMATIC ELEMENT OF vec4 IS:\npearson AND THE vec4 ARGUMENT MUST BE MADE OF ALL THESE OPTIONS:\n1\n2\n3\n4\nTHE MISSING ELEMENTS IN vec4 ARE:\n1\n2\n3\n4", object_name = "vec4")
     testthat::expect_equal(result, expect)
     result <- arg_check(data = vec4, options = c("pearson", "spearman"), all_options_in_data = TRUE) # vec4 is double but integer like, options is integer
-    expect <- list(problem = TRUE, text =  "ERROR\n\nTHE vec4 ARGUMENT MUST BE MADE OF ALL THESE OPTIONS:\npearson\nspearman\nTHE MISSING ELEMENT IN vec4 IS:\nspearman", object.name = "vec4")
+    expect <- list(problem = TRUE, text =  "ERROR\n\nTHE vec4 ARGUMENT MUST BE MADE OF ALL THESE OPTIONS:\npearson\nspearman\nTHE MISSING ELEMENT IN vec4 IS:\nspearman", object_name = "vec4")
     testthat::expect_equal(result, expect)
     result <- arg_check(data = vec3, options = 1:2, all_options_in_data = TRUE) # vec3 is double but integer like, options is integer
-    expect <- list(problem =  TRUE, text = "ERROR\n\nTHE vec3 ARGUMENT MUST BE SOME OF THESE OPTIONS:\n1\n2\nTHE PROBLEMATIC ELEMENT OF vec3 IS:\n3", object.name = "vec3")
+    expect <- list(problem =  TRUE, text = "ERROR\n\nTHE vec3 ARGUMENT MUST BE SOME OF THESE OPTIONS:\n1\n2\nTHE PROBLEMATIC ELEMENT OF vec3 IS:\n3", object_name = "vec3")
     testthat::expect_equal(result, expect)
     result <- arg_check(data = vec3, options = c(1,2), all_options_in_data = TRUE) # vec3 is double but integer like, options is integer
-    expect <- list(problem =  TRUE, text = "ERROR\n\nTHE vec3 ARGUMENT MUST BE SOME OF THESE OPTIONS:\n1\n2\nTHE PROBLEMATIC ELEMENT OF vec3 IS:\n3", object.name = "vec3")
+    expect <- list(problem =  TRUE, text = "ERROR\n\nTHE vec3 ARGUMENT MUST BE SOME OF THESE OPTIONS:\n1\n2\nTHE PROBLEMATIC ELEMENT OF vec3 IS:\n3", object_name = "vec3")
     testthat::expect_equal(result, expect)
     result <- arg_check(data = 1, options = c(1,2), all_options_in_data = TRUE) # vec3 is double but integer like, options is integer
-    expect <- list(problem =  TRUE, text = "ERROR\n\nTHE 1 ARGUMENT MUST BE MADE OF ALL THESE OPTIONS:\n1\n2\nTHE MISSING ELEMENT IN 1 IS:\n2", object.name = "1")
+    expect <- list(problem =  TRUE, text = "ERROR\n\nTHE 1 ARGUMENT MUST BE MADE OF ALL THESE OPTIONS:\n1\n2\nTHE MISSING ELEMENT IN 1 IS:\n2", object_name = "1")
     testthat::expect_equal(result, expect)
     result <- arg_check(data = vec3, options = c(1,2,4), all_options_in_data = TRUE) # vec3 is double but integer like, options is integer
-    expect <- list(problem =  TRUE, text =  "ERROR\n\nTHE vec3 ARGUMENT MUST BE SOME OF THESE OPTIONS:\n1\n2\n4\nTHE PROBLEMATIC ELEMENT OF vec3 IS:\n3 AND THE vec3 ARGUMENT MUST BE MADE OF ALL THESE OPTIONS:\n1\n2\n4\nTHE MISSING ELEMENT IN vec3 IS:\n4", object.name = "vec3")
+    expect <- list(problem =  TRUE, text =  "ERROR\n\nTHE vec3 ARGUMENT MUST BE SOME OF THESE OPTIONS:\n1\n2\n4\nTHE PROBLEMATIC ELEMENT OF vec3 IS:\n3 AND THE vec3 ARGUMENT MUST BE MADE OF ALL THESE OPTIONS:\n1\n2\n4\nTHE MISSING ELEMENT IN vec3 IS:\n4", object_name = "vec3")
     testthat::expect_equal(result, expect)
     result <- arg_check(data = vec3, options = 1:4, all_options_in_data = TRUE) # vec3 is double but integer like, options is integer
-    expect <- list(problem = TRUE, text = "ERROR\n\nTHE vec3 ARGUMENT MUST BE MADE OF ALL THESE OPTIONS:\n1\n2\n3\n4\nTHE MISSING ELEMENT IN vec3 IS:\n4", object.name = "vec3")
+    expect <- list(problem = TRUE, text = "ERROR\n\nTHE vec3 ARGUMENT MUST BE MADE OF ALL THESE OPTIONS:\n1\n2\n3\n4\nTHE MISSING ELEMENT IN vec3 IS:\n4", object_name = "vec3")
     testthat::expect_equal(result, expect)
     result <- arg_check(data = vec3, options = 1:4, all_options_in_data = TRUE) # vec3 is double but integer like, options is integer
-    expect <- list(problem = TRUE, text = "ERROR\n\nTHE vec3 ARGUMENT MUST BE MADE OF ALL THESE OPTIONS:\n1\n2\n3\n4\nTHE MISSING ELEMENT IN vec3 IS:\n4", object.name = "vec3")
+    expect <- list(problem = TRUE, text = "ERROR\n\nTHE vec3 ARGUMENT MUST BE MADE OF ALL THESE OPTIONS:\n1\n2\n3\n4\nTHE MISSING ELEMENT IN vec3 IS:\n4", object_name = "vec3")
     testthat::expect_equal(result, expect)
     result <- arg_check(data = vec4, options = 1:4, all_options_in_data = TRUE) # vec3 is double but integer like, options is integer
-    expect <- list(problem = TRUE, text = "ERROR\n\nTHE vec4 ARGUMENT MUST BE SOME OF THESE OPTIONS:\n1\n2\n3\n4\nTHE PROBLEMATIC ELEMENT OF vec4 IS:\npearson AND THE vec4 ARGUMENT MUST BE MADE OF ALL THESE OPTIONS:\n1\n2\n3\n4\nTHE MISSING ELEMENTS IN vec4 ARE:\n1\n2\n3\n4", object.name = "vec4")
+    expect <- list(problem = TRUE, text = "ERROR\n\nTHE vec4 ARGUMENT MUST BE SOME OF THESE OPTIONS:\n1\n2\n3\n4\nTHE PROBLEMATIC ELEMENT OF vec4 IS:\npearson AND THE vec4 ARGUMENT MUST BE MADE OF ALL THESE OPTIONS:\n1\n2\n3\n4\nTHE MISSING ELEMENTS IN vec4 ARE:\n1\n2\n3\n4", object_name = "vec4")
     testthat::expect_equal(result, expect)
     result <- arg_check(data = vec4, options = c("pearson", "spearman"), all_options_in_data = TRUE) # vec4 is double but integer like, options is integer
-    expect <- list(problem = TRUE, text =  "ERROR\n\nTHE vec4 ARGUMENT MUST BE MADE OF ALL THESE OPTIONS:\npearson\nspearman\nTHE MISSING ELEMENT IN vec4 IS:\nspearman", object.name = "vec4")
+    expect <- list(problem = TRUE, text =  "ERROR\n\nTHE vec4 ARGUMENT MUST BE MADE OF ALL THESE OPTIONS:\npearson\nspearman\nTHE MISSING ELEMENT IN vec4 IS:\nspearman", object_name = "vec4")
     testthat::expect_equal(result, expect)
     # end if(all_options_in_data == TRUE){
 
     result <- arg_check(data = vec1, options = 1:2, all_options_in_data = FALSE)
-    expect <- list(problem =  TRUE, text = "ERROR\n\nTHE vec1 ARGUMENT MUST BE SOME OF THESE OPTIONS:\n1\n2\nTHE PROBLEMATIC ELEMENTS OF vec1 ARE:\n-1\n0\n3", object.name = "vec1")
+    expect <- list(problem =  TRUE, text = "ERROR\n\nTHE vec1 ARGUMENT MUST BE SOME OF THESE OPTIONS:\n1\n2\nTHE PROBLEMATIC ELEMENTS OF vec1 ARE:\n-1\n0\n3", object_name = "vec1")
     testthat::expect_equal(result, expect)
     result <- arg_check(data = vec1, options = 1:2, all_options_in_data = TRUE)
-    expect <- list(problem =  TRUE, text = "ERROR\n\nTHE vec1 ARGUMENT MUST BE SOME OF THESE OPTIONS:\n1\n2\nTHE PROBLEMATIC ELEMENTS OF vec1 ARE:\n-1\n0\n3", object.name = "vec1")
+    expect <- list(problem =  TRUE, text = "ERROR\n\nTHE vec1 ARGUMENT MUST BE SOME OF THESE OPTIONS:\n1\n2\nTHE PROBLEMATIC ELEMENTS OF vec1 ARE:\n-1\n0\n3", object_name = "vec1")
     testthat::expect_equal(result, expect)
 
 
     result <- arg_check(data = vec1, options = -1:3, all_options_in_data = TRUE)
-    expect <- list(problem = FALSE, text = "NO PROBLEM DETECTED FOR THE vec1 ARGUMENT.", object.name = "vec1")
+    expect <- list(problem = FALSE, text = "NO PROBLEM DETECTED FOR THE vec1 ARGUMENT.", object_name = "vec1")
     testthat::expect_equal(result, expect)
     result <- arg_check(data = vec1, options = 1:2, all_options_in_data = FALSE)
-    expect <- list(problem = TRUE, text = "ERROR\n\nTHE vec1 ARGUMENT MUST BE SOME OF THESE OPTIONS:\n1\n2\nTHE PROBLEMATIC ELEMENTS OF vec1 ARE:\n-1\n0\n3", object.name = "vec1")
+    expect <- list(problem = TRUE, text = "ERROR\n\nTHE vec1 ARGUMENT MUST BE SOME OF THESE OPTIONS:\n1\n2\nTHE PROBLEMATIC ELEMENTS OF vec1 ARE:\n-1\n0\n3", object_name = "vec1")
     testthat::expect_equal(result, expect)
     result <- arg_check(data = vec1, options = -1:3, all_options_in_data = FALSE)
-    expect <- list(problem = FALSE, text = "NO PROBLEM DETECTED FOR THE vec1 ARGUMENT.", object.name = "vec1")
+    expect <- list(problem = FALSE, text = "NO PROBLEM DETECTED FOR THE vec1 ARGUMENT.", object_name = "vec1")
     testthat::expect_equal(result, expect)
     result <- arg_check(data = vec1, options = 8, all_options_in_data = FALSE)
-    expect <- list(problem = TRUE, text = "ERROR\n\nTHE vec1 ARGUMENT MUST BE SOME OF THESE OPTIONS:\n8\nTHE PROBLEMATIC ELEMENTS OF vec1 ARE:\n-1\n0\n1\n2\n3", object.name = "vec1")
+    expect <- list(problem = TRUE, text = "ERROR\n\nTHE vec1 ARGUMENT MUST BE SOME OF THESE OPTIONS:\n8\nTHE PROBLEMATIC ELEMENTS OF vec1 ARE:\n-1\n0\n1\n2\n3", object_name = "vec1")
     testthat::expect_equal(result, expect)
     result <- arg_check(data = ggplot2::ggplot_build(ggplot2::ggplot()), options = 1)
-    expect <- list(problem = TRUE, text = "ERROR\n\nTHE ggplot2::ggplot_build(ggplot2::ggplot()) ARGUMENT MUST BE SOME OF THESE OPTIONS:\n1\nBUT IS NOT EVEN TYPE CHARACTER OR INTEGER, OR TYPE DOUBLE WITH A 0 MODULO.", object.name = "ggplot2::ggplot_build(ggplot2::ggplot())")
+    expect <- list(problem = TRUE, text = "ERROR\n\nTHE ggplot2::ggplot_build(ggplot2::ggplot()) ARGUMENT MUST BE SOME OF THESE OPTIONS:\n1\nBUT IS NOT EVEN TYPE CHARACTER OR INTEGER, OR TYPE DOUBLE WITH A 0 MODULO.", object_name = "ggplot2::ggplot_build(ggplot2::ggplot())")
     testthat::expect_equal(result, expect)
     testthat::expect_error(arg_check(data = ggplot2::ggplot_build(ggplot2::ggplot()), class = "ggplot_built", options = 1))
     testthat::expect_no_error(arg_check(data = ggplot2::ggplot_build(ggplot2::ggplot()), class = "ggplot_built"))
     # if( ! base::is.null(x = length)){
     result <- arg_check(data = vec1, length = 5)
-    expect <- list(problem = FALSE, text = "NO PROBLEM DETECTED FOR THE vec1 ARGUMENT.", object.name = "vec1")
+    expect <- list(problem = FALSE, text = "NO PROBLEM DETECTED FOR THE vec1 ARGUMENT.", object_name = "vec1")
     testthat::expect_equal(result, expect)
     result <- arg_check(data = vec1, length = 2)
-    expect <- list(problem = TRUE, text = "ERROR\n\nTHE vec1 ARGUMENT MUST BE LENGTH 2", object.name = "vec1")
+    expect <- list(problem = TRUE, text = "ERROR\n\nTHE vec1 ARGUMENT MUST BE LENGTH 2", object_name = "vec1")
     testthat::expect_equal(result, expect)
     result <- arg_check(data = vec1, length = 2, error_text = " IN ADDED_TEXT")
-    expect <- list(problem = TRUE, text = "ERROR IN ADDED_TEXT\n\nTHE vec1 ARGUMENT MUST BE LENGTH 2", object.name = "vec1")
+    expect <- list(problem = TRUE, text = "ERROR IN ADDED_TEXT\n\nTHE vec1 ARGUMENT MUST BE LENGTH 2", object_name = "vec1")
     testthat::expect_equal(result, expect)
     result <- arg_check(data = vec4, options = c("pearson", "spearman"), length = 2)
-    expect <- list(problem = TRUE, text =   "ERROR\n\nTHE LENGTH OF vec4 MUST BE 2 AND NOT 1", object.name = "vec4")
+    expect <- list(problem = TRUE, text =   "ERROR\n\nTHE LENGTH OF vec4 MUST BE 2 AND NOT 1", object_name = "vec4")
     testthat::expect_equal(result, expect)
     # end if( ! base::is.null(x = length)){
 
     # end if(( ! base::is.null(options)) & (base::all(base::typeof(data) == "character") | base::all(base::typeof(data) == "integer") | base::all(base::typeof(data) == "double"))){
     #     }else if( ! base::is.null(options)){
     result <- arg_check(data = vec6, options = "a") # data of typeof "list". Error message output expected because only integers or characters allowed for options.
-    expect <- list(problem = TRUE, text = "ERROR\n\nTHE vec6 ARGUMENT MUST BE SOME OF THESE OPTIONS:\na\nBUT IS NOT EVEN TYPE CHARACTER OR INTEGER, OR TYPE DOUBLE WITH A 0 MODULO.", object.name = "vec6")
+    expect <- list(problem = TRUE, text = "ERROR\n\nTHE vec6 ARGUMENT MUST BE SOME OF THESE OPTIONS:\na\nBUT IS NOT EVEN TYPE CHARACTER OR INTEGER, OR TYPE DOUBLE WITH A 0 MODULO.", object_name = "vec6")
     testthat::expect_equal(result, expect)
     # end     }else if( ! base::is.null(options)){
     # if( ! base::is.null(class)){
     result <- arg_check(data = mat1, class = c("matrix", "array")) # since R 4.0.0, class(mat1) is c("matrix", "array"): this is the valid form of https://github.com/safer-r/saferDev/issues/100
-    expect <- list(problem = FALSE, text = "NO PROBLEM DETECTED FOR THE mat1 ARGUMENT.", object.name = "mat1")
+    expect <- list(problem = FALSE, text = "NO PROBLEM DETECTED FOR THE mat1 ARGUMENT.", object_name = "mat1")
     testthat::expect_equal(result, expect)
     result <- arg_check(data = factor1, class = "factor") # plain (non ordered) factor: class(factor1) is "factor", so class = "factor" alone is valid
-    expect <- list(problem = FALSE, text = "NO PROBLEM DETECTED FOR THE factor1 ARGUMENT.", object.name = "factor1")
+    expect <- list(problem = FALSE, text = "NO PROBLEM DETECTED FOR THE factor1 ARGUMENT.", object_name = "factor1")
     testthat::expect_equal(result, expect)
     result <- arg_check(data = ord_factor1, class = c("ordered", "factor")) # class(ord_factor1) is c("ordered", "factor"): this is the valid form of https://github.com/safer-r/saferDev/issues/100
-    expect <- list(problem = FALSE, text = "NO PROBLEM DETECTED FOR THE ord_factor1 ARGUMENT.", object.name = "ord_factor1")
+    expect <- list(problem = FALSE, text = "NO PROBLEM DETECTED FOR THE ord_factor1 ARGUMENT.", object_name = "ord_factor1")
     testthat::expect_equal(result, expect)
     # (a weak expect_no_error(arg_check(data = mat1, class = "matrix")) test was here before: it was misleading because arg_check() does not stop() on a problem, and class = "matrix" alone returns problem = TRUE since R 4.0.0. The correct assertion is made below in the exact-match section)
     # end if( ! base::is.null(class)){
@@ -648,62 +657,62 @@ testthat::test_that("arg_check()", {
     # for class
     # data of type double & double_as_integer_allowed == TRUE and (class = "integer" | typeof = "integer") but finally, data is double but not made of integers # if(base::typeof(data) == "double" & double_as_integer_allowed == TRUE & ((arg.names[i2] == "class" & base::all(base::get(arg.names[i2], envir = base::sys.nframe(), inherits = FALSE) == "integer")) | (arg.names[i2] == "typeof" & base::all(base::get(arg.names[i2], envir = base::sys.nframe(), inherits = FALSE) == "integer")))){
     result <- arg_check(data = vec7, typeof = "integer", options = NULL, double_as_integer_allowed = TRUE)
-    expect <- list(problem = TRUE, text = "ERROR\n\nTHE vec7 ARGUMENT MUST BE TYPEOF integer", object.name = "vec7")
+    expect <- list(problem = TRUE, text = "ERROR\n\nTHE vec7 ARGUMENT MUST BE TYPEOF integer", object_name = "vec7")
     testthat::expect_equal(result, expect)
     result <- arg_check(data = vec7, typeof = "integer", length = 1, options = NULL, double_as_integer_allowed = TRUE)
-    expect <- list(problem = TRUE, text = "ERROR\n\nTHE vec7 ARGUMENT MUST BE TYPEOF integer AND LENGTH 1", object.name = "vec7")
+    expect <- list(problem = TRUE, text = "ERROR\n\nTHE vec7 ARGUMENT MUST BE TYPEOF integer AND LENGTH 1", object_name = "vec7")
     testthat::expect_equal(result, expect)
     result <- arg_check(data = vec3, typeof = "integer", options = NULL, double_as_integer_allowed = TRUE)
-    expect <- list(problem = FALSE, text = "NO PROBLEM DETECTED FOR THE vec3 ARGUMENT.", object.name = "vec3")
+    expect <- list(problem = FALSE, text = "NO PROBLEM DETECTED FOR THE vec3 ARGUMENT.", object_name = "vec3")
     testthat::expect_equal(result, expect)
     result <- arg_check(data = vec3, class = "integer", options = NULL, double_as_integer_allowed = TRUE) # class path rescue: class(vec3) is "numeric" but vec3 is a 0 modulo double, so it is accepted as integer
-    expect <- list(problem = FALSE, text = "NO PROBLEM DETECTED FOR THE vec3 ARGUMENT.", object.name = "vec3")
+    expect <- list(problem = FALSE, text = "NO PROBLEM DETECTED FOR THE vec3 ARGUMENT.", object_name = "vec3")
     testthat::expect_equal(result, expect)
     result <- arg_check(data = vec3, class = "integer", options = NULL) # same without the rescue: problem expected because class(vec3) is "numeric", not "integer"
-    expect <- list(problem = TRUE, text = "ERROR\n\nTHE vec3 ARGUMENT MUST BE CLASS integer", object.name = "vec3")
+    expect <- list(problem = TRUE, text = "ERROR\n\nTHE vec3 ARGUMENT MUST BE CLASS integer", object_name = "vec3")
     testthat::expect_equal(result, expect)
     result <- arg_check(data = vec7, class = "integer", options = NULL, double_as_integer_allowed = TRUE) # vec7 is a decimal double (non zero modulo): the rescue must NOT apply, problem expected
-    expect <- list(problem = TRUE, text = "ERROR\n\nTHE vec7 ARGUMENT MUST BE CLASS integer", object.name = "vec7")
+    expect <- list(problem = TRUE, text = "ERROR\n\nTHE vec7 ARGUMENT MUST BE CLASS integer", object_name = "vec7")
     testthat::expect_equal(result, expect)
     # end data of type double & double_as_integer_allowed == TRUE and (class = "integer" | typeof = "integer") but finally, data is double but not made of integers # if(base::typeof(data) == "double" & double_as_integer_allowed == TRUE & ((arg.names[i2] == "class" & base::all(base::get(arg.names[i2], envir = base::sys.nframe(), inherits = FALSE) == "integer")) | (arg.names[i2] == "typeof" & base::all(base::get(arg.names[i2], envir = base::sys.nframe(), inherits = FALSE) == "integer")))){
     # test the four base::c("class", "typeof", "mode", "length") arguments with their corresponding function # }else if( ! base::any(base::all(base::get(arg.names[i2], envir = base::sys.nframe(), inherits = FALSE) %in% base::c("vector", "ggplot2"))) & ! base::all(base::eval(base::parse(text = base::paste0(arg.names[i2], "(data)"))) %in% base::get(arg.names[i2], envir = base::sys.nframe(), inherits = FALSE))){
     result <- arg_check(data = vec7, typeof = "integer", options = NULL)
-    expect <- list(problem = TRUE, text = "ERROR\n\nTHE vec7 ARGUMENT MUST BE TYPEOF integer", object.name = "vec7")
+    expect <- list(problem = TRUE, text = "ERROR\n\nTHE vec7 ARGUMENT MUST BE TYPEOF integer", object_name = "vec7")
     testthat::expect_equal(result, expect)
     result <- arg_check(data = vec7, typeof = "integer", length = 1, options = NULL)
-    expect <- list(problem = TRUE, text = "ERROR\n\nTHE vec7 ARGUMENT MUST BE TYPEOF integer AND LENGTH 1", object.name = "vec7")
+    expect <- list(problem = TRUE, text = "ERROR\n\nTHE vec7 ARGUMENT MUST BE TYPEOF integer AND LENGTH 1", object_name = "vec7")
     testthat::expect_equal(result, expect)
     result <- arg_check(data = vec1, typeof = "integer", options = NULL)
-    expect <- list(problem = FALSE, text = "NO PROBLEM DETECTED FOR THE vec1 ARGUMENT.", object.name = "vec1")
+    expect <- list(problem = FALSE, text = "NO PROBLEM DETECTED FOR THE vec1 ARGUMENT.", object_name = "vec1")
     testthat::expect_equal(result, expect)
     # end test the four base::c("class", "typeof", "mode", "length") arguments with their corresponding function # }else if( ! base::any(base::all(base::get(arg.names[i2], envir = base::sys.nframe(), inherits = FALSE) %in% base::c("vector", "ggplot2"))) & ! base::all(base::eval(base::parse(text = base::paste0(arg.names[i2], "(data)"))) %in% base::get(arg.names[i2], envir = base::sys.nframe(), inherits = FALSE))){
     # test of class == "vector" # }else if(arg.names[i2] == "class" & base::all(base::get(arg.names[i2], envir = base::sys.nframe(), inherits = FALSE) == "vector") & ! (base::all(base::class(data) %in% "numeric") | base::all(base::class(data) %in% "integer") | base::all(base::class(data) %in% "character") | base::all(base::class(data) %in% "logical") | base::all(base::class(data) %in% "complex") | base::all(base::class(data) %in% "expression"))){ # test class == "vector". base::all(base::get(arg.names[i2], envir = base::sys.nframe(), inherits = FALSE) check if user has used the argument class = "vector". If TRUE and base::length(data) > 1, the class "numeric" "integer" "character" "logical" "complex" "expression" should be returned. No need of na.rm = TRUE for base::all() because %in% does not output NA # no need of na.rm = TRUE for base::all() because == does not output NA if no NA in left of ==, which is the case for arg.names. Other classes "list", "name", "symbol", "function", "environment", "S4", "call" return a list if length of data > 1
     result <- arg_check(data = mat1, class = "vector", options = NULL)
-    expect <- list(problem = TRUE, text = "ERROR\n\nTHE mat1 ARGUMENT MUST BE CLASS vector", object.name = "mat1")
+    expect <- list(problem = TRUE, text = "ERROR\n\nTHE mat1 ARGUMENT MUST BE CLASS vector", object_name = "mat1")
     testthat::expect_equal(result, expect)
     result <- arg_check(data = mat1, class = "vector", length = 1, options = NULL)
-    expect <- list(problem = TRUE, text = "ERROR\n\nTHE mat1 ARGUMENT MUST BE CLASS vector AND LENGTH 1", object.name = "mat1")
+    expect <- list(problem = TRUE, text = "ERROR\n\nTHE mat1 ARGUMENT MUST BE CLASS vector AND LENGTH 1", object_name = "mat1")
     testthat::expect_equal(result, expect)
     result <- arg_check(data = vec1, class = "vector", options = NULL) # class = "vector" is not a shorthand anymore: class(vec1) is "integer", so a problem is returned
-    expect <- list(problem = TRUE, text = "ERROR\n\nTHE vec1 ARGUMENT MUST BE CLASS vector", object.name = "vec1")
+    expect <- list(problem = TRUE, text = "ERROR\n\nTHE vec1 ARGUMENT MUST BE CLASS vector", object_name = "vec1")
     testthat::expect_equal(result, expect)
     result <- arg_check(data = vec1, class = "integer", options = NULL)
-    expect <- list(problem = FALSE, text = "NO PROBLEM DETECTED FOR THE vec1 ARGUMENT.", object.name = "vec1")
+    expect <- list(problem = FALSE, text = "NO PROBLEM DETECTED FOR THE vec1 ARGUMENT.", object_name = "vec1")
     testthat::expect_equal(result, expect)
     # end test of class == "vector" # }else if(arg.names[i2] == "class" & base::all(base::get(arg.names[i2], envir = base::sys.nframe(), inherits = FALSE) == "vector") & ! (base::all(base::class(data) %in% "numeric") | base::all(base::class(data) %in% "integer") | base::all(base::class(data) %in% "character") | base::all(base::class(data) %in% "logical") | base::all(base::class(data) %in% "complex") | base::all(base::class(data) %in% "expression"))){ # test class == "vector". base::all(base::get(arg.names[i2], envir = base::sys.nframe(), inherits = FALSE) check if user has used the argument class = "vector". If TRUE and base::length(data) > 1, the class "numeric" "integer" "character" "logical" "complex" "expression" should be returned. No need of na.rm = TRUE for base::all() because %in% does not output NA # no need of na.rm = TRUE for base::all() because == does not output NA if no NA in left of ==, which is the case for arg.names. Other classes "list", "name", "symbol", "function", "environment", "S4", "call" return a list if length of data > 1
     # test of class == "ggplot2" # }else if(arg.names[i2] == "class" & base::all(base::get(arg.names[i2], envir = base::sys.nframe(), inherits = FALSE) == "ggplot2") & ! base::all(base::class(data) %in% base::c("gg", "ggplot"))){
     result <- arg_check(data = mat1, class = "ggplot2", options = NULL)
-    expect <- list(problem = TRUE, text = "ERROR\n\nTHE mat1 ARGUMENT MUST BE CLASS ggplot2", object.name = "mat1")
+    expect <- list(problem = TRUE, text = "ERROR\n\nTHE mat1 ARGUMENT MUST BE CLASS ggplot2", object_name = "mat1")
     testthat::expect_equal(result, expect)
     if (utils::packageVersion("ggplot2") >= "4.0.0"){
         result <- arg_check(data = ggplot2::ggplot(), class = c("ggplot2::ggplot", "ggplot", "ggplot2::gg", "S7_object", "gg"), options = NULL) # class = "ggplot2" is not a shorthand anymore: it must match class(data) exactly
     }else{
         result <- arg_check(data = ggplot2::ggplot(), class = c("gg", "ggplot"), options = NULL) # or c("gg", "ggplot") depending on what arg_check should accept
     }
-    expect <- list(problem = FALSE, text = "NO PROBLEM DETECTED FOR THE ggplot2::ggplot() ARGUMENT.", object.name = "ggplot2::ggplot()")
+    expect <- list(problem = FALSE, text = "NO PROBLEM DETECTED FOR THE ggplot2::ggplot() ARGUMENT.", object_name = "ggplot2::ggplot()")
     testthat::expect_equal(result, expect)
     result <- arg_check(data = ggplot2::ggplot(), class = "ggplot2", options = NULL) # class(data) of a ggplot object is not the single string "ggplot2"
-    expect <- list(problem = TRUE, text = "ERROR\n\nTHE ggplot2::ggplot() ARGUMENT MUST BE CLASS ggplot2", object.name = "ggplot2::ggplot()")
+    expect <- list(problem = TRUE, text = "ERROR\n\nTHE ggplot2::ggplot() ARGUMENT MUST BE CLASS ggplot2", object_name = "ggplot2::ggplot()")
     testthat::expect_equal(result, expect)
     r_version <- as.numeric_version(paste0(R.version$major, ".", R.version$minor))
     if (utils::packageVersion("ggplot2") >= "4.0.0"){
@@ -711,24 +720,24 @@ testthat::test_that("arg_check()", {
     }else{
         result <- arg_check(data = ggplot2::ggplot_build(ggplot2::ggplot()), class = "ggplot_built", options = NULL) # before ggplot2 4.0.0, class(ggplot_build()) is the single string "ggplot_built"
     }
-    expect <- list(problem = FALSE, text = "NO PROBLEM DETECTED FOR THE ggplot2::ggplot_build(ggplot2::ggplot()) ARGUMENT.", object.name = "ggplot2::ggplot_build(ggplot2::ggplot())")
+    expect <- list(problem = FALSE, text = "NO PROBLEM DETECTED FOR THE ggplot2::ggplot_build(ggplot2::ggplot()) ARGUMENT.", object_name = "ggplot2::ggplot_build(ggplot2::ggplot())")
     testthat::expect_equal(result, expect)
     if (r_version >= "4.5.0" && utils::packageVersion("ggplot2") >= "4.0.0"){
         result <- arg_check(data = ggplot2::ggplot_build(ggplot2::ggplot()), class = c("ggplot2::ggplot_built", "ggplot_built", "ggplot2::gg", "S7_object"), mode = "object")
     }else{
         result <- arg_check(data = ggplot2::ggplot_build(ggplot2::ggplot()), class = "ggplot_built", mode = "list")
     }
-    expect <- list(problem = FALSE, text = "NO PROBLEM DETECTED FOR THE ggplot2::ggplot_build(ggplot2::ggplot()) ARGUMENT.", object.name = "ggplot2::ggplot_build(ggplot2::ggplot())")
+    expect <- list(problem = FALSE, text = "NO PROBLEM DETECTED FOR THE ggplot2::ggplot_build(ggplot2::ggplot()) ARGUMENT.", object_name = "ggplot2::ggplot_build(ggplot2::ggplot())")
     testthat::expect_equal(result, expect)
     if (r_version >= "4.5.0" && utils::packageVersion("ggplot2") >= "4.0.0"){
         result <- arg_check(data = ggplot2::ggplot_build(ggplot2::ggplot()), class = c("ggplot2::ggplot_built", "ggplot_built", "ggplot2::gg", "S7_object"), typeof = "object")
     }else{
         result <- arg_check(data = ggplot2::ggplot_build(ggplot2::ggplot()), class = "ggplot_built", typeof = "list")
     }
-    expect <- list(problem = FALSE, text = "NO PROBLEM DETECTED FOR THE ggplot2::ggplot_build(ggplot2::ggplot()) ARGUMENT.", object.name = "ggplot2::ggplot_build(ggplot2::ggplot())")
+    expect <- list(problem = FALSE, text = "NO PROBLEM DETECTED FOR THE ggplot2::ggplot_build(ggplot2::ggplot()) ARGUMENT.", object_name = "ggplot2::ggplot_build(ggplot2::ggplot())")
     testthat::expect_equal(result, expect)
     result <- arg_check(data = list(), class = "ggplot_built")
-    expect <- list(problem = TRUE, text = "ERROR\n\nTHE list() ARGUMENT MUST BE CLASS ggplot_built", object.name = "list()")
+    expect <- list(problem = TRUE, text = "ERROR\n\nTHE list() ARGUMENT MUST BE CLASS ggplot_built", object_name = "list()")
     testthat::expect_equal(result, expect)
 
     # end test of class == "ggplot2" # end }else if(arg.names[i2] == "class" & base::all(base::get(arg.names[i2], envir = base::sys.nframe(), inherits = FALSE) == "ggplot2") & ! base::all(base::class(data) %in% base::c("gg", "ggplot"))){
@@ -736,53 +745,53 @@ testthat::test_that("arg_check()", {
     # for typeof
     # data of type double & double_as_integer_allowed == TRUE and (class = "integer" | typeof = "integer") but finally, data is double but not made of integers # if(base::typeof(data) == "double" & double_as_integer_allowed == TRUE & ((arg.names[i2] == "class" & base::all(base::get(arg.names[i2], envir = base::sys.nframe(), inherits = FALSE) == "integer")) | (arg.names[i2] == "typeof" & base::all(base::get(arg.names[i2], envir = base::sys.nframe(), inherits = FALSE) == "integer")))){
     result <- arg_check(data = vec7, typeof = "integer", options = NULL, double_as_integer_allowed = TRUE)
-    expect <- list(problem = TRUE, text = "ERROR\n\nTHE vec7 ARGUMENT MUST BE TYPEOF integer", object.name = "vec7")
+    expect <- list(problem = TRUE, text = "ERROR\n\nTHE vec7 ARGUMENT MUST BE TYPEOF integer", object_name = "vec7")
     testthat::expect_equal(result, expect)
     result <- arg_check(data = vec7, typeof = "integer", length = 1, options = NULL, double_as_integer_allowed = TRUE)
-    expect <- list(problem = TRUE, text = "ERROR\n\nTHE vec7 ARGUMENT MUST BE TYPEOF integer AND LENGTH 1", object.name = "vec7")
+    expect <- list(problem = TRUE, text = "ERROR\n\nTHE vec7 ARGUMENT MUST BE TYPEOF integer AND LENGTH 1", object_name = "vec7")
     testthat::expect_equal(result, expect)
     result <- arg_check(data = vec3, typeof = "integer", options = NULL, double_as_integer_allowed = TRUE)
-    expect <- list(problem = FALSE, text = "NO PROBLEM DETECTED FOR THE vec3 ARGUMENT.", object.name = "vec3")
+    expect <- list(problem = FALSE, text = "NO PROBLEM DETECTED FOR THE vec3 ARGUMENT.", object_name = "vec3")
     testthat::expect_equal(result, expect)
     # end data of type double & double_as_integer_allowed == TRUE and (class = "integer" | typeof = "integer") but finally, data is double but not made of integers # if(base::typeof(data) == "double" & double_as_integer_allowed == TRUE & ((arg.names[i2] == "class" & base::all(base::get(arg.names[i2], envir = base::sys.nframe(), inherits = FALSE) == "integer")) | (arg.names[i2] == "typeof" & base::all(base::get(arg.names[i2], envir = base::sys.nframe(), inherits = FALSE) == "integer")))){
     # test the four base::c("class", "typeof", "mode", "length") arguments with their corresponding function # }else if( ! base::any(base::all(base::get(arg.names[i2], envir = base::sys.nframe(), inherits = FALSE) %in% base::c("vector", "ggplot2"))) & ! base::all(base::eval(base::parse(text = base::paste0(arg.names[i2], "(data)"))) %in% base::get(arg.names[i2], envir = base::sys.nframe(), inherits = FALSE))){
     result <- arg_check(data = vec7, typeof = "integer", options = NULL)
-    expect <- list(problem = TRUE, text = "ERROR\n\nTHE vec7 ARGUMENT MUST BE TYPEOF integer", object.name = "vec7")
+    expect <- list(problem = TRUE, text = "ERROR\n\nTHE vec7 ARGUMENT MUST BE TYPEOF integer", object_name = "vec7")
     testthat::expect_equal(result, expect)
     result <- arg_check(data = vec7, typeof = "integer", length = 1, options = NULL)
-    expect <- list(problem = TRUE, text = "ERROR\n\nTHE vec7 ARGUMENT MUST BE TYPEOF integer AND LENGTH 1", object.name = "vec7")
+    expect <- list(problem = TRUE, text = "ERROR\n\nTHE vec7 ARGUMENT MUST BE TYPEOF integer AND LENGTH 1", object_name = "vec7")
     testthat::expect_equal(result, expect)
     result <- arg_check(data = vec1, typeof = "integer", options = NULL)
-    expect <- list(problem = FALSE, text = "NO PROBLEM DETECTED FOR THE vec1 ARGUMENT.", object.name = "vec1")
+    expect <- list(problem = FALSE, text = "NO PROBLEM DETECTED FOR THE vec1 ARGUMENT.", object_name = "vec1")
     testthat::expect_equal(result, expect)
     # end test the four base::c("class", "typeof", "mode", "length") arguments with their corresponding function # }else if( ! base::any(base::all(base::get(arg.names[i2], envir = base::sys.nframe(), inherits = FALSE) %in% base::c("vector", "ggplot2"))) & ! base::all(base::eval(base::parse(text = base::paste0(arg.names[i2], "(data)"))) %in% base::get(arg.names[i2], envir = base::sys.nframe(), inherits = FALSE))){
     # end for typeof
     # for mode
     # test the four base::c("class", "typeof", "mode", "length") arguments with their corresponding function # }else if( ! base::any(base::all(base::get(arg.names[i2], envir = base::sys.nframe(), inherits = FALSE) %in% base::c("vector", "ggplot2"))) & ! base::all(base::eval(base::parse(text = base::paste0(arg.names[i2], "(data)"))) %in% base::get(arg.names[i2], envir = base::sys.nframe(), inherits = FALSE))){
     result <- arg_check(data = vec7, mode = "character", options = NULL)
-    expect <- list(problem = TRUE, text = "ERROR\n\nTHE vec7 ARGUMENT MUST BE MODE character", object.name = "vec7")
+    expect <- list(problem = TRUE, text = "ERROR\n\nTHE vec7 ARGUMENT MUST BE MODE character", object_name = "vec7")
     testthat::expect_equal(result, expect)
     result <- arg_check(data = vec7, mode = "character", length = 1, options = NULL)
-    expect <- list(problem = TRUE, text = "ERROR\n\nTHE vec7 ARGUMENT MUST BE MODE character AND LENGTH 1", object.name = "vec7")
+    expect <- list(problem = TRUE, text = "ERROR\n\nTHE vec7 ARGUMENT MUST BE MODE character AND LENGTH 1", object_name = "vec7")
     testthat::expect_equal(result, expect)
     result <- arg_check(data = vec1, mode = "numeric", options = NULL)
-    expect <- list(problem = FALSE, text = "NO PROBLEM DETECTED FOR THE vec1 ARGUMENT.", object.name = "vec1")
+    expect <- list(problem = FALSE, text = "NO PROBLEM DETECTED FOR THE vec1 ARGUMENT.", object_name = "vec1")
     testthat::expect_equal(result, expect)
     # end test the four base::c("class", "typeof", "mode", "length") arguments with their corresponding function # }else if( ! base::any(base::all(base::get(arg.names[i2], envir = base::sys.nframe(), inherits = FALSE) %in% base::c("vector", "ggplot2"))) & ! base::all(base::eval(base::parse(text = base::paste0(arg.names[i2], "(data)"))) %in% base::get(arg.names[i2], envir = base::sys.nframe(), inherits = FALSE))){
     # end for mode
     # for length
     # test the four base::c("class", "typeof", "mode", "length") arguments with their corresponding function # }else if( ! base::any(base::all(base::get(arg.names[i2], envir = base::sys.nframe(), inherits = FALSE) %in% base::c("vector", "ggplot2"))) & ! base::all(base::eval(base::parse(text = base::paste0(arg.names[i2], "(data)"))) %in% base::get(arg.names[i2], envir = base::sys.nframe(), inherits = FALSE))){
     result <- arg_check(data = vec7, length = 1, options = NULL)
-    expect <- list(problem = TRUE, text = "ERROR\n\nTHE vec7 ARGUMENT MUST BE LENGTH 1", object.name = "vec7")
+    expect <- list(problem = TRUE, text = "ERROR\n\nTHE vec7 ARGUMENT MUST BE LENGTH 1", object_name = "vec7")
     testthat::expect_equal(result, expect)
     result <- arg_check(data = vec7, mode = "character", length = 1, options = NULL)
-    expect <- list(problem = TRUE, text = "ERROR\n\nTHE vec7 ARGUMENT MUST BE MODE character AND LENGTH 1", object.name = "vec7")
+    expect <- list(problem = TRUE, text = "ERROR\n\nTHE vec7 ARGUMENT MUST BE MODE character AND LENGTH 1", object_name = "vec7")
     testthat::expect_equal(result, expect)
     result <- arg_check(data = vec7, mode = "numeric", length = 1, options = NULL)
-    expect <- list(problem = TRUE, text = "ERROR\n\nTHE vec7 ARGUMENT MUST BE LENGTH 1", object.name = "vec7")
+    expect <- list(problem = TRUE, text = "ERROR\n\nTHE vec7 ARGUMENT MUST BE LENGTH 1", object_name = "vec7")
     testthat::expect_equal(result, expect)
     result <- arg_check(data = vec1, length = 5, options = NULL)
-    expect <- list(problem = FALSE, text = "NO PROBLEM DETECTED FOR THE vec1 ARGUMENT.", object.name = "vec1")
+    expect <- list(problem = FALSE, text = "NO PROBLEM DETECTED FOR THE vec1 ARGUMENT.", object_name = "vec1")
     testthat::expect_equal(result, expect)
     # end test the four base::c("class", "typeof", "mode", "length") arguments with their corresponding function # }else if( ! base::any(base::all(base::get(arg.names[i2], envir = base::sys.nframe(), inherits = FALSE) %in% base::c("vector", "ggplot2"))) & ! base::all(base::eval(base::parse(text = base::paste0(arg.names[i2], "(data)"))) %in% base::get(arg.names[i2], envir = base::sys.nframe(), inherits = FALSE))){
     # end for length
@@ -790,113 +799,113 @@ testthat::test_that("arg_check()", {
 
     # if(prop == TRUE & base::all(base::typeof(data) == "double")){
     result <- arg_check(data = vec7, prop = TRUE)
-    expect <- list(problem = TRUE, text = "ERROR\n\nTHE vec7 ARGUMENT MUST BE DECIMAL VALUES BETWEEN 0 AND 1.", object.name = "vec7")
+    expect <- list(problem = TRUE, text = "ERROR\n\nTHE vec7 ARGUMENT MUST BE DECIMAL VALUES BETWEEN 0 AND 1.", object_name = "vec7")
     testthat::expect_equal(result, expect)
     result <- arg_check(data = vec7, length = 1, prop = TRUE)
-    expect <- list(problem = TRUE, text = "ERROR\n\nTHE vec7 ARGUMENT MUST BE LENGTH 1 AND THE vec7 ARGUMENT MUST BE DECIMAL VALUES BETWEEN 0 AND 1.", object.name = "vec7")
+    expect <- list(problem = TRUE, text = "ERROR\n\nTHE vec7 ARGUMENT MUST BE LENGTH 1 AND THE vec7 ARGUMENT MUST BE DECIMAL VALUES BETWEEN 0 AND 1.", object_name = "vec7")
     testthat::expect_equal(result, expect)
     result <- arg_check(data = vec1, prop = TRUE)
-    expect <- list(problem = TRUE, text = "ERROR\n\nTHE vec1 ARGUMENT MUST BE DECIMAL VALUES BETWEEN 0 AND 1.", object.name = "vec1")
+    expect <- list(problem = TRUE, text = "ERROR\n\nTHE vec1 ARGUMENT MUST BE DECIMAL VALUES BETWEEN 0 AND 1.", object_name = "vec1")
     testthat::expect_equal(result, expect)
     result <- arg_check(data = vec1, prop = TRUE, length = 1)
-    expect <- list(problem = TRUE, text = "ERROR\n\nTHE vec1 ARGUMENT MUST BE LENGTH 1 AND THE vec1 ARGUMENT MUST BE DECIMAL VALUES BETWEEN 0 AND 1.", object.name = "vec1")
+    expect <- list(problem = TRUE, text = "ERROR\n\nTHE vec1 ARGUMENT MUST BE LENGTH 1 AND THE vec1 ARGUMENT MUST BE DECIMAL VALUES BETWEEN 0 AND 1.", object_name = "vec1")
     testthat::expect_equal(result, expect)
     # end if(prop == TRUE & base::all(base::typeof(data) == "double")){
     # if(base::all(base::class(data) %in% "expression")){
     result <- arg_check(data = expr1, prop = TRUE, length = 2)
-    expect <- list(problem = TRUE, text = "ERROR\n\nTHE expr1 ARGUMENT MUST BE LENGTH 2 AND THE expr1 ARGUMENT MUST BE DECIMAL VALUES BETWEEN 0 AND 1.", object.name = "expr1")
+    expect <- list(problem = TRUE, text = "ERROR\n\nTHE expr1 ARGUMENT MUST BE LENGTH 2 AND THE expr1 ARGUMENT MUST BE DECIMAL VALUES BETWEEN 0 AND 1.", object_name = "expr1")
     testthat::expect_equal(result, expect)
     # end if(base::all(base::class(data) %in% "expression")){
     # if(na_contain == FALSE & (base::mode(data) %in% base::c("logical", "numeric", "complex", "character", "list"))){
     result <- arg_check(data = mat2, mode = "numeric", na_contain = FALSE)
-    expect <- list(problem = TRUE, text = "ERROR\n\nTHE mat2 ARGUMENT CONTAINS NA WHILE NOT AUTHORIZED.", object.name = "mat2")
+    expect <- list(problem = TRUE, text = "ERROR\n\nTHE mat2 ARGUMENT CONTAINS NA WHILE NOT AUTHORIZED.", object_name = "mat2")
     testthat::expect_equal(result, expect)
     result <- arg_check(data = mat2, mode = "numeric", length = 1, na_contain = FALSE)
-    expect <- list(problem = TRUE, text = "ERROR\n\nTHE mat2 ARGUMENT MUST BE LENGTH 1 AND THE mat2 ARGUMENT CONTAINS NA WHILE NOT AUTHORIZED.", object.name = "mat2")
+    expect <- list(problem = TRUE, text = "ERROR\n\nTHE mat2 ARGUMENT MUST BE LENGTH 1 AND THE mat2 ARGUMENT CONTAINS NA WHILE NOT AUTHORIZED.", object_name = "mat2")
     testthat::expect_equal(result, expect)
     # end if(na_contain == FALSE & (base::mode(data) %in% base::c("logical", "numeric", "complex", "character", "list"))){
     # if(neg_values == FALSE & base::all(base::mode(data) %in% "numeric") & ! base::any(base::class(data) %in% "factor")){
     result <- arg_check(data = vec1, mode = "numeric", neg_values = FALSE)
-    expect <- list(problem = TRUE, text = "ERROR\n\nTHE vec1 ARGUMENT MUST BE MADE OF NON NEGATIVE VALUES.", object.name = "vec1")
+    expect <- list(problem = TRUE, text = "ERROR\n\nTHE vec1 ARGUMENT MUST BE MADE OF NON NEGATIVE VALUES.", object_name = "vec1")
     testthat::expect_equal(result, expect)
     result <- arg_check(data = vec1, mode = "numeric", length = 1, neg_values = FALSE)
-    expect <- list(problem = TRUE, text = "ERROR\n\nTHE vec1 ARGUMENT MUST BE LENGTH 1 AND THE vec1 ARGUMENT MUST BE MADE OF NON NEGATIVE VALUES.", object.name = "vec1")
+    expect <- list(problem = TRUE, text = "ERROR\n\nTHE vec1 ARGUMENT MUST BE LENGTH 1 AND THE vec1 ARGUMENT MUST BE MADE OF NON NEGATIVE VALUES.", object_name = "vec1")
     testthat::expect_equal(result, expect)
     result <- arg_check(data = vec3, mode = "numeric", neg_values = FALSE)
-    expect <- list(problem = FALSE, text = "NO PROBLEM DETECTED FOR THE vec3 ARGUMENT.", object.name = "vec3")
+    expect <- list(problem = FALSE, text = "NO PROBLEM DETECTED FOR THE vec3 ARGUMENT.", object_name = "vec3")
     testthat::expect_equal(result, expect)
     result <- arg_check(data = factor1, mode = "numeric", neg_values = FALSE)
-    expect <- list(problem = TRUE, text = "ERROR\n\nTHE factor1 ARGUMENT MUST BE MADE OF NON NEGATIVE VALUES BUT IS A FACTOR", object.name = "factor1")
+    expect <- list(problem = TRUE, text = "ERROR\n\nTHE factor1 ARGUMENT MUST BE MADE OF NON NEGATIVE VALUES BUT IS A FACTOR", object_name = "factor1")
     testthat::expect_equal(result, expect)
     result <- arg_check(data = factor1, mode = "numeric", length = 1, neg_values = FALSE)
-    expect <- list(problem = TRUE, text = "ERROR\n\nTHE factor1 ARGUMENT MUST BE LENGTH 1 AND THE factor1 ARGUMENT MUST BE MADE OF NON NEGATIVE VALUES BUT IS A FACTOR", object.name = "factor1")
+    expect <- list(problem = TRUE, text = "ERROR\n\nTHE factor1 ARGUMENT MUST BE LENGTH 1 AND THE factor1 ARGUMENT MUST BE MADE OF NON NEGATIVE VALUES BUT IS A FACTOR", object_name = "factor1")
     testthat::expect_equal(result, expect)
     result <- arg_check(data = vec5, mode = "numeric", neg_values = FALSE)
-    expect <- list(problem = TRUE, text = "ERROR\n\nTHE vec5 ARGUMENT MUST BE MODE numeric AND THE vec5 ARGUMENT MUST BE MADE OF NON NEGATIVE VALUES BUT IS NOT EVEN NUMERIC.", object.name = "vec5")
+    expect <- list(problem = TRUE, text = "ERROR\n\nTHE vec5 ARGUMENT MUST BE MODE numeric AND THE vec5 ARGUMENT MUST BE MADE OF NON NEGATIVE VALUES BUT IS NOT EVEN NUMERIC.", object_name = "vec5")
     testthat::expect_equal(result, expect)
     result <- arg_check(data = vec5, mode = "numeric", length = 1, neg_values = FALSE)
-    expect <- list(problem = TRUE, text = "ERROR\n\nTHE vec5 ARGUMENT MUST BE MODE numeric AND LENGTH 1 AND THE vec5 ARGUMENT MUST BE MADE OF NON NEGATIVE VALUES BUT IS NOT EVEN NUMERIC.", object.name = "vec5")
+    expect <- list(problem = TRUE, text = "ERROR\n\nTHE vec5 ARGUMENT MUST BE MODE numeric AND LENGTH 1 AND THE vec5 ARGUMENT MUST BE MADE OF NON NEGATIVE VALUES BUT IS NOT EVEN NUMERIC.", object_name = "vec5")
     testthat::expect_equal(result, expect)
     result <- arg_check(data = vec5, mode = "numeric", class = "vector", typeof = "integer", length = 1, neg_values = FALSE) # class = "vector" is not a shorthand anymore: class(vec5) is "character"
-    expect <- list(problem = TRUE, text = "ERROR\n\nTHE vec5 ARGUMENT MUST BE CLASS vector AND TYPEOF integer AND MODE numeric AND LENGTH 1 AND THE vec5 ARGUMENT MUST BE MADE OF NON NEGATIVE VALUES BUT IS NOT EVEN NUMERIC.", object.name = "vec5")
+    expect <- list(problem = TRUE, text = "ERROR\n\nTHE vec5 ARGUMENT MUST BE CLASS vector AND TYPEOF integer AND MODE numeric AND LENGTH 1 AND THE vec5 ARGUMENT MUST BE MADE OF NON NEGATIVE VALUES BUT IS NOT EVEN NUMERIC.", object_name = "vec5")
     testthat::expect_equal(result, expect)
     # end if(neg_values == FALSE & base::all(base::mode(data) %in% "numeric") & ! base::any(base::class(data) %in% "factor")){
     # if(inf_values == FALSE & base::all(base::typeof(data) %in% "double") & ! base::any(base::class(data) %in% "factor")){
     result <- arg_check(data = vec8, mode = "numeric", inf_values = FALSE)
-    expect <- list(problem = TRUE, text = "ERROR\n\nTHE vec8 ARGUMENT MUST BE MADE OF NON INFINITE VALUES.", object.name = "vec8")
+    expect <- list(problem = TRUE, text = "ERROR\n\nTHE vec8 ARGUMENT MUST BE MADE OF NON INFINITE VALUES.", object_name = "vec8")
     testthat::expect_equal(result, expect)
     result <- arg_check(data = vec8, mode = "numeric", length = 1, inf_values = FALSE)
-    expect <- list(problem = TRUE, text = "ERROR\n\nTHE vec8 ARGUMENT MUST BE LENGTH 1 AND THE vec8 ARGUMENT MUST BE MADE OF NON INFINITE VALUES.", object.name = "vec8")
+    expect <- list(problem = TRUE, text = "ERROR\n\nTHE vec8 ARGUMENT MUST BE LENGTH 1 AND THE vec8 ARGUMENT MUST BE MADE OF NON INFINITE VALUES.", object_name = "vec8")
     testthat::expect_equal(result, expect)
     result <- arg_check(data = vec3, mode = "numeric", inf_values = FALSE)
-    expect <- list(problem = FALSE, text = "NO PROBLEM DETECTED FOR THE vec3 ARGUMENT.", object.name = "vec3")
+    expect <- list(problem = FALSE, text = "NO PROBLEM DETECTED FOR THE vec3 ARGUMENT.", object_name = "vec3")
     testthat::expect_equal(result, expect)
     result <- arg_check(data = factor1, mode = "numeric", inf_values = FALSE)
-    expect <- list(problem = TRUE, text = "ERROR\n\nTHE factor1 ARGUMENT MUST BE MADE OF NON INFINITE VALUES BUT IS A FACTOR", object.name = "factor1")
+    expect <- list(problem = TRUE, text = "ERROR\n\nTHE factor1 ARGUMENT MUST BE MADE OF NON INFINITE VALUES BUT IS A FACTOR", object_name = "factor1")
     testthat::expect_equal(result, expect)
     result <- arg_check(data = factor1, mode = "numeric", length = 1, inf_values = FALSE)
-    expect <- list(problem = TRUE, text = "ERROR\n\nTHE factor1 ARGUMENT MUST BE LENGTH 1 AND THE factor1 ARGUMENT MUST BE MADE OF NON INFINITE VALUES BUT IS A FACTOR", object.name = "factor1")
+    expect <- list(problem = TRUE, text = "ERROR\n\nTHE factor1 ARGUMENT MUST BE LENGTH 1 AND THE factor1 ARGUMENT MUST BE MADE OF NON INFINITE VALUES BUT IS A FACTOR", object_name = "factor1")
     testthat::expect_equal(result, expect)
     result <- arg_check(data = vec5, mode = "numeric", inf_values = FALSE)
-    expect <- list(problem = TRUE, text = "ERROR\n\nTHE vec5 ARGUMENT MUST BE MODE numeric AND THE vec5 ARGUMENT MUST BE MADE OF NON INFINITE VALUES BUT IS NOT EVEN MODE NUMERIC OR TYPE DOUBLE.", object.name = "vec5")
+    expect <- list(problem = TRUE, text = "ERROR\n\nTHE vec5 ARGUMENT MUST BE MODE numeric AND THE vec5 ARGUMENT MUST BE MADE OF NON INFINITE VALUES BUT IS NOT EVEN MODE NUMERIC OR TYPE DOUBLE.", object_name = "vec5")
     testthat::expect_equal(result, expect)
     result <- arg_check(data = vec5, mode = "numeric", length = 1, inf_values = FALSE)
-    expect <- list(problem = TRUE, text = "ERROR\n\nTHE vec5 ARGUMENT MUST BE MODE numeric AND LENGTH 1 AND THE vec5 ARGUMENT MUST BE MADE OF NON INFINITE VALUES BUT IS NOT EVEN MODE NUMERIC OR TYPE DOUBLE.", object.name = "vec5")
+    expect <- list(problem = TRUE, text = "ERROR\n\nTHE vec5 ARGUMENT MUST BE MODE numeric AND LENGTH 1 AND THE vec5 ARGUMENT MUST BE MADE OF NON INFINITE VALUES BUT IS NOT EVEN MODE NUMERIC OR TYPE DOUBLE.", object_name = "vec5")
     testthat::expect_equal(result, expect)
     result <- arg_check(data = vec5, class = "vector", mode = "numeric", typeof = "double", length = 1, inf_values = FALSE) # class = "vector" is not a shorthand anymore: class(vec5) is "character"
-    expect <- list(problem = TRUE, text = "ERROR\n\nTHE vec5 ARGUMENT MUST BE CLASS vector AND TYPEOF double AND MODE numeric AND LENGTH 1 AND THE vec5 ARGUMENT MUST BE MADE OF NON INFINITE VALUES BUT IS NOT EVEN MODE NUMERIC OR TYPE DOUBLE.", object.name = "vec5")
+    expect <- list(problem = TRUE, text = "ERROR\n\nTHE vec5 ARGUMENT MUST BE CLASS vector AND TYPEOF double AND MODE numeric AND LENGTH 1 AND THE vec5 ARGUMENT MUST BE MADE OF NON INFINITE VALUES BUT IS NOT EVEN MODE NUMERIC OR TYPE DOUBLE.", object_name = "vec5")
     testthat::expect_equal(result, expect)
     # end if(inf_values == FALSE & base::all(base::typeof(data) %in% "double") & ! base::any(base::class(data) %in% "factor")){
     # if(print == TRUE & problem == TRUE){
     result <- arg_check(data = vec8, mode = "character", print = TRUE)
-    expect <- list(problem = TRUE, text = "ERROR\n\nTHE vec8 ARGUMENT MUST BE MODE character", object.name = "vec8")
+    expect <- list(problem = TRUE, text = "ERROR\n\nTHE vec8 ARGUMENT MUST BE MODE character", object_name = "vec8")
     testthat::expect_equal(result, expect)
     # end if(print == TRUE & problem == TRUE){
     # if( ! base::is.null(x = base::get(x = arg.names[i2], pos = -1L, envir = base::as.environment(-1), mode = "any", inherits = FALSE))){ # exact matching of class(data) now
     testthat::expect_no_error(arg_check(data = arr1, class = "array"))
     result <- arg_check(data = mat1, class = "array", print = TRUE)
-    expect <- list(problem = TRUE, text = "ERROR\n\nTHE mat1 ARGUMENT MUST BE CLASS array", object.name = "mat1")
+    expect <- list(problem = TRUE, text = "ERROR\n\nTHE mat1 ARGUMENT MUST BE CLASS array", object_name = "mat1")
     testthat::expect_equal(result, expect)
     result <- arg_check(data = mat1, class = "matrix", print = TRUE) # since R 4.0.0, class(mat1) is c("matrix", "array"), so class = "matrix" alone returns a problem. This is the fix of https://github.com/safer-r/saferDev/issues/100
-    expect <- list(problem = TRUE, text = "ERROR\n\nTHE mat1 ARGUMENT MUST BE CLASS matrix", object.name = "mat1")
+    expect <- list(problem = TRUE, text = "ERROR\n\nTHE mat1 ARGUMENT MUST BE CLASS matrix", object_name = "mat1")
     testthat::expect_equal(result, expect)
     result <- arg_check(data = arr1, class = "matrix", print = TRUE)
-    expect <- list(problem = TRUE, text = "ERROR\n\nTHE arr1 ARGUMENT MUST BE CLASS matrix", object.name = "arr1")
+    expect <- list(problem = TRUE, text = "ERROR\n\nTHE arr1 ARGUMENT MUST BE CLASS matrix", object_name = "arr1")
     testthat::expect_equal(result, expect)
 
     result <- arg_check(data = ord_factor1, class = "factor", print = TRUE) # class(ord_factor1) is c("ordered", "factor"), so class = "factor" alone returns a problem
-    expect <- list(problem = TRUE, text = "ERROR\n\nTHE ord_factor1 ARGUMENT MUST BE CLASS factor", object.name = "ord_factor1")
+    expect <- list(problem = TRUE, text = "ERROR\n\nTHE ord_factor1 ARGUMENT MUST BE CLASS factor", object_name = "ord_factor1")
     testthat::expect_equal(result, expect)
     result <- arg_check(data = ord_factor1, class = "vector", print = TRUE)
-    expect <- list(problem = TRUE, text = "ERROR\n\nTHE ord_factor1 ARGUMENT MUST BE CLASS vector", object.name = "ord_factor1")
+    expect <- list(problem = TRUE, text = "ERROR\n\nTHE ord_factor1 ARGUMENT MUST BE CLASS vector", object_name = "ord_factor1")
     testthat::expect_equal(result, expect)
 
     # valid exact-match forms of issue #100: the full class vector, in order
-    result <- arg_check(data = mat1, class = c("matrix", "array"), print = TRUE) # class(mat1) is c("matrix", "array"): exact match, valid
-    expect <- list(problem = FALSE, text = "NO PROBLEM DETECTED FOR THE mat1 ARGUMENT.", object.name = "mat1")
+    result <- arg_check(data = mat1, class = c("matrix", "array")) # class(mat1) is c("matrix", "array"): exact match, valid (no print = TRUE because print only acts when a problem is detected)
+    expect <- list(problem = FALSE, text = "NO PROBLEM DETECTED FOR THE mat1 ARGUMENT.", object_name = "mat1")
     testthat::expect_equal(result, expect)
-    result <- arg_check(data = ord_factor1, class = c("ordered", "factor"), print = TRUE) # class(ord_factor1) is c("ordered", "factor"): exact match, valid
-    expect <- list(problem = FALSE, text = "NO PROBLEM DETECTED FOR THE ord_factor1 ARGUMENT.", object.name = "ord_factor1")
+    result <- arg_check(data = ord_factor1, class = c("ordered", "factor")) # class(ord_factor1) is c("ordered", "factor"): exact match, valid
+    expect <- list(problem = FALSE, text = "NO PROBLEM DETECTED FOR THE ord_factor1 ARGUMENT.", object_name = "ord_factor1")
     testthat::expect_equal(result, expect)
 
     # end if( ! base::is.null(x = base::get(x = arg.names[i2], pos = -1L, envir = base::as.environment(-1), mode = "any", inherits = FALSE))){
@@ -960,7 +969,7 @@ testthat::test_that("arg_check()", {
         safer_check = TRUE, 
         error_text = " IN P1::F1"
     )
-    expect26 <- base::list(problem = FALSE, text = "NO PROBLEM DETECTED FOR THE vec1 OBJECT IN P1::F1", object.name = "vec1")
+    expect26 <- base::list(problem = FALSE, text = "NO PROBLEM DETECTED FOR THE vec1 OBJECT IN P1::F1", object_name = "vec1")
     testthat::expect_equal(result26, expect26)
 
     #### end sophiticated examples

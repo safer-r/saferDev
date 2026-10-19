@@ -300,7 +300,7 @@
     text_check <- NULL
     checked_arg_names <- NULL # for function debbuging: used by r_debugging_tools
     arg_check_error_text <- base::paste0("ERROR ", embed_error_text, "\n\n", collapse = NULL, recycle0 = FALSE) # must be used instead of error_text = embed_error_text when several arg_check are performed on the same argument (tempo1, tempo2, see below)
-    ee <- base::expression(argum_check <- base::c(argum_check, tempo$problem) , text_check <- base::c(text_check, tempo$text) , checked_arg_names <- base::c(checked_arg_names, tempo$object.name))
+    ee <- base::expression(argum_check <- base::c(argum_check, tempo$problem) , text_check <- base::c(text_check, tempo$text) , checked_arg_names <- base::c(checked_arg_names, tempo$object_name))
     # add as many lines as below, for each of your arguments of your function in development
     tempo <- saferDev::arg_check(data = col1, class = "integer", typeof = "integer", mode = NULL, length = NULL, prop = FALSE, options = NULL, double_as_integer_allowed = TRUE, all_options_in_data = FALSE, na_contain = TRUE, neg_values = TRUE, inf_values = TRUE, print = FALSE, data_name = NULL, data_arg = TRUE, safer_check = FALSE, lib_path = lib_path, error_text = embed_error_text) ; base::eval(expr = ee, envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL)) # class = "integer" and not class = NULL to avoid factors # copy - paste this line as much as necessary
     tempo <- saferDev::arg_check(data = col2, class = NULL, typeof = "character", mode = NULL, length = NULL, prop = FALSE, options = NULL, double_as_integer_allowed = FALSE, all_options_in_data = FALSE, na_contain = TRUE, neg_values = TRUE, inf_values = TRUE, print = FALSE, data_name = NULL, data_arg = TRUE, safer_check = FALSE, lib_path = lib_path, error_text = embed_error_text) ; base::eval(expr = ee, envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL)) # copy - paste this line as much as necessary
@@ -424,42 +424,42 @@
         }
         # end detection of a$fun() pattern
         # detection of functions between quotes
-        tempo.ini.order <- 1:base::length(x = col1) # to recover the initial order at the end
-        tempo.order <- base::order(col2, na.last = TRUE, decreasing = FALSE, method = "auto") # order according to function name
-        tempo.ini.order <- tempo.ini.order[tempo.order]
-        tempo.col1 <- col1[tempo.order] # reorder to work only once with duplicated functions
-        tempo.col2 <- col2[tempo.order] # reorder to work only once with duplicated functions
-        tempo.ini <- ini
-        pos.rm <- NULL # positions to remove (functions between quotes)
-        for(i2 in 1:base::length(x = tempo.col1)){
-            pattern1 <- base::paste0(tempo.col2[i2], " *\\(", collapse = NULL, recycle0 = FALSE)
-            lines.split <- base::strsplit(x = tempo.ini[tempo.col1[i2]], split = pattern1, fixed = FALSE, perl = FALSE, useBytes = FALSE)[[1]][1]
+        tempo_ini_order <- 1:base::length(x = col1) # to recover the initial order at the end
+        tempo_order <- base::order(col2, na.last = TRUE, decreasing = FALSE, method = "auto") # order according to function name
+        tempo_ini_order <- tempo_ini_order[tempo_order]
+        tempo_col1 <- col1[tempo_order] # reorder to work only once with duplicated functions
+        tempo_col2 <- col2[tempo_order] # reorder to work only once with duplicated functions
+        tempo_ini <- ini
+        pos_rm <- NULL # positions to remove (functions between quotes)
+        for(i2 in 1:base::length(x = tempo_col1)){
+            pattern1 <- base::paste0(tempo_col2[i2], " *\\(", collapse = NULL, recycle0 = FALSE)
+            lines_split <- base::strsplit(x = tempo_ini[tempo_col1[i2]], split = pattern1, fixed = FALSE, perl = FALSE, useBytes = FALSE)[[1]][1]
             # if odds number of quotes, it means that # has broken the string in the middle of a quoted part
-            double.quote.test <- .has_odd_number_of_quotes(
-                input_string = lines.split, 
+            double_quote_test <- .has_odd_number_of_quotes(
+                input_string = lines_split, 
                 pattern = '"', 
                 lib_path = lib_path, 
                 error_text = embed_error_text
             ) # here FALSE means even number of quotes, thus that the function is not between quotes, thus has to be kept. TRUE means that the function is between quotes, thus has to be removed
-            simple.quote.test <- .has_odd_number_of_quotes(
-                input_string = lines.split, 
+            simple_quote_test <- .has_odd_number_of_quotes(
+                input_string = lines_split, 
                 pattern = "'", 
                 lib_path = lib_path, 
                 error_text = embed_error_text
             ) # idem
-            odds.quotes.log <- double.quote.test |  simple.quote.test
-            if(odds.quotes.log == FALSE){
-                pos.rm <- base::c(pos.rm, i2)
+            odds_quotes_log <- double_quote_test |  simple_quote_test
+            if(odds_quotes_log == FALSE){
+                pos_rm <- base::c(pos_rm, i2)
             }else{
-                pos.rm <- base::c(pos.rm, NA) # NA means betwwen quotes. pos.rm will becomes double if integer added, otherwise remains logical. Thus, do not use any()
+                pos_rm <- base::c(pos_rm, NA) # NA means betwwen quotes. pos.rm will becomes double if integer added, otherwise remains logical. Thus, do not use any()
             }
-            tempo.ini[tempo.col1[i2]] <- base::sub(pattern = pattern1, replacement = "", x = tempo.ini[tempo.col1[i2]], ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE) # remove the first fonction in the line, in case of identical function names in a code line. Like, that, the next round for the next same function can be easily tested for "between quotes" 
+            tempo_ini[tempo_col1[i2]] <- base::sub(pattern = pattern1, replacement = "", x = tempo_ini[tempo_col1[i2]], ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE) # remove the first fonction in the line, in case of identical function names in a code line. Like, that, the next round for the next same function can be easily tested for "between quotes" 
         }
         # initial order
-        pos.rm.fin <- pos.rm[base::order(tempo.ini.order, na.last = TRUE, decreasing = FALSE, method = "auto")]
+        pos_rm_fin <- pos_rm[base::order(tempo_ini_order, na.last = TRUE, decreasing = FALSE, method = "auto")]
         # end initial order
-        if(base::any(base::is.na(x = pos.rm.fin), na.rm = TRUE)){
-            output <- output | base::is.na(x = pos.rm.fin)
+        if(base::any(base::is.na(x = pos_rm_fin), na.rm = TRUE)){
+            output <- output | base::is.na(x = pos_rm_fin)
         }
         # end detection of functions between quotes
     }

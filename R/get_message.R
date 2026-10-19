@@ -432,7 +432,7 @@ get_message <- function(
     text_check <- NULL
     checked_arg_names <- NULL # for function debbuging: used by r_debugging_tools
     arg_check_error_text <- base::paste0("ERROR ", embed_error_text, "\n\n", collapse = NULL, recycle0 = FALSE) # must be used instead of error_text = embed_error_text when several arg_check are performed on the same argument (tempo1, tempo2, see below)
-    ee <- base::expression(argum_check <- base::c(argum_check, tempo$problem) , text_check <- base::c(text_check, tempo$text) , checked_arg_names <- base::c(checked_arg_names, tempo$object.name))
+    ee <- base::expression(argum_check <- base::c(argum_check, tempo$problem) , text_check <- base::c(text_check, tempo$text) , checked_arg_names <- base::c(checked_arg_names, tempo$object_name))
     # add as many lines as below, for each of your arguments of your function in development
     # tempo <- saferDev::arg_check(data = data, class = "character", typeof = "character", mode = NULL, length = 1, prop = FALSE, options = NULL, double_as_integer_allowed = FALSE, all_options_in_data = FALSE, na_contain = TRUE, neg_values = TRUE, inf_values = TRUE, print = FALSE, data_name = NULL, data_arg = TRUE, safer_check = FALSE, lib_path = lib_path, error_text = embed_error_text) ; base::eval(expr = ee, envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL)) # inactivated because returns a bug if data is an unquote and uncorrect expression. Anyway: can be anything
     tempo <- saferDev::arg_check(data = kind, class = NULL, typeof = NULL, mode = NULL, length = 1, prop = FALSE, options = base::c("error", "warning", "message"), double_as_integer_allowed = FALSE, all_options_in_data = FALSE, na_contain = FALSE, neg_values = TRUE, inf_values = TRUE, print = FALSE, data_name = NULL, data_arg = TRUE, safer_check = FALSE, lib_path = lib_path, error_text = embed_error_text) ; base::eval(expr = ee, envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL))
@@ -512,11 +512,11 @@ get_message <- function(
         grDevices::pdf(file = NULL, width = , height = , onefile = , family = , title = , fonts = , version = , paper = , encoding = , bg = , fg = , pointsize = , pagecentre = , colormodel = , useDingbats = , useKerning = , fillOddEven = , compress = , timestamp = , producer = , author = ) # send plots into a NULL file, no pdf file created
     }
     # nocov end
-    window.nb <- grDevices::dev.cur()
-    base::invisible(x = grDevices::dev.set(which = window.nb))
+    window_nb <- grDevices::dev.cur()
+    base::invisible(x = grDevices::dev.set(which = window_nb))
     tempo_error <- base::try(expr = base::suppressMessages(expr = base::suppressWarnings(expr = base::eval(expr = base::parse(text = base::is.null(x = data), file = "", n = NULL, prompt = "?", keep.source = base::getOption(x = "keep.source", default = NULL), srcfile = NULL, encoding = "unknown"), envir = if(base::is.null(x = env)){base::parent.frame(n = 1)}else{env}, enclos = base::environment(fun = NULL)), classes = "warning"), classes = "message"), silent = TRUE, outFile = base::getOption(x = "try.outFile", default = base::stderr())) # deal first with data = NULL: return NULL
     if(base::all(tempo_error == TRUE, na.rm = TRUE)){
-        base::invisible(x = grDevices::dev.off(which = window.nb)) # end send plots into a NULL file
+        base::invisible(x = grDevices::dev.off(which = window_nb)) # end send plots into a NULL file
         tempo_cat <- base::paste0(
             error_text_start, 
             "THE data ARGUMENT MUST BE A SINGLE CHARACTER STRING.", 
@@ -529,7 +529,7 @@ get_message <- function(
         if(base::all(tempo_error == TRUE, na.rm = TRUE)){
             tempo_error <- base::try(expr = base::suppressMessages(expr = base::suppressWarnings(expr = base::eval(expr = base::parse(text = data, file = "", n = NULL, prompt = "?", keep.source = base::getOption(x = "keep.source", default = NULL), srcfile = NULL, encoding = "unknown"), envir = if(base::is.null(x = env)){base::parent.frame(n = 1)}else{env}, enclos = base::environment(fun = NULL)), classes = "warning"), classes = "message"), silent = TRUE, outFile = base::getOption(x = "try.outFile", default = base::stderr())) # get error message, not warning or messages # cannot prevent some printing, when data = "show(1)" for instance
         }else{
-            base::invisible(x = grDevices::dev.off(which = window.nb)) # end send plots into a NULL file
+            base::invisible(x = grDevices::dev.off(which = window_nb)) # end send plots into a NULL file
             tempo_cat <- base::paste0(
                 error_text_start, 
                 "THE data ARGUMENT MUST BE A SINGLE CHARACTER STRING.", 
@@ -573,31 +573,31 @@ get_message <- function(
             }, type = "message", file = NULL, append = FALSE, split = FALSE) # recover messages not warnings and not errors
             # end get message
             # get warning
-            fun.warning.capture <- function(expr){
+            fun_warning_capture <- function(expr){
                 # from demo(error.catching) typed in the R console, coming from ?tryCatch
                 # see also http://mazamascience.com/WorkingWithData/?p=912
                 # return a character string or NULL
                 # expr <- wilcox.test(c(1, 1, 3), c(1, 2, 4), paired = TRUE)
                 W <- NULL
-                w.handler <- function(w){ # warning handler
-                    W <<- w # send to the above env, i.e., the inside of the fun.warning.capture function
-                    base::invokeRestart(r = "muffleWarning") # here w.handler() muffles all the warnings. See http://romainfrancois.blog.free.fr/index.php?post/2009/05/20/Disable-specific-warnings to muffle specific warnings and print others
+                w_handler <- function(w){ # warning handler
+                    W <<- w # send to the above env, i.e., the inside of the fun_warning_capture function
+                    base::invokeRestart(r = "muffleWarning") # here w_handler() muffles all the warnings. See http://romainfrancois.blog.free.fr/index.php?post/2009/05/20/Disable-specific-warnings to muffle specific warnings and print others
                 }
                 # nocov start
                 # codecov inactivated because testthat::expect_no_error(get_message()) does not detect taht it is used. But is is
-                value = base::suppressMessages(expr = base::withCallingHandlers(expr = base::tryCatch(expr = expr, error = function(e){e}, finally = ), warning = w.handler), classes = "message") # BEWARE: w.handler is a function written without (), like in other functions with FUN argument
+                value = base::suppressMessages(expr = base::withCallingHandlers(expr = base::tryCatch(expr = expr, error = function(e){e}, finally = ), warning = w_handler), classes = "message") # BEWARE: w_handler is a function written without (), like in other functions with FUN argument
                 # nocov end
                 output <- base::list(
                     value = value, 
-                    warning = W # processed by w.handler()
+                    warning = W # processed by w_handler()
                 )
                 base::return(if(base::is.null(x = output$warning)){NULL}else{base::as.character(x = output$warning)})
             }
             if(ggplot2_detect == FALSE){
-                tempo_warn <- fun.warning.capture(expr = base::eval(expr = base::parse(text = data, file = "", n = NULL, prompt = "?", keep.source = base::getOption(x = "keep.source", default = NULL), srcfile = NULL, encoding = "unknown"), envir = if(base::is.null(x = env)){base::parent.frame(n = 1)}else{env}, enclos = base::environment(fun = NULL)))
+                tempo_warn <- fun_warning_capture(expr = base::eval(expr = base::parse(text = data, file = "", n = NULL, prompt = "?", keep.source = base::getOption(x = "keep.source", default = NULL), srcfile = NULL, encoding = "unknown"), envir = if(base::is.null(x = env)){base::parent.frame(n = 1)}else{env}, enclos = base::environment(fun = NULL)))
             }else{
                  # last warning cannot be used because suppressWarnings() does not modify last.warning present in the base evironment (created at first warning in a new R session), or warnings() # to reset the warning history : unlockBinding("last.warning", baseenv()) ; assign("last.warning", NULL, envir = baseenv())
-                tempo_warn <- fun.warning.capture(expr = base::print(x = gg_obj))
+                tempo_warn <- fun_warning_capture(expr = base::print(x = gg_obj))
             }
             # end get warning
             # warn.options.ini <- options()$warn ; options(warn = 1) ; tempo_warn <- utils::capture.output({tempo <- suppressMessages(eval(parse(text = data), envir = if(is.null(x = env)){parent.frame()}else{env}))}, type = "message") ; options(warn = warn.options.ini) # this recover warnings not messages and not errors but does not work in all enviroments
@@ -628,7 +628,7 @@ get_message <- function(
             } # no need else{} here because output is already NULL at first
         }
     }
-    base::invisible(x = grDevices::dev.off(which = window.nb)) # end send plots into a NULL file
+    base::invisible(x = grDevices::dev.off(which = window_nb)) # end send plots into a NULL file
     #### end main code
 
     #### warning output

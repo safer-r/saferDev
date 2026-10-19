@@ -295,7 +295,7 @@
     text_check <- NULL
     checked_arg_names <- NULL # for function debbuging: used by r_debugging_tools
     arg_check_error_text <- base::paste0("ERROR ", embed_error_text, "\n\n", collapse = NULL, recycle0 = FALSE) # must be used instead of error_text = embed_error_text when several arg_check are performed on the same argument (tempo1, tempo2, see below)
-    ee <- base::expression(argum_check <- base::c(argum_check, tempo$problem) , text_check <- base::c(text_check, tempo$text) , checked_arg_names <- base::c(checked_arg_names, tempo$object.name))
+    ee <- base::expression(argum_check <- base::c(argum_check, tempo$problem) , text_check <- base::c(text_check, tempo$text) , checked_arg_names <- base::c(checked_arg_names, tempo$object_name))
     # add as many lines as below, for each of your arguments of your function in development
     tempo <- saferDev::arg_check(data = text, class = NULL, typeof = "character", mode = NULL, length = 1, prop = FALSE, options = NULL, double_as_integer_allowed = FALSE, all_options_in_data = FALSE, na_contain = TRUE, neg_values = TRUE, inf_values = TRUE, print = FALSE, data_name = NULL, data_arg = TRUE, safer_check = FALSE, lib_path = lib_path, error_text = embed_error_text) ; base::eval(expr = ee, envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL))
     tempo <- saferDev::arg_check(data = pattern, class = NULL, typeof = "character", mode = NULL, length = 1, prop = FALSE, options = NULL, double_as_integer_allowed = FALSE, all_options_in_data = FALSE, na_contain = TRUE, neg_values = TRUE, inf_values = TRUE, print = FALSE, data_name = NULL, data_arg = TRUE, safer_check = FALSE, lib_path = lib_path, error_text = embed_error_text) ; base::eval(expr = ee, envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL))
@@ -425,8 +425,8 @@
     ){
         count <- 1 # 1 because ( of the function is already opened. When count == 0, we will have the closing )
         final_pos <- base::which(x = all_pos == start, arr.ind = FALSE, useNames = TRUE) #start by the first ( but will be incremented
-        loop.nb <- 1 
-        while(count != 0 & loop.nb < base::length(x = all_pos)){
+        loop_nb <- 1 
+        while(count != 0 & loop_nb < base::length(x = all_pos)){
             final_pos <- final_pos + 1
             if(all_pos[final_pos] %in% open_pos){
                 count <- count + 1
@@ -434,7 +434,7 @@
             if(all_pos[final_pos] %in% close_pos){
                 count <- count - 1
             }
-            loop.nb <- loop.nb + 1
+            loop_nb <- loop_nb + 1
         }
         if(count != 0){
             # nocov start

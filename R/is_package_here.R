@@ -354,7 +354,7 @@ is_package_here <- function(
     text_check <- NULL
     checked_arg_names <- NULL # for function debbuging: used by r_debugging_tools
     arg_check_error_text <- base::paste0("ERROR ", embed_error_text, "\n\n", collapse = NULL, recycle0 = FALSE) # must be used instead of error_text = embed_error_text when several arg_check are performed on the same argument (tempo1, tempo2, see below)
-    ee <- base::expression(argum_check <- base::c(argum_check, tempo$problem) , text_check <- base::c(text_check, tempo$text) , checked_arg_names <- base::c(checked_arg_names, tempo$object.name))
+    ee <- base::expression(argum_check <- base::c(argum_check, tempo$problem) , text_check <- base::c(text_check, tempo$text) , checked_arg_names <- base::c(checked_arg_names, tempo$object_name))
     # add as many lines as below, for each of your arguments of your function in development
     tempo <- saferDev::arg_check(data = req_package, class = NULL, typeof = NULL, mode = "character", length = NULL, prop = FALSE, options = NULL, double_as_integer_allowed = FALSE, all_options_in_data = FALSE, na_contain = TRUE, neg_values = TRUE, inf_values = TRUE, print = FALSE, data_name = NULL, data_arg = TRUE, safer_check = FALSE, lib_path = lib_path, error_text = embed_error_text) ; base::eval(expr = ee, envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL)) # copy - paste this line as much as necessary
     # lib_path already checked above
@@ -445,9 +445,9 @@ is_package_here <- function(
     #### end second round of checking and data preparation
 
     #### main code
-    pkg.log <- req_package %in% base::gsub(x = base::find.package(package = req_package, lib.loc = lib_path, quiet = TRUE, verbose = FALSE), pattern = "^.*/", replacement = "", ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE)
-    if( ! base::all(pkg.log, na.rm = TRUE)){
-        tempo <- req_package[ ! pkg.log]
+    pkg_log <- req_package %in% base::gsub(x = base::find.package(package = req_package, lib.loc = lib_path, quiet = TRUE, verbose = FALSE), pattern = "^.*/", replacement = "", ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE)
+    if( ! base::all(pkg_log, na.rm = TRUE)){
+        tempo <- req_package[ ! pkg_log]
         tempo_cat <- base::paste0(
             error_text_start, 
             "REQUIRED PACKAGE", 

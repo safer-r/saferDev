@@ -67,7 +67,7 @@ A list containing:
 \itemize{
   \item \code{problem}: logical. Is there any problem detected?
   \item \code{text}: message indicating the details of the problem, or the absence of problem.
-  \item \code{object.name}: value of the \code{data_name} argument (i.e., name of the checked object if provided, \code{NULL} otherwise).
+  \item \code{object_name}: value of the \code{data_name} argument (i.e., name of the checked object if provided, \code{NULL} otherwise).
 }
 }
 \description{

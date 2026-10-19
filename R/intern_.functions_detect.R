@@ -317,7 +317,7 @@
     text_check <- NULL
     checked_arg_names <- NULL # for function debbuging: used by r_debugging_tools
     arg_check_error_text <- base::paste0("ERROR ", embed_error_text, "\n\n", collapse = NULL, recycle0 = FALSE) # must be used instead of error_text = embed_error_text when several arg_check are performed on the same argument (tempo1, tempo2, see below)
-    ee <- base::expression(argum_check <- base::c(argum_check, tempo$problem) , text_check <- base::c(text_check, tempo$text) , checked_arg_names <- base::c(checked_arg_names, tempo$object.name))
+    ee <- base::expression(argum_check <- base::c(argum_check, tempo$problem) , text_check <- base::c(text_check, tempo$text) , checked_arg_names <- base::c(checked_arg_names, tempo$object_name))
     # add as many lines as below, for each of your arguments of your function in development
     tempo <- saferDev::arg_check(data = x, class = NULL, typeof = NULL, mode = "function", length = 1, prop = FALSE, options = NULL, double_as_integer_allowed = FALSE, all_options_in_data = FALSE, na_contain = TRUE, neg_values = TRUE, inf_values = TRUE, print = FALSE, data_name = NULL, data_arg = TRUE, safer_check = FALSE, lib_path = lib_path, error_text = embed_error_text) ; base::eval(expr = ee, envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL))
     tempo <- saferDev::arg_check(data = skipped_base, class = NULL, typeof = "character", mode = NULL, length = NULL, prop = FALSE, options = NULL, double_as_integer_allowed = FALSE, all_options_in_data = FALSE, na_contain = TRUE, neg_values = TRUE, inf_values = TRUE, print = FALSE, data_name = NULL, data_arg = TRUE, safer_check = FALSE, lib_path = lib_path, error_text = embed_error_text) ; base::eval(expr = ee, envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL))
@@ -391,49 +391,49 @@
     # end recovering the input function string
 
     # removal of empty lines
-    empty_line.log <- base::grepl(x = code, pattern = "^\\s*$", ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE)
+    empty_line_log <- base::grepl(x = code, pattern = "^\\s*$", ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE)
     # end removal of empty lines
 
     # removal of comments
-    comment_line.log <- base::grepl(x = code, pattern = "^\\s*#", ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE) # removal of the lines starting by #
+    comment_line_log <- base::grepl(x = code, pattern = "^\\s*#", ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE) # removal of the lines starting by #
     # no test for empty code here because code style contains "function" as fisrt line of code
 
-    comment.log <- base::grepl(x = code, pattern = "#", ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE)
-    if(base::any(comment.log, na.rm = TRUE)){
-        comment.line.to.rm <- base::which(x = comment.log, arr.ind = FALSE, useNames = TRUE) # elements among code that have #
-        lines <- code[comment.log]
+    comment_log <- base::grepl(x = code, pattern = "#", ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE)
+    if(base::any(comment_log, na.rm = TRUE)){
+        comment_line_to_rm <- base::which(x = comment_log, arr.ind = FALSE, useNames = TRUE) # elements among code that have #
+        lines <- code[comment_log]
         for(i2 in 1:base::length(x = lines)){
-            lines.split <- base::strsplit(x = lines[i2], split = "#", fixed = FALSE, perl = FALSE, useBytes = FALSE)[[1]]
+            lines_split <- base::strsplit(x = lines[i2], split = "#", fixed = FALSE, perl = FALSE, useBytes = FALSE)[[1]]
             # detection of the first left # that is not between quotes
             count <- 1
-            tempo.line <- lines.split[1]
-            while.loop <- TRUE
-            while(while.loop == TRUE & count < base::length(x = lines.split)){
+            tempo_line <- lines_split[1]
+            while_loop <- TRUE
+            while(while_loop == TRUE & count < base::length(x = lines_split)){
                 # if odds number of quotes, it means that # has broken the string in the middle of a quoted part
-                double.quote.test <- .has_odd_number_of_quotes(
-                    input_string = tempo.line, 
+                double_quote_test <- .has_odd_number_of_quotes(
+                    input_string = tempo_line, 
                     pattern = '"', 
                     lib_path = lib_path, 
                     error_text = embed_error_text
                 ) # here FALSE means even number of quotes, thus that # is not between quotes, thus has to be removed. TRUE means that # is between quotes, thus has to be kept
-                simple.quote.test <- .has_odd_number_of_quotes(
-                    input_string = tempo.line, 
+                simple_quote_test <- .has_odd_number_of_quotes(
+                    input_string = tempo_line, 
                     pattern = "'", 
                     lib_path = lib_path, 
                     error_text = embed_error_text
                 ) # idem
-                odds.quotes.log <- double.quote.test |  simple.quote.test # lines to keep among commented lines
-                if(odds.quotes.log == TRUE){
+                odds_quotes_log <- double_quote_test |  simple_quote_test # lines to keep among commented lines
+                if(odds_quotes_log == TRUE){
                     count <- count + 1
-                    tempo.line <- base::paste0(tempo.line, "#", lines.split[count], collapse = NULL, recycle0 = FALSE)
+                    tempo_line <- base::paste0(tempo_line, "#", lines_split[count], collapse = NULL, recycle0 = FALSE)
                 }else{
-                     while.loop <- FALSE
+                     while_loop <- FALSE
                 }
             }
             # end detection of the first left # that is not between quotes
-            lines[i2] <- tempo.line
+            lines[i2] <- tempo_line
         }
-        code[comment.line.to.rm] <- lines
+        code[comment_line_to_rm] <- lines
     }
     # no test for empty code here because code style contains "function" as fisrt line of code
     # end removal of comments
@@ -509,7 +509,7 @@
     tempo.log <- base::sapply(X = fun_name_wo_op, FUN = function(x){base::length(x = x) == 0}, simplify = TRUE, USE.NAMES = TRUE) # detection of string with empty function names
     fun_name_wo_op <- fun_name_wo_op[ ! tempo.log]
     fun_name_pos_wo_op <- fun_name_pos_wo_op[ ! tempo.log]
-    code_line_nb <- code_line_nb[( ! tempo.log) & ( ! comment_line.log) & ( ! empty_line.log)]
+    code_line_nb <- code_line_nb[( ! tempo.log) & ( ! comment_line_log) & ( ! empty_line_log)]
     if( ! (base::length(x = fun_name_wo_op) == base::length(x = fun_name_pos_wo_op) & base::length(x = fun_name_wo_op) == base::length(x = code_line_nb))){
         # nocov start
         # codecov inactivated because it is an internal control of code writing, impossible to cover with argument values.
@@ -526,11 +526,11 @@
         base::names(x = fun_name_pos_wo_op) <- base::paste0("c", code_line_nb, collapse = NULL, recycle0 = FALSE)
     }
     # end removal of empty string
-    test.log <- base::mapply(FUN = function(x, y){base::length(x = x) != base::length(x = y)}, x = fun_name_wo_op, y = fun_name_pos_wo_op, MoreArgs = NULL, SIMPLIFY = TRUE, USE.NAMES = TRUE)
-    if(base::any(test.log, na.rm = TRUE)){
+    test_log <- base::mapply(FUN = function(x, y){base::length(x = x) != base::length(x = y)}, x = fun_name_wo_op, y = fun_name_pos_wo_op, MoreArgs = NULL, SIMPLIFY = TRUE, USE.NAMES = TRUE)
+    if(base::any(test_log, na.rm = TRUE)){
         # nocov start
         # codecov inactivated because it is an internal control of code writing, impossible to cover with argument values.
-        tempo_cat <- base::paste0("INTERNAL ERROR 4 IN ", intern_error_text_start, "LENGTHS SHOULD BE IDENTICAL IN COMPARTMENTS ", base::paste0(base::which(x = test.log, arr.ind = FALSE, useNames = TRUE), collapse = ", ", recycle0 = FALSE), " OF fun_name_wo_op AND fun_name_pos_wo_op.", intern_error_text_end, collapse = NULL, recycle0 = FALSE) ; base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL)
+        tempo_cat <- base::paste0("INTERNAL ERROR 4 IN ", intern_error_text_start, "LENGTHS SHOULD BE IDENTICAL IN COMPARTMENTS ", base::paste0(base::which(x = test_log, arr.ind = FALSE, useNames = TRUE), collapse = ", ", recycle0 = FALSE), " OF fun_name_wo_op AND fun_name_pos_wo_op.", intern_error_text_end, collapse = NULL, recycle0 = FALSE) ; base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL)
         # nocov end
     }
     # fun_name_wo_op_uni <- base::unlist(base::unique(fun_name_wo_op)) # in case

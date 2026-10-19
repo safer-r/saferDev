@@ -26,7 +26,7 @@
 #' search() # current R scope (order of the successive R environments).
 #' utils::find("mean") # where the objects with the name "mean" are present.
 #' utils::find("t.test") # where the objects with the name "mean" are present.
-#' # test if any object name of the global environment are above environments:
+#' # test if any object_name of the global environment are above environments:
 #' a <- saferDev::env_check(pos = 1) 
 #' a # output string.
 #' cat(a)
@@ -413,7 +413,7 @@ env_check <- function(
     text_check <- NULL
     checked_arg_names <- NULL # for function debbuging: used by r_debugging_tools
     arg_check_error_text <- base::paste0("ERROR ", embed_error_text, "\n\n", collapse = NULL, recycle0 = FALSE) # must be used instead of error_text = embed_error_text when several arg_check are performed on the same argument (tempo1, tempo2, see below)
-    ee <- base::expression(argum_check <- base::c(argum_check, tempo$problem) , text_check <- base::c(text_check, tempo$text) , checked_arg_names <- base::c(checked_arg_names, tempo$object.name))
+    ee <- base::expression(argum_check <- base::c(argum_check, tempo$problem) , text_check <- base::c(text_check, tempo$text) , checked_arg_names <- base::c(checked_arg_names, tempo$object_name))
     # add as many lines as below, for each of your arguments of your function in development
     tempo <- saferDev::arg_check(data = pos, class = "integer", typeof = "integer", mode = NULL, length = 1, prop = FALSE, options = NULL, double_as_integer_allowed = TRUE, all_options_in_data = FALSE, na_contain = FALSE, neg_values = FALSE, inf_values = TRUE, print = FALSE, data_name = NULL, data_arg = TRUE, safer_check = FALSE, lib_path = lib_path, error_text = embed_error_text) ; base::eval(expr = ee, envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL)) # class = "integer" and not class = NULL to avoid factors
     if( ! base::is.null(x = name)){
@@ -497,8 +497,8 @@ env_check <- function(
 
     #### main code
     # match.list <- base::vector("list", length = (base::length(base::sys.calls()) - 1 + base::length(base::search()) + base::ifelse(base::length(base::sys.calls()) == 1L, -1, 0))) # match.list is a list of all the environment tested (local of functions and R envs), base::length(base::sys.calls()) - 1 to remove the level of the ebase::nv_check() function, base::sys.calls() giving all the names of the imbricated functions, including env_check, base::ifelse(base::length(sys.calls()) == 1L, -1, 0) to remove Global env if this one is tested
-    tempo.name <- base::rev(x = base::as.character(x = base::unlist(x = base::sys.calls(), recursive = TRUE, use.names = TRUE))) # get names of frames (i.e., enclosed env)
-    tempo.frame <- base::rev(x = base::sys.frames())  # get frames (i.e., enclosed env)
+    tempo_name <- base::rev(x = base::as.character(x = base::unlist(x = base::sys.calls(), recursive = TRUE, use.names = TRUE))) # get names of frames (i.e., enclosed env)
+    tempo_frame <- base::rev(x = base::sys.frames())  # get frames (i.e., enclosed env)
     ######## dealing with source()
     # source() used in the Global env creates three frames above the Global env, which should be removed because not very interesting for variable duplications. Add a <<-(sys.frames()) in this code and source anova_contrasts code to see this. With ls(a[[4]]), we can see the content of each env, which are probably elements of source()
     # Inactivated below because I cannot find anymore what was the problem.
@@ -511,16 +511,16 @@ env_check <- function(
     ######## end dealing with source()
 
     # might have a problem if(length(x = tempo.name) == 0L){
-    match.list <- base::vector(mode = "list", length = base::length(x = tempo.name) + base::length(x = base::search())) # match.list is a list of all the environment tested (local of functions and R envs), base::length(x = base::sys.calls()) - 1 to remove the level of the env_check() function, base::sys.calls() giving all the names of the imbricated functions, including env_check, base::ifelse(base::length(x = base::sys.calls()) == 1L, -1, 0) to remove Global env if this one is tested
-    ls.names <- base::c(tempo.name, base::search()) # names of the functions + names of the base::search() environments
-    ls.input <- base::c(tempo.frame, base::as.list(x = base::search())) # environements of the functions + names of the base::search() environments
-    base::names(x = match.list) <- ls.names # 
-    match.list <- match.list[-base::c(1:(pos + 1))] # because we check only above pos
-    ls.tested <- ls.input[[pos + 1]]
-    ls.input <- ls.input[-base::c(1:(pos + 1))]
-    for(i1 in 1:base::length(x = match.list)){
-        if(base::any(base::ls(name = ls.input[[i1]], pos = , envir = , all.names = TRUE, pattern = , sorted = TRUE) %in% base::ls(name = ls.tested, pos = , envir = , all.names = TRUE, pattern = , sorted = TRUE), na.rm = TRUE)){
-            match.list[i1] <- base::list(base::ls(name = ls.input[[i1]], pos = , envir = , all.names = TRUE, pattern = , sorted = TRUE)[base::ls(name = ls.input[[i1]], pos = , envir = , all.names = TRUE, pattern = , sorted = TRUE) %in% base::ls(name = ls.tested, pos = , envir = , all.names = TRUE, pattern = , sorted = TRUE)])
+    match_list <- base::vector(mode = "list", length = base::length(x = tempo_name) + base::length(x = base::search())) # match.list is a list of all the environment tested (local of functions and R envs), base::length(x = base::sys.calls()) - 1 to remove the level of the env_check() function, base::sys.calls() giving all the names of the imbricated functions, including env_check, base::ifelse(base::length(x = base::sys.calls()) == 1L, -1, 0) to remove Global env if this one is tested
+    ls_names <- base::c(tempo_name, base::search()) # names of the functions + names of the base::search() environments
+    ls_input <- base::c(tempo_frame, base::as.list(x = base::search())) # environements of the functions + names of the base::search() environments
+    base::names(x = match_list) <- ls_names # 
+    match_list <- match_list[-base::c(1:(pos + 1))] # because we check only above pos
+    ls_tested <- ls_input[[pos + 1]]
+    ls_input <- ls_input[-base::c(1:(pos + 1))]
+    for(i1 in 1:base::length(x = match_list)){
+        if(base::any(base::ls(name = ls_input[[i1]], pos = , envir = , all.names = TRUE, pattern = , sorted = TRUE) %in% base::ls(name = ls_tested, pos = , envir = , all.names = TRUE, pattern = , sorted = TRUE), na.rm = TRUE)){
+            match_list[i1] <- base::list(base::ls(name = ls_input[[i1]], pos = , envir = , all.names = TRUE, pattern = , sorted = TRUE)[base::ls(name = ls_input[[i1]], pos = , envir = , all.names = TRUE, pattern = , sorted = TRUE) %in% base::ls(name = ls_tested, pos = , envir = , all.names = TRUE, pattern = , sorted = TRUE)])
         }
     }
     #### end main code
@@ -529,28 +529,28 @@ env_check <- function(
     #### end warning output
 
     ######## output
-    if( ! base::all(base::sapply(X = match.list, FUN = is.null, simplify = TRUE, USE.NAMES = TRUE), na.rm = TRUE)){
+    if( ! base::all(base::sapply(X = match_list, FUN = is.null, simplify = TRUE, USE.NAMES = TRUE), na.rm = TRUE)){
         output <- base::paste0(
             "SOME VARIABLES OF THE CHECKED ENVIRONMENT ", 
             base::ifelse(
                 test = base::is.null(x = name), 
                 yes = base::ifelse(
-                    test = base::all(base::typeof(x = ls.tested) == "character", na.rm = TRUE), 
-                    yes = ls.tested, 
+                    test = base::all(base::typeof(x = ls_tested) == "character", na.rm = TRUE), 
+                    yes = ls_tested, 
                     no = "UNNAMED"
                 ), 
                 no = name
             ), 
             " ARE ALSO PRESENT IN :\n", 
             base::paste0(
-                base::names(x = match.list[ ! base::sapply(X = match.list, FUN = base::is.null, simplify = TRUE, USE.NAMES = TRUE)]), 
+                base::names(x = match_list[ ! base::sapply(X = match_list, FUN = base::is.null, simplify = TRUE, USE.NAMES = TRUE)]), 
                 ": ", 
-                base::sapply(X = match.list[ ! base::sapply(X = match.list, FUN = base::is.null, simplify = TRUE, USE.NAMES = TRUE)], FUN = function(x){base::paste0(x, collapse = " ", recycle0 = FALSE)}, simplify = TRUE, USE.NAMES = TRUE), 
+                base::sapply(X = match_list[ ! base::sapply(X = match_list, FUN = base::is.null, simplify = TRUE, USE.NAMES = TRUE)], FUN = function(x){base::paste0(x, collapse = " ", recycle0 = FALSE)}, simplify = TRUE, USE.NAMES = TRUE), 
                 collapse = "\n",
                 recycle0 = FALSE
             ), 
             "\nSEARCH PATH CHECKED:\n", 
-            base::paste0(ls.input, collapse = "\n", recycle0 = FALSE), 
+            base::paste0(ls_input, collapse = "\n", recycle0 = FALSE), 
             "\n", 
             collapse = NULL, 
             recycle0 = FALSE

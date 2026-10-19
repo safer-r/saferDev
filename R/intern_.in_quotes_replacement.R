@@ -316,7 +316,7 @@
     text_check <- NULL
     checked_arg_names <- NULL # for function debbuging: used by r_debugging_tools
     arg_check_error_text <- base::paste0("ERROR ", embed_error_text, "\n\n", collapse = NULL, recycle0 = FALSE) # must be used instead of error_text = embed_error_text when several arg_check are performed on the same argument (tempo1, tempo2, see below)
-    ee <- base::expression(argum_check <- base::c(argum_check, tempo$problem) , text_check <- base::c(text_check, tempo$text) , checked_arg_names <- base::c(checked_arg_names, tempo$object.name))
+    ee <- base::expression(argum_check <- base::c(argum_check, tempo$problem) , text_check <- base::c(text_check, tempo$text) , checked_arg_names <- base::c(checked_arg_names, tempo$object_name))
     # add as many lines as below, for each of your arguments of your function in development
     tempo <- saferDev::arg_check(data = string, class = NULL, typeof = "character", mode = NULL, length = 1, prop = FALSE, options = NULL, double_as_integer_allowed = FALSE, all_options_in_data = FALSE, na_contain = TRUE, neg_values = TRUE, inf_values = TRUE, print = FALSE, data_name = NULL, data_arg = TRUE, safer_check = FALSE, lib_path = lib_path, error_text = embed_error_text) ; base::eval(expr = ee, envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL))
     tempo <- saferDev::arg_check(data = pattern, class = NULL, typeof = "character", mode = NULL, length = 1, prop = FALSE, options = NULL, double_as_integer_allowed = FALSE, all_options_in_data = FALSE, na_contain = TRUE, neg_values = TRUE, inf_values = TRUE, print = FALSE, data_name = NULL, data_arg = TRUE, safer_check = FALSE, lib_path = lib_path, error_text = embed_error_text) ; base::eval(expr = ee, envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL))
@@ -459,20 +459,20 @@
         while(count < base::length(x = string_split)){
             count <- count + 1
             # if odds number of quotes, it means that # has broken the string in the middle of a quoted part
-            double.quote.test <- .has_odd_number_of_quotes(
+            double_quote_test <- .has_odd_number_of_quotes(
                 input_string = string_out, 
                 pattern = '"', 
                 lib_path = lib_path, 
                 error_text = embed_error_text
             ) # here FALSE means even number of quotes, thus that ")" is not between quotes, thus has to be kept. TRUE means that ")" is between quotes, thus has to be removed
-            simple.quote.test <- .has_odd_number_of_quotes(
+            simple_quote_test <- .has_odd_number_of_quotes(
                 input_string = string_out, 
                 pattern = "'", 
                 lib_path = lib_path, 
                 error_text = embed_error_text
             ) # idem
-            odds.quotes.log <- double.quote.test |  simple.quote.test # remove ")" ?
-            if(odds.quotes.log == TRUE){
+            odds_quotes_log <- double_quote_test |  simple_quote_test # remove ")" ?
+            if(odds_quotes_log == TRUE){
                 pos <- base::c(pos, base::nchar(x = string_out, type = "chars", allowNA = FALSE, keepNA = NA) + 1)
                 string_out <- base::paste0(string_out, replacement, string_split[count], collapse = NULL, recycle0 = FALSE) # to keep the same length of the tested function on a single string output_1_line
             }else{
@@ -482,20 +482,20 @@
         }
     }
     if(base::nchar(x = string, type = "chars", allowNA = FALSE, keepNA = NA) == base::nchar(x = string_out, type = "chars", allowNA = FALSE, keepNA = NA) + 1){ # this is when the pattern is the last character of string. strsplit("a)", split = "\\)") gives "a". Should also deal when while loop has run, i.e., when several pattern in string including the last one: "a)vb)"
-        double.quote.test <- .has_odd_number_of_quotes(
+        double_quote_test <- .has_odd_number_of_quotes(
             input_string = string_out, 
             pattern = '"', 
             lib_path = lib_path, 
             error_text = embed_error_text
         ) # here FALSE means even number of quotes, thus that ")" is not between quotes, thus has to be kept. TRUE means that ")" is between quotes, thus has to be removed
-        simple.quote.test <- .has_odd_number_of_quotes(
+        simple_quote_test <- .has_odd_number_of_quotes(
             input_string = string_out, 
             pattern = "'", 
             lib_path = lib_path, 
             error_text = embed_error_text
         ) # idem
-        odds.quotes.log <- double.quote.test |  simple.quote.test # remove ")" ?
-        if(odds.quotes.log == TRUE){
+        odds_quotes_log <- double_quote_test |  simple_quote_test # remove ")" ?
+        if(odds_quotes_log == TRUE){
             pos <- base::c(pos, base::nchar(x = string_out, type = "chars", allowNA = FALSE, keepNA = NA) + 1)
             string_out <- base::paste0(string_out, replacement, collapse = NULL, recycle0 = FALSE) # to keep the same length of the tested function on a single string output_1_line
         }else{

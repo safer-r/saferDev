@@ -389,7 +389,7 @@ report <- function(
     text_check <- NULL
     checked_arg_names <- NULL # for function debbuging: used by r_debugging_tools
     arg_check_error_text <- base::paste0("ERROR ", embed_error_text, "\n\n", collapse = NULL, recycle0 = FALSE) # must be used instead of error_text = embed_error_text when several arg_check are performed on the same argument (tempo1, tempo2, see below)
-    ee <- base::expression(argum_check <- base::c(argum_check, tempo$problem) , text_check <- base::c(text_check, tempo$text) , checked_arg_names <- base::c(checked_arg_names, tempo$object.name))
+    ee <- base::expression(argum_check <- base::c(argum_check, tempo$problem) , text_check <- base::c(text_check, tempo$text) , checked_arg_names <- base::c(checked_arg_names, tempo$object_name))
     # add as many lines as below, for each of your arguments of your function in development
     tempo <- saferDev::arg_check(data = output, class = NULL, typeof = NULL, mode = "character", length = 1, prop = FALSE, options = NULL, double_as_integer_allowed = TRUE, all_options_in_data = FALSE, na_contain = FALSE, neg_values = TRUE, inf_values = TRUE, print = FALSE, data_name = NULL, data_arg = TRUE, safer_check = FALSE, lib_path = lib_path, error_text = embed_error_text) ; base::eval(expr = ee, envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL))
     tempo <- saferDev::arg_check(data = path, class = NULL, typeof = NULL, mode = "character", length = 1, prop = FALSE, options = NULL, double_as_integer_allowed = TRUE, all_options_in_data = FALSE, na_contain = FALSE, neg_values = TRUE, inf_values = TRUE, print = FALSE, data_name = NULL, data_arg = TRUE, safer_check = FALSE, lib_path = lib_path, error_text = embed_error_text) ; base::eval(expr = ee, envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL))
@@ -493,12 +493,12 @@ report <- function(
         }
         if(base::all(base::class(x = data) == "data.frame", na.rm = TRUE) | base::all(base::class(x = data) == "table", na.rm = TRUE) | base::all(base::class(x = data) %in% base::c("matrix", "array"), na.rm = TRUE)){ # before R4.0.0, it was  base::all(base::class(data) %in% c("matrix", "data.frame", "table")) # base::class() never returns NA
             if(rownames_kept == FALSE & base::all(base::class(x = data) == "data.frame", na.rm = TRUE) & base::nrow(x = data) != 0 & base::nrow(x = data) <= 4){ # for data frames with nrows <= 4
-                rownames.output.tables <- ""
-                length.rows <- base::nrow(x = data)
-                for(i in 1:length.rows){ # replace the rownames of the first 4 rows by increasing number of spaces (because identical row names not allowed in data frames). This method cannot be extended to more rows as the printed data frame is shifted on the right because of "big empty rownames"
-                    rownames.output.tables <- base::c(rownames.output.tables, base::paste0(rownames.output.tables[i]," ", collapse = "", recycle0 = FALSE))
+                rownames_output_tables <- ""
+                length_rows <- base::nrow(x = data)
+                for(i in 1:length_rows){ # replace the rownames of the first 4 rows by increasing number of spaces (because identical row names not allowed in data frames). This method cannot be extended to more rows as the printed data frame is shifted on the right because of "big empty rownames"
+                    rownames_output_tables <- base::c(rownames_output_tables, base::paste0(rownames_output_tables[i]," ", collapse = "", recycle0 = FALSE))
                 }
-                data <- base::"rownames<-"(x = data, value = rownames.output.tables[1:length.rows])
+                data <- base::"rownames<-"(x = data, value = rownames_output_tables[1:length_rows])
             }else if(rownames_kept == FALSE & (base::all(base::class(x = data) == "table", na.rm = TRUE) | base::all(base::class(x = data) %in% base::c("matrix", "array"), na.rm = TRUE))){ # before R4.0.0, it was  & base::all(base::class(data) %in% base::c("matrix", "table"))
                 data <- base::"rownames<-"(x = data, value = base::rep(x = "", times = base::nrow(x = data))) # identical row names allowed in matrices and tables
             }
@@ -538,8 +538,8 @@ report <- function(
         if(base::all(base::class(x = data) == "list", na.rm = TRUE)){
             sep <- base::ifelse(test = sep == 0, yes = 0, no = sep - 1) # because with lists, R add another additionnal space
         }
-        sep.final <- base::paste0(base::rep(x = "\n", times = sep), collapse = "", recycle0 = FALSE)
-        base::write(x = sep.final, file = out_path, ncolumns = 1, append = TRUE, sep = "") # add a sep
+        sep_final <- base::paste0(base::rep(x = "\n", times = sep), collapse = "", recycle0 = FALSE)
+        base::write(x = sep_final, file = out_path, ncolumns = 1, append = TRUE, sep = "") # add a sep
     }
     #### end main code
 

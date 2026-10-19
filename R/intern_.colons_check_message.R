@@ -320,7 +320,7 @@
     text_check <- NULL
     checked_arg_names <- NULL # for function debbuging: used by r_debugging_tools
     arg_check_error_text <- base::paste0("ERROR ", embed_error_text, "\n\n", collapse = NULL, recycle0 = FALSE) # must be used instead of error_text = embed_error_text when several arg_check are performed on the same argument (tempo1, tempo2, see below)
-    ee <- base::expression(argum_check <- base::c(argum_check, tempo$problem) , text_check <- base::c(text_check, tempo$text) , checked_arg_names <- base::c(checked_arg_names, tempo$object.name))
+    ee <- base::expression(argum_check <- base::c(argum_check, tempo$problem) , text_check <- base::c(text_check, tempo$text) , checked_arg_names <- base::c(checked_arg_names, tempo$object_name))
     # add as many lines as below, for each of your arguments of your function in development
     tempo <- saferDev::arg_check(data = list_fun, class = "list", typeof = NULL, mode = NULL, length = NULL, prop = FALSE, options = NULL, double_as_integer_allowed = FALSE, all_options_in_data = FALSE, na_contain = TRUE, neg_values = TRUE, inf_values = TRUE, print = FALSE, data_name = NULL, data_arg = TRUE, safer_check = FALSE, lib_path = lib_path, error_text = embed_error_text) ; base::eval(expr = ee, envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL)) # copy - paste this line as much as necessary
     tempo <- saferDev::arg_check(data = list_fun_pos, class = "list", typeof = NULL, mode = NULL, length = NULL, prop = FALSE, options = NULL, double_as_integer_allowed = FALSE, all_options_in_data = FALSE, na_contain = TRUE, neg_values = TRUE, inf_values = TRUE, print = FALSE, data_name = NULL, data_arg = TRUE, safer_check = FALSE, lib_path = lib_path,  error_text = embed_error_text) ; base::eval(expr = ee, envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL)) # copy - paste this line as much as necessary
@@ -429,7 +429,7 @@
         arg_user_setting2$x <- base::paste0(base::as.character(x = arg_user_setting2$x)[2], base::as.character(x = arg_user_setting2$x)[1], base::as.character(x = arg_user_setting2$x)[3], "()", collapse = NULL, recycle0 = FALSE)
     }
     # end modification of arg_user_setting2$x for clean messages
-    output.cat <- NULL
+    output_cat <- NULL
     colon_not_here <- FALSE # reminder: no colon problem with internal functions
     # check the identical structure of list_fun and list_fun_pos
     ident_str <- function(list_fun, list_fun_pos, error_nb, intern_error_text_start, intern_error_text_end){
@@ -478,7 +478,7 @@
         list_fun_pos <- list_fun_pos[ ! tempo_log2]
         line_nb <- line_nb[ ! tempo_log2]
         # end remove empty compartment
-        output.cat <- base::paste0(
+        output_cat <- base::paste0(
             "INSIDE ", arg_user_setting2$x, ", ", base::ifelse(test = base::length(x = list_fun) == 0, yes = "ONLY", no = ""), "INTERNAL FUNCTION", base::ifelse(test = base::length(x = internal_fun_names) == 1, yes = "", no = "S"), " DETECTED:\n", 
             base::paste0(internal_fun_names, collapse = "\n", recycle0 = FALSE),
             collapse = "\n", recycle0 = FALSE
@@ -548,12 +548,12 @@
             }
             # end removal of functions between quotes and after $
             if(base::length(x = col1) > 0){
-                tempo.pos <- base::paste0(col1, "\t", col2, "\t\t", col3, collapse = NULL, recycle0 = FALSE)
-                output.cat <- base::paste0(
-                    base::ifelse(test = base::is.null(x = output.cat), yes = "", no = base::paste0(output.cat, "\n\n", collapse = NULL, recycle0 = FALSE)),
+                tempo_pos <- base::paste0(col1, "\t", col2, "\t\t", col3, collapse = NULL, recycle0 = FALSE)
+                output_cat <- base::paste0(
+                    base::ifelse(test = base::is.null(x = output_cat), yes = "", no = base::paste0(output_cat, "\n\n", collapse = NULL, recycle0 = FALSE)),
                     "INSIDE ", arg_user_setting2$x, ", SOME :: OR ::: ARE MISSING BEFORE ", text, " FUNCTIONS:\n\n", 
                     "LINE\tFUN\t\tSTRING_BEFORE\n",
-                    base::paste0(tempo.pos, collapse = "\n", recycle0 = FALSE), 
+                    base::paste0(tempo_pos, collapse = "\n", recycle0 = FALSE), 
                     collapse = NULL, 
                     recycle0 = FALSE
                 )
@@ -566,6 +566,6 @@
     #### end warning output
 
     #### output
-    base::return(base::list(output.cat = output.cat, colon_not_here = base::unlist(x = colon_not_here, recursive = TRUE, use.names = TRUE)))
+    base::return(base::list(output.cat = output_cat, colon_not_here = base::unlist(x = colon_not_here, recursive = TRUE, use.names = TRUE)))
     #### end output
 }

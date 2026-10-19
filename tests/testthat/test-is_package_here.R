@@ -163,13 +163,25 @@ testthat::test_that("is_package_here()", {
     testthat::expect_error(is_package_here(req_package = str2, safer_check = FALSE, lib_path ="C:\\Users\\gmillot\\Desktop", error_text = ""))
 
 empty_dir <- base::tempdir()
-# Ensure it exists but contains no R packages
-# (Do not install anything there)
-
- testthat::expect_no_error(is_package_here(
+# The empty dir is ADDED to .libPaths() (not replacing it), so the required package is still found
+# in the default libraries: the call must succeed even though the dir contains no packages.
+# Also assert the documented .libPaths() restoration.
+ini_lib_path <- base::.libPaths(new = , include.site = TRUE)
+testthat::expect_no_error(is_package_here(
     req_package = "ggplot2",  # Any valid package name
-    lib_path = empty_dir,           # Must exist AND be empty of packages
+    lib_path = empty_dir,           # exists but contains no R packages: added to .libPaths() but package found in default libs
     safer_check = FALSE,            # Avoid dependency on saferDev checks
+    error_text = ""
+))
+testthat::expect_equal(base::.libPaths(new = , include.site = TRUE), ini_lib_path) # .libPaths() must be restored after function execution
+# error path: a package that exists nowhere in lib_path (a dir containing no packages cannot provide it)
+# is caught by the main-code stop: use an isolated empty dir as the ONLY search path is not possible
+# (is_package_here always adds lib_path to the default .libPaths()), so instead check the error when
+# the package name does not exist in any library:
+testthat::expect_error(is_package_here(
+    req_package = "NOTGOOD",
+    lib_path = empty_dir,
+    safer_check = FALSE,
     error_text = ""
 ))
 

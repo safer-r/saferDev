@@ -506,6 +506,30 @@ testthat::test_that("get_message()", {
     rm(stats_env)
     # end env test
 
+    # additional env tests: documented usage examples
+    # env = asNamespace("stats") (documented example): a function of the stats namespace is found
+    result <- get_message(data = 'base::suppressWarnings(expr = stats::median(x = 1:3))', kind = "error", header = TRUE, print_no = FALSE, text = NULL, env = base::asNamespace(ns = "stats", base.OK = TRUE), safer_check = TRUE, lib_path = NULL, error_text = "")
+    expected <- NULL # no error, no warning, no message reported
+    testthat::expect_equal(result, expected)
+    # env = a local environment (documented advice: always use env inside functions): a variable defined only in that env is found there
+    # note: the generic backbone check "CANNOT BE AN EMPTY NON NULL OBJECT" rejects an env containing no object,
+    # because base::length() of an environment is its number of bindings: the envs below each contain 1 object on purpose
+    env1 <- base::new.env(parent = base::baseenv())
+    base::assign(x = "local_var", value = 7, pos = -1L, envir = env1, inherits = FALSE)
+    env2 <- base::new.env(parent = base::baseenv())
+    base::assign(x = "local_var", value = "text", pos = -1L, envir = env2, inherits = FALSE)
+    # same expression, 3 different envs: 3 different errors, proving that env really controls the evaluation
+    result_env1 <- get_message(data = "base::stop(local_var)", kind = "error", header = TRUE, print_no = FALSE, text = NULL, env = env1, safer_check = TRUE, lib_path = NULL, error_text = "")
+    expected_env1 <- "ERROR MESSAGE REPORTED:\nIn base::eval(expr = base::parse(text = data, file = \"\", n = NULL,  : \n  7\n"
+    testthat::expect_equal(result_env1, expected_env1)
+    result_env2 <- get_message(data = "base::stop(local_var)", kind = "error", header = TRUE, print_no = FALSE, text = NULL, env = env2, safer_check = TRUE, lib_path = NULL, error_text = "")
+    expected_env2 <- "ERROR MESSAGE REPORTED:\nIn base::eval(expr = base::parse(text = data, file = \"\", n = NULL,  : \n  text\n"
+    testthat::expect_equal(result_env2, expected_env2)
+    result_stats_ns <- get_message(data = "base::stop(local_var)", kind = "error", header = TRUE, print_no = FALSE, text = NULL, env = base::asNamespace(ns = "stats", base.OK = TRUE), safer_check = TRUE, lib_path = NULL, error_text = "")
+    expected_stats_ns <- "ERROR MESSAGE REPORTED:\nIn base::eval(expr = base::parse(text = data, file = \"\", n = NULL,  : \n  object 'local_var' not found\n"
+    testthat::expect_equal(result_stats_ns, expected_stats_ns)
+    base::rm(env1, env2)
+
 
     # This reaches line 540 (evaluates the expression with warning capture setup), but locally only
     result <- get_message(data = "1+factor(1)", kind = "warning")
