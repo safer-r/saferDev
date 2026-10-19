@@ -55,6 +55,13 @@ testthat::test_that("for_loop_nb_check()", {
     fun38 <- function(x){ x <- 0 ; for(i in 0:0){ y <- i } ; y } # from the @description example: hard numbers, so clean here
     fun39 <- function(f = function(y) for(i in y){ base::print(i) }) f(1) # for inside a formal default: reported
     fun40 <- function(x){ if(x > 1){ for(i in 1:length(x)){ base::print(i) } } } # for inside if
+    fun41 <- function(x){ for(i in base::seq_along(along.with = x) - 1){ base::print(i) } } # seq_along followed by an operator: reported (gives c(0, 1) when x has 2 elements)
+    fun42 <- function(x){ for(i in seq_len(3) + 1){ base::print(i) } } # seq_len followed by an operator: reported
+    fun43 <- function(x){ for(i in seq_len(3)[1]){ base::print(i) } } # subscripted seq_len: reported
+    fun44 <- function(x){ for(i in 1:3 - 1){ base::print(i) } } # binary minus: reported (gives c(-2, -1))
+    fun45 <- function(x){ for(i in 3-1){ base::print(i) } } # binary minus without spaces: reported (1, same as 2, but the writing is not hard numbers)
+    fun46 <- function(x){ for(i in 2 - 1){ base::print(i) } } # binary minus around a single number: reported
+    fun47 <- function(x){ for(i in 1:3-1:2){ base::print(i) } } # chained colon with binary minus: reported
     ## end data argument values
 
     ## initialization of tests
@@ -246,6 +253,13 @@ testthat::test_that("for_loop_nb_check()", {
     testthat::expect_message(for_loop_nb_check(x = fun37, safer_check = TRUE, lib_path = NULL, error_text = ""), regexp = "SOME for() SEQUENCES ARE NOT WRITTEN WITH HARD NUMBERS", fixed = TRUE) # seq(from = , to = length())
     testthat::expect_message(for_loop_nb_check(x = fun39, safer_check = TRUE, lib_path = NULL, error_text = ""), regexp = "SOME for() SEQUENCES ARE NOT WRITTEN WITH HARD NUMBERS", fixed = TRUE) # for inside a formal default
     testthat::expect_message(for_loop_nb_check(x = fun40, safer_check = TRUE, lib_path = NULL, error_text = ""), regexp = "SOME for() SEQUENCES ARE NOT WRITTEN WITH HARD NUMBERS", fixed = TRUE) # for inside if
+    testthat::expect_message(for_loop_nb_check(x = fun41, safer_check = TRUE, lib_path = NULL, error_text = ""), regexp = "SOME for() SEQUENCES ARE NOT WRITTEN WITH HARD NUMBERS", fixed = TRUE) # seq_along followed by an operator
+    testthat::expect_message(for_loop_nb_check(x = fun42, safer_check = TRUE, lib_path = NULL, error_text = ""), regexp = "SOME for() SEQUENCES ARE NOT WRITTEN WITH HARD NUMBERS", fixed = TRUE) # seq_len followed by an operator
+    testthat::expect_message(for_loop_nb_check(x = fun43, safer_check = TRUE, lib_path = NULL, error_text = ""), regexp = "SOME for() SEQUENCES ARE NOT WRITTEN WITH HARD NUMBERS", fixed = TRUE) # subscripted seq_len
+    testthat::expect_message(for_loop_nb_check(x = fun44, safer_check = TRUE, lib_path = NULL, error_text = ""), regexp = "SOME for() SEQUENCES ARE NOT WRITTEN WITH HARD NUMBERS", fixed = TRUE) # binary minus 1:3 - 1
+    testthat::expect_message(for_loop_nb_check(x = fun45, safer_check = TRUE, lib_path = NULL, error_text = ""), regexp = "SOME for() SEQUENCES ARE NOT WRITTEN WITH HARD NUMBERS", fixed = TRUE) # binary minus 3-1
+    testthat::expect_message(for_loop_nb_check(x = fun46, safer_check = TRUE, lib_path = NULL, error_text = ""), regexp = "SOME for() SEQUENCES ARE NOT WRITTEN WITH HARD NUMBERS", fixed = TRUE) # binary minus 2 - 1
+    testthat::expect_message(for_loop_nb_check(x = fun47, safer_check = TRUE, lib_path = NULL, error_text = ""), regexp = "SOME for() SEQUENCES ARE NOT WRITTEN WITH HARD NUMBERS", fixed = TRUE) # chained colon 1:3-1:2
     # message normalization of pkg::fun
     testthat::expect_message(for_loop_nb_check(x = base::rep, safer_check = TRUE, lib_path = NULL, error_text = ""), regexp = "INSIDE base::rep(), EVERYTHING SEEMS CLEAN", fixed = TRUE)
     testthat::expect_message(for_loop_nb_check(x = fun20, safer_check = TRUE, lib_path = NULL, error_text = ""), regexp = "INSIDE fun20(), SOME for() SEQUENCES", fixed = TRUE)

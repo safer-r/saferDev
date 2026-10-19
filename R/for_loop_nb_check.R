@@ -14,7 +14,7 @@
 #' @details
 #' The result is used to modify the code inside the tested function like this: \code{for(i in <HARD NUMBERS>)} or \code{for(i in base::seq_along(x = <OBJECT>))}.
 #' 
-#' More precisely, \code{for_loop_nb_check()} verifies that the sequence expression written between \code{in} and the closing parenthesis of the condition of each \code{for} construct contains only integer-valued numeric literals (\code{1:3}, \code{0:0}, \code{-3:-1}, \code{1e3}, \code{1L:3L}, \code{0x10:0x11}, or single literals like \code{3} or \code{-3}), each literal possibly negated by a unary minus, or is a \code{seq_len(...)} or \code{seq_along(...)} call (namespaced or not, whatever the arguments, because these functions are the recommended safe replacements). Any other writing is reported: variables like \code{for(i in n)} or \code{for(i in x)}, function calls like \code{1:length(x)}, \code{1:nrow(df)}, \code{1:(n - 1)}, \code{base::rev(x = x)} or \code{base::seq(x = x)}, and non integer-valued or non finite numeric literals like \code{1:2.5}, \code{1:1e-3}, \code{1:NA}, \code{1:Inf} or \code{1:TRUE} (which are silently truncated toward 0, or run for a very long time, at execution). Comments and strings are ignored during this verification.
+#' More precisely, \code{for_loop_nb_check()} verifies that the sequence expression written between \code{in} and the closing parenthesis of the condition of each \code{for} construct is exactly a hard-number writing or a \code{seq_len(...)} or \code{seq_along(...)} call. The hard-number writing is: an optional unary minus, then a numeric literal, then optionally \code{:}, then an optional unary minus, then a numeric literal, with nothing else (e.g., \code{1:3}, \code{0:0}, \code{-3:-1}, \code{1e3}, \code{1L:3L}, \code{0x10:0x11}, or single literals like \code{3} or \code{-3}). Each numeric literal must be finite and integer-valued: \code{2.5}, \code{1e-3}, \code{NA}, \code{NaN}, \code{Inf} and \code{TRUE}/\code{FALSE} are reported (they are silently truncated toward 0, or run for a very long time, at execution). A \code{seq_len(...)} or \code{seq_along(...)} call (namespaced or not, whatever the arguments, because these functions are the recommended safe replacements) is clean only if it occupies the whole sequence expression: \code{seq_along(x) - 1} is reported, because it gives \code{c(0, 1)} when \code{x} has 2 elements. Any other writing is reported: variables like \code{for(i in n)} or \code{for(i in x)}, function calls like \code{1:length(x)}, \code{1:nrow(df)}, \code{1:(n - 1)}, \code{1:3 - 1} (which gives \code{c(-2, -1)} at execution), \code{2 - 1}, \code{1:3:1}, \code{base::rev(x = x)}, \code{base::seq(x = x)} or \code{base::names(x = df)}. Comments and strings are ignored during this verification.
 #' 
 #' Deliberately NOT reported, because the hard-number writings are checked by a specific checking line added in the function bodies (which warns at execution when the computed sequence is equal like \code{0:0} or \code{1:1}, both negative like \code{-3:-1}, or decreasing like \code{1:0}): the equal-bounds, both-negative and decreasing hard-number writings.
 #' 
@@ -474,8 +474,7 @@ for_loop_nb_check <- function(
         if(base::is.null(x = in_pos) == TRUE){
             # nocov start
             # codecov inactivated because it is an internal control of code writing, impossible to cover with argument values (R code without in between the ( and the ) of a for() condition cannot be parsed).
-            tempo_cat <- base::paste0("INTERNAL ERROR 6 IN ", intern_error_text_start, "NO in FOUND BETWEEN THE ( AND THE ) OF A for() CONDITION", intern_error_text_end, collapse = NULL, recycle0 = FALSE) ; base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL)
-            # nocov end
+            tempo_cat <- base::paste0("INTERNAL ERROR 5 IN ", intern_error_text_start, "NO in FOUND BETWEEN THE ( AND THE ) OF A for() CONDITION", intern_error_text_end, collapse = NULL, recycle0 = FALSE) ; base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL)            # nocov end
         }
         # tokens of the sequence expression: between the IN token and the ) of the condition
         seq_pos1 <- in_pos + 1
@@ -483,41 +482,83 @@ for_loop_nb_check <- function(
         if(seq_pos2 < seq_pos1){
             # nocov start
             # codecov inactivated because it is an internal control of code writing, impossible to cover with argument values (R code without sequence expression after in cannot be parsed).
-            tempo_cat <- base::paste0("INTERNAL ERROR 7 IN ", intern_error_text_start, "NO SEQUENCE EXPRESSION FOUND AFTER THE in TOKEN", intern_error_text_end, collapse = NULL, recycle0 = FALSE) ; base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL)
+            tempo_cat <- base::paste0("INTERNAL ERROR 6 IN ", intern_error_text_start, "NO SEQUENCE EXPRESSION FOUND AFTER THE in TOKEN", intern_error_text_end, collapse = NULL, recycle0 = FALSE) ; base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL)
             # nocov end
         }
         seq_tokens <- term_rows[base::seq_len(length.out = seq_pos2 - seq_pos1 + 1) + seq_pos1 - 1]
-        # 1) clean writings: seq_len() or seq_along() call, namespaced or not, whatever the arguments (these functions are the recommended safe replacements)
+        # 1) clean writings: seq_len() or seq_along() call, namespaced or not, whatever the arguments, but ONLY if the call is the whole sequence expression (e.g., seq_along(x) - 1 is NOT clean, because it can give c(0, 1))
         seq_clean <- FALSE
         tok1 <- pd$token[seq_tokens[1]]
-        txt1 <- pd$text[seq_tokens[1]]
-        if(tok1 == "SYMBOL_FUNCTION_CALL" && txt1 %in% base::c("seq_len", "seq_along")){
-            seq_clean <- TRUE
+        fun_name_pos <- NULL
+        if(tok1 == "SYMBOL_FUNCTION_CALL" && pd$text[seq_tokens[1]] %in% base::c("seq_len", "seq_along")){
+            fun_name_pos <- 1
         }else if(base::length(x = seq_tokens) >= 3 && tok1 == "SYMBOL_PACKAGE" && pd$token[seq_tokens[2]] %in% base::c("NS_GET", "NS_GET_INT") && pd$token[seq_tokens[3]] == "SYMBOL_FUNCTION_CALL" && pd$text[seq_tokens[3]] %in% base::c("seq_len", "seq_along")){
-            seq_clean <- TRUE
+            fun_name_pos <- 3
         }
-        # 2) hard-number detection: only integer-valued numeric literals, joined by :, each possibly negated by a unary minus
-        if(seq_clean == FALSE){
-            allowed <- pd$token[seq_tokens] %in% base::c("NUM_CONST", "':'", "'-'")
-            if(base::all(x = allowed, na.rm = TRUE) == FALSE){
-                hard_log <- FALSE
-            }else{
-                hard_log <- TRUE
-                for(j in base::seq_along(along.with = seq_tokens)){ # seq_along() instead of 1:base::length() avoids iterating over c(1, 0) when seq_tokens is empty, which would be reported by this very function
-                    # a unary minus must be immediately followed by a NUM_CONST
-                    if(pd$token[seq_tokens[j]] == "'-'" && (j == base::length(x = seq_tokens) || pd$token[seq_tokens[j + 1]] != "NUM_CONST")){
-                        hard_log <- FALSE
+        if(base::is.null(x = fun_name_pos) == FALSE){
+            # the call must occupy the whole sequence expression: its closing ) must be the last token of the sequence expression
+            if(fun_name_pos + 1 > base::length(x = seq_tokens) || pd$token[seq_tokens[fun_name_pos + 1]] != "'('"){
+                # nocov start
+                # codecov inactivated because it is an internal control of code writing, impossible to cover with argument values (a function call without () cannot be parsed).
+                tempo_cat <- base::paste0("INTERNAL ERROR 3 IN ", intern_error_text_start, "NO ( FOUND AFTER THE seq_len OR seq_along FUNCTION NAME TOKEN", intern_error_text_end, collapse = NULL, recycle0 = FALSE) ; base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL)
+                # nocov end
+            }
+            depth <- 0
+            k <- fun_name_pos + 1 # the scan includes the ( token itself
+            while(k <= base::length(x = seq_tokens)){
+                if(pd$token[seq_tokens[k]] == "'('"){
+                    depth <- depth + 1
+                }else if(pd$token[seq_tokens[k]] == "')'"){
+                    depth <- depth - 1
+                    if(depth == 0){
                         break
                     }
-                    # every NUM_CONST must be a finite integer-valued number (2.5, 1e-3, NA, Inf, NaN, TRUE are not)
+                }
+                k <- k + 1
+            }
+            if(depth != 0){ # nocov start
+                # codecov inactivated because it is an internal control of code writing, impossible to cover with argument values (R code with unbalanced parentheses cannot be parsed).
+                tempo_cat <- base::paste0("INTERNAL ERROR 4 IN ", intern_error_text_start, "UNBALANCED PARENTHESES DETECTED IN A seq_len OR seq_along CALL", intern_error_text_end, collapse = NULL, recycle0 = FALSE) ; base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL)
+                # nocov end
+            }else if(k == base::length(x = seq_tokens) && pd$token[seq_tokens[k]] == "')'"){
+                seq_clean <- TRUE
+            }
+        }
+        # 2) hard-number detection: STRICT structural writing only, i.e., [optional unary -] NUM_CONST [ ':' [optional unary -] NUM_CONST ], with nothing else. This rejects binary operators (e.g., 1:3 - 1, which gives c(-2, -1) at execution, and 2 - 1), chained colons (e.g., 1:3:1) and everything else
+        if(seq_clean == FALSE){
+            hard_log <- TRUE
+            j <- 1
+            tok_nb <- base::length(x = seq_tokens)
+            # first operand: optional unary minus then NUM_CONST
+            if(j <= tok_nb && pd$token[seq_tokens[j]] == "'-'"){
+                j <- j + 1
+            }
+            if(j > tok_nb || pd$token[seq_tokens[j]] != "NUM_CONST"){ # j > tok_nb also covers the empty seq_tokens (unreachable because internal error 4 above, but secured)
+                hard_log <- FALSE
+            }else{
+                j <- j + 1
+                if(j <= tok_nb){
+                    if(pd$token[seq_tokens[j]] != "':'"){
+                        hard_log <- FALSE
+                    }else{
+                        j <- j + 1
+                        if(j <= tok_nb && pd$token[seq_tokens[j]] == "'-'" && j < tok_nb){ # the optional unary minus must not be the last token (j < tok_nb because a NUM_CONST must follow)
+                            j <- j + 1
+                        }
+                        if(j != tok_nb || pd$token[seq_tokens[j]] != "NUM_CONST"){ # j != tok_nb covers any missing or extra token (e.g., 1:3 - 1, 1:3:1, 1:): the short-circuit avoids the out of bounds indexing of the second condition
+                            hard_log <- FALSE
+                        }
+                    }
+                } # else: single NUM_CONST only: hard_log stays TRUE
+            }
+            # literal validation: every NUM_CONST must be a finite integer-valued number (2.5, 1e-3, NA, Inf, NaN, TRUE are not)
+            if(hard_log == TRUE){
+                for(j in base::seq_along(along.with = seq_tokens)){ # seq_along() instead of 1:base::length() avoids iterating over c(1, 0) when seq_tokens is empty, which would be reported by this very function
                     if(pd$token[seq_tokens[j]] == "NUM_CONST"){
                         val_txt <- pd$text[seq_tokens[j]]
                         val_txt <- base::gsub(x = val_txt, pattern = "_", replacement = "", ignore.case = FALSE, perl = FALSE, fixed = TRUE, useBytes = FALSE) # digits separator (1_000) introduced in R 3.6.0
                         val_txt <- base::sub(x = val_txt, pattern = "L$", replacement = "", ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE) # remove the integer suffix (1L), because base::as.numeric() does not parse it
-                        val <- base::suppressWarnings(expr = base::as.numeric(x = val_txt))
-                        if(base::is.na(x = val) == TRUE && base::grepl(x = val_txt, pattern = "^0[xX][0-9a-fA-F]+$", ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE)){ # base::as.numeric() does not parse hexadecimal literals
-                            val <- base::suppressWarnings(expr = base::strtoi(x = val_txt, base = 0L))
-                        }
+                        val <- base::suppressWarnings(expr = base::as.numeric(x = val_txt)) # parses integers, decimals, exponentials, hexadecimal literals (R >= 4.5.0 required by the package) and NA/NaN/Inf, the last ones rejected below
                         if(base::length(x = val) != 1 || base::is.na(x = val) == TRUE || base::is.finite(x = val) == FALSE || val != base::floor(x = val)){
                             hard_log <- FALSE
                             break
