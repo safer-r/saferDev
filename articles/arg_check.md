@@ -100,7 +100,7 @@ arg_check(data = vec1, typeof = "integer")
     ## $text
     ## [1] "NO PROBLEM DETECTED FOR THE vec1 ARGUMENT."
     ## 
-    ## $object.name
+    ## $object_name
     ## [1] "vec1"
 
 ``` r
@@ -116,7 +116,7 @@ arg_check(data = vec1, class = "integer", typeof = "double")
     ## $text
     ## [1] "ERROR\n\nTHE vec1 ARGUMENT MUST BE TYPEOF double"
     ## 
-    ## $object.name
+    ## $object_name
     ## [1] "vec1"
 
 ``` r
@@ -139,7 +139,7 @@ arg_check(
     ## $text
     ## [1] "ERROR\n\nTHE vec1 ARGUMENT MUST BE LENGTH 3 AND THE vec1 ARGUMENT MUST BE MADE OF NON NEGATIVE VALUES."
     ## 
-    ## $object.name
+    ## $object_name
     ## [1] "vec1"
 
 ``` r
@@ -159,7 +159,7 @@ arg_check(data = NULL, typeof = "integer")
     ## $text
     ## [1] "ERROR\n\nTHE NULL ARGUMENT MUST BE TYPEOF integer"
     ## 
-    ## $object.name
+    ## $object_name
     ## [1] "NULL"
 
 \
@@ -191,7 +191,7 @@ arg_check(
     ## $text
     ## [1] "NO PROBLEM DETECTED FOR THE vec1 ARGUMENT."
     ## 
-    ## $object.name
+    ## $object_name
     ## [1] "vec1"
 
 ``` r
@@ -212,7 +212,7 @@ arg_check(
     ## $text
     ## [1] "ERROR\n\nTHE vec1 ARGUMENT MUST BE MODE character"
     ## 
-    ## $object.name
+    ## $object_name
     ## [1] "vec1"
 
 ``` r
@@ -230,7 +230,7 @@ arg_check(
     ## $text
     ## [1] "ERROR\n\nTHE vec1 ARGUMENT MUST BE MODE integer"
     ## 
-    ## $object.name
+    ## $object_name
     ## [1] "vec1"
 
 ``` r
@@ -250,7 +250,7 @@ arg_check(
     ## $text
     ## [1] "NO PROBLEM DETECTED FOR THE mat1 ARGUMENT."
     ## 
-    ## $object.name
+    ## $object_name
     ## [1] "mat1"
 
 ``` r
@@ -269,7 +269,7 @@ arg_check(
     ## $text
     ## [1] "ERROR\n\nTHE mat1 ARGUMENT MUST BE CLASS array, matrix"
     ## 
-    ## $object.name
+    ## $object_name
     ## [1] "mat1"
 
 \
@@ -291,7 +291,7 @@ arg_check(
     ## $text
     ## [1] "NO PROBLEM DETECTED FOR THE vec2 ARGUMENT."
     ## 
-    ## $object.name
+    ## $object_name
     ## [1] "vec2"
 
 \
@@ -315,7 +315,7 @@ arg_check(
     ## $text
     ## [1] "NO PROBLEM DETECTED FOR THE vec3 ARGUMENT."
     ## 
-    ## $object.name
+    ## $object_name
     ## [1] "vec3"
 
 \
@@ -337,7 +337,7 @@ arg_check(
     ## $text
     ## [1] "NO PROBLEM DETECTED FOR THE vec4 ARGUMENT."
     ## 
-    ## $object.name
+    ## $object_name
     ## [1] "vec4"
 
 \
@@ -361,7 +361,7 @@ arg_check(
     ## $text
     ## [1] "NO PROBLEM DETECTED FOR THE vec5 ARGUMENT."
     ## 
-    ## $object.name
+    ## $object_name
     ## [1] "vec5"
 
 ``` r
@@ -380,7 +380,7 @@ arg_check(
     ## $text
     ## [1] "NO PROBLEM DETECTED FOR THE vec5 ARGUMENT."
     ## 
-    ## $object.name
+    ## $object_name
     ## [1] "vec5"
 
 ``` r
@@ -399,7 +399,7 @@ arg_check(
     ## $text
     ## [1] "ERROR\n\nTHE vec5 ARGUMENT MUST BE MADE OF ALL THESE OPTIONS:\na\nb\nc\nTHE MISSING ELEMENT IN vec5 IS:\nc"
     ## 
-    ## $object.name
+    ## $object_name
     ## [1] "vec5"
 
 \
@@ -424,7 +424,7 @@ arg_check(
     ## $text
     ## [1] "ERROR\n\nTHE mat2 ARGUMENT CONTAINS NA WHILE NOT AUTHORIZED."
     ## 
-    ## $object.name
+    ## $object_name
     ## [1] "mat2"
 
 \
@@ -448,7 +448,7 @@ arg_check(
     ## $text
     ## [1] "ERROR\n\nTHE vec1 ARGUMENT MUST BE MADE OF NON NEGATIVE VALUES."
     ## 
-    ## $object.name
+    ## $object_name
     ## [1] "vec1"
 
 ``` r
@@ -493,7 +493,7 @@ arg_check(
     ## $text
     ## [1] "NO PROBLEM DETECTED FOR THE vec2 ARGUMENT."
     ## 
-    ## $object.name
+    ## $object_name
     ## [1] "vec2"
 
 ``` r
@@ -600,7 +600,7 @@ arg_check(
     ## $text
     ## [1] "NO PROBLEM DETECTED FOR THE OBSERVATION_1 ARGUMENT."
     ## 
-    ## $object.name
+    ## $object_name
     ## [1] "OBSERVATION_1"
 
 ``` r
@@ -620,7 +620,7 @@ arg_check(
     ## $text
     ## [1] "ERROR\n\nTHE x ARGUMENT MUST BE TYPEOF integer"
     ## 
-    ## $object.name
+    ## $object_name
     ## [1] "x"
 
 ``` r
@@ -639,7 +639,7 @@ arg_check(
     ## $text
     ## [1] "ERROR\n\nTHE get(\"x\") ARGUMENT MUST BE TYPEOF integer"
     ## 
-    ## $object.name
+    ## $object_name
     ## [1] "get(\"x\")"
 
 \
@@ -662,7 +662,7 @@ arg_check(
     ## $text
     ## [1] "ERROR\n\nTHE vec2 ARGUMENT MUST BE TYPEOF integer"
     ## 
-    ## $object.name
+    ## $object_name
     ## [1] "vec2"
 
 ``` r
@@ -681,7 +681,7 @@ arg_check(
     ## $text
     ## [1] "ERROR\n\nTHE vec2 OBJECT MUST BE TYPEOF integer"
     ## 
-    ## $object.name
+    ## $object_name
     ## [1] "vec2"
 
 \
@@ -704,7 +704,7 @@ arg_check(
     ## $text
     ## [1] "NO PROBLEM DETECTED FOR THE mat1 ARGUMENT."
     ## 
-    ## $object.name
+    ## $object_name
     ## [1] "mat1"
 
 \
@@ -794,5 +794,5 @@ arg_check(
     ## $text
     ## [1] "NO PROBLEM DETECTED FOR THE vec1 ARGUMENT."
     ## 
-    ## $object.name
+    ## $object_name
     ## [1] "vec1"

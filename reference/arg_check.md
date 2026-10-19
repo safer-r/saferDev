@@ -202,7 +202,7 @@ A list containing:
 - `text`: message indicating the details of the problem, or the absence
   of problem.
 
-- `object.name`: value of the `data_name` argument (i.e., name of the
+- `object_name`: value of the `data_name` argument (i.e., name of the
   checked object if provided, `NULL` otherwise).
 
 ## Details
@@ -294,7 +294,7 @@ saferDev::arg_check(data = test, print = TRUE, class = c("matrix", "array"), mod
 #> $text
 #> [1] "NO PROBLEM DETECTED FOR THE test ARGUMENT."
 #> 
-#> $object.name
+#> $object_name
 #> [1] "test"
 #> 
 saferDev::arg_check(
@@ -310,7 +310,7 @@ saferDev::arg_check(
 #> $text
 #> [1] "NO PROBLEM DETECTED FOR THE test ARGUMENT using saferDev::arg_check()"
 #> 
-#> $object.name
+#> $object_name
 #> [1] "test"
 #> 
 ```

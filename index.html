@@ -129,6 +129,10 @@
 <td align="left">Verify that all the bodies of the <code>if</code>, <code>else</code>, <code>for</code>, <code>while</code>, <code>repeat</code> and <code>function</code> (including lambda <code>\(x)</code>) are delimited by curly brackets <code><a href="https://rdrr.io/r/base/Paren.html" class="external-link">{ }</a></code>.</td>
 </tr>
 <tr>
+<td align="left"><strong>for_loop_nb_check()</strong></td>
+<td align="left">Verify that the sequence expression of every <code>for</code> construct is written with hard numbers (integer-valued numeric literals joined by <code>:</code>, or a <code>seq_len(...)</code>/<code>seq_along(...)</code> call). For instance: <code>for(i in 1:3)</code> and not <code>for(i in 1:length(x))</code> (use <code>base::seq_along(x = x)</code> instead).</td>
+</tr>
+<tr>
 <td align="left"><strong>env_check()</strong></td>
 <td align="left">Verify that object names in the environment defined by the <code>pos</code> argument are identical or not to object names in the above environments (following R Scope). This can be used to verify that names used for objects inside a function or in the working environment do not override names of objects already present in the above R environments, following the R scope.</td>
 </tr>

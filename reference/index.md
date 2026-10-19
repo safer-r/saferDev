@@ -36,6 +36,10 @@
 
 - [`curl_bracket_check()`](curl_bracket_check.md) : Curl Brackets Check
 
+## for_loop_nb_check
+
+- [`for_loop_nb_check()`](for_loop_nb_check.md) : For Loop Number Check
+
 ## true_false_check
 
 - [`true_false_check()`](true_false_check.md) : True False Check

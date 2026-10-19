@@ -118,7 +118,7 @@ utils::find("mean") # where the objects with the name "mean" are present.
 #> [1] "package:base"
 utils::find("t.test") # where the objects with the name "mean" are present.
 #> [1] "package:stats"
-# test if any object name of the global environment are above environments:
+# test if any object_name of the global environment are above environments:
 a <- saferDev::env_check(pos = 1) 
 a # output string.
 #> [1] "SOME VARIABLES OF THE CHECKED ENVIRONMENT UNNAMED ARE ALSO PRESENT IN :\npackage:stats: t.test\npackage:base: mean\nSEARCH PATH CHECKED:\n<environment>\n<environment>\n<environment>\n<environment>\n<environment>\n<environment>\n<environment>\n<environment>\n<environment>\n<environment>\n<environment>\n<environment>\n<environment>\n<environment>\n<environment>\n<environment>\n<environment>\n<environment>\n<environment>\n<environment>\n<environment>\n<environment>\n<environment>\n<environment>\n<environment>\n<environment>\n<environment>\n<environment>\n<environment>\n<environment>\n<environment>\n.GlobalEnv\npackage:saferDev\npackage:stats\npackage:graphics\npackage:grDevices\npackage:utils\npackage:datasets\npackage:methods\nAutoloads\npackage:base\n"
