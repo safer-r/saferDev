@@ -1,0 +1,184 @@
+---
+title: "for_loop_nb_check: more examples"
+---
+<br>
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+    error = TRUE, 
+    collapse = FALSE,
+    comment = "##"
+)
+```
+
+```{r setup}
+library(saferDev)
+```
+<br>
+
+### Datasets
+
+```{r}
+# Function with all the for() sequences written with hard numbers or seq_len()/seq_along() calls.
+fun1 <- function(x){
+    for(i in 1:3){
+        base::print(i)
+    }
+    for(i in 0:0){ # equal bounds: not reported by for_loop_nb_check() (target of the runtime checking line)
+        base::print(i)
+    }
+    for(i in -3:-1){ # both negative: not reported by for_loop_nb_check()
+        base::print(i)
+    }
+    for(i in 1:0){ # decreasing: not reported by for_loop_nb_check()
+        base::print(i)
+    }
+    for(i in base::seq_along(along.with = x)){ # recommended replacement of 1:length(x)
+        base::print(i)
+    }
+    for(i in base::seq_len(length.out = 3)){ # recommended replacement of 1:n
+        base::print(i)
+    }
+}
+# Function with some for() sequences not written with hard numbers.
+fun2 <- function(x){
+    for(i in 1:length(x)){ # 1:0 when x is empty: 2 loops
+        base::print(i)
+    }
+    for(i in 1:length(x) - 1){ # 0:-1 when x is empty: 2 loops, and only 0 when x has 1 element
+        base::print(i)
+    }
+    for(i in 1:n){ # n a variable: the sequence content is not predictable from the writing
+        base::print(i)
+    }
+    for(i in 1:(3 - 1)){ # parenthesized constant expression: reported (purely syntactic rule)
+        base::print(i)
+    }
+    for(i in 1:3 - 1){ # gives c(-2, -1) at execution
+        base::print(i)
+    }
+    for(i in seq_along(along.with = x) - 1){ # gives c(0, 1) when x has 2 elements
+        base::print(i)
+    }
+    for(i in 1:2.5){ # silently truncated toward 0
+        base::print(i)
+    }
+    for(i in 1:NA){ # error at execution
+        base::print(i)
+    }
+    for(i in 1:Inf){ # runs for a very long time
+        base::print(i)
+    }
+    for(i in 1:TRUE){ # TRUE is not a numeric literal
+        base::print(i)
+    }
+    for(i in x){ # plain object
+        base::print(i)
+    }
+    for(i in base::rev(x = x)){ # non seq_len()/seq_along() call
+        base::print(i)
+    }
+    for(i in base::seq(x = x)){ # 2 loops when x = 0
+        base::print(i)
+    }
+    for(i in base::names(x = x)){ # non seq_len()/seq_along() call
+        base::print(i)
+    }
+}
+```
+<br>
+
+### Datasets info
+
+```{r}
+fun1 # Function.
+fun2 # Function.
+```
+<br>
+
+### Argument <code>x</code>
+```{r, echo = TRUE, error = TRUE}
+# Test if all the for() sequences of fun1 are written with hard numbers.
+# Here everything is fine.
+for_loop_nb_check(x = fun1)
+
+# Here some for() sequences are not written with hard numbers.
+for_loop_nb_check(x = fun2)
+```
+<br>
+
+### Argument <code>safer_check</code> 
+```{r, echo = TRUE, error = TRUE}
+# Safer checkings are performed before main code running.
+for_loop_nb_check(
+    x = fun1, 
+    safer_check = TRUE
+)
+```
+<br>
+
+### Argument <code>lib_path</code>
+```{r}
+# The "NOTGOOD" path does not exists.
+for_loop_nb_check(
+    x = fun1,  
+    lib_path = "NOTGOOD"
+)
+```
+<br>
+
+### Argument <code>error_text</code>
+```{r}
+# Add a text in error messages returned by for_loop_nb_check().
+for_loop_nb_check(
+    x = fun1, 
+    lib_path = "NOTGOOD", 
+    error_text = " === TEXT ADDED ==="
+)
+```
+<br>
+
+### All the arguments
+```{r, echo = TRUE, error = TRUE}
+for_loop_nb_check(
+    x = fun1, # function name to test.
+    safer_check = TRUE, # perform some "safer" checks (see https://github.com/safer-r)?
+    lib_path = NULL, # where the required packages are if not in the default directories.
+    error_text = "" # add information in error messages returned by the function.
+)
+```
+<br>
+
+### Sophisticated example
+```{r, echo = TRUE, error = TRUE}
+# The for() sequences written with hard numbers are all clean, whatever the bounds (0:0, 1:0 and -3:-1 are deliberately not reported by for_loop_nb_check(): they are the target of a specific checking line added in the function bodies, which warns at execution when the computed sequence is equal, both negative or decreasing).
+fun3 <- function(x){ x <- 0 ; for(i in 0:0){ y <- i } ; y }
+for_loop_nb_check(x = fun3)
+
+# But the same writing computed from an object is reported, like 1:length(x), which gives c(1, 0) when x is empty (base::seq_along(x = x) should be used instead).
+fun4 <- function(x){ x <- character() ; for(i in 1:length(x)){ y <- i } ; y }
+for_loop_nb_check(x = fun4)
+
+# Nested for() loops are all checked.
+fun5 <- function(x){
+    for(i in 1:3){
+        for(i2 in 1:length(x)){ # reported
+            base::print(i2)
+        }
+    }
+}
+for_loop_nb_check(x = fun5)
+
+# A for() loop inside a formal default is also checked.
+fun6 <- function(f = function(y) for(i in y){ base::print(i) }) f(1)
+for_loop_nb_check(x = fun6)
+
+# Aliased bounds cannot be detected (documented limitation): n <- length(x) ; for(i in 1:n) is reported as a plain variable, but the aliasing itself is invisible.
+fun7 <- function(x){ n <- base::length(x = x) ; for(i in 1:n){ y <- i } ; y }
+for_loop_nb_check(x = fun7)
+
+# Backquoted constructs cannot be checked (documented limitation).
+fun8 <- function(x){ `for`(i in 1:3, base::print(i)) }
+try(for_loop_nb_check(x = fun8), silent = FALSE)
+```
+<br>
