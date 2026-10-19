@@ -4,21 +4,27 @@
 #' 
 #' Indeed, for instance \code{x <- 0 ; for(i in 0:0){y <- i}} makes one loop while it should a priori not be necessary, and \code{x <- character() ; for(i in 1:length(x)){y <- i}} returns \code{y = 0}, because \code{1:length(x)} gives \code{c(1, 0)} when \code{x} is empty. Thus, \code{base::seq_along(x = ...)} should be used instead of \code{length(x)}.
 #' @param x a function name, written without quotes and brackets.
+#' @param export Single logical value. Export the modified function (see the \code{@returns} and \code{@details} sections) into a file? If \code{TRUE}, the modified code is written in a file named \code{<function name>_safer.R} (the function name is the last component of the submitted name, so that \code{pkg::fun()} gives \code{fun_safer.R}) in the directory indicated by the \code{out_path} argument, and \code{NULL} is returned: the modified function is only available in the file. An error is returned if this file already exists. Nothing is written if no modification is performed (everything clean, or no checking line inserted). If \code{FALSE} (default), the modified function is returned by \code{return()} (\code{NULL} if no modification is performed).
+#' @param out_path Single character string indicating the absolute pathway of the folder where to export the modified function when the \code{export} argument is \code{TRUE}. \code{out_path = "."} means the R working directory set by the user. Ignored (and the R working directory set by the user is used) if \code{NULL} (default), or if the \code{export} argument is \code{FALSE}.
 #' @param safer_check Single logical value. Perform some "safer" checks? If \code{TRUE}, checkings are performed before main code running (see the \href{https://github.com/safer-r}{safer-r project}): 1) correct \code{lib_path} argument value 2) required functions and related packages effectively present in local R libraries and 3) R classical operators (like \code{"<-"}) not overwritten by another package because of the R scope. Must be set to \code{FALSE} if this function is used inside another "safer" function to avoid pointless multiple checkings.
 #' @param lib_path Vector of characters specifying the absolute pathways of the directories containing the required packages for the function, if not in the default directories. Useful when R packages are not installed in the default directories because of lack of admin rights. More precisely, \code{lib_path} is passed through the \code{new} argument of \code{.libPaths()} so that the new library paths are \code{unique(c(new, .Library.site, .Library))}. Warning: \code{.libPaths()} is restored to the initial paths, after function execution. Ignored if \code{NULL} (default) or if the \code{safer_check} argument is \code{FALSE}: only the pathways specified by the current \code{.libPaths()} are used for package calling.
 #' @param error_text Single character string used to add information in error messages returned by the function, notably if the function is inside other functions, which is practical for debugging. Example: \code{error_text = " INSIDE <PACKAGE_1>::<FUNCTION_1> INSIDE <PACKAGE_2>::<FUNCTION_2>."}. If \code{NULL}, converted into \code{""}.
 #' @returns 
-#' A table-like text message indicating the \code{for} sequences not written with hard numbers or a message saying that everything seems fine.
+#' A table-like text message indicating the \code{for} sequences not written with hard numbers or a message saying that everything seems fine, printed by \code{base::message()} (always, whatever the value of the \code{export} argument).
 #' 
 #' Table-like: column 1, the line number in the function code (starting at the \code{"<- function"} line, i.e., without counting the \code{#'} header lines); column 2, the construct (\code{for}); column 3, the code preceding the construct body.
+#' 
+#' In addition, the returned value depends on the \code{export} argument and on the presence of reported \code{for} sequences. If \code{export} is \code{FALSE} and at least one checking line has been inserted (see the \code{@details} section), the modified function is returned by \code{return()}. If \code{export} is \code{TRUE}, \code{NULL} is returned, and the modified code is only available in the exported file. \code{NULL} is also returned when no modification is performed (everything clean, or no checking line inserted).
 #' @details
-#' The result is used to modify the code inside the tested function like this: \code{for(i in <HARD NUMBERS>)} or \code{for(i in base::seq_along(x = <OBJECT>))}.
+#' The reported \code{for} sequences are the ones whose computed controller depends on objects or function results, i.e., whose number of iterations is not predictable from the writing itself. The modification consists in adding a checking line before each reported \code{for} construct (see below).
 #' 
 #' More precisely, \code{for_loop_nb_check()} verifies that the sequence expression written between \code{in} and the closing parenthesis of the condition of each \code{for} construct is exactly a hard-number writing or a \code{seq_len(...)} or \code{seq_along(...)} call. The hard-number writing is: an optional unary minus, then a numeric literal, then optionally \code{:}, then an optional unary minus, then a numeric literal, with nothing else (e.g., \code{1:3}, \code{0:0}, \code{-3:-1}, \code{1e3}, \code{1L:3L}, \code{0x10:0x11}, or single literals like \code{3} or \code{-3}). Each numeric literal must be finite and integer-valued: \code{2.5}, \code{1e-3}, \code{NA}, \code{NaN}, \code{Inf} and \code{TRUE}/\code{FALSE} are reported (they are silently truncated toward 0, or run for a very long time, at execution). A \code{seq_len(...)} or \code{seq_along(...)} call (namespaced or not, whatever the arguments, because these functions are the recommended safe replacements) is clean only if it occupies the whole sequence expression: \code{seq_along(x) - 1} is reported, because it gives \code{c(0, 1)} when \code{x} has 2 elements. Any other writing is reported: variables like \code{for(i in n)} or \code{for(i in x)}, function calls like \code{1:length(x)}, \code{1:nrow(df)}, \code{1:(n - 1)}, \code{1:3 - 1} (which gives \code{c(-2, -1)} at execution), \code{2 - 1}, \code{1:3:1}, \code{base::rev(x = x)}, \code{base::seq(x = x)} or \code{base::names(x = df)}. Comments and strings are ignored during this verification.
 #' 
-#' Deliberately NOT reported, because the hard-number writings are checked by a specific checking line added in the function bodies (which warns at execution when the computed sequence is equal like \code{0:0} or \code{1:1}, both negative like \code{-3:-1}, or decreasing like \code{1:0}): the equal-bounds, both-negative and decreasing hard-number writings.
+#' Deliberately NOT reported, because these writings are fully determined by the code itself: their control is the responsibility of the writer, and no checking line is added for them: the equal-bounds (like \code{0:0} or \code{1:1}), both-negative (like \code{-3:-1}) and decreasing (like \code{1:0}) hard-number writings.
 #' 
-#' Warning: \code{for_loop_nb_check()} cannot check constructs written with backquotes, like \code{`for`(i in 1:3, base::print(i))}. Please, use the standard writing.
+#' Each reported \code{for} construct is modified in the recovered code: the sequence expression is evaluated once in a specific object named \code{tempo_for_seqN} (N being the rank of the report), this object is checked, and then used as the \code{for} controller, giving \code{tempo_for_seqN <- <SEQUENCE> ; <CHECKS> ; for(<VARIABLE> in tempo_for_seqN)<BODY>}. Evaluating the sequence expression once in the \code{tempo_for_seqN} object guarantees that the checking and the \code{for} controller are strictly identical. At execution, \code{base::warning()} is issued when the computed sequence is empty (0 iteration), contains \code{NA} values, has a single value (equal bounds), contains infinite values, or is decreasing (like \code{1:0}). The errors of the sequence evaluation itself (like \code{1:NA} or \code{1:Inf}) are propagated as they are. Warning: no endless loop is possible with \code{Inf}, because R fully evaluates the \code{for} controller before iterating: \code{1:Inf} gives an error at evaluation, and an \code{Inf} element just gives one iteration with \code{i = Inf}, whatever a potential \code{break} in the loop body. The modification is performed at the exact positions of the reported \code{for} constructs in the recovered code, so that comments, strings and the formatting of the original code are preserved outside the modified spans. When the reported \code{for} construct is not preceded by a statement boundary (unbraced body of \code{if}/\code{else}/\code{for}/\code{while}/\code{repeat}, assignment value, function argument, operator operand, etc.), the whole modified construct is wrapped in curly brackets, because a statement insertion would otherwise break the binding of the enclosing writing. When \code{export} is \code{FALSE}, the modified function is returned by \code{return()} in a new environment whose parent is the environment of the submitted function: please, check the returned function before replacing the original one, notably because its environment is not necessarily the same. When \code{export} is \code{TRUE}, the modified code is written in the file \code{<function name>_safer.R} of the directory indicated by the \code{out_path} argument, and nothing is written if no modification was performed. Warning: the exported file is a standalone R script containing the modified function code, and its potential pre-existing version is never overwritten (an error is returned instead). Warning: the \code{x} argument must be designated by a function name, not by an inline function definition (like \code{function(x)\{ x \}}), when \code{export} is \code{TRUE}, otherwise the name of the exported file cannot be determined.
+#' 
+#' Warning: the checking lines are not inserted when the tempo object name (\code{tempo_for_seqN}) is already used anywhere in the checked function code (including in comments and strings), or when a reported \code{for} construct is located inside the sequence expression of another reported \code{for} construct (overlapping insertion spans): the concerned \code{for} constructs are listed in the returned message.
 #' 
 #' Warning: aliased bounds like \code{n <- length(x) ; for(i in 1:n)} cannot be detected, because \code{n} is a plain variable in the \code{for} writing. The checking must then be done on the function body.
 #' 
@@ -34,18 +40,22 @@
 #' saferDev::for_loop_nb_check(fun1)
 #' fun2 <- function(x){ for(i in 1:length(x)){ base::print(x = i) } } ; saferDev::for_loop_nb_check(fun2)
 #' fun3 <- function(x){ for(i in base::seq_along(x = x)){ base::print(x = i) } } ; saferDev::for_loop_nb_check(fun3)
+#' fun4 <- function(x){ for(i in 1:length(x)){ base::print(x = i) } } ; fun4_safer <- saferDev::for_loop_nb_check(x = fun4, export = FALSE, safer_check = TRUE, lib_path = NULL, error_text = "") # modified function returned (checking line added)
+#' fun5 <- function(x){ for(i in 0:0){ base::print(x = i) } } ; saferDev::for_loop_nb_check(x = fun5, export = FALSE, safer_check = TRUE, lib_path = NULL, error_text = "") # NULL returned: the degenerate hard-number writings are the responsibility of the writer, no checking line inserted
 #' 
 #' @export
 for_loop_nb_check <- function(
     x, 
+    export = FALSE, 
+    out_path = NULL, 
     safer_check = TRUE, 
     lib_path = NULL, 
     error_text = ""
 ){
     # DEBUGGING
-    # x = fun ; lib_path = NULL ; safer_check = TRUE ; error_text = " INSIDE A"
-    # function_name <- "for_loop_nb_check" ; arg_user_setting = base::list(x = as.name(x = "fun"), lib_path = NULL, safer_check = TRUE, error_text = " INSIDE A")
-    # source("C:\\Users\\gmillot\\Documents\\Git_projects\\safer-r\\saferDev\\R\\for_loop_nb_check.R") ; x = for_loop_nb_check ; lib_path = NULL ; safer_check = TRUE ; error_text = " INSIDE A" # Warning: x = saferDev::for_loop_nb_check does not return the same number of code lines
+    # x = fun ; export = FALSE ; out_path = NULL ; lib_path = NULL ; safer_check = TRUE ; error_text = " INSIDE A"
+    # function_name <- "for_loop_nb_check" ; arg_user_setting = base::list(x = as.name(x = "fun"), export = FALSE, out_path = NULL, lib_path = NULL, safer_check = TRUE, error_text = " INSIDE A")
+    # source("C:\\Users\\gmillot\\Documents\\Git_projects\\safer-r\\saferDev\\R\\for_loop_nb_check.R") ; x = for_loop_nb_check ; export = FALSE ; out_path = NULL ; lib_path = NULL ; safer_check = TRUE ; error_text = " INSIDE A" # Warning: x = saferDev::for_loop_nb_check does not return the same number of code lines
 
     #### package name
     package_name <- "saferDev" # write NULL if the function developed is not in a package
@@ -182,7 +192,8 @@ for_loop_nb_check <- function(
     # before NA checking because is.na(NULL) return logical(0) and all(logical(0)) is TRUE (but secured with & base::length(x = x) > 0)
     tempo_arg <-base::c(
         "x", 
-        # "lib_path", # inactivated because can be NULL
+        # "export", # inactivated because NULL is managed by arg_check() below (converted into FALSE)
+        # "out_path", # inactivated because NULL converted into the R working directory set by the user
         "safer_check"
         # "error_text" # inactivated because NULL converted to "" above
     )
@@ -204,8 +215,10 @@ for_loop_nb_check <- function(
     # # before NA checking because is.na(logical()) is logical(0) (but secured with & base::length(x = x) > 0)
     tempo_arg <-base::c(
         "x", 
+        "export", 
         "safer_check", 
         "lib_path"
+        # "out_path" # inactivated because NULL is a valid value (converted into the R working directory set by the user)
         # "error_text" # inactivated because empty value converted to "" above
     )
     tempo_arg_user_setting_eval <- arg_user_setting_eval[base::names(x = arg_user_setting_eval) %in% tempo_arg]
@@ -375,6 +388,10 @@ for_loop_nb_check <- function(
     ee <- base::expression(argum_check <- base::c(argum_check, tempo$problem) , text_check <- base::c(text_check, tempo$text) , checked_arg_names <- base::c(checked_arg_names, tempo$object_name))
     # add as many lines as below, for each of your arguments of your function in development
     tempo <- saferDev::arg_check(data = x, class = "function", typeof = NULL, mode = NULL, length = NULL, prop = FALSE, options = NULL, double_as_integer_allowed = FALSE, all_options_in_data = FALSE, na_contain = FALSE, neg_values = TRUE, inf_values = TRUE, print = FALSE, data_name = NULL, data_arg = TRUE, safer_check = FALSE, lib_path = lib_path, error_text = embed_error_text) ; base::eval(expr = ee, envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL))
+    tempo <- saferDev::arg_check(data = export, class = NULL, typeof = "logical", mode = NULL, length = 1, prop = FALSE, options = NULL, double_as_integer_allowed = FALSE, all_options_in_data = FALSE, na_contain = FALSE, neg_values = TRUE, inf_values = TRUE, print = FALSE, data_name = NULL, data_arg = TRUE, safer_check = FALSE, lib_path = lib_path, error_text = embed_error_text) ; base::eval(expr = ee, envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL))
+    if( ! base::is.null(x = out_path)){ # NULL is a valid value, converted into the R working directory set by the user in the main code
+        tempo <- saferDev::arg_check(data = out_path, class = "character", typeof = "character", mode = NULL, length = 1, prop = FALSE, options = NULL, double_as_integer_allowed = FALSE, all_options_in_data = FALSE, na_contain = FALSE, neg_values = TRUE, inf_values = TRUE, print = FALSE, data_name = NULL, data_arg = TRUE, safer_check = FALSE, lib_path = lib_path, error_text = embed_error_text) ; base::eval(expr = ee, envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL))
+    }
     # lib_path already checked above
     # safer_check already checked above
     # error_text converted to single string above
@@ -409,6 +426,55 @@ for_loop_nb_check <- function(
     ######## end graphic device checking
 
     ######## other checkings
+    if(export == TRUE){
+        # function name of the submitted function: last component of the submitted name (pkg::fun() gives fun). Warning: the submitted function must be designated by a name, not by an inline definition (like function(x){ x }), otherwise the name of the exported file cannot be determined
+        if(base::as.character(x = arg_user_setting$x)[1] == "::" | base::as.character(x = arg_user_setting$x)[1] == ":::"){
+            out_fun_name <- base::as.character(x = arg_user_setting$x)[3]
+        }else if(base::is.symbol(x = arg_user_setting$x)){
+            out_fun_name <- base::as.character(x = arg_user_setting$x)[1]
+        }else{
+            tempo_cat <- base::paste0(
+                error_text_start, 
+                "THE x ARGUMENT MUST BE DESIGNATED BY A FUNCTION NAME (NOT BY AN INLINE FUNCTION DEFINITION) WHEN THE export ARGUMENT IS TRUE.\nHERE IT IS:\n", 
+                base::paste0(base::deparse(expr = arg_user_setting$x, width.cutoff = 60L, backtick = FALSE, control = base::c("keepNA", "keepInteger", "niceNames", "showAttributes"), nlines = -1L), collapse = "\n", recycle0 = FALSE), 
+                collapse = NULL, 
+                recycle0 = FALSE
+            )
+            base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL)
+        }
+        if(base::is.null(x = out_path)){
+            out_dir <- base::getwd() # R working directory set by the user
+        }else{
+            out_dir <- out_path
+        }
+        if(base::dir.exists(paths = out_dir) == FALSE){
+            tempo_cat <- base::paste0(
+                error_text_start, 
+                "DIRECTORY PATH INDICATED IN THE out_path ARGUMENT DOES NOT EXISTS:\n", 
+                out_dir, 
+                collapse = NULL, 
+                recycle0 = FALSE
+            )
+            base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL)
+        }
+        out_file_name <- base::paste0(out_fun_name, "_safer.R", collapse = NULL, recycle0 = FALSE)
+        out_file_path <- base::file.path(out_dir, out_file_name, fsep = "/") # consistent between OS, contrary to base::paste0(out_dir, "/", out_file_name, collapse = NULL, recycle0 = FALSE)
+        if(base::file.exists(out_file_path)){
+            tempo_cat <- base::paste0(
+                error_text_start, 
+                "FILE NAME ALREADY EXISTS AT THE INDICATED PATH:\n", 
+                out_file_path, 
+                "\n\nPLEASE, RENAME OR REMOVE THIS FILE, OR CHANGE THE out_path ARGUMENT BEFORE RERUNNING ", 
+                package_function_name, 
+                ".", 
+                collapse = NULL, 
+                recycle0 = FALSE
+            )
+            base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL)
+        }
+    }else{
+        out_file_path <- NULL
+    }
     ######## end other checkings
 
     #### end second round of checking and data preparation
@@ -427,6 +493,14 @@ for_loop_nb_check <- function(
     findings_line <- base::integer(length = 0)
     findings_kind <- base::character(length = 0)
     findings_code <- base::character(length = 0)
+    findings_in_line1 <- base::integer(length = 0)
+    findings_in_col2 <- base::integer(length = 0)
+    findings_rp_line2 <- base::integer(length = 0)
+    findings_rp_col2 <- base::integer(length = 0)
+    findings_body_line2 <- base::integer(length = 0)
+    findings_body_col2 <- base::integer(length = 0)
+    findings_braced <- base::logical(length = 0)
+    findings_kid <- base::integer(length = 0)
     for(i in base::seq_along(along.with = for_idx)){ # seq_along() instead of 1:base::length() avoids iterating over c(1, 0) when for_idx is empty, which would be reported by this very function
         kid <- term_rows[for_idx[i]]
         # search of the parentheses of the condition by scanning the terminal tokens located after the FOR keyword in source order. Warning: the search cannot be done through the parse tree, because the forcond expr of for() owns the parentheses
@@ -476,6 +550,22 @@ for_loop_nb_check <- function(
             # codecov inactivated because it is an internal control of code writing, impossible to cover with argument values (R code without in between the ( and the ) of a for() condition cannot be parsed).
             tempo_cat <- base::paste0("INTERNAL ERROR 5 IN ", intern_error_text_start, "NO in FOUND BETWEEN THE ( AND THE ) OF A for() CONDITION", intern_error_text_end, collapse = NULL, recycle0 = FALSE) ; base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL)            # nocov end
         }
+        # rows of the IN token and of the loop variable token (the terminal token between the ( and the in)
+        in_kid <- term_rows[in_pos]
+        # span of the construct body: the expr child of the for expression that is after the forcond in source order. Warning: the parse tree is described by the pd$id and pd$parent columns, whose values must be converted into pd row numbers through a lookup vector, because the two numbering systems are different (the id numbering skips the non terminal rows)
+        id2row <- base::seq_len(length.out = base::nrow(x = pd))
+        base::names(x = id2row) <- base::as.character(x = pd$id)
+        siblings <- base::which(x = pd$parent == pd$parent[kid], arr.ind = FALSE, useNames = TRUE)
+        siblings <- siblings[pd$token[siblings] != "FOR"]
+        if(base::length(x = siblings) != 2){ # forcond and body expr: exactly 2 children besides the FOR keyword itself
+            # nocov start
+            # codecov inactivated because it is an internal control of code writing, impossible to cover with argument values (a for() construct with a different number of children cannot be parsed).
+            tempo_cat <- base::paste0("INTERNAL ERROR 7 IN ", intern_error_text_start, "UNEXPECTED NUMBER OF CHILDREN FOR A for() CONSTRUCT IN THE PARSE TREE", intern_error_text_end, collapse = NULL, recycle0 = FALSE) ; base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL)
+            # nocov end
+        }
+        siblings <- siblings[base::order(x = pd$line1[siblings], pd$col1[siblings])]
+        body_row <- siblings[2]
+        body_span <- base::c(pd$line1[body_row], pd$col1[body_row], pd$line2[body_row], pd$col2[body_row])
         # tokens of the sequence expression: between the IN token and the ) of the condition
         seq_pos1 <- in_pos + 1
         seq_pos2 <- rp_pos - 1
@@ -570,9 +660,230 @@ for_loop_nb_check <- function(
                 findings_line <- base::c(findings_line, pd$line1[kid], recursive = TRUE, use.names = TRUE)
                 findings_kind <- base::c(findings_kind, "for", recursive = TRUE, use.names = TRUE)
                 findings_code <- base::c(findings_code, base::trimws(x = code[pd$line1[kid]], which = "left", whitespace = "[ \\t]"), recursive = TRUE, use.names = TRUE)
+                # positions needed by the modification (below): span of the sequence expression (from the IN token to the ) of the condition), span of the construct body (to wrap the construct when needed), and enclosing-expression start (for the statement boundary detection). Warning: kid is the row of the FOR token, needed to recover the for keyword position after the filtering below
+                findings_kid <- base::c(findings_kid, kid, recursive = TRUE, use.names = TRUE)
+                findings_in_line1 <- base::c(findings_in_line1, pd$line1[in_kid], recursive = TRUE, use.names = TRUE)
+                findings_in_col2 <- base::c(findings_in_col2, pd$col2[in_kid], recursive = TRUE, use.names = TRUE)
+                findings_rp_line2 <- base::c(findings_rp_line2, pd$line2[rp], recursive = TRUE, use.names = TRUE)
+                findings_rp_col2 <- base::c(findings_rp_col2, pd$col2[rp], recursive = TRUE, use.names = TRUE)
+                findings_body_line2 <- base::c(findings_body_line2, body_span[3], recursive = TRUE, use.names = TRUE)
+                findings_body_col2 <- base::c(findings_body_col2, body_span[4], recursive = TRUE, use.names = TRUE)
+                # boundary detection (for the insertion below): the checking line can be inserted before the for keyword without wrapping only when the for construct is a statement of a braced block ({ or of the top level of the function body written without braces). Detection through the parse tree: the enclosing expr of the for expression (the parent of the parent of the FOR token) must start with a { terminal token. Any other enclosing writing (unbraced body of if/else/for/while/repeat, assignment value, function argument, operator operand, etc.) requires the wrap of the whole construct, because a statement insertion would otherwise break the binding of the enclosing writing
+                for_expr_row <- id2row[base::as.character(x = pd$parent[kid])] # row of the expr containing the for construct
+                enclosing_row <- id2row[base::as.character(x = pd$parent[for_expr_row])] # row of the enclosing expr
+                if(base::is.na(x = enclosing_row)){ # the for construct is a top level expression of the recovered code (cannot happen inside a function body, but secured for a top level for())
+                    enclosing_line1 <- pd$line1[for_expr_row]
+                    enclosing_col1 <- pd$col1[for_expr_row]
+                }else{
+                    enclosing_line1 <- pd$line1[enclosing_row]
+                    enclosing_col1 <- pd$col1[enclosing_row]
+                }
+                first_tok_rows <- term_rows[pd$line1[term_rows] == enclosing_line1 & pd$col1[term_rows] == enclosing_col1]
+                if(base::length(x = first_tok_rows) != 1){
+                    # nocov start
+                    # codecov inactivated because it is an internal control of code writing, impossible to cover with argument values (a parse tree node without exactly one terminal token at its start position cannot be produced by the R parser).
+                    tempo_cat <- base::paste0("INTERNAL ERROR 8 IN ", intern_error_text_start, "NO OR SEVERAL TERMINAL TOKENS FOUND AT THE START POSITION OF THE ENCLOSING EXPRESSION OF A for() CONSTRUCT", intern_error_text_end, collapse = NULL, recycle0 = FALSE) ; base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL)
+                    # nocov end
+                }
+                findings_braced <- base::c(findings_braced, pd$text[first_tok_rows] == "{", recursive = TRUE, use.names = TRUE)
             }
         }
     }
+    # modification of the recovered code: insertion of a checking line before each reported for() construct (see the @details section), from the last construct to the first one so that the positions of the preceding constructs remain valid. Warning: findings_* are ordered by source position, because term_rows is sorted and the loop appends in order
+    inserted_log <- NULL # one value per reported construct: TRUE if the checking line has been inserted, FALSE otherwise (NULL when no construct is reported)
+    skipped_text <- base::character(length = 0)
+    if(base::length(x = findings_line) != 0){
+        modified_code <- code
+        inserted_log <- base::rep(x = TRUE, times = base::length(x = findings_line))
+        # tempo object names: specific names, refused if already present anywhere in the recovered code (including comments and strings), to avoid any masking
+        tempo_names <- base::paste0("tempo_for_seq", base::seq_len(length.out = base::length(x = findings_line)), collapse = NULL, recycle0 = FALSE, sep = "")
+        all_txt <- base::paste0(modified_code, collapse = "\n", recycle0 = FALSE)
+        name_log <- base::vapply(X = tempo_names, FUN = function(x){base::grepl(x = all_txt, pattern = base::paste0("\\b", x, "\\b"), ignore.case = FALSE, perl = TRUE, fixed = FALSE, useBytes = FALSE)}, FUN.VALUE = base::logical(length = 1), USE.NAMES = FALSE) # word boundary so that tempo_for_seq1 does not match tempo_for_seq10
+        if(base::any(name_log, na.rm = TRUE)){
+            name_idx <- base::which(x = name_log, arr.ind = FALSE, useNames = TRUE)
+            for(k in base::seq_along(along.with = name_idx)){
+                i <- name_idx[k]
+                skipped_text <- base::c(skipped_text, base::paste0("line ", findings_line[i], ": the object name ", tempo_names[i], " is already used in the checked function code", collapse = NULL, recycle0 = FALSE), recursive = TRUE, use.names = TRUE)
+            }
+            # the constructs whose name is refused do not get any modification: remove their positions from all the findings vectors
+            keep_log <- ! name_log
+            findings_line <- findings_line[keep_log]
+            findings_kind <- findings_kind[keep_log]
+            findings_code <- findings_code[keep_log]
+            findings_in_line1 <- findings_in_line1[keep_log]
+            findings_in_col2 <- findings_in_col2[keep_log]
+            findings_rp_line2 <- findings_rp_line2[keep_log]
+            findings_rp_col2 <- findings_rp_col2[keep_log]
+            findings_body_line2 <- findings_body_line2[keep_log]
+            findings_body_col2 <- findings_body_col2[keep_log]
+            findings_braced <- findings_braced[keep_log]
+            findings_kid <- findings_kid[keep_log]
+            tempo_names <- tempo_names[keep_log]
+        }
+        # guard: a reported for() construct must not be located inside the sequence expression of another reported for() construct (overlapping insertion spans). Detection: the span of the sequence expression of a construct contains the position of the for keyword of the other
+        overlap_log <- base::rep(x = FALSE, times = base::length(x = findings_line))
+        if(base::length(x = findings_line) > 1){
+            findings_for_line1 <- pd$line1[findings_kid]
+            findings_for_col1 <- pd$col1[findings_kid]
+            for(i in base::seq_along(along.with = findings_line)){
+                if(findings_in_line1[i] == findings_rp_line2[i]){ # sequence expression of construct i written on a single line
+                    for(j in base::seq_along(along.with = findings_line)){
+                        if(j == i){
+                            next
+                        }
+                        if(findings_for_line1[j] == findings_in_line1[i] & findings_for_col1[j] >= findings_in_col2[i] + 1 & findings_for_col1[j] <= findings_rp_col2[i] - 1){
+                            overlap_log[i] <- TRUE
+                            break
+                        }
+                    }
+                }
+            }
+        }
+        if(base::any(overlap_log, na.rm = TRUE)){
+            overlap_idx <- base::which(x = overlap_log, arr.ind = FALSE, useNames = TRUE)
+            for(k in base::seq_along(along.with = overlap_idx)){
+                i <- overlap_idx[k]
+                skipped_text <- base::c(skipped_text, base::paste0("line ", pd$line1[term_rows[i]], ": the for() construct is located inside the sequence expression of another reported for() construct", collapse = NULL, recycle0 = FALSE), recursive = TRUE, use.names = TRUE)
+            }
+            keep_log <- ! overlap_log
+            findings_line <- findings_line[keep_log]
+            findings_kind <- findings_kind[keep_log]
+            findings_code <- findings_code[keep_log]
+            findings_in_line1 <- findings_in_line1[keep_log]
+            findings_in_col2 <- findings_in_col2[keep_log]
+            findings_rp_line2 <- findings_rp_line2[keep_log]
+            findings_rp_col2 <- findings_rp_col2[keep_log]
+            findings_body_line2 <- findings_body_line2[keep_log]
+            findings_body_col2 <- findings_body_col2[keep_log]
+            findings_braced <- findings_braced[keep_log]
+            findings_kid <- findings_kid[keep_log]
+            tempo_names <- tempo_names[keep_log]
+            inserted_log <- inserted_log[keep_log]
+        }
+        findings_for_line1 <- pd$line1[findings_kid] # line of the for keyword of each kept construct
+        findings_for_col1 <- pd$col1[findings_kid] # column of the for keyword of each kept construct
+        # apply back-to-front: highest (line, column) first, so that the positions of the not-yet-applied constructs remain valid. Per construct, the sequence expression replacement (at the IN position) comes after the insertion (at the for keyword position) in source order
+        ord <- base::order(x = findings_for_line1, findings_for_col1, decreasing = TRUE)
+        ord_len <- base::length(x = ord)
+        for(k in base::seq_len(length.out = ord_len)){
+            i <- ord[k]
+            tempo_name <- tempo_names[i]
+            # 1) one-line writing of the sequence expression, from the recovered code span. The span can cross several lines: the pieces are pasted with a space, trimmed
+            if(findings_in_line1[i] == findings_rp_line2[i]){
+                seq_txt <- base::substr(x = modified_code[findings_in_line1[i]], start = findings_in_col2[i] + 1, stop = findings_rp_col2[i] - 1)
+            }else{
+                seq_pieces <- base::c(
+                    base::substr(x = modified_code[findings_in_line1[i]], start = findings_in_col2[i] + 1, stop = base::nchar(x = modified_code[findings_in_line1[i]], type = "chars", allowNA = FALSE, keepNA = NA)),
+                    modified_code[(findings_in_line1[i] + 1):(findings_rp_line2[i] - 1)], 
+                    base::substr(x = modified_code[findings_rp_line2[i]], start = 1, stop = findings_rp_col2[i] - 1)
+                )
+                seq_txt <- base::trimws(x = base::paste0(seq_pieces, collapse = " ", recycle0 = FALSE), which = "both", whitespace = "[ \t\r\n]")
+            }
+            seq_txt <- base::trimws(x = seq_txt, which = "both", whitespace = "[ \t\r\n]")
+            # one-line deparse of the sequence expression, for a single-line insertion
+            ok_parse <- FALSE
+            seq_expr <- NULL
+            res_parse <- base::try(expr = base::parse(text = seq_txt, file = "", n = NULL, prompt = "?", keep.source = base::getOption(x = "keep.source", default = NULL), srcfile = NULL, encoding = "unknown"), silent = TRUE)
+            if(base::inherits(x = res_parse, what = "try-error") == FALSE && base::length(x = res_parse) == 1){
+                seq_expr <- res_parse[[1]]
+                ok_parse <- TRUE
+            }
+            if(ok_parse == FALSE){
+                skipped_text <- base::c(skipped_text, base::paste0("line ", findings_line[i], ": the sequence expression cannot be rewritten on a single line", collapse = NULL, recycle0 = FALSE), recursive = TRUE, use.names = TRUE)
+                next
+            }
+            # 2) replace the sequence expression span by the tempo object name, keeping the surrounding spaces
+            if(findings_in_line1[i] == findings_rp_line2[i]){
+                tempo_line <- modified_code[findings_in_line1[i]]
+                modified_code[findings_in_line1[i]] <- base::paste0(
+                    base::substr(x = tempo_line, start = 1, stop = findings_in_col2[i]), 
+                    " ", 
+                    tempo_name, 
+                    base::substr(x = tempo_line, start = findings_rp_col2[i], stop = base::nchar(x = tempo_line, type = "chars", allowNA = FALSE, keepNA = NA)), 
+                    collapse = NULL, 
+                    recycle0 = FALSE
+                )
+            }else{
+                tempo_line1 <- modified_code[findings_in_line1[i]]
+                tempo_line2 <- modified_code[findings_rp_line2[i]]
+                modified_code[findings_in_line1[i]] <- base::paste0(base::substr(x = tempo_line1, start = 1, stop = findings_in_col2[i]), " ", tempo_name, collapse = NULL, recycle0 = FALSE)
+                if(findings_rp_line2[i] - findings_in_line1[i] > 1){
+                    modified_code[(findings_in_line1[i] + 1):(findings_rp_line2[i] - 1)] <- "" # empty lines keep the line numbering
+                }
+                modified_code[findings_rp_line2[i]] <- base::substr(x = tempo_line2, start = findings_rp_col2[i], stop = base::nchar(x = tempo_line2, type = "chars", allowNA = FALSE, keepNA = NA))
+            }
+            # 3) build the checking line: the sequence object is checked at execution, and then used as the for() controller. base::warning() only: the loop is still run (the errors of the sequence evaluation itself, like 1:NA or 1:Inf, are propagated as they are)
+            check_txt <- base::paste0(
+                "if(base::length(x = ", tempo_name, ") == 0){base::warning(\"FOR SEQUENCE EMPTY: 0 ITERATION\", call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, domain = NULL)}else if(base::anyNA(x = ", tempo_name, ")){base::warning(\"FOR SEQUENCE WITH NA VALUES\", call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, domain = NULL)}else if(base::length(x = ", tempo_name, ") == 1){base::warning(\"FOR SEQUENCE WITH A SINGLE VALUE (EQUAL BOUNDS?): SINGLE ITERATION\", call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, domain = NULL)}else if(base::is.atomic(x = ", tempo_name, ") && base::any(base::is.infinite(x = ", tempo_name, "), na.rm = TRUE)){base::warning(\"FOR SEQUENCE WITH INFINITE VALUES: NO ENDLESS LOOP POSSIBLE BECAUSE THE for() CONTROLLER IS FULLY EVALUATED BEFORE ITERATING, BUT CHECK THAT AN INFINITE VALUE IS EXPECTED\", call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, domain = NULL)}else if(base::is.atomic(x = ", tempo_name, ") && base::typeof(x = ", tempo_name, ") %in% base::c(\"double\", \"integer\") && base::all(x = ", tempo_name, " < 0, na.rm = FALSE)){base::warning(\"FOR SEQUENCE WITH ALL NEGATIVE VALUES\", call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, domain = NULL)}else if(base::is.atomic(x = ", tempo_name, ") && base::typeof(x = ", tempo_name, ") %in% base::c(\"double\", \"integer\", \"character\", \"complex\") && base::length(x = ", tempo_name, ") >= 2 && ", tempo_name, "[1] > ", tempo_name, "[2]){base::warning(\"FOR SEQUENCE DECREASING\", call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, domain = NULL)}", 
+                collapse = NULL, 
+                recycle0 = FALSE
+            )
+            insert_txt <- base::paste0(tempo_name, " <- ", base::paste0(base::deparse(expr = seq_expr, width.cutoff = 500L, backtick = FALSE, control = base::c("keepNA", "keepInteger", "niceNames", "showAttributes"), nlines = -1L), collapse = " ", recycle0 = FALSE), " ; ", check_txt, " ; ", collapse = NULL, recycle0 = FALSE)
+            # 4) insert the tempo assignment and the checking line before the for keyword, or wrap the whole modified construct in curly brackets when the enclosing expression of the construct is not a braced block (see the detection above): the insertion before the for keyword would otherwise break the binding of the enclosing writing (unbraced body of if/else/for/while/repeat, assignment value, function argument, operator operand, etc.)
+            if(findings_braced[i] == TRUE){
+                tempo_line <- modified_code[findings_for_line1[i]]
+                modified_code[findings_for_line1[i]] <- base::paste0(
+                    base::substr(x = tempo_line, start = 1, stop = findings_for_col1[i] - 1), 
+                    insert_txt, 
+                    base::substr(x = tempo_line, start = findings_for_col1[i], stop = base::nchar(x = tempo_line, type = "chars", allowNA = FALSE, keepNA = NA)), 
+                    collapse = NULL, 
+                    recycle0 = FALSE
+                )
+            }else{
+                # wrap the whole construct in curly brackets: prefix + "{ " + modified construct + " }"
+                tempo_line <- modified_code[findings_for_line1[i]]
+                # positions in the current (already modified) line: the for keyword position is unchanged (the modifications below are applied later, from higher positions). But the sequence replacement may have changed the line content: recompute the positions from the parse data of the current content is too complex: instead, rebuild the modified construct from the original spans, taking into account that only the sequence span has been replaced (the insertion below has not yet been applied for this construct: positions below findings_for_col1 are untouched)
+                # simplest robust approach: extract the whole construct text from the current modified_code using the ORIGINAL spans: from (for_line1, for_col1) to (body_line2, body_col2), apply the prefix and suffix
+                # collect the construct text
+                if(findings_for_line1[i] == findings_body_line2[i]){
+                    construct_txt <- base::substr(x = modified_code[findings_for_line1[i]], start = findings_for_col1[i], stop = findings_body_col2[i])
+                    prefix_txt <- base::substr(x = modified_code[findings_for_line1[i]], start = 1, stop = findings_for_col1[i] - 1)
+                    suffix_txt <- base::substr(x = modified_code[findings_for_line1[i]], start = findings_body_col2[i] + 1, stop = base::nchar(x = modified_code[findings_for_line1[i]], type = "chars", allowNA = FALSE, keepNA = NA))
+                }else{
+                    construct_txt <- base::c(
+                        base::substr(x = modified_code[findings_for_line1[i]], start = findings_for_col1[i], stop = base::nchar(x = modified_code[findings_for_line1[i]], type = "chars", allowNA = FALSE, keepNA = NA)), 
+                        modified_code[(findings_for_line1[i] + 1):(findings_body_line2[i] - 1)], 
+                        base::substr(x = modified_code[findings_body_line2[i]], start = 1, stop = findings_body_col2[i])
+                    )
+                    prefix_txt <- base::substr(x = modified_code[findings_for_line1[i]], start = 1, stop = findings_for_col1[i] - 1)
+                    suffix_txt <- base::substr(x = modified_code[findings_body_line2[i]], start = findings_body_col2[i] + 1, stop = base::nchar(x = modified_code[findings_body_line2[i]], type = "chars", allowNA = FALSE, keepNA = NA))
+                    # collapse the construct text into a single line: the wrapped construct goes on the prefix line, the suffix stays on its own line (or the rest of it)
+                    construct_txt <- base::paste0(construct_txt, collapse = " ", recycle0 = FALSE)
+                }
+                wrapped_txt <- base::paste0("{ ", insert_txt, construct_txt, " }", collapse = NULL, recycle0 = FALSE)
+                if(findings_for_line1[i] == findings_body_line2[i]){
+                    modified_code[findings_for_line1[i]] <- base::paste0(prefix_txt, wrapped_txt, suffix_txt, collapse = NULL, recycle0 = FALSE)
+                }else{
+                    modified_code[findings_for_line1[i]] <- base::paste0(prefix_txt, wrapped_txt, collapse = NULL, recycle0 = FALSE)
+                    if(findings_body_line2[i] - findings_for_line1[i] > 1){
+                        modified_code[(findings_for_line1[i] + 1):(findings_body_line2[i] - 1)] <- "" # empty lines keep the line numbering
+                    }
+                    modified_code[findings_body_line2[i]] <- suffix_txt
+                }
+            }
+            inserted_log[i] <- TRUE
+        }
+        # the modified code must parse, otherwise an internal error is returned (a modified code that does not parse would indicate a replacement bug)
+        # nocov start
+        # codecov inactivated because it is an internal control of the replacement, impossible to cover with argument values.
+if(base::exists(x = "DEBUG_DUMP_MODIFIED_CODE", envir = base::globalenv(), inherits = FALSE) && base::isTRUE(x = base::get(x = "DEBUG_DUMP_MODIFIED_CODE", envir = base::globalenv(), inherits = FALSE))){base::writeLines(text = modified_code, con = base::file.path(path = base::tempdir(), "debug_modified_code.R"), sep = "\n", useBytes = FALSE)}
+        if(base::inherits(x = base::try(expr = base::parse(text = base::paste0(modified_code, collapse = "\n", recycle0 = FALSE), file = "", n = NULL, prompt = "?", keep.source = base::getOption(x = "keep.source", default = NULL), srcfile = NULL, encoding = "unknown"), silent = TRUE), what = "try-error")){
+            tempo_cat <- base::paste0(
+                intern_error_text_start, 
+                "THE CODE OF ", 
+                base::as.character(x = arg_user_setting$x), 
+                " MODIFIED BY THE INSERTION OF THE for() SEQUENCE CHECKING LINES DOES NOT PARSE ANYMORE.\n\nTHIS IS AN INTERNAL BUG: PLEASE, DO NOT USE THE MODIFIED CODE (NOR THE EXPORTED FILE) AND REPORT IT.", 
+                intern_error_text_end, 
+                collapse = NULL, 
+                recycle0 = FALSE
+            )
+            base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL)
+        }
+        # nocov end
+    }else{
+        modified_code <- NULL
+    }
+    # end modification of the recovered code
     # modification of arg_user_setting$x for clean messages
     if(base::as.character(x = arg_user_setting$x)[1] == "::" | base::as.character(x = arg_user_setting$x)[1] == ":::"){
         arg_user_setting$x <- base::paste0(
@@ -629,6 +940,38 @@ for_loop_nb_check <- function(
             collapse = NULL, 
             recycle0 = FALSE
         )
+        if(base::length(x = skipped_text) != 0){
+            tempo_cat <- base::paste0(
+                tempo_cat, 
+                "\n\nCHECKING LINES NOT INSERTED FOR THE FOLLOWING for() CONSTRUCTS (THEY REMAIN UNMODIFIED):\n", 
+                base::paste0(skipped_text, collapse = "\n", recycle0 = FALSE), 
+                collapse = NULL, 
+                recycle0 = FALSE
+            )
+        }
+        if(base::any(inserted_log, na.rm = TRUE)){
+            if(export == TRUE){
+                # the file is written BEFORE the message is printed, so that the message only claims an export that actually happened. Warning: the first line of the recovered code always starts by the function writing (fun <- function...), possibly indented
+                export_code <- modified_code
+                export_code[1] <- base::paste0(out_fun_name, "_safer <- ", export_code[1], collapse = NULL, recycle0 = FALSE)
+                utils::write.table(x = export_code, file = out_file_path, row.names = FALSE, col.names = FALSE, append = FALSE, quote = FALSE, sep = "", eol = "\n", na = "", dec = ".", qmethod = base::c("escape", "double"), fileEncoding = "") # write each line of the modified code, without any quoting, in a plain text R script
+                tempo_cat <- base::paste0(
+                    tempo_cat, 
+                    "\n\nMODIFIED CODE EXPORTED IN:\n", 
+                    out_file_path, 
+                    ".", 
+                    collapse = NULL, 
+                    recycle0 = FALSE
+                )
+            }else{
+                tempo_cat <- base::paste0(
+                    tempo_cat, 
+                    "\n\nMODIFIED FUNCTION RETURNED BY return().", 
+                    collapse = NULL, 
+                    recycle0 = FALSE
+                )
+            }
+        }
     }
     base::message(base::paste0("\n\n", tempo_cat, "\n\n", collapse = NULL, recycle0 = FALSE), domain = NULL, appendLF = TRUE)
     #### end main code
@@ -637,5 +980,17 @@ for_loop_nb_check <- function(
     #### end warning output
 
     #### output
+    if(base::length(x = findings_line) == 0){
+        output <- NULL
+    }else if(base::any(inserted_log, na.rm = TRUE) == FALSE){
+        output <- NULL # no checking line inserted: the reported for() constructs remain unmodified (see the returned message)
+    }else if(export == TRUE){
+        output <- NULL # the modified code has already been written in the exported file above
+    }else{
+        output <- base::eval(expr = base::parse(text = base::paste0(modified_code, collapse = "\n", recycle0 = FALSE), file = "", n = NULL, prompt = "?", keep.source = base::getOption(x = "keep.source", default = NULL), srcfile = NULL, encoding = "unknown")[[1]], envir = base::new.env(parent = base::environment(fun = x)), enclos = base::globalenv())
+    }
+    base::return(output) # NULL if everything is clean, if no checking line has been inserted, or if export is TRUE
     #### end output
+
+    #### end of function
 }
