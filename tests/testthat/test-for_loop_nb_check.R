@@ -276,6 +276,46 @@ testthat::test_that("for_loop_nb_check()", {
     res2 <- base::unlist(x = base::strsplit(x = msgs2, split = "\n", fixed = TRUE), recursive = TRUE, use.names = FALSE)
     res2 <- res2[base::grepl(x = res2, pattern = "^[0-9]+\\t", perl = TRUE)]
     testthat::expect_true(object = base::length(x = res2) == 2, label = "two findings for two reported for() constructs")
+    # constructs that cannot be wrapped are skipped (comment inside the construct), listed in the message, and remain unmodified: NULL returned when no construct is modified
+    fun48 <- function(x){
+        if(x) for(i in 1:length(x)){ # comment inside the construct
+            base::print(i)
+        }
+    }
+    testthat::expect_message(for_loop_nb_check(x = fun48, safer_check = TRUE, lib_path = NULL, error_text = ""), regexp = "SOME for() SEQUENCES ARE NOT WRITTEN WITH HARD NUMBERS", fixed = TRUE)
+    testthat::expect_message(for_loop_nb_check(x = fun48, safer_check = TRUE, lib_path = NULL, error_text = ""), regexp = "the for() construct contains comment(s) and cannot be wrapped in curly brackets on a single line", fixed = TRUE)
+    testthat::expect_true(object = base::is.null(x = for_loop_nb_check(x = fun48, safer_check = TRUE, lib_path = NULL, error_text = "")))
+    # mixed case: one construct modified, one skipped because of a comment
+    fun49 <- function(x){
+        for(i in 1:length(x)){ base::print(i) }
+        if(x) for(j in 1:length(x)){ # comment inside the construct
+            base::print(j)
+        }
+    }
+    r49 <- for_loop_nb_check(x = fun49, safer_check = TRUE, lib_path = NULL, error_text = "")
+    testthat::expect_true(object = base::is.function(x = r49), label = "mixed case: modified function returned")
+    txt49 <- base::paste0(base::deparse(expr = r49, width.cutoff = 500L, backtick = FALSE, control = base::c("keepNA", "keepInteger", "niceNames", "showAttributes"), nlines = -1L), collapse = " ", recycle0 = FALSE)
+    testthat::expect_true(object = base::grepl(x = txt49, pattern = "tempo_for_seq", ignore.case = FALSE, perl = FALSE, fixed = TRUE, useBytes = FALSE), label = "mixed case: first construct modified")
+    testthat::expect_true(object = base::grepl(x = txt49, pattern = "for \\(j in 1:length\\(x\\)\\)", ignore.case = FALSE, perl = TRUE, fixed = FALSE, useBytes = FALSE), label = "mixed case: skipped construct remains unmodified")
+    # constructs sharing the end of their body: the earlier one is skipped (listed in the message), the later one is modified
+    fun50 <- function(x){
+        if(x) for(i in 1:nrow(df)) for(j in 1:length(x)){ base::print(j) }
+    }
+    testthat::expect_message(for_loop_nb_check(x = fun50, safer_check = TRUE, lib_path = NULL, error_text = ""), regexp = "the end of the for() construct body is shared with a for() construct written after it", fixed = TRUE)
+    r50 <- for_loop_nb_check(x = fun50, safer_check = TRUE, lib_path = NULL, error_text = "")
+    testthat::expect_true(object = base::is.function(x = r50), label = "shared body end: modified function returned")
+    txt50 <- base::paste0(base::deparse(expr = r50, width.cutoff = 500L, backtick = FALSE, control = base::c("keepNA", "keepInteger", "niceNames", "showAttributes"), nlines = -1L), collapse = " ", recycle0 = FALSE)
+    testthat::expect_true(object = base::grepl(x = txt50, pattern = "for \\(i in 1:nrow\\(df\\)\\)", ignore.case = FALSE, perl = TRUE, fixed = FALSE, useBytes = FALSE), label = "shared body end: outer construct unmodified")
+    testthat::expect_true(object = base::grepl(x = txt50, pattern = "tempo_for_seq2", ignore.case = FALSE, perl = FALSE, fixed = TRUE, useBytes = FALSE), label = "shared body end: inner construct modified")
+    # same as fun50, but with the constructs written on several lines
+    fun51 <- function(x){
+        if(x) for(i in 1:nrow(df)) for(j in 1:length(x)){
+            base::print(j)
+        }
+    }
+    testthat::expect_message(for_loop_nb_check(x = fun51, safer_check = TRUE, lib_path = NULL, error_text = ""), regexp = "the end of the for() construct body is shared with a for() construct written after it", fixed = TRUE)
+    r51 <- for_loop_nb_check(x = fun51, safer_check = TRUE, lib_path = NULL, error_text = "")
+    testthat::expect_true(object = base::is.function(x = r51), label = "shared body end, multi-line: modified function returned")
     #### end main code
 
     ## end tests (ordered by arg appearance and conditions in the code)

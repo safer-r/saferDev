@@ -24,7 +24,7 @@
 #' 
 #' Each reported \code{for} construct is modified in the recovered code: the sequence expression is evaluated once in a specific object named \code{tempo_for_seqN} (N being the rank of the report), this object is checked, and then used as the \code{for} controller, giving \code{tempo_for_seqN <- <SEQUENCE> ; <CHECKS> ; for(<VARIABLE> in tempo_for_seqN)<BODY>}. Evaluating the sequence expression once in the \code{tempo_for_seqN} object guarantees that the checking and the \code{for} controller are strictly identical. At execution, \code{base::warning()} is issued when the computed sequence is empty (0 iteration), contains \code{NA} values, has a single value (equal bounds), contains infinite values, or is decreasing (like \code{1:0}). The errors of the sequence evaluation itself (like \code{1:NA} or \code{1:Inf}) are propagated as they are. Warning: no endless loop is possible with \code{Inf}, because R fully evaluates the \code{for} controller before iterating: \code{1:Inf} gives an error at evaluation, and an \code{Inf} element just gives one iteration with \code{i = Inf}, whatever a potential \code{break} in the loop body. The modification is performed at the exact positions of the reported \code{for} constructs in the recovered code, so that comments, strings and the formatting of the original code are preserved outside the modified spans. When the reported \code{for} construct is not preceded by a statement boundary (unbraced body of \code{if}/\code{else}/\code{for}/\code{while}/\code{repeat}, assignment value, function argument, operator operand, etc.), the whole modified construct is wrapped in curly brackets, because a statement insertion would otherwise break the binding of the enclosing writing. When \code{export} is \code{FALSE}, the modified function is returned by \code{return()} in a new environment whose parent is the environment of the submitted function: please, check the returned function before replacing the original one, notably because its environment is not necessarily the same. When \code{export} is \code{TRUE}, the modified code is written in the file \code{<function name>_safer.R} of the directory indicated by the \code{out_path} argument, and nothing is written if no modification was performed. Warning: the exported file is a standalone R script containing the modified function code, and its potential pre-existing version is never overwritten (an error is returned instead). Warning: the \code{x} argument must be designated by a function name, not by an inline function definition (like \code{function(x)\{ x \}}), when \code{export} is \code{TRUE}, otherwise the name of the exported file cannot be determined.
 #' 
-#' Warning: the checking lines are not inserted when the tempo object name (\code{tempo_for_seqN}) is already used anywhere in the checked function code (including in comments and strings), or when a reported \code{for} construct is located inside the sequence expression of another reported \code{for} construct (overlapping insertion spans): the concerned \code{for} constructs are listed in the returned message.
+#' Warning: the checking lines are not inserted when the tempo object name (\code{tempo_for_seqN}) is already used anywhere in the checked function code (including in comments and strings), or when a reported \code{for} construct is located inside the sequence expression of another reported \code{for} construct (overlapping insertion spans): the concerned \code{for} constructs are listed in the returned message, and remain unmodified. The checking lines are also not inserted, for the same reason (listed in the message), when a \code{for} construct that requires the wrap in curly brackets (see above) contains comments in its span (the wrap collapses the construct on a single line, which would merge the comments with the code), or when such a construct shares the end of its body with a \code{for} construct written after it and also requiring the wrap (as in \code{for(a in 1:n) for(b in 1:length(x)){...}}, where the two bodies end at the same position: the wrap of the latter, applied first, moves the shared closing token away from the position where the former would end its own body).
 #' 
 #' Warning: aliased bounds like \code{n <- length(x) ; for(i in 1:n)} cannot be detected, because \code{n} is a plain variable in the \code{for} writing. The checking must then be done on the function body.
 #' 
@@ -695,6 +695,10 @@ for_loop_nb_check <- function(
     if(base::length(x = findings_line) != 0){
         modified_code <- code
         inserted_log <- base::rep(x = TRUE, times = base::length(x = findings_line))
+        # column-shift events: each modification applied below changes the length of the concerned line, which shifts the character positions located after the modification point. Each event records the line number, the last column that is not shifted (in the coordinates used when the event is recorded) and the shift to apply to the positions located after it. The events are used to adjust the positions of the constructs processed later (the constructs are applied from the last one to the first one, see below)
+        ev_line <- base::integer(length = 0)
+        ev_col <- base::integer(length = 0)
+        ev_shift <- base::double(length = 0)
         # tempo object names: specific names, refused if already present anywhere in the recovered code (including comments and strings), to avoid any masking
         tempo_names <- base::paste0("tempo_for_seq", base::seq_len(length.out = base::length(x = findings_line)), collapse = NULL, recycle0 = FALSE, sep = "")
         all_txt <- base::paste0(modified_code, collapse = "\n", recycle0 = FALSE)
@@ -719,6 +723,7 @@ for_loop_nb_check <- function(
             findings_braced <- findings_braced[keep_log]
             findings_kid <- findings_kid[keep_log]
             tempo_names <- tempo_names[keep_log]
+            inserted_log <- inserted_log[keep_log]
         }
         # guard: a reported for() construct must not be located inside the sequence expression of another reported for() construct (overlapping insertion spans). Detection: the span of the sequence expression of a construct contains the position of the for keyword of the other
         overlap_log <- base::rep(x = FALSE, times = base::length(x = findings_line))
@@ -743,7 +748,7 @@ for_loop_nb_check <- function(
             overlap_idx <- base::which(x = overlap_log, arr.ind = FALSE, useNames = TRUE)
             for(k in base::seq_along(along.with = overlap_idx)){
                 i <- overlap_idx[k]
-                skipped_text <- base::c(skipped_text, base::paste0("line ", pd$line1[term_rows[i]], ": the for() construct is located inside the sequence expression of another reported for() construct", collapse = NULL, recycle0 = FALSE), recursive = TRUE, use.names = TRUE)
+                skipped_text <- base::c(skipped_text, base::paste0("line ", pd$line1[findings_kid[i]], ": the for() construct is located inside the sequence expression of another reported for() construct", collapse = NULL, recycle0 = FALSE), recursive = TRUE, use.names = TRUE)
             }
             keep_log <- ! overlap_log
             findings_line <- findings_line[keep_log]
@@ -762,12 +767,45 @@ for_loop_nb_check <- function(
         }
         findings_for_line1 <- pd$line1[findings_kid] # line of the for keyword of each kept construct
         findings_for_col1 <- pd$col1[findings_kid] # column of the for keyword of each kept construct
+        # rows of the COMMENT tokens, used to detect constructs that cannot be wrapped (see below)
+        comment_rows <- base::which(x = pd$token == "COMMENT", arr.ind = FALSE, useNames = TRUE)
+        # constructs whose body end is shared with a for() construct written after them (see the guard in the loop below): the wrap of the later construct (applied first, back-to-front order) moves the body-end token away from the position where the earlier construct would end its own body, which would corrupt the wrap extraction of the earlier construct. The earlier constructs are therefore skipped. Warning: only constructs that require the wrap are concerned (see the guard in the loop below), and the later construct must also require the wrap (a later construct enclosed in a braced block only receives an insertion before its for keyword, which never moves the body-end token: the shifted positions are handled by the shift events recorded in the loop)
+        body_end_key <- base::paste0(findings_body_line2, ":", findings_body_col2, collapse = NULL, recycle0 = FALSE)
+        shared_log <- base::rep(x = FALSE, times = base::length(x = findings_body_line2))
+        if(base::length(x = findings_body_line2) > 1){
+            for(m in base::seq_along(along.with = findings_body_line2)){
+                same_end <- body_end_key == body_end_key[m]
+                later_log <- (findings_for_line1 > findings_for_line1[m]) | (findings_for_line1 == findings_for_line1[m] & findings_for_col1 > findings_for_col1[m])
+                if(base::any(x = same_end & later_log & findings_braced == FALSE, na.rm = TRUE)){
+                    shared_log[m] <- TRUE
+                }
+            }
+        }
         # apply back-to-front: highest (line, column) first, so that the positions of the not-yet-applied constructs remain valid. Per construct, the sequence expression replacement (at the IN position) comes after the insertion (at the for keyword position) in source order
         ord <- base::order(x = findings_for_line1, findings_for_col1, decreasing = TRUE)
         ord_len <- base::length(x = ord)
         for(k in base::seq_len(length.out = ord_len)){
             i <- ord[k]
             tempo_name <- tempo_names[i]
+            # guards for constructs that cannot be modified (they remain unmodified and are listed in the skipped_text message below):
+            # 1) a construct that requires the wrap (not enclosed in a braced block) cannot contain comments, because the wrap below collapses the construct on a single line, which would merge the comments with the code and comment out the rest of the line
+            # 2) a construct that requires the wrap cannot share the end of its body with another reported for() construct written after it, because the wrap of that other construct (applied first, back-to-front order) moves the body-end token away from its position. Both guards must be applied BEFORE any modification of the construct (the sequence replacement of step 2 below), so that a skipped construct remains fully unmodified
+            if(findings_braced[i] == FALSE){
+                if(base::length(x = comment_rows) != 0){
+                    comment_span <- comment_rows[pd$line1[comment_rows] > findings_for_line1[i] | (pd$line1[comment_rows] == findings_for_line1[i] & pd$col1[comment_rows] >= findings_for_col1[i])]
+                    comment_span <- comment_span[pd$line1[comment_span] < findings_body_line2[i] | (pd$line1[comment_span] == findings_body_line2[i] & pd$col1[comment_span] <= findings_body_col2[i])]
+                    if(base::length(x = comment_span) != 0){
+                        skipped_text <- base::c(skipped_text, base::paste0("line ", findings_line[i], ": the for() construct contains comment(s) and cannot be wrapped in curly brackets on a single line", collapse = NULL, recycle0 = FALSE), recursive = TRUE, use.names = TRUE)
+                        inserted_log[i] <- FALSE
+                        next
+                    }
+                }
+                if(shared_log[i] == TRUE){
+                    skipped_text <- base::c(skipped_text, base::paste0("line ", findings_line[i], ": the end of the for() construct body is shared with a for() construct written after it, which prevents the wrap in curly brackets on a single line", collapse = NULL, recycle0 = FALSE), recursive = TRUE, use.names = TRUE)
+                    inserted_log[i] <- FALSE
+                    next
+                }
+            }
             # 1) one-line writing of the sequence expression, from the recovered code span. The span can cross several lines: the pieces are pasted with a space, trimmed
             if(findings_in_line1[i] == findings_rp_line2[i]){
                 seq_txt <- base::substr(x = modified_code[findings_in_line1[i]], start = findings_in_col2[i] + 1, stop = findings_rp_col2[i] - 1)
@@ -790,27 +828,40 @@ for_loop_nb_check <- function(
             }
             if(ok_parse == FALSE){
                 skipped_text <- base::c(skipped_text, base::paste0("line ", findings_line[i], ": the sequence expression cannot be rewritten on a single line", collapse = NULL, recycle0 = FALSE), recursive = TRUE, use.names = TRUE)
+                inserted_log[i] <- FALSE
                 next
             }
-            # 2) replace the sequence expression span by the tempo object name, keeping the surrounding spaces
+            # 2) replace the sequence expression span by the tempo object name, keeping the surrounding spaces. The length changes of the modified lines are recorded as shift events, used to adjust the positions of the constructs processed later (the constructs are applied from the last one to the first one)
+            len_in_before <- base::nchar(x = modified_code[findings_in_line1[i]], type = "chars", allowNA = FALSE, keepNA = NA)
             if(findings_in_line1[i] == findings_rp_line2[i]){
                 tempo_line <- modified_code[findings_in_line1[i]]
                 modified_code[findings_in_line1[i]] <- base::paste0(
-                    base::substr(x = tempo_line, start = 1, stop = findings_in_col2[i]), 
-                    " ", 
-                    tempo_name, 
-                    base::substr(x = tempo_line, start = findings_rp_col2[i], stop = base::nchar(x = tempo_line, type = "chars", allowNA = FALSE, keepNA = NA)), 
-                    collapse = NULL, 
+                    base::substr(x = tempo_line, start = 1, stop = findings_in_col2[i]),
+                    " ",
+                    tempo_name,
+                    base::substr(x = tempo_line, start = findings_rp_col2[i], stop = base::nchar(x = tempo_line, type = "chars", allowNA = FALSE, keepNA = NA)),
+                    collapse = NULL,
                     recycle0 = FALSE
                 )
             }else{
                 tempo_line1 <- modified_code[findings_in_line1[i]]
                 tempo_line2 <- modified_code[findings_rp_line2[i]]
+                len_rp_before <- base::nchar(x = tempo_line2, type = "chars", allowNA = FALSE, keepNA = NA)
                 modified_code[findings_in_line1[i]] <- base::paste0(base::substr(x = tempo_line1, start = 1, stop = findings_in_col2[i]), " ", tempo_name, collapse = NULL, recycle0 = FALSE)
                 if(findings_rp_line2[i] - findings_in_line1[i] > 1){
                     modified_code[(findings_in_line1[i] + 1):(findings_rp_line2[i] - 1)] <- "" # empty lines keep the line numbering
                 }
                 modified_code[findings_rp_line2[i]] <- base::substr(x = tempo_line2, start = findings_rp_col2[i], stop = base::nchar(x = tempo_line2, type = "chars", allowNA = FALSE, keepNA = NA))
+            }
+            len_in_after <- base::nchar(x = modified_code[findings_in_line1[i]], type = "chars", allowNA = FALSE, keepNA = NA)
+            ev_line <- base::c(ev_line, findings_in_line1[i], recursive = TRUE, use.names = TRUE)
+            ev_col <- base::c(ev_col, findings_in_col2[i], recursive = TRUE, use.names = TRUE)
+            ev_shift <- base::c(ev_shift, len_in_after - len_in_before, recursive = TRUE, use.names = TRUE)
+            if(findings_in_line1[i] != findings_rp_line2[i]){
+                len_rp_after <- base::nchar(x = modified_code[findings_rp_line2[i]], type = "chars", allowNA = FALSE, keepNA = NA)
+                ev_line <- base::c(ev_line, findings_rp_line2[i], recursive = TRUE, use.names = TRUE)
+                ev_col <- base::c(ev_col, findings_rp_col2[i] - 1, recursive = TRUE, use.names = TRUE)
+                ev_shift <- base::c(ev_shift, len_rp_after - len_rp_before, recursive = TRUE, use.names = TRUE)
             }
             # 3) build the checking line: the sequence object is checked at execution, and then used as the for() controller. base::warning() only: the loop is still run (the errors of the sequence evaluation itself, like 1:NA or 1:Inf, are propagated as they are)
             check_txt <- base::paste0(
@@ -819,46 +870,62 @@ for_loop_nb_check <- function(
                 recycle0 = FALSE
             )
             insert_txt <- base::paste0(tempo_name, " <- ", base::paste0(base::deparse(expr = seq_expr, width.cutoff = 500L, backtick = FALSE, control = base::c("keepNA", "keepInteger", "niceNames", "showAttributes"), nlines = -1L), collapse = " ", recycle0 = FALSE), " ; ", check_txt, " ; ", collapse = NULL, recycle0 = FALSE)
-            # 4) insert the tempo assignment and the checking line before the for keyword, or wrap the whole modified construct in curly brackets when the enclosing expression of the construct is not a braced block (see the detection above): the insertion before the for keyword would otherwise break the binding of the enclosing writing (unbraced body of if/else/for/while/repeat, assignment value, function argument, operator operand, etc.)
+            # 4) insert the tempo assignment and the checking line before the for keyword, or wrap the whole modified construct in curly brackets when the enclosing expression of the construct is not a braced block (see the detection above): the insertion before the for keyword would otherwise break the binding of the enclosing writing (unbraced body of if/else/for/while/repeat, assignment value, function argument, operator operand, etc.). Warning: the positions of the for keyword and of the body end must be adjusted with the shift events recorded above, because the sequence replacement of this construct (step 2) and the modifications of the constructs processed before (back-to-front order) have shifted the columns located after their modification points
+            for_col1_adj <- findings_for_col1[i] + base::sum(x = ev_shift[ev_line == findings_for_line1[i] & ev_col < findings_for_col1[i]], na.rm = FALSE)
             if(findings_braced[i] == TRUE){
                 tempo_line <- modified_code[findings_for_line1[i]]
+                len_for_before <- base::nchar(x = tempo_line, type = "chars", allowNA = FALSE, keepNA = NA)
                 modified_code[findings_for_line1[i]] <- base::paste0(
-                    base::substr(x = tempo_line, start = 1, stop = findings_for_col1[i] - 1), 
-                    insert_txt, 
-                    base::substr(x = tempo_line, start = findings_for_col1[i], stop = base::nchar(x = tempo_line, type = "chars", allowNA = FALSE, keepNA = NA)), 
-                    collapse = NULL, 
+                    base::substr(x = tempo_line, start = 1, stop = for_col1_adj - 1),
+                    insert_txt,
+                    base::substr(x = tempo_line, start = for_col1_adj, stop = base::nchar(x = tempo_line, type = "chars", allowNA = FALSE, keepNA = NA)),
+                    collapse = NULL,
                     recycle0 = FALSE
                 )
+                ev_line <- base::c(ev_line, findings_for_line1[i], recursive = TRUE, use.names = TRUE)
+                ev_col <- base::c(ev_col, for_col1_adj - 1, recursive = TRUE, use.names = TRUE)
+                ev_shift <- base::c(ev_shift, base::nchar(x = modified_code[findings_for_line1[i]], type = "chars", allowNA = FALSE, keepNA = NA) - len_for_before, recursive = TRUE, use.names = TRUE)
             }else{
                 # wrap the whole construct in curly brackets: prefix + "{ " + modified construct + " }"
-                tempo_line <- modified_code[findings_for_line1[i]]
-                # positions in the current (already modified) line: the for keyword position is unchanged (the modifications below are applied later, from higher positions). But the sequence replacement may have changed the line content: recompute the positions from the parse data of the current content is too complex: instead, rebuild the modified construct from the original spans, taking into account that only the sequence span has been replaced (the insertion below has not yet been applied for this construct: positions below findings_for_col1 are untouched)
-                # simplest robust approach: extract the whole construct text from the current modified_code using the ORIGINAL spans: from (for_line1, for_col1) to (body_line2, body_col2), apply the prefix and suffix
-                # collect the construct text
+                body_col2_adj <- findings_body_col2[i] + base::sum(x = ev_shift[ev_line == findings_body_line2[i] & ev_col < findings_body_col2[i]], na.rm = FALSE)
+                tempo_line1 <- modified_code[findings_for_line1[i]]
+                prefix_txt <- base::substr(x = tempo_line1, start = 1, stop = for_col1_adj - 1)
+                len_for_before <- base::nchar(x = tempo_line1, type = "chars", allowNA = FALSE, keepNA = NA)
                 if(findings_for_line1[i] == findings_body_line2[i]){
-                    construct_txt <- base::substr(x = modified_code[findings_for_line1[i]], start = findings_for_col1[i], stop = findings_body_col2[i])
-                    prefix_txt <- base::substr(x = modified_code[findings_for_line1[i]], start = 1, stop = findings_for_col1[i] - 1)
-                    suffix_txt <- base::substr(x = modified_code[findings_for_line1[i]], start = findings_body_col2[i] + 1, stop = base::nchar(x = modified_code[findings_for_line1[i]], type = "chars", allowNA = FALSE, keepNA = NA))
-                }else{
-                    construct_txt <- base::c(
-                        base::substr(x = modified_code[findings_for_line1[i]], start = findings_for_col1[i], stop = base::nchar(x = modified_code[findings_for_line1[i]], type = "chars", allowNA = FALSE, keepNA = NA)), 
-                        modified_code[(findings_for_line1[i] + 1):(findings_body_line2[i] - 1)], 
-                        base::substr(x = modified_code[findings_body_line2[i]], start = 1, stop = findings_body_col2[i])
-                    )
-                    prefix_txt <- base::substr(x = modified_code[findings_for_line1[i]], start = 1, stop = findings_for_col1[i] - 1)
-                    suffix_txt <- base::substr(x = modified_code[findings_body_line2[i]], start = findings_body_col2[i] + 1, stop = base::nchar(x = modified_code[findings_body_line2[i]], type = "chars", allowNA = FALSE, keepNA = NA))
-                    # collapse the construct text into a single line: the wrapped construct goes on the prefix line, the suffix stays on its own line (or the rest of it)
-                    construct_txt <- base::paste0(construct_txt, collapse = " ", recycle0 = FALSE)
-                }
-                wrapped_txt <- base::paste0("{ ", insert_txt, construct_txt, " }", collapse = NULL, recycle0 = FALSE)
-                if(findings_for_line1[i] == findings_body_line2[i]){
+                    # single-line construct: the positions on this line have been shifted by the sequence replacement of step 2 (and by the constructs processed before, when inside this construct)
+                    tempo_line2 <- tempo_line1
+                    construct_txt <- base::substr(x = tempo_line2, start = for_col1_adj, stop = body_col2_adj)
+                    suffix_txt <- base::substr(x = tempo_line2, start = body_col2_adj + 1, stop = base::nchar(x = tempo_line2, type = "chars", allowNA = FALSE, keepNA = NA))
+                    wrapped_txt <- base::paste0("{ ", insert_txt, construct_txt, " }", collapse = NULL, recycle0 = FALSE)
                     modified_code[findings_for_line1[i]] <- base::paste0(prefix_txt, wrapped_txt, suffix_txt, collapse = NULL, recycle0 = FALSE)
                 }else{
+                    # multi-line construct: the construct is collapsed on a single line, which keeps the line numbering (the middle lines are emptied, and the prefix and suffix remain on their lines)
+                    tempo_line2 <- modified_code[findings_body_line2[i]]
+                    len_body_before <- base::nchar(x = tempo_line2, type = "chars", allowNA = FALSE, keepNA = NA)
+                    construct_txt <- base::c(
+                        base::substr(x = tempo_line1, start = for_col1_adj, stop = base::nchar(x = tempo_line1, type = "chars", allowNA = FALSE, keepNA = NA)),
+                        modified_code[(findings_for_line1[i] + 1):(findings_body_line2[i] - 1)],
+                        base::substr(x = tempo_line2, start = 1, stop = body_col2_adj)
+                    )
+                    suffix_txt <- base::substr(x = tempo_line2, start = body_col2_adj + 1, stop = base::nchar(x = tempo_line2, type = "chars", allowNA = FALSE, keepNA = NA))
+                    construct_txt <- base::paste0(construct_txt, collapse = " ", recycle0 = FALSE)
+                    wrapped_txt <- base::paste0("{ ", insert_txt, construct_txt, " }", collapse = NULL, recycle0 = FALSE)
                     modified_code[findings_for_line1[i]] <- base::paste0(prefix_txt, wrapped_txt, collapse = NULL, recycle0 = FALSE)
                     if(findings_body_line2[i] - findings_for_line1[i] > 1){
                         modified_code[(findings_for_line1[i] + 1):(findings_body_line2[i] - 1)] <- "" # empty lines keep the line numbering
                     }
                     modified_code[findings_body_line2[i]] <- suffix_txt
+                }
+                # shift events of the wrap: one for the line of the for keyword (always modified), one for the line of the body end (modified only when different from the for keyword line)
+                len_for_after <- base::nchar(x = modified_code[findings_for_line1[i]], type = "chars", allowNA = FALSE, keepNA = NA)
+                ev_line <- base::c(ev_line, findings_for_line1[i], recursive = TRUE, use.names = TRUE)
+                ev_col <- base::c(ev_col, for_col1_adj - 1, recursive = TRUE, use.names = TRUE)
+                ev_shift <- base::c(ev_shift, len_for_after - len_for_before, recursive = TRUE, use.names = TRUE)
+                if(findings_body_line2[i] != findings_for_line1[i]){
+                    len_body_after <- base::nchar(x = modified_code[findings_body_line2[i]], type = "chars", allowNA = FALSE, keepNA = NA)
+                    ev_line <- base::c(ev_line, findings_body_line2[i], recursive = TRUE, use.names = TRUE)
+                    ev_col <- base::c(ev_col, body_col2_adj, recursive = TRUE, use.names = TRUE)
+                    ev_shift <- base::c(ev_shift, len_body_after - len_body_before, recursive = TRUE, use.names = TRUE)
                 }
             }
             inserted_log[i] <- TRUE
@@ -866,7 +933,6 @@ for_loop_nb_check <- function(
         # the modified code must parse, otherwise an internal error is returned (a modified code that does not parse would indicate a replacement bug)
         # nocov start
         # codecov inactivated because it is an internal control of the replacement, impossible to cover with argument values.
-if(base::exists(x = "DEBUG_DUMP_MODIFIED_CODE", envir = base::globalenv(), inherits = FALSE) && base::isTRUE(x = base::get(x = "DEBUG_DUMP_MODIFIED_CODE", envir = base::globalenv(), inherits = FALSE))){base::writeLines(text = modified_code, con = base::file.path(path = base::tempdir(), "debug_modified_code.R"), sep = "\n", useBytes = FALSE)}
         if(base::inherits(x = base::try(expr = base::parse(text = base::paste0(modified_code, collapse = "\n", recycle0 = FALSE), file = "", n = NULL, prompt = "?", keep.source = base::getOption(x = "keep.source", default = NULL), srcfile = NULL, encoding = "unknown"), silent = TRUE), what = "try-error")){
             tempo_cat <- base::paste0(
                 intern_error_text_start, 
