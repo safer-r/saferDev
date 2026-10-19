@@ -3,9 +3,8 @@
 ## saferDev 3.0.0
 
 - curl_bracket_check(): new function. Verifies that all the bodies of
-  the if, else, for, while, repeat and function (including lambda (x))
-  constructs of a function are delimited by curly brackets {}, according
-  to the safer-r recommendation.
+  the if, else, for, while, repeat and function are delimited by curly
+  brackets {}, according to the safer-r recommendation.
 - for_loop_nb_check(): new function. Verifies that the sequence
   expression of every for construct of a function is written with hard
   numbers, i.e., only integer-valued numeric literals joined by : (like
