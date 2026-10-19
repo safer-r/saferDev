@@ -56,7 +56,7 @@ Read this [webpage](https://safer-r.github.io/saferDev) for more details.
 | **is_function_here()** | Check if required functions are present in installed packages. This controls for instance modifications of function names depending on package versions. |
 | **is_package_here()** | Check if required packages are installed locally. |
 | **report()** | Print a character string or a data object into a same log file. |
-| **true_false_check()** | Verify that the `TRUE` and `FALSE` logical constants are always written in full when used as values (argument values, conditions, comparisons, indexing) and never abbreviated as `T` or `F`, which can be overwritten by the user. Like `all_args_here()`, an error asking to run `colons_check()` first is returned if some functions are not associated to their package. |
+| **true_false_check()** | Verify that the `TRUE` and `FALSE` logical constants are always written in full when used as values (argument values, conditions, comparisons, indexing) and never abbreviated as `T` or `F`, which can be overwritten by the user. |
 
 <br />
 
@@ -79,12 +79,12 @@ v <- "v1.0.0" # desired tag version
 remotes::install_github(paste0("https://github.com/safer-r/saferDev@CRAN_/", v))
 ```
 
-## Docker image
+## Docker images
 
-SaferDev alone in R 4.6.0: [gmillot/r_v4.6.0_safer_v1.0:gitlab_v11.7](https://hub.docker.com/repository/docker/gmillot/r_v4.6.0_safer_v1.0/general)
+SaferDev v1.0.0 alone in R 4.6.0: [gmillot/r_v4.6.0_safer_v1.0:gitlab_v11.7](https://hub.docker.com/repository/docker/gmillot/r_v4.6.0_safer_v1.0/general)
 
 
-SaferDev and [295 other packages](https://gitlab.pasteur.fr/gmillot/dockerfiles/-/blob/master/R/v4.6.0/extended/v1.0/installed_r_packages.csv) in R 4.6.0: [gmillot/r_v4.6.0_extended_v1.0:gitlab_v11.7](https://hub.docker.com/repository/docker/gmillot/r_v4.6.0_extended_v1.0/general)
+SaferDev v1.0.0 and [295 other packages](https://gitlab.pasteur.fr/gmillot/dockerfiles/-/blob/master/R/v4.6.0/extended/v1.0/installed_r_packages.csv) in R 4.6.0: [gmillot/r_v4.6.0_extended_v1.0:gitlab_v11.7](https://hub.docker.com/repository/docker/gmillot/r_v4.6.0_extended_v1.0/general)
 
 <br />
 
@@ -115,6 +115,8 @@ If you are using functions of *saferDev*, please cite:
 
 [Jacques Serizay](https://github.com/js2264), Spatial Regulation of Genomes team, Institut Pasteur, Paris, France
 
+[GLM-5.3](https://docs.z.ai/guides/llm/glm-5.3), hosted to Institut Pasteur, Paris, France
+
 [Gael A. Millot](https://github.com/gael-millot), Bioinformatics and Biostatistics Hub, Institut Pasteur, Paris, France
 
 <br />
@@ -128,5 +130,7 @@ The developers & maintainers of the mentioned softwares and packages, including:
 - [GitHub](https://github.com/)
 - [rworkflows](https://github.com/neurogenomics/rworkflows)
 - [tidyverse](https://ggplot2.tidyverse.org/)
+- [opencode](https://opencode.ai/)
+- [GLM-5.3](https://docs.z.ai/guides/llm/glm-5.3)
 
-
+The Information Technology team of Institut Pasteur.
