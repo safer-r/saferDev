@@ -247,7 +247,7 @@ saferDev::true_false_check(fun2)
 #>         base::return(x)
 #>     }
 #> }
-#> <environment: 0x56311a38bcd0>
+#> <environment: 0x562470588010>
 fun3 <- function(x){ x } # no function call: accepted by the package-association pre-check
 saferDev::true_false_check(fun3)
 #> 
@@ -273,7 +273,7 @@ fun4 <- function(x){ if(x == T){ base::return(x) } } ; saferDev::true_false_chec
 #>         base::return(x)
 #>     }
 #> }
-#> <environment: 0x56311e3b5f90>
+#> <environment: 0x562470e009f0>
 fun4_bis <- saferDev::true_false_check(x = fun4, export = FALSE, safer_check = TRUE, lib_path = NULL, error_text = "") # modified function returned (T replaced by TRUE)
 #> 
 #> 
