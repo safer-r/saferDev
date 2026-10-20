@@ -1,4 +1,4 @@
-#' @title For Loop Number Check
+#' @title \code{for} Loop Number Check
 #' @description
 #' Check the sequence expression of every \code{for} loop of a function. If the number of iterations is not fixed by the writing itself (e.g., \code{1:length(x)}), a checking line is added before the loop, issuing a warning at execution if the sequence is empty, contains \code{NA} or infinite values, has a single value, or is decreasing. Return a table-like message of the problematic lines and a corrected version of the submitted function.
 #' @param x A function name, written without quotes and brackets.
