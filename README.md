@@ -62,7 +62,7 @@ Read this [webpage](https://safer-r.github.io/saferDev) for more details.
 
 ## Versions
 
-The different *saferDev* releases are tagged [here](https://github.com/safer-r/saferDev/tags).
+The different *saferDev* releases are tagged [here](https://github.com/safer-r/saferDev/releases).
 
 <br />
 

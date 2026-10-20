@@ -318,6 +318,78 @@ testthat::test_that("for_loop_nb_check()", {
     testthat::expect_true(object = base::is.function(x = r51), label = "shared body end, multi-line: modified function returned")
     #### end main code
 
+    ######## export and out_path arguments
+    # out_path cannot be NULL nor contain an empty string, whatever the value of export
+    testthat::expect_error(for_loop_nb_check(x = fun20, export = TRUE, out_path = NULL, safer_check = FALSE, lib_path = NULL, error_text = ""), regexp = "CANNOT BE NULL", fixed = TRUE)
+    testthat::expect_error(for_loop_nb_check(x = fun20, export = FALSE, out_path = NULL, safer_check = FALSE, lib_path = NULL, error_text = ""), regexp = "CANNOT BE NULL", fixed = TRUE)
+    testthat::expect_error(for_loop_nb_check(x = fun20, export = TRUE, out_path = "", safer_check = FALSE, lib_path = NULL, error_text = ""), regexp = "CANNOT CONTAIN EMPTY STRING", fixed = TRUE)
+    testthat::expect_error(for_loop_nb_check(x = fun20, export = FALSE, out_path = "", safer_check = FALSE, lib_path = NULL, error_text = ""), regexp = "CANNOT CONTAIN EMPTY STRING", fixed = TRUE)
+    # export argument values
+    testthat::expect_error(for_loop_nb_check(x = fun20, export = NA, safer_check = FALSE, lib_path = NULL, error_text = ""))
+    testthat::expect_error(for_loop_nb_check(x = fun20, export = 1, safer_check = FALSE, lib_path = NULL, error_text = ""))
+    testthat::expect_error(for_loop_nb_check(x = fun20, export = "TRUE", safer_check = FALSE, lib_path = NULL, error_text = ""))
+    testthat::expect_error(for_loop_nb_check(x = fun20, export = base::c(TRUE, FALSE), safer_check = FALSE, lib_path = NULL, error_text = ""))
+    testthat::expect_error(for_loop_nb_check(x = fun20, export = mat1, safer_check = FALSE, lib_path = NULL, error_text = ""))
+    testthat::expect_error(for_loop_nb_check(x = fun20, export = factor1, safer_check = FALSE, lib_path = NULL, error_text = ""))
+    testthat::expect_error(for_loop_nb_check(x = fun20, export = expr1, safer_check = FALSE, lib_path = NULL, error_text = ""))
+    testthat::expect_error(for_loop_nb_check(x = fun20, export = fun1, safer_check = FALSE, lib_path = NULL, error_text = ""))
+    testthat::expect_no_error(for_loop_nb_check(x = fun20, export = FALSE, out_path = ".", safer_check = FALSE, lib_path = NULL, error_text = ""))
+    # out_path values
+    testthat::expect_error(for_loop_nb_check(x = fun20, export = TRUE, out_path = 1, safer_check = FALSE, lib_path = NULL, error_text = ""))
+    testthat::expect_error(for_loop_nb_check(x = fun20, export = TRUE, out_path = factor1, safer_check = FALSE, lib_path = NULL, error_text = ""))
+    testthat::expect_error(for_loop_nb_check(x = fun20, export = TRUE, out_path = expr1, safer_check = FALSE, lib_path = NULL, error_text = ""))
+    testthat::expect_error(for_loop_nb_check(x = fun20, export = TRUE, out_path = fun1, safer_check = FALSE, lib_path = NULL, error_text = ""))
+    testthat::expect_error(for_loop_nb_check(x = fun20, export = TRUE, out_path = base::c("a", "b"), safer_check = FALSE, lib_path = NULL, error_text = ""))
+    # out_path ignored when export = FALSE (even a non-existing path)
+    testthat::expect_no_error(for_loop_nb_check(x = fun20, export = FALSE, out_path = "PATH_NOT_GOOD", safer_check = FALSE, lib_path = NULL, error_text = ""))
+    # export = TRUE with a function to modify: file written in a fresh temporary directory, NULL returned (invisible), and the file recreates the function when sourced
+    tempo_dir_forloop <- base::tempfile(pattern = "fl_export_")
+    base::dir.create(path = tempo_dir_forloop, showWarnings = FALSE, recursive = TRUE, mode = "0777")
+    testthat::expect_null(object = for_loop_nb_check(x = fun20, export = TRUE, out_path = tempo_dir_forloop, safer_check = FALSE, lib_path = NULL, error_text = ""), label = "export TRUE returns NULL")
+    testthat::expect_true(object = base::file.exists(base::file.path(tempo_dir_forloop, "fun20_safer.R", fsep = "/")), label = "fun20_safer.R written")
+    exported_lines <- base::readLines(con = base::file.path(tempo_dir_forloop, "fun20_safer.R", fsep = "/"), warn = FALSE, ok = TRUE)
+    testthat::expect_true(object = base::grepl(x = exported_lines[1], pattern = "^fun20_safer <- ", perl = TRUE), label = "exported file starts with the function writing")
+    testthat::expect_true(object = base::any(base::grepl(x = exported_lines, pattern = "tempo_for_seq", ignore.case = FALSE, perl = FALSE, fixed = TRUE, useBytes = FALSE), na.rm = TRUE), label = "exported code contains the checking line")
+    tempo_env_forloop <- base::new.env(parent = base::globalenv())
+    base::sys.source(file = base::file.path(tempo_dir_forloop, "fun20_safer.R", fsep = "/"), envir = tempo_env_forloop, chdir = FALSE)
+    testthat::expect_identical(object = tempo_env_forloop$fun20_safer(1:2), expected = fun20(1:2), label = "exported function behaves like the submitted one")
+    # export message: the file location is announced by a message
+    base::unlink(x = base::file.path(tempo_dir_forloop, "fun20_safer.R", fsep = "/"))
+    testthat::expect_message(for_loop_nb_check(x = fun20, export = TRUE, out_path = tempo_dir_forloop, safer_check = FALSE, lib_path = NULL, error_text = ""), regexp = "MODIFIED CODE EXPORTED IN:", fixed = TRUE)
+    # pre-existing file is never overwritten
+    testthat::expect_error(for_loop_nb_check(x = fun20, export = TRUE, out_path = tempo_dir_forloop, safer_check = FALSE, lib_path = NULL, error_text = ""), regexp = "FILE NAME ALREADY EXISTS", fixed = TRUE)
+    # clean function (fun3 has clean for() sequences): no file written, NULL returned
+    testthat::expect_null(object = for_loop_nb_check(x = fun3, export = TRUE, out_path = tempo_dir_forloop, safer_check = FALSE, lib_path = NULL, error_text = ""))
+    testthat::expect_false(object = base::file.exists(base::file.path(tempo_dir_forloop, "fun3_safer.R", fsep = "/")))
+    # reported for() constructs with no checking line inserted: no file written either
+    testthat::expect_null(object = for_loop_nb_check(x = fun5, export = TRUE, out_path = tempo_dir_forloop, safer_check = FALSE, lib_path = NULL, error_text = ""))
+    testthat::expect_false(object = base::file.exists(base::file.path(tempo_dir_forloop, "fun5_safer.R", fsep = "/")))
+    # file name determination: written as pkg::fun, the package name is not part of the file name (mean contains no for() construct, so a file is not written: use a reported function through pkg::fun)
+    fun53 <- function(x){ for(i in 1:length(x)){ base::print(x = i) } }
+    base::assign(x = "fun53_in_pkg", value = fun53, envir = base::globalenv())
+    testthat::expect_null(object = for_loop_nb_check(x = fun53_in_pkg, export = TRUE, out_path = tempo_dir_forloop, safer_check = FALSE, lib_path = NULL, error_text = ""))
+    testthat::expect_true(object = base::file.exists(base::file.path(tempo_dir_forloop, "fun53_in_pkg_safer.R", fsep = "/")), label = "fun53_in_pkg_safer.R written for the bare name form")
+    base::unlink(x = base::file.path(tempo_dir_forloop, "fun53_in_pkg_safer.R", fsep = "/"))
+    # inline definition and component writing are refused when export = TRUE (the name of the exported file could not be determined reliably)
+    testthat::expect_error(for_loop_nb_check(x = function(y){ for(i in 1:length(y)){ base::print(x = i) } }, export = TRUE, out_path = tempo_dir_forloop, safer_check = FALSE, lib_path = NULL, error_text = ""), regexp = "MUST BE DESIGNATED BY A FUNCTION NAME", fixed = TRUE)
+    FUN_LIST <- base::list(fun = fun20)
+    testthat::expect_error(for_loop_nb_check(x = FUN_LIST$fun, export = TRUE, out_path = tempo_dir_forloop, safer_check = FALSE, lib_path = NULL, error_text = ""), regexp = "MUST BE DESIGNATED BY A FUNCTION NAME", fixed = TRUE)
+    # non-existing out_path
+    testthat::expect_error(for_loop_nb_check(x = fun20, export = TRUE, out_path = "PATH_NOT_GOOD", safer_check = FALSE, lib_path = NULL, error_text = ""), regexp = "DIRECTORY PATH INDICATED IN THE out_path ARGUMENT DOES NOT EXISTS", fixed = TRUE)
+    # out_path with a trailing /: the trailing / is removed first, then the path checked (the error message shows the path without the trailing /)
+    testthat::expect_error(for_loop_nb_check(x = fun20, export = TRUE, out_path = "PATH_NOT_GOOD/", safer_check = FALSE, lib_path = NULL, error_text = ""), regexp = "DOES NOT EXISTS:\nPATH_NOT_GOOD\n", fixed = TRUE)
+    # trailing / and \\ tolerated in out_path
+    base::unlink(x = base::file.path(tempo_dir_forloop, "fun20_safer.R", fsep = "/"))
+    testthat::expect_null(object = for_loop_nb_check(x = fun20, export = TRUE, out_path = base::paste0(tempo_dir_forloop, "/"), safer_check = FALSE, lib_path = NULL, error_text = ""))
+    testthat::expect_true(object = base::file.exists(base::file.path(tempo_dir_forloop, "fun20_safer.R", fsep = "/")))
+    base::unlink(x = base::file.path(tempo_dir_forloop, "fun20_safer.R", fsep = "/"))
+    testthat::expect_null(object = for_loop_nb_check(x = fun20, export = TRUE, out_path = base::paste0(tempo_dir_forloop, "\\"), safer_check = FALSE, lib_path = NULL, error_text = ""))
+    testthat::expect_true(object = base::file.exists(base::file.path(tempo_dir_forloop, "fun20_safer.R", fsep = "/")))
+    # cleanup
+    base::unlink(x = tempo_dir_forloop, recursive = TRUE, force = TRUE, expand = TRUE)
+    base::rm(list = "fun53_in_pkg", envir = base::globalenv())
+    ######## end export and out_path arguments
+
     ## end tests (ordered by arg appearance and conditions in the code)
 
     ## other tests

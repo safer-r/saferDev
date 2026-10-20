@@ -5,14 +5,14 @@
 #' @param safer_check Single logical value. Perform some "safer" checks? If \code{TRUE}, checkings are performed before main code running (see the \href{https://github.com/safer-r}{safer-r project}): 1) correct \code{lib_path} argument value 2) required functions and related packages effectively present in local R libraries and 3) R classical operators (like \code{"<-"}) not overwritten by another package because of the R scope. Must be set to \code{FALSE} if this function is used inside another "safer" function to avoid pointless multiple checkings.
 #' @param lib_path Vector of characters specifying the absolute pathways of the directories containing the required packages for the function, if not in the default directories. Useful when R packages are not installed in the default directories because of lack of admin rights. More precisely, \code{lib_path} is passed through the \code{new} argument of \code{.libPaths()} so that the new library paths are \code{unique(c(new, .Library.site, .Library))}. Warning: \code{.libPaths()} is restored to the initial paths, after function execution. Ignored if \code{NULL} (default) or if the \code{safer_check} argument is \code{FALSE}: only the pathways specified by the current \code{.libPaths()} are used for package calling.
 #' @param error_text Single character string used to add information in error messages returned by the function, notably if the function is inside other functions, which is practical for debugging. Example: \code{error_text = " INSIDE <PACKAGE_1>::<FUNCTION_1> INSIDE <PACKAGE_2>::<FUNCTION_2>."}. If \code{NULL}, converted into \code{""}.
-#' @param export Single logical value. Export the modified function into a \code{.R} file (see the \code{out_path} argument)? If \code{FALSE} (default), the modified function is returned by the function instead of being exported.
-#' @param out_path Single character string indicating the absolute pathway of the folder where to export the modified function file, named \code{<FUNCTION_NAME>_safer.R} (e.g., \code{mean_safer.R}). The file contains an assignment of the modified function, so that \code{base::source()}ing it recreates the modified function: \code{<FUNCTION_NAME>_safer <- function(...) ...}. \code{out_path = "."} means the R working directory set by the user. Ignored if \code{NULL} (default) or if the \code{export} argument is \code{FALSE}. Warning: an already existing \code{<FUNCTION_NAME>_safer.R} file in \code{out_path} is overwritten.
+#' @param export Single logical value. Export the modified function into a \code{.R} file (see the \code{out_path} argument)? If \code{TRUE}, the modified function is not returned but only exported. An error is returned if the file already exists in \code{out_path}, and if the tested function is not designated by a function name (like \code{test} or \code{package::test}), i.e., written by an inline definition (like \code{function(x)\{x\}}) or by a component writing (like \code{FUN_LIST$fun}). If \code{FALSE} (default), the modified function is returned by the function instead of being exported.
+#' @param out_path Single character string indicating the absolute pathway of the folder where to export the modified function file, named \code{<FUNCTION_NAME>_safer.R} (e.g., \code{mean_safer.R}). \code{out_path = "."} (default) means the R working directory set by the user. Ignored if the \code{export} argument is \code{FALSE}.
 #' @returns 
 #' If the \code{export} argument is \code{FALSE}: the modified function, i.e., the submitted function with all the missing curly brackets \code{\{ \}} added, returned by \code{base::return()}. \code{NULL} is returned if no modification was done, i.e., if the submitted function was already compliant. 
 #' 
-#' If the \code{export} argument is \code{TRUE}: the modified function is written into the \code{<FUNCTION_NAME>_safer.R} file of the \code{out_path} directory and \code{NULL} is returned. If no modification was done, no file is written and \code{NULL} is also returned.
+#' If the \code{export} argument is \code{TRUE}: the modified function is written into the \code{<FUNCTION_NAME>_safer.R} file of the \code{out_path} directory and \code{NULL} is returned (invisibly), with a message indicating where the modified function has been exported. If no modification was done, no file is written and \code{NULL} is also returned.
 #' 
-#' In both cases, a table-like text message indicating the missing curly brackets \code{\{ \}} is printed, or a message saying that everything seems fine (followed by "\code{no modified function exported}" when the \code{export} argument is \code{TRUE}).
+#' In both cases, a table-like text message indicating the missing curly brackets \code{\{ \}} is printed, or a message saying that everything seems fine.
 #' 
 #' Table-like: column 1, the line number in the function code (starting at the \code{"<- function"} line, i.e., without counting the \code{#'} header lines); column 2, the construct (\code{if}, \code{else}, \code{for}, \code{while}, \code{repeat} or \code{function}); column 3, the code preceding the construct body.
 #' @details
@@ -28,7 +28,7 @@
 #' 
 #' When the modified function is built, it is validated by re-parsing the modified code: if the modified code cannot be parsed, an internal error is returned (please, report it in the link given by the error message). Note that the line numbers of the reported missing curly brackets (column 1 of the table-like message) are those of the submitted function, before modification.
 #' 
-#' When the \code{export} argument is \code{TRUE}, the exported file contains the code of the modified function obtained with \code{base::deparse()}: comments of the submitted function are lost in this file (this is a known limitation of \code{base::deparse()}). The returned modified function (when \code{export = FALSE}) preserves the comments of the submitted function.
+#' When the \code{export} argument is \code{TRUE}, the exported file contains the code of the modified function obtained with \code{base::deparse()}: comments of the submitted function are lost in this file (this is a known limitation of \code{base::deparse()}). The returned modified function (when \code{export = FALSE}) preserves the comments of the submitted function. The exported file contains an assignment of the modified function (\code{<FUNCTION_NAME>_safer <- function(...) ...}), so that \code{base::source()}ing it recreates the modified function. Warning: the tested function must be designated by a function name (like \code{test} or \code{package::test}) when \code{export = TRUE}: an inline definition (like \code{function(x)\{x\}}) or a component writing (like \code{FUN_LIST$fun}) returns an error, because the name of the exported file could not be determined reliably.
 #' 
 #' Warning: \code{curl_bracket_check()} cannot check constructs written with backquotes, like \code{`if`(x > 1, base::return(x), base::return(0))}. Please, use the standard writing.
 #' 
@@ -44,22 +44,23 @@
 #' saferDev::curl_bracket_check(fun1)
 #' fun2 <- function(x){ if(x > 1) base::return(x) } ; saferDev::curl_bracket_check(fun2)
 #' fun2 <- function(x){ if(x > 1) base::return(x) } ; fun2_safer <- saferDev::curl_bracket_check(fun2) ; fun2_safer(2)
+#' fun2_ter <- function(x){ if(x > 1) base::return(x) } ; saferDev::curl_bracket_check(x = fun2_ter, export = TRUE, out_path = ".") # fun2_ter_safer.R written in the working directory, NULL returned
 #' saferDev::curl_bracket_check(mean)
 #' 
 #' @export
 curl_bracket_check <- function(
     x, 
+    export = FALSE, 
+    out_path = ".", 
     safer_check = TRUE, 
     lib_path = NULL, 
-    error_text = "", 
-    export = FALSE, 
-    out_path = NULL
+    error_text = ""
 ){
     # DEBUGGING
-    # x = mean ; lib_path = NULL ; safer_check = TRUE ; error_text = " INSIDE A" ; export = FALSE ; out_path = NULL
-    # function_name <- "curl_bracket_check" ; arg_user_setting = base::list(x = as.name(x = "mean"), lib_path = NULL, safer_check = TRUE, error_text = " INSIDE A", export = FALSE, out_path = NULL)
-    # x = .base_op_check ; lib_path = NULL ; safer_check = TRUE ; error_text = " INSIDE A" ; export = FALSE ; out_path = NULL # internal function with function body made of a single .Primitive() call
-    # source("C:\\Users\\gmillot\\Documents\\Git_projects\\safer-r\\saferDev\\R\\curl_bracket_check.R") ; x = curl_bracket_check ; lib_path = NULL ; safer_check = TRUE ; error_text = " INSIDE A" ; export = FALSE ; out_path = NULL # Warning: x = saferDev::curl_bracket_check does not return the same number of code lines
+    # x = mean ; export = FALSE ; out_path = "." ; lib_path = NULL ; safer_check = TRUE ; error_text = " INSIDE A"
+    # function_name <- "curl_bracket_check" ; arg_user_setting = base::list(x = as.name(x = "mean"), export = FALSE, out_path = ".", lib_path = NULL, safer_check = TRUE, error_text = " INSIDE A")
+    # x = .base_op_check ; export = FALSE ; out_path = "." ; lib_path = NULL ; safer_check = TRUE ; error_text = " INSIDE A" # internal function with function body made of a single .Primitive() call
+    # source("C:\\Users\\gmillot\\Documents\\Git_projects\\safer-r\\saferDev\\R\\curl_bracket_check.R") ; x = curl_bracket_check ; export = FALSE ; out_path = "." ; lib_path = NULL ; safer_check = TRUE ; error_text = " INSIDE A" # Warning: x = saferDev::curl_bracket_check does not return the same number of code lines
 
     #### package name
     package_name <- "saferDev" # write NULL if the function developed is not in a package
@@ -196,8 +197,8 @@ curl_bracket_check <- function(
     # before NA checking because is.na(NULL) return logical(0) and all(logical(0)) is TRUE (but secured with & base::length(x = x) > 0)
     tempo_arg <-base::c(
         "x", 
-        "export",
-        # "out_path", # inactivated because can be NULL (see the out_path section of the other checkings below)
+        "export", 
+        "out_path", 
         "safer_check"
         # "lib_path", # inactivated because can be NULL
         # "error_text" # inactivated because NULL converted to "" above
@@ -306,50 +307,6 @@ curl_bracket_check <- function(
     }
     ######## end safer_check argument checking
 
-    ######## export argument checking
-    if( ! (base::all(base::typeof(x = export) == "logical", na.rm = TRUE) & base::length(x = export) == 1)){ # no need to test NA because NA only already managed above and base::length(x = export) == 1)
-        if(base::all(base::mode(x = export) == "function", na.rm = TRUE)){
-            export <- base::deparse1(expr = export, collapse = "", width.cutoff = 500L)
-        }
-        tempo_cat <- base::paste0(
-            error_text_start, 
-            "THE export ARGUMENT VALUE MUST BE A SINGLE LOGICAL VALUE (TRUE OR FALSE ONLY).\nHERE IT IS:\n", 
-            base::ifelse(test = base::length(x = export) == 0 | base::all(base::suppressWarnings(expr = export == base::quote(expr = ), classes = "warning"), na.rm = TRUE) | base::all(export == "", na.rm = TRUE), yes = "<NULL, \"\", EMPTY OBJECT OR EMPTY NAME>", no = base::paste0(export, collapse = "\n", recycle0 = FALSE)),
-            collapse = NULL, 
-            recycle0 = FALSE
-        )
-        base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL)
-    }
-    ######## end export argument checking
-
-    ######## check of out_path
-    # always executed: out_path is always checked, whatever the value of export
-    if( ! base::is.null(x = out_path)){ # is.null(NA) returns FALSE so OK.
-        if( ! base::all(base::typeof(x = out_path) == "character", na.rm = TRUE)){ # na.rm = TRUE but no NA returned with typeof (typeof(NA) == "character" returns FALSE)
-            if(base::all(base::mode(x = out_path) == "function", na.rm = TRUE)){
-                out_path <- base::deparse1(expr = out_path, collapse = "", width.cutoff = 500L)
-            }
-            tempo_cat <- base::paste0(
-                error_text_start, 
-                "THE DIRECTORY PATH INDICATED IN THE out_path ARGUMENT MUST BE A VECTOR OF CHARACTERS.\nHERE IT IS:\n", 
-                base::ifelse(test = base::length(x = out_path) == 0 | base::all(base::suppressWarnings(expr = out_path == base::quote(expr = ), classes = "warning"), na.rm = TRUE), yes = "<NULL, EMPTY OBJECT OR EMPTY NAME>", no = base::paste0(out_path, collapse = "\n", recycle0 = FALSE)),
-                collapse = NULL, 
-                recycle0 = FALSE
-            )
-            base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL)
-        }else if(base::length(x = out_path) != 1){
-            tempo_cat <- base::paste0(
-                error_text_start, 
-                "THE out_path ARGUMENT MUST BE A SINGLE CHARACTER STRING.\nHERE IT IS:\n", 
-                base::paste0(out_path, collapse = "\n", recycle0 = FALSE), 
-                collapse = NULL, 
-                recycle0 = FALSE
-            )
-            base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL)
-        }
-    }
-    ######## end check of out_path
-
     ######## check of lib_path
     # must be before any :: or ::: non basic package calling
     # always executed: lib_path is always checked, whatever the value of safer_check
@@ -440,7 +397,7 @@ curl_bracket_check <- function(
     # add as many lines as below, for each of your arguments of your function in development
     tempo <- saferDev::arg_check(data = x, class = "function", typeof = NULL, mode = NULL, length = NULL, prop = FALSE, options = NULL, double_as_integer_allowed = FALSE, all_options_in_data = FALSE, na_contain = FALSE, neg_values = TRUE, inf_values = TRUE, print = FALSE, data_name = NULL, data_arg = TRUE, safer_check = FALSE, lib_path = lib_path, error_text = embed_error_text) ; base::eval(expr = ee, envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL))
     tempo <- saferDev::arg_check(data = export, class = NULL, typeof = "logical", mode = NULL, length = 1, prop = FALSE, options = NULL, double_as_integer_allowed = FALSE, all_options_in_data = FALSE, na_contain = FALSE, neg_values = TRUE, inf_values = TRUE, print = FALSE, data_name = NULL, data_arg = TRUE, safer_check = FALSE, lib_path = lib_path, error_text = embed_error_text) ; base::eval(expr = ee, envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL))
-    # out_path already checked above (can be NULL: checked manually like lib_path)
+    tempo <- saferDev::arg_check(data = out_path, class = NULL, typeof = "character", mode = NULL, length = 1, prop = FALSE, options = NULL, double_as_integer_allowed = FALSE, all_options_in_data = FALSE, na_contain = FALSE, neg_values = TRUE, inf_values = TRUE, print = FALSE, data_name = NULL, data_arg = TRUE, safer_check = FALSE, lib_path = lib_path, error_text = embed_error_text) ; base::eval(expr = ee, envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL))
     # lib_path already checked above
     # safer_check already checked above
     # error_text converted to single string above
@@ -455,7 +412,45 @@ curl_bracket_check <- function(
     ######## end argument checking with arg_check()
 
     ######## management of "" in arguments of mode character
-    # not required
+    tempo_arg <- base::c(
+        "out_path"
+        # "lib_path" # inactivated because already checked above
+        # "error_text" # inactivated because can be ""
+    )
+    # nocov start
+    # codecov inactivated because it is an internal control of code writing, impossible to cover with argument values.
+    tempo_log <- ! base::sapply(X = base::lapply(X = tempo_arg, FUN = function(x){base::get(x = x, pos = -1L, envir = base::parent.frame(n = 2), mode = "any", inherits = FALSE)}), FUN = function(x){if(base::is.null(x = x)){base::return(TRUE)}else{base::all(base::mode(x = x) == "character", na.rm = TRUE)}}, simplify = TRUE, USE.NAMES = TRUE) # parent.frame(n = 2) because get() is evaluated inside the FUN closure of the inner lapply: parent.frame(n = 1) is lapply's frame, parent.frame(n = 2) is BACKBONE's frame.  #  need to test is.null() here
+    if(base::any(tempo_log, na.rm = TRUE)){
+        # This check is here in case the developer has not correctly fill tempo_arg
+        tempo_cat <- base::paste0(
+            "INTERNAL ERROR IN THE BACKBONE PART OF ", 
+            intern_error_text_start, 
+            "IN THE SECTION \"management of \"\" in arguments of mode character\"\n", 
+            base::ifelse(test = base::sum(tempo_log, na.rm = TRUE) > 1, yes = "THESE ARGUMENTS ARE", no = "THIS ARGUMENT IS"), 
+            " NOT CLASS \"character\":\n", 
+            base::paste0(tempo_arg[tempo_log], collapse = "\n", recycle0 = FALSE), 
+            "\nIf saferMake::saferMake() HAS BEEN USED TO MODIFY YOUR FUNCTION, PLEASE RESTART WITH YOUR MAIN CODE AND SELECT PROPER CLASS, TYPE AND/OR MODE FOR YOUR ARGUMENTS\n.HERE, ARGUMENTS ARE TYPE:\n", 
+            base::paste0(base::sapply(X = tempo_arg, FUN = function(x){base::paste0(x, ": \"", base::typeof(x = base::get(x = x, pos = -1L, envir = base::parent.frame(n = 3), mode = "any", inherits = FALSE)), "\"", collapse = NULL, recycle0 = FALSE)}, simplify = TRUE, USE.NAMES = TRUE), collapse = "\n", recycle0 = FALSE), # parent.frame(n = 3) because the get() is evaluated inside the FUN closure of sapply. But sapply(FUN) calls lapply(FUN) internally !! So parent.frame(n = 1) is the internal lapply() frame called by sapply, parent.frame(n = 2) is sapply's frame, parent.frame(n = 3) is BACKBONE's frame. NB: paste0() and typeof() are primitives and add no frame.
+            intern_error_text_end, 
+            collapse = NULL, 
+            recycle0 = FALSE
+        )
+        base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL)
+        # nocov end
+    }else{
+        tempo_log <- base::sapply(X = base::lapply(X = tempo_arg, FUN = function(x){base::get(x = x, pos = -1L, envir = base::parent.frame(n = 2), mode = "any", inherits = FALSE)}), FUN = function(x){base::any(x == "", na.rm = TRUE)}, simplify = TRUE, USE.NAMES = TRUE) # parent.frame(n = 2) because get() is evaluated inside the FUN closure of the inner lapply: parent.frame(n = 1) is lapply's frame, parent.frame(n = 2) is BACKBONE's frame. # for character argument that can also be NULL, if NULL -> returns FALSE. Thus no need to test is.null()
+        if(base::any(tempo_log, na.rm = TRUE)){
+            tempo_cat <- base::paste0(
+                error_text_start, 
+                base::ifelse(test = base::sum(tempo_log, na.rm = TRUE) > 1, yes = "THESE ARGUMENTS\n", no = "THIS ARGUMENT\n"), 
+                base::paste0(tempo_arg[tempo_log], collapse = "\n", recycle0 = FALSE),
+                "\nCANNOT CONTAIN EMPTY STRING \"\".", 
+                collapse = NULL, 
+                recycle0 = FALSE
+            )
+            base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL) # == in stop() to be able to add several messages between ==
+        }
+    }
     ######## end management of "" in arguments of mode character
 
     #### end argument secondary checking
@@ -476,9 +471,6 @@ curl_bracket_check <- function(
 
     ######## other checkings
     if(export == TRUE){
-        if(base::is.null(x = out_path)){
-            out_path <- "." # current working directory
-        }
         # removal of trailing / or \\ in the path
         if(base::grepl(x = out_path, pattern = "/$", ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE)){
             out_path <- base::sub(pattern = "/$", replacement = "", x = out_path, ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE)
@@ -488,9 +480,40 @@ curl_bracket_check <- function(
         # end removal of trailing / or \\ in the path
         if( ! base::dir.exists(paths = out_path)){
             tempo_cat <- base::paste0(
-                error_text_start, 
-                "DIRECTORY PATH INDICATED IN THE out_path ARGUMENT DOES NOT EXIST:\n", 
+                error_text_start,
+                "DIRECTORY PATH INDICATED IN THE out_path ARGUMENT DOES NOT EXISTS:\n", 
                 out_path, 
+                collapse = NULL, 
+                recycle0 = FALSE
+            )
+            base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL)
+        }
+        # determination of the file name: name of the submitted function, as written by the user, with _safer added at the end
+        # arg_user_setting$x is a language object: as.name(x = "test") or the parsed call "saferDev::test". deparse() recovers the written form
+        if(base::as.character(x = arg_user_setting$x)[1] == "::" | base::as.character(x = arg_user_setting$x)[1] == ":::"){
+            tempo_fun_name <- base::as.character(x = arg_user_setting$x)[3] # form "package::function" or "package:::function"
+        }else if(base::is.symbol(x = arg_user_setting$x)){
+            tempo_fun_name <- base::as.character(x = arg_user_setting$x)[1]
+        }else{
+            # multi-component written name (like FUN_LIST$fun), or inline definition (like function(x){x}), or other unexpected writing: cannot determine a file name reliably. FUN_LIST$fun would give fun_safer.R, but a same name can designate different functions depending on the object browsed by $: the written form is not reliable for the file name
+            tempo_cat <- base::paste0(
+                error_text_start,
+                "THE x ARGUMENT MUST BE DESIGNATED BY A FUNCTION NAME (NOT BY AN INLINE FUNCTION DEFINITION, NOR BY A COMPONENT WRITING LIKE obj$fun) WHEN THE export ARGUMENT IS TRUE.\nHERE IT IS:\n",
+                base::paste0(base::deparse(expr = arg_user_setting$x, width.cutoff = 60L, backtick = FALSE, control = base::c("keepNA", "keepInteger", "niceNames", "showAttributes"), nlines = -1L), collapse = "\n", recycle0 = FALSE),
+                collapse = NULL,
+                recycle0 = FALSE
+            )
+            base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL)
+        }
+        out_name <- base::paste0(tempo_fun_name, "_safer.R", collapse = NULL, recycle0 = FALSE)
+        if(base::file.exists(base::paste0(out_path, "/", out_name, collapse = NULL, recycle0 = FALSE))){
+            tempo_cat <- base::paste0(
+                error_text_start,
+                "FILE NAME ALREADY EXISTS AT THE INDICATED PATH:\n",
+                base::paste0(out_path, "/", out_name, collapse = NULL, recycle0 = FALSE),
+                "\n\nPLEASE, RENAME OR REMOVE THIS FILE, OR CHANGE THE out_path ARGUMENT BEFORE RERUNNING ",
+                package_function_name,
+                ".",
                 collapse = NULL, 
                 recycle0 = FALSE
             )
@@ -674,9 +697,6 @@ curl_bracket_check <- function(
             collapse = NULL, 
             recycle0 = FALSE
         )
-        if(export == TRUE){
-            tempo_cat <- base::paste0(tempo_cat, " NO MODIFIED FUNCTION EXPORTED.", collapse = NULL, recycle0 = FALSE)
-        }
     }else{
         tempo_cat <- base::paste0(
             "\nINSIDE ", 
@@ -695,7 +715,7 @@ curl_bracket_check <- function(
 
     #### output
     if(base::length(x = findings_line) == 0){
-        base::return(value = NULL) # nothing to modify: the submitted function is already compliant
+        base::return(value = base::invisible(x = NULL)) # nothing to modify: the submitted function is already compliant
     }
     # build the modified code: insert "{ " before each construct body and " }" after, from the end of the code to the beginning (so that the positions of the not-yet-modified parts stay valid). The "after" modifications are applied before the "before" ones at the same position (the type key of the sort: 1 for "after", 0 for "before")
     mod_code <- code
@@ -721,27 +741,7 @@ curl_bracket_check <- function(
         base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL)
         # nocov end
     }
-    # name of the modified function: <FUNCTION_NAME>_safer (function name part of the submitted expression)
-    fun_symbol <- base::as.character(x = tempo_settings$x)
-    if(base::length(x = fun_symbol) == 3 && (fun_symbol[1] == "::" | fun_symbol[1] == ":::")){
-        fun_symbol <- fun_symbol[3] # package::function() -> function name only
-    }
-    if(base::length(x = fun_symbol) != 1 || fun_symbol %in% base::c("", "::", ":::")){
-        # nocov start
-        # codecov inactivated because it is an internal control of code writing: the x argument is already arg_check-validated as a single function, so a plain symbol or a pkg::fun name is normally submitted (the multi-element case only occurs with exotic submitted names, like get("f") or anonymous functions).
-        tempo_cat <- base::paste0(
-            error_text_start, 
-            "THE MODIFIED FUNCTION CANNOT BE NAMED BECAUSE THE SUBMITTED x ARGUMENT IS NOT A FUNCTION NAME WRITTEN WITHOUT QUOTES AND BRACKETS.\nHERE IT IS:\n", 
-            base::paste0(base::deparse(expr = arg_user_setting$x, width.cutoff = 60L, backtick = FALSE, control = base::c("keepNA", "keepInteger", "niceNames", "showAttributes"), nlines = -1L), collapse = "\n", recycle0 = FALSE), 
-            "\nPLEASE, SUBMIT A FUNCTION WRITTEN AS <FUNCTION_NAME> OR <PACKAGE>::<FUNCTION_NAME>.", 
-            collapse = NULL, 
-            recycle0 = FALSE
-        )
-        base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL)
-        # nocov end
-    }
-    safe_name <- base::sub(x = fun_symbol, pattern = "[^A-Za-z0-9._]", replacement = "_", ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE)
-    out_name <- base::paste0(safe_name, "_safer", collapse = NULL, recycle0 = FALSE)
+    # name of the modified function: the file name (out_name, "<FUNCTION_NAME>_safer.R") and the assignment name (tempo_fun_name, <FUNCTION_NAME>) have already been determined in the other checkings section when export == TRUE. When export == FALSE, no file is written, so no name is needed
     parsed_mod <- base::parse(text = mod_text, keep.source = FALSE)
     if(base::length(x = parsed_mod) == 1){
         mod_fun <- base::eval(expr = parsed_mod[[1]], envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL)) # evaluates the assignment fun <- function(...)... : returns the assigned function
@@ -754,13 +754,14 @@ curl_bracket_check <- function(
     # restore the environment of the submitted function: without this, the modified function would keep the evaluation environment of curl_bracket_check() as closure environment, which would break closures of the submitted function and could resolve names wrongly
     base::environment(fun = mod_fun) <- base::environment(fun = x)
     if(export == TRUE){
-        # file content: assignment of the modified function, so that base::source()ing the file recreates it
+        # file content: assignment of the modified function, so that base::source()ing the file recreates it. The file name (out_name) and the assignment name (tempo_fun_name) have been determined in the other checkings section
         deparsed <- base::deparse(expr = mod_fun, width.cutoff = 500L, backtick = TRUE, control = base::c("keepNA", "keepInteger", "niceNames", "showAttributes"), nlines = -1L)
-        file_text <- base::paste0(out_name, " <- ", base::paste0(deparsed, collapse = "\n", recycle0 = FALSE), "\n", collapse = NULL, recycle0 = FALSE)
-        file_path <- base::paste0(out_path, "/", out_name, ".R", collapse = NULL, recycle0 = FALSE)
+        file_text <- base::paste0(tempo_fun_name, "_safer <- ", base::paste0(deparsed, collapse = "\n", recycle0 = FALSE), "\n", collapse = NULL, recycle0 = FALSE)
+        file_path <- base::paste0(out_path, "/", out_name, collapse = NULL, recycle0 = FALSE)
         base::cat(x = file_text, file = file_path, append = FALSE, sep = "")
-        base::message(base::paste0("MODIFIED FUNCTION EXPORTED TO: ", file_path, "\n\n", collapse = NULL, recycle0 = FALSE), domain = NULL, appendLF = TRUE)
-        output <- NULL
+        # the export message is printed with on.exit(), after the message of the main code: it only claims an export that actually happened, because the file writing is performed just above and no on.exit() is registered when no modification is inserted
+        base::on.exit(expr = base::message(base::paste0("MODIFIED CODE EXPORTED IN:\n", file_path, "\n\n", collapse = NULL, recycle0 = FALSE), domain = NULL, appendLF = TRUE), add = TRUE, after = TRUE)
+        output <- base::invisible(x = NULL)
     }else{
         output <- mod_fun
     }

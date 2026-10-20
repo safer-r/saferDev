@@ -7,7 +7,7 @@
 for_loop_nb_check(
   x,
   export = FALSE,
-  out_path = NULL,
+  out_path = ".",
   safer_check = TRUE,
   lib_path = NULL,
   error_text = ""
@@ -16,9 +16,9 @@ for_loop_nb_check(
 \arguments{
 \item{x}{a function name, written without quotes and brackets.}
 
-\item{export}{Single logical value. Export the modified function (see the \code{@returns} and \code{@details} sections) into a file? If \code{TRUE}, the modified code is written in a file named \code{<function name>_safer.R} (the function name is the last component of the submitted name, so that \code{pkg::fun()} gives \code{fun_safer.R}) in the directory indicated by the \code{out_path} argument, and \code{NULL} is returned: the modified function is only available in the file. An error is returned if this file already exists. Nothing is written if no modification is performed (everything clean, or no checking line inserted). If \code{FALSE} (default), the modified function is returned by \code{return()} (\code{NULL} if no modification is performed).}
+\item{export}{Single logical value. Export the modified function (see the \code{@returns} and \code{@details} sections) into a \code{.R} file? If \code{TRUE}, the modified code is written in a file named \code{<function name>_safer.R} (the function name is the last component of the submitted name, so that \code{pkg::fun()} gives \code{fun_safer.R}) in the directory indicated by the \code{out_path} argument, and \code{NULL} is returned: the modified function is only available in the file. The file contains an assignment of the modified function: \code{<function name>_safer <- function(...) ...}, so that \code{base::source()}ing it recreates the modified function. An error is returned if this file already exists, and if the tested function is not designated by a function name (like \code{test} or \code{package::test}), i.e., written by an inline definition (like \code{function(x)\{x\}}) or by a component writing (like \code{FUN_LIST$fun}). Nothing is written if no modification is performed (everything clean, or no checking line inserted). If \code{FALSE} (default), the modified function is returned by \code{return()} (\code{NULL} if no modification is performed).}
 
-\item{out_path}{Single character string indicating the absolute pathway of the folder where to export the modified function when the \code{export} argument is \code{TRUE}. \code{out_path = "."} means the R working directory set by the user. Ignored (and the R working directory set by the user is used) if \code{NULL} (default), or if the \code{export} argument is \code{FALSE}.}
+\item{out_path}{Single character string indicating the absolute pathway of the folder where to export the modified function when the \code{export} argument is \code{TRUE}. \code{out_path = "."} (default) means the R working directory set by the user. Ignored if the \code{export} argument is \code{FALSE}.}
 
 \item{safer_check}{Single logical value. Perform some "safer" checks? If \code{TRUE}, checkings are performed before main code running (see the \href{https://github.com/safer-r}{safer-r project}): 1) correct \code{lib_path} argument value 2) required functions and related packages effectively present in local R libraries and 3) R classical operators (like \code{"<-"}) not overwritten by another package because of the R scope. Must be set to \code{FALSE} if this function is used inside another "safer" function to avoid pointless multiple checkings.}
 
@@ -31,7 +31,7 @@ A table-like text message indicating the \code{for} sequences not written with h
 
 Table-like: column 1, the line number in the function code (starting at the \code{"<- function"} line, i.e., without counting the \code{#'} header lines); column 2, the construct (\code{for}); column 3, the code preceding the construct body.
 
-In addition, the returned value depends on the \code{export} argument and on the presence of reported \code{for} sequences. If \code{export} is \code{FALSE} and at least one checking line has been inserted (see the \code{@details} section), the modified function is returned by \code{return()}. If \code{export} is \code{TRUE}, \code{NULL} is returned, and the modified code is only available in the exported file. \code{NULL} is also returned when no modification is performed (everything clean, or no checking line inserted).
+In addition, the returned value depends on the \code{export} argument and on the presence of reported \code{for} sequences. If \code{export} is \code{FALSE} and at least one checking line has been inserted (see the \code{@details} section), the modified function is returned by \code{return()}. If \code{export} is \code{TRUE}, \code{NULL} is returned (invisibly), and the modified code is only available in the exported file, whose location is indicated by a message. \code{NULL} is also returned when no modification is performed (everything clean, or no checking line inserted).
 }
 \description{
 Verify that the sequence expression of every \code{for} construct of a function is written with hard numbers, i.e., only integer-valued numeric literals joined by \code{:} (like \code{1:3}, \code{0:0}, \code{-3:-1} or \code{1e3}, each of them possibly reduced to a single literal like \code{3}), each literal possibly negated by a unary minus, or a \code{base::seq_len(...)} or \code{base::seq_along(...)} call. Any other writing is reported, notably \code{1:length(x)} (recommended replacement: \code{base::seq_along(x = x)}), \code{1:n} with \code{n} a variable, \code{1:(n - 1)}, \code{1:2.5}, \code{1:NA}, \code{1:Inf} or \code{1:TRUE}, and plain variables like \code{for(i in x)} or calls like \code{base::rev(x = x)}, \code{base::names(x = df)} or \code{base::seq(x = x)}.

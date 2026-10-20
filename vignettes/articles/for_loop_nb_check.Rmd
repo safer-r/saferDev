@@ -143,7 +143,7 @@ for_loop_nb_check(
 for_loop_nb_check(
     x = fun1, # function name to test.
     export = FALSE, # return the modified function (FALSE, default) or export it in a <function name>_safer.R file (TRUE)?
-    out_path = NULL, # directory where to export the file when export = TRUE (R working directory when NULL).
+    out_path = ".", # directory where to export the file when export = TRUE (the R working directory by default).
     safer_check = TRUE, # perform some "safer" checks (see https://github.com/safer-r)?
     lib_path = NULL, # where the required packages are if not in the default directories.
     error_text = "" # add information in error messages returned by the function.
@@ -155,10 +155,10 @@ for_loop_nb_check(
 ```{r, echo = TRUE, error = TRUE}
 # When at least one checking line has been inserted, the modified function is returned by return() (NULL is returned when no modification is performed, e.g., when everything is clean or when the constructs cannot be modified, which are then listed in the message).
 fun9 <- function(x){ for(i in 1:length(x)){ y <- i } ; y }
-fun9_safer <- for_loop_nb_check(x = fun9, export = FALSE, out_path = NULL, safer_check = TRUE, lib_path = NULL, error_text = "")
+fun9_safer <- for_loop_nb_check(x = fun9, export = FALSE, out_path = ".", safer_check = TRUE, lib_path = NULL, error_text = "")
 fun9_safer # the modified function: tempo_for_seq1 <- 1:length(x) ; <CHECKS> ; for(i in tempo_for_seq1){ y <- i }
 
-# With export = TRUE, the modified code is written in a fun9_safer.R file, in the directory indicated by out_path (the R working directory when out_path = NULL), and NULL is returned. An error is issued if the file already exists, and nothing is written when no modification is performed.
+# With export = TRUE, the modified code is written in a fun9_safer.R file, in the directory indicated by out_path (the R working directory by default, when out_path = "."), and NULL is returned. An error is issued if the file already exists, and nothing is written when no modification is performed.
 # for_loop_nb_check(x = fun9, export = TRUE, out_path = tempdir(), safer_check = TRUE, lib_path = NULL, error_text = "")
 ```
 <br>

@@ -4,7 +4,8 @@
 #'
 #' Warning: the function first checks that all the functions used inside \code{x} are preceded by a package attribution (like \code{colons_check()} would do): if not, an error is returned, asking to run \code{colons_check()} first (like \code{all_args_here()} does). This pre-check must pass before the \code{T} or \code{F} scanning is performed.
 #' @param x a function name, written without quotes and brackets.
-#' @param export Single logical value. Export the modified function (see the \code{@returns} and \code{@details} sections) into a file in the R working directory set by the user? If \code{TRUE}, the modified code is written in a file named \code{<function name>_safer.R} (the function name is the last component of the submitted name, so that \code{pkg::fun()} gives \code{fun_safer.R}), and \code{NULL} is returned: the modified function is only available in the file. An error is returned if this file already exists. If \code{FALSE} (default), the modified function is returned by \code{return()}.
+#' @param export Single logical value. Export the modified function (see the \code{@returns} and \code{@details} sections) into a \code{.R} file? If \code{TRUE}, the modified code is written in a file named \code{<function name>_safer.R} (the function name is the last component of the submitted name, so that \code{pkg::fun()} gives \code{fun_safer.R}) in the directory indicated by the \code{out_path} argument, and \code{NULL} is returned: the modified function is only available in the file. The file contains an assignment of the modified function: \code{<function name>_safer <- function(...) ...}, so that \code{base::source()}ing it recreates the modified function. An error is returned if this file already exists, and if the tested function is not designated by a function name (like \code{test} or \code{package::test}), i.e., written by an inline definition (like \code{function(x)\{x\}}) or by a component writing (like \code{FUN_LIST$fun}). Nothing is written if no modification is performed (everything clean). If \code{FALSE} (default), the modified function is returned by \code{return()} (\code{NULL} if no modification is performed).
+#' @param out_path Single character string indicating the absolute pathway of the folder where to export the modified function when the \code{export} argument is \code{TRUE}. \code{out_path = "."} (default) means the R working directory set by the user. Ignored if the \code{export} argument is \code{FALSE}.
 #' @param safer_check Single logical value. Perform some "safer" checks? If \code{TRUE}, checkings are performed before main code running (see the \href{https://github.com/safer-r}{safer-r project}): 1) correct \code{lib_path} argument value 2) required functions and related packages effectively present in local R libraries and 3) R classical operators (like \code{"<-"}) not overwritten by another package because of the R scope. Must be set to \code{FALSE} if this function is used inside another "safer" function to avoid pointless multiple checkings.
 #' @param lib_path Vector of characters specifying the absolute pathways of the directories containing the required packages for the function, if not in the default directories. Useful when R packages are not installed in the default directories because of lack of admin rights. More precisely, \code{lib_path} is passed through the \code{new} argument of \code{.libPaths()} so that the new library paths are \code{unique(c(new, .Library.site, .Library))}. Warning: \code{.libPaths()} is restored to the initial paths, after function execution. Ignored if \code{NULL} (default) or if the \code{safer_check} argument is \code{FALSE}: only the pathways specified by the current \code{.libPaths()} are used for package calling.
 #' @param error_text Single character string used to add information in error messages returned by the function, notably if the function is inside other functions, which is practical for debugging. Example: \code{error_text = " INSIDE <PACKAGE_1>::<FUNCTION_1> INSIDE <PACKAGE_2>::<FUNCTION_2>."}. If \code{NULL}, converted into \code{""}.
@@ -13,9 +14,9 @@
 #'
 #' Table-like: column 1, the line number in the function code (starting at the \code{"<- function"} line, i.e., without counting the \code{#'} header lines); column 2, the symbol (\code{T} or \code{F}); column 3, the code preceding the symbol.
 #'
-#' In addition, the returned value depends on the \code{export} argument. If \code{export} is \code{FALSE}, the submitted function with all the reported symbols replaced (\code{T} by \code{TRUE} and \code{F} by \code{FALSE}) is returned by \code{return()}, and \code{NULL} is returned if no modification was performed (everything clean). If \code{export} is \code{TRUE}, \code{NULL} is returned, and the modified code is only available in the exported file.
+#' In addition, the returned value depends on the \code{export} argument. If \code{export} is \code{FALSE}, the submitted function with all the reported symbols replaced (\code{T} by \code{TRUE} and \code{F} by \code{FALSE}) is returned by \code{return()}, and \code{NULL} is returned if no modification was performed (everything clean). If \code{export} is \code{TRUE}, \code{NULL} is returned (invisibly), and the modified code is only available in the exported file, whose location is indicated by a message.
 #' @details
-#' The reported symbols are used to modify the code of the tested function like this: replace \code{T} by \code{TRUE} and \code{F} by \code{FALSE} (see the \code{@returns} section). The replacement is performed at the exact positions of the reported tokens in the recovered code, so that comments, strings and the formatting of the original code are preserved (in particular, symbols written as \code{base::T} are replaced by \code{TRUE}, because the \code{::} operator cannot precede a reserved constant). When \code{export} is \code{FALSE}, the modified function is returned by \code{return()} in a new environment whose parent is the environment of the submitted function: please, check the returned function before replacing the original one, notably because its environment is not necessarily the same. When \code{export} is \code{TRUE}, the modified code is written in the file \code{<function name>_safer.R} of the R working directory set by the user (the function name is the last component of the submitted name, so that \code{pkg::fun()} gives \code{fun_safer.R}), and nothing is written if no modification was performed. Warning: the exported file is a standalone R script containing the modified function code, and its potential pre-existing version is never overwritten (an error is returned instead).
+#' The reported symbols are used to modify the code of the tested function like this: replace \code{T} by \code{TRUE} and \code{F} by \code{FALSE} (see the \code{@returns} section). The replacement is performed at the exact positions of the reported tokens in the recovered code, so that comments, strings and the formatting of the original code are preserved (in particular, symbols written as \code{base::T} are replaced by \code{TRUE}, because the \code{::} operator cannot precede a reserved constant). When \code{export} is \code{FALSE}, the modified function is returned by \code{return()} in a new environment whose parent is the environment of the submitted function: please, check the returned function before replacing the original one, notably because its environment is not necessarily the same. When \code{export} is \code{TRUE}, the modified code is written in the file \code{<function name>_safer.R} of the directory indicated by the \code{out_path} argument (the function name is the last component of the submitted name, so that \code{pkg::fun()} gives \code{fun_safer.R}), and nothing is written if no modification was performed. The exported file contains an assignment of the modified function (\code{<function name>_safer <- function(...) ...}), so that \code{base::source()}ing it recreates the modified function. Warning: the tested function must be designated by a function name (like \code{test} or \code{package::test}) when \code{export = TRUE}: an inline definition (like \code{function(x)\{x\}}) or a component writing (like \code{FUN_LIST$fun}) returns an error, because the name of the exported file could not be determined reliably. Warning: the exported file is a standalone R script containing the modified function code, and its potential pre-existing version is never overwritten (an error is returned instead).
 #'
 #' More precisely, \code{true_false_check()} reports every symbol \code{T} or \code{F} used as a value (see the \code{@description} section), but not the symbols used as names, because these are user-defined objects: definition target, like \code{T <- 1}, \code{T = 1} or \code{y -> T}; assignment value, like \code{x <- T} or \code{T -> x} (deliberately not reported, because such a symbol refers to a user-defined object); formal name, like \code{function(T)}; named-argument name, like \code{f(T = 1)}; component after \code{$} or slot after \code{@}, like \code{df$T} or \code{df@F}; loop variable, like \code{for(T in 1:3)}; function name, like \code{T()}; help topic, like \code{?T}, \code{?(T)}, \code{?((T))} or \code{??T}, at any parenthesis depth; formula symbol, like \code{y ~ T}, \code{T ~ y} or \code{y ~ x + T}, wherever it is located in the formula.
 #'
@@ -44,21 +45,22 @@
 #' fun4 <- function(x){ if(x == T){ base::return(x) } } ; saferDev::true_false_check(fun4)
 #' fun4_bis <- saferDev::true_false_check(x = fun4, export = FALSE, safer_check = TRUE, lib_path = NULL, error_text = "") # modified function returned (T replaced by TRUE)
 #' fun4_safer <- fun4_bis ; base::rm(list = base::c("fun4_bis")) # keep the original fun4 untouched
-#' saferDev::true_false_check(x = fun4, export = TRUE, safer_check = TRUE, lib_path = NULL, error_text = "") # fun4_safer.R written in the working directory, NULL returned
+#' saferDev::true_false_check(x = fun4, export = TRUE, out_path = ".", safer_check = TRUE, lib_path = NULL, error_text = "") # fun4_safer.R written in the working directory, NULL returned
 #'
 #' @export
 true_false_check <- function(
     x,
     export = FALSE,
+    out_path = ".",
     safer_check = TRUE,
     lib_path = NULL,
     error_text = ""
 ){
     # DEBUGGING
-    # x = fun1 ; export = FALSE ; lib_path = NULL ; safer_check = TRUE ; error_text = " INSIDE A"
-    # function_name <- "true_false_check" ; arg_user_setting = base::list(x = as.name(x = "fun1"), export = FALSE, lib_path = NULL , safer_check = TRUE, error_text = " INSIDE A")
-    # x = .base_op_check ; export = FALSE ; lib_path = NULL ; safer_check = TRUE ; error_text = " INSIDE A" # internal function with function body made of a single .Primitive() call
-    # source("C:\\Users\\gmillot\\Documents\\Git_projects\\safer-r\\saferDev\\R\\true_false_check.R") ; x = true_false_check ; export = FALSE ; lib_path = NULL ; safer_check = TRUE ; error_text = " INSIDE A" # Warning: x = saferDev::true_false_check does not return the same number of code lines
+    # x = fun1 ; export = FALSE ; out_path = "." ; lib_path = NULL ; safer_check = TRUE ; error_text = " INSIDE A"
+    # function_name <- "true_false_check" ; arg_user_setting = base::list(x = as.name(x = "fun1"), export = FALSE, out_path = ".", lib_path = NULL , safer_check = TRUE, error_text = " INSIDE A")
+    # x = .base_op_check ; export = FALSE ; out_path = "." ; lib_path = NULL ; safer_check = TRUE ; error_text = " INSIDE A" # internal function with function body made of a single .Primitive() call
+    # source("C:\\Users\\gmillot\\Documents\\Git_projects\\safer-r\\saferDev\\R\\true_false_check.R") ; x = true_false_check ; export = FALSE ; out_path = "." ; lib_path = NULL ; safer_check = TRUE ; error_text = " INSIDE A" # Warning: x = saferDev::true_false_check does not return the same number of code lines
 
     #### package name
     package_name <- "saferDev" # write NULL if the function developed is not in a package
@@ -196,6 +198,7 @@ true_false_check <- function(
     tempo_arg <-base::c(
         "x",
         "export",
+        "out_path",
         # "lib_path", # inactivated because can be NULL
         "safer_check"
         # "error_text" # inactivated because NULL converted to "" above
@@ -219,6 +222,7 @@ true_false_check <- function(
     tempo_arg <-base::c(
         "x",
         "export",
+        "out_path",
         "safer_check",
         "lib_path"
         # "error_text" # inactivated because empty value converted to "" above
@@ -391,6 +395,7 @@ true_false_check <- function(
     # add as many lines as below, for each of your arguments of your function in development
     tempo <- saferDev::arg_check(data = x, class = "function", typeof = NULL, mode = NULL, length = NULL, prop = FALSE, options = NULL, double_as_integer_allowed = FALSE, all_options_in_data = FALSE, na_contain = FALSE, neg_values = TRUE, inf_values = TRUE, print = FALSE, data_name = NULL, data_arg = TRUE, safer_check = FALSE, lib_path = lib_path, error_text = embed_error_text) ; base::eval(expr = ee, envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL))
     tempo <- saferDev::arg_check(data = export, class = NULL, typeof = "logical", mode = NULL, length = 1, prop = FALSE, options = NULL, double_as_integer_allowed = FALSE, all_options_in_data = FALSE, na_contain = FALSE, neg_values = TRUE, inf_values = TRUE, print = FALSE, data_name = NULL, data_arg = TRUE, safer_check = FALSE, lib_path = lib_path, error_text = embed_error_text) ; base::eval(expr = ee, envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL))
+    tempo <- saferDev::arg_check(data = out_path, class = NULL, typeof = "character", mode = NULL, length = 1, prop = FALSE, options = NULL, double_as_integer_allowed = FALSE, all_options_in_data = FALSE, na_contain = FALSE, neg_values = TRUE, inf_values = TRUE, print = FALSE, data_name = NULL, data_arg = TRUE, safer_check = FALSE, lib_path = lib_path, error_text = embed_error_text) ; base::eval(expr = ee, envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL))
     # lib_path already checked above
     # safer_check already checked above
     # error_text converted to single string above
@@ -405,7 +410,45 @@ true_false_check <- function(
     ######## end argument checking with arg_check()
 
     ######## management of "" in arguments of mode character
-    # not required
+    tempo_arg <- base::c(
+        "out_path"
+        # "lib_path" # inactivated because already checked above
+        # "error_text" # inactivated because can be ""
+    )
+    # nocov start
+    # codecov inactivated because it is an internal control of code writing, impossible to cover with argument values.
+    tempo_log <- ! base::sapply(X = base::lapply(X = tempo_arg, FUN = function(x){base::get(x = x, pos = -1L, envir = base::parent.frame(n = 2), mode = "any", inherits = FALSE)}), FUN = function(x){if(base::is.null(x = x)){base::return(TRUE)}else{base::all(base::mode(x = x) == "character", na.rm = TRUE)}}, simplify = TRUE, USE.NAMES = TRUE) # parent.frame(n = 2) because get() is evaluated inside the FUN closure of the inner lapply: parent.frame(n = 1) is lapply's frame, parent.frame(n = 2) is BACKBONE's frame.  #  need to test is.null() here
+    if(base::any(tempo_log, na.rm = TRUE)){
+        # This check is here in case the developer has not correctly fill tempo_arg
+        tempo_cat <- base::paste0(
+            "INTERNAL ERROR IN THE BACKBONE PART OF ", 
+            intern_error_text_start, 
+            "IN THE SECTION \"management of \"\" in arguments of mode character\"\n", 
+            base::ifelse(test = base::sum(tempo_log, na.rm = TRUE) > 1, yes = "THESE ARGUMENTS ARE", no = "THIS ARGUMENT IS"), 
+            " NOT CLASS \"character\":\n", 
+            base::paste0(tempo_arg[tempo_log], collapse = "\n", recycle0 = FALSE), 
+            "\nIf saferMake::saferMake() HAS BEEN USED TO MODIFY YOUR FUNCTION, PLEASE RESTART WITH YOUR MAIN CODE AND SELECT PROPER CLASS, TYPE AND/OR MODE FOR YOUR ARGUMENTS\n.HERE, ARGUMENTS ARE TYPE:\n", 
+            base::paste0(base::sapply(X = tempo_arg, FUN = function(x){base::paste0(x, ": \"", base::typeof(x = base::get(x = x, pos = -1L, envir = base::parent.frame(n = 3), mode = "any", inherits = FALSE)), "\"", collapse = NULL, recycle0 = FALSE)}, simplify = TRUE, USE.NAMES = TRUE), collapse = "\n", recycle0 = FALSE), # parent.frame(n = 3) because the get() is evaluated inside the FUN closure of sapply. But sapply(FUN) calls lapply(FUN) internally !! So parent.frame(n = 1) is the internal lapply() frame called by sapply, parent.frame(n = 2) is sapply's frame, parent.frame(n = 3) is BACKBONE's frame. NB: paste0() and typeof() are primitives and add no frame.
+            intern_error_text_end, 
+            collapse = NULL, 
+            recycle0 = FALSE
+        )
+        base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL)
+        # nocov end
+    }else{
+        tempo_log <- base::sapply(X = base::lapply(X = tempo_arg, FUN = function(x){base::get(x = x, pos = -1L, envir = base::parent.frame(n = 2), mode = "any", inherits = FALSE)}), FUN = function(x){base::any(x == "", na.rm = TRUE)}, simplify = TRUE, USE.NAMES = TRUE) # parent.frame(n = 2) because get() is evaluated inside the FUN closure of the inner lapply: parent.frame(n = 1) is lapply's frame, parent.frame(n = 2) is BACKBONE's frame. # for character argument that can also be NULL, if NULL -> returns FALSE. Thus no need to test is.null()
+        if(base::any(tempo_log, na.rm = TRUE)){
+            tempo_cat <- base::paste0(
+                error_text_start, 
+                base::ifelse(test = base::sum(tempo_log, na.rm = TRUE) > 1, yes = "THESE ARGUMENTS\n", no = "THIS ARGUMENT\n"), 
+                base::paste0(tempo_arg[tempo_log], collapse = "\n", recycle0 = FALSE),
+                "\nCANNOT CONTAIN EMPTY STRING \"\".", 
+                collapse = NULL, 
+                recycle0 = FALSE
+            )
+            base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL) # == in stop() to be able to add several messages between ==
+        }
+    }
     ######## end management of "" in arguments of mode character
 
     #### end argument secondary checking
@@ -426,15 +469,34 @@ true_false_check <- function(
 
     ######## other checkings
     if(export == TRUE){
-        # function name of the submitted function: last component of the submitted name (pkg::fun() gives fun). Warning: the submitted function must be designated by a name, not by an inline definition (like function(x){ x }), otherwise the name of the exported file cannot be determined
+        # removal of trailing / or \\ in the path
+        if(base::grepl(x = out_path, pattern = "/$", ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE)){
+            out_path <- base::sub(pattern = "/$", replacement = "", x = out_path, ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE)
+        }else if(base::grepl(x = out_path, pattern = "\\\\$", ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE)){
+            out_path <- base::sub(pattern = "\\\\$", replacement = "", x = out_path, ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE)
+        }
+        # end removal of trailing / or \\ in the path
+        if( ! base::dir.exists(paths = out_path)){
+            tempo_cat <- base::paste0(
+                error_text_start,
+                "DIRECTORY PATH INDICATED IN THE out_path ARGUMENT DOES NOT EXISTS:\n", 
+                out_path, 
+                collapse = NULL, 
+                recycle0 = FALSE
+            )
+            base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL)
+        }
+        out_dir <- out_path # folder path after trailing / or \\ removal
+        # determination of the file name: name of the submitted function, as written by the user, with _safer added at the end
         if(base::as.character(x = arg_user_setting$x)[1] == "::" | base::as.character(x = arg_user_setting$x)[1] == ":::"){
-            out_fun_name <- base::as.character(x = arg_user_setting$x)[3]
+            out_fun_name <- base::as.character(x = arg_user_setting$x)[3] # form "package::function" or "package:::function"
         }else if(base::is.symbol(x = arg_user_setting$x)){
             out_fun_name <- base::as.character(x = arg_user_setting$x)[1]
         }else{
+            # multi-component written name (like FUN_LIST$fun), or inline definition (like function(x){x}), or other unexpected writing: cannot determine a file name reliably. FUN_LIST$fun would give fun_safer.R, but a same name can designate different functions depending on the object browsed by $: the written form is not reliable for the file name
             tempo_cat <- base::paste0(
                 error_text_start,
-                "THE x ARGUMENT MUST BE DESIGNATED BY A FUNCTION NAME (NOT BY AN INLINE FUNCTION DEFINITION) WHEN THE export ARGUMENT IS TRUE.\nHERE IT IS:\n",
+                "THE x ARGUMENT MUST BE DESIGNATED BY A FUNCTION NAME (NOT BY AN INLINE FUNCTION DEFINITION, NOR BY A COMPONENT WRITING LIKE obj$fun) WHEN THE export ARGUMENT IS TRUE.\nHERE IT IS:\n",
                 base::paste0(base::deparse(expr = arg_user_setting$x, width.cutoff = 60L, backtick = FALSE, control = base::c("keepNA", "keepInteger", "niceNames", "showAttributes"), nlines = -1L), collapse = "\n", recycle0 = FALSE),
                 collapse = NULL,
                 recycle0 = FALSE
@@ -442,16 +504,16 @@ true_false_check <- function(
             base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL)
         }
         out_file_name <- base::paste0(out_fun_name, "_safer.R", collapse = NULL, recycle0 = FALSE)
-        out_file_path <- base::file.path(base::getwd(), out_file_name, fsep = "/") # consistent between OS, contrary to base::paste0(base::getwd(), "/", out_file_name, collapse = NULL, recycle0 = FALSE)
+        out_file_path <- base::file.path(out_dir, out_file_name, fsep = "/") # consistent between OS, contrary to base::paste0(out_dir, "/", out_file_name, collapse = NULL, recycle0 = FALSE)
         if(base::file.exists(out_file_path)){
             tempo_cat <- base::paste0(
-                error_text_start,
-                "FILE NAME ALREADY EXISTS AT THE INDICATED PATH:\n",
-                out_file_path,
-                "\n\nPLEASE, RENAME OR REMOVE THIS FILE, OR CHANGE THE R WORKING DIRECTORY BEFORE RERUNNING ",
-                package_function_name,
-                ".",
-                collapse = NULL,
+                error_text_start, 
+                "FILE NAME ALREADY EXISTS AT THE INDICATED PATH:\n", 
+                out_file_path, 
+                "\n\nPLEASE, RENAME OR REMOVE THIS FILE, OR CHANGE THE out_path ARGUMENT BEFORE RERUNNING ", 
+                package_function_name, 
+                ".", 
+                collapse = NULL, 
                 recycle0 = FALSE
             )
             base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL)
@@ -719,14 +781,8 @@ true_false_check <- function(
             export_code <- modified_code
             export_code[1] <- base::paste0(out_fun_name, "_safer <- ", export_code[1], collapse = NULL, recycle0 = FALSE)
             utils::write.table(x = export_code, file = out_file_path, row.names = FALSE, col.names = FALSE, append = FALSE, quote = FALSE, sep = "", eol = "\n", na = "", dec = ".", qmethod = base::c("escape", "double"), fileEncoding = "") # write each line of the modified code, without any quoting, in a plain text R script
-            tempo_cat <- base::paste0(
-                tempo_cat,
-                "\n\nMODIFIED CODE EXPORTED IN:\n",
-                out_file_path,
-                ".",
-                collapse = NULL,
-                recycle0 = FALSE
-            )
+            # the export message is printed with on.exit(), after the message of the main code: it only claims an export that actually happened, because the file writing is performed just above and no on.exit() is registered when no modification is inserted
+            base::on.exit(expr = base::message(base::paste0("MODIFIED CODE EXPORTED IN:\n", out_file_path, "\n\n", collapse = NULL, recycle0 = FALSE), domain = NULL, appendLF = TRUE), add = TRUE, after = TRUE)
         }else{
             tempo_cat <- base::paste0(
                 tempo_cat,
@@ -746,7 +802,7 @@ true_false_check <- function(
     if(base::length(x = findings_line) == 0){
         output <- NULL
     }else if(export == TRUE){
-        output <- NULL # the modified code has already been written in the exported file above
+        output <- base::invisible(x = NULL) # the modified code has already been written in the exported file above
     }else{
         output <- base::eval(expr = base::parse(text = base::paste0(modified_code, collapse = "\n", recycle0 = FALSE), file = "", n = NULL, prompt = "?", keep.source = base::getOption(x = "keep.source", default = NULL), srcfile = NULL, encoding = "unknown")[[1]], envir = base::new.env(parent = base::environment(fun = x)), enclos = base::globalenv())
     }

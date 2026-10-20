@@ -21,9 +21,9 @@ all_args_here(
 
 \item{table_export}{Single logical value. Export the result data frame into a \code{.tsv} file? If \code{TRUE}, the data frame is not returned by the function but only exported.}
 
-\item{fun_export}{Single logical value. Export the modified function into a \code{.R} file? If \code{TRUE}, the corrected code (missing arguments added into the detected function calls, as proposed in the \code{$STATUS} column) is not returned by the function but only exported into a file made of the name of the submitted function with \code{_safer} added at the end (e.g., \code{test_safer.R}). Ignored if no correction has been applied.}
+\item{fun_export}{Single logical value. Export the modified function into a \code{.R} file? If \code{TRUE}, the corrected code (missing arguments added into the detected function calls, as proposed in the \code{$STATUS} column) is not returned by the function but only exported into a file made of the name of the submitted function with \code{_safer} added at the end (e.g., \code{test_safer.R}). The file contains an assignment of the modified function: \code{test_safer <- function(...) ...}, so that \code{base::source()}ing it recreates the modified function. An error is returned if the file already exists in \code{out_path} and \code{overwrite} is \code{FALSE}, and if the tested function is not designated by a function name (like \code{test} or \code{package::test}), i.e., written by an inline definition (like \code{function(x)\{x\}}) or by a component writing (like \code{FUN_LIST$fun}). Ignored if no correction has been applied.}
 
-\item{out_path}{Single character string indicating the absolute pathway of the folder where to export the data frame or the modified function. \code{out_path = "."} means the R working directory set by the user. Ignored if \code{table_export} and \code{fun_export} are \code{FALSE}.}
+\item{out_path}{Single character string indicating the absolute pathway of the folder where to export the data frame or the modified function. \code{out_path = "."} (default) means the R working directory set by the user. Ignored if \code{table_export} and \code{fun_export} are \code{FALSE}.}
 
 \item{df_name}{Single character string indicating the name of the exported data frame file. Ignored if \code{table_export} is \code{FALSE}.}
 

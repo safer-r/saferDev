@@ -259,6 +259,8 @@ testthat::test_that("colons_check()", {
     ######## export and out_path arguments
     # out_path cannot contain an empty string, whatever the value of export
     testthat::expect_error(colons_check(x = fun9, out_path = "", safer_check = FALSE, lib_path = NULL, error_text = ""), regexp = "CANNOT CONTAIN EMPTY STRING", fixed = TRUE)
+    testthat::expect_error(colons_check(x = fun9, out_path = NULL, safer_check = FALSE, lib_path = NULL, error_text = ""), regexp = "CANNOT BE NULL", fixed = TRUE)
+    testthat::expect_error(colons_check(x = fun9, export = FALSE, out_path = NULL, safer_check = FALSE, lib_path = NULL, error_text = ""), regexp = "CANNOT BE NULL", fixed = TRUE)
     # export argument values
     testthat::expect_error(colons_check(x = fun9, export = NA, safer_check = FALSE, lib_path = NULL, error_text = ""))
     testthat::expect_error(colons_check(x = fun9, export = 1, safer_check = FALSE, lib_path = NULL, error_text = ""))
@@ -283,11 +285,11 @@ testthat::test_that("colons_check()", {
     testthat::expect_null(object = colons_check(x = fun9, export = TRUE, out_path = tempo_dir_colons, safer_check = FALSE, lib_path = NULL, error_text = ""), label = "export TRUE returns NULL")
     testthat::expect_true(object = base::file.exists(base::file.path(tempo_dir_colons, "fun9_safer.R", fsep = "/")), label = "fun9_safer.R written")
     exported_lines <- base::readLines(con = base::file.path(tempo_dir_colons, "fun9_safer.R", fsep = "/"), warn = FALSE, ok = TRUE)
-    testthat::expect_true(object = base::grepl(x = exported_lines[1], pattern = "^fun9 <- ", perl = TRUE), label = "exported file starts with the function writing")
+    testthat::expect_true(object = base::grepl(x = exported_lines[1], pattern = "^fun9_safer <- ", perl = TRUE), label = "exported file starts with the function writing")
     testthat::expect_true(object = base::any(base::grepl(x = exported_lines, pattern = "base::c\\(", perl = TRUE), na.rm = TRUE), label = "exported code contains base::c")
     tempo_env_colons <- base::new.env(parent = base::globalenv())
     base::sys.source(file = base::file.path(tempo_dir_colons, "fun9_safer.R", fsep = "/"), envir = tempo_env_colons, chdir = FALSE)
-    testthat::expect_identical(object = tempo_env_colons$fun9(1), expected = fun9(1), label = "exported function behaves like the submitted one")
+    testthat::expect_identical(object = tempo_env_colons$fun9_safer(1), expected = fun9(1), label = "exported function behaves like the submitted one")
     # pre-existing file is never overwritten
     testthat::expect_error(colons_check(x = fun9, export = TRUE, out_path = tempo_dir_colons, safer_check = FALSE, lib_path = NULL, error_text = ""), regexp = "FILE NAME ALREADY EXISTS", fixed = TRUE)
     base::unlink(x = base::file.path(tempo_dir_colons, "fun9_safer.R", fsep = "/"))
@@ -298,9 +300,9 @@ testthat::test_that("colons_check()", {
     testthat::expect_null(object = colons_check(x = base::mean, export = TRUE, out_path = tempo_dir_colons, safer_check = FALSE, lib_path = NULL, error_text = ""))
     testthat::expect_true(object = base::file.exists(base::file.path(tempo_dir_colons, "mean_safer.R", fsep = "/")), label = "mean_safer.R written for pkg::fun form")
     base::unlink(x = base::file.path(tempo_dir_colons, "mean_safer.R", fsep = "/"))
-    # file name determination: multi-component written name like FUN_LIST$fun: fallback to the last element of as.character()
-    testthat::expect_null(object = colons_check(x = FUN_LIST$fun, export = TRUE, out_path = tempo_dir_colons, safer_check = FALSE, lib_path = NULL, error_text = ""))
-    testthat::expect_true(object = base::file.exists(base::file.path(tempo_dir_colons, "fun_safer.R", fsep = "/")), label = "fun_safer.R written for FUN_LIST$fun")
+    # file name determination: multi-component written name like FUN_LIST$fun is refused when export = TRUE (the written form is not reliable for the file name)
+    testthat::expect_error(colons_check(x = FUN_LIST$fun, export = TRUE, out_path = tempo_dir_colons, safer_check = FALSE, lib_path = NULL, error_text = ""), regexp = "MUST BE DESIGNATED BY A FUNCTION NAME", fixed = TRUE)
+    testthat::expect_false(object = base::file.exists(base::file.path(tempo_dir_colons, "fun_safer.R", fsep = "/")), label = "no fun_safer.R written for FUN_LIST$fun")
     # trailing / and \\ tolerated in out_path
     testthat::expect_no_error(colons_check(x = fun_rec, export = TRUE, out_path = base::paste0(tempo_dir_colons, "/"), safer_check = FALSE, lib_path = NULL, error_text = "")) # clean function for basic functions (recursive call only): no file written
     testthat::expect_false(object = base::file.exists(base::file.path(tempo_dir_colons, "fun_rec_safer.R", fsep = "/")))
@@ -310,6 +312,13 @@ testthat::test_that("colons_check()", {
     testthat::expect_error(colons_check(x = fun9, export = TRUE, out_path = "PATH_NOT_GOOD", safer_check = FALSE, lib_path = NULL, error_text = ""), regexp = "DIRECTORY PATH INDICATED IN THE out_path ARGUMENT DOES NOT EXISTS", fixed = TRUE)
     # out_path with a trailing /: the trailing / is removed first, then the path checked (the error message shows the path without the trailing /)
     testthat::expect_error(colons_check(x = fun9, export = TRUE, out_path = "PATH_NOT_GOOD/", safer_check = FALSE, lib_path = NULL, error_text = ""), regexp = "DOES NOT EXISTS:\nPATH_NOT_GOOD\n", fixed = TRUE)
+    # export message: the file location is announced by a message, and the returned value is invisible
+    testthat::expect_error(colons_check(x = fun9, export = TRUE, out_path = tempo_dir_colons, safer_check = FALSE, lib_path = NULL, error_text = ""), regexp = "FILE NAME ALREADY EXISTS", fixed = TRUE) # the file fun9_safer.R was rewritten just above, so a new error is expected
+    base::unlink(x = base::file.path(tempo_dir_colons, "fun9_safer.R", fsep = "/"))
+    testthat::expect_message(colons_check(x = fun9, export = TRUE, out_path = tempo_dir_colons, safer_check = FALSE, lib_path = NULL, error_text = ""), regexp = "MODIFIED CODE EXPORTED IN:", fixed = TRUE)
+    # inline definition and component writing are refused when export = TRUE (the name of the exported file could not be determined reliably)
+    testthat::expect_error(colons_check(x = function(y){ base::c(y) }, export = TRUE, out_path = tempo_dir_colons, safer_check = FALSE, lib_path = NULL, error_text = ""), regexp = "MUST BE DESIGNATED BY A FUNCTION NAME", fixed = TRUE)
+    testthat::expect_error(colons_check(x = FUN_LIST$fun, export = TRUE, out_path = tempo_dir_colons, safer_check = FALSE, lib_path = NULL, error_text = ""), regexp = "MUST BE DESIGNATED BY A FUNCTION NAME", fixed = TRUE)
     # cleanup
     base::unlink(x = tempo_dir_colons, recursive = TRUE, force = TRUE, expand = TRUE)
     ######## end export and out_path arguments

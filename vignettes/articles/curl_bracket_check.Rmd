@@ -124,7 +124,7 @@ fun2_safer(1)
 curl_bracket_check(x = fun2_safer)
 
 # Export the modified function into the fun2_safer.R file, in the "." path.
-# Warning: an already existing fun2_safer.R file is overwritten.
+# Warning: an already existing fun2_safer.R file is never overwritten (an error is returned instead).
 curl_bracket_check(
     x = fun2,
     export = TRUE,
@@ -134,17 +134,17 @@ curl_bracket_check(
 # so that base::source()ing it recreates the modified function.
 # Warning: comments of the submitted function are lost in the exported file.
 ```
-When `export = TRUE`, the modified function is not returned by the function but only exported (no file is created when the submitted function is already compliant). `out_path = NULL` (default) means the R working directory set by the user.
+When `export = TRUE`, the modified function is not returned by the function but only exported (no file is created when the submitted function is already compliant). `out_path = "."` (default) means the R working directory set by the user, and the tested function must be designated by a function name (not by an inline definition, nor by a component writing like `obj$fun`), because the name of the exported file could not be determined reliably otherwise.
 <br>
 
 ### All the arguments
 ```{r, echo = TRUE, error = TRUE}
 curl_bracket_check(
     x = fun1, # function name to test.
+    export = FALSE, # return the modified function, or export it into a .R file?
+    out_path = ".", # pathway of the folder where to export the modified function file.
     safer_check = TRUE, # perform some "safer" checks (see https://github.com/safer-r)?
     lib_path = NULL, # where the required packages are if not in the default directories.
-    export = FALSE, # return the modified function, or export it into a .R file?
-    out_path = NULL, # pathway of the folder where to export the modified function file.
     error_text = "" # add information in error messages returned by the function.
 )
 ```

@@ -293,6 +293,10 @@ testthat::test_that("true_false_check() export argument", {
     fun4 <- function(x){ if(x == T){ base::return(x) } } # contains T only
     fun6 <- function(x){ base::ifelse(test = x > 1, yes = T, no = F) } # contains T and F
     fun3 <- function(x){ if(x > 1){ base::return(TRUE) } } # clean function
+    str1 <- "FUN1"
+    factor1 <- base::as.factor(str1)
+    expr1 <- expression(1)
+    fun1 <- function(x){x = 1}
     ## end data argument values
 
     ## tests
@@ -343,6 +347,30 @@ testthat::test_that("true_false_check() export argument", {
     testthat::expect_false(object = base::file.exists(base::file.path(tempo_dir, "fun3_safer.R", fsep = "/")), label = "no file written for a clean function")
     # end export = TRUE tests
 
+    # out_path argument: type checks (whatever the value of export for NULL and "")
+    testthat::expect_error(true_false_check(x = fun3, export = TRUE, out_path = NULL, safer_check = TRUE, lib_path = NULL, error_text = ""), regexp = "CANNOT BE NULL", fixed = TRUE)
+    testthat::expect_error(true_false_check(x = fun3, export = FALSE, out_path = NULL, safer_check = TRUE, lib_path = NULL, error_text = ""), regexp = "CANNOT BE NULL", fixed = TRUE)
+    testthat::expect_error(true_false_check(x = fun3, export = TRUE, out_path = "", safer_check = TRUE, lib_path = NULL, error_text = ""), regexp = "CANNOT CONTAIN EMPTY STRING", fixed = TRUE)
+    testthat::expect_error(true_false_check(x = fun3, export = FALSE, out_path = "", safer_check = TRUE, lib_path = NULL, error_text = ""), regexp = "CANNOT CONTAIN EMPTY STRING", fixed = TRUE)
+    testthat::expect_error(true_false_check(x = fun3, export = TRUE, out_path = 1, safer_check = TRUE, lib_path = NULL, error_text = ""))
+    testthat::expect_error(true_false_check(x = fun3, export = TRUE, out_path = factor1, safer_check = TRUE, lib_path = NULL, error_text = ""))
+    testthat::expect_error(true_false_check(x = fun3, export = TRUE, out_path = expr1, safer_check = TRUE, lib_path = NULL, error_text = ""))
+    testthat::expect_error(true_false_check(x = fun3, export = TRUE, out_path = fun1, safer_check = TRUE, lib_path = NULL, error_text = ""))
+    testthat::expect_error(true_false_check(x = fun3, export = TRUE, out_path = base::c("a", "b"), safer_check = TRUE, lib_path = NULL, error_text = ""))
+    # out_path ignored when export = FALSE (even a non-existing path)
+    testthat::expect_no_error(true_false_check(x = fun3, export = FALSE, out_path = "PATH_NOT_GOOD", safer_check = TRUE, lib_path = NULL, error_text = ""))
+    # non-existing out_path with export = TRUE
+    testthat::expect_error(true_false_check(x = fun3, export = TRUE, out_path = "PATH_NOT_GOOD", safer_check = TRUE, lib_path = NULL, error_text = ""), regexp = "DIRECTORY PATH INDICATED IN THE out_path ARGUMENT DOES NOT EXISTS", fixed = TRUE)
+    # trailing / and \\ tolerated in out_path
+    base::unlink(x = base::file.path(tempo_dir, "fun4_safer.R", fsep = "/"))
+    testthat::expect_null(object = true_false_check(x = fun4, export = TRUE, out_path = base::paste0(tempo_dir, "/"), safer_check = TRUE, lib_path = NULL, error_text = ""))
+    testthat::expect_true(object = base::file.exists(base::file.path(tempo_dir, "fun4_safer.R", fsep = "/")))
+    base::unlink(x = base::file.path(tempo_dir, "fun4_safer.R", fsep = "/"))
+    testthat::expect_null(object = true_false_check(x = fun4, export = TRUE, out_path = base::paste0(tempo_dir, "\\"), safer_check = TRUE, lib_path = NULL, error_text = ""))
+    testthat::expect_true(object = base::file.exists(base::file.path(tempo_dir, "fun4_safer.R", fsep = "/")))
+    # component writing is refused when export = TRUE (the written form is not reliable for the file name)
+    FUN_LIST <- base::list(fun = fun4)
+    testthat::expect_error(true_false_check(x = FUN_LIST$fun, export = TRUE, out_path = tempo_dir, safer_check = TRUE, lib_path = NULL, error_text = ""), regexp = "MUST BE DESIGNATED BY A FUNCTION NAME", fixed = TRUE)
     # end of tests: restore the working directory and remove the temporary directory
     base::setwd(ini_wd)
     base::unlink(x = tempo_dir, recursive = TRUE, force = FALSE)

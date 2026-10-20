@@ -3,8 +3,8 @@
 #' Verify that all the functions used inside a function are written with all their arguments. For instance: \code{base::paste0(letters[1:2], collapse = NULL, recycle0 = FALSE)} and not \code{paste0(letters[1:2])}.
 #' @param x Function name, written without quotes and brackets.
 #' @param table_export Single logical value. Export the result data frame into a \code{.tsv} file? If \code{TRUE}, the data frame is not returned by the function but only exported.
-#' @param fun_export Single logical value. Export the modified function into a \code{.R} file? If \code{TRUE}, the corrected code (missing arguments added into the detected function calls, as proposed in the \code{$STATUS} column) is not returned by the function but only exported into a file made of the name of the submitted function with \code{_safer} added at the end (e.g., \code{test_safer.R}). Ignored if no correction has been applied.
-#' @param out_path Single character string indicating the absolute pathway of the folder where to export the data frame or the modified function. \code{out_path = "."} means the R working directory set by the user. Ignored if \code{table_export} and \code{fun_export} are \code{FALSE}.
+#' @param fun_export Single logical value. Export the modified function into a \code{.R} file? If \code{TRUE}, the corrected code (missing arguments added into the detected function calls, as proposed in the \code{$STATUS} column) is not returned by the function but only exported into a file made of the name of the submitted function with \code{_safer} added at the end (e.g., \code{test_safer.R}). The file contains an assignment of the modified function: \code{test_safer <- function(...) ...}, so that \code{base::source()}ing it recreates the modified function. An error is returned if the file already exists in \code{out_path} and \code{overwrite} is \code{FALSE}, and if the tested function is not designated by a function name (like \code{test} or \code{package::test}), i.e., written by an inline definition (like \code{function(x)\{x\}}) or by a component writing (like \code{FUN_LIST$fun}). Ignored if no correction has been applied.
+#' @param out_path Single character string indicating the absolute pathway of the folder where to export the data frame or the modified function. \code{out_path = "."} (default) means the R working directory set by the user. Ignored if \code{table_export} and \code{fun_export} are \code{FALSE}.
 #' @param df_name Single character string indicating the name of the exported data frame file. Ignored if \code{table_export} is \code{FALSE}.
 #' @param overwrite Single logical value. Overwrite potential files already existing in \code{out_path} (\code{df_name} for the table export, and the function name with \code{_safer} added at the end for the \code{fun_export})? Ignored if \code{table_export} and \code{fun_export} are \code{FALSE}.
 #' @param safer_check Single logical value. Perform the "safer" checks? If \code{TRUE}, checkings are performed before main code running (see the \href{https://github.com/safer-r}{safer-r project}): 1) correct \code{lib_path} argument value 2) required functions and related packages effectively present in local R libraries and 3) R classical operators (like \code{"<-"}) not overwritten by another package because of the R scope. Warning: must be set to \code{FALSE} if this function is used inside another "safer" function to avoid pointless multiple checkings.
@@ -598,14 +598,36 @@ all_args_here <- function(
         if(fun_export == TRUE){
             # determination of the file name: name of the submitted function, as written by the user, with _safer added at the end
             # arg_user_setting$x is a language object: as.name(x = "test") or the parsed call "saferDev::test". deparse() recovers the written form
-            tempo_fun_name <- base::deparse(expr = arg_user_setting$x, width.cutoff = 60L, backtick = FALSE, control = base::c("keepNA", "keepInteger", "niceNames", "showAttributes"), nlines = -1L) # deparse() of a name returns the bare name, of a call like "saferDev::test" returns c("saferDev::test")
-            if(base::length(x = tempo_fun_name) > 1 | base::any(base::grepl(x = tempo_fun_name, pattern = "\\(|\\)|\\s|\\$", ignore.case = FALSE, perl = TRUE, fixed = FALSE, useBytes = FALSE), na.rm = TRUE)){ # multi-line name or unexpected writing: fallback to the last element of as.character()
-                tempo_fun_name <- base::paste0(utils::tail(x = base::as.character(x = arg_user_setting$x), n = 1, keepnums = FALSE), collapse = NULL, recycle0 = FALSE)
-            }
-            if(base::grepl(x = tempo_fun_name, pattern = ":", ignore.case = FALSE, perl = FALSE, fixed = TRUE, useBytes = FALSE)){ # form "package::function" or "package:::function"
-                tempo_fun_name <- base::paste0(utils::tail(x = base::strsplit(x = tempo_fun_name, split = ":", fixed = TRUE, perl = FALSE, useBytes = FALSE)[[1]], n = 1, keepnums = FALSE), collapse = NULL, recycle0 = FALSE)
+            if(base::as.character(x = arg_user_setting$x)[1] == "::" | base::as.character(x = arg_user_setting$x)[1] == ":::"){
+                tempo_fun_name <- base::as.character(x = arg_user_setting$x)[3] # form "package::function" or "package:::function"
+            }else if(base::is.symbol(x = arg_user_setting$x)){
+                tempo_fun_name <- base::as.character(x = arg_user_setting$x)[1]
+            }else{
+                # multi-component written name (like FUN_LIST$fun), or inline definition (like function(x){x}), or other unexpected writing: cannot determine a file name reliably. FUN_LIST$fun would give fun_safer.R, but a same name can designate different functions depending on the object browsed by $: the written form is not reliable for the file name
+                tempo_cat <- base::paste0(
+                    error_text_start,
+                    "THE x ARGUMENT MUST BE DESIGNATED BY A FUNCTION NAME (NOT BY AN INLINE FUNCTION DEFINITION, NOR BY A COMPONENT WRITING LIKE obj$fun) WHEN THE fun_export ARGUMENT IS TRUE.\nHERE IT IS:\n",
+                    base::paste0(base::deparse(expr = arg_user_setting$x, width.cutoff = 60L, backtick = FALSE, control = base::c("keepNA", "keepInteger", "niceNames", "showAttributes"), nlines = -1L), collapse = "\n", recycle0 = FALSE),
+                    collapse = NULL,
+                    recycle0 = FALSE
+                )
+                base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL)
             }
             tempo_fun_file_name <- base::paste0(tempo_fun_name, "_safer.R", collapse = NULL, recycle0 = FALSE)
+            # the file existence check is performed here, like in the other safer functions having the export argument: the check is performed before the main code, so a pre-existing file is never silently overwritten (except when overwrite = TRUE)
+            if(overwrite == FALSE & base::file.exists(x = base::paste0(out_path, "/", tempo_fun_file_name, collapse = NULL, recycle0 = FALSE))){
+                tempo_cat <- base::paste0(
+                    error_text_start,
+                    "FILE NAME ALREADY EXISTS AT THE INDICATED PATH:\n",
+                    base::paste0(out_path, "/", tempo_fun_file_name, collapse = NULL, recycle0 = FALSE),
+                    "\n\nPLEASE, RENAME OR REMOVE THIS FILE, OR CHANGE THE out_path ARGUMENT BEFORE RERUNNING ",
+                    package_function_name,
+                    ".",
+                    collapse = NULL,
+                    recycle0 = FALSE
+                )
+                base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL)
+            }
         }
         if(overwrite == FALSE){
             if(table_export == TRUE){
@@ -620,7 +642,7 @@ all_args_here <- function(
                     base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL)
                 }
             }
-            # fun_export = TRUE: the file existence check is performed later, next to the actual writing: it must not block a call whose submitted function turns out to be clean (no correction applied, so no file written)
+            # fun_export = TRUE: the file existence check has already been performed above, in the other checkings section (skipped when overwrite = TRUE)
         }
     }
     ######## end other checkings
@@ -1114,6 +1136,8 @@ all_args_here <- function(
         if(fun_export == TRUE & base::length(x = tempo_insert$inserted) > 0){
             tempo_fun_file <- base::paste0(out_dir, "/", tempo_fun_file_name, collapse = NULL, recycle0 = FALSE)
             if(overwrite == FALSE & base::file.exists(x = tempo_fun_file)){
+                # nocov start
+                # codecov inactivated because the file existence check has already been performed in the other checkings section: this branch can only be reached if the file was created between the two checks
                 tempo_cat <- base::paste0(
                     error_text_start,
                     "FILE NAME ALREADY EXISTS AT THE INDICATED PATH:\n",
@@ -1122,9 +1146,12 @@ all_args_here <- function(
                     recycle0 = FALSE
                 )
                 base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL)
+                # nocov end
             }
-            base::writeLines(text = tempo_insert$fun_txt, con = tempo_fun_file, sep = "\n", useBytes = FALSE)
-            base::on.exit(expr = base::message(base::paste0("MODIFIED FUNCTION EXPORTED IN:\n", tempo_fun_file, "\n\n", collapse = NULL, recycle0 = FALSE), domain = NULL, appendLF = TRUE), add = TRUE, after = TRUE)
+            # file content: assignment of the modified function, so that base::source()ing the file recreates it. tempo_insert$fun_txt is the bare "function(...) ..." writing of the modified function, so the assignment name is the name of the submitted function with _safer added at the end
+            base::writeLines(text = base::paste0(tempo_fun_name, "_safer <- ", tempo_insert$fun_txt, collapse = NULL, recycle0 = FALSE), con = tempo_fun_file, sep = "\n", useBytes = FALSE)
+            # the export message is printed with on.exit(), after the messages of the main code: it only claims an export that actually happened, because the file writing is performed just above and no on.exit() is registered when no modification is inserted
+            base::on.exit(expr = base::message(base::paste0("MODIFIED CODE EXPORTED IN:\n", tempo_fun_file, "\n\n", collapse = NULL, recycle0 = FALSE), domain = NULL, appendLF = TRUE), add = TRUE, after = TRUE)
         }
         if(table_export == TRUE){
             utils::write.table(x = output, file = out_path, row.names = FALSE, col.names = TRUE, append = FALSE, quote = FALSE, sep = "\t", eol = "\n", na = "", dec = ".", qmethod = base::c("escape", "double"), fileEncoding = "")

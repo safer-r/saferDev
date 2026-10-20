@@ -396,6 +396,14 @@ testthat::test_that("all_args_here()", {
     tempo_dir <- base::tempdir()
     testthat::expect_no_error(all_args_here(x = FUN1, table_export = FALSE, fun_export = TRUE, out_path = tempo_dir, df_name = "res.tsv", overwrite = TRUE, safer_check = TRUE, lib_path = NULL, error_text = ""))
     testthat::expect_true(object = base::file.exists(base::file.path(tempo_dir, "FUN1_safer.R")))
+    # the exported file contains an assignment and can be sourced to recreate the function
+    tempo_lines <- base::readLines(con = base::file.path(tempo_dir, "FUN1_safer.R"), n = 5, warn = FALSE, ok = TRUE)
+    testthat::expect_true(object = base::grepl(x = tempo_lines[1], pattern = "^FUN1_safer <- ", perl = TRUE), label = "exported file starts with assignment")
+    tempo_env <- base::new.env(parent = base::globalenv())
+    base::sys.source(file = base::file.path(tempo_dir, "FUN1_safer.R"), envir = tempo_env, chdir = FALSE)
+    testthat::expect_true(object = base::is.function(x = tempo_env$FUN1_safer), label = "sourced exported file defines FUN1_safer")
+    # export message: the file location is announced by a message
+    testthat::expect_message(all_args_here(x = FUN1, table_export = FALSE, fun_export = TRUE, out_path = tempo_dir, df_name = "res.tsv", overwrite = TRUE, safer_check = TRUE, lib_path = NULL, error_text = ""), regexp = "MODIFIED CODE EXPORTED IN:", fixed = TRUE)
     # the exported file parses and gives a function
     tempo_parsed <- base::parse(file = base::file.path(tempo_dir, "FUN1_safer.R"), n = NULL, text = NULL, prompt = "?", keep.source = base::getOption(x = "keep.source", default = NULL), srcfile = NULL, encoding = "unknown")
     tempo_fun2 <- base::eval(expr = tempo_parsed[[1]], envir = base::environment(fun = NULL))
@@ -405,12 +413,12 @@ testthat::test_that("all_args_here()", {
     a <- file.remove(base::file.path(tempo_dir, "FUN1_safer.R"))
     # fun_export = TRUE with a clean function: no file written, no error even if a file with the same name already exists (the overwrite check is only performed when a file is actually written)
     testthat::expect_null(object = all_args_here(x = FUN2, table_export = FALSE, fun_export = TRUE, out_path = tempo_dir, df_name = "res.tsv", overwrite = FALSE, safer_check = TRUE, lib_path = NULL, error_text = ""))
-    # x = pkg::fun writing form: the file-name determination must not crash (the name is deparsed, then the last : -split component is kept), and for a clean pkg::fun nothing is written
+    # x = pkg::fun writing form: the file-name determination works (the last :: -split component is kept), and for a clean pkg::fun nothing is written
     testthat::expect_null(object = all_args_here(x = saferDev::all_args_here, table_export = FALSE, fun_export = TRUE, out_path = tempo_dir, df_name = "res.tsv", overwrite = TRUE, safer_check = FALSE, lib_path = NULL, error_text = ""))
-    # x = obj$fun writing form: the deparsed name contains a $, which triggers the fallback to the last element of as.character() (the file name determination works whatever the writing form)
+    # x = obj$fun writing form and inline definitions are refused when fun_export = TRUE (the written form is not reliable for the file name)
     FUN_LIST <- base::list(fun = FUN2)
-    testthat::expect_null(object = all_args_here(x = FUN_LIST$fun, table_export = FALSE, fun_export = TRUE, out_path = tempo_dir, df_name = "res.tsv", overwrite = FALSE, safer_check = FALSE, lib_path = NULL, error_text = "")) # clean function: nothing written
-    testthat::expect_false(object = base::file.exists(x = base::file.path(tempo_dir, "fun_safer.R")))
+    testthat::expect_error(all_args_here(x = FUN_LIST$fun, table_export = FALSE, fun_export = TRUE, out_path = tempo_dir, df_name = "res.tsv", overwrite = FALSE, safer_check = FALSE, lib_path = NULL, error_text = ""), regexp = "MUST BE DESIGNATED BY A FUNCTION NAME", fixed = TRUE) # clean function: nothing written anyway
+    testthat::expect_error(all_args_here(x = function(y){ base::sum(x = y) }, table_export = FALSE, fun_export = TRUE, out_path = tempo_dir, df_name = "res.tsv", overwrite = FALSE, safer_check = FALSE, lib_path = NULL, error_text = ""), regexp = "MUST BE DESIGNATED BY A FUNCTION NAME", fixed = TRUE)
     # nested calls on the same line: the innermost correction is applied, the outer one is reported in the final message (CORRECTIONS NOT APPLIED)
     FUN_NESTED <- function(v){
         res <- base::paste0(base::mean(1:2))
