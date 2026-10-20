@@ -254,6 +254,8 @@ testthat::test_that("true_false_check()", {
     testthat::expect_error(true_false_check(x = fun34, safer_check = TRUE, lib_path = NULL, error_text = ""), regexp = "SOME FUNCTIONS ARE NOT ASSOCIATED TO THEIR PACKAGE", fixed = TRUE) # component assignment is not an internal function: the bare mean() is flagged by the pre-check
     testthat::expect_message(true_false_check(x = fun35, safer_check = TRUE, lib_path = NULL, error_text = ""), regexp = "SOME SYMBOLS T OR F MUST BE WRITTEN TRUE OR FALSE", fixed = TRUE) # component function call: pre-check ok, T still reported
     testthat::expect_message(true_false_check(x = fun36, safer_check = TRUE, lib_path = NULL, error_text = ""), regexp = "EVERYTHING SEEMS CLEAN", fixed = TRUE)
+    fun36b <- base::eval(expr = base::parse(text = "function(x){ df <- 1 ; ?(T) ; base::print(df) }", file = "", n = NULL, prompt = "?", keep.source = FALSE, srcfile = NULL, encoding = "unknown")) # function built without srcref: deparsed as `?`((T)) by utils::capture.output()
+    testthat::expect_message(true_false_check(x = fun36b, safer_check = TRUE, lib_path = NULL, error_text = ""), regexp = "EVERYTHING SEEMS CLEAN", fixed = TRUE) # deparsed `?` call: the `?` function-call token is skipped by the identifier check, and the topic is in the parent-of-parent subtree: not reported
     testthat::expect_message(true_false_check(x = fun37, safer_check = TRUE, lib_path = NULL, error_text = ""), regexp = "SOME SYMBOLS T OR F MUST BE WRITTEN TRUE OR FALSE", fixed = TRUE) # ->> behaves like ->
     msgs37 <- testthat::capture_messages(true_false_check(x = fun37, safer_check = FALSE, lib_path = NULL, error_text = ""))
     res37 <- base::unlist(x = base::strsplit(x = msgs37, split = "\n", fixed = TRUE), recursive = TRUE, use.names = FALSE)
@@ -279,5 +281,77 @@ testthat::test_that("true_false_check()", {
 
     ## other tests
     ## end other tests
+
+    base::rm(list = base::ls())
+
+})
+
+# The tests of the export argument are in a separate block, so that they always run, even if the block above stops on an error
+testthat::test_that("true_false_check() export argument", {
+
+    ## data argument values
+    fun4 <- function(x){ if(x == T){ base::return(x) } } # contains T only
+    fun6 <- function(x){ base::ifelse(test = x > 1, yes = T, no = F) } # contains T and F
+    fun3 <- function(x){ if(x > 1){ base::return(TRUE) } } # clean function
+    ## end data argument values
+
+    ## tests
+    # export argument values
+    testthat::expect_error(true_false_check(x = fun4, export = NULL, safer_check = TRUE, lib_path = NULL, error_text = ""))
+    testthat::expect_error(true_false_check(x = fun4, export = NA, safer_check = TRUE, lib_path = NULL, error_text = ""))
+    testthat::expect_error(true_false_check(x = fun4, export = 1, safer_check = TRUE, lib_path = NULL, error_text = ""))
+    testthat::expect_error(true_false_check(x = fun4, export = c(TRUE, FALSE), safer_check = TRUE, lib_path = NULL, error_text = ""))
+    testthat::expect_error(true_false_check(x = fun4, export = "a", safer_check = TRUE, lib_path = NULL, error_text = ""))
+    testthat::expect_error(true_false_check(x = fun4, export = character(), safer_check = TRUE, lib_path = NULL, error_text = ""))
+    # end export argument values
+
+    # export = FALSE (default): the modified function is returned, NULL if everything is clean
+    out_fun4 <- true_false_check(x = fun4, export = FALSE, safer_check = TRUE, lib_path = NULL, error_text = "")
+    testthat::expect_true(object = base::is.function(x = out_fun4), label = "export FALSE returns the modified function")
+    testthat::expect_message(true_false_check(x = out_fun4, export = FALSE, safer_check = TRUE, lib_path = NULL, error_text = ""), regexp = "EVERYTHING SEEMS CLEAN", fixed = TRUE) # the returned function is clean
+    testthat::expect_true(object = base::identical(x = out_fun4(TRUE), y = TRUE), label = "the returned function actually evaluates") # out_fun4(TRUE) must return TRUE, exactly like fun4(TRUE)
+    testthat::expect_null(object = out_fun4(2), label = "the returned function behaves like the submitted one when the condition is FALSE") # fun4(2) returns NULL
+    testthat::expect_true(object = base::is.null(x = true_false_check(x = fun3, export = FALSE, safer_check = TRUE, lib_path = NULL, error_text = "")), label = "export FALSE returns NULL when everything is clean")
+
+    # export = TRUE: file written in a fresh temporary working directory, NULL returned, pre-existing file not overwritten
+    ini_wd <- base::getwd()
+    base::on.exit(expr = base::setwd(ini_wd), add = TRUE, after = TRUE) # restore the working directory even if a test fails
+    tempo_dir <- base::tempfile(pattern = "tf_export_") # fresh directory at each test run, so that no pre-existing file can interfere
+    base::dir.create(tempo_dir, showWarnings = FALSE, recursive = TRUE, mode = "0777")
+    base::setwd(tempo_dir)
+    out6 <- base::suppressMessages(true_false_check(x = fun6, export = TRUE, safer_check = TRUE, lib_path = NULL, error_text = "")) # suppressMessages() keeps the printed message out of the test output: the message itself is tested below with fun4
+    testthat::expect_null(object = out6, label = "export TRUE returns NULL")
+    testthat::expect_true(object = base::file.exists(base::file.path(tempo_dir, "fun6_safer.R", fsep = "/")), label = "fun6_safer.R written")
+    exported_lines <- base::readLines(con = base::file.path(tempo_dir, "fun6_safer.R", fsep = "/"))
+    testthat::expect_true(object = base::any(base::grepl(x = exported_lines, pattern = "^fun6_safer <- function", ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE)), label = "exported file defines fun6_safer <- function")
+    testthat::expect_true(object = base::any(base::grepl(x = exported_lines, pattern = "TRUE", ignore.case = FALSE, perl = FALSE, fixed = TRUE, useBytes = FALSE)) & base::any(base::grepl(x = exported_lines, pattern = "FALSE", ignore.case = FALSE, perl = FALSE, fixed = TRUE, useBytes = FALSE)), label = "exported file contains TRUE and FALSE") # fun6 contains both T and F
+    # sourced file defines a working function
+    base::sys.source(file = base::file.path(tempo_dir, "fun6_safer.R", fsep = "/"), envir = base::environment(fun = NULL))
+    testthat::expect_true(object = base::identical(x = fun6_safer(2), y = fun6(2)), label = "sourced exported function behaves like the submitted one")
+    testthat::expect_true(object = base::identical(x = fun6_safer(1), y = fun6(1)), label = "sourced exported function with T branch")
+    # the message is still printed (tested with fun4, whose file does not exist yet)
+    testthat::expect_message(true_false_check(x = fun4, export = TRUE, safer_check = TRUE, lib_path = NULL, error_text = ""), regexp = "MODIFIED CODE EXPORTED IN:", fixed = TRUE)
+    # pre-existing file never overwritten
+    testthat::expect_error(true_false_check(x = fun6, export = TRUE, safer_check = TRUE, lib_path = NULL, error_text = ""), regexp = "FILE NAME ALREADY EXISTS", fixed = TRUE)
+    # pkg::fun submitted name: the file name is built from the last component of the submitted name (true_false_check_safer.R here, not saferDev_safer.R). The function is clean, so no file is written and NULL is returned
+    testthat::expect_null(object = true_false_check(x = saferDev::true_false_check, export = TRUE, safer_check = TRUE, lib_path = NULL, error_text = ""), label = "pkg::fun naming with a clean function: NULL")
+    testthat::expect_false(object = base::file.exists(base::file.path(tempo_dir, "true_false_check_safer.R", fsep = "/")), label = "no true_false_check_safer.R file written for the clean pkg::fun")
+    # inline anonymous function with export = TRUE: error
+    testthat::expect_error(true_false_check(x = function(y){ y == T }, export = TRUE, safer_check = TRUE, lib_path = NULL, error_text = ""), regexp = "MUST BE DESIGNATED BY A FUNCTION NAME", fixed = TRUE)
+    # clean function: NULL returned, no file written
+    testthat::expect_true(object = base::is.null(x = true_false_check(x = fun3, export = TRUE, safer_check = TRUE, lib_path = NULL, error_text = "")), label = "clean function with export TRUE: NULL, no file")
+    testthat::expect_false(object = base::file.exists(base::file.path(tempo_dir, "fun3_safer.R", fsep = "/")), label = "no file written for a clean function")
+    # end export = TRUE tests
+
+    # end of tests: restore the working directory and remove the temporary directory
+    base::setwd(ini_wd)
+    base::unlink(x = tempo_dir, recursive = TRUE, force = FALSE)
+
+    ## end tests
+
+    ## other tests
+    ## end other tests
+
+    base::rm(list = base::setdiff(x = base::ls(), y = "ini_wd")) # ini_wd is kept because used by the on.exit() handler above
 
 })

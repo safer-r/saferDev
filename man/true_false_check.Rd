@@ -4,10 +4,18 @@
 \alias{true_false_check}
 \title{True False Check}
 \usage{
-true_false_check(x, safer_check = TRUE, lib_path = NULL, error_text = "")
+true_false_check(
+  x,
+  export = FALSE,
+  safer_check = TRUE,
+  lib_path = NULL,
+  error_text = ""
+)
 }
 \arguments{
 \item{x}{a function name, written without quotes and brackets.}
+
+\item{export}{Single logical value. Export the modified function (see the \code{@returns} and \code{@details} sections) into a file in the R working directory set by the user? If \code{TRUE}, the modified code is written in a file named \code{<function name>_safer.R} (the function name is the last component of the submitted name, so that \code{pkg::fun()} gives \code{fun_safer.R}), and \code{NULL} is returned: the modified function is only available in the file. An error is returned if this file already exists. If \code{FALSE} (default), the modified function is returned by \code{return()}.}
 
 \item{safer_check}{Single logical value. Perform some "safer" checks? If \code{TRUE}, checkings are performed before main code running (see the \href{https://github.com/safer-r}{safer-r project}): 1) correct \code{lib_path} argument value 2) required functions and related packages effectively present in local R libraries and 3) R classical operators (like \code{"<-"}) not overwritten by another package because of the R scope. Must be set to \code{FALSE} if this function is used inside another "safer" function to avoid pointless multiple checkings.}
 
@@ -16,9 +24,11 @@ true_false_check(x, safer_check = TRUE, lib_path = NULL, error_text = "")
 \item{error_text}{Single character string used to add information in error messages returned by the function, notably if the function is inside other functions, which is practical for debugging. Example: \code{error_text = " INSIDE <PACKAGE_1>::<FUNCTION_1> INSIDE <PACKAGE_2>::<FUNCTION_2>."}. If \code{NULL}, converted into \code{""}.}
 }
 \value{
-A table-like text message indicating the \code{T} or \code{F} symbols that must be written \code{TRUE} or \code{FALSE} or a message saying that everything seems fine.
+A table-like text message indicating the \code{T} or \code{F} symbols that must be written \code{TRUE} or \code{FALSE} or a message saying that everything seems fine, printed by \code{base::message()} (always, whatever the value of the \code{export} argument).
 
 Table-like: column 1, the line number in the function code (starting at the \code{"<- function"} line, i.e., without counting the \code{#'} header lines); column 2, the symbol (\code{T} or \code{F}); column 3, the code preceding the symbol.
+
+In addition, the returned value depends on the \code{export} argument. If \code{export} is \code{FALSE}, the submitted function with all the reported symbols replaced (\code{T} by \code{TRUE} and \code{F} by \code{FALSE}) is returned by \code{return()}, and \code{NULL} is returned if no modification was performed (everything clean). If \code{export} is \code{TRUE}, \code{NULL} is returned, and the modified code is only available in the exported file.
 }
 \description{
 Verify that the logical constants are always written in full, \code{TRUE} or \code{FALSE}, and never abbreviated as \code{T} or \code{F}, when used as values inside a function: in argument values, like \code{f(log = T)} or \code{f(T)}, in condition values, like \code{if(T)} or \code{while(T)}, in comparison values, like \code{x == T} (both sides), and in indexing values, like \code{n[T]}. The safer-r rule requires full logical names, because \code{T} and \code{F} can be overwritten by the user (e.g., \code{T <- 1}), contrary to \code{TRUE} and \code{FALSE}.
@@ -26,7 +36,7 @@ Verify that the logical constants are always written in full, \code{TRUE} or \co
 Warning: the function first checks that all the functions used inside \code{x} are preceded by a package attribution (like \code{colons_check()} would do): if not, an error is returned, asking to run \code{colons_check()} first (like \code{all_args_here()} does). This pre-check must pass before the \code{T} or \code{F} scanning is performed.
 }
 \details{
-The result is used to modify the code inside the tested function like this: replace \code{T} by \code{TRUE} and \code{F} by \code{FALSE}.
+The reported symbols are used to modify the code of the tested function like this: replace \code{T} by \code{TRUE} and \code{F} by \code{FALSE} (see the \code{@returns} section). The replacement is performed at the exact positions of the reported tokens in the recovered code, so that comments, strings and the formatting of the original code are preserved (in particular, symbols written as \code{base::T} are replaced by \code{TRUE}, because the \code{::} operator cannot precede a reserved constant). When \code{export} is \code{FALSE}, the modified function is returned by \code{return()} in a new environment whose parent is the environment of the submitted function: please, check the returned function before replacing the original one, notably because its environment is not necessarily the same. When \code{export} is \code{TRUE}, the modified code is written in the file \code{<function name>_safer.R} of the R working directory set by the user (the function name is the last component of the submitted name, so that \code{pkg::fun()} gives \code{fun_safer.R}), and nothing is written if no modification was performed. Warning: the exported file is a standalone R script containing the modified function code, and its potential pre-existing version is never overwritten (an error is returned instead).
 
 More precisely, \code{true_false_check()} reports every symbol \code{T} or \code{F} used as a value (see the \code{@description} section), but not the symbols used as names, because these are user-defined objects: definition target, like \code{T <- 1}, \code{T = 1} or \code{y -> T}; assignment value, like \code{x <- T} or \code{T -> x} (deliberately not reported, because such a symbol refers to a user-defined object); formal name, like \code{function(T)}; named-argument name, like \code{f(T = 1)}; component after \code{$} or slot after \code{@}, like \code{df$T} or \code{df@F}; loop variable, like \code{for(T in 1:3)}; function name, like \code{T()}; help topic, like \code{?T}, \code{?(T)}, \code{?((T))} or \code{??T}, at any parenthesis depth; formula symbol, like \code{y ~ T}, \code{T ~ y} or \code{y ~ x + T}, wherever it is located in the formula.
 
@@ -50,6 +60,10 @@ fun2 <- function(x){ if(x == T){ base::return(x) } }
 saferDev::true_false_check(fun2)
 fun3 <- function(x){ x } # no function call: accepted by the package-association pre-check
 saferDev::true_false_check(fun3)
+fun4 <- function(x){ if(x == T){ base::return(x) } } ; saferDev::true_false_check(fun4)
+fun4_bis <- saferDev::true_false_check(x = fun4, export = FALSE, safer_check = TRUE, lib_path = NULL, error_text = "") # modified function returned (T replaced by TRUE)
+fun4_safer <- fun4_bis ; base::rm(list = base::c("fun4_bis")) # keep the original fun4 untouched
+saferDev::true_false_check(x = fun4, export = TRUE, safer_check = TRUE, lib_path = NULL, error_text = "") # fun4_safer.R written in the working directory, NULL returned
 
 }
 \author{

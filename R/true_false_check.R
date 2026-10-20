@@ -4,15 +4,18 @@
 #'
 #' Warning: the function first checks that all the functions used inside \code{x} are preceded by a package attribution (like \code{colons_check()} would do): if not, an error is returned, asking to run \code{colons_check()} first (like \code{all_args_here()} does). This pre-check must pass before the \code{T} or \code{F} scanning is performed.
 #' @param x a function name, written without quotes and brackets.
+#' @param export Single logical value. Export the modified function (see the \code{@returns} and \code{@details} sections) into a file in the R working directory set by the user? If \code{TRUE}, the modified code is written in a file named \code{<function name>_safer.R} (the function name is the last component of the submitted name, so that \code{pkg::fun()} gives \code{fun_safer.R}), and \code{NULL} is returned: the modified function is only available in the file. An error is returned if this file already exists. If \code{FALSE} (default), the modified function is returned by \code{return()}.
 #' @param safer_check Single logical value. Perform some "safer" checks? If \code{TRUE}, checkings are performed before main code running (see the \href{https://github.com/safer-r}{safer-r project}): 1) correct \code{lib_path} argument value 2) required functions and related packages effectively present in local R libraries and 3) R classical operators (like \code{"<-"}) not overwritten by another package because of the R scope. Must be set to \code{FALSE} if this function is used inside another "safer" function to avoid pointless multiple checkings.
 #' @param lib_path Vector of characters specifying the absolute pathways of the directories containing the required packages for the function, if not in the default directories. Useful when R packages are not installed in the default directories because of lack of admin rights. More precisely, \code{lib_path} is passed through the \code{new} argument of \code{.libPaths()} so that the new library paths are \code{unique(c(new, .Library.site, .Library))}. Warning: \code{.libPaths()} is restored to the initial paths, after function execution. Ignored if \code{NULL} (default) or if the \code{safer_check} argument is \code{FALSE}: only the pathways specified by the current \code{.libPaths()} are used for package calling.
 #' @param error_text Single character string used to add information in error messages returned by the function, notably if the function is inside other functions, which is practical for debugging. Example: \code{error_text = " INSIDE <PACKAGE_1>::<FUNCTION_1> INSIDE <PACKAGE_2>::<FUNCTION_2>."}. If \code{NULL}, converted into \code{""}.
 #' @returns
-#' A table-like text message indicating the \code{T} or \code{F} symbols that must be written \code{TRUE} or \code{FALSE} or a message saying that everything seems fine.
+#' A table-like text message indicating the \code{T} or \code{F} symbols that must be written \code{TRUE} or \code{FALSE} or a message saying that everything seems fine, printed by \code{base::message()} (always, whatever the value of the \code{export} argument).
 #'
 #' Table-like: column 1, the line number in the function code (starting at the \code{"<- function"} line, i.e., without counting the \code{#'} header lines); column 2, the symbol (\code{T} or \code{F}); column 3, the code preceding the symbol.
+#'
+#' In addition, the returned value depends on the \code{export} argument. If \code{export} is \code{FALSE}, the submitted function with all the reported symbols replaced (\code{T} by \code{TRUE} and \code{F} by \code{FALSE}) is returned by \code{return()}, and \code{NULL} is returned if no modification was performed (everything clean). If \code{export} is \code{TRUE}, \code{NULL} is returned, and the modified code is only available in the exported file.
 #' @details
-#' The result is used to modify the code inside the tested function like this: replace \code{T} by \code{TRUE} and \code{F} by \code{FALSE}.
+#' The reported symbols are used to modify the code of the tested function like this: replace \code{T} by \code{TRUE} and \code{F} by \code{FALSE} (see the \code{@returns} section). The replacement is performed at the exact positions of the reported tokens in the recovered code, so that comments, strings and the formatting of the original code are preserved (in particular, symbols written as \code{base::T} are replaced by \code{TRUE}, because the \code{::} operator cannot precede a reserved constant). When \code{export} is \code{FALSE}, the modified function is returned by \code{return()} in a new environment whose parent is the environment of the submitted function: please, check the returned function before replacing the original one, notably because its environment is not necessarily the same. When \code{export} is \code{TRUE}, the modified code is written in the file \code{<function name>_safer.R} of the R working directory set by the user (the function name is the last component of the submitted name, so that \code{pkg::fun()} gives \code{fun_safer.R}), and nothing is written if no modification was performed. Warning: the exported file is a standalone R script containing the modified function code, and its potential pre-existing version is never overwritten (an error is returned instead).
 #'
 #' More precisely, \code{true_false_check()} reports every symbol \code{T} or \code{F} used as a value (see the \code{@description} section), but not the symbols used as names, because these are user-defined objects: definition target, like \code{T <- 1}, \code{T = 1} or \code{y -> T}; assignment value, like \code{x <- T} or \code{T -> x} (deliberately not reported, because such a symbol refers to a user-defined object); formal name, like \code{function(T)}; named-argument name, like \code{f(T = 1)}; component after \code{$} or slot after \code{@}, like \code{df$T} or \code{df@F}; loop variable, like \code{for(T in 1:3)}; function name, like \code{T()}; help topic, like \code{?T}, \code{?(T)}, \code{?((T))} or \code{??T}, at any parenthesis depth; formula symbol, like \code{y ~ T}, \code{T ~ y} or \code{y ~ x + T}, wherever it is located in the formula.
 #'
@@ -38,19 +41,24 @@
 #' saferDev::true_false_check(fun2)
 #' fun3 <- function(x){ x } # no function call: accepted by the package-association pre-check
 #' saferDev::true_false_check(fun3)
+#' fun4 <- function(x){ if(x == T){ base::return(x) } } ; saferDev::true_false_check(fun4)
+#' fun4_bis <- saferDev::true_false_check(x = fun4, export = FALSE, safer_check = TRUE, lib_path = NULL, error_text = "") # modified function returned (T replaced by TRUE)
+#' fun4_safer <- fun4_bis ; base::rm(list = base::c("fun4_bis")) # keep the original fun4 untouched
+#' saferDev::true_false_check(x = fun4, export = TRUE, safer_check = TRUE, lib_path = NULL, error_text = "") # fun4_safer.R written in the working directory, NULL returned
 #'
 #' @export
 true_false_check <- function(
     x,
+    export = FALSE,
     safer_check = TRUE,
     lib_path = NULL,
     error_text = ""
 ){
     # DEBUGGING
-    # x = fun1 ; lib_path = NULL ; safer_check = TRUE ; error_text = " INSIDE A"
-    # function_name <- "true_false_check" ; arg_user_setting = base::list(x = as.name(x = "fun1"), lib_path = NULL , safer_check = TRUE, error_text = " INSIDE A")
-    # x = .base_op_check ; lib_path = NULL ; safer_check = TRUE ; error_text = " INSIDE A" # internal function with function body made of a single .Primitive() call
-    # source("C:\\Users\\gmillot\\Documents\\Git_projects\\safer-r\\saferDev\\R\\true_false_check.R") ; x = true_false_check ; lib_path = NULL ; safer_check = TRUE ; error_text = " INSIDE A" # Warning: x = saferDev::true_false_check does not return the same number of code lines
+    # x = fun1 ; export = FALSE ; lib_path = NULL ; safer_check = TRUE ; error_text = " INSIDE A"
+    # function_name <- "true_false_check" ; arg_user_setting = base::list(x = as.name(x = "fun1"), export = FALSE, lib_path = NULL , safer_check = TRUE, error_text = " INSIDE A")
+    # x = .base_op_check ; export = FALSE ; lib_path = NULL ; safer_check = TRUE ; error_text = " INSIDE A" # internal function with function body made of a single .Primitive() call
+    # source("C:\\Users\\gmillot\\Documents\\Git_projects\\safer-r\\saferDev\\R\\true_false_check.R") ; x = true_false_check ; export = FALSE ; lib_path = NULL ; safer_check = TRUE ; error_text = " INSIDE A" # Warning: x = saferDev::true_false_check does not return the same number of code lines
 
     #### package name
     package_name <- "saferDev" # write NULL if the function developed is not in a package
@@ -187,6 +195,7 @@ true_false_check <- function(
     # before NA checking because is.na(NULL) return logical(0) and all(logical(0)) is TRUE (but secured with & base::length(x = x) > 0)
     tempo_arg <-base::c(
         "x",
+        "export",
         # "lib_path", # inactivated because can be NULL
         "safer_check"
         # "error_text" # inactivated because NULL converted to "" above
@@ -209,6 +218,7 @@ true_false_check <- function(
     # # before NA checking because is.na(logical()) is logical(0) (but secured with & base::length(x = x) > 0)
     tempo_arg <-base::c(
         "x",
+        "export",
         "safer_check",
         "lib_path"
         # "error_text" # inactivated because empty value converted to "" above
@@ -380,6 +390,7 @@ true_false_check <- function(
     ee <- base::expression(argum_check <- base::c(argum_check, tempo$problem) , text_check <- base::c(text_check, tempo$text) , checked_arg_names <- base::c(checked_arg_names, tempo$object_name))
     # add as many lines as below, for each of your arguments of your function in development
     tempo <- saferDev::arg_check(data = x, class = "function", typeof = NULL, mode = NULL, length = NULL, prop = FALSE, options = NULL, double_as_integer_allowed = FALSE, all_options_in_data = FALSE, na_contain = FALSE, neg_values = TRUE, inf_values = TRUE, print = FALSE, data_name = NULL, data_arg = TRUE, safer_check = FALSE, lib_path = lib_path, error_text = embed_error_text) ; base::eval(expr = ee, envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL))
+    tempo <- saferDev::arg_check(data = export, class = NULL, typeof = "logical", mode = NULL, length = 1, prop = FALSE, options = NULL, double_as_integer_allowed = FALSE, all_options_in_data = FALSE, na_contain = FALSE, neg_values = TRUE, inf_values = TRUE, print = FALSE, data_name = NULL, data_arg = TRUE, safer_check = FALSE, lib_path = lib_path, error_text = embed_error_text) ; base::eval(expr = ee, envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL))
     # lib_path already checked above
     # safer_check already checked above
     # error_text converted to single string above
@@ -414,6 +425,40 @@ true_false_check <- function(
     ######## end graphic device checking
 
     ######## other checkings
+    if(export == TRUE){
+        # function name of the submitted function: last component of the submitted name (pkg::fun() gives fun). Warning: the submitted function must be designated by a name, not by an inline definition (like function(x){ x }), otherwise the name of the exported file cannot be determined
+        if(base::as.character(x = arg_user_setting$x)[1] == "::" | base::as.character(x = arg_user_setting$x)[1] == ":::"){
+            out_fun_name <- base::as.character(x = arg_user_setting$x)[3]
+        }else if(base::is.symbol(x = arg_user_setting$x)){
+            out_fun_name <- base::as.character(x = arg_user_setting$x)[1]
+        }else{
+            tempo_cat <- base::paste0(
+                error_text_start,
+                "THE x ARGUMENT MUST BE DESIGNATED BY A FUNCTION NAME (NOT BY AN INLINE FUNCTION DEFINITION) WHEN THE export ARGUMENT IS TRUE.\nHERE IT IS:\n",
+                base::paste0(base::deparse(expr = arg_user_setting$x, width.cutoff = 60L, backtick = FALSE, control = base::c("keepNA", "keepInteger", "niceNames", "showAttributes"), nlines = -1L), collapse = "\n", recycle0 = FALSE),
+                collapse = NULL,
+                recycle0 = FALSE
+            )
+            base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL)
+        }
+        out_file_name <- base::paste0(out_fun_name, "_safer.R", collapse = NULL, recycle0 = FALSE)
+        out_file_path <- base::file.path(base::getwd(), out_file_name, fsep = "/") # consistent between OS, contrary to base::paste0(base::getwd(), "/", out_file_name, collapse = NULL, recycle0 = FALSE)
+        if(base::file.exists(out_file_path)){
+            tempo_cat <- base::paste0(
+                error_text_start,
+                "FILE NAME ALREADY EXISTS AT THE INDICATED PATH:\n",
+                out_file_path,
+                "\n\nPLEASE, RENAME OR REMOVE THIS FILE, OR CHANGE THE R WORKING DIRECTORY BEFORE RERUNNING ",
+                package_function_name,
+                ".",
+                collapse = NULL,
+                recycle0 = FALSE
+            )
+            base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL)
+        }
+    }else{
+        out_file_path <- NULL
+    }
     ######## end other checkings
 
     #### end second round of checking and data preparation
@@ -529,6 +574,9 @@ true_false_check <- function(
     findings_line <- base::integer(length = 0)
     findings_symbol <- base::character(length = 0)
     findings_code <- base::character(length = 0)
+    findings_col1 <- base::integer(length = 0)
+    findings_col2 <- base::integer(length = 0)
+    findings_tr <- base::integer(length = 0)
     # detection of the formula symbols and help topics: all the symbols located inside the subtree of the formula expression (~) or of the help call (? or ??) are names, whatever their position (y ~ T, T ~ y, y ~ x + T, ?T, ?(T), ?((T)), etc.) and whatever the srcref presence (without srcrefs, ?T is deparsed as `?`(T) and ?(T) as `?`((T)), so that the topic is always inside the subtree of the ? call). Warning: the tokens ~ and ? must be compared through their text, because their token names are quoted ('~' and '?'). Warning: the parse tree is described by the pd$id and pd$parent columns, whose values must be converted into pd row numbers through a lookup vector, because the two numbering systems are different (the id numbering skips the non terminal rows)
     id2row <- base::seq_len(length.out = base::nrow(x = pd))
     base::names(x = id2row) <- base::as.character(x = pd$id)
@@ -541,7 +589,7 @@ true_false_check <- function(
             start_row <- parent_row[start_row]
         }
         if(base::is.na(x = start_row) | start_row == 0){
-            next
+            next # nocov # start_row is never NA or 0 here: the checked code is always a function definition, so that every ? or ~ token has a parent inside the function body (the parent id 0 only exists for top-level expressions, which cannot occur in a function body)
         }
         subtree_rows <- start_row
         frontier_rows <- start_row
@@ -575,8 +623,60 @@ true_false_check <- function(
         findings_line <- base::c(findings_line, pd$line1[k], recursive = TRUE, use.names = TRUE)
         findings_symbol <- base::c(findings_symbol, pd$text[k], recursive = TRUE, use.names = TRUE)
         findings_code <- base::c(findings_code, base::trimws(x = code[pd$line1[k]], which = "left", whitespace = "[ \\t]"), recursive = TRUE, use.names = TRUE)
+        findings_col1 <- base::c(findings_col1, pd$col1[k], recursive = TRUE, use.names = TRUE)
+        findings_col2 <- base::c(findings_col2, pd$col2[k], recursive = TRUE, use.names = TRUE)
+        findings_tr <- base::c(findings_tr, i, recursive = TRUE, use.names = TRUE) # position i of the finding in term_rows, for the qualified-constant detection below
     }
     # end scan of the T and F symbols used as values
+    # modification of the recovered code: exact replacement of the reported tokens (T -> TRUE, F -> FALSE), from the last token to the first one so that the columns of the preceding tokens remain valid. Warning: findings_* are ordered by source position, because term_rows is sorted and the loop appends in order. Warning: the multi-byte safety of the substr()/substr<-() based replacement has been verified (the col1/col2 columns of utils::getParseData() count characters, not bytes, in R >= 4.0.0)
+    if(base::length(x = findings_line) != 0){
+        modified_code <- code
+        for(i in base::rev(x = base::seq_along(along.with = findings_line))){
+            # exact token replacement at the parse-data columns: T -> TRUE and F -> FALSE. Warning: the substr() slices are rebuilt from the left part + replacement + right part, so that the columns of the other tokens of the same line remain valid
+            tempo_line <- modified_code[findings_line[i]]
+            # qualified constants (like base::T or pkg:::T): the :: or ::: operator cannot precede a reserved constant (base::TRUE is a syntax error), so the whole pkg:: or pkg::: prefix is removed as well, writing plain TRUE/FALSE (identical values, because TRUE and FALSE are reserved constants that cannot be masked). Warning: the SYMBOL token of a qualified constant is always immediately preceded, in term_rows order, by the NS_GET or NS_GET_INT token of the :: or ::: operator, itself immediately preceded by the SYMBOL_PACKAGE token of the package name (verified on the R parser output)
+            tempo_qual_start <- NA_integer_ # base::NA_integer_ does not exist: :: cannot precede a reserved constant
+            if(findings_tr[i] > 1){
+                if(pd$token[term_rows[findings_tr[i] - 1]] %in% base::c("NS_GET", "NS_GET_INT") & findings_tr[i] > 2){
+                    if(pd$token[term_rows[findings_tr[i] - 2]] == "SYMBOL_PACKAGE"){
+                        tempo_qual_start <- pd$col1[term_rows[findings_tr[i] - 2]]
+                    }
+                }
+            }
+            if(base::is.na(x = tempo_qual_start)){
+                tempo_start <- findings_col1[i]
+            }else{
+                tempo_start <- tempo_qual_start
+            }
+            tempo_rep <- base::ifelse(test = findings_symbol[i] == "T", yes = "TRUE", no = "FALSE")
+            modified_code[findings_line[i]] <- base::paste0(
+                base::substr(x = tempo_line, start = 1, stop = tempo_start - 1),
+                tempo_rep,
+                base::substr(x = tempo_line, start = findings_col2[i] + 1, stop = base::nchar(x = tempo_line, type = "chars", allowNA = FALSE, keepNA = NA)),
+                collapse = NULL,
+                recycle0 = FALSE
+            )
+        }
+        # the modified code must parse, otherwise an internal error is returned (a modified code that does not parse would indicate a replacement bug)
+        # nocov start
+        # codecov inactivated because it is an internal control of the replacement, impossible to cover with argument values.
+        if(base::inherits(x = base::try(expr = base::parse(text = base::paste0(modified_code, collapse = "\n", recycle0 = FALSE), file = "", n = NULL, prompt = "?", keep.source = base::getOption(x = "keep.source", default = NULL), srcfile = NULL, encoding = "unknown"), silent = TRUE), what = "try-error")){
+            tempo_cat <- base::paste0(
+                intern_error_text_start,
+                "THE CODE OF ",
+                base::as.character(x = arg_user_setting$x),
+                " MODIFIED BY THE T -> TRUE AND F -> FALSE REPLACEMENTS DOES NOT PARSE ANYMORE.\n\nTHIS IS AN INTERNAL BUG: PLEASE, DO NOT USE THE MODIFIED CODE (NOR THE EXPORTED FILE) AND REPORT IT.",
+                intern_error_text_end,
+                collapse = NULL,
+                recycle0 = FALSE
+            )
+            base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL)
+        }
+        # nocov end
+    }else{
+        modified_code <- NULL
+    }
+    # end modification of the recovered code
     # message
     tempo_cat <- base::paste0(
         "AFTER RUNNING ",
@@ -614,6 +714,27 @@ true_false_check <- function(
             collapse = NULL,
             recycle0 = FALSE
         )
+        if(export == TRUE){
+            # the file is written BEFORE the message is printed, so that the message only claims an export that actually happened. Warning: the first line of the recovered code always starts by the function writing (fun <- function...), possibly indented
+            export_code <- modified_code
+            export_code[1] <- base::paste0(out_fun_name, "_safer <- ", export_code[1], collapse = NULL, recycle0 = FALSE)
+            utils::write.table(x = export_code, file = out_file_path, row.names = FALSE, col.names = FALSE, append = FALSE, quote = FALSE, sep = "", eol = "\n", na = "", dec = ".", qmethod = base::c("escape", "double"), fileEncoding = "") # write each line of the modified code, without any quoting, in a plain text R script
+            tempo_cat <- base::paste0(
+                tempo_cat,
+                "\n\nMODIFIED CODE EXPORTED IN:\n",
+                out_file_path,
+                ".",
+                collapse = NULL,
+                recycle0 = FALSE
+            )
+        }else{
+            tempo_cat <- base::paste0(
+                tempo_cat,
+                "\n\nMODIFIED FUNCTION RETURNED BY return().",
+                collapse = NULL,
+                recycle0 = FALSE
+            )
+        }
     }
     base::message(base::paste0("\n\n", tempo_cat, "\n\n", collapse = NULL, recycle0 = FALSE), domain = NULL, appendLF = TRUE)
     #### end main code
@@ -622,5 +743,15 @@ true_false_check <- function(
     #### end warning output
 
     #### output
+    if(base::length(x = findings_line) == 0){
+        output <- NULL
+    }else if(export == TRUE){
+        output <- NULL # the modified code has already been written in the exported file above
+    }else{
+        output <- base::eval(expr = base::parse(text = base::paste0(modified_code, collapse = "\n", recycle0 = FALSE), file = "", n = NULL, prompt = "?", keep.source = base::getOption(x = "keep.source", default = NULL), srcfile = NULL, encoding = "unknown")[[1]], envir = base::new.env(parent = base::environment(fun = x)), enclos = base::globalenv())
+    }
+    base::return(output) # NULL if everything is clean or if export is TRUE
     #### end output
+
+    #### end of function
 }
