@@ -1,4 +1,4 @@
-#' @title Curl Brackets Check
+#' @title Curly Brackets Check
 #' @description
 #' Verify that all the bodies of the \code{if}, \code{else}, \code{for}, \code{while}, \code{repeat} and \code{function} (including lambda \code{\\(x)}) constructs of a function are delimited by curly brackets \code{\{ \}}. For instance: \code{if(x > 1)\{ base::return(x) \}} and not \code{if(x > 1) base::return(x)}. The safer-r rule requires curly brackets for every body, even single-statement ones.
 #' @param x a function name, written without quotes and brackets.
