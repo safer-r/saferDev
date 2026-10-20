@@ -1,0 +1,1 @@
+res <- devtools::document(pkg = "C:/Users/gmillot/Documents/Git_projects/safer-r/saferDev")

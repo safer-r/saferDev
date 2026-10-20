@@ -1,0 +1,3 @@
+res <- pkgload::load_all(path = "C:/Users/gmillot/Documents/Git_projects/safer-r/saferDev", quiet = TRUE)
+res2 <- testthat::test_dir("C:/Users/gmillot/Documents/Git_projects/safer-r/saferDev/tests/testthat", reporter = "summary", filter = "mandatory_args|curl_bracket_check|find_construct_body")
+quit(save = "no", status = if(any(unlist(lapply(X = res2, FUN = function(x){base::vapply(X = x[["results"]], FUN = function(r){base::inherits(x = r, what = "expectation_failure") || base::inherits(x = r, what = "expectation_error")}, FUN.VALUE = base::logical(length = 1))})), na.rm = TRUE)) 1 else 0)

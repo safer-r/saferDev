@@ -242,6 +242,90 @@ testthat::test_that("curl_bracket_check()", {
     testthat::expect_true(object = base::identical(x = base::vapply(X = res_fields, FUN = function(x){x[2]}, FUN.VALUE = base::character(length = 1)), y = base::c("if", "else")), label = "fun14 exact construct kinds")
     #### end main code
 
+    ######## export and out_path arguments
+    # default: modified function returned, NULL when clean
+    testthat::expect_null(object = curl_bracket_check(x = fun1, safer_check = FALSE, lib_path = NULL, error_text = "", export = FALSE, out_path = NULL)) # clean function: NULL
+    testthat::expect_true(object = base::is.function(x = curl_bracket_check(x = fun4, safer_check = FALSE, lib_path = NULL, error_text = "", export = FALSE, out_path = NULL))) # modified function returned
+    # the modified function passes the check itself and behaves correctly
+    fun4_safer <- curl_bracket_check(x = fun4, safer_check = FALSE, lib_path = NULL, error_text = "", export = FALSE, out_path = NULL)
+    testthat::expect_message(curl_bracket_check(x = fun4_safer, safer_check = FALSE, lib_path = NULL, error_text = "", export = FALSE, out_path = NULL), regexp = "EVERYTHING SEEMS CLEAN", fixed = TRUE)
+    testthat::expect_identical(object = fun4_safer(2), expected = fun4(2))
+    testthat::expect_identical(object = fun4_safer(0), expected = fun4(0))
+    # modified code of a multi-line function keeps its line structure (braces inserted, nothing else moved)
+    fun20_safer <- curl_bracket_check(x = fun20, safer_check = FALSE, lib_path = NULL, error_text = "", export = FALSE, out_path = NULL)
+    testthat::expect_message(curl_bracket_check(x = fun20_safer, safer_check = FALSE, lib_path = NULL, error_text = "", export = FALSE, out_path = NULL), regexp = "EVERYTHING SEEMS CLEAN", fixed = TRUE)
+    # export = TRUE: file written, NULL returned, no file when clean
+    tempo_dir <- base::tempdir(check = TRUE)
+    testthat::expect_null(object = curl_bracket_check(x = fun4, safer_check = FALSE, lib_path = NULL, error_text = "", export = TRUE, out_path = tempo_dir))
+    testthat::expect_true(object = base::file.exists(base::file.path(tempo_dir, "fun4_safer.R")))
+    # the exported file contains an assignment and can be sourced to recreate the function
+    tempo_lines <- base::readLines(con = base::file.path(tempo_dir, "fun4_safer.R"), n = 5, warn = FALSE, ok = TRUE)
+    testthat::expect_true(object = base::grepl(x = tempo_lines[1], pattern = "^fun4_safer <- ", perl = TRUE), label = "exported file starts with assignment")
+    tempo_env <- base::new.env(parent = base::globalenv())
+    base::sys.source(file = base::file.path(tempo_dir, "fun4_safer.R"), envir = tempo_env, chdir = FALSE)
+    testthat::expect_identical(object = tempo_env$fun4_safer(2), expected = fun4(2))
+    # clean function: no file written
+    testthat::expect_null(object = curl_bracket_check(x = fun1, safer_check = FALSE, lib_path = NULL, error_text = "", export = TRUE, out_path = tempo_dir))
+    testthat::expect_false(object = base::file.exists(base::file.path(tempo_dir, "fun1_safer.R")))
+    # custom out_path
+    tempo_dir2 <- base::file.path(base::tempdir(check = TRUE), "sub_curl_check")
+    base::dir.create(path = tempo_dir2, showWarnings = FALSE, recursive = FALSE, mode = "0777")
+    testthat::expect_message(curl_bracket_check(x = fun4, safer_check = FALSE, lib_path = NULL, error_text = "", export = TRUE, out_path = tempo_dir2), regexp = "MODIFIED FUNCTION EXPORTED TO", fixed = TRUE)
+    testthat::expect_true(object = base::file.exists(base::file.path(tempo_dir2, "fun4_safer.R")))
+    # trailing slash tolerated (forward slash and backslash)
+    testthat::expect_no_error(curl_bracket_check(x = fun4, safer_check = FALSE, lib_path = NULL, error_text = "", export = TRUE, out_path = base::paste0(tempo_dir2, "/")))
+    testthat::expect_message(curl_bracket_check(x = fun4, safer_check = FALSE, lib_path = NULL, error_text = "", export = TRUE, out_path = base::paste0(tempo_dir2, "\\")), regexp = "MODIFIED FUNCTION EXPORTED TO", fixed = TRUE) # trailing backslash tolerated
+    # non-existing out_path
+    testthat::expect_error(curl_bracket_check(x = fun4, safer_check = FALSE, lib_path = NULL, error_text = "", export = TRUE, out_path = "PATH_NOT_GOOD"))
+    # out_path must be a single character string when not NULL
+    testthat::expect_error(curl_bracket_check(x = fun4, safer_check = FALSE, lib_path = NULL, error_text = "", export = TRUE, out_path = base::c(tempo_dir, tempo_dir)))
+    testthat::expect_error(curl_bracket_check(x = fun4, safer_check = FALSE, lib_path = NULL, error_text = "", export = TRUE, out_path = 1))
+    testthat::expect_error(curl_bracket_check(x = fun4, safer_check = FALSE, lib_path = NULL, error_text = "", export = TRUE, out_path = factor1))
+    testthat::expect_error(curl_bracket_check(x = fun4, safer_check = FALSE, lib_path = NULL, error_text = "", export = TRUE, out_path = expr1))
+    testthat::expect_error(curl_bracket_check(x = fun4, safer_check = FALSE, lib_path = NULL, error_text = "", export = TRUE, out_path = fun1))
+    # out_path ignored when export = FALSE (even a non-existing path)
+    testthat::expect_no_error(curl_bracket_check(x = fun4, safer_check = FALSE, lib_path = NULL, error_text = "", export = FALSE, out_path = "PATH_NOT_GOOD"))
+    # export must be a single logical value
+    testthat::expect_error(curl_bracket_check(x = fun4, safer_check = FALSE, lib_path = NULL, error_text = "", export = NA))
+    testthat::expect_error(curl_bracket_check(x = fun4, safer_check = FALSE, lib_path = NULL, error_text = "", export = 1))
+    testthat::expect_error(curl_bracket_check(x = fun4, safer_check = FALSE, lib_path = NULL, error_text = "", export = "TRUE"))
+    testthat::expect_error(curl_bracket_check(x = fun4, safer_check = FALSE, lib_path = NULL, error_text = "", export = base::c(TRUE, FALSE)))
+    testthat::expect_error(curl_bracket_check(x = fun4, safer_check = FALSE, lib_path = NULL, error_text = "", export = NULL))
+    testthat::expect_error(curl_bracket_check(x = fun4, safer_check = FALSE, lib_path = NULL, error_text = "", export = mat1))
+    testthat::expect_error(curl_bracket_check(x = fun4, safer_check = FALSE, lib_path = NULL, error_text = "", export = factor1))
+    testthat::expect_error(curl_bracket_check(x = fun4, safer_check = FALSE, lib_path = NULL, error_text = "", export = expr1))
+    testthat::expect_error(curl_bracket_check(x = fun4, safer_check = FALSE, lib_path = NULL, error_text = "", export = fun1))
+    testthat::expect_no_error(curl_bracket_check(x = fun4, safer_check = FALSE, lib_path = NULL, error_text = "", export = FALSE, out_path = NULL))
+    testthat::expect_no_error(curl_bracket_check(x = fun4, safer_check = FALSE, lib_path = NULL, error_text = "", export = TRUE, out_path = tempo_dir))
+    # export = TRUE with out_path = NULL: exports in the current working directory (restored after the test)
+    tempo_wd <- base::getwd()
+    base::setwd(dir = tempo_dir)
+    testthat::expect_null(object = curl_bracket_check(x = fun4, safer_check = FALSE, lib_path = NULL, error_text = "", export = TRUE, out_path = NULL))
+    testthat::expect_true(object = base::file.exists(base::file.path(tempo_dir, "fun4_safer.R")))
+    base::setwd(dir = tempo_wd)
+    # the returned modified function keeps the closure environment of the submitted function
+    fun_closure <- local({
+        z <- 10
+        function(x){
+            if(x > 1)
+                z + x
+        }
+    })
+    fun_closure_safer <- curl_bracket_check(x = fun_closure, safer_check = FALSE, lib_path = NULL, error_text = "", export = FALSE, out_path = NULL)
+    testthat::expect_identical(object = fun_closure_safer(2), expected = fun_closure(2))
+    testthat::expect_identical(object = base::environment(fun = fun_closure_safer), expected = base::environment(fun = fun_closure))
+    # long function (> 21 lines of recovered code): the insertion sort must not suffer from integer overflow (the if body must still get its braces)
+    fun_long <- eval(parse(text = paste0(
+        "function(x){\n",
+        paste0("    y <- x + ", 1:30, "\n", collapse = ""),
+        "    if(x > 1)\n        base::return(y)\n    base::return(0)\n}"
+    )))
+    fun_long_safer <- curl_bracket_check(x = fun_long, safer_check = FALSE, lib_path = NULL, error_text = "", export = FALSE, out_path = NULL)
+    testthat::expect_message(curl_bracket_check(x = fun_long_safer, safer_check = FALSE, lib_path = NULL, error_text = "", export = FALSE, out_path = NULL), regexp = "EVERYTHING SEEMS CLEAN", fixed = TRUE)
+    testthat::expect_identical(object = fun_long_safer(2), expected = fun_long(2))
+    testthat::expect_identical(object = fun_long_safer(0), expected = fun_long(0))
+    ######## end export and out_path arguments
+
     ## end tests (ordered by arg appearance and conditions in the code)
 
     ## other tests

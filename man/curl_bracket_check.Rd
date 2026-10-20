@@ -4,7 +4,14 @@
 \alias{curl_bracket_check}
 \title{Curl Brackets Check}
 \usage{
-curl_bracket_check(x, safer_check = TRUE, lib_path = NULL, error_text = "")
+curl_bracket_check(
+  x,
+  safer_check = TRUE,
+  lib_path = NULL,
+  error_text = "",
+  export = FALSE,
+  out_path = NULL
+)
 }
 \arguments{
 \item{x}{a function name, written without quotes and brackets.}
@@ -14,9 +21,17 @@ curl_bracket_check(x, safer_check = TRUE, lib_path = NULL, error_text = "")
 \item{lib_path}{Vector of characters specifying the absolute pathways of the directories containing the required packages for the function, if not in the default directories. Useful when R packages are not installed in the default directories because of lack of admin rights. More precisely, \code{lib_path} is passed through the \code{new} argument of \code{.libPaths()} so that the new library paths are \code{unique(c(new, .Library.site, .Library))}. Warning: \code{.libPaths()} is restored to the initial paths, after function execution. Ignored if \code{NULL} (default) or if the \code{safer_check} argument is \code{FALSE}: only the pathways specified by the current \code{.libPaths()} are used for package calling.}
 
 \item{error_text}{Single character string used to add information in error messages returned by the function, notably if the function is inside other functions, which is practical for debugging. Example: \code{error_text = " INSIDE <PACKAGE_1>::<FUNCTION_1> INSIDE <PACKAGE_2>::<FUNCTION_2>."}. If \code{NULL}, converted into \code{""}.}
+
+\item{export}{Single logical value. Export the modified function into a \code{.R} file (see the \code{out_path} argument)? If \code{FALSE} (default), the modified function is returned by the function instead of being exported.}
+
+\item{out_path}{Single character string indicating the absolute pathway of the folder where to export the modified function file, named \code{<FUNCTION_NAME>_safer.R} (e.g., \code{mean_safer.R}). The file contains an assignment of the modified function, so that \code{base::source()}ing it recreates the modified function: \code{<FUNCTION_NAME>_safer <- function(...) ...}. \code{out_path = "."} means the R working directory set by the user. Ignored if \code{NULL} (default) or if the \code{export} argument is \code{FALSE}. Warning: an already existing \code{<FUNCTION_NAME>_safer.R} file in \code{out_path} is overwritten.}
 }
 \value{
-A table-like text message indicating the missing curly brackets \code{\{ \}} or a message saying that everything seems fine.
+If the \code{export} argument is \code{FALSE}: the modified function, i.e., the submitted function with all the missing curly brackets \code{\{ \}} added, returned by \code{base::return()}. \code{NULL} is returned if no modification was done, i.e., if the submitted function was already compliant. 
+
+If the \code{export} argument is \code{TRUE}: the modified function is written into the \code{<FUNCTION_NAME>_safer.R} file of the \code{out_path} directory and \code{NULL} is returned. If no modification was done, no file is written and \code{NULL} is also returned.
+
+In both cases, a table-like text message indicating the missing curly brackets \code{\{ \}} is printed, or a message saying that everything seems fine (followed by "\code{no modified function exported}" when the \code{export} argument is \code{TRUE}).
 
 Table-like: column 1, the line number in the function code (starting at the \code{"<- function"} line, i.e., without counting the \code{#'} header lines); column 2, the construct (\code{if}, \code{else}, \code{for}, \code{while}, \code{repeat} or \code{function}); column 3, the code preceding the construct body.
 }
@@ -28,9 +43,15 @@ The result is used to modify the code inside the tested function like this: \cod
 
 More precisely, \code{curl_bracket_check()} verifies that the first code element of the body of each \code{if}, \code{else}, \code{for}, \code{while}, \code{repeat} and \code{function} construct (after the \code{()} of the condition or of the arguments, when present) is a curly bracket \code{\{}. Comments are ignored during this verification.
 
-In \code{else if} chains, an \code{else} part followed by an \code{if()} construct is not reported, because the chained \code{if()} is checked on its own.
+In \code{else if} chains, an \code{else} part followed by an \code{if()} construct is not reported, because the chained \code{if()} is checked on its own. When the modified function is built (see the \code{returns} section), such an \code{else if()} construct is left unmodified (only the \code{else} is not modified): the chained \code{if()} construct itself is modified on its own.
 
 Function bodies reduced to a single \code{.Primitive(...)} call are skipped, because primitive functions cannot be delimited by curly brackets. For instance, the body of \code{base::`+`} is \code{.Primitive("+")} and is not reported. Contrary to these ones, \code{UseMethod(...)} bodies are reported (e.g., \code{base::mean}).
+
+When the modified function is built, the curly brackets \code{\{ \}} are added as follows: a \code{\{} followed by a space is inserted before the first character of the construct body, and a space followed by a \code{\}} is inserted after the last character of the construct body. Comments located between the construct keyword and the body (e.g., \code{if(x > 1) # comment}) are kept before the added opening bracket. If the body contains a comment between statements, like \code{if(x > 1) x # comment} followed by \code{+ 1} on the next line, the added closing bracket is inserted at the end of the last code line of the body, i.e., after the comment. The added curly brackets are always separated from the body content by a single space, and the original code formatting is otherwise left unchanged. Warning: because the curly brackets are added around the construct body, code lines can become longer than 80 characters: check the modified function with a linter if needed.
+
+When the modified function is built, it is validated by re-parsing the modified code: if the modified code cannot be parsed, an internal error is returned (please, report it in the link given by the error message). Note that the line numbers of the reported missing curly brackets (column 1 of the table-like message) are those of the submitted function, before modification.
+
+When the \code{export} argument is \code{TRUE}, the exported file contains the code of the modified function obtained with \code{base::deparse()}: comments of the submitted function are lost in this file (this is a known limitation of \code{base::deparse()}). The returned modified function (when \code{export = FALSE}) preserves the comments of the submitted function.
 
 Warning: \code{curl_bracket_check()} cannot check constructs written with backquotes, like \code{`if`(x > 1, base::return(x), base::return(0))}. Please, use the standard writing.
 
@@ -43,6 +64,7 @@ The returned line numbers are indicative, depending on which source is checked. 
 fun1 <- function(x){ if(x > 1){ base::return(x) } else { base::return(0) } }
 saferDev::curl_bracket_check(fun1)
 fun2 <- function(x){ if(x > 1) base::return(x) } ; saferDev::curl_bracket_check(fun2)
+fun2 <- function(x){ if(x > 1) base::return(x) } ; fun2_safer <- saferDev::curl_bracket_check(fun2) ; fun2_safer(2)
 saferDev::curl_bracket_check(mean)
 
 }

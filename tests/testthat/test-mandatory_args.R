@@ -63,6 +63,7 @@ testthat::test_that("mandatory arg block of safer-r functions (internal function
         .all_args_insert = base::quote(.all_args_insert(x = base::mean, out = base::list(code = "a"), output = base::data.frame(), error_text = "")),
         .colons_check_message = base::quote(.colons_check_message(list_fun = base::list(), list_fun_pos = base::list(), line_nb = base::integer(), ini = base::character(), arg_user_setting2 = base::list(), text = "BASIC", internal_fun_names = base::character(), error_text = "")),
         .extract_all_fun_names = base::quote(.extract_all_fun_names(text = "a", pattern = "a", error_text = "")),
+        .find_construct_body = base::quote(.find_construct_body(pd = base::data.frame(), kid = 1L, body_start = 1L, body_start_pos = 1L, term_rows = base::integer(), else_branch = FALSE, else_tok = NULL, intern_error_text_start = "T.", intern_error_text_end = "", error_text = "")),
         .functions_detect = base::quote(.functions_detect(x = "a", skipped_base = FALSE, arg_user_setting2 = base::list(), error_text = "")),
         .fun_args_pos = base::quote(.fun_args_pos(text = "a", pattern = "a", error_text = "")),
         .has_odd_number_of_quotes = base::quote(.has_odd_number_of_quotes(input_string = "a", pattern = "a", error_text = "")),
