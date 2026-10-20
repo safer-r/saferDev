@@ -54,7 +54,8 @@
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">all_args_here</span><span class="op">(</span></span>
 <span>  <span class="va">x</span>,</span>
-<span>  export <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  table_export <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  fun_export <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  out_path <span class="op">=</span> <span class="st">"."</span>,</span>
 <span>  df_name <span class="op">=</span> <span class="st">"res.tsv"</span>,</span>
 <span>  overwrite <span class="op">=</span> <span class="cn">FALSE</span>,</span>
@@ -72,20 +73,24 @@
 <dd><p>Function name, written without quotes and brackets.</p></dd>
 
 
-<dt id="arg-export">export<a class="anchor" aria-label="anchor" href="#arg-export"></a></dt>
+<dt id="arg-table-export">table_export<a class="anchor" aria-label="anchor" href="#arg-table-export"></a></dt>
 <dd><p>Single logical value. Export the result data frame into a <code>.tsv</code> file? If <code>TRUE</code>, the data frame is not returned by the function but only exported.</p></dd>
 
 
+<dt id="arg-fun-export">fun_export<a class="anchor" aria-label="anchor" href="#arg-fun-export"></a></dt>
+<dd><p>Single logical value. Export the modified function into a <code>.R</code> file? If <code>TRUE</code>, the corrected code (missing arguments added into the detected function calls, as proposed in the <code>$STATUS</code> column) is not returned by the function but only exported into a file made of the name of the submitted function with <code>_safer</code> added at the end (e.g., <code>test_safer.R</code>). The file contains an assignment of the modified function: <code>test_safer &lt;- function(...) ...</code>, so that <code><a href="https://rdrr.io/r/base/source.html" class="external-link">base::source()</a></code>ing it recreates the modified function. An error is returned if the file already exists in <code>out_path</code> and <code>overwrite</code> is <code>FALSE</code>, and if the tested function is not designated by a function name (like <code>test</code> or <code>package::test</code>), i.e., written by an inline definition (like <code>function(x){x}</code>) or by a component writing (like <code>FUN_LIST$fun</code>). Ignored if no correction has been applied.</p></dd>
+
+
 <dt id="arg-out-path">out_path<a class="anchor" aria-label="anchor" href="#arg-out-path"></a></dt>
-<dd><p>Single character string indicating the absolute pathway of the folder where to export the data frame. <code>out_path = "."</code> means the R working directory set by the user. Ignored if export is <code>FALSE</code>.</p></dd>
+<dd><p>Single character string indicating the absolute pathway of the folder where to export the data frame or the modified function. <code>out_path = "."</code> (default) means the R working directory set by the user. Ignored if <code>table_export</code> and <code>fun_export</code> are <code>FALSE</code>.</p></dd>
 
 
 <dt id="arg-df-name">df_name<a class="anchor" aria-label="anchor" href="#arg-df-name"></a></dt>
-<dd><p>Single character string indicating the name of the exported data frame file. Ignored if export is <code>FALSE</code>.</p></dd>
+<dd><p>Single character string indicating the name of the exported data frame file. Ignored if <code>table_export</code> is <code>FALSE</code>.</p></dd>
 
 
 <dt id="arg-overwrite">overwrite<a class="anchor" aria-label="anchor" href="#arg-overwrite"></a></dt>
-<dd><p>Single logical value. Overwrite potential <code>df_name</code> file already existing in <code>out_path</code>? Ignored if export is <code>FALSE</code>.</p></dd>
+<dd><p>Single logical value. Overwrite potential files already existing in <code>out_path</code> (<code>df_name</code> for the table export, and the function name with <code>_safer</code> added at the end for the <code>fun_export</code>)? Ignored if <code>table_export</code> and <code>fun_export</code> are <code>FALSE</code>.</p></dd>
 
 
 <dt id="arg-safer-check">safer_check<a class="anchor" aria-label="anchor" href="#arg-safer-check"></a></dt>
@@ -103,7 +108,9 @@
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
     <p>A data frame indicating the missing arguments or a message saying that everything seems fine.
-If <code>export</code> argument is <code>TRUE</code>, then the data frame is exported as <code>res.tsv</code> instead of being returned.
+If <code>table_export</code> argument is <code>TRUE</code>, then the data frame is exported as <code>res.tsv</code> instead of being returned.
+If <code>fun_export</code> argument is <code>TRUE</code>, the modified function is exported as <code>&lt;FUNCTION_NAME&gt;_safer.R</code> instead of being returned (ignored if no correction has been applied).
+Otherwise, the modified function (an R function object rebuilt from the corrected code, with its comments removed) is returned, or <code>NULL</code> if no modification has been applied. The returned value is invisible when nothing is exported.
 Column descriptions:</p><ul><li><p><code>$LINE_NB</code>: the line number in the function code (starting at the <code>"&lt;- function"</code> line, i.e., without counting the <code>#'</code> header lines).</p></li>
 <li><p><code>$FUN_NAME</code>: the function name.</p></li>
 <li><p><code>$FUN_ARGS</code>: the written arguments of <code>FUN_NAME</code>. <code>"NOT_CONSIDERED"</code> means that the function is between quotes or after <code>$</code>.</p></li>
@@ -112,7 +119,7 @@ Column descriptions:</p><ul><li><p><code>$LINE_NB</code>: the line number in the
 <li><p><code>$MISSING_ARG_NAMES</code>: the missing argument names in <code>FUN_ARGS</code>.</p></li>
 <li><p><code>$MISSING_ARGS</code>: the missing arguments with their values in <code>FUN_ARGS</code>.</p></li>
 <li><p><code>$STATUS</code>: either <code>"GOOD"</code>, meaning that all the arguments are already written, or a new proposal of arguments writing, or indicates if some arguments are not fully written (abbreviation is discouraged), or nothing.</p></li>
-</ul><p>An additional message <code>"EVERYTHING SEEMS CLEAN"</code> if the <code>STATUS</code> column is only made of <code>""</code> and <code>"GOOD"</code>.</p>
+</ul><p>An additional message <code>"EVERYTHING SEEMS CLEAN"</code> if the <code>$STATUS</code> column is only made of <code>""</code> and <code>"GOOD"</code>.</p>
     </div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
@@ -161,24 +168,25 @@ Column descriptions:</p><ul><li><p><code>$LINE_NB</code>: the line number in the
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> INSIDE FUN2(), ARGUMENTS ARE MISSING.</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   LINE_NB     FUN_NAME</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1       3      do.call</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2       4 parent.frame</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                                                                     FUN_ARGS</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1 do.call(what = base::c, args = code_for_col,  quote = FALSE, envir = base::parent.frame())</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2                                                                             parent.frame()</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   FUN_POS                                          DEF_ARGS MISSING_ARG_NAMES</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1      26 what, args, quote = FALSE, envir = parent.frame()                  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2      30                                             n = 1                 n</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   MISSING_ARGS              STATUS</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1                             GOOD</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2        n = 1 parent.frame(n = 1)</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span> <span class="co"># \dontrun{</span></span></span>
 <span class="r-in"><span><span class="co"># Example that creates a file/folder in the working directory</span></span></span>
 <span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/source.html" class="external-link">source</a></span><span class="op">(</span><span class="st">"https://raw.githubusercontent.com/safer-r/.github/refs/heads/main/profile/backbone.R"</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu">saferDev</span><span class="fu">::</span><span class="fu">all_args_here</span><span class="op">(</span><span class="va">BACKBONE</span>, export <span class="op">=</span> <span class="cn">TRUE</span>, safer_check <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">saferDev</span><span class="fu">::</span><span class="fu">all_args_here</span><span class="op">(</span><span class="va">BACKBONE</span>, table_export <span class="op">=</span> <span class="cn">TRUE</span>, fun_export <span class="op">=</span> <span class="cn">TRUE</span>, safer_check <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">}</span> <span class="co"># }</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">FUN2</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span>, <span class="va">y</span><span class="op">)</span><span class="op">{</span></span></span>
+<span class="r-in"><span>    <span class="va">middle_bracket2</span> <span class="op">&lt;-</span> <span class="fu">base</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/base/do.call.html" class="external-link">do.call</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>        what <span class="op">=</span> <span class="fu">base</span><span class="fu">::</span><span class="va"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span>,</span></span>
+<span class="r-in"><span>        args <span class="op">=</span> <span class="va">code_for_col</span>,</span></span>
+<span class="r-in"><span>        quote <span class="op">=</span> <span class="cn">FALSE</span>,</span></span>
+<span class="r-in"><span>        envir <span class="op">=</span> <span class="fu">base</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/base/sys.parent.html" class="external-link">parent.frame</a></span><span class="op">(</span><span class="op">)</span></span></span>
+<span class="r-in"><span>    <span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">}</span></span></span>
+<span class="r-in"><span><span class="va">FUN2_safer</span> <span class="op">&lt;-</span> <span class="fu">saferDev</span><span class="fu">::</span><span class="fu">all_args_here</span><span class="op">(</span><span class="va">FUN2</span>, fun_export <span class="op">=</span> <span class="cn">FALSE</span>, safer_check <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span> <span class="co"># returns the modified function (missing arguments added) or NULL if nothing was modified</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> INSIDE FUN2(), ARGUMENTS ARE MISSING.</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>

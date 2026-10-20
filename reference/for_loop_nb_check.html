@@ -55,7 +55,14 @@ Indeed, for instance x &amp;lt;- 0 ; for(i in 0:0){y &amp;lt;- i} makes one loop
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">for_loop_nb_check</span><span class="op">(</span><span class="va">x</span>, safer_check <span class="op">=</span> <span class="cn">TRUE</span>, lib_path <span class="op">=</span> <span class="cn">NULL</span>, error_text <span class="op">=</span> <span class="st">""</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">for_loop_nb_check</span><span class="op">(</span></span>
+<span>  <span class="va">x</span>,</span>
+<span>  export <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  out_path <span class="op">=</span> <span class="st">"."</span>,</span>
+<span>  safer_check <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  lib_path <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  error_text <span class="op">=</span> <span class="st">""</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -64,6 +71,14 @@ Indeed, for instance x &amp;lt;- 0 ; for(i in 0:0){y &amp;lt;- i} makes one loop
 
 <dl><dt id="arg-x">x<a class="anchor" aria-label="anchor" href="#arg-x"></a></dt>
 <dd><p>a function name, written without quotes and brackets.</p></dd>
+
+
+<dt id="arg-export">export<a class="anchor" aria-label="anchor" href="#arg-export"></a></dt>
+<dd><p>Single logical value. Export the modified function (see the <code>@returns</code> and <code>@details</code> sections) into a <code>.R</code> file? If <code>TRUE</code>, the modified code is written in a file named <code>&lt;function name&gt;_safer.R</code> (the function name is the last component of the submitted name, so that <code>pkg::fun()</code> gives <code>fun_safer.R</code>) in the directory indicated by the <code>out_path</code> argument, and <code>NULL</code> is returned: the modified function is only available in the file. The file contains an assignment of the modified function: <code>&lt;function name&gt;_safer &lt;- function(...) ...</code>, so that <code><a href="https://rdrr.io/r/base/source.html" class="external-link">base::source()</a></code>ing it recreates the modified function. An error is returned if this file already exists, and if the tested function is not designated by a function name (like <code>test</code> or <code>package::test</code>), i.e., written by an inline definition (like <code>function(x){x}</code>) or by a component writing (like <code>FUN_LIST$fun</code>). Nothing is written if no modification is performed (everything clean, or no checking line inserted). If <code>FALSE</code> (default), the modified function is returned by <code><a href="https://rdrr.io/r/base/function.html" class="external-link">return()</a></code> (<code>NULL</code> if no modification is performed).</p></dd>
+
+
+<dt id="arg-out-path">out_path<a class="anchor" aria-label="anchor" href="#arg-out-path"></a></dt>
+<dd><p>Single character string indicating the absolute pathway of the folder where to export the modified function when the <code>export</code> argument is <code>TRUE</code>. <code>out_path = "."</code> (default) means the R working directory set by the user. Ignored if the <code>export</code> argument is <code>FALSE</code>.</p></dd>
 
 
 <dt id="arg-safer-check">safer_check<a class="anchor" aria-label="anchor" href="#arg-safer-check"></a></dt>
@@ -80,15 +95,17 @@ Indeed, for instance x &amp;lt;- 0 ; for(i in 0:0){y &amp;lt;- i} makes one loop
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-    <p>A table-like text message indicating the <code>for</code> sequences not written with hard numbers or a message saying that everything seems fine.</p>
+    <p>A table-like text message indicating the <code>for</code> sequences not written with hard numbers or a message saying that everything seems fine, printed by <code><a href="https://rdrr.io/r/base/message.html" class="external-link">base::message()</a></code> (always, whatever the value of the <code>export</code> argument).</p>
 <p>Table-like: column 1, the line number in the function code (starting at the <code>"&lt;- function"</code> line, i.e., without counting the <code>#'</code> header lines); column 2, the construct (<code>for</code>); column 3, the code preceding the construct body.</p>
+<p>In addition, the returned value depends on the <code>export</code> argument and on the presence of reported <code>for</code> sequences. If <code>export</code> is <code>FALSE</code> and at least one checking line has been inserted (see the <code>@details</code> section), the modified function is returned by <code><a href="https://rdrr.io/r/base/function.html" class="external-link">return()</a></code>. If <code>export</code> is <code>TRUE</code>, <code>NULL</code> is returned (invisibly), and the modified code is only available in the exported file, whose location is indicated by a message. <code>NULL</code> is also returned when no modification is performed (everything clean, or no checking line inserted).</p>
     </div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
-    <p>The result is used to modify the code inside the tested function like this: <code>for(i in &lt;HARD NUMBERS&gt;)</code> or <code>for(i in base::seq_along(x = &lt;OBJECT&gt;))</code>.</p>
+    <p>The reported <code>for</code> sequences are the ones whose computed controller depends on objects or function results, i.e., whose number of iterations is not predictable from the writing itself. The modification consists in adding a checking line before each reported <code>for</code> construct (see below).</p>
 <p>More precisely, <code>for_loop_nb_check()</code> verifies that the sequence expression written between <code>in</code> and the closing parenthesis of the condition of each <code>for</code> construct is exactly a hard-number writing or a <code>seq_len(...)</code> or <code>seq_along(...)</code> call. The hard-number writing is: an optional unary minus, then a numeric literal, then optionally <code>:</code>, then an optional unary minus, then a numeric literal, with nothing else (e.g., <code>1:3</code>, <code>0:0</code>, <code>-3:-1</code>, <code>1e3</code>, <code>1L:3L</code>, <code>0x10:0x11</code>, or single literals like <code>3</code> or <code>-3</code>). Each numeric literal must be finite and integer-valued: <code>2.5</code>, <code>1e-3</code>, <code>NA</code>, <code>NaN</code>, <code>Inf</code> and <code>TRUE</code>/<code>FALSE</code> are reported (they are silently truncated toward 0, or run for a very long time, at execution). A <code>seq_len(...)</code> or <code>seq_along(...)</code> call (namespaced or not, whatever the arguments, because these functions are the recommended safe replacements) is clean only if it occupies the whole sequence expression: <code>seq_along(x) - 1</code> is reported, because it gives <code>c(0, 1)</code> when <code>x</code> has 2 elements. Any other writing is reported: variables like <code>for(i in n)</code> or <code>for(i in x)</code>, function calls like <code>1:length(x)</code>, <code>1:nrow(df)</code>, <code>1:(n - 1)</code>, <code>1:3 - 1</code> (which gives <code>c(-2, -1)</code> at execution), <code>2 - 1</code>, <code>1:3:1</code>, <code>base::rev(x = x)</code>, <code>base::seq(x = x)</code> or <code>base::names(x = df)</code>. Comments and strings are ignored during this verification.</p>
-<p>Deliberately NOT reported, because the hard-number writings are checked by a specific checking line added in the function bodies (which warns at execution when the computed sequence is equal like <code>0:0</code> or <code>1:1</code>, both negative like <code>-3:-1</code>, or decreasing like <code>1:0</code>): the equal-bounds, both-negative and decreasing hard-number writings.</p>
-<p>Warning: <code>for_loop_nb_check()</code> cannot check constructs written with backquotes, like <code>`for`(i in 1:3, base::print(i))</code>. Please, use the standard writing.</p>
+<p>Deliberately NOT reported, because these writings are fully determined by the code itself: their control is the responsibility of the writer, and no checking line is added for them: the equal-bounds (like <code>0:0</code> or <code>1:1</code>), both-negative (like <code>-3:-1</code>) and decreasing (like <code>1:0</code>) hard-number writings.</p>
+<p>Each reported <code>for</code> construct is modified in the recovered code: the sequence expression is evaluated once in a specific object named <code>tempo_for_seqN</code> (N being the rank of the report), this object is checked, and then used as the <code>for</code> controller, giving <code>tempo_for_seqN &lt;- &lt;SEQUENCE&gt; ; &lt;CHECKS&gt; ; for(&lt;VARIABLE&gt; in tempo_for_seqN)&lt;BODY&gt;</code>. Evaluating the sequence expression once in the <code>tempo_for_seqN</code> object guarantees that the checking and the <code>for</code> controller are strictly identical. At execution, <code><a href="https://rdrr.io/r/base/warning.html" class="external-link">base::warning()</a></code> is issued when the computed sequence is empty (0 iteration), contains <code>NA</code> values, has a single value (equal bounds), contains infinite values, or is decreasing (like <code>1:0</code>). The errors of the sequence evaluation itself (like <code>1:NA</code> or <code>1:Inf</code>) are propagated as they are. Warning: no endless loop is possible with <code>Inf</code>, because R fully evaluates the <code>for</code> controller before iterating: <code>1:Inf</code> gives an error at evaluation, and an <code>Inf</code> element just gives one iteration with <code>i = Inf</code>, whatever a potential <code><a href="https://rdrr.io/r/base/Control.html" class="external-link">break</a></code> in the loop body. The modification is performed at the exact positions of the reported <code>for</code> constructs in the recovered code, so that comments, strings and the formatting of the original code are preserved outside the modified spans. When the reported <code>for</code> construct is not preceded by a statement boundary (unbraced body of <code>if</code>/<code>else</code>/<code>for</code>/<code>while</code>/<code>repeat</code>, assignment value, function argument, operator operand, etc.), the whole modified construct is wrapped in curly brackets, because a statement insertion would otherwise break the binding of the enclosing writing. When <code>export</code> is <code>FALSE</code>, the modified function is returned by <code><a href="https://rdrr.io/r/base/function.html" class="external-link">return()</a></code> in a new environment whose parent is the environment of the submitted function: please, check the returned function before replacing the original one, notably because its environment is not necessarily the same. When <code>export</code> is <code>TRUE</code>, the modified code is written in the file <code>&lt;function name&gt;_safer.R</code> of the directory indicated by the <code>out_path</code> argument, and nothing is written if no modification was performed. Warning: the exported file is a standalone R script containing the modified function code, and its potential pre-existing version is never overwritten (an error is returned instead). Warning: the <code>x</code> argument must be designated by a function name, not by an inline function definition (like <code>function(x){ x }</code>), when <code>export</code> is <code>TRUE</code>, otherwise the name of the exported file cannot be determined.</p>
+<p>Warning: the checking lines are not inserted when the tempo object name (<code>tempo_for_seqN</code>) is already used anywhere in the checked function code (including in comments and strings), or when a reported <code>for</code> construct is located inside the sequence expression of another reported <code>for</code> construct (overlapping insertion spans): the concerned <code>for</code> constructs are listed in the returned message, and remain unmodified. The checking lines are also not inserted, for the same reason (listed in the message), when a <code>for</code> construct that requires the wrap in curly brackets (see above) contains comments in its span (the wrap collapses the construct on a single line, which would merge the comments with the code), or when such a construct shares the end of its body with a <code>for</code> construct written after it and also requiring the wrap (as in <code>for(a in 1:n) for(b in 1:length(x)){...}</code>, where the two bodies end at the same position: the wrap of the latter, applied first, moves the shared closing token away from the position where the former would end its own body).</p>
 <p>Warning: aliased bounds like <code>n &lt;- length(x) ; for(i in 1:n)</code> cannot be detected, because <code>n</code> is a plain variable in the <code>for</code> writing. The checking must then be done on the function body.</p>
 <p>The returned line numbers are indicative, depending on which source is checked. For instance, <code><a href="colons_check.html">saferDev::colons_check</a></code> (compiled) has not the same line numbers as its source file. Notably, compiled functions do not have comments anymore, compared to the same source function sourced into the working environment. In addition, the counting starts at the <code>"&lt;- function"</code> line, i.e., without counting the <code>#'</code> header lines potentially present in source files.</p>
     </div>
@@ -111,6 +128,7 @@ Indeed, for instance x &amp;lt;- 0 ; for(i in 0:0){y &amp;lt;- i} makes one loop
 <span class="r-msg co"><span class="r-pr">#&gt;</span> AFTER RUNNING saferDev::for_loop_nb_check().</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> INSIDE fun1(), EVERYTHING SEEMS CLEAN.</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> NULL</span>
 <span class="r-in"><span><span class="va">fun2</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">{</span> <span class="kw">for</span><span class="op">(</span><span class="va">i</span> <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">)</span><span class="op">{</span> <span class="fu">base</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">i</span><span class="op">)</span> <span class="op">}</span> <span class="op">}</span> ; <span class="fu">saferDev</span><span class="fu">::</span><span class="fu">for_loop_nb_check</span><span class="op">(</span><span class="va">fun2</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
@@ -120,12 +138,74 @@ Indeed, for instance x &amp;lt;- 0 ; for(i in 0:0){y &amp;lt;- i} makes one loop
 <span class="r-msg co"><span class="r-pr">#&gt;</span> LINE	CONSTRUCT		CODE</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> 3	for		for (i in 1:length(x)) {</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> MODIFIED FUNCTION RETURNED BY return().</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> function (x) </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     tempo_for_seq1 &lt;- 1:length(x)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     if (base::length(x = tempo_for_seq1) == 0) {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         base::warning("FOR SEQUENCE EMPTY: 0 ITERATION", call. = FALSE, </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>             immediate. = FALSE, noBreaks. = FALSE, domain = NULL)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     }</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     else if (base::anyNA(x = tempo_for_seq1)) {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         base::warning("FOR SEQUENCE WITH NA VALUES", call. = FALSE, </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>             immediate. = FALSE, noBreaks. = FALSE, domain = NULL)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     }</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     else if (base::length(x = tempo_for_seq1) == 1) {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         base::warning("FOR SEQUENCE WITH A SINGLE VALUE (EQUAL BOUNDS?): SINGLE ITERATION", </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>             call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>             domain = NULL)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     }</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     else if (base::is.atomic(x = tempo_for_seq1) &amp;&amp; base::any(base::is.infinite(x = tempo_for_seq1), </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         na.rm = TRUE)) {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         base::warning("FOR SEQUENCE WITH INFINITE VALUES: NO ENDLESS LOOP POSSIBLE BECAUSE THE for() CONTROLLER IS FULLY EVALUATED BEFORE ITERATING, BUT CHECK THAT AN INFINITE VALUE IS EXPECTED", </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>             call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>             domain = NULL)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     }</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     else if (base::is.atomic(x = tempo_for_seq1) &amp;&amp; base::typeof(x = tempo_for_seq1) %in% </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         base::c("double", "integer") &amp;&amp; base::all(x = tempo_for_seq1 &lt; </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         0, na.rm = FALSE)) {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         base::warning("FOR SEQUENCE WITH ALL NEGATIVE VALUES", </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>             call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>             domain = NULL)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     }</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     else if (base::is.atomic(x = tempo_for_seq1) &amp;&amp; base::typeof(x = tempo_for_seq1) %in% </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         base::c("double", "integer", "character", "complex") &amp;&amp; </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         base::length(x = tempo_for_seq1) &gt;= 2 &amp;&amp; tempo_for_seq1[1] &gt; </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         tempo_for_seq1[2]) {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         base::warning("FOR SEQUENCE DECREASING", call. = FALSE, </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>             immediate. = FALSE, noBreaks. = FALSE, domain = NULL)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     }</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     for (i in tempo_for_seq1) {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         base::print(x = i)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     }</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x56311c137d90&gt;</span>
 <span class="r-in"><span><span class="va">fun3</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">{</span> <span class="kw">for</span><span class="op">(</span><span class="va">i</span> <span class="kw">in</span> <span class="fu">base</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq_along</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">x</span><span class="op">)</span><span class="op">)</span><span class="op">{</span> <span class="fu">base</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">i</span><span class="op">)</span> <span class="op">}</span> <span class="op">}</span> ; <span class="fu">saferDev</span><span class="fu">::</span><span class="fu">for_loop_nb_check</span><span class="op">(</span><span class="va">fun3</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> AFTER RUNNING saferDev::for_loop_nb_check().</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> INSIDE fun3(), EVERYTHING SEEMS CLEAN.</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> NULL</span>
+<span class="r-in"><span><span class="va">fun4</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">{</span> <span class="kw">for</span><span class="op">(</span><span class="va">i</span> <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">)</span><span class="op">{</span> <span class="fu">base</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">i</span><span class="op">)</span> <span class="op">}</span> <span class="op">}</span> ; <span class="va">fun4_safer</span> <span class="op">&lt;-</span> <span class="fu">saferDev</span><span class="fu">::</span><span class="fu">for_loop_nb_check</span><span class="op">(</span>x <span class="op">=</span> <span class="va">fun4</span>, export <span class="op">=</span> <span class="cn">FALSE</span>, safer_check <span class="op">=</span> <span class="cn">TRUE</span>, lib_path <span class="op">=</span> <span class="cn">NULL</span>, error_text <span class="op">=</span> <span class="st">""</span><span class="op">)</span> <span class="co"># modified function returned (checking line added)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> INSIDE fun4(), SOME for() SEQUENCES ARE NOT WRITTEN WITH HARD NUMBERS:</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> LINE	CONSTRUCT		CODE</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> 3	for		for (i in 1:length(x)) {</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> MODIFIED FUNCTION RETURNED BY return().</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-in"><span><span class="va">fun5</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">{</span> <span class="kw">for</span><span class="op">(</span><span class="va">i</span> <span class="kw">in</span> <span class="fl">0</span><span class="op">:</span><span class="fl">0</span><span class="op">)</span><span class="op">{</span> <span class="fu">base</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">i</span><span class="op">)</span> <span class="op">}</span> <span class="op">}</span> ; <span class="fu">saferDev</span><span class="fu">::</span><span class="fu">for_loop_nb_check</span><span class="op">(</span>x <span class="op">=</span> <span class="va">fun5</span>, export <span class="op">=</span> <span class="cn">FALSE</span>, safer_check <span class="op">=</span> <span class="cn">TRUE</span>, lib_path <span class="op">=</span> <span class="cn">NULL</span>, error_text <span class="op">=</span> <span class="st">""</span><span class="op">)</span> <span class="co"># NULL returned: the degenerate hard-number writings are the responsibility of the writer, no checking line inserted</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> AFTER RUNNING saferDev::for_loop_nb_check().</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> INSIDE fun5(), EVERYTHING SEEMS CLEAN.</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> NULL</span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>

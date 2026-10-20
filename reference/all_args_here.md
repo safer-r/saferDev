@@ -10,7 +10,8 @@ all their arguments. For instance:
 ``` r
 all_args_here(
   x,
-  export = FALSE,
+  table_export = FALSE,
+  fun_export = FALSE,
   out_path = ".",
   df_name = "res.tsv",
   overwrite = FALSE,
@@ -26,27 +27,47 @@ all_args_here(
 
   Function name, written without quotes and brackets.
 
-- export:
+- table_export:
 
   Single logical value. Export the result data frame into a `.tsv` file?
   If `TRUE`, the data frame is not returned by the function but only
   exported.
 
+- fun_export:
+
+  Single logical value. Export the modified function into a `.R` file?
+  If `TRUE`, the corrected code (missing arguments added into the
+  detected function calls, as proposed in the `$STATUS` column) is not
+  returned by the function but only exported into a file made of the
+  name of the submitted function with `_safer` added at the end (e.g.,
+  `test_safer.R`). The file contains an assignment of the modified
+  function: `test_safer <- function(...) ...`, so that
+  [`base::source()`](https://rdrr.io/r/base/source.html)ing it recreates
+  the modified function. An error is returned if the file already exists
+  in `out_path` and `overwrite` is `FALSE`, and if the tested function
+  is not designated by a function name (like `test` or `package::test`),
+  i.e., written by an inline definition (like `function(x){x}`) or by a
+  component writing (like `FUN_LIST$fun`). Ignored if no correction has
+  been applied.
+
 - out_path:
 
   Single character string indicating the absolute pathway of the folder
-  where to export the data frame. `out_path = "."` means the R working
-  directory set by the user. Ignored if export is `FALSE`.
+  where to export the data frame or the modified function.
+  `out_path = "."` (default) means the R working directory set by the
+  user. Ignored if `table_export` and `fun_export` are `FALSE`.
 
 - df_name:
 
   Single character string indicating the name of the exported data frame
-  file. Ignored if export is `FALSE`.
+  file. Ignored if `table_export` is `FALSE`.
 
 - overwrite:
 
-  Single logical value. Overwrite potential `df_name` file already
-  existing in `out_path`? Ignored if export is `FALSE`.
+  Single logical value. Overwrite potential files already existing in
+  `out_path` (`df_name` for the table export, and the function name with
+  `_safer` added at the end for the `fun_export`)? Ignored if
+  `table_export` and `fun_export` are `FALSE`.
 
 - safer_check:
 
@@ -86,8 +107,14 @@ all_args_here(
 ## Value
 
 A data frame indicating the missing arguments or a message saying that
-everything seems fine. If `export` argument is `TRUE`, then the data
-frame is exported as `res.tsv` instead of being returned. Column
+everything seems fine. If `table_export` argument is `TRUE`, then the
+data frame is exported as `res.tsv` instead of being returned. If
+`fun_export` argument is `TRUE`, the modified function is exported as
+`<FUNCTION_NAME>_safer.R` instead of being returned (ignored if no
+correction has been applied). Otherwise, the modified function (an R
+function object rebuilt from the corrected code, with its comments
+removed) is returned, or `NULL` if no modification has been applied. The
+returned value is invisible when nothing is exported. Column
 descriptions:
 
 - `$LINE_NB`: the line number in the function code (starting at the
@@ -117,7 +144,7 @@ descriptions:
   arguments are not fully written (abbreviation is discouraged), or
   nothing.
 
-An additional message `"EVERYTHING SEEMS CLEAN"` if the `STATUS` column
+An additional message `"EVERYTHING SEEMS CLEAN"` if the `$STATUS` column
 is only made of `""` and `"GOOD"`.
 
 ## Details
@@ -219,22 +246,23 @@ saferDev::all_args_here(FUN2, safer_check = FALSE)
 #> 
 #> INSIDE FUN2(), ARGUMENTS ARE MISSING.
 #> 
-#>   LINE_NB     FUN_NAME
-#> 1       3      do.call
-#> 2       4 parent.frame
-#>                                                                                     FUN_ARGS
-#> 1 do.call(what = base::c, args = code_for_col,  quote = FALSE, envir = base::parent.frame())
-#> 2                                                                             parent.frame()
-#>   FUN_POS                                          DEF_ARGS MISSING_ARG_NAMES
-#> 1      26 what, args, quote = FALSE, envir = parent.frame()                  
-#> 2      30                                             n = 1                 n
-#>   MISSING_ARGS              STATUS
-#> 1                             GOOD
-#> 2        n = 1 parent.frame(n = 1)
 
 if (FALSE) { # \dontrun{
 # Example that creates a file/folder in the working directory
 source("https://raw.githubusercontent.com/safer-r/.github/refs/heads/main/profile/backbone.R")
-saferDev::all_args_here(BACKBONE, export = TRUE, safer_check = FALSE)
+saferDev::all_args_here(BACKBONE, table_export = TRUE, fun_export = TRUE, safer_check = FALSE)
 } # }
+
+FUN2 <- function(x, y){
+    middle_bracket2 <- base::do.call(
+        what = base::c,
+        args = code_for_col,
+        quote = FALSE,
+        envir = base::parent.frame()
+    )
+}
+FUN2_safer <- saferDev::all_args_here(FUN2, fun_export = FALSE, safer_check = FALSE) # returns the modified function (missing arguments added) or NULL if nothing was modified
+#> 
+#> INSIDE FUN2(), ARGUMENTS ARE MISSING.
+#> 
 ```

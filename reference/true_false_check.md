@@ -18,7 +18,14 @@ before the `T` or `F` scanning is performed.
 ## Usage
 
 ``` r
-true_false_check(x, safer_check = TRUE, lib_path = NULL, error_text = "")
+true_false_check(
+  x,
+  export = FALSE,
+  out_path = ".",
+  safer_check = TRUE,
+  lib_path = NULL,
+  error_text = ""
+)
 ```
 
 ## Arguments
@@ -26,6 +33,34 @@ true_false_check(x, safer_check = TRUE, lib_path = NULL, error_text = "")
 - x:
 
   a function name, written without quotes and brackets.
+
+- export:
+
+  Single logical value. Export the modified function (see the `@returns`
+  and `@details` sections) into a `.R` file? If `TRUE`, the modified
+  code is written in a file named `<function name>_safer.R` (the
+  function name is the last component of the submitted name, so that
+  `pkg::fun()` gives `fun_safer.R`) in the directory indicated by the
+  `out_path` argument, and `NULL` is returned: the modified function is
+  only available in the file. The file contains an assignment of the
+  modified function: `<function name>_safer <- function(...) ...`, so
+  that [`base::source()`](https://rdrr.io/r/base/source.html)ing it
+  recreates the modified function. An error is returned if this file
+  already exists, and if the tested function is not designated by a
+  function name (like `test` or `package::test`), i.e., written by an
+  inline definition (like `function(x){x}`) or by a component writing
+  (like `FUN_LIST$fun`). Nothing is written if no modification is
+  performed (everything clean). If `FALSE` (default), the modified
+  function is returned by
+  [`return()`](https://rdrr.io/r/base/function.html) (`NULL` if no
+  modification is performed).
+
+- out_path:
+
+  Single character string indicating the absolute pathway of the folder
+  where to export the modified function when the `export` argument is
+  `TRUE`. `out_path = "."` (default) means the R working directory set
+  by the user. Ignored if the `export` argument is `FALSE`.
 
 - safer_check:
 
@@ -66,17 +101,53 @@ true_false_check(x, safer_check = TRUE, lib_path = NULL, error_text = "")
 
 A table-like text message indicating the `T` or `F` symbols that must be
 written `TRUE` or `FALSE` or a message saying that everything seems
-fine.
+fine, printed by
+[`base::message()`](https://rdrr.io/r/base/message.html) (always,
+whatever the value of the `export` argument).
 
 Table-like: column 1, the line number in the function code (starting at
 the `"<- function"` line, i.e., without counting the `#'` header lines);
 column 2, the symbol (`T` or `F`); column 3, the code preceding the
 symbol.
 
+In addition, the returned value depends on the `export` argument. If
+`export` is `FALSE`, the submitted function with all the reported
+symbols replaced (`T` by `TRUE` and `F` by `FALSE`) is returned by
+[`return()`](https://rdrr.io/r/base/function.html), and `NULL` is
+returned if no modification was performed (everything clean). If
+`export` is `TRUE`, `NULL` is returned (invisibly), and the modified
+code is only available in the exported file, whose location is indicated
+by a message.
+
 ## Details
 
-The result is used to modify the code inside the tested function like
-this: replace `T` by `TRUE` and `F` by `FALSE`.
+The reported symbols are used to modify the code of the tested function
+like this: replace `T` by `TRUE` and `F` by `FALSE` (see the `@returns`
+section). The replacement is performed at the exact positions of the
+reported tokens in the recovered code, so that comments, strings and the
+formatting of the original code are preserved (in particular, symbols
+written as [`base::T`](https://rdrr.io/r/base/logical.html) are replaced
+by `TRUE`, because the `::` operator cannot precede a reserved
+constant). When `export` is `FALSE`, the modified function is returned
+by [`return()`](https://rdrr.io/r/base/function.html) in a new
+environment whose parent is the environment of the submitted function:
+please, check the returned function before replacing the original one,
+notably because its environment is not necessarily the same. When
+`export` is `TRUE`, the modified code is written in the file
+`<function name>_safer.R` of the directory indicated by the `out_path`
+argument (the function name is the last component of the submitted name,
+so that `pkg::fun()` gives `fun_safer.R`), and nothing is written if no
+modification was performed. The exported file contains an assignment of
+the modified function (`<function name>_safer <- function(...) ...`), so
+that [`base::source()`](https://rdrr.io/r/base/source.html)ing it
+recreates the modified function. Warning: the tested function must be
+designated by a function name (like `test` or `package::test`) when
+`export = TRUE`: an inline definition (like `function(x){x}`) or a
+component writing (like `FUN_LIST$fun`) returns an error, because the
+name of the exported file could not be determined reliably. Warning: the
+exported file is a standalone R script containing the modified function
+code, and its potential pre-existing version is never overwritten (an
+error is returned instead).
 
 More precisely, `true_false_check()` reports every symbol `T` or `F`
 used as a value (see the `@description` section), but not the symbols
@@ -157,6 +228,7 @@ saferDev::true_false_check(fun1)
 #> AFTER RUNNING saferDev::true_false_check().
 #> INSIDE fun1(), EVERYTHING SEEMS CLEAN.
 #> 
+#> NULL
 fun2 <- function(x){ if(x == T){ base::return(x) } }
 saferDev::true_false_check(fun2)
 #> 
@@ -167,6 +239,15 @@ saferDev::true_false_check(fun2)
 #> LINE SYMBOL      CODE
 #> 3    T       if (x == T) {
 #> 
+#> MODIFIED FUNCTION RETURNED BY return().
+#> 
+#> function (x) 
+#> {
+#>     if (x == TRUE) {
+#>         base::return(x)
+#>     }
+#> }
+#> <environment: 0x56311a38bcd0>
 fun3 <- function(x){ x } # no function call: accepted by the package-association pre-check
 saferDev::true_false_check(fun3)
 #> 
@@ -174,4 +255,48 @@ saferDev::true_false_check(fun3)
 #> AFTER RUNNING saferDev::true_false_check().
 #> INSIDE fun3(), EVERYTHING SEEMS CLEAN.
 #> 
+#> NULL
+fun4 <- function(x){ if(x == T){ base::return(x) } } ; saferDev::true_false_check(fun4)
+#> 
+#> 
+#> 
+#> INSIDE fun4(), SOME SYMBOLS T OR F MUST BE WRITTEN TRUE OR FALSE:
+#> 
+#> LINE SYMBOL      CODE
+#> 3    T       if (x == T) {
+#> 
+#> MODIFIED FUNCTION RETURNED BY return().
+#> 
+#> function (x) 
+#> {
+#>     if (x == TRUE) {
+#>         base::return(x)
+#>     }
+#> }
+#> <environment: 0x56311e3b5f90>
+fun4_bis <- saferDev::true_false_check(x = fun4, export = FALSE, safer_check = TRUE, lib_path = NULL, error_text = "") # modified function returned (T replaced by TRUE)
+#> 
+#> 
+#> 
+#> INSIDE fun4(), SOME SYMBOLS T OR F MUST BE WRITTEN TRUE OR FALSE:
+#> 
+#> LINE SYMBOL      CODE
+#> 3    T       if (x == T) {
+#> 
+#> MODIFIED FUNCTION RETURNED BY return().
+#> 
+fun4_safer <- fun4_bis ; base::rm(list = base::c("fun4_bis")) # keep the original fun4 untouched
+saferDev::true_false_check(x = fun4, export = TRUE, out_path = ".", safer_check = TRUE, lib_path = NULL, error_text = "") # fun4_safer.R written in the working directory, NULL returned
+#> 
+#> 
+#> 
+#> INSIDE fun4(), SOME SYMBOLS T OR F MUST BE WRITTEN TRUE OR FALSE:
+#> 
+#> LINE SYMBOL      CODE
+#> 3    T       if (x == T) {
+#> 
+#> MODIFIED CODE EXPORTED IN:
+#> ./fun4_safer.R
+#> 
+#> NULL
 ```

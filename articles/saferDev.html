@@ -133,7 +133,12 @@ modify yor code.</td>
 <code>else</code>, <code>for</code>, <code>while</code>,
 <code>repeat</code> and <code>function</code> (including lambda
 <code>\(x)</code>) constructs of a function are delimited by curly
-brackets <code><a href="https://rdrr.io/r/base/Paren.html" class="external-link">{ }</a></code>.</td>
+brackets <code><a href="https://rdrr.io/r/base/Paren.html" class="external-link">{ }</a></code>. Since <code>saferDev</code> v3.0.0, the
+modified function (with the missing <code><a href="https://rdrr.io/r/base/Paren.html" class="external-link">{ }</a></code> added at their
+exact position in the code, formatting and comments preserved) is
+returned, or exported in a <code>&lt;function name&gt;_safer.R</code>
+file of the directory indicated by <code>out_path</code> with
+<code>export = TRUE</code>.</td>
 </tr>
 <tr class="odd">
 <td align="left"><strong>env_check()</strong></td>
@@ -171,9 +176,16 @@ log file.</td>
 <code>FALSE</code> logical constants are always written in full when
 used as values (argument values, conditions, comparisons, indexing) and
 never abbreviated as <code>T</code> or <code>F</code>, which can be
-overwritten by the user. Like <code><a href="../reference/all_args_here.html">all_args_here()</a></code>, an error
-asking to run <code><a href="../reference/colons_check.html">colons_check()</a></code> first is returned if some
-functions are not associated to their package.</td>
+overwritten by the user. Since <code>saferDev</code> v3.0.0, the
+modified function is returned (each reported
+<code>T</code>/<code>F</code> replaced by
+<code>TRUE</code>/<code>FALSE</code> at its exact position in the code,
+comments, strings and formatting preserved), or exported in a
+<code>&lt;function name&gt;_safer.R</code> file of the directory
+indicated by <code>out_path</code> with <code>export = TRUE</code>. Like
+<code><a href="../reference/all_args_here.html">all_args_here()</a></code>, an error asking to run
+<code><a href="../reference/colons_check.html">colons_check()</a></code> first is returned if some functions are not
+associated to their package.</td>
 </tr>
 </tbody>
 </table>

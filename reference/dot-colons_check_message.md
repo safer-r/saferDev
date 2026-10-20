@@ -83,6 +83,17 @@ A list:
 - `colon_not_here`: logical vector. Does `list_fun` contain function
   names without `::` or `:::` ?
 
+- `col1`: integer vector of the line numbers (in `ini`) of the function
+  names without `::` or `:::`, after removal of the functions between
+  quotes or preceded by `$`, and of the internal functions when
+  `text = "OTHER"`. Length 0 if no problem detected.
+
+- `col2`: character vector of the corresponding function names. Length 0
+  if no problem detected.
+
+- `col3`: character vector of the corresponding strings before the
+  function names. Length 0 if no problem detected.
+
 ## Details
 
 Warnings:

@@ -52,7 +52,14 @@
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">curl_bracket_check</span><span class="op">(</span><span class="va">x</span>, safer_check <span class="op">=</span> <span class="cn">TRUE</span>, lib_path <span class="op">=</span> <span class="cn">NULL</span>, error_text <span class="op">=</span> <span class="st">""</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">curl_bracket_check</span><span class="op">(</span></span>
+<span>  <span class="va">x</span>,</span>
+<span>  export <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  out_path <span class="op">=</span> <span class="st">"."</span>,</span>
+<span>  safer_check <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  lib_path <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  error_text <span class="op">=</span> <span class="st">""</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -61,6 +68,14 @@
 
 <dl><dt id="arg-x">x<a class="anchor" aria-label="anchor" href="#arg-x"></a></dt>
 <dd><p>a function name, written without quotes and brackets.</p></dd>
+
+
+<dt id="arg-export">export<a class="anchor" aria-label="anchor" href="#arg-export"></a></dt>
+<dd><p>Single logical value. Export the modified function into a <code>.R</code> file (see the <code>out_path</code> argument)? If <code>TRUE</code>, the modified function is not returned but only exported. An error is returned if the file already exists in <code>out_path</code>, and if the tested function is not designated by a function name (like <code>test</code> or <code>package::test</code>), i.e., written by an inline definition (like <code>function(x){x}</code>) or by a component writing (like <code>FUN_LIST$fun</code>). If <code>FALSE</code> (default), the modified function is returned by the function instead of being exported.</p></dd>
+
+
+<dt id="arg-out-path">out_path<a class="anchor" aria-label="anchor" href="#arg-out-path"></a></dt>
+<dd><p>Single character string indicating the absolute pathway of the folder where to export the modified function file, named <code>&lt;FUNCTION_NAME&gt;_safer.R</code> (e.g., <code>mean_safer.R</code>). <code>out_path = "."</code> (default) means the R working directory set by the user. Ignored if the <code>export</code> argument is <code>FALSE</code>.</p></dd>
 
 
 <dt id="arg-safer-check">safer_check<a class="anchor" aria-label="anchor" href="#arg-safer-check"></a></dt>
@@ -77,15 +92,20 @@
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-    <p>A table-like text message indicating the missing curly brackets <code><a href="https://rdrr.io/r/base/Paren.html" class="external-link">{ }</a></code> or a message saying that everything seems fine.</p>
+    <p>If the <code>export</code> argument is <code>FALSE</code>: the modified function, i.e., the submitted function with all the missing curly brackets <code><a href="https://rdrr.io/r/base/Paren.html" class="external-link">{ }</a></code> added, returned by <code><a href="https://rdrr.io/r/base/function.html" class="external-link">base::return()</a></code>. <code>NULL</code> is returned if no modification was done, i.e., if the submitted function was already compliant.</p>
+<p>If the <code>export</code> argument is <code>TRUE</code>: the modified function is written into the <code>&lt;FUNCTION_NAME&gt;_safer.R</code> file of the <code>out_path</code> directory and <code>NULL</code> is returned (invisibly), with a message indicating where the modified function has been exported. If no modification was done, no file is written and <code>NULL</code> is also returned.</p>
+<p>In both cases, a table-like text message indicating the missing curly brackets <code><a href="https://rdrr.io/r/base/Paren.html" class="external-link">{ }</a></code> is printed, or a message saying that everything seems fine.</p>
 <p>Table-like: column 1, the line number in the function code (starting at the <code>"&lt;- function"</code> line, i.e., without counting the <code>#'</code> header lines); column 2, the construct (<code>if</code>, <code>else</code>, <code>for</code>, <code>while</code>, <code>repeat</code> or <code>function</code>); column 3, the code preceding the construct body.</p>
     </div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
     <p>The result is used to modify the code inside the tested function like this: <code>{ &lt;CODE&gt; }</code>.</p>
 <p>More precisely, <code>curl_bracket_check()</code> verifies that the first code element of the body of each <code>if</code>, <code>else</code>, <code>for</code>, <code>while</code>, <code>repeat</code> and <code>function</code> construct (after the <code>()</code> of the condition or of the arguments, when present) is a curly bracket <code>{</code>. Comments are ignored during this verification.</p>
-<p>In <code>else if</code> chains, an <code>else</code> part followed by an <code>if()</code> construct is not reported, because the chained <code>if()</code> is checked on its own.</p>
+<p>In <code>else if</code> chains, an <code>else</code> part followed by an <code>if()</code> construct is not reported, because the chained <code>if()</code> is checked on its own. When the modified function is built (see the <code>returns</code> section), such an <code>else if()</code> construct is left unmodified (only the <code>else</code> is not modified): the chained <code>if()</code> construct itself is modified on its own.</p>
 <p>Function bodies reduced to a single <code>.Primitive(...)</code> call are skipped, because primitive functions cannot be delimited by curly brackets. For instance, the body of <code><a href="https://rdrr.io/r/base/Arithmetic.html" class="external-link">base::`+`</a></code> is <code>.Primitive("+")</code> and is not reported. Contrary to these ones, <code>UseMethod(...)</code> bodies are reported (e.g., <code><a href="https://rdrr.io/r/base/mean.html" class="external-link">base::mean</a></code>).</p>
+<p>When the modified function is built, the curly brackets <code><a href="https://rdrr.io/r/base/Paren.html" class="external-link">{ }</a></code> are added as follows: a <code>{</code> followed by a space is inserted before the first character of the construct body, and a space followed by a <code>}</code> is inserted after the last character of the construct body. Comments located between the construct keyword and the body (e.g., <code>if(x &gt; 1) # comment</code>) are kept before the added opening bracket. If the body contains a comment between statements, like <code>if(x &gt; 1) x # comment</code> followed by <code>+ 1</code> on the next line, the added closing bracket is inserted at the end of the last code line of the body, i.e., after the comment. The added curly brackets are always separated from the body content by a single space, and the original code formatting is otherwise left unchanged. Warning: because the curly brackets are added around the construct body, code lines can become longer than 80 characters: check the modified function with a linter if needed.</p>
+<p>When the modified function is built, it is validated by re-parsing the modified code: if the modified code cannot be parsed, an internal error is returned (please, report it in the link given by the error message). Note that the line numbers of the reported missing curly brackets (column 1 of the table-like message) are those of the submitted function, before modification.</p>
+<p>When the <code>export</code> argument is <code>TRUE</code>, the exported file contains the code of the modified function obtained with <code><a href="https://rdrr.io/r/base/deparse.html" class="external-link">base::deparse()</a></code>: comments of the submitted function are lost in this file (this is a known limitation of <code><a href="https://rdrr.io/r/base/deparse.html" class="external-link">base::deparse()</a></code>). The returned modified function (when <code>export = FALSE</code>) preserves the comments of the submitted function. The exported file contains an assignment of the modified function (<code>&lt;FUNCTION_NAME&gt;_safer &lt;- function(...) ...</code>), so that <code><a href="https://rdrr.io/r/base/source.html" class="external-link">base::source()</a></code>ing it recreates the modified function. Warning: the tested function must be designated by a function name (like <code>test</code> or <code>package::test</code>) when <code>export = TRUE</code>: an inline definition (like <code>function(x){x}</code>) or a component writing (like <code>FUN_LIST$fun</code>) returns an error, because the name of the exported file could not be determined reliably.</p>
 <p>Warning: <code>curl_bracket_check()</code> cannot check constructs written with backquotes, like <code>`if`(x &gt; 1, base::return(x), base::return(0))</code>. Please, use the standard writing.</p>
 <p>The returned line numbers are indicative, depending on which source is checked. For instance, <code><a href="colons_check.html">saferDev::colons_check</a></code> (compiled) has not the same line numbers as its source file. Notably, compiled functions do not have comments anymore, compared to the same source function sourced into the working environment. In addition, the counting starts at the <code>"&lt;- function"</code> line, i.e., without counting the <code>#'</code> header lines potentially present in source files.</p>
     </div>
@@ -117,6 +137,36 @@
 <span class="r-msg co"><span class="r-pr">#&gt;</span> LINE	CONSTRUCT		CODE</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> 3	if		if (x &gt; 1) </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> function (x) </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     if (x &gt; 1) {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         base::return(x)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     }</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x56311cc561f0&gt;</span>
+<span class="r-in"><span><span class="va">fun2</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">{</span> <span class="kw">if</span><span class="op">(</span><span class="va">x</span> <span class="op">&gt;</span> <span class="fl">1</span><span class="op">)</span> <span class="fu">base</span><span class="fu">::</span><span class="kw"><a href="https://rdrr.io/r/base/function.html" class="external-link">return</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="op">}</span> ; <span class="va">fun2_safer</span> <span class="op">&lt;-</span> <span class="fu">saferDev</span><span class="fu">::</span><span class="fu">curl_bracket_check</span><span class="op">(</span><span class="va">fun2</span><span class="op">)</span> ; <span class="fu">fun2_safer</span><span class="op">(</span><span class="fl">2</span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> INSIDE fun2(), SOME CURLY BRACKETS {} ARE MISSING AFTER:</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> LINE	CONSTRUCT		CODE</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> 3	if		if (x &gt; 1) </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 2</span>
+<span class="r-in"><span><span class="va">fun2_ter</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">{</span> <span class="kw">if</span><span class="op">(</span><span class="va">x</span> <span class="op">&gt;</span> <span class="fl">1</span><span class="op">)</span> <span class="fu">base</span><span class="fu">::</span><span class="kw"><a href="https://rdrr.io/r/base/function.html" class="external-link">return</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="op">}</span> ; <span class="fu">saferDev</span><span class="fu">::</span><span class="fu">curl_bracket_check</span><span class="op">(</span>x <span class="op">=</span> <span class="va">fun2_ter</span>, export <span class="op">=</span> <span class="cn">TRUE</span>, out_path <span class="op">=</span> <span class="st">"."</span><span class="op">)</span> <span class="co"># fun2_ter_safer.R written in the working directory, NULL returned</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> INSIDE fun2_ter(), SOME CURLY BRACKETS {} ARE MISSING AFTER:</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> LINE	CONSTRUCT		CODE</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> 3	if		if (x &gt; 1) </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> MODIFIED CODE EXPORTED IN:</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> ./fun2_ter_safer.R</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> NULL</span>
 <span class="r-in"><span><span class="fu">saferDev</span><span class="fu">::</span><span class="fu">curl_bracket_check</span><span class="op">(</span><span class="va">mean</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
@@ -126,6 +176,11 @@
 <span class="r-msg co"><span class="r-pr">#&gt;</span> LINE	CONSTRUCT		CODE</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> 1	function		function (x, ...) </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> function (x, ...) </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     UseMethod("mean")</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: namespace:base&gt;</span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>

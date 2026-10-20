@@ -2,6 +2,29 @@
 
 ## saferDev 3.0.0
 
+- colons_check(), for_loop_nb_check(), true_false_check(),
+  curl_bracket_check() and all_args_here(): the export arguments
+  (export, out_path, fun_export) are harmonized. out_path now defaults
+  to “.” (the R working directory) and cannot be NULL nor contain an
+  empty string. The exported \_safer.R file always contains an
+  assignment of the modified function (\_safer \<- function(…) …), so
+  that base::source()ing it recreates the modified function. An error is
+  returned if the file already exists (an error is also returned by
+  all_args_here() before the main code when overwrite = FALSE, instead
+  of just before the writing). The tested function must be designated by
+  a function name (like test or package::test) when the function is
+  exported: an inline definition (like function(x){x}) or a component
+  writing (like FUN_LIST\$fun) returns an error, because the name of the
+  exported file could not be determined reliably. A message “MODIFIED
+  CODE EXPORTED IN: ” is now printed by the five functions when a file
+  is written. In curl_bracket_check(), the export and out_path arguments
+  now come before safer_check, lib_path and error_text (breaking change
+  of argument order), and an already existing file is no longer silently
+  overwritten. In true_false_check(), the new out_path argument (default
+  “.”) now indicates the export directory. All the messages of these
+  functions are unchanged, except the new export message and the
+  “DIRECTORY PATH INDICATED IN THE out_path ARGUMENT DOES NOT EXISTS”
+  spelling, now identical in the five functions.
 - curl_bracket_check(): new function. Verifies that all the bodies of
   the if, else, for, while, repeat and function are delimited by curly
   brackets {}, according to the safer-r recommendation.
@@ -10,11 +33,21 @@
   numbers, i.e., only integer-valued numeric literals joined by : (like
   1:3, 0:0, -3:-1 or 1e3), or a seq_len(…) or seq_along(…) call
   occupying the whole sequence expression. Any other writing is
-  reported, notably 1:length(x).
+  reported, notably 1:length(x). Since v3.0.0, the modified function (a
+  checking line added before each reported for() construct) is returned,
+  or exported in a \_safer.R file in out_path with export = TRUE; NULL
+  is returned if no modification is performed (skipped constructs are
+  listed in the message), and the message is still always printed. See
+  the harmonization entry above for the export arguments.
 - true_false_check(): new function. Verifies that the TRUE and FALSE
   logical constants are always written in full when used as values
   (argument values, conditions, comparisons, indexing) and never
-  abbreviated as T or F.
+  abbreviated as T or F. Since v3.0.0, the modified function (T replaced
+  by TRUE and F by FALSE at the exact token positions) is returned, or
+  exported in a \_safer.R file in out_path with export = TRUE; NULL is
+  returned if no modification is performed, and the message is still
+  always printed. See the harmonization entry above for the export
+  arguments.
 - arg_check(): output component object.name renamed object_name
   (breaking change).
 - arg_check(), env_check(), get_message(), all_args_here() and the other
@@ -26,6 +59,12 @@
 - all_args_here(): an incoherent arg_full_names argument no longer
   causes a raw crash, but a proper internal error (INTERNAL ERROR 9 when
   arg_full is non-empty and arg_full_names is NULL).
+- all_args_here(): since v3.0.0, the missing arguments detected in the
+  code of the submitted function can be automatically written: the
+  modified function is returned (NULL if no modification is applied), or
+  exported in a \_safer.R file in out_path with fun_export = TRUE. The
+  former export argument is renamed table_export (breaking change), and
+  the message is still always printed.
 
 ## saferDev 2.0.0
 

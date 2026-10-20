@@ -190,12 +190,33 @@
 <span><span class="co">## 7    while       while (x &gt; 1) x &lt;- x - 1</span></span>
 <span><span class="co">## 8    repeat      repeat x &lt;- x + 1</span></span>
 <span><span class="co">## 9    function        base::sapply(X = 1:3, FUN = function(y) y * 2)</span></span></code></pre>
+<pre><code><span><span class="co">## function (x) </span></span>
+<span><span class="co">## {</span></span>
+<span><span class="co">##     if (x &gt; 1) {</span></span>
+<span><span class="co">##         base::return(x)</span></span>
+<span><span class="co">##     }</span></span>
+<span><span class="co">##     else {</span></span>
+<span><span class="co">##         base::return(0)</span></span>
+<span><span class="co">##     }</span></span>
+<span><span class="co">##     for (i in 1:3) {</span></span>
+<span><span class="co">##         base::print(i)</span></span>
+<span><span class="co">##     }</span></span>
+<span><span class="co">##     while (x &gt; 1) {</span></span>
+<span><span class="co">##         x &lt;- x - 1</span></span>
+<span><span class="co">##     }</span></span>
+<span><span class="co">##     repeat {</span></span>
+<span><span class="co">##         x &lt;- x + 1</span></span>
+<span><span class="co">##     }</span></span>
+<span><span class="co">##     base::sapply(X = 1:3, FUN = function(y) {</span></span>
+<span><span class="co">##         y * 2</span></span>
+<span><span class="co">##     })</span></span>
+<span><span class="co">## }</span></span></code></pre>
 <p><br></p>
 </div>
 <div class="section level3">
 <h3 id="argument-safer_check">Argument <code>safer_check</code><a class="anchor" aria-label="anchor" href="#argument-safer_check"></a>
 </h3>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Safer checkings are performed before main code running.</span></span>
 <span><span class="fu"><a href="../reference/curl_bracket_check.html">curl_bracket_check</a></span><span class="op">(</span></span>
 <span>    x <span class="op">=</span> <span class="va">fun1</span>, </span>
@@ -210,7 +231,7 @@
 <div class="section level3">
 <h3 id="argument-lib_path">Argument <code>lib_path</code><a class="anchor" aria-label="anchor" href="#argument-lib_path"></a>
 </h3>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># The "NOTGOOD" path does not exists.</span></span>
 <span><span class="fu"><a href="../reference/curl_bracket_check.html">curl_bracket_check</a></span><span class="op">(</span></span>
 <span>    x <span class="op">=</span> <span class="va">fun1</span>,  </span>
@@ -232,7 +253,7 @@
 <div class="section level3">
 <h3 id="argument-error_text">Argument <code>error_text</code><a class="anchor" aria-label="anchor" href="#argument-error_text"></a>
 </h3>
-<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Add a text in error messages returned by curl_bracket_check().</span></span>
 <span><span class="fu"><a href="../reference/curl_bracket_check.html">curl_bracket_check</a></span><span class="op">(</span></span>
 <span>    x <span class="op">=</span> <span class="va">fun1</span>, </span>
@@ -253,11 +274,113 @@
 <p><br></p>
 </div>
 <div class="section level3">
+<h3 id="arguments-export-and-out_path-return-or-export-the-modified-function">Arguments <code>export</code> and <code>out_path</code>: return or
+export the modified function<a class="anchor" aria-label="anchor" href="#arguments-export-and-out_path-return-or-export-the-modified-function"></a>
+</h3>
+<p>When curly brackets <code><a href="https://rdrr.io/r/base/Paren.html" class="external-link">{ }</a></code> are missing in the code of the
+submitted function, <code><a href="../reference/curl_bracket_check.html">curl_bracket_check()</a></code> can return the
+corrected function (with the missing <code><a href="https://rdrr.io/r/base/Paren.html" class="external-link">{ }</a></code> added around each
+reported construct body), or export its code into a <code>.R</code> file
+named with the submitted function name and <code>_safer</code> added at
+the end:</p>
+<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Returns the modified function, or NULL if nothing has to be modified.</span></span>
+<span><span class="va">fun2_safer</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/curl_bracket_check.html">curl_bracket_check</a></span><span class="op">(</span></span>
+<span>    x <span class="op">=</span> <span class="va">fun2</span></span>
+<span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">## </span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## INSIDE fun2(), SOME CURLY BRACKETS {} ARE MISSING AFTER:</span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## LINE CONSTRUCT       CODE</span></span>
+<span><span class="co">## 3    if      if (x &gt; 1) </span></span>
+<span><span class="co">## 5    else        else base::return(0)</span></span>
+<span><span class="co">## 6    for     for (i in 1:3) base::print(i)</span></span>
+<span><span class="co">## 7    while       while (x &gt; 1) x &lt;- x - 1</span></span>
+<span><span class="co">## 8    repeat      repeat x &lt;- x + 1</span></span>
+<span><span class="co">## 9    function        base::sapply(X = 1:3, FUN = function(y) y * 2)</span></span></code></pre>
+<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">fun2_safer</span> <span class="co"># modified function (or NULL when the code was already clean).</span></span></code></pre></div>
+<pre><code><span><span class="co">## function (x) </span></span>
+<span><span class="co">## {</span></span>
+<span><span class="co">##     if (x &gt; 1) {</span></span>
+<span><span class="co">##         base::return(x)</span></span>
+<span><span class="co">##     }</span></span>
+<span><span class="co">##     else {</span></span>
+<span><span class="co">##         base::return(0)</span></span>
+<span><span class="co">##     }</span></span>
+<span><span class="co">##     for (i in 1:3) {</span></span>
+<span><span class="co">##         base::print(i)</span></span>
+<span><span class="co">##     }</span></span>
+<span><span class="co">##     while (x &gt; 1) {</span></span>
+<span><span class="co">##         x &lt;- x - 1</span></span>
+<span><span class="co">##     }</span></span>
+<span><span class="co">##     repeat {</span></span>
+<span><span class="co">##         x &lt;- x + 1</span></span>
+<span><span class="co">##     }</span></span>
+<span><span class="co">##     base::sapply(X = 1:3, FUN = function(y) {</span></span>
+<span><span class="co">##         y * 2</span></span>
+<span><span class="co">##     })</span></span>
+<span><span class="co">## }</span></span></code></pre>
+<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># The modified function behaves like the submitted one.</span></span>
+<span><span class="fu">fun2</span><span class="op">(</span><span class="fl">1</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">## [1] 0</span></span></code></pre>
+<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu">fun2_safer</span><span class="op">(</span><span class="fl">1</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">## [1] 0</span></span></code></pre>
+<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># The modified function passes the check itself.</span></span>
+<span><span class="fu"><a href="../reference/curl_bracket_check.html">curl_bracket_check</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">fun2_safer</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">## </span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## AFTER RUNNING saferDev::curl_bracket_check().</span></span>
+<span><span class="co">## INSIDE fun2_safer(), EVERYTHING SEEMS CLEAN.</span></span></code></pre>
+<div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Export the modified function into the fun2_safer.R file, in the "." path.</span></span>
+<span><span class="co"># Warning: an already existing fun2_safer.R file is never overwritten (an error is returned instead).</span></span>
+<span><span class="fu"><a href="../reference/curl_bracket_check.html">curl_bracket_check</a></span><span class="op">(</span></span>
+<span>    x <span class="op">=</span> <span class="va">fun2</span>,</span>
+<span>    export <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>    out_path <span class="op">=</span> <span class="st">"."</span></span>
+<span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">## </span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## INSIDE fun2(), SOME CURLY BRACKETS {} ARE MISSING AFTER:</span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## LINE CONSTRUCT       CODE</span></span>
+<span><span class="co">## 3    if      if (x &gt; 1) </span></span>
+<span><span class="co">## 5    else        else base::return(0)</span></span>
+<span><span class="co">## 6    for     for (i in 1:3) base::print(i)</span></span>
+<span><span class="co">## 7    while       while (x &gt; 1) x &lt;- x - 1</span></span>
+<span><span class="co">## 8    repeat      repeat x &lt;- x + 1</span></span>
+<span><span class="co">## 9    function        base::sapply(X = 1:3, FUN = function(y) y * 2)</span></span></code></pre>
+<pre><code><span><span class="co">## MODIFIED CODE EXPORTED IN:</span></span>
+<span><span class="co">## ./fun2_safer.R</span></span></code></pre>
+<pre><code><span><span class="co">## NULL</span></span></code></pre>
+<div class="sourceCode" id="cb32"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># The exported file contains an assignment (fun2_safer &lt;- function(...)...), </span></span>
+<span><span class="co"># so that base::source()ing it recreates the modified function.</span></span>
+<span><span class="co"># Warning: comments of the submitted function are lost in the exported file.</span></span></code></pre></div>
+<p>When <code>export = TRUE</code>, the modified function is not
+returned by the function but only exported (no file is created when the
+submitted function is already compliant). <code>out_path = "."</code>
+(default) means the R working directory set by the user, and the tested
+function must be designated by a function name (not by an inline
+definition, nor by a component writing like <code>obj$fun</code>),
+because the name of the exported file could not be determined reliably
+otherwise. <br></p>
+</div>
+<div class="section level3">
 <h3 id="all-the-arguments">All the arguments<a class="anchor" aria-label="anchor" href="#all-the-arguments"></a>
 </h3>
-<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb33"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/curl_bracket_check.html">curl_bracket_check</a></span><span class="op">(</span></span>
 <span>    x <span class="op">=</span> <span class="va">fun1</span>, <span class="co"># function name to test.</span></span>
+<span>    export <span class="op">=</span> <span class="cn">FALSE</span>, <span class="co"># return the modified function, or export it into a .R file?</span></span>
+<span>    out_path <span class="op">=</span> <span class="st">"."</span>, <span class="co"># pathway of the folder where to export the modified function file.</span></span>
 <span>    safer_check <span class="op">=</span> <span class="cn">TRUE</span>, <span class="co"># perform some "safer" checks (see https://github.com/safer-r)?</span></span>
 <span>    lib_path <span class="op">=</span> <span class="cn">NULL</span>, <span class="co"># where the required packages are if not in the default directories.</span></span>
 <span>    error_text <span class="op">=</span> <span class="st">""</span> <span class="co"># add information in error messages returned by the function.</span></span>
@@ -271,14 +394,14 @@
 <div class="section level3">
 <h3 id="sophisticated-example">Sophisticated example<a class="anchor" aria-label="anchor" href="#sophisticated-example"></a>
 </h3>
-<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb35"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># The body of a primitive function cannot be delimited by curly brackets: skipped.</span></span>
 <span><span class="fu"><a href="../reference/curl_bracket_check.html">curl_bracket_check</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fu">base</span><span class="fu">::</span><span class="va">`+`</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## </span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## AFTER RUNNING saferDev::curl_bracket_check().</span></span>
 <span><span class="co">## INSIDE base::`+`(), EVERYTHING SEEMS CLEAN.</span></span></code></pre>
-<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb37"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># The body of base::mean() is UseMethod("mean"): reported.</span></span>
 <span><span class="fu"><a href="../reference/curl_bracket_check.html">curl_bracket_check</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fu">base</span><span class="fu">::</span><span class="va"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## </span></span>
@@ -288,6 +411,11 @@
 <span><span class="co">## </span></span>
 <span><span class="co">## LINE CONSTRUCT       CODE</span></span>
 <span><span class="co">## 1    function        function (x, ...)</span></span></code></pre>
+<pre><code><span><span class="co">## function (x, ...) </span></span>
+<span><span class="co">## {</span></span>
+<span><span class="co">##     UseMethod("mean")</span></span>
+<span><span class="co">## }</span></span>
+<span><span class="co">## &lt;environment: namespace:base&gt;</span></span></code></pre>
 <p><br></p>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

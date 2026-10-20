@@ -20,9 +20,11 @@
 <url><loc>/reference/colons_check.html</loc></url>
 <url><loc>/reference/curl_bracket_check.html</loc></url>
 <url><loc>/reference/dot-all_args_here_fill.html</loc></url>
+<url><loc>/reference/dot-all_args_insert.html</loc></url>
 <url><loc>/reference/dot-base_op_check.html</loc></url>
 <url><loc>/reference/dot-colons_check_message.html</loc></url>
 <url><loc>/reference/dot-extract_all_fun_names.html</loc></url>
+<url><loc>/reference/dot-find_construct_body.html</loc></url>
 <url><loc>/reference/dot-fun_args_pos.html</loc></url>
 <url><loc>/reference/dot-functions_detect.html</loc></url>
 <url><loc>/reference/dot-has_odd_number_of_quotes.html</loc></url>

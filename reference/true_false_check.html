@@ -55,7 +55,14 @@ Warning: the function first checks that all the functions used inside x are prec
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">true_false_check</span><span class="op">(</span><span class="va">x</span>, safer_check <span class="op">=</span> <span class="cn">TRUE</span>, lib_path <span class="op">=</span> <span class="cn">NULL</span>, error_text <span class="op">=</span> <span class="st">""</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">true_false_check</span><span class="op">(</span></span>
+<span>  <span class="va">x</span>,</span>
+<span>  export <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  out_path <span class="op">=</span> <span class="st">"."</span>,</span>
+<span>  safer_check <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  lib_path <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  error_text <span class="op">=</span> <span class="st">""</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -64,6 +71,14 @@ Warning: the function first checks that all the functions used inside x are prec
 
 <dl><dt id="arg-x">x<a class="anchor" aria-label="anchor" href="#arg-x"></a></dt>
 <dd><p>a function name, written without quotes and brackets.</p></dd>
+
+
+<dt id="arg-export">export<a class="anchor" aria-label="anchor" href="#arg-export"></a></dt>
+<dd><p>Single logical value. Export the modified function (see the <code>@returns</code> and <code>@details</code> sections) into a <code>.R</code> file? If <code>TRUE</code>, the modified code is written in a file named <code>&lt;function name&gt;_safer.R</code> (the function name is the last component of the submitted name, so that <code>pkg::fun()</code> gives <code>fun_safer.R</code>) in the directory indicated by the <code>out_path</code> argument, and <code>NULL</code> is returned: the modified function is only available in the file. The file contains an assignment of the modified function: <code>&lt;function name&gt;_safer &lt;- function(...) ...</code>, so that <code><a href="https://rdrr.io/r/base/source.html" class="external-link">base::source()</a></code>ing it recreates the modified function. An error is returned if this file already exists, and if the tested function is not designated by a function name (like <code>test</code> or <code>package::test</code>), i.e., written by an inline definition (like <code>function(x){x}</code>) or by a component writing (like <code>FUN_LIST$fun</code>). Nothing is written if no modification is performed (everything clean). If <code>FALSE</code> (default), the modified function is returned by <code><a href="https://rdrr.io/r/base/function.html" class="external-link">return()</a></code> (<code>NULL</code> if no modification is performed).</p></dd>
+
+
+<dt id="arg-out-path">out_path<a class="anchor" aria-label="anchor" href="#arg-out-path"></a></dt>
+<dd><p>Single character string indicating the absolute pathway of the folder where to export the modified function when the <code>export</code> argument is <code>TRUE</code>. <code>out_path = "."</code> (default) means the R working directory set by the user. Ignored if the <code>export</code> argument is <code>FALSE</code>.</p></dd>
 
 
 <dt id="arg-safer-check">safer_check<a class="anchor" aria-label="anchor" href="#arg-safer-check"></a></dt>
@@ -80,12 +95,13 @@ Warning: the function first checks that all the functions used inside x are prec
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-    <p>A table-like text message indicating the <code>T</code> or <code>F</code> symbols that must be written <code>TRUE</code> or <code>FALSE</code> or a message saying that everything seems fine.</p>
+    <p>A table-like text message indicating the <code>T</code> or <code>F</code> symbols that must be written <code>TRUE</code> or <code>FALSE</code> or a message saying that everything seems fine, printed by <code><a href="https://rdrr.io/r/base/message.html" class="external-link">base::message()</a></code> (always, whatever the value of the <code>export</code> argument).</p>
 <p>Table-like: column 1, the line number in the function code (starting at the <code>"&lt;- function"</code> line, i.e., without counting the <code>#'</code> header lines); column 2, the symbol (<code>T</code> or <code>F</code>); column 3, the code preceding the symbol.</p>
+<p>In addition, the returned value depends on the <code>export</code> argument. If <code>export</code> is <code>FALSE</code>, the submitted function with all the reported symbols replaced (<code>T</code> by <code>TRUE</code> and <code>F</code> by <code>FALSE</code>) is returned by <code><a href="https://rdrr.io/r/base/function.html" class="external-link">return()</a></code>, and <code>NULL</code> is returned if no modification was performed (everything clean). If <code>export</code> is <code>TRUE</code>, <code>NULL</code> is returned (invisibly), and the modified code is only available in the exported file, whose location is indicated by a message.</p>
     </div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
-    <p>The result is used to modify the code inside the tested function like this: replace <code>T</code> by <code>TRUE</code> and <code>F</code> by <code>FALSE</code>.</p>
+    <p>The reported symbols are used to modify the code of the tested function like this: replace <code>T</code> by <code>TRUE</code> and <code>F</code> by <code>FALSE</code> (see the <code>@returns</code> section). The replacement is performed at the exact positions of the reported tokens in the recovered code, so that comments, strings and the formatting of the original code are preserved (in particular, symbols written as <code><a href="https://rdrr.io/r/base/logical.html" class="external-link">base::T</a></code> are replaced by <code>TRUE</code>, because the <code>::</code> operator cannot precede a reserved constant). When <code>export</code> is <code>FALSE</code>, the modified function is returned by <code><a href="https://rdrr.io/r/base/function.html" class="external-link">return()</a></code> in a new environment whose parent is the environment of the submitted function: please, check the returned function before replacing the original one, notably because its environment is not necessarily the same. When <code>export</code> is <code>TRUE</code>, the modified code is written in the file <code>&lt;function name&gt;_safer.R</code> of the directory indicated by the <code>out_path</code> argument (the function name is the last component of the submitted name, so that <code>pkg::fun()</code> gives <code>fun_safer.R</code>), and nothing is written if no modification was performed. The exported file contains an assignment of the modified function (<code>&lt;function name&gt;_safer &lt;- function(...) ...</code>), so that <code><a href="https://rdrr.io/r/base/source.html" class="external-link">base::source()</a></code>ing it recreates the modified function. Warning: the tested function must be designated by a function name (like <code>test</code> or <code>package::test</code>) when <code>export = TRUE</code>: an inline definition (like <code>function(x){x}</code>) or a component writing (like <code>FUN_LIST$fun</code>) returns an error, because the name of the exported file could not be determined reliably. Warning: the exported file is a standalone R script containing the modified function code, and its potential pre-existing version is never overwritten (an error is returned instead).</p>
 <p>More precisely, <code>true_false_check()</code> reports every symbol <code>T</code> or <code>F</code> used as a value (see the <code>@description</code> section), but not the symbols used as names, because these are user-defined objects: definition target, like <code>T &lt;- 1</code>, <code>T = 1</code> or <code>y -&gt; T</code>; assignment value, like <code>x &lt;- T</code> or <code>T -&gt; x</code> (deliberately not reported, because such a symbol refers to a user-defined object); formal name, like <code>function(T)</code>; named-argument name, like <code>f(T = 1)</code>; component after <code>$</code> or slot after <code>@</code>, like <code>df$T</code> or <code>df@F</code>; loop variable, like <code>for(T in 1:3)</code>; function name, like <code><a href="https://rdrr.io/r/base/logical.html" class="external-link">T()</a></code>; help topic, like <code><a href="https://rdrr.io/r/base/logical.html" class="external-link">?T</a></code>, <code>?(T)</code>, <code>?((T))</code> or <code>??T</code>, at any parenthesis depth; formula symbol, like <code>y ~ T</code>, <code>T ~ y</code> or <code>y ~ x + T</code>, wherever it is located in the formula.</p>
 <p>If a name <code>T</code> or <code>F</code> is defined anywhere in the checked function code (formal name, loop variable, definition target), then all the value usages of this symbol are not reported, whatever the position in the code.</p>
 <p>The verification is performed on the R parser output (<code><a href="https://rdrr.io/r/base/parse.html" class="external-link">base::parse()</a></code> + <code><a href="https://rdrr.io/r/utils/getParseData.html" class="external-link">utils::getParseData()</a></code>), so that strings (like <code>"T"</code>), comments and backquoted names (like <code>`T`</code>) are never reported. Contrary to <code><a href="curl_bracket_check.html">curl_bracket_check()</a></code>, function bodies reduced to a single <code>.Primitive(...)</code> call do not need to be skipped, because such bodies do not contain any <code>T</code> or <code>F</code> symbol.</p>
@@ -112,6 +128,7 @@ Warning: the function first checks that all the functions used inside x are prec
 <span class="r-msg co"><span class="r-pr">#&gt;</span> AFTER RUNNING saferDev::true_false_check().</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> INSIDE fun1(), EVERYTHING SEEMS CLEAN.</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> NULL</span>
 <span class="r-in"><span><span class="va">fun2</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">{</span> <span class="kw">if</span><span class="op">(</span><span class="va">x</span> <span class="op">==</span> <span class="cn">T</span><span class="op">)</span><span class="op">{</span> <span class="fu">base</span><span class="fu">::</span><span class="kw"><a href="https://rdrr.io/r/base/function.html" class="external-link">return</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="op">}</span> <span class="op">}</span></span></span>
 <span class="r-in"><span><span class="fu">saferDev</span><span class="fu">::</span><span class="fu">true_false_check</span><span class="op">(</span><span class="va">fun2</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
@@ -122,6 +139,15 @@ Warning: the function first checks that all the functions used inside x are prec
 <span class="r-msg co"><span class="r-pr">#&gt;</span> LINE	SYMBOL		CODE</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> 3	T		if (x == T) {</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> MODIFIED FUNCTION RETURNED BY return().</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> function (x) </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     if (x == TRUE) {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         base::return(x)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     }</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x56311a38bcd0&gt;</span>
 <span class="r-in"><span><span class="va">fun3</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">{</span> <span class="va">x</span> <span class="op">}</span> <span class="co"># no function call: accepted by the package-association pre-check</span></span></span>
 <span class="r-in"><span><span class="fu">saferDev</span><span class="fu">::</span><span class="fu">true_false_check</span><span class="op">(</span><span class="va">fun3</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
@@ -129,6 +155,50 @@ Warning: the function first checks that all the functions used inside x are prec
 <span class="r-msg co"><span class="r-pr">#&gt;</span> AFTER RUNNING saferDev::true_false_check().</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> INSIDE fun3(), EVERYTHING SEEMS CLEAN.</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> NULL</span>
+<span class="r-in"><span><span class="va">fun4</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">{</span> <span class="kw">if</span><span class="op">(</span><span class="va">x</span> <span class="op">==</span> <span class="cn">T</span><span class="op">)</span><span class="op">{</span> <span class="fu">base</span><span class="fu">::</span><span class="kw"><a href="https://rdrr.io/r/base/function.html" class="external-link">return</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="op">}</span> <span class="op">}</span> ; <span class="fu">saferDev</span><span class="fu">::</span><span class="fu">true_false_check</span><span class="op">(</span><span class="va">fun4</span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> INSIDE fun4(), SOME SYMBOLS T OR F MUST BE WRITTEN TRUE OR FALSE:</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> LINE	SYMBOL		CODE</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> 3	T		if (x == T) {</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> MODIFIED FUNCTION RETURNED BY return().</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> function (x) </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     if (x == TRUE) {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         base::return(x)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     }</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x56311e3b5f90&gt;</span>
+<span class="r-in"><span><span class="va">fun4_bis</span> <span class="op">&lt;-</span> <span class="fu">saferDev</span><span class="fu">::</span><span class="fu">true_false_check</span><span class="op">(</span>x <span class="op">=</span> <span class="va">fun4</span>, export <span class="op">=</span> <span class="cn">FALSE</span>, safer_check <span class="op">=</span> <span class="cn">TRUE</span>, lib_path <span class="op">=</span> <span class="cn">NULL</span>, error_text <span class="op">=</span> <span class="st">""</span><span class="op">)</span> <span class="co"># modified function returned (T replaced by TRUE)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> INSIDE fun4(), SOME SYMBOLS T OR F MUST BE WRITTEN TRUE OR FALSE:</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> LINE	SYMBOL		CODE</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> 3	T		if (x == T) {</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> MODIFIED FUNCTION RETURNED BY return().</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-in"><span><span class="va">fun4_safer</span> <span class="op">&lt;-</span> <span class="va">fun4_bis</span> ; <span class="fu">base</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/base/rm.html" class="external-link">rm</a></span><span class="op">(</span>list <span class="op">=</span> <span class="fu">base</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"fun4_bis"</span><span class="op">)</span><span class="op">)</span> <span class="co"># keep the original fun4 untouched</span></span></span>
+<span class="r-in"><span><span class="fu">saferDev</span><span class="fu">::</span><span class="fu">true_false_check</span><span class="op">(</span>x <span class="op">=</span> <span class="va">fun4</span>, export <span class="op">=</span> <span class="cn">TRUE</span>, out_path <span class="op">=</span> <span class="st">"."</span>, safer_check <span class="op">=</span> <span class="cn">TRUE</span>, lib_path <span class="op">=</span> <span class="cn">NULL</span>, error_text <span class="op">=</span> <span class="st">""</span><span class="op">)</span> <span class="co"># fun4_safer.R written in the working directory, NULL returned</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> INSIDE fun4(), SOME SYMBOLS T OR F MUST BE WRITTEN TRUE OR FALSE:</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> LINE	SYMBOL		CODE</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> 3	T		if (x == T) {</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> MODIFIED CODE EXPORTED IN:</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> ./fun4_safer.R</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> NULL</span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
