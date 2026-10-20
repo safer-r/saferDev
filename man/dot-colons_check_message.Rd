@@ -40,6 +40,9 @@ A list:
 \itemize{
   \item \code{output.cat}: the message (string).
   \item \code{colon_not_here}: logical vector. Does \code{list_fun} contain function names without \code{::} or \code{:::} ?
+  \item \code{col1}: integer vector of the line numbers (in \code{ini}) of the function names without \code{::} or \code{:::}, after removal of the functions between quotes or preceded by \code{$}, and of the internal functions when \code{text = "OTHER"}. Length 0 if no problem detected.
+  \item \code{col2}: character vector of the corresponding function names. Length 0 if no problem detected.
+  \item \code{col3}: character vector of the corresponding strings before the function names. Length 0 if no problem detected.
 }
 }
 \description{

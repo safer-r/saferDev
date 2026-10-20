@@ -15,6 +15,9 @@
 #' \itemize{
 #'   \item \code{output.cat}: the message (string).
 #'   \item \code{colon_not_here}: logical vector. Does \code{list_fun} contain function names without \code{::} or \code{:::} ?
+#'   \item \code{col1}: integer vector of the line numbers (in \code{ini}) of the function names without \code{::} or \code{:::}, after removal of the functions between quotes or preceded by \code{$}, and of the internal functions when \code{text = "OTHER"}. Length 0 if no problem detected.
+#'   \item \code{col2}: character vector of the corresponding function names. Length 0 if no problem detected.
+#'   \item \code{col3}: character vector of the corresponding strings before the function names. Length 0 if no problem detected.
 #' }
 #' @details
 #' Warnings:
@@ -486,6 +489,9 @@
         # reminder: no colon problem with internal functions
     }
     # end remove internal functions in other functions (list_fun and list_fun_pos)
+    col1_out <- base::integer(length = 0)
+    col2_out <- base::character(length = 0)
+    col3_out <- base::character(length = 0)
     if(base::length(x = list_fun) != 0){
         # pattern2 <- base::paste(base::paste0("(?<![A-Za-z0-9._])", fun.uni, "\\s*\\("), collapse = "|") # to split string according to function name as splitter. Pattern (?<![A-Za-z0-9._]) means "must not be preceeded by any alphanum or .or _
         # pattern3 <- base::paste(base::paste0("(?<![A-Za-z0-9._])", fun.uni, "\\s*\\($"), collapse = "|") # same as pattern2 but used to know if the seeked function is at the end of the string
@@ -557,6 +563,9 @@
                     collapse = NULL, 
                     recycle0 = FALSE
                 )
+                col1_out <- col1
+                col2_out <- col2
+                col3_out <- col3
             }
         }
     }
@@ -566,6 +575,6 @@
     #### end warning output
 
     #### output
-    base::return(base::list(output.cat = output_cat, colon_not_here = base::unlist(x = colon_not_here, recursive = TRUE, use.names = TRUE)))
+    base::return(base::list(output.cat = output_cat, colon_not_here = base::unlist(x = colon_not_here, recursive = TRUE, use.names = TRUE), col1 = col1_out, col2 = col2_out, col3 = col3_out))
     #### end output
 }

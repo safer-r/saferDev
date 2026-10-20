@@ -29,6 +29,17 @@ testthat::test_that("colons_check()", {
     fun9 <- function(x){
         b <- c("a", "b")
     }
+    # a function calling only itself: the recursive name is filtered out, leaving no other function
+    fun_rec <- function(x){
+        if(x > 0){
+            fun_rec(x = x - 1)
+        }
+    }
+    # a function with an internal function whose name is also a basic R function name: the basic occurrence must be skipped during the modification
+    fun_skip <- function(x){
+        sum <- function(y){y}
+        sum(1)
+    }
 
     # A function calling only non-base functions (assuming dplyr is available)
     fun_non_base <- function(data){
@@ -40,6 +51,8 @@ testthat::test_that("colons_check()", {
     fun_custom <- function(){
         my_helper(5)  # 'my_helper' is not a base R function
     }
+    # a list containing a function, to test the multi-component written name fallback of the exported file name
+    FUN_LIST <- base::list(fun = fun9)
     test <- function(
             text, 
             pattern
@@ -229,6 +242,77 @@ testthat::test_that("colons_check()", {
     testthat::expect_no_error(colons_check(x = fun_non_base))  
     testthat::expect_no_error(colons_check(x = fun_custom))    
 
+    # function calling only itself (recursive): the recursive name is removed from the other functions, leaving no other function, and NULL is returned (no modification)
+    testthat::expect_null(object = colons_check(x = fun_rec, safer_check = FALSE, lib_path = NULL, error_text = ""))
+    # function containing an internal function whose name is also a basic R function name: the basic occurrence is skipped (no modification of the internal one), and NULL is returned
+    testthat::expect_null(object = colons_check(x = fun_skip, safer_check = FALSE, lib_path = NULL, error_text = ""))
+    # function named like a basic R function and calling itself: the recursive call must NOT be modified (the base:: prefix would redirect the recursion to the basic function), while the other basic functions are modified
+    sum_test2 <- function(x){
+        sum_test2(x)
+        sum(1:2)
+    }
+    sum_test2_safer <- colons_check(x = sum_test2, safer_check = FALSE, lib_path = NULL, error_text = "")
+    sum_test2_body <- base::deparse(expr = base::body(fun = sum_test2_safer), width.cutoff = 500L, backtick = FALSE, control = base::c("keepNA", "keepInteger", "niceNames", "showAttributes"), nlines = -1L)
+    testthat::expect_false(object = base::any(base::grepl(x = sum_test2_body, pattern = "base::sum_test2\\(", perl = TRUE), na.rm = TRUE), label = "recursive call not modified")
+    testthat::expect_true(object = base::any(base::grepl(x = sum_test2_body, pattern = "base::sum\\(", perl = TRUE), na.rm = TRUE), label = "basic sum call modified")
+
+    ######## export and out_path arguments
+    # out_path cannot contain an empty string, whatever the value of export
+    testthat::expect_error(colons_check(x = fun9, out_path = "", safer_check = FALSE, lib_path = NULL, error_text = ""), regexp = "CANNOT CONTAIN EMPTY STRING", fixed = TRUE)
+    # export argument values
+    testthat::expect_error(colons_check(x = fun9, export = NA, safer_check = FALSE, lib_path = NULL, error_text = ""))
+    testthat::expect_error(colons_check(x = fun9, export = 1, safer_check = FALSE, lib_path = NULL, error_text = ""))
+    testthat::expect_error(colons_check(x = fun9, export = "TRUE", safer_check = FALSE, lib_path = NULL, error_text = ""))
+    testthat::expect_error(colons_check(x = fun9, export = base::c(TRUE, FALSE), safer_check = FALSE, lib_path = NULL, error_text = ""))
+    testthat::expect_error(colons_check(x = fun9, export = mat1, safer_check = FALSE, lib_path = NULL, error_text = ""))
+    testthat::expect_error(colons_check(x = fun9, export = factor1, safer_check = FALSE, lib_path = NULL, error_text = ""))
+    testthat::expect_error(colons_check(x = fun9, export = expr1, safer_check = FALSE, lib_path = NULL, error_text = ""))
+    testthat::expect_error(colons_check(x = fun9, export = fun1, safer_check = FALSE, lib_path = NULL, error_text = ""))
+    testthat::expect_no_error(colons_check(x = fun9, export = FALSE, out_path = ".", safer_check = FALSE, lib_path = NULL, error_text = ""))
+    # out_path values
+    testthat::expect_error(colons_check(x = fun9, export = TRUE, out_path = 1, safer_check = FALSE, lib_path = NULL, error_text = ""))
+    testthat::expect_error(colons_check(x = fun9, export = TRUE, out_path = factor1, safer_check = FALSE, lib_path = NULL, error_text = ""))
+    testthat::expect_error(colons_check(x = fun9, export = TRUE, out_path = expr1, safer_check = FALSE, lib_path = NULL, error_text = ""))
+    testthat::expect_error(colons_check(x = fun9, export = TRUE, out_path = fun1, safer_check = FALSE, lib_path = NULL, error_text = ""))
+    testthat::expect_error(colons_check(x = fun9, export = TRUE, out_path = base::c("a", "b"), safer_check = FALSE, lib_path = NULL, error_text = ""))
+    # out_path ignored when export = FALSE (even a non-existing path)
+    testthat::expect_no_error(colons_check(x = fun9, export = FALSE, out_path = "PATH_NOT_GOOD", safer_check = FALSE, lib_path = NULL, error_text = ""))
+    # export = TRUE with a function to modify: file written in a fresh temporary directory, NULL returned (invisible), and the file recreates the function when sourced
+    tempo_dir_colons <- base::tempfile(pattern = "cc_export_")
+    base::dir.create(path = tempo_dir_colons, showWarnings = FALSE, recursive = TRUE, mode = "0777")
+    testthat::expect_null(object = colons_check(x = fun9, export = TRUE, out_path = tempo_dir_colons, safer_check = FALSE, lib_path = NULL, error_text = ""), label = "export TRUE returns NULL")
+    testthat::expect_true(object = base::file.exists(base::file.path(tempo_dir_colons, "fun9_safer.R", fsep = "/")), label = "fun9_safer.R written")
+    exported_lines <- base::readLines(con = base::file.path(tempo_dir_colons, "fun9_safer.R", fsep = "/"), warn = FALSE, ok = TRUE)
+    testthat::expect_true(object = base::grepl(x = exported_lines[1], pattern = "^fun9 <- ", perl = TRUE), label = "exported file starts with the function writing")
+    testthat::expect_true(object = base::any(base::grepl(x = exported_lines, pattern = "base::c\\(", perl = TRUE), na.rm = TRUE), label = "exported code contains base::c")
+    tempo_env_colons <- base::new.env(parent = base::globalenv())
+    base::sys.source(file = base::file.path(tempo_dir_colons, "fun9_safer.R", fsep = "/"), envir = tempo_env_colons, chdir = FALSE)
+    testthat::expect_identical(object = tempo_env_colons$fun9(1), expected = fun9(1), label = "exported function behaves like the submitted one")
+    # pre-existing file is never overwritten
+    testthat::expect_error(colons_check(x = fun9, export = TRUE, out_path = tempo_dir_colons, safer_check = FALSE, lib_path = NULL, error_text = ""), regexp = "FILE NAME ALREADY EXISTS", fixed = TRUE)
+    base::unlink(x = base::file.path(tempo_dir_colons, "fun9_safer.R", fsep = "/"))
+    # clean function (only non-basic functions, all with colons): no file written, NULL returned
+    testthat::expect_null(object = colons_check(x = fun2, export = TRUE, out_path = tempo_dir_colons, safer_check = FALSE, lib_path = NULL, error_text = ""))
+    testthat::expect_false(object = base::file.exists(base::file.path(tempo_dir_colons, "fun2_safer.R", fsep = "/")))
+    # file name determination: written as pkg::fun, the package name is not part of the file name (mean is not clean: its code contains basic functions, so a file is written)
+    testthat::expect_null(object = colons_check(x = base::mean, export = TRUE, out_path = tempo_dir_colons, safer_check = FALSE, lib_path = NULL, error_text = ""))
+    testthat::expect_true(object = base::file.exists(base::file.path(tempo_dir_colons, "mean_safer.R", fsep = "/")), label = "mean_safer.R written for pkg::fun form")
+    base::unlink(x = base::file.path(tempo_dir_colons, "mean_safer.R", fsep = "/"))
+    # file name determination: multi-component written name like FUN_LIST$fun: fallback to the last element of as.character()
+    testthat::expect_null(object = colons_check(x = FUN_LIST$fun, export = TRUE, out_path = tempo_dir_colons, safer_check = FALSE, lib_path = NULL, error_text = ""))
+    testthat::expect_true(object = base::file.exists(base::file.path(tempo_dir_colons, "fun_safer.R", fsep = "/")), label = "fun_safer.R written for FUN_LIST$fun")
+    # trailing / and \\ tolerated in out_path
+    testthat::expect_no_error(colons_check(x = fun_rec, export = TRUE, out_path = base::paste0(tempo_dir_colons, "/"), safer_check = FALSE, lib_path = NULL, error_text = "")) # clean function for basic functions (recursive call only): no file written
+    testthat::expect_false(object = base::file.exists(base::file.path(tempo_dir_colons, "fun_rec_safer.R", fsep = "/")))
+    testthat::expect_null(object = colons_check(x = fun9, export = TRUE, out_path = base::paste0(tempo_dir_colons, "\\"), safer_check = FALSE, lib_path = NULL, error_text = "")) # trailing backslash tolerated, file written
+    testthat::expect_true(object = base::file.exists(base::file.path(tempo_dir_colons, "fun9_safer.R", fsep = "/")))
+    # non-existing out_path
+    testthat::expect_error(colons_check(x = fun9, export = TRUE, out_path = "PATH_NOT_GOOD", safer_check = FALSE, lib_path = NULL, error_text = ""), regexp = "DIRECTORY PATH INDICATED IN THE out_path ARGUMENT DOES NOT EXISTS", fixed = TRUE)
+    # out_path with a trailing /: the trailing / is removed first, then the path checked (the error message shows the path without the trailing /)
+    testthat::expect_error(colons_check(x = fun9, export = TRUE, out_path = "PATH_NOT_GOOD/", safer_check = FALSE, lib_path = NULL, error_text = ""), regexp = "DOES NOT EXISTS:\nPATH_NOT_GOOD\n", fixed = TRUE)
+    # cleanup
+    base::unlink(x = tempo_dir_colons, recursive = TRUE, force = TRUE, expand = TRUE)
+    ######## end export and out_path arguments
 
     #### end main code
 

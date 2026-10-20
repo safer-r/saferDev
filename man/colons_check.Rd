@@ -4,10 +4,21 @@
 \alias{colons_check}
 \title{Colons Check}
 \usage{
-colons_check(x, safer_check = TRUE, lib_path = NULL, error_text = "")
+colons_check(
+  x,
+  export = FALSE,
+  out_path = ".",
+  safer_check = TRUE,
+  lib_path = NULL,
+  error_text = ""
+)
 }
 \arguments{
 \item{x}{a function name, written without quotes and brackets.}
+
+\item{export}{Single logical value. Export the modified code into a \code{.R} file? If \code{TRUE}, the modified function is not returned but only exported. The name of the file is the name of the tested function, as written by the user, with \code{_safer} added at the end (e.g., \code{test_safer.R}). Warning: the written code is the analyzed code (see the \code{Details} section): comments removed and multiple spaces collapsed. An error is returned if the file already exists in \code{out_path}. Ignored, and nothing written, if \code{FALSE} (default).}
+
+\item{out_path}{Single character string indicating the pathway of the folder where to export the modified code. \code{out_path = "."} means the R working directory set by the user. Ignored if \code{export} is \code{FALSE}.}
 
 \item{safer_check}{Single logical value. Perform some "safer" checks? If \code{TRUE}, checkings are performed before main code running (see the \href{https://github.com/safer-r}{safer-r project}): 1) correct \code{lib_path} argument value 2) required functions and related packages effectively present in local R libraries and 3) R classical operators (like \code{"<-"}) not overwritten by another package because of the R scope. Must be set to \code{FALSE} if this function is used inside another "safer" function to avoid pointless multiple checkings.}
 
@@ -18,6 +29,12 @@ colons_check(x, safer_check = TRUE, lib_path = NULL, error_text = "")
 \value{
 A table-like text message indicating the missing \code{::} or \code{:::} or a message saying that everything seems fine.
 
+The message is always printed (see the \code{Details} section).
+
+In addition, if the \code{export} argument is \code{FALSE} (default), the function returns \code{NULL} if no basic function required a package attribution, or the modified function if basic functions were modified (see the \code{Details} section).
+
+If the \code{export} argument is \code{TRUE}, the modified code is exported in the \code{.R} file specified by the \code{out_path} argument, instead of being returned.
+
 Table-like: column 1, the line number in the function code (starting at the \code{"<- function"} line, i.e., without counting the \code{#'} header lines); column 2, the function name; column 3, the code preceding the function name.
 
 With missing \code{::} or \code{:::}, the message also indicates if internal functions are created inside the checked function code, since these functions cannot have \code{::} or \code{:::}.
@@ -27,6 +44,12 @@ Verify that all the functions used inside a function are preceded by a package a
 }
 \details{
 The result is used to modify the code inside the tested function like this: \code{<PACKAGE>::<FUNCTION>} (or \code{<PACKAGE>:::<FUNCTION>} for function names starting by a dot).
+
+Since \code{saferDev} v3.0.0, the modified function is returned: the package attributions of the basic R functions, as indicated in the \code{"INSIDE test(), SOME :: OR ::: ARE MISSING BEFORE BASIC FUNCTIONS"} section of the returned message, are added to the submitted function code, and the modified function is returned using \code{return()}. The package attributions of the other functions, as indicated in the \code{"INSIDE test(), SOME :: OR ::: ARE MISSING BEFORE OTHER FUNCTIONS"} section of the returned message, are NOT added automatically, because the correct package cannot be determined reliably: a \code{base::warning()} is issued instead (in addition to the printed message). \code{NULL} is returned if no basic function required a package attribution.
+
+The modification is only performed on the code lines indicated in the \code{"INSIDE test(), SOME :: OR ::: ARE MISSING BEFORE BASIC FUNCTIONS"} section of the message, which is the same analysis as the one performed by \code{colons_check()} itself: functions written between quotes or preceded by \code{$} are not modified, and internal functions (created inside the tested function) are not modified either. Beware: the modification can only be applied to the analyzed code, which is the code with comments removed and multiple spaces collapsed: the returned function therefore does not contain the comments of the submitted function (the modification cannot recover them, since \code{colons_check()} does not analyze the comments). The modified function is returned with the environment of the submitted function, so that the functions used inside it still resolve the same way. If the modified code does not parse (a rare situation, e.g., a function name split across lines in a way the analyzer could not handle correctly), this is an internal bug: an internal error is returned when \code{export = TRUE}, and the submitted function is returned unchanged, with no error, when \code{export = FALSE}.
+
+The name of the exported file (when \code{export = TRUE}) is the name of the submitted function, as written by the user, with \code{_safer} added at the end, e.g., \code{test_safer.R} for \code{colons_check(x = test)}. If the submitted function was written as \code{package::function}, like \code{colons_check(x = saferDev::test)}, the name is \code{test_safer.R} (the package name is not part of the file name).
 
 More precisely, \code{colons_check()} verifies that all the strings before an opening bracket \code{(} are preceded by \code{::}.
 
@@ -61,7 +84,10 @@ checking dependencies in R code ... WARNING
 saferDev::colons_check(mean)
 saferDev::colons_check(colons_check)
 source("https://raw.githubusercontent.com/safer-r/saferDev/main/dev/other/test.R")
-saferDev::colons_check(test)
+res <- saferDev::colons_check(test) # res is the modified function, also printed in the message
+# source("https://raw.githubusercontent.com/safer-r/saferDev/main/dev/other/test.R")
+# saferDev::colons_check(x = test, export = TRUE, out_path = ".")
+# writes test_safer.R in the R working directory
 
 }
 \author{

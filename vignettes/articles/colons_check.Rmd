@@ -80,10 +80,34 @@ colons_check(
 ```
 <br>
 
+### Arguments <code>export</code> and <code>out_path</code>
+```{r, echo = TRUE, error = TRUE}
+# Since saferDev v3.0.0, the package attributions of the basic functions are added automatically.
+# The modified function is returned by return() (NULL if no modification was needed).
+res <- colons_check(x = fun2) # res is the modified function: sum() has become base::sum()
+res # print the modified function.
+res() # the modified function evaluates identically.
+
+# Alternatively, the modified code can be exported in a .R file (export = TRUE).
+# The file is named <function name>_safer.R, here fun2_safer.R, and is written in out_path.
+# Nothing is written and NULL is returned if no modification was needed.
+# An error is returned if the file already exists (never overwritten).
+base::file.remove(base::file.path(out_path = base::tempdir(), "fun2_safer.R", fsep = "/")) # remove a potential pre-existing file from a previous run
+colons_check(
+    x = fun2,
+    export = TRUE,
+    out_path = base::tempdir() # directory where to write fun2_safer.R (default: the R working directory).
+)
+base::readLines(con = base::file.path(base::tempdir(), "fun2_safer.R", fsep = "/")) # content of the exported file.
+```
+<br>
+
 ### All the arguments
 ```{r, echo = TRUE, error = TRUE}
 colons_check(
     x = fun1, # function name to test.
+    export = FALSE, # export the modified code in a .R file instead of returning it?
+    out_path = ".", # folder where to export the modified code (used only if export = TRUE).
     safer_check = TRUE, # perform some "safer" checks (see https://github.com/safer-r)?
     lib_path = NULL, # where the required packages are if not in the default directories.
     error_text = "" # add information in error messages returned by the function.
@@ -97,5 +121,19 @@ source("https://raw.githubusercontent.com/safer-r/saferDev/main/dev/other/test.R
 colons_check(
     x = test
 )
+```
+<br>
+
+### Returned value with the returned modified function
+```{r, echo = TRUE, error = TRUE}
+# The modified function is returned (NULL if no basic function required a package attribution).
+# The returned function carries the environment of the submitted function,
+# so that the functions used inside it still resolve the same way.
+source("https://raw.githubusercontent.com/safer-r/saferDev/main/dev/other/test.R")
+res <- colons_check(x = test)
+base::is.null(x = res) # NULL only if no modification was performed.
+base::is.function(x = res)
+# Beware: the returned function is the analyzed code, i.e., without the comments
+# of the submitted function, because colons_check() does not analyze the comments.
 ```
 <br>
