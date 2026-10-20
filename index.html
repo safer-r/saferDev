@@ -131,7 +131,7 @@
 </tr>
 <tr>
 <td align="left"><strong>for_loop_nb_check()</strong></td>
-<td align="left">Check the sequence expression of every <code>for</code> loop in a function. If the loop number is not predictable (i.e., using a variable like <code>1:length(x)</code>), a checking line is added before each <code>for</code> loop, that. Return table message of the line with problems and a corrected version of the submitted function.</td>
+<td align="left">Check the sequence expression of every <code>for</code> loop of a function. If the number of iterations is not fixed by the writing itself (e.g., <code>1:length(x)</code>), a checking line is added before the loop, issuing a warning at execution if the sequence is empty, contains <code>NA</code> or infinite values, has a single value, or is decreasing. Return a table-like message of the problematic lines and a corrected version of the submitted function.</td>
 </tr>
 <tr>
 <td align="left"><strong>env_check()</strong></td>
