@@ -2,6 +2,13 @@
 
 ## saferDev 3.0.0
 
+- for_loop_nb_check(): two bug fixes in the modification of a reported
+  for() construct written on several lines: a sequence expression
+  spanning exactly 2 lines was wrongly skipped (descending (in+1):(rp-1)
+  range), and an unbraced construct with the body starting on the next
+  line (2-line construct) was modified into a non-parseable code
+  (descending (for+1):(body-1) range). Both writings are now handled
+  correctly (regression tests added).
 - colons_check(), for_loop_nb_check(), true_false_check(),
   curl_bracket_check() and all_args_here(): the export arguments
   (export, out_path, fun_export) are harmonized. out_path now defaults
