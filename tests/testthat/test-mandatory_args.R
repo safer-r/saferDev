@@ -8,7 +8,7 @@ testthat::test_that("mandatory arg block of safer-r functions (public functions)
     ## data argument values
     # full calls with all formals except the mandatory one to drop (lib_path for all these functions)
     full_calls <- base::list(
-        all_args_here = base::quote(all_args_here(x = "a", export = FALSE, out_path = ".", df_name = "res.tsv", overwrite = FALSE, safer_check = FALSE, error_text = "")),
+        all_args_here = base::quote(all_args_here(x = "a", table_export = FALSE, fun_export = FALSE, out_path = ".", df_name = "res.tsv", overwrite = FALSE, safer_check = FALSE, error_text = "")),
         arg_check = base::quote(arg_check(data = 1, class = NULL, typeof = NULL, mode = "numeric", length = NULL, prop = FALSE, options = NULL, double_as_integer_allowed = FALSE, all_options_in_data = FALSE, na_contain = FALSE, neg_values = TRUE, inf_values = TRUE, print = FALSE, data_name = NULL, data_arg = TRUE, safer_check = FALSE, error_text = "")),
         colons_check = base::quote(colons_check(x = "a", safer_check = FALSE, error_text = "")),
         env_check = base::quote(env_check(pos = 1, name = NULL, safer_check = FALSE, error_text = "")),
@@ -60,6 +60,7 @@ testthat::test_that("mandatory arg block of safer-r functions (internal function
     # full calls with all formals except the mandatory one to drop (lib_path for all these internals)
     intern_calls <- base::list(
         .all_args_here_fill = base::quote(.all_args_here_fill(arg_full = base::list(), arg_full_names = "x", tempo_split = "x", three_dots_log = FALSE, i2 = 1L, col1_i2 = 1L, col2_i2 = "length", arg_user_setting_x = "x", warn = NULL, warn_count = 0L, error_text = "")),
+        .all_args_insert = base::quote(.all_args_insert(x = base::mean, out = base::list(code = "a"), output = base::data.frame(), error_text = "")),
         .colons_check_message = base::quote(.colons_check_message(list_fun = base::list(), list_fun_pos = base::list(), line_nb = base::integer(), ini = base::character(), arg_user_setting2 = base::list(), text = "BASIC", internal_fun_names = base::character(), error_text = "")),
         .extract_all_fun_names = base::quote(.extract_all_fun_names(text = "a", pattern = "a", error_text = "")),
         .functions_detect = base::quote(.functions_detect(x = "a", skipped_base = FALSE, arg_user_setting2 = base::list(), error_text = "")),

@@ -74,18 +74,39 @@ all_args_here(
 ```
 <br>
 
-### Arguments <code>export</code>, <code>out_path</code>, <code>df_name</code> and <code>overwrite</code>
+### Arguments <code>table_export</code>, <code>fun_export</code>, <code>out_path</code>, <code>df_name</code> and <code>overwrite</code>
 ```{r}
 # Print the results into the res.tsv file written in the "." path, 
 # and overwrite if res.tsv already exists in ".".
 all_args_here(
     x = FUN2, 
-    export = TRUE, 
+    table_export = TRUE, 
     out_path = ".", 
     df_name = "res.tsv", 
     overwrite = TRUE
 )
 ```
+<br>
+
+### Argument <code>fun_export</code>: return or export the modified function
+When arguments are missing in the code of the submitted function, `all_args_here()` can return the corrected function (with the missing arguments written as proposed in the `$STATUS` column of the output data frame), or export its code into a `.R` file named with the submitted function name and `_safer` added at the end:
+
+```{r}
+# Returns the modified function, or NULL if nothing has to be modified.
+FUN2_safer <- all_args_here(
+    x = FUN2
+)
+FUN2_safer # modified function (or NULL when the code was already clean).
+
+# Export the modified function into the FUN2_safer.R file, in the "." path.
+all_args_here(
+    x = FUN2,
+    fun_export = TRUE,
+    out_path = ".", 
+    overwrite = TRUE
+)
+```
+When `fun_export = TRUE`, the modified function is not returned by the function but only exported (the file is not created when no correction has been applied).
 <br>
 
 ### Argument <code>safer_check</code>
@@ -123,10 +144,11 @@ all_args_here(
 ```{r}
 all_args_here(
     x = FUN1, # R function.
-    export = FALSE, # export the data frame into a .tsv file?
-    out_path = ".", # pathway of the folder where to export the data frame.
+    table_export = FALSE, # export the data frame into a .tsv file?
+    fun_export = FALSE, # export the modified function into a .R file?
+    out_path = ".", # pathway of the folder where to export the data frame or the modified function.
     df_name = "res.tsv", # name of the exported data frame file.
-    overwrite = FALSE, # overwrite potential df_name file already existing in out_path?
+    overwrite = FALSE, # overwrite potential files already existing in out_path?
     safer_check = TRUE, # perform some "safer" checks (see https://github.com/safer-r)?
     lib_path = NULL, # where the required packages are if not in the default directories.
     error_text = "" # add information in error messages returned by the function.

@@ -6,7 +6,8 @@
 \usage{
 all_args_here(
   x,
-  export = FALSE,
+  table_export = FALSE,
+  fun_export = FALSE,
   out_path = ".",
   df_name = "res.tsv",
   overwrite = FALSE,
@@ -18,13 +19,15 @@ all_args_here(
 \arguments{
 \item{x}{Function name, written without quotes and brackets.}
 
-\item{export}{Single logical value. Export the result data frame into a \code{.tsv} file? If \code{TRUE}, the data frame is not returned by the function but only exported.}
+\item{table_export}{Single logical value. Export the result data frame into a \code{.tsv} file? If \code{TRUE}, the data frame is not returned by the function but only exported.}
 
-\item{out_path}{Single character string indicating the absolute pathway of the folder where to export the data frame. \code{out_path = "."} means the R working directory set by the user. Ignored if export is \code{FALSE}.}
+\item{fun_export}{Single logical value. Export the modified function into a \code{.R} file? If \code{TRUE}, the corrected code (missing arguments added into the detected function calls, as proposed in the \code{$STATUS} column) is not returned by the function but only exported into a file made of the name of the submitted function with \code{_safer} added at the end (e.g., \code{test_safer.R}). Ignored if no correction has been applied.}
 
-\item{df_name}{Single character string indicating the name of the exported data frame file. Ignored if export is \code{FALSE}.}
+\item{out_path}{Single character string indicating the absolute pathway of the folder where to export the data frame or the modified function. \code{out_path = "."} means the R working directory set by the user. Ignored if \code{table_export} and \code{fun_export} are \code{FALSE}.}
 
-\item{overwrite}{Single logical value. Overwrite potential \code{df_name} file already existing in \code{out_path}? Ignored if export is \code{FALSE}.}
+\item{df_name}{Single character string indicating the name of the exported data frame file. Ignored if \code{table_export} is \code{FALSE}.}
+
+\item{overwrite}{Single logical value. Overwrite potential files already existing in \code{out_path} (\code{df_name} for the table export, and the function name with \code{_safer} added at the end for the \code{fun_export})? Ignored if \code{table_export} and \code{fun_export} are \code{FALSE}.}
 
 \item{safer_check}{Single logical value. Perform the "safer" checks? If \code{TRUE}, checkings are performed before main code running (see the \href{https://github.com/safer-r}{safer-r project}): 1) correct \code{lib_path} argument value 2) required functions and related packages effectively present in local R libraries and 3) R classical operators (like \code{"<-"}) not overwritten by another package because of the R scope. Warning: must be set to \code{FALSE} if this function is used inside another "safer" function to avoid pointless multiple checkings.}
 
@@ -34,7 +37,9 @@ all_args_here(
 }
 \value{
 A data frame indicating the missing arguments or a message saying that everything seems fine.
-If \code{export} argument is \code{TRUE}, then the data frame is exported as \code{res.tsv} instead of being returned.
+If \code{table_export} argument is \code{TRUE}, then the data frame is exported as \code{res.tsv} instead of being returned.
+If \code{fun_export} argument is \code{TRUE}, the modified function is exported as \code{<FUNCTION_NAME>_safer.R} instead of being returned (ignored if no correction has been applied).
+Otherwise, the modified function (an R function object rebuilt from the corrected code, with its comments removed) is returned, or \code{NULL} if no modification has been applied. The returned value is invisible when nothing is exported.
 Column descriptions: 
 \itemize{
   \item \code{$LINE_NB}: the line number in the function code (starting at the \code{"<- function"} line, i.e., without counting the \code{#'} header lines).
@@ -47,7 +52,7 @@ Column descriptions:
   \item \code{$STATUS}: either \code{"GOOD"}, meaning that all the arguments are already written, or a new proposal of arguments writing, or indicates if some arguments are not fully written (abbreviation is discouraged), or nothing.
 }
 
-An additional message \code{"EVERYTHING SEEMS CLEAN"} if the \code{STATUS} column is only made of \code{""} and \code{"GOOD"}.
+An additional message \code{"EVERYTHING SEEMS CLEAN"} if the \code{$STATUS} column is only made of \code{""} and \code{"GOOD"}.
 }
 \description{
 Verify that all the functions used inside a function are written with all their arguments. For instance: \code{base::paste0(letters[1:2], collapse = NULL, recycle0 = FALSE)} and not \code{paste0(letters[1:2])}.
@@ -103,8 +108,18 @@ saferDev::all_args_here(FUN2, safer_check = FALSE)
 \dontrun{
 # Example that creates a file/folder in the working directory
 source("https://raw.githubusercontent.com/safer-r/.github/refs/heads/main/profile/backbone.R")
-saferDev::all_args_here(BACKBONE, export = TRUE, safer_check = FALSE)
+saferDev::all_args_here(BACKBONE, table_export = TRUE, fun_export = TRUE, safer_check = FALSE)
 }
+
+FUN2 <- function(x, y){
+    middle_bracket2 <- base::do.call(
+        what = base::c,
+        args = code_for_col,
+        quote = FALSE,
+        envir = base::parent.frame()
+    )
+}
+FUN2_safer <- saferDev::all_args_here(FUN2, fun_export = FALSE, safer_check = FALSE) # returns the modified function (missing arguments added) or NULL if nothing was modified
 
 }
 \author{
