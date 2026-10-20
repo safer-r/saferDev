@@ -316,6 +316,66 @@ testthat::test_that("for_loop_nb_check()", {
     testthat::expect_message(for_loop_nb_check(x = fun51, safer_check = TRUE, lib_path = NULL, error_text = ""), regexp = "the end of the for() construct body is shared with a for() construct written after it", fixed = TRUE)
     r51 <- for_loop_nb_check(x = fun51, safer_check = TRUE, lib_path = NULL, error_text = "")
     testthat::expect_true(object = base::is.function(x = r51), label = "shared body end, multi-line: modified function returned")
+    # a reported construct whose tempo object name (tempo_for_seq1) is already used in the checked function code is skipped: the construct remains unmodified and the name is listed in the message
+    fun54 <- function(x){
+        tempo_for_seq1 <- x
+        for(i in 1:length(x)){ base::print(i) }
+        for(j in 1:length(x)){ base::print(j) }
+    }
+    testthat::expect_message(for_loop_nb_check(x = fun54, safer_check = TRUE, lib_path = NULL, error_text = ""), regexp = "the object name tempo_for_seq1 is already used in the checked function code", fixed = TRUE)
+    r54 <- for_loop_nb_check(x = fun54, safer_check = TRUE, lib_path = NULL, error_text = "")
+    testthat::expect_true(object = base::is.function(x = r54), label = "tempo name already used: modified function returned")
+    txt54 <- base::paste0(base::deparse(expr = r54, width.cutoff = 500L, backtick = FALSE, control = base::c("keepNA", "keepInteger", "niceNames", "showAttributes"), nlines = -1L), collapse = " ", recycle0 = FALSE)
+    testthat::expect_true(object = base::grepl(x = txt54, pattern = "for \\(i in 1:length\\(x\\)\\)", ignore.case = FALSE, perl = TRUE, fixed = FALSE, useBytes = FALSE), label = "tempo name already used: first construct unmodified")
+    testthat::expect_true(object = base::grepl(x = txt54, pattern = "tempo_for_seq2", ignore.case = FALSE, perl = FALSE, fixed = TRUE, useBytes = FALSE), label = "tempo name already used: second construct modified")
+    # a reported for() construct located inside the sequence expression of another reported for() construct is skipped (the insertion spans would overlap): listed in the message, and only the enclosing construct is modified
+    fun55 <- function(x){
+        for(i in if(x > 0) for(j in x) j){
+            base::print(i)
+        }
+    }
+    testthat::expect_message(for_loop_nb_check(x = fun55, safer_check = TRUE, lib_path = NULL, error_text = ""), regexp = "the for() construct is located inside the sequence expression of another reported for() construct", fixed = TRUE)
+    r55 <- for_loop_nb_check(x = fun55, safer_check = TRUE, lib_path = NULL, error_text = "")
+    testthat::expect_true(object = base::is.function(x = r55), label = "overlapping sequence expressions: modified function returned")
+    txt55 <- base::paste0(base::deparse(expr = r55, width.cutoff = 500L, backtick = FALSE, control = base::c("keepNA", "keepInteger", "niceNames", "showAttributes"), nlines = -1L), collapse = " ", recycle0 = FALSE)
+    testthat::expect_true(object = base::grepl(x = txt55, pattern = "for \\(i in if \\(x > 0\\)", ignore.case = FALSE, perl = TRUE, fixed = FALSE, useBytes = FALSE), label = "overlapping sequence expressions: outer construct unmodified")
+    testthat::expect_false(object = base::grepl(x = txt55, pattern = "tempo_for_seq1", ignore.case = FALSE, perl = FALSE, fixed = TRUE, useBytes = FALSE), label = "overlapping sequence expressions: outer construct gets no checking line")
+    testthat::expect_true(object = base::grepl(x = txt55, pattern = "tempo_for_seq2", ignore.case = FALSE, perl = FALSE, fixed = TRUE, useBytes = FALSE), label = "overlapping sequence expressions: inner construct modified")
+    # a sequence expression that cannot be rewritten on a single line (comment inside the sequence span) is skipped: listed in the message, construct remains unmodified
+    fun56 <- function(x){
+        for(i in # c
+            1:length(x)){
+            base::print(i)
+        }
+    }
+    testthat::expect_message(for_loop_nb_check(x = fun56, safer_check = TRUE, lib_path = NULL, error_text = ""), regexp = "the sequence expression cannot be rewritten on a single line", fixed = TRUE)
+    testthat::expect_true(object = base::is.null(x = for_loop_nb_check(x = fun56, safer_check = TRUE, lib_path = NULL, error_text = "")))
+    # sequence expression written on exactly 2 lines (the regression fixed here: the middle-line extraction used a descending range)
+    fun57 <- function(x){ for(i in
+        1:length(x)){ base::print(i) } }
+    r57 <- for_loop_nb_check(x = fun57, safer_check = TRUE, lib_path = NULL, error_text = "")
+    testthat::expect_true(object = base::is.function(x = r57), label = "sequence expression on 2 lines: modified function returned")
+    testthat::expect_true(object = base::grepl(x = base::paste0(base::deparse(expr = r57, width.cutoff = 500L, backtick = FALSE, control = base::c("keepNA", "keepInteger", "niceNames", "showAttributes"), nlines = -1L), collapse = " ", recycle0 = FALSE), pattern = "tempo_for_seq1 <- 1:length\\(x\\)", ignore.case = FALSE, perl = TRUE, fixed = FALSE, useBytes = FALSE), label = "sequence expression on 2 lines: checking line inserted")
+    # sequence expression written on 3 lines
+    fun58 <- function(x){ for(i in
+        1:
+        length(x)){ base::print(i) } }
+    r58 <- for_loop_nb_check(x = fun58, safer_check = TRUE, lib_path = NULL, error_text = "")
+    testthat::expect_true(object = base::is.function(x = r58), label = "sequence expression on 3 lines: modified function returned")
+    testthat::expect_true(object = base::grepl(x = base::paste0(base::deparse(expr = r58, width.cutoff = 500L, backtick = FALSE, control = base::c("keepNA", "keepInteger", "niceNames", "showAttributes"), nlines = -1L), collapse = " ", recycle0 = FALSE), pattern = "tempo_for_seq1 <- 1:length\\(x\\)", ignore.case = FALSE, perl = TRUE, fixed = FALSE, useBytes = FALSE), label = "sequence expression on 3 lines: checking line inserted")
+    # an unbraced for() construct whose body starts on the next line (wrap path, construct written on exactly 2 lines: the regression fixed here)
+    fun59 <- function(x){ if(x > 1) for(i in 1:length(x))
+        base::print(i) }
+    r59 <- for_loop_nb_check(x = fun59, safer_check = TRUE, lib_path = NULL, error_text = "")
+    testthat::expect_true(object = base::is.function(x = r59), label = "2-line unbraced construct: modified function returned")
+    testthat::expect_true(object = base::grepl(x = base::paste0(base::deparse(expr = r59, width.cutoff = 500L, backtick = FALSE, control = base::c("keepNA", "keepInteger", "niceNames", "showAttributes"), nlines = -1L), collapse = " ", recycle0 = FALSE), pattern = "tempo_for_seq1", ignore.case = FALSE, perl = FALSE, fixed = TRUE, useBytes = FALSE), label = "2-line unbraced construct: checking line inserted")
+    # an unbraced for() construct whose body starts 2 lines after the for keyword (wrap path, construct written on 3 lines)
+    fun60 <- function(x){ if(x > 1) for(i in
+        1:length(x))
+        base::print(i) }
+    r60 <- for_loop_nb_check(x = fun60, safer_check = TRUE, lib_path = NULL, error_text = "")
+    testthat::expect_true(object = base::is.function(x = r60), label = "3-line unbraced construct: modified function returned")
+    testthat::expect_true(object = base::grepl(x = base::paste0(base::deparse(expr = r60, width.cutoff = 500L, backtick = FALSE, control = base::c("keepNA", "keepInteger", "niceNames", "showAttributes"), nlines = -1L), collapse = " ", recycle0 = FALSE), pattern = "tempo_for_seq1", ignore.case = FALSE, perl = FALSE, fixed = TRUE, useBytes = FALSE), label = "3-line unbraced construct: checking line inserted")
     #### end main code
 
     ######## export and out_path arguments
@@ -370,6 +430,10 @@ testthat::test_that("for_loop_nb_check()", {
     testthat::expect_null(object = for_loop_nb_check(x = fun53_in_pkg, export = TRUE, out_path = tempo_dir_forloop, safer_check = FALSE, lib_path = NULL, error_text = ""))
     testthat::expect_true(object = base::file.exists(base::file.path(tempo_dir_forloop, "fun53_in_pkg_safer.R", fsep = "/")), label = "fun53_in_pkg_safer.R written for the bare name form")
     base::unlink(x = base::file.path(tempo_dir_forloop, "fun53_in_pkg_safer.R", fsep = "/"))
+    # same, with the explicit pkg::fun written form: the package name is not part of the file name (stats::factanal contains a reported for() construct)
+    testthat::expect_null(object = for_loop_nb_check(x = stats::factanal, export = TRUE, out_path = tempo_dir_forloop, safer_check = FALSE, lib_path = NULL, error_text = ""))
+    testthat::expect_true(object = base::file.exists(base::file.path(tempo_dir_forloop, "factanal_safer.R", fsep = "/")), label = "factanal_safer.R written for the pkg::fun form")
+    base::unlink(x = base::file.path(tempo_dir_forloop, "factanal_safer.R", fsep = "/"))
     # inline definition and component writing are refused when export = TRUE (the name of the exported file could not be determined reliably)
     testthat::expect_error(for_loop_nb_check(x = function(y){ for(i in 1:length(y)){ base::print(x = i) } }, export = TRUE, out_path = tempo_dir_forloop, safer_check = FALSE, lib_path = NULL, error_text = ""), regexp = "MUST BE DESIGNATED BY A FUNCTION NAME", fixed = TRUE)
     FUN_LIST <- base::list(fun = fun20)
