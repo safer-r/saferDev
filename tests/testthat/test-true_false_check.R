@@ -1,5 +1,5 @@
 # This file tests true_false_check()
-# Same structure as test-curl_bracket_check.R
+# Same structure as test-curly_bracket_check.R
 
 testthat::test_that("true_false_check()", {
 
@@ -226,7 +226,7 @@ testthat::test_that("true_false_check()", {
     testthat::expect_message(true_false_check(x = true_false_check, safer_check = TRUE, lib_path = NULL, error_text = ""), regexp = "EVERYTHING SEEMS CLEAN", fixed = TRUE) # self check
     testthat::expect_message(true_false_check(x = colons_check, safer_check = TRUE, lib_path = NULL, error_text = ""), regexp = "EVERYTHING SEEMS CLEAN", fixed = TRUE)
     testthat::expect_message(true_false_check(x = arg_check, safer_check = TRUE, lib_path = NULL, error_text = ""), regexp = "EVERYTHING SEEMS CLEAN", fixed = TRUE)
-    testthat::expect_message(true_false_check(x = curl_bracket_check, safer_check = TRUE, lib_path = NULL, error_text = ""), regexp = "EVERYTHING SEEMS CLEAN", fixed = TRUE)
+    testthat::expect_message(true_false_check(x = curly_bracket_check, safer_check = TRUE, lib_path = NULL, error_text = ""), regexp = "EVERYTHING SEEMS CLEAN", fixed = TRUE)
     testthat::expect_message(true_false_check(x = fun4, safer_check = TRUE, lib_path = NULL, error_text = ""), regexp = "SOME SYMBOLS T OR F MUST BE WRITTEN TRUE OR FALSE", fixed = TRUE)
     testthat::expect_message(true_false_check(x = fun6, safer_check = TRUE, lib_path = NULL, error_text = ""), regexp = "SOME SYMBOLS T OR F MUST BE WRITTEN TRUE OR FALSE", fixed = TRUE)
     testthat::expect_message(true_false_check(x = fun8, safer_check = TRUE, lib_path = NULL, error_text = ""), regexp = "SOME SYMBOLS T OR F MUST BE WRITTEN TRUE OR FALSE", fixed = TRUE)

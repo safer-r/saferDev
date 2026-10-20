@@ -27,7 +27,7 @@
 
 \item{body_start_pos}{Single integer: position in \code{term_rows} of the terminal token \code{body_start}.}
 
-\item{term_rows}{Integer vector of the terminal rows (comments excluded) of \code{pd}, sorted by source position (as computed in \code{\link{curl_bracket_check}}).}
+\item{term_rows}{Integer vector of the terminal rows (comments excluded) of \code{pd}, sorted by source position (as computed in \code{\link{curly_bracket_check}}).}
 
 \item{else_branch}{Single logical value. Is the requested body the \code{else} branch of the \code{if()} construct? If \code{TRUE}, the last \code{expr} child of the construct expression is returned; if \code{FALSE}, the \code{then} body of an \code{if} with an \code{else} (the second-to-last \code{expr} child) is returned.}
 
@@ -41,7 +41,7 @@
 A list with: \code{row}, row index in \code{pd} of the body \code{expr} (whose \code{col1}/\code{line1} give the position just before the body, and \code{col2}/\code{line2} the position of the last character of the body); \code{line1}, the line of the body start; \code{col1}, the column (character offset) of the body start.
 }
 \description{
-Locate the body expression of a construct (\code{if}, \code{else}, \code{for}, \code{while}, \code{repeat}, \code{function} or lambda \code{\\(x)}) in the parse data of the checked code, for the construction of the modified function by \code{\link{curl_bracket_check}}. The body is the last \code{expr} child of the construct expression: for \code{if}, the condition \code{expr} comes first, the \code{then} body follows, and the \code{else} body (if any) is the last \code{expr} child; for \code{for}, the \code{forcond} (which owns the parentheses) comes before the body \code{expr}; for \code{while}, \code{repeat}, \code{function} and lambdas, the body is also the last \code{expr} child.
+Locate the body expression of a construct (\code{if}, \code{else}, \code{for}, \code{while}, \code{repeat}, \code{function} or lambda \code{\\(x)}) in the parse data of the checked code, for the construction of the modified function by \code{\link{curly_bracket_check}}. The body is the last \code{expr} child of the construct expression: for \code{if}, the condition \code{expr} comes first, the \code{then} body follows, and the \code{else} body (if any) is the last \code{expr} child; for \code{for}, the \code{forcond} (which owns the parentheses) comes before the body \code{expr}; for \code{while}, \code{repeat}, \code{function} and lambdas, the body is also the last \code{expr} child.
 }
 \details{
 Warnings:

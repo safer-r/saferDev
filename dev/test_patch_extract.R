@@ -16,5 +16,5 @@ extract_hunks <- function(diff_path, marker, out_path){
     base::writeLines(text = base::c(header, keep), con = out_path, useBytes = TRUE)
 }
 extract_hunks("C:/Users/gmillot/AppData/Local/Temp/opencode/mand.diff", ".find_construct_body", "C:/Users/gmillot/AppData/Local/Temp/opencode/mand_mine.patch")
-extract_hunks("C:/Users/gmillot/AppData/Local/Temp/opencode/rmd.diff", "curl_bracket_check", "C:/Users/gmillot/AppData/Local/Temp/opencode/rmd_mine.patch")
+extract_hunks("C:/Users/gmillot/AppData/Local/Temp/opencode/rmd.diff", "curly_bracket_check", "C:/Users/gmillot/AppData/Local/Temp/opencode/rmd_mine.patch")
 cat("patch written\n")

@@ -1,5 +1,5 @@
 ---
-title: "curl_bracket_check(): more examples"
+title: "curly_bracket_check(): more examples"
 ---
 <br>
 
@@ -68,17 +68,17 @@ fun2 # Function.
 ```{r, echo = TRUE, error = TRUE}
 # Test if all the bodies of fun1 are delimited by curly brackets.
 # Here everything is fine.
-curl_bracket_check(x = fun1)
+curly_bracket_check(x = fun1)
 
 # Here some bodies are not delimited by curly brackets.
-curl_bracket_check(x = fun2)
+curly_bracket_check(x = fun2)
 ```
 <br>
 
 ### Argument <code>safer_check</code> 
 ```{r, echo = TRUE, error = TRUE}
 # Safer checkings are performed before main code running.
-curl_bracket_check(
+curly_bracket_check(
     x = fun1, 
     safer_check = TRUE
 )
@@ -88,7 +88,7 @@ curl_bracket_check(
 ### Argument <code>lib_path</code>
 ```{r}
 # The "NOTGOOD" path does not exists.
-curl_bracket_check(
+curly_bracket_check(
     x = fun1,  
     lib_path = "NOTGOOD"
 )
@@ -97,8 +97,8 @@ curl_bracket_check(
 
 ### Argument <code>error_text</code>
 ```{r}
-# Add a text in error messages returned by curl_bracket_check().
-curl_bracket_check(
+# Add a text in error messages returned by curly_bracket_check().
+curly_bracket_check(
     x = fun1, 
     lib_path = "NOTGOOD", 
     error_text = " === TEXT ADDED ==="
@@ -107,11 +107,11 @@ curl_bracket_check(
 <br>
 
 ### Arguments <code>export</code> and <code>out_path</code>: return or export the modified function
-When curly brackets `{ }` are missing in the code of the submitted function, `curl_bracket_check()` can return the corrected function (with the missing `{ }` added around each reported construct body), or export its code into a `.R` file named with the submitted function name and `_safer` added at the end:
+When curly brackets `{ }` are missing in the code of the submitted function, `curly_bracket_check()` can return the corrected function (with the missing `{ }` added around each reported construct body), or export its code into a `.R` file named with the submitted function name and `_safer` added at the end:
 
 ```{r}
 # Returns the modified function, or NULL if nothing has to be modified.
-fun2_safer <- curl_bracket_check(
+fun2_safer <- curly_bracket_check(
     x = fun2
 )
 fun2_safer # modified function (or NULL when the code was already clean).
@@ -121,11 +121,11 @@ fun2(1)
 fun2_safer(1)
 
 # The modified function passes the check itself.
-curl_bracket_check(x = fun2_safer)
+curly_bracket_check(x = fun2_safer)
 
 # Export the modified function into the fun2_safer.R file, in the "." path.
 # Warning: an already existing fun2_safer.R file is never overwritten (an error is returned instead).
-curl_bracket_check(
+curly_bracket_check(
     x = fun2,
     export = TRUE,
     out_path = "."
@@ -139,7 +139,7 @@ When `export = TRUE`, the modified function is not returned by the function but 
 
 ### All the arguments
 ```{r, echo = TRUE, error = TRUE}
-curl_bracket_check(
+curly_bracket_check(
     x = fun1, # function name to test.
     export = FALSE, # return the modified function, or export it into a .R file?
     out_path = ".", # pathway of the folder where to export the modified function file.
@@ -153,9 +153,9 @@ curl_bracket_check(
 ### Sophisticated example
 ```{r, echo = TRUE, error = TRUE}
 # The body of a primitive function cannot be delimited by curly brackets: skipped.
-curl_bracket_check(x = base::`+`)
+curly_bracket_check(x = base::`+`)
 
 # The body of base::mean() is UseMethod("mean"): reported.
-curl_bracket_check(x = base::mean)
+curly_bracket_check(x = base::mean)
 ```
 <br>

@@ -3,7 +3,7 @@
 export(all_args_here)
 export(arg_check)
 export(colons_check)
-export(curl_bracket_check)
+export(curly_bracket_check)
 export(env_check)
 export(for_loop_nb_check)
 export(get_message)

@@ -1,5 +1,5 @@
 # This file tests for_loop_nb_check()
-# Same structure as test-curl_bracket_check.R
+# Same structure as test-curly_bracket_check.R
 
 testthat::test_that("for_loop_nb_check()", {
 
