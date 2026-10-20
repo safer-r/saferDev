@@ -216,7 +216,7 @@ fun2 <- function(x){ if(x > 1) base::return(x) } ; saferDev::curl_bracket_check(
 #>         base::return(x)
 #>     }
 #> }
-#> <environment: 0x55eddff4ab88>
+#> <environment: 0x55aa8e83e808>
 fun2 <- function(x){ if(x > 1) base::return(x) } ; fun2_safer <- saferDev::curl_bracket_check(fun2) ; fun2_safer(2)
 #> 
 #> 

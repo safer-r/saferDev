@@ -731,7 +731,7 @@ for_loop_nb_check(x = fun2)
     ##         base::print(i)
     ##     }
     ## }
-    ## <environment: 0x55fd68028318>
+    ## <environment: 0x556308a65980>
 
 \
 
@@ -894,7 +894,7 @@ fun9_safer # the modified function: tempo_for_seq1 <- 1:length(x) ; <CHECKS> ; f
     ##     }
     ##     y
     ## }
-    ## <environment: 0x55fd6ac9bf70>
+    ## <environment: 0x55630b6da270>
 
 ``` r
 
