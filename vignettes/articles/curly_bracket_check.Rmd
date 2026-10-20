@@ -106,43 +106,40 @@ curly_bracket_check(
 ```
 <br>
 
-### Arguments <code>export</code> and <code>out_path</code>: return or export the modified function
-When curly brackets `{ }` are missing in the code of the submitted function, `curly_bracket_check()` can return the corrected function (with the missing `{ }` added around each reported construct body), or export its code into a `.R` file named with the submitted function name and `_safer` added at the end:
-
+### Arguments <code>export</code> and <code>out_path</code>: return or export the corrected function
 ```{r}
-# Returns the modified function, or NULL if nothing has to be modified.
-fun2_safer <- curly_bracket_check(
-    x = fun2
-)
-fun2_safer # modified function (or NULL when the code was already clean).
+# The corrected function is returned (NULL if nothing has to be corrected).
+fun2_safer <- curly_bracket_check(x = fun2)
+fun2_safer # { } added around each reported body.
 
-# The modified function behaves like the submitted one.
+# The corrected function behaves like the submitted one.
 fun2(1)
 fun2_safer(1)
 
-# The modified function passes the check itself.
+# And it passes the check.
 curly_bracket_check(x = fun2_safer)
 
-# Export the modified function into the fun2_safer.R file, in the "." path.
-# Warning: an already existing fun2_safer.R file is never overwritten (an error is returned instead).
+# Export the corrected function into the fun2_safer.R file, here in a new temporary folder.
+# out_path = "." (default) is the R working directory.
+# An existing file is never overwritten (an error is returned instead).
+tempo_dir <- base::tempfile(pattern = "dir", tmpdir = base::tempdir(), fileext = "")
+base::dir.create(path = tempo_dir, showWarnings = TRUE, recursive = FALSE, mode = "0777")
 curly_bracket_check(
     x = fun2,
     export = TRUE,
-    out_path = "."
+    out_path = tempo_dir
 )
-# The exported file contains an assignment (fun2_safer <- function(...)...), 
-# so that base::source()ing it recreates the modified function.
-# Warning: comments of the submitted function are lost in the exported file.
+# base::source() of this file recreates the corrected function, named fun2_safer.
+base::readLines(con = base::file.path(tempo_dir, "fun2_safer.R", fsep = "/"))
 ```
-When `export = TRUE`, the modified function is not returned by the function but only exported (no file is created when the submitted function is already compliant). `out_path = "."` (default) means the R working directory set by the user, and the tested function must be designated by a function name (not by an inline definition, nor by a component writing like `obj$fun`), because the name of the exported file could not be determined reliably otherwise.
 <br>
 
 ### All the arguments
 ```{r, echo = TRUE, error = TRUE}
 curly_bracket_check(
     x = fun1, # function name to test.
-    export = FALSE, # return the modified function, or export it into a .R file?
-    out_path = ".", # pathway of the folder where to export the modified function file.
+    export = FALSE, # write the corrected function into a .R file instead of returning it?
+    out_path = ".", # folder where to write the file (used only if export = TRUE).
     safer_check = TRUE, # perform some "safer" checks (see https://github.com/safer-r)?
     lib_path = NULL, # where the required packages are if not in the default directories.
     error_text = "" # add information in error messages returned by the function.
@@ -152,7 +149,7 @@ curly_bracket_check(
 
 ### Sophisticated example
 ```{r, echo = TRUE, error = TRUE}
-# The body of a primitive function cannot be delimited by curly brackets: skipped.
+# The body of a primitive function cannot have curly brackets: skipped.
 curly_bracket_check(x = base::`+`)
 
 # The body of base::mean() is UseMethod("mean"): reported.

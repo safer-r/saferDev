@@ -1,0 +1,152 @@
+---
+title: "true_false_check(): more examples"
+---
+<br>
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+    error = TRUE, 
+    collapse = FALSE,
+    comment = "##"
+)
+```
+
+```{r setup}
+library(saferDev)
+```
+<br>
+
+### Datasets
+
+```{r}
+# Function with TRUE and FALSE written in full.
+fun1 <- function(x){
+    if(x == TRUE){
+        base::return(base::mean(x = 1:3, na.rm = FALSE))
+    }
+}
+# Function with T and F used as values.
+fun2 <- function(x){
+    if(x == T){
+        base::return(base::mean(x = 1:3, na.rm = F))
+    }
+}
+```
+<br>
+
+### Datasets info
+
+```{r}
+fun1 # Function.
+fun2 # Function.
+```
+<br>
+
+### Argument <code>x</code>
+```{r, echo = TRUE, error = TRUE}
+# Test if TRUE and FALSE are written in full in fun1.
+# Here everything is fine.
+true_false_check(x = fun1)
+
+# Here T and F are used.
+true_false_check(x = fun2)
+
+# Error: the functions called in x must first be written with their package (run colons_check() first).
+fun3 <- function(x){ if(x == T){ mean(x = 1:3) } }
+true_false_check(x = fun3)
+```
+<br>
+
+### Argument <code>safer_check</code> 
+```{r, echo = TRUE, error = TRUE}
+# Safer checkings are performed before main code running.
+true_false_check(
+    x = fun1, 
+    safer_check = TRUE
+)
+```
+<br>
+
+### Argument <code>lib_path</code>
+```{r}
+# The "NOTGOOD" path does not exists.
+true_false_check(
+    x = fun1,  
+    lib_path = "NOTGOOD"
+)
+```
+<br>
+
+### Argument <code>error_text</code>
+```{r}
+# Add a text in error messages returned by true_false_check().
+true_false_check(
+    x = fun1, 
+    lib_path = "NOTGOOD", 
+    error_text = " === TEXT ADDED ==="
+)
+```
+<br>
+
+### Arguments <code>export</code> and <code>out_path</code>: return or export the corrected function
+```{r}
+# The corrected function is returned (NULL if nothing has to be corrected).
+fun2_safer <- true_false_check(x = fun2)
+fun2_safer # T replaced by TRUE, F replaced by FALSE.
+
+# And it passes the check.
+true_false_check(x = fun2_safer)
+
+# Export the corrected function into the fun2_safer.R file, here in a new temporary folder.
+# out_path = "." (default) is the R working directory.
+# An existing file is never overwritten (an error is returned instead).
+tempo_dir <- base::tempfile(pattern = "dir", tmpdir = base::tempdir(), fileext = "")
+base::dir.create(path = tempo_dir, showWarnings = TRUE, recursive = FALSE, mode = "0777")
+true_false_check(
+    x = fun2,
+    export = TRUE,
+    out_path = tempo_dir
+)
+# base::source() of this file recreates the corrected function, named fun2_safer.
+base::readLines(con = base::file.path(tempo_dir, "fun2_safer.R", fsep = "/"))
+```
+<br>
+
+### All the arguments
+```{r, echo = TRUE, error = TRUE}
+true_false_check(
+    x = fun1, # function name to test.
+    export = FALSE, # write the corrected function into a .R file instead of returning it?
+    out_path = ".", # folder where to write the file (used only if export = TRUE).
+    safer_check = TRUE, # perform some "safer" checks (see https://github.com/safer-r)?
+    lib_path = NULL, # where the required packages are if not in the default directories.
+    error_text = "" # add information in error messages returned by the function.
+)
+```
+<br>
+
+### Sophisticated example
+```{r, echo = TRUE, error = TRUE}
+# T and F used as names are not reported: they are user-defined objects.
+fun4 <- function(x){
+    df <- base::data.frame(T = 1:2, stringsAsFactors = FALSE)
+    y <- df$T # column named T
+    z <- base::list(F = 3) # argument named F
+    base::return(y)
+}
+true_false_check(x = fun4)
+
+# If T is defined in the function, its uses are not reported.
+fun5 <- function(x){
+    T <- 2
+    base::return(x + T)
+}
+true_false_check(x = fun5)
+
+# Strings and comments are ignored.
+fun6 <- function(x){
+    base::return("T") # F
+}
+true_false_check(x = fun6)
+```
+<br>

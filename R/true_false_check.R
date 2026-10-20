@@ -2,33 +2,27 @@
 #' @description
 #' Verify that the \code{TRUE} and \code{FALSE} logical constants are always written in full when used as values (argument values, conditions, comparisons, indexing) and never abbreviated as \code{T} or \code{F}, which can be overwritten by the user. Return table message of the line with problems and a corrected version of the submitted function.
 #' @param x A function name, written without quotes and brackets.
-#' @param export Single logical value. Export the modified function (see the \code{@returns} and \code{@details} sections) into a \code{.R} file? If \code{TRUE}, the modified code is written in a file named \code{<function name>_safer.R} (the function name is the last component of the submitted name, so that \code{pkg::fun()} gives \code{fun_safer.R}) in the directory indicated by the \code{out_path} argument, and \code{NULL} is returned: the modified function is only available in the file. The file contains an assignment of the modified function: \code{<function name>_safer <- function(...) ...}, so that \code{base::source()}ing it recreates the modified function. An error is returned if this file already exists, and if the tested function is not designated by a function name (like \code{test} or \code{package::test}), i.e., written by an inline definition (like \code{function(x)\{x\}}) or by a component writing (like \code{FUN_LIST$fun}). Nothing is written if no modification is performed (everything clean). If \code{FALSE} (default), the modified function is returned by \code{return()} (\code{NULL} if no modification is performed).
-#' @param out_path Single character string indicating the absolute pathway of the folder where to export the modified function when the \code{export} argument is \code{TRUE}. \code{out_path = "."} (default) means the R working directory set by the user. Ignored if the \code{export} argument is \code{FALSE}.
+#' @param export Single logical value. Write the corrected function into a file instead of returning it? If \code{TRUE}, the file \code{<function name>_safer.R} is written in \code{out_path} (e.g., \code{fun_safer.R} for \code{x = fun} or \code{x = pkg::fun}). It contains \code{fun_safer <- function(...) ...}, so that \code{base::source()} recreates the corrected function. Nothing is written if nothing has to be corrected. An error is returned if the file already exists, or if \code{x} is not a function name (e.g., \code{function(x)\{x\}} or \code{FUN_LIST$fun}).
+#' @param out_path Single character string indicating the path of the folder where to write the file when \code{export = TRUE}. \code{"."} (default) means the R working directory. Ignored if \code{export = FALSE}.
 #' @param safer_check Single logical value. Perform some "safer" checks? If \code{TRUE}, checkings are performed before main code running (see the \href{https://github.com/safer-r}{safer-r project}): 1) correct \code{lib_path} argument value 2) required functions and related packages effectively present in local R libraries and 3) R classical operators (like \code{"<-"}) not overwritten by another package because of the R scope. Must be set to \code{FALSE} if this function is used inside another "safer" function to avoid pointless multiple checkings.
 #' @param lib_path Vector of characters specifying the absolute pathways of the directories containing the required packages for the function, if not in the default directories. Useful when R packages are not installed in the default directories because of lack of admin rights. More precisely, \code{lib_path} is passed through the \code{new} argument of \code{.libPaths()} so that the new library paths are \code{unique(c(new, .Library.site, .Library))}. Warning: \code{.libPaths()} is restored to the initial paths, after function execution. Ignored if \code{NULL} (default) or if the \code{safer_check} argument is \code{FALSE}: only the pathways specified by the current \code{.libPaths()} are used for package calling.
 #' @param error_text Single character string used to add information in error messages returned by the function, notably if the function is inside other functions, which is practical for debugging. Example: \code{error_text = " INSIDE <PACKAGE_1>::<FUNCTION_1> INSIDE <PACKAGE_2>::<FUNCTION_2>."}. If \code{NULL}, converted into \code{""}.
 #' @returns
-#' A table-like text message indicating the \code{T} or \code{F} symbols that must be written \code{TRUE} or \code{FALSE} or a message saying that everything seems fine, printed by \code{base::message()} (always, whatever the value of the \code{export} argument).
+#' A table-like message is always printed, with one row per reported symbol (column 1: line number; column 2: symbol; column 3: code before the symbol), or a message saying that everything seems fine.
 #'
-#' Table-like: column 1, the line number in the function code (starting at the \code{"<- function"} line, i.e., without counting the \code{#'} header lines); column 2, the symbol (\code{T} or \code{F}); column 3, the code preceding the symbol.
+#' If \code{export = FALSE}: the corrected function, or \code{NULL} if nothing has to be corrected.
 #'
-#' In addition, the returned value depends on the \code{export} argument. If \code{export} is \code{FALSE}, the submitted function with all the reported symbols replaced (\code{T} by \code{TRUE} and \code{F} by \code{FALSE}) is returned by \code{return()}, and \code{NULL} is returned if no modification was performed (everything clean). If \code{export} is \code{TRUE}, \code{NULL} is returned (invisibly), and the modified code is only available in the exported file, whose location is indicated by a message.
+#' If \code{export = TRUE}: \code{NULL}, returned invisibly. The corrected function is written in a file (see the \code{export} argument).
 #' @details
-#' Warning: the function first checks that all the functions used inside \code{x} are preceded by a package attribution (like \code{colons_check()} would do): if not, an error is returned, asking to run \code{colons_check()} first (like \code{all_args_here()} does). This pre-check must pass before the \code{T} or \code{F} scanning is performed.
+#' Warning: all the functions called in \code{x} must first be written with their package, like \code{base::mean()}. Otherwise, an error asks to run \code{colons_check()} first. As in \code{colons_check()}, function names without brackets (e.g., \code{FUN = as.character}) or preceded by \code{$} are not checked, and internal functions must be written \code{name <- function(...)}, not \code{function(...) -> name}. A function without any call is accepted. A function like \code{base::mean} (\code{UseMethod()} body) never passes this pre-check.
 #'
-#' The reported symbols are used to modify the code of the tested function like this: replace \code{T} by \code{TRUE} and \code{F} by \code{FALSE} (see the \code{@returns} section). The replacement is performed at the exact positions of the reported tokens in the recovered code, so that comments, strings and the formatting of the original code are preserved (in particular, symbols written as \code{base::T} are replaced by \code{TRUE}, because the \code{::} operator cannot precede a reserved constant). When \code{export} is \code{FALSE}, the modified function is returned by \code{return()} in a new environment whose parent is the environment of the submitted function: please, check the returned function before replacing the original one, notably because its environment is not necessarily the same. When \code{export} is \code{TRUE}, the modified code is written in the file \code{<function name>_safer.R} of the directory indicated by the \code{out_path} argument (the function name is the last component of the submitted name, so that \code{pkg::fun()} gives \code{fun_safer.R}), and nothing is written if no modification was performed. The exported file contains an assignment of the modified function (\code{<function name>_safer <- function(...) ...}), so that \code{base::source()}ing it recreates the modified function. Warning: the tested function must be designated by a function name (like \code{test} or \code{package::test}) when \code{export = TRUE}: an inline definition (like \code{function(x)\{x\}}) or a component writing (like \code{FUN_LIST$fun}) returns an error, because the name of the exported file could not be determined reliably. Warning: the exported file is a standalone R script containing the modified function code, and its potential pre-existing version is never overwritten (an error is returned instead).
+#' Reported: \code{T} or \code{F} used as a value, e.g., \code{f(log = T)}, \code{f(T)}, \code{if(T)}, \code{while(T)}, \code{x == T} or \code{x[T]}.
 #'
-#' More precisely, \code{true_false_check()} reports every symbol \code{T} or \code{F} used as a value (argument values, like \code{f(log = T)} or \code{f(T)}; condition values, like \code{if(T)} or \code{while(T)}; comparison values, like \code{x == T}, both sides; indexing values, like \code{n[T]}), but not the symbols used as names, because these are user-defined objects: definition target, like \code{T <- 1}, \code{T = 1} or \code{y -> T}; assignment value, like \code{x <- T} or \code{T -> x} (deliberately not reported, because such a symbol refers to a user-defined object); formal name, like \code{function(T)}; named-argument name, like \code{f(T = 1)}; component after \code{$} or slot after \code{@}, like \code{df$T} or \code{df@F}; loop variable, like \code{for(T in 1:3)}; function name, like \code{T()}; help topic, like \code{?T}, \code{?(T)}, \code{?((T))} or \code{??T}, at any parenthesis depth; formula symbol, like \code{y ~ T}, \code{T ~ y} or \code{y ~ x + T}, wherever it is located in the formula.
+#' Not reported: \code{T} or \code{F} used as a name or assigned, e.g., \code{T <- 1}, \code{x <- T}, \code{function(T)}, \code{f(T = 1)}, \code{df$T}, \code{for(T in 1:3)}, \code{T()}, \code{?T} or \code{y ~ T}. Strings, comments and backquoted names (\code{`T`}) are ignored. If \code{T} or \code{F} is defined anywhere in the function (argument, loop variable or assignment), none of its uses is reported.
 #'
-#' If a name \code{T} or \code{F} is defined anywhere in the checked function code (formal name, loop variable, definition target), then all the value usages of this symbol are not reported, whatever the position in the code.
+#' Correction: each reported \code{T} is replaced by \code{TRUE} and each \code{F} by \code{FALSE} (\code{base::T} also becomes \code{TRUE}). The rest of the code is unchanged. The comments are kept in the exported file, but can be lost in the returned function. The returned function is evaluated in a new environment whose parent is the environment of the submitted function: check it before replacing the original function.
 #'
-#' The verification is performed on the R parser output (\code{base::parse()} + \code{utils::getParseData()}), so that strings (like \code{"T"}), comments and backquoted names (like \code{`T`}) are never reported. Contrary to \code{curly_bracket_check()}, function bodies reduced to a single \code{.Primitive(...)} call do not need to be skipped, because such bodies do not contain any \code{T} or \code{F} symbol.
-#'
-#' The package-association pre-check verifies that all the functions called with brackets (like \code{mean()}) in the code of the tested function are preceded by \code{::} or \code{:::}. Like \code{colons_check()}, it does not check function names written without brackets, like in the \code{FUN} argument of some functions, e.g., \code{sapply(1:3, FUN = as.character)}, and function names preceded by \code{$} are not considered. Contrary to \code{colons_check()}, the pre-check is performed on the R parser output, and functions without any function call (like \code{function(x)\{ x == TRUE \}}) are accepted, instead of returning the \code{colons_check()} "EMPTY OF FUNCTION" error. Functions like \code{base::mean} (body made of \code{UseMethod(...)}) can never pass the pre-check, exactly like they never pass \code{colons_check()}. Warning: internal functions defined with the arrow writing \code{function(...)} \code{->} \code{name} are not detected by the pre-check (the detection only supports \code{name <- function(...)} and \code{name <- utils::getFromNamespace(...)}), exactly like in \code{colons_check()} where the arrow writing is also flagged: please, use the standard writing.
-#'
-#' Warning: \code{true_false_check()} cannot check symbols written with backquotes, like \code{`T`}. Please, use the standard writing.
-#'
-#' The returned line numbers are indicative, depending on which source is checked. For instance, \code{saferDev::colons_check} (compiled) has not the same line numbers as its source file. Notably, compiled functions do not have comments anymore, compared to the same source function sourced into the working environment. In addition, the counting starts at the \code{"<- function"} line, i.e., without counting the \code{#'} header lines potentially present in source files.
+#' Line numbers are indicative. They start at the \code{<- function} line (\code{#'} header lines not counted). Compiled functions, like \code{saferDev::colons_check}, have no comments: their line numbers differ from their source file.
 #' @author \href{mailto:gael.millot@pasteur.fr}{Gael Millot}
 #' @author Haiding Wang
 #' @author Yushi Han
@@ -36,15 +30,15 @@
 #' # Warning: these examples may not work well when using the "Run examples" link
 #' # because of a particular environment. Please, copy-paste in a local environment.
 #' # See also https://safer-r.github.io/saferDev/articles/true_false_check.html
-#' fun1 <- function(x){ if(x > 1){ base::return(TRUE) } }
-#' saferDev::true_false_check(fun1)
+#' fun1 <- function(x){ if(x == TRUE){ base::return(x) } }
+#' saferDev::true_false_check(fun1) # everything fine: NULL returned
 #' fun2 <- function(x){ if(x == T){ base::return(x) } }
-#' saferDev::true_false_check(fun2)
-#' fun2_safer <- saferDev::true_false_check(fun2) # modified function returned (T replaced by TRUE)
-#' fun2_safer(TRUE)
-#' saferDev::true_false_check(x = fun2, export = TRUE, out_path = ".") # fun2_safer.R written in the working directory, NULL returned
-#' fun3 <- function(x){ x } # no function call: accepted by the package-association pre-check
-#' saferDev::true_false_check(fun3)
+#' fun2_safer <- saferDev::true_false_check(fun2) # T reported
+#' fun2_safer # corrected function
+#' # Write the corrected function in the fun2_safer.R file of a new temporary folder:
+#' tempo_dir <- base::tempfile(pattern = "dir", tmpdir = base::tempdir(), fileext = "")
+#' base::dir.create(path = tempo_dir, showWarnings = TRUE, recursive = FALSE, mode = "0777")
+#' saferDev::true_false_check(x = fun2, export = TRUE, out_path = tempo_dir)
 #'
 #' @export
 true_false_check <- function(
@@ -805,7 +799,11 @@ true_false_check <- function(
     }else{
         output <- base::eval(expr = base::parse(text = base::paste0(modified_code, collapse = "\n", recycle0 = FALSE), file = "", n = NULL, prompt = "?", keep.source = base::getOption(x = "keep.source", default = NULL), srcfile = NULL, encoding = "unknown")[[1]], envir = base::new.env(parent = base::environment(fun = x)), enclos = base::globalenv())
     }
-    base::return(output) # NULL if everything is clean or if export is TRUE
+    if(export == TRUE){
+        base::return(base::invisible(x = output)) # NULL returned invisibly when export is TRUE (the invisibility is lost when assigned to output, hence invisible() here)
+    }else{
+        base::return(output) # NULL if everything is clean
+    }
     #### end output
 
     #### end of function

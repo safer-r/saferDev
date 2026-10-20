@@ -24,13 +24,13 @@ fun1 <- function(x){
     for(i in 1:3){
         base::print(i)
     }
-    for(i in 0:0){ # equal bounds: not reported by for_loop_nb_check() (target of the runtime checking line)
+    for(i in 0:0){ # equal bounds: hard numbers, not reported
         base::print(i)
     }
-    for(i in -3:-1){ # both negative: not reported by for_loop_nb_check()
+    for(i in -3:-1){ # negative: hard numbers, not reported
         base::print(i)
     }
-    for(i in 1:0){ # decreasing: not reported by for_loop_nb_check()
+    for(i in 1:0){ # decreasing: hard numbers, not reported
         base::print(i)
     }
     for(i in base::seq_along(along.with = x)){ # recommended replacement of 1:length(x)
@@ -142,8 +142,8 @@ for_loop_nb_check(
 ```{r, echo = TRUE, error = TRUE}
 for_loop_nb_check(
     x = fun1, # function name to test.
-    export = FALSE, # return the modified function (FALSE, default) or export it in a <function name>_safer.R file (TRUE)?
-    out_path = ".", # directory where to export the file when export = TRUE (the R working directory by default).
+    export = FALSE, # write the corrected function into a .R file instead of returning it?
+    out_path = ".", # folder where to write the file (used only if export = TRUE).
     safer_check = TRUE, # perform some "safer" checks (see https://github.com/safer-r)?
     lib_path = NULL, # where the required packages are if not in the default directories.
     error_text = "" # add information in error messages returned by the function.
@@ -151,25 +151,39 @@ for_loop_nb_check(
 ```
 <br>
 
-### Modified function returned or exported
+### Arguments <code>export</code> and <code>out_path</code>: return or export the corrected function
 ```{r, echo = TRUE, error = TRUE}
-# When at least one checking line has been inserted, the modified function is returned by return() (NULL is returned when no modification is performed, e.g., when everything is clean or when the constructs cannot be modified, which are then listed in the message).
+# The corrected function is returned (NULL if nothing has to be corrected).
 fun9 <- function(x){ for(i in 1:length(x)){ y <- i } ; y }
-fun9_safer <- for_loop_nb_check(x = fun9, export = FALSE, out_path = ".", safer_check = TRUE, lib_path = NULL, error_text = "")
-fun9_safer # the modified function: tempo_for_seq1 <- 1:length(x) ; <CHECKS> ; for(i in tempo_for_seq1){ y <- i }
+fun9_safer <- for_loop_nb_check(x = fun9)
+fun9_safer # a checking line is added before the loop.
 
-# With export = TRUE, the modified code is written in a fun9_safer.R file, in the directory indicated by out_path (the R working directory by default, when out_path = "."), and NULL is returned. An error is issued if the file already exists, and nothing is written when no modification is performed.
-# for_loop_nb_check(x = fun9, export = TRUE, out_path = tempdir(), safer_check = TRUE, lib_path = NULL, error_text = "")
+# The corrected function warns when x is empty, because 1:length(x) is then c(1, 0), a decreasing sequence.
+fun9_safer(x = base::character())
+
+# Export the corrected function into the fun9_safer.R file, here in a new temporary folder.
+# out_path = "." (default) is the R working directory.
+# An existing file is never overwritten (an error is returned instead).
+tempo_dir <- base::tempfile(pattern = "dir", tmpdir = base::tempdir(), fileext = "")
+base::dir.create(path = tempo_dir, showWarnings = TRUE, recursive = FALSE, mode = "0777")
+for_loop_nb_check(
+    x = fun9,
+    export = TRUE,
+    out_path = tempo_dir
+)
+base::readLines(con = base::file.path(tempo_dir, "fun9_safer.R", fsep = "/"))
 ```
 <br>
 
 ### Sophisticated example
 ```{r, echo = TRUE, error = TRUE}
-# The for() sequences written with hard numbers are all clean, whatever the bounds (0:0, 1:0 and -3:-1 are deliberately not reported by for_loop_nb_check(): they are the target of a specific checking line added in the function bodies, which warns at execution when the computed sequence is equal, both negative or decreasing).
+# Hard numbers are never reported, whatever the bounds (0:0, 1:0 or -3:-1):
+# the writing itself fixes the iterations, so their control is left to the writer.
 fun3 <- function(x){ x <- 0 ; for(i in 0:0){ y <- i } ; y }
 for_loop_nb_check(x = fun3)
 
-# But the same writing computed from an object is reported, like 1:length(x), which gives c(1, 0) when x is empty (base::seq_along(x = x) should be used instead).
+# But a sequence computed from an object is reported, like 1:length(x), 
+# which gives c(1, 0) when x is empty (use base::seq_along(along.with = x) instead).
 fun4 <- function(x){ x <- character() ; for(i in 1:length(x)){ y <- i } ; y }
 for_loop_nb_check(x = fun4)
 
@@ -183,16 +197,13 @@ fun5 <- function(x){
 }
 for_loop_nb_check(x = fun5)
 
-# A for() loop inside a formal default is also checked, and the whole construct is wrapped in curly brackets when needed (here, the for() construct is the unbraced body of the function() writing, so the checking lines must be inserted inside { }).
+# A for() loop inside an argument default is also checked.
+# Here, the loop is the body of function(y) without { }: the correction adds { } around it.
 fun6 <- function(f = function(y) for(i in y){ base::print(i) }) f(1)
 for_loop_nb_check(x = fun6)
 
-# Aliased bounds cannot be detected (documented limitation): n <- length(x) ; for(i in 1:n) is reported as a plain variable, but the aliasing itself is invisible.
+# Only the writing is analyzed: 1:n is reported as a variable, whatever n.
 fun7 <- function(x){ n <- base::length(x = x) ; for(i in 1:n){ y <- i } ; y }
 for_loop_nb_check(x = fun7)
-
-# Backquoted constructs cannot be checked (documented limitation).
-fun8 <- function(x){ `for`(i in 1:3, base::print(i)) }
-try(for_loop_nb_check(x = fun8), silent = FALSE)
 ```
 <br>
