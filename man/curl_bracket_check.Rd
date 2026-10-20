@@ -2,7 +2,7 @@
 % Please edit documentation in R/curl_bracket_check.R
 \name{curl_bracket_check}
 \alias{curl_bracket_check}
-\title{Curl Brackets Check}
+\title{Curly Brackets Check}
 \usage{
 curl_bracket_check(
   x,
@@ -14,7 +14,7 @@ curl_bracket_check(
 )
 }
 \arguments{
-\item{x}{a function name, written without quotes and brackets.}
+\item{x}{A function name, written without quotes and brackets.}
 
 \item{export}{Single logical value. Export the modified function into a \code{.R} file (see the \code{out_path} argument)? If \code{TRUE}, the modified function is not returned but only exported. An error is returned if the file already exists in \code{out_path}, and if the tested function is not designated by a function name (like \code{test} or \code{package::test}), i.e., written by an inline definition (like \code{function(x)\{x\}}) or by a component writing (like \code{FUN_LIST$fun}). If \code{FALSE} (default), the modified function is returned by the function instead of being exported.}
 
@@ -36,7 +36,7 @@ In both cases, a table-like text message indicating the missing curly brackets \
 Table-like: column 1, the line number in the function code (starting at the \code{"<- function"} line, i.e., without counting the \code{#'} header lines); column 2, the construct (\code{if}, \code{else}, \code{for}, \code{while}, \code{repeat} or \code{function}); column 3, the code preceding the construct body.
 }
 \description{
-Verify that all the bodies of the \code{if}, \code{else}, \code{for}, \code{while}, \code{repeat} and \code{function} (including lambda \code{\\(x)}) constructs of a function are delimited by curly brackets \code{\{ \}}. For instance: \code{if(x > 1)\{ base::return(x) \}} and not \code{if(x > 1) base::return(x)}. The safer-r rule requires curly brackets for every body, even single-statement ones.
+Verify that all the bodies of the \code{if}, \code{else}, \code{for}, \code{while}, \code{repeat} and \code{function} (including lambda \code{\\(x)}) constructs of a function are delimited by curly brackets \code{\{ \}}. For instance: \code{if(x > 1)\{ base::return(x) \}} and not \code{if(x > 1) base::return(x)}. The safer-r rule requires curly brackets for every body, even single-statement ones. Return table message of the line with problems and a corrected version of the submitted function.
 }
 \details{
 The result is used to modify the code inside the tested function like this: \code{\{ <CODE> \}}.
@@ -63,9 +63,11 @@ The returned line numbers are indicative, depending on which source is checked. 
 # See also https://safer-r.github.io/saferDev/articles/curl_bracket_check.html
 fun1 <- function(x){ if(x > 1){ base::return(x) } else { base::return(0) } }
 saferDev::curl_bracket_check(fun1)
-fun2 <- function(x){ if(x > 1) base::return(x) } ; saferDev::curl_bracket_check(fun2)
-fun2 <- function(x){ if(x > 1) base::return(x) } ; fun2_safer <- saferDev::curl_bracket_check(fun2) ; fun2_safer(2)
-fun2_ter <- function(x){ if(x > 1) base::return(x) } ; saferDev::curl_bracket_check(x = fun2_ter, export = TRUE, out_path = ".") # fun2_ter_safer.R written in the working directory, NULL returned
+fun2 <- function(x){ if(x > 1) base::return(x) }
+saferDev::curl_bracket_check(fun2)
+fun2_safer <- saferDev::curl_bracket_check(fun2) # modified function returned (curly brackets added)
+fun2_safer(2)
+saferDev::curl_bracket_check(x = fun2, export = TRUE, out_path = ".") # fun2_safer.R written in the working directory, NULL returned
 saferDev::curl_bracket_check(mean)
 
 }

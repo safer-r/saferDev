@@ -1,7 +1,7 @@
-#' @title Curl Brackets Check
+#' @title Curly Brackets Check
 #' @description
-#' Verify that all the bodies of the \code{if}, \code{else}, \code{for}, \code{while}, \code{repeat} and \code{function} (including lambda \code{\\(x)}) constructs of a function are delimited by curly brackets \code{\{ \}}. For instance: \code{if(x > 1)\{ base::return(x) \}} and not \code{if(x > 1) base::return(x)}. The safer-r rule requires curly brackets for every body, even single-statement ones.
-#' @param x a function name, written without quotes and brackets.
+#' Verify that all the bodies of the \code{if}, \code{else}, \code{for}, \code{while}, \code{repeat} and \code{function} (including lambda \code{\\(x)}) constructs of a function are delimited by curly brackets \code{\{ \}}. For instance: \code{if(x > 1)\{ base::return(x) \}} and not \code{if(x > 1) base::return(x)}. The safer-r rule requires curly brackets for every body, even single-statement ones. Return table message of the line with problems and a corrected version of the submitted function.
+#' @param x A function name, written without quotes and brackets.
 #' @param safer_check Single logical value. Perform some "safer" checks? If \code{TRUE}, checkings are performed before main code running (see the \href{https://github.com/safer-r}{safer-r project}): 1) correct \code{lib_path} argument value 2) required functions and related packages effectively present in local R libraries and 3) R classical operators (like \code{"<-"}) not overwritten by another package because of the R scope. Must be set to \code{FALSE} if this function is used inside another "safer" function to avoid pointless multiple checkings.
 #' @param lib_path Vector of characters specifying the absolute pathways of the directories containing the required packages for the function, if not in the default directories. Useful when R packages are not installed in the default directories because of lack of admin rights. More precisely, \code{lib_path} is passed through the \code{new} argument of \code{.libPaths()} so that the new library paths are \code{unique(c(new, .Library.site, .Library))}. Warning: \code{.libPaths()} is restored to the initial paths, after function execution. Ignored if \code{NULL} (default) or if the \code{safer_check} argument is \code{FALSE}: only the pathways specified by the current \code{.libPaths()} are used for package calling.
 #' @param error_text Single character string used to add information in error messages returned by the function, notably if the function is inside other functions, which is practical for debugging. Example: \code{error_text = " INSIDE <PACKAGE_1>::<FUNCTION_1> INSIDE <PACKAGE_2>::<FUNCTION_2>."}. If \code{NULL}, converted into \code{""}.
@@ -42,9 +42,11 @@
 #' # See also https://safer-r.github.io/saferDev/articles/curl_bracket_check.html
 #' fun1 <- function(x){ if(x > 1){ base::return(x) } else { base::return(0) } }
 #' saferDev::curl_bracket_check(fun1)
-#' fun2 <- function(x){ if(x > 1) base::return(x) } ; saferDev::curl_bracket_check(fun2)
-#' fun2 <- function(x){ if(x > 1) base::return(x) } ; fun2_safer <- saferDev::curl_bracket_check(fun2) ; fun2_safer(2)
-#' fun2_ter <- function(x){ if(x > 1) base::return(x) } ; saferDev::curl_bracket_check(x = fun2_ter, export = TRUE, out_path = ".") # fun2_ter_safer.R written in the working directory, NULL returned
+#' fun2 <- function(x){ if(x > 1) base::return(x) }
+#' saferDev::curl_bracket_check(fun2)
+#' fun2_safer <- saferDev::curl_bracket_check(fun2) # modified function returned (curly brackets added)
+#' fun2_safer(2)
+#' saferDev::curl_bracket_check(x = fun2, export = TRUE, out_path = ".") # fun2_safer.R written in the working directory, NULL returned
 #' saferDev::curl_bracket_check(mean)
 #' 
 #' @export

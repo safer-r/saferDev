@@ -1,5 +1,5 @@
 ---
-title: "curl_bracket_check: more examples"
+title: "curl_bracket_check(): more examples"
 ---
 <br>
 
