@@ -1,11 +1,11 @@
 #' @title Find Construct Body
 #' @description
-#' Locate the body expression of a construct (\code{if}, \code{else}, \code{for}, \code{while}, \code{repeat}, \code{function} or lambda \code{\\(x)}) in the parse data of the checked code, for the construction of the modified function by \code{\link{curl_bracket_check}}. The body is the last \code{expr} child of the construct expression: for \code{if}, the condition \code{expr} comes first, the \code{then} body follows, and the \code{else} body (if any) is the last \code{expr} child; for \code{for}, the \code{forcond} (which owns the parentheses) comes before the body \code{expr}; for \code{while}, \code{repeat}, \code{function} and lambdas, the body is also the last \code{expr} child.
+#' Locate the body expression of a construct (\code{if}, \code{else}, \code{for}, \code{while}, \code{repeat}, \code{function} or lambda \code{\\(x)}) in the parse data of the checked code, for the construction of the modified function by \code{\link{curly_bracket_check}}. The body is the last \code{expr} child of the construct expression: for \code{if}, the condition \code{expr} comes first, the \code{then} body follows, and the \code{else} body (if any) is the last \code{expr} child; for \code{for}, the \code{forcond} (which owns the parentheses) comes before the body \code{expr}; for \code{while}, \code{repeat}, \code{function} and lambdas, the body is also the last \code{expr} child.
 #' @param pd Data frame returned by \code{utils::getParseData()} on the code of the checked function.
 #' @param kid Single integer: row index in \code{pd} of the terminal token of the construct keyword (\code{IF}, \code{FOR}, \code{WHILE}, \code{REPEAT}, \code{FUNCTION}, \code{LAMBDA} or \code{'\\\\'}).
 #' @param body_start Single integer: row index in \code{pd} of the terminal token just before the body (the closing \code{)} of the condition or of the arguments, or the keyword itself for \code{repeat}).
 #' @param body_start_pos Single integer: position in \code{term_rows} of the terminal token \code{body_start}.
-#' @param term_rows Integer vector of the terminal rows (comments excluded) of \code{pd}, sorted by source position (as computed in \code{\link{curl_bracket_check}}).
+#' @param term_rows Integer vector of the terminal rows (comments excluded) of \code{pd}, sorted by source position (as computed in \code{\link{curly_bracket_check}}).
 #' @param else_branch Single logical value. Is the requested body the \code{else} branch of the \code{if()} construct? If \code{TRUE}, the last \code{expr} child of the construct expression is returned; if \code{FALSE}, the \code{then} body of an \code{if} with an \code{else} (the second-to-last \code{expr} child) is returned.
 #' @param else_tok Single integer or \code{NULL}: row index in \code{pd} of the \code{ELSE} token (used only when \code{else_branch = TRUE}, for the internal error messages).
 #' @param lib_path Vector of characters specifying the absolute pathways of the directories containing the required packages for the function, if not in the default directories. Useful when R packages are not installed in the default directories because of lack of admin rights. More precisely, \code{lib_path} is passed through the \code{new} argument of \code{.libPaths()} so that the new library paths are \code{unique(c(new, .Library.site, .Library))}. Warning: \code{.libPaths()} is restored to the initial paths, after function execution. Ignored if \code{NULL} (default) or if the \code{safer_check} argument is \code{FALSE}: only the pathways specified by the current \code{.libPaths()} are used for package calling.
@@ -95,7 +95,7 @@
     ######## end basic error text start
 
     ######## internal error text
-    # provided by the caller (curl_bracket_check), built from its own package_function_name and error_text
+    # provided by the caller (curly_bracket_check), built from its own package_function_name and error_text
     intern_error_text_start <- base::paste0(base::unlist(x = intern_error_text_start, recursive = TRUE, use.names = TRUE), collapse = "", recycle0 = FALSE) # convert everything to string
     intern_error_text_end <- base::paste0(base::unlist(x = intern_error_text_end, recursive = TRUE, use.names = TRUE), collapse = "", recycle0 = FALSE) # convert everything to string
     ######## end internal error text

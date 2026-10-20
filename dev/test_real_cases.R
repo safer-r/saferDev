@@ -1,6 +1,6 @@
 res <- pkgload::load_all(path = "C:/Users/gmillot/Documents/Git_projects/safer-r/saferDev", quiet = TRUE)
 check_fun <- function(f, expected_findings = NULL){
-    out <- base::suppressMessages(expr = saferDev::curl_bracket_check(x = f, safer_check = FALSE, lib_path = NULL, error_text = "", export = FALSE, out_path = NULL))
+    out <- base::suppressMessages(expr = saferDev::curly_bracket_check(x = f, safer_check = FALSE, lib_path = NULL, error_text = "", export = FALSE, out_path = NULL))
     base::invisible(out)
 }
 # collect results
@@ -40,8 +40,8 @@ for(n in base::names(x = cases)){
         all_ok <- FALSE
         next
     }
-    # verify the modified function passes curl_bracket_check cleanly
-    m <- base::suppressMessages(expr = saferDev::curl_bracket_check(x = out, safer_check = FALSE, lib_path = NULL, error_text = "", export = FALSE, out_path = NULL))
+    # verify the modified function passes curly_bracket_check cleanly
+    m <- base::suppressMessages(expr = saferDev::curly_bracket_check(x = out, safer_check = FALSE, lib_path = NULL, error_text = "", export = FALSE, out_path = NULL))
     if( ! base::is.null(x = m)){
         cat("[", n, "] MODIFIED FUNCTION STILL NOT CLEAN\n")
         all_ok <- FALSE

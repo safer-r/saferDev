@@ -1,7 +1,7 @@
 #' @title Curly Brackets Check
 #' @description
-#' Verify that all the bodies of the \code{if}, \code{else}, \code{for}, \code{while}, \code{repeat} and \code{function} (including lambda \code{\\(x)}) constructs of a function are delimited by curly brackets \code{\{ \}}. For instance: \code{if(x > 1)\{ base::return(x) \}} and not \code{if(x > 1) base::return(x)}. The safer-r rule requires curly brackets for every body, even single-statement ones.
-#' @param x a function name, written without quotes and brackets.
+#' Verify that all the bodies of the \code{if}, \code{else}, \code{for}, \code{while}, \code{repeat} and \code{function} (including lambda \code{\\(x)}) constructs of a function are delimited by curly brackets \code{\{ \}}. For instance: \code{if(x > 1)\{ base::return(x) \}} and not \code{if(x > 1) base::return(x)}. The safer-r rule requires curly brackets for every body, even single-statement ones. Return table message of the line with problems and a corrected version of the submitted function.
+#' @param x A function name, written without quotes and brackets.
 #' @param safer_check Single logical value. Perform some "safer" checks? If \code{TRUE}, checkings are performed before main code running (see the \href{https://github.com/safer-r}{safer-r project}): 1) correct \code{lib_path} argument value 2) required functions and related packages effectively present in local R libraries and 3) R classical operators (like \code{"<-"}) not overwritten by another package because of the R scope. Must be set to \code{FALSE} if this function is used inside another "safer" function to avoid pointless multiple checkings.
 #' @param lib_path Vector of characters specifying the absolute pathways of the directories containing the required packages for the function, if not in the default directories. Useful when R packages are not installed in the default directories because of lack of admin rights. More precisely, \code{lib_path} is passed through the \code{new} argument of \code{.libPaths()} so that the new library paths are \code{unique(c(new, .Library.site, .Library))}. Warning: \code{.libPaths()} is restored to the initial paths, after function execution. Ignored if \code{NULL} (default) or if the \code{safer_check} argument is \code{FALSE}: only the pathways specified by the current \code{.libPaths()} are used for package calling.
 #' @param error_text Single character string used to add information in error messages returned by the function, notably if the function is inside other functions, which is practical for debugging. Example: \code{error_text = " INSIDE <PACKAGE_1>::<FUNCTION_1> INSIDE <PACKAGE_2>::<FUNCTION_2>."}. If \code{NULL}, converted into \code{""}.
@@ -18,7 +18,7 @@
 #' @details
 #' The result is used to modify the code inside the tested function like this: \code{\{ <CODE> \}}.
 #' 
-#' More precisely, \code{curl_bracket_check()} verifies that the first code element of the body of each \code{if}, \code{else}, \code{for}, \code{while}, \code{repeat} and \code{function} construct (after the \code{()} of the condition or of the arguments, when present) is a curly bracket \code{\{}. Comments are ignored during this verification.
+#' More precisely, \code{curly_bracket_check()} verifies that the first code element of the body of each \code{if}, \code{else}, \code{for}, \code{while}, \code{repeat} and \code{function} construct (after the \code{()} of the condition or of the arguments, when present) is a curly bracket \code{\{}. Comments are ignored during this verification.
 #' 
 #' In \code{else if} chains, an \code{else} part followed by an \code{if()} construct is not reported, because the chained \code{if()} is checked on its own. When the modified function is built (see the \code{returns} section), such an \code{else if()} construct is left unmodified (only the \code{else} is not modified): the chained \code{if()} construct itself is modified on its own.
 #' 
@@ -30,7 +30,7 @@
 #' 
 #' When the \code{export} argument is \code{TRUE}, the exported file contains the code of the modified function obtained with \code{base::deparse()}: comments of the submitted function are lost in this file (this is a known limitation of \code{base::deparse()}). The returned modified function (when \code{export = FALSE}) preserves the comments of the submitted function. The exported file contains an assignment of the modified function (\code{<FUNCTION_NAME>_safer <- function(...) ...}), so that \code{base::source()}ing it recreates the modified function. Warning: the tested function must be designated by a function name (like \code{test} or \code{package::test}) when \code{export = TRUE}: an inline definition (like \code{function(x)\{x\}}) or a component writing (like \code{FUN_LIST$fun}) returns an error, because the name of the exported file could not be determined reliably.
 #' 
-#' Warning: \code{curl_bracket_check()} cannot check constructs written with backquotes, like \code{`if`(x > 1, base::return(x), base::return(0))}. Please, use the standard writing.
+#' Warning: \code{curly_bracket_check()} cannot check constructs written with backquotes, like \code{`if`(x > 1, base::return(x), base::return(0))}. Please, use the standard writing.
 #' 
 #' The returned line numbers are indicative, depending on which source is checked. For instance, \code{saferDev::colons_check} (compiled) has not the same line numbers as its source file. Notably, compiled functions do not have comments anymore, compared to the same source function sourced into the working environment. In addition, the counting starts at the \code{"<- function"} line, i.e., without counting the \code{#'} header lines potentially present in source files.
 #' @author \href{mailto:gael.millot@pasteur.fr}{Gael Millot}
@@ -39,16 +39,18 @@
 #' @examples
 #' # Warning: these examples may not work well when using the "Run examples" link 
 #' # because of a particular environment. Please, copy-paste in a local environment.
-#' # See also https://safer-r.github.io/saferDev/articles/curl_bracket_check.html
+#' # See also https://safer-r.github.io/saferDev/articles/curly_bracket_check.html
 #' fun1 <- function(x){ if(x > 1){ base::return(x) } else { base::return(0) } }
-#' saferDev::curl_bracket_check(fun1)
-#' fun2 <- function(x){ if(x > 1) base::return(x) } ; saferDev::curl_bracket_check(fun2)
-#' fun2 <- function(x){ if(x > 1) base::return(x) } ; fun2_safer <- saferDev::curl_bracket_check(fun2) ; fun2_safer(2)
-#' fun2_ter <- function(x){ if(x > 1) base::return(x) } ; saferDev::curl_bracket_check(x = fun2_ter, export = TRUE, out_path = ".") # fun2_ter_safer.R written in the working directory, NULL returned
-#' saferDev::curl_bracket_check(mean)
+#' saferDev::curly_bracket_check(fun1)
+#' fun2 <- function(x){ if(x > 1) base::return(x) }
+#' saferDev::curly_bracket_check(fun2)
+#' fun2_safer <- saferDev::curly_bracket_check(fun2) # modified function returned (curly brackets added)
+#' fun2_safer(2)
+#' saferDev::curly_bracket_check(x = fun2, export = TRUE, out_path = ".") # fun2_safer.R written in the working directory, NULL returned
+#' saferDev::curly_bracket_check(mean)
 #' 
 #' @export
-curl_bracket_check <- function(
+curly_bracket_check <- function(
     x, 
     export = FALSE, 
     out_path = ".", 
@@ -58,9 +60,9 @@ curl_bracket_check <- function(
 ){
     # DEBUGGING
     # x = mean ; export = FALSE ; out_path = "." ; lib_path = NULL ; safer_check = TRUE ; error_text = " INSIDE A"
-    # function_name <- "curl_bracket_check" ; arg_user_setting = base::list(x = as.name(x = "mean"), export = FALSE, out_path = ".", lib_path = NULL, safer_check = TRUE, error_text = " INSIDE A")
+    # function_name <- "curly_bracket_check" ; arg_user_setting = base::list(x = as.name(x = "mean"), export = FALSE, out_path = ".", lib_path = NULL, safer_check = TRUE, error_text = " INSIDE A")
     # x = .base_op_check ; export = FALSE ; out_path = "." ; lib_path = NULL ; safer_check = TRUE ; error_text = " INSIDE A" # internal function with function body made of a single .Primitive() call
-    # source("C:\\Users\\gmillot\\Documents\\Git_projects\\safer-r\\saferDev\\R\\curl_bracket_check.R") ; x = curl_bracket_check ; export = FALSE ; out_path = "." ; lib_path = NULL ; safer_check = TRUE ; error_text = " INSIDE A" # Warning: x = saferDev::curl_bracket_check does not return the same number of code lines
+    # source("C:\\Users\\gmillot\\Documents\\Git_projects\\safer-r\\saferDev\\R\\curly_bracket_check.R") ; x = curly_bracket_check ; export = FALSE ; out_path = "." ; lib_path = NULL ; safer_check = TRUE ; error_text = " INSIDE A" # Warning: x = saferDev::curly_bracket_check does not return the same number of code lines
 
     #### package name
     package_name <- "saferDev" # write NULL if the function developed is not in a package
@@ -751,7 +753,7 @@ curl_bracket_check <- function(
         mod_fun <- base::eval(expr = parsed_mod[[base::length(x = parsed_mod)]], envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL)) # several expressions in the code (e.g. a header line): evaluate the last one, the assignment that defines the function
         # nocov end
     }
-    # restore the environment of the submitted function: without this, the modified function would keep the evaluation environment of curl_bracket_check() as closure environment, which would break closures of the submitted function and could resolve names wrongly
+    # restore the environment of the submitted function: without this, the modified function would keep the evaluation environment of curly_bracket_check() as closure environment, which would break closures of the submitted function and could resolve names wrongly
     base::environment(fun = mod_fun) <- base::environment(fun = x)
     if(export == TRUE){
         # file content: assignment of the modified function, so that base::source()ing the file recreates it. The file name (out_name) and the assignment name (tempo_fun_name) have been determined in the other checkings section

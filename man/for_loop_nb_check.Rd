@@ -2,7 +2,7 @@
 % Please edit documentation in R/for_loop_nb_check.R
 \name{for_loop_nb_check}
 \alias{for_loop_nb_check}
-\title{For Loop Number Check}
+\title{\code{for} Loop Number Check}
 \usage{
 for_loop_nb_check(
   x,
@@ -38,7 +38,7 @@ If \code{export = FALSE}: the modified function (checking lines added, see the \
 If \code{export = TRUE}: \code{NULL} (invisibly), the modified function being written into the \code{<function name>_safer.R} file (see the \code{export} argument).
 }
 \description{
-Check the sequence expression of every \code{for} loop of a function. If the number of iterations is not fixed by the writing itself (e.g., \code{1:length(x)}), a checking line is added before the loop, issuing a warning at execution if the sequence is empty, contains \code{NA} or infinite values, has a single value, or is decreasing. Return a table-like message of the problematic lines and a corrected version of the submitted function.
+Check the sequence expression of every \code{for} loop of a function. If the number of iterations is not fixed by the writing itself (e.g., \code{1:length(x)}), a checking line is added before the loop, issuing a warning at execution if the sequence is empty, contains \code{NA} or infinite values, has a single value, or is decreasing. Return table message of the line with problems and a corrected version of the submitted function.
 }
 \details{
 Clean writings (not reported): hard numbers, i.e., an optional unary minus and a finite integer-valued numeric literal, optionally followed by \code{:} and another such literal, with nothing else (e.g., \code{3}, \code{-3}, \code{1:3}, \code{1e3}, \code{1L:3L}, \code{0x10:0x11}), or a \code{seq_len(...)} or \code{seq_along(...)} call (namespaced or not) occupying the whole sequence expression. Any other writing is reported, e.g., variables (\code{for(i in x)}, \code{1:n}), calls (\code{1:length(x)}, \code{1:nrow(df)}, \code{base::rev(x = x)}), arithmetic (\code{1:(n - 1)}, \code{1:3 - 1}, \code{seq_along(x) - 1}) and non-integer or non-finite literals (\code{1:2.5}, \code{1:NA}, \code{1:Inf}, \code{1:TRUE}). Comments and strings are ignored. Rationale: \code{x <- character() ; for(i in 1:length(x)){y <- i}} loops twice and ends with \code{y = 0}, because \code{1:length(x)} gives \code{c(1, 0)} when \code{x} is empty: \code{base::seq_along(x = x)} should be used instead.
