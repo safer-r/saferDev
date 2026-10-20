@@ -12,6 +12,7 @@ testthat::test_that("mandatory arg block of safer-r functions (public functions)
         arg_check = base::quote(arg_check(data = 1, class = NULL, typeof = NULL, mode = "numeric", length = NULL, prop = FALSE, options = NULL, double_as_integer_allowed = FALSE, all_options_in_data = FALSE, na_contain = FALSE, neg_values = TRUE, inf_values = TRUE, print = FALSE, data_name = NULL, data_arg = TRUE, safer_check = FALSE, error_text = "")),
         colons_check = base::quote(colons_check(x = "a", safer_check = FALSE, error_text = "")),
         env_check = base::quote(env_check(pos = 1, name = NULL, safer_check = FALSE, error_text = "")),
+        for_loop_nb_check = base::quote(for_loop_nb_check(x = function(x){1}, safer_check = FALSE, error_text = "")),
         get_message = base::quote(get_message(data = "a", kind = "error", header = TRUE, print_no = FALSE, text = NULL, env = NULL, safer_check = FALSE, error_text = "")),
         is_function_here = base::quote(is_function_here(fun = sum, safer_check = FALSE, error_text = "")),
         is_package_here = base::quote(is_package_here(req_package = "base", safer_check = FALSE, error_text = "")),

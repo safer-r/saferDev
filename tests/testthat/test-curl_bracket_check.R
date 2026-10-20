@@ -330,6 +330,10 @@ testthat::test_that("curl_bracket_check()", {
     testthat::expect_error(curl_bracket_check(x = function(y){ if(y > 1) base::return(y) }, safer_check = FALSE, lib_path = NULL, error_text = "", export = TRUE, out_path = tempo_dir), regexp = "MUST BE DESIGNATED BY A FUNCTION NAME", fixed = TRUE)
     FUN_LIST <- base::list(fun = fun4)
     testthat::expect_error(curl_bracket_check(x = FUN_LIST$fun, safer_check = FALSE, lib_path = NULL, error_text = "", export = TRUE, out_path = tempo_dir), regexp = "MUST BE DESIGNATED BY A FUNCTION NAME", fixed = TRUE)
+    # file name determination: written as pkg::fun, the package name is not part of the file name (base::noquote contains reported constructs, so a file is written)
+    testthat::expect_null(object = curl_bracket_check(x = base::noquote, safer_check = FALSE, lib_path = NULL, error_text = "", export = TRUE, out_path = tempo_dir))
+    testthat::expect_true(object = base::file.exists(base::file.path(tempo_dir, "noquote_safer.R")), label = "noquote_safer.R written for the pkg::fun form")
+    base::unlink(x = base::file.path(tempo_dir, "noquote_safer.R"))
     # long function (> 21 lines of recovered code): the insertion sort must not suffer from integer overflow (the if body must still get its braces)
     fun_long <- eval(parse(text = paste0(
         "function(x){\n",

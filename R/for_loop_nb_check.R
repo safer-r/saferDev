@@ -712,8 +712,11 @@ for_loop_nb_check <- function(
                 for_expr_row <- id2row[base::as.character(x = pd$parent[kid])] # row of the expr containing the for construct
                 enclosing_row <- id2row[base::as.character(x = pd$parent[for_expr_row])] # row of the enclosing expr
                 if(base::is.na(x = enclosing_row)){ # the for construct is a top level expression of the recovered code (cannot happen inside a function body, but secured for a top level for())
+                    # nocov start
+                    # codecov inactivated because it is an internal control of code writing, impossible to cover with argument values (a for() construct at the top level of the recovered code cannot be produced by the parser from a function definition).
                     enclosing_line1 <- pd$line1[for_expr_row]
                     enclosing_col1 <- pd$col1[for_expr_row]
+                    # nocov end
                 }else{
                     enclosing_line1 <- pd$line1[enclosing_row]
                     enclosing_col1 <- pd$col1[enclosing_row]
@@ -852,7 +855,7 @@ for_loop_nb_check <- function(
             }else{
                 seq_pieces <- base::c(
                     base::substr(x = modified_code[findings_in_line1[i]], start = findings_in_col2[i] + 1, stop = base::nchar(x = modified_code[findings_in_line1[i]], type = "chars", allowNA = FALSE, keepNA = NA)),
-                    modified_code[(findings_in_line1[i] + 1):(findings_rp_line2[i] - 1)], 
+                    if(findings_rp_line2[i] - findings_in_line1[i] > 1){modified_code[(findings_in_line1[i] + 1):(findings_rp_line2[i] - 1)]}else{base::character(length = 0)}, # guard: a span of exactly 2 lines has no middle line, and the unguarded (in+1):(rp-1) writing would be a descending range in R (c(in+1, in)), pulling the for line into the reconstruction and corrupting the sequence text
                     base::substr(x = modified_code[findings_rp_line2[i]], start = 1, stop = findings_rp_col2[i] - 1)
                 )
                 seq_txt <- base::trimws(x = base::paste0(seq_pieces, collapse = " ", recycle0 = FALSE), which = "both", whitespace = "[ \t\r\n]")
@@ -944,7 +947,7 @@ for_loop_nb_check <- function(
                     len_body_before <- base::nchar(x = tempo_line2, type = "chars", allowNA = FALSE, keepNA = NA)
                     construct_txt <- base::c(
                         base::substr(x = tempo_line1, start = for_col1_adj, stop = base::nchar(x = tempo_line1, type = "chars", allowNA = FALSE, keepNA = NA)),
-                        modified_code[(findings_for_line1[i] + 1):(findings_body_line2[i] - 1)],
+                        if(findings_body_line2[i] - findings_for_line1[i] > 1){modified_code[(findings_for_line1[i] + 1):(findings_body_line2[i] - 1)]}else{base::character(length = 0)}, # guard: a construct written on exactly 2 lines has no middle line, and the unguarded (for+1):(body-1) writing would be a descending range in R (c(for+1, for)), pulling the for line into the wrap and producing a non-parseable modified code
                         base::substr(x = tempo_line2, start = 1, stop = body_col2_adj)
                     )
                     suffix_txt <- base::substr(x = tempo_line2, start = body_col2_adj + 1, stop = base::nchar(x = tempo_line2, type = "chars", allowNA = FALSE, keepNA = NA))
