@@ -232,7 +232,7 @@
 <span><span class="co"># An error is returned if the file already exists (never overwritten).</span></span>
 <span><span class="fu">base</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/base/files.html" class="external-link">file.remove</a></span><span class="op">(</span><span class="fu">base</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span>out_path <span class="op">=</span> <span class="fu">base</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir</a></span><span class="op">(</span><span class="op">)</span>, <span class="st">"fun2_safer.R"</span>, fsep <span class="op">=</span> <span class="st">"/"</span><span class="op">)</span><span class="op">)</span> <span class="co"># remove a potential pre-existing file from a previous run</span></span></code></pre></div>
 <pre><code><span><span class="co">## Warning in base::file.remove(base::file.path(out_path = base::tempdir(), :</span></span>
-<span><span class="co">## cannot remove file '/tmp/Rtmpex9b0D/fun2_safer.R', reason 'No such file or</span></span>
+<span><span class="co">## cannot remove file '/tmp/RtmptODLHh/fun2_safer.R', reason 'No such file or</span></span>
 <span><span class="co">## directory'</span></span></code></pre>
 <pre><code><span><span class="co">## [1] FALSE</span></span></code></pre>
 <div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
@@ -248,7 +248,7 @@
 <span><span class="co">## LINE FUN     STRING_BEFORE</span></span>
 <span><span class="co">## 3    sum     </span></span></code></pre>
 <pre><code><span><span class="co">## MODIFIED CODE EXPORTED IN:</span></span>
-<span><span class="co">## /tmp/Rtmpex9b0D/fun2_safer.R</span></span></code></pre>
+<span><span class="co">## /tmp/RtmptODLHh/fun2_safer.R</span></span></code></pre>
 <div class="sourceCode" id="cb32"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">base</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/base/readLines.html" class="external-link">readLines</a></span><span class="op">(</span>con <span class="op">=</span> <span class="fu">base</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="fu">base</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir</a></span><span class="op">(</span><span class="op">)</span>, <span class="st">"fun2_safer.R"</span>, fsep <span class="op">=</span> <span class="st">"/"</span><span class="op">)</span><span class="op">)</span> <span class="co"># content of the exported file.</span></span></code></pre></div>
 <pre><code><span><span class="co">## [1] "fun2_safer &lt;- function () " "{"                         </span></span>

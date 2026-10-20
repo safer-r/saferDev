@@ -234,7 +234,7 @@ fun2 <- function(x){ for(i in 1:length(x)){ base::print(x = i) } } ; saferDev::f
 #>         base::print(x = i)
 #>     }
 #> }
-#> <environment: 0x564c124e8f70>
+#> <environment: 0x55eddec26820>
 fun3 <- function(x){ for(i in base::seq_along(x = x)){ base::print(x = i) } } ; saferDev::for_loop_nb_check(fun3)
 #> 
 #> 
