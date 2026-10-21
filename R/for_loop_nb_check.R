@@ -922,7 +922,7 @@ for_loop_nb_check <- function(
             )
             insert_txt <- base::paste0(tempo_name, " <- ", base::paste0(base::deparse(expr = seq_expr, width.cutoff = 500L, backtick = FALSE, control = base::c("keepNA", "keepInteger", "niceNames", "showAttributes"), nlines = -1L), collapse = " ", recycle0 = FALSE), " ; ", check_txt, " ; ", collapse = NULL, recycle0 = FALSE)
             # 4) insert the tempo assignment and the checking line before the for keyword, or wrap the whole modified construct in curly brackets when the enclosing expression of the construct is not a braced block (see the detection above): the insertion before the for keyword would otherwise break the binding of the enclosing writing (unbraced body of if/else/for/while/repeat, assignment value, function argument, operator operand, etc.). Warning: the positions of the for keyword and of the body end must be adjusted with the shift events recorded above, because the sequence replacement of this construct (step 2) and the modifications of the constructs processed before (back-to-front order) have shifted the columns located after their modification points
-            for_col1_adj <- findings_for_col1[i] + base::sum(x = ev_shift[ev_line == findings_for_line1[i] & ev_col < findings_for_col1[i]], na.rm = FALSE)
+            for_col1_adj <- findings_for_col1[i] + base::sum(ev_shift[ev_line == findings_for_line1[i] & ev_col < findings_for_col1[i]], na.rm = FALSE)
             if(findings_braced[i] == TRUE){
                 tempo_line <- modified_code[findings_for_line1[i]]
                 len_for_before <- base::nchar(x = tempo_line, type = "chars", allowNA = FALSE, keepNA = NA)
@@ -938,7 +938,7 @@ for_loop_nb_check <- function(
                 ev_shift <- base::c(ev_shift, base::nchar(x = modified_code[findings_for_line1[i]], type = "chars", allowNA = FALSE, keepNA = NA) - len_for_before, recursive = TRUE, use.names = TRUE)
             }else{
                 # wrap the whole construct in curly brackets: prefix + "{ " + modified construct + " }"
-                body_col2_adj <- findings_body_col2[i] + base::sum(x = ev_shift[ev_line == findings_body_line2[i] & ev_col < findings_body_col2[i]], na.rm = FALSE)
+                body_col2_adj <- findings_body_col2[i] + base::sum(ev_shift[ev_line == findings_body_line2[i] & ev_col < findings_body_col2[i]], na.rm = FALSE)
                 tempo_line1 <- modified_code[findings_for_line1[i]]
                 prefix_txt <- base::substr(x = tempo_line1, start = 1, stop = for_col1_adj - 1)
                 len_for_before <- base::nchar(x = tempo_line1, type = "chars", allowNA = FALSE, keepNA = NA)
