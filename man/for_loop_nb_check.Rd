@@ -16,9 +16,9 @@ for_loop_nb_check(
 \arguments{
 \item{x}{A function name, written without quotes and brackets.}
 
-\item{export}{Single logical value. Export the modified function into a \code{.R} file (see the \code{out_path} argument)? If \code{TRUE}, the file is named \code{<function name>_safer.R} (\code{pkg::fun} gives \code{fun_safer.R}) and contains \code{<function name>_safer <- function(...) ...}, so that \code{base::source()} recreates it. An error is returned if the file already exists, or if \code{x} is not a function name (inline definition like \code{function(x)\{x\}}, or component like \code{FUN_LIST$fun}). Nothing is written if no modification is performed. See the \code{@returns} section for the returned value.}
+\item{export}{Single logical value. Write the corrected function into a file instead of returning it? If \code{TRUE}, the file \code{<function name>_safer.R} is written in \code{out_path} (e.g., \code{fun_safer.R} for \code{x = fun} or \code{x = pkg::fun}). It contains \code{fun_safer <- function(...) ...}, so that \code{base::source()} recreates the corrected function. Nothing is written if nothing has to be corrected. An error is returned if the file already exists, or if \code{x} is not a function name (e.g., \code{function(x)\{x\}} or \code{FUN_LIST$fun}).}
 
-\item{out_path}{Single character string indicating the absolute pathway of the folder where to export the modified function when the \code{export} argument is \code{TRUE}. \code{out_path = "."} (default) means the R working directory set by the user. Ignored if the \code{export} argument is \code{FALSE}.}
+\item{out_path}{Single character string indicating the path of the folder where to write the file when \code{export = TRUE}. \code{"."} (default) means the R working directory. Ignored if \code{export = FALSE}.}
 
 \item{safer_check}{Single logical value. Perform some "safer" checks? If \code{TRUE}, checkings are performed before main code running (see the \href{https://github.com/safer-r}{safer-r project}): 1) correct \code{lib_path} argument value 2) required functions and related packages effectively present in local R libraries and 3) R classical operators (like \code{"<-"}) not overwritten by another package because of the R scope. Must be set to \code{FALSE} if this function is used inside another "safer" function to avoid pointless multiple checkings.}
 
@@ -27,48 +27,50 @@ for_loop_nb_check(
 \item{error_text}{Single character string used to add information in error messages returned by the function, notably if the function is inside other functions, which is practical for debugging. Example: \code{error_text = " INSIDE <PACKAGE_1>::<FUNCTION_1> INSIDE <PACKAGE_2>::<FUNCTION_2>."}. If \code{NULL}, converted into \code{""}.}
 }
 \value{
-A table-like text message indicating the \code{for} sequences not written with hard numbers, or a message saying that everything seems fine, printed by \code{base::message()}.
+A table-like message is always printed, with one row per reported loop (column 1: line number; column 2: construct; column 3: code before the body), or a message saying that everything seems fine.
 
-Table-like: column 1, the line number in the function code (starting at the \code{"<- function"} line, i.e., without counting the \code{#'} header lines); column 2, the construct (\code{for}); column 3, the code preceding the construct body.
+If \code{export = FALSE}: the corrected function, or \code{NULL} if nothing has been corrected.
 
-In addition:
-
-If \code{export = FALSE}: the modified function (checking lines added, see the \code{@details} section), or \code{NULL} if no modification was performed (everything clean, or no checking line inserted).
-
-If \code{export = TRUE}: \code{NULL} (invisibly), the modified function being written into the \code{<function name>_safer.R} file (see the \code{export} argument).
+If \code{export = TRUE}: \code{NULL}, returned invisibly. The corrected function is written in a file (see the \code{export} argument).
 }
 \description{
-Check the sequence expression of every \code{for} loop of a function. If the number of iterations is not fixed by the writing itself (e.g., \code{1:length(x)}), a checking line is added before the loop, issuing a warning at execution if the sequence is empty, contains \code{NA} or infinite values, has a single value, or is decreasing. Return table message of the line with problems and a corrected version of the submitted function.
+Check the sequence expression of every \code{for} loop of a function. If the number of iterations is not fixed by the writing itself (e.g., \code{1:length(x)}), a checking line is added before the loop, issuing a warning at execution if the sequence is empty, contains \code{NA} or infinite values, has a single value, or is decreasing. Return a table-like message of the problematic lines and a corrected version of the submitted function.
 }
 \details{
-Clean writings (not reported): hard numbers, i.e., an optional unary minus and a finite integer-valued numeric literal, optionally followed by \code{:} and another such literal, with nothing else (e.g., \code{3}, \code{-3}, \code{1:3}, \code{1e3}, \code{1L:3L}, \code{0x10:0x11}), or a \code{seq_len(...)} or \code{seq_along(...)} call (namespaced or not) occupying the whole sequence expression. Any other writing is reported, e.g., variables (\code{for(i in x)}, \code{1:n}), calls (\code{1:length(x)}, \code{1:nrow(df)}, \code{base::rev(x = x)}), arithmetic (\code{1:(n - 1)}, \code{1:3 - 1}, \code{seq_along(x) - 1}) and non-integer or non-finite literals (\code{1:2.5}, \code{1:NA}, \code{1:Inf}, \code{1:TRUE}). Comments and strings are ignored. Rationale: \code{x <- character() ; for(i in 1:length(x)){y <- i}} loops twice and ends with \code{y = 0}, because \code{1:length(x)} gives \code{c(1, 0)} when \code{x} is empty: \code{base::seq_along(x = x)} should be used instead.
+Not reported: hard numbers, i.e., an integer-valued number, possibly negative, or two such numbers joined by \code{:} (e.g., \code{3}, \code{1:3}, \code{1e3}, \code{1L:3L}, \code{0:0}, \code{-3:-1}, \code{1:0}), and a single \code{seq_len(...)} or \code{seq_along(...)} call. These writings fully fix the iterations, and their control is left to the writer.
 
-Not reported either, because fully determined by the code itself (their control is the responsibility of the writer): the equal-bounds (\code{0:0}, \code{1:1}), both-negative (\code{-3:-1}) and decreasing (\code{1:0}) hard-number writings.
+Reported: everything else, e.g., \code{for(i in x)}, \code{1:n}, \code{1:length(x)}, \code{1:nrow(df)}, \code{1:(n - 1)}, \code{seq_along(x) - 1}, \code{1:2.5}, \code{1:NA} or \code{1:Inf}. Comments and strings are ignored.
 
-Modification: each reported construct becomes \code{tempo_for_seqN <- <SEQUENCE> ; <CHECKS> ; for(<VARIABLE> in tempo_for_seqN)<BODY>} (N being the rank of the report), so that the checked sequence and the \code{for} controller are strictly identical. At execution, \code{base::warning()} is issued when the sequence is empty, contains \code{NA} or infinite values, has a single value, or is decreasing. Errors of the sequence evaluation itself (like \code{1:NA}) are propagated as they are. Only the reported spans are modified: comments, strings and formatting are preserved elsewhere. A construct not preceded by a statement boundary (unbraced body of \code{if}/\code{else}/\code{for}/\code{while}/\code{repeat}, assignment value, function argument, operand, etc.) is wrapped in curly brackets. The returned function is in a new environment whose parent is the environment of the submitted function: check it before replacing the original one.
+Why: with \code{x <- character()}, \code{for(i in 1:length(x))} runs twice, because \code{1:length(x)} is \code{c(1, 0)}. Use \code{base::seq_along(along.with = x)} instead.
 
-Warning: the checking lines are not inserted (the concerned constructs are listed in the message and remain unmodified) when:
+Correction: each reported loop becomes \code{tempo_for_seqN <- <SEQUENCE> ; <CHECKS> ; for(i in tempo_for_seqN)<BODY>}, N being the rank of the report. The checks warn if the sequence is empty, contains \code{NA} or infinite values, has a single value, has only negative values, or is decreasing. The loop thus runs on the checked sequence. Errors of the sequence itself (like \code{1:NA}) are not caught. If the loop is not a standalone statement (e.g., unbraced body of an \code{if}, or argument value), the whole is enclosed in curly brackets. The rest of the code is unchanged. The comments are kept in the exported file, but can be lost in the returned function. The returned function is evaluated in a new environment whose parent is the environment of the submitted function: check it before replacing the original function.
+
+Warning: a reported loop is left unchanged, and listed in the message, when:
 \itemize{
 \item the name \code{tempo_for_seqN} is already used in the function code (including comments and strings);
-\item the reported construct is inside the sequence expression of another reported construct;
-\item a construct requiring the curly bracket wrap contains comments (the wrap collapses it on a single line);
-\item a construct requiring the wrap shares the end of its body with a later construct also requiring it (e.g., \code{for(a in 1:n) for(b in 1:length(x)){...}}).
+\item the loop is inside the sequence expression of another reported loop;
+\item the loop must be enclosed in curly brackets and contains comments;
+\item the loop must be enclosed in curly brackets and ends with another loop that must also be (e.g., \code{for(a in 1:n) for(b in 1:length(x)){...}}).
 }
 
-Warning: with aliased bounds like \code{n <- length(x) ; for(i in 1:n)}, only \code{1:n} is analyzed (reported as a plain variable), not the origin of \code{n}.
+Warning: only the writing is analyzed. In \code{n <- length(x) ; for(i in 1:n)}, \code{1:n} is reported as a variable, whatever \code{n}.
 
-Line numbers are indicative: compiled functions (like \code{saferDev::colons_check}) have no comments, hence line numbers different from their source file.
+Line numbers are indicative. They start at the \code{<- function} line (\code{#'} header lines not counted). Compiled functions, like \code{saferDev::colons_check}, have no comments: their line numbers differ from their source file.
 }
 \examples{
-# Warning: these examples may not work well when using the "Run examples" link 
+# Warning: these examples may not work well when using the "Run examples" link
 # because of a particular environment. Please, copy-paste in a local environment.
 # See also https://safer-r.github.io/saferDev/articles/for_loop_nb_check.html
-fun1 <- function(x){ for(i in 1:3){ base::print(x = i) } }
-saferDev::for_loop_nb_check(fun1)
-fun2 <- function(x){ for(i in 1:length(x)){ base::print(x = i) } } ; saferDev::for_loop_nb_check(fun2)
-fun3 <- function(x){ for(i in base::seq_along(x = x)){ base::print(x = i) } } ; saferDev::for_loop_nb_check(fun3)
-fun4 <- function(x){ for(i in 1:length(x)){ base::print(x = i) } } ; fun4_safer <- saferDev::for_loop_nb_check(x = fun4, export = FALSE, safer_check = TRUE, lib_path = NULL, error_text = "") # modified function returned (checking line added)
-fun5 <- function(x){ for(i in 0:0){ base::print(x = i) } } ; saferDev::for_loop_nb_check(x = fun5, export = FALSE, safer_check = TRUE, lib_path = NULL, error_text = "") # NULL returned: the degenerate hard-number writings are the responsibility of the writer, no checking line inserted
+fun1 <- function(x){ for(i in base::seq_along(along.with = x)){ base::print(x = i) } }
+saferDev::for_loop_nb_check(fun1) # everything fine: NULL returned
+fun2 <- function(x){ for(i in 1:length(x)){ base::print(x = i) } }
+fun2_safer <- saferDev::for_loop_nb_check(fun2) # 1:length(x) reported
+fun2_safer # corrected function
+fun2_safer(x = base::character()) # warning: 1:length(x) is c(1, 0), a decreasing sequence
+# Write the corrected function in the fun2_safer.R file of a new temporary folder:
+tempo_dir <- base::tempfile(pattern = "dir", tmpdir = base::tempdir(), fileext = "")
+base::dir.create(path = tempo_dir, showWarnings = TRUE, recursive = FALSE, mode = "0777")
+saferDev::for_loop_nb_check(x = fun2, export = TRUE, out_path = tempo_dir)
 
 }
 \author{
