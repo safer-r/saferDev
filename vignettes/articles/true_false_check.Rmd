@@ -51,7 +51,8 @@ true_false_check(x = fun1)
 # Here T and F are used.
 true_false_check(x = fun2)
 
-# Error: the functions called in x must first be written with their package (run colons_check() first).
+# The package association of the function calls is not checked: the bare mean() stays unchanged,
+# and only the T is replaced by TRUE (run colons_check() separately for the package association).
 fun3 <- function(x){ if(x == T){ mean(x = 1:3) } }
 true_false_check(x = fun3)
 ```

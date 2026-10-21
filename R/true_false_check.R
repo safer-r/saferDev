@@ -14,7 +14,7 @@
 #'
 #' If \code{export = TRUE}: \code{NULL}, returned invisibly. The corrected function is written in a file (see the \code{export} argument).
 #' @details
-#' Warning: all the functions called in \code{x} must first be written with their package, like \code{base::mean()}. Otherwise, an error asks to run \code{colons_check()} first. As in \code{colons_check()}, function names without brackets (e.g., \code{FUN = as.character}) or preceded by \code{$} are not checked, and internal functions must be written \code{name <- function(...)}, not \code{function(...) -> name}. A function without any call is accepted. A function like \code{base::mean} (\code{UseMethod()} body) never passes this pre-check.
+#' Warning: \code{true_false_check()} only checks the \code{T} and \code{F} symbols used as values: the package association of the function calls is not checked (run \code{saferDev::colons_check()} separately for that). Function names written without brackets (e.g., \code{FUN = as.character}) or used as function names (e.g., \code{T()}) are not reported.
 #'
 #' Reported: \code{T} or \code{F} used as a value, e.g., \code{f(log = T)}, \code{f(T)}, \code{if(T)}, \code{while(T)}, \code{x == T} or \code{x[T]}.
 #'
@@ -546,69 +546,7 @@ true_false_check <- function(
         )
     }
     # end modification of arg_user_setting$x for clean messages
-    # package-association pre-check (like for all_args_here(), all the functions called with brackets in x must be preceded by :: or :::). Detection of the internal functions created inside the checked function code (name <- function or name <- utils::getFromNamespace), because these functions cannot have :: or ::: in their calls
-    internal_fun_names <- base::character(length = 0)
-    assign_pos <- base::which(x = pd$token[term_rows] %in% base::c("LEFT_ASSIGN", "EQ_ASSIGN", "RIGHT_ASSIGN"), arr.ind = FALSE, useNames = TRUE)
-    for(i in assign_pos){
-        k <- term_rows[i]
-        if(pd$token[k] == "RIGHT_ASSIGN"){
-            # function(...) -> name: the function definition is before the assignment operator, the name after it. Warning: this writing is never detected, because the token before -> or ->> is never the FUNCTION token itself (it is the last token of the function body), exactly like in colons_check() where the arrow writing is also flagged: see the roxygen @details section
-            next
-        }else{
-            # name <- function(...) or name <- utils::getFromNamespace(...): the name is before the assignment operator, the function definition after it. Warning: the name must not be a component or slot name, like in df$T <- function(...), which is not an internal function of the checked function: the token located two positions before the assignment operator (the token before the assigned name) must not be $ or @. Warning: the tokens $ and @ must be compared through their text (pd$text), because their token names are quoted ('$' and '@')
-            if(i > 1 & pd$token[term_rows[i - 1]] == "SYMBOL" & (i < 3 | ! (pd$text[term_rows[i - 2]] %in% base::c("$", "@")))){
-                if(i < base::length(x = term_rows)){
-                    if(pd$token[term_rows[i + 1]] == "FUNCTION"){
-                        internal_fun_names <- base::c(internal_fun_names, pd$text[term_rows[i - 1]], recursive = TRUE, use.names = TRUE)
-                    }else if(i + 3 <= base::length(x = term_rows) & pd$token[term_rows[i + 1]] == "SYMBOL_PACKAGE" & pd$text[term_rows[i + 1]] == "utils" & pd$token[term_rows[i + 2]] %in% base::c("NS_GET", "NS_GET_INT") & pd$token[term_rows[i + 3]] == "SYMBOL_FUNCTION_CALL" & pd$text[term_rows[i + 3]] == "getFromNamespace"){
-                        internal_fun_names <- base::c(internal_fun_names, pd$text[term_rows[i - 1]], recursive = TRUE, use.names = TRUE)
-                    }
-                }
-            }
-        }
-    }
-    # end detection of the internal functions created inside the checked function code
-    # detection of the function calls not preceded by :: or ::: (component or slot names preceded by $ or @ are not considered, like in colons_check())
-    bad_fun_names <- base::character(length = 0)
-    bad_fun_lines <- base::integer(length = 0)
-    fun_call_pos <- base::which(x = pd$token[term_rows] == "SYMBOL_FUNCTION_CALL", arr.ind = FALSE, useNames = TRUE)
-    for(i in fun_call_pos){
-        k <- term_rows[i]
-        # Warning: only the plain function names are checked, like in colons_check(), which cannot detect function names written between quotes (e.g., the help call ?fun() is a SYMBOL_FUNCTION_CALL token of text "`?`")
-        if( ! base::grepl(x = pd$text[k], pattern = "^([a-zA-Z]|\\.[a-zA-Z._])[a-zA-Z0-9._]*$", ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE)){
-            next
-        }
-        if(i > 1){
-            prev_tok <- pd$token[term_rows[i - 1]]
-            prev_txt <- pd$text[term_rows[i - 1]]
-            # Warning: $ and @ must be compared through their text (prev_txt), because their token names are quoted ('$' and '@')
-            if(prev_tok %in% base::c("NS_GET", "NS_GET_INT") | prev_txt %in% base::c("$", "@")){
-                next
-            }
-        }
-        if( ! (pd$text[k] %in% internal_fun_names)){
-            bad_fun_names <- base::c(bad_fun_names, pd$text[k], recursive = TRUE, use.names = TRUE)
-            bad_fun_lines <- base::c(bad_fun_lines, pd$line1[k], recursive = TRUE, use.names = TRUE)
-        }
-    }
-    # end detection of the function calls not preceded by :: or :::
-    if(base::length(x = bad_fun_names) != 0){
-        # like for all_args_here(), the function stops with an error: the package attributions must be corrected with colons_check() first, because the analysis of the function calls (and of the T or F symbols used as argument values) only makes sense once all the functions are properly associated to their package
-        tempo_cat <- base::paste0(
-            error_text_start,
-            "INSIDE ",
-            arg_user_setting$x,
-            ", SOME FUNCTIONS ARE NOT ASSOCIATED TO THEIR PACKAGE.\n\nPLEASE, RUN saferDev::colons_check(",
-            arg_user_setting$x,
-            ") FIRST,\nADD THE MISSING <PACKAGE>::<FUNCTION> (OR <PACKAGE>:::<FUNCTION> FOR FUNCTION STARTING BY A DOT)\nAND RERUN saferDev::true_false_check(",
-            arg_user_setting$x,
-            ").",
-            collapse = NULL,
-            recycle0 = FALSE
-        )
-        base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL)
-    }
-    # end package-association pre-check
+    # true_false_check() only checks the T and F symbols used as values: no package-association pre-check of the function calls (unlike all_args_here(), which performs this pre-check, colons_check() does not have to be run first in true_false_check())
     # detection of the T and F symbols used as names in the checked function code (formal name, loop variable, definition target), because the value usages of these symbols refer to user-defined objects and are not reported. Warning: conservative rule: if a name T or F is defined anywhere in the checked function code, all the value usages of this symbol are not reported, whatever the position in the code
     tf_names <- base::character(length = 0)
     term_nb <- base::length(x = term_rows)

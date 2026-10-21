@@ -37,7 +37,7 @@ If \code{export = TRUE}: \code{NULL}, returned invisibly. The corrected function
 Verify that the \code{TRUE} and \code{FALSE} logical constants are always written in full when used as values (argument values, conditions, comparisons, indexing) and never abbreviated as \code{T} or \code{F}, which can be overwritten by the user. Return table message of the line with problems and a corrected version of the submitted function.
 }
 \details{
-Warning: all the functions called in \code{x} must first be written with their package, like \code{base::mean()}. Otherwise, an error asks to run \code{colons_check()} first. As in \code{colons_check()}, function names without brackets (e.g., \code{FUN = as.character}) or preceded by \code{$} are not checked, and internal functions must be written \code{name <- function(...)}, not \code{function(...) -> name}. A function without any call is accepted. A function like \code{base::mean} (\code{UseMethod()} body) never passes this pre-check.
+Warning: \code{true_false_check()} only checks the \code{T} and \code{F} symbols used as values: the package association of the function calls is not checked (run \code{saferDev::colons_check()} separately for that). Function names written without brackets (e.g., \code{FUN = as.character}) or used as function names (e.g., \code{T()}) are not reported.
 
 Reported: \code{T} or \code{F} used as a value, e.g., \code{f(log = T)}, \code{f(T)}, \code{if(T)}, \code{while(T)}, \code{x == T} or \code{x[T]}.
 
