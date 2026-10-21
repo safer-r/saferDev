@@ -43,13 +43,14 @@
 <li><a class="dropdown-item" href="../articles/all_args_here.html">all_args_here(): more examples</a></li>
     <li><a class="dropdown-item" href="../articles/arg_check.html">arg_check(): more examples</a></li>
     <li><a class="dropdown-item" href="../articles/colons_check.html">colons_check: more examples</a></li>
-    <li><a class="dropdown-item" href="../articles/curl_bracket_check.html">curl_bracket_check: more examples</a></li>
+    <li><a class="dropdown-item" href="../articles/curly_bracket_check.html">curly_bracket_check(): more examples</a></li>
     <li><a class="dropdown-item" href="../articles/env_check.html">env_check(): more examples</a></li>
-    <li><a class="dropdown-item" href="../articles/for_loop_nb_check.html">for_loop_nb_check: more examples</a></li>
+    <li><a class="dropdown-item" href="../articles/for_loop_nb_check.html">for_loop_nb_check(): more examples</a></li>
     <li><a class="dropdown-item" href="../articles/get_message.html">get_message(): more examples</a></li>
     <li><a class="dropdown-item" href="../articles/is_function_here.html">is_function_here(): more examples</a></li>
     <li><a class="dropdown-item" href="../articles/is_package_here.html">is_package_here(): more examples</a></li>
     <li><a class="dropdown-item" href="../articles/report.html">report(): more examples</a></li>
+    <li><a class="dropdown-item" href="../articles/true_false_check.html">true_false_check(): more examples</a></li>
   </ul>
 </li>
 <li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
@@ -104,10 +105,12 @@ project</a> specifications.</p>
 <tbody>
 <tr class="odd">
 <td align="left"><strong>all_args_here()</strong></td>
-<td align="left">Verify that all the functions used inside a function
-are written with all their arguments. For instance:
+<td align="left">Check that all the functions used inside a function are
+written with all their arguments. For instance:
 <code>base::paste0(letters[1:2], collapse = NULL, recycle0 = FALSE)</code>
-and not <code>paste0(letters[1:2])</code>.</td>
+and not <code>base::paste0(letters[1:2])</code>. Return table message of
+the line with problems and a corrected version of the submitted
+function.</td>
 </tr>
 <tr class="even">
 <td align="left"><strong>arg_check()</strong></td>
@@ -120,27 +123,32 @@ values authorized? negative values authorized? Integers of type
 </tr>
 <tr class="odd">
 <td align="left"><strong>colons_check()</strong></td>
-<td align="left">Verify that all the functions used inside a function
-are all referenced by their package attribution. For instance:
+<td align="left">Check that all the functions used inside a function are
+all referenced by their package attribution. For instance:
 <code><a href="https://rdrr.io/r/base/mean.html" class="external-link">base::mean()</a></code> and not <code><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean()</a></code>, or
 <code>saferDev:::.base_op_check()</code> and not
-<code><a href="../reference/dot-base_op_check.html">.base_op_check()</a></code>. Use <a href="https://github.com/dreamrs/prefixer" class="external-link">prefixer</a> to directly
-modify yor code.</td>
+<code><a href="../reference/dot-base_op_check.html">.base_op_check()</a></code>. Return table message of the line with
+problems and a corrected version of the submitted function.</td>
 </tr>
 <tr class="even">
-<td align="left"><strong>curl_bracket_check()</strong></td>
+<td align="left"><strong>curly_bracket_check()</strong></td>
 <td align="left">Verify that all the bodies of the <code>if</code>,
 <code>else</code>, <code>for</code>, <code>while</code>,
-<code>repeat</code> and <code>function</code> (including lambda
-<code>\(x)</code>) constructs of a function are delimited by curly
-brackets <code><a href="https://rdrr.io/r/base/Paren.html" class="external-link">{ }</a></code>. Since <code>saferDev</code> v3.0.0, the
-modified function (with the missing <code><a href="https://rdrr.io/r/base/Paren.html" class="external-link">{ }</a></code> added at their
-exact position in the code, formatting and comments preserved) is
-returned, or exported in a <code>&lt;function name&gt;_safer.R</code>
-file of the directory indicated by <code>out_path</code> with
-<code>export = TRUE</code>.</td>
+<code>repeat</code> and <code>function</code> are delimited by curly
+brackets <code><a href="https://rdrr.io/r/base/Paren.html" class="external-link">{ }</a></code>. Return table message of the line with
+problems and a corrected version of the submitted function.</td>
 </tr>
 <tr class="odd">
+<td align="left"><strong>for_loop_nb_check()</strong></td>
+<td align="left">Check the sequence expression of every <code>for</code>
+loop of a function. If the number of iterations is not fixed by the
+writing itself (e.g., <code>1:length(x)</code>), a checking line is
+added before the loop, issuing a warning at execution if the sequence is
+empty, contains <code>NA</code> or infinite values, has a single value,
+or is decreasing. Return a table-like message of the problematic lines
+and a corrected version of the submitted function.</td>
+</tr>
+<tr class="even">
 <td align="left"><strong>env_check()</strong></td>
 <td align="left">Verify that object names in the environment defined by
 the <code>pos</code> argument are identical or not to object names in
@@ -149,43 +157,35 @@ that names used for objects inside a function or in the working
 environment do not override names of objects already present in the
 above R environments, following the R scope.</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td align="left"><strong>get_message()</strong></td>
 <td align="left">Return the error, warning or simple (non error non
 warning) message if ever exist of an instruction written between
 quotes.</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td align="left"><strong>is_function_here()</strong></td>
 <td align="left">Check if required functions are present in installed
 packages. This controls for instance modifications of function names
 depending on package versions.</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td align="left"><strong>is_package_here()</strong></td>
 <td align="left">Check if required packages are installed locally.</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td align="left"><strong>report()</strong></td>
 <td align="left">Print a character string or a data object into a same
 log file.</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td align="left"><strong>true_false_check()</strong></td>
 <td align="left">Verify that the <code>TRUE</code> and
 <code>FALSE</code> logical constants are always written in full when
 used as values (argument values, conditions, comparisons, indexing) and
 never abbreviated as <code>T</code> or <code>F</code>, which can be
-overwritten by the user. Since <code>saferDev</code> v3.0.0, the
-modified function is returned (each reported
-<code>T</code>/<code>F</code> replaced by
-<code>TRUE</code>/<code>FALSE</code> at its exact position in the code,
-comments, strings and formatting preserved), or exported in a
-<code>&lt;function name&gt;_safer.R</code> file of the directory
-indicated by <code>out_path</code> with <code>export = TRUE</code>. Like
-<code><a href="../reference/all_args_here.html">all_args_here()</a></code>, an error asking to run
-<code><a href="../reference/colons_check.html">colons_check()</a></code> first is returned if some functions are not
-associated to their package.</td>
+overwritten by the user. Return table message of the line with problems
+and a corrected version of the submitted function.</td>
 </tr>
 </tbody>
 </table>

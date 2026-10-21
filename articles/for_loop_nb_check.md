@@ -1,4 +1,4 @@
-# for_loop_nb_check: more examples
+# for_loop_nb_check(): more examples
 
 \
 
@@ -18,13 +18,13 @@ fun1 <- function(x){
     for(i in 1:3){
         base::print(i)
     }
-    for(i in 0:0){ # equal bounds: not reported by for_loop_nb_check() (target of the runtime checking line)
+    for(i in 0:0){ # equal bounds: hard numbers, not reported
         base::print(i)
     }
-    for(i in -3:-1){ # both negative: not reported by for_loop_nb_check()
+    for(i in -3:-1){ # negative: hard numbers, not reported
         base::print(i)
     }
-    for(i in 1:0){ # decreasing: not reported by for_loop_nb_check()
+    for(i in 1:0){ # decreasing: hard numbers, not reported
         base::print(i)
     }
     for(i in base::seq_along(along.with = x)){ # recommended replacement of 1:length(x)
@@ -731,7 +731,7 @@ for_loop_nb_check(x = fun2)
     ##         base::print(i)
     ##     }
     ## }
-    ## <environment: 0x556308a65980>
+    ## <environment: 0x55f931a5e1b0>
 
 \
 
@@ -812,8 +812,8 @@ for_loop_nb_check(
 
 for_loop_nb_check(
     x = fun1, # function name to test.
-    export = FALSE, # return the modified function (FALSE, default) or export it in a <function name>_safer.R file (TRUE)?
-    out_path = ".", # directory where to export the file when export = TRUE (the R working directory by default).
+    export = FALSE, # write the corrected function into a .R file instead of returning it?
+    out_path = ".", # folder where to write the file (used only if export = TRUE).
     safer_check = TRUE, # perform some "safer" checks (see https://github.com/safer-r)?
     lib_path = NULL, # where the required packages are if not in the default directories.
     error_text = "" # add information in error messages returned by the function.
@@ -829,13 +829,13 @@ for_loop_nb_check(
 
 \
 
-### Modified function returned or exported
+### Arguments `export` and `out_path`: return or export the corrected function
 
 ``` r
 
-# When at least one checking line has been inserted, the modified function is returned by return() (NULL is returned when no modification is performed, e.g., when everything is clean or when the constructs cannot be modified, which are then listed in the message).
+# The corrected function is returned (NULL if nothing has to be corrected).
 fun9 <- function(x){ for(i in 1:length(x)){ y <- i } ; y }
-fun9_safer <- for_loop_nb_check(x = fun9, export = FALSE, out_path = ".", safer_check = TRUE, lib_path = NULL, error_text = "")
+fun9_safer <- for_loop_nb_check(x = fun9)
 ```
 
     ## 
@@ -850,7 +850,7 @@ fun9_safer <- for_loop_nb_check(x = fun9, export = FALSE, out_path = ".", safer_
 
 ``` r
 
-fun9_safer # the modified function: tempo_for_seq1 <- 1:length(x) ; <CHECKS> ; for(i in tempo_for_seq1){ y <- i }
+fun9_safer # a checking line is added before the loop.
 ```
 
     ## function (x) 
@@ -894,26 +894,138 @@ fun9_safer # the modified function: tempo_for_seq1 <- 1:length(x) ; <CHECKS> ; f
     ##     }
     ##     y
     ## }
-    ## <environment: 0x55630b6da270>
+    ## <environment: 0x55f931921f20>
 
 ``` r
 
-# With export = TRUE, the modified code is written in a fun9_safer.R file, in the directory indicated by out_path (the R working directory by default, when out_path = "."), and NULL is returned. An error is issued if the file already exists, and nothing is written when no modification is performed.
-# for_loop_nb_check(x = fun9, export = TRUE, out_path = tempdir(), safer_check = TRUE, lib_path = NULL, error_text = "")
+# The corrected function warns when x is empty, because 1:length(x) is then c(1, 0), a decreasing sequence.
+fun9_safer(x = base::character())
 ```
+
+    ## Warning: FOR SEQUENCE DECREASING
+
+    ## [1] 0
+
+``` r
+
+# Export the corrected function into the fun9_safer.R file, here in a new temporary folder.
+# out_path = "." (default) is the R working directory.
+# An existing file is never overwritten (an error is returned instead).
+tempo_dir <- base::tempfile(pattern = "dir", tmpdir = base::tempdir(), fileext = "")
+base::dir.create(path = tempo_dir, showWarnings = TRUE, recursive = FALSE, mode = "0777")
+for_loop_nb_check(
+    x = fun9,
+    export = TRUE,
+    out_path = tempo_dir
+)
+```
+
+    ## 
+    ## 
+    ## 
+    ## INSIDE fun9(), SOME for() SEQUENCES ARE NOT WRITTEN WITH HARD NUMBERS:
+    ## 
+    ## LINE CONSTRUCT       CODE
+    ## 3    for     for (i in 1:length(x)) {
+
+    ## MODIFIED CODE EXPORTED IN:
+    ## /tmp/RtmpK1q7yC/dir1a4758e3b9a9/fun9_safer.R
+
+``` r
+
+base::readLines(con = base::file.path(tempo_dir, "fun9_safer.R", fsep = "/"))
+```
+
+    ## [1] "fun9_safer <- function (x) "                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
+    ## [2] "{"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          
+    ## [3] "    tempo_for_seq1 <- 1:length(x) ; if(base::length(x = tempo_for_seq1) == 0){base::warning(\"FOR SEQUENCE EMPTY: 0 ITERATION\", call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, domain = NULL)}else if(base::anyNA(x = tempo_for_seq1)){base::warning(\"FOR SEQUENCE WITH NA VALUES\", call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, domain = NULL)}else if(base::length(x = tempo_for_seq1) == 1){base::warning(\"FOR SEQUENCE WITH A SINGLE VALUE (EQUAL BOUNDS?): SINGLE ITERATION\", call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, domain = NULL)}else if(base::is.atomic(x = tempo_for_seq1) && base::any(base::is.infinite(x = tempo_for_seq1), na.rm = TRUE)){base::warning(\"FOR SEQUENCE WITH INFINITE VALUES: NO ENDLESS LOOP POSSIBLE BECAUSE THE for() CONTROLLER IS FULLY EVALUATED BEFORE ITERATING, BUT CHECK THAT AN INFINITE VALUE IS EXPECTED\", call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, domain = NULL)}else if(base::is.atomic(x = tempo_for_seq1) && base::typeof(x = tempo_for_seq1) %in% base::c(\"double\", \"integer\") && base::all(x = tempo_for_seq1 < 0, na.rm = FALSE)){base::warning(\"FOR SEQUENCE WITH ALL NEGATIVE VALUES\", call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, domain = NULL)}else if(base::is.atomic(x = tempo_for_seq1) && base::typeof(x = tempo_for_seq1) %in% base::c(\"double\", \"integer\", \"character\", \"complex\") && base::length(x = tempo_for_seq1) >= 2 && tempo_for_seq1[1] > tempo_for_seq1[2]){base::warning(\"FOR SEQUENCE DECREASING\", call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, domain = NULL)} ; for (i in tempo_for_seq1) {"
+    ## [4] "        y <- i"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             
+    ## [5] "    }"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      
+    ## [6] "    y"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      
+    ## [7] "}"
 
 \
 
 ### Sophisticated example
 
 ``` r
-# The for() sequences written with hard numbers are all clean, whatever the bounds (0:0, 1:0 and -3:-1 are deliberately not reported by for_loop_nb_check(): they are the target of a specific checking line added in the function bodies, which warns at execution when the computed sequence is equal, both negative or decreasing).
+
+# Hard numbers are never reported, whatever the bounds (0:0, 1:0 or -3:-1):
+# the writing itself fixes the iterations, so their control is left to the writer.
 fun3 <- function(x){ x <- 0 ; for(i in 0:0){ y <- i } ; y }
 for_loop_nb_check(x = fun3)
+```
 
-# But the same writing computed from an object is reported, like 1:length(x), which gives c(1, 0) when x is empty (base::seq_along(x = x) should be used instead).
+    ## 
+    ## 
+    ## AFTER RUNNING saferDev::for_loop_nb_check().
+    ## INSIDE fun3(), EVERYTHING SEEMS CLEAN.
+
+    ## NULL
+
+``` r
+
+# But a sequence computed from an object is reported, like 1:length(x), 
+# which gives c(1, 0) when x is empty (use base::seq_along(along.with = x) instead).
 fun4 <- function(x){ x <- character() ; for(i in 1:length(x)){ y <- i } ; y }
 for_loop_nb_check(x = fun4)
+```
+
+    ## 
+    ## 
+    ## 
+    ## INSIDE fun4(), SOME for() SEQUENCES ARE NOT WRITTEN WITH HARD NUMBERS:
+    ## 
+    ## LINE CONSTRUCT       CODE
+    ## 4    for     for (i in 1:length(x)) {
+    ## 
+    ## MODIFIED FUNCTION RETURNED BY return().
+
+    ## function (x) 
+    ## {
+    ##     x <- character()
+    ##     tempo_for_seq1 <- 1:length(x)
+    ##     if (base::length(x = tempo_for_seq1) == 0) {
+    ##         base::warning("FOR SEQUENCE EMPTY: 0 ITERATION", call. = FALSE, 
+    ##             immediate. = FALSE, noBreaks. = FALSE, domain = NULL)
+    ##     }
+    ##     else if (base::anyNA(x = tempo_for_seq1)) {
+    ##         base::warning("FOR SEQUENCE WITH NA VALUES", call. = FALSE, 
+    ##             immediate. = FALSE, noBreaks. = FALSE, domain = NULL)
+    ##     }
+    ##     else if (base::length(x = tempo_for_seq1) == 1) {
+    ##         base::warning("FOR SEQUENCE WITH A SINGLE VALUE (EQUAL BOUNDS?): SINGLE ITERATION", 
+    ##             call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, 
+    ##             domain = NULL)
+    ##     }
+    ##     else if (base::is.atomic(x = tempo_for_seq1) && base::any(base::is.infinite(x = tempo_for_seq1), 
+    ##         na.rm = TRUE)) {
+    ##         base::warning("FOR SEQUENCE WITH INFINITE VALUES: NO ENDLESS LOOP POSSIBLE BECAUSE THE for() CONTROLLER IS FULLY EVALUATED BEFORE ITERATING, BUT CHECK THAT AN INFINITE VALUE IS EXPECTED", 
+    ##             call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, 
+    ##             domain = NULL)
+    ##     }
+    ##     else if (base::is.atomic(x = tempo_for_seq1) && base::typeof(x = tempo_for_seq1) %in% 
+    ##         base::c("double", "integer") && base::all(x = tempo_for_seq1 < 
+    ##         0, na.rm = FALSE)) {
+    ##         base::warning("FOR SEQUENCE WITH ALL NEGATIVE VALUES", 
+    ##             call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, 
+    ##             domain = NULL)
+    ##     }
+    ##     else if (base::is.atomic(x = tempo_for_seq1) && base::typeof(x = tempo_for_seq1) %in% 
+    ##         base::c("double", "integer", "character", "complex") && 
+    ##         base::length(x = tempo_for_seq1) >= 2 && tempo_for_seq1[1] > 
+    ##         tempo_for_seq1[2]) {
+    ##         base::warning("FOR SEQUENCE DECREASING", call. = FALSE, 
+    ##             immediate. = FALSE, noBreaks. = FALSE, domain = NULL)
+    ##     }
+    ##     for (i in tempo_for_seq1) {
+    ##         y <- i
+    ##     }
+    ##     y
+    ## }
+    ## <environment: 0x55f933dddfc8>
+
+``` r
 
 # Nested for() loops are all checked.
 fun5 <- function(x){
@@ -924,23 +1036,182 @@ fun5 <- function(x){
     }
 }
 for_loop_nb_check(x = fun5)
-
-# A for() loop inside a formal default is also checked, and the whole construct is wrapped in curly brackets when needed (here, the for() construct is the unbraced body of the function() writing, so the checking lines must be inserted inside { }).
-fun6 <- function(f = function(y) for(i in y){ base::print(i) }) f(1)
-for_loop_nb_check(x = fun6)
-
-# Aliased bounds cannot be detected (documented limitation): n <- length(x) ; for(i in 1:n) is reported as a plain variable, but the aliasing itself is invisible.
-fun7 <- function(x){ n <- base::length(x = x) ; for(i in 1:n){ y <- i } ; y }
-for_loop_nb_check(x = fun7)
-
-# Backquoted constructs cannot be checked (documented limitation).
-fun8 <- function(x){ `for`(i in 1:3, base::print(i)) }
-try(for_loop_nb_check(x = fun8), silent = FALSE)
 ```
 
-    ## Error in parse(text = input): <text>:28:30: unexpected 'in'
-    ## 27: # Backquoted constructs cannot be checked (documented limitation).
-    ## 28: fun8 <- function(x){ `for`(i in
-    ##                                  ^
+    ## 
+    ## 
+    ## 
+    ## INSIDE fun5(), SOME for() SEQUENCES ARE NOT WRITTEN WITH HARD NUMBERS:
+    ## 
+    ## LINE CONSTRUCT       CODE
+    ## 4    for     for (i2 in 1:length(x)) {
+    ## 
+    ## MODIFIED FUNCTION RETURNED BY return().
+
+    ## function (x) 
+    ## {
+    ##     for (i in 1:3) {
+    ##         tempo_for_seq1 <- 1:length(x)
+    ##         if (base::length(x = tempo_for_seq1) == 0) {
+    ##             base::warning("FOR SEQUENCE EMPTY: 0 ITERATION", 
+    ##                 call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, 
+    ##                 domain = NULL)
+    ##         }
+    ##         else if (base::anyNA(x = tempo_for_seq1)) {
+    ##             base::warning("FOR SEQUENCE WITH NA VALUES", call. = FALSE, 
+    ##                 immediate. = FALSE, noBreaks. = FALSE, domain = NULL)
+    ##         }
+    ##         else if (base::length(x = tempo_for_seq1) == 1) {
+    ##             base::warning("FOR SEQUENCE WITH A SINGLE VALUE (EQUAL BOUNDS?): SINGLE ITERATION", 
+    ##                 call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, 
+    ##                 domain = NULL)
+    ##         }
+    ##         else if (base::is.atomic(x = tempo_for_seq1) && base::any(base::is.infinite(x = tempo_for_seq1), 
+    ##             na.rm = TRUE)) {
+    ##             base::warning("FOR SEQUENCE WITH INFINITE VALUES: NO ENDLESS LOOP POSSIBLE BECAUSE THE for() CONTROLLER IS FULLY EVALUATED BEFORE ITERATING, BUT CHECK THAT AN INFINITE VALUE IS EXPECTED", 
+    ##                 call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, 
+    ##                 domain = NULL)
+    ##         }
+    ##         else if (base::is.atomic(x = tempo_for_seq1) && base::typeof(x = tempo_for_seq1) %in% 
+    ##             base::c("double", "integer") && base::all(x = tempo_for_seq1 < 
+    ##             0, na.rm = FALSE)) {
+    ##             base::warning("FOR SEQUENCE WITH ALL NEGATIVE VALUES", 
+    ##                 call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, 
+    ##                 domain = NULL)
+    ##         }
+    ##         else if (base::is.atomic(x = tempo_for_seq1) && base::typeof(x = tempo_for_seq1) %in% 
+    ##             base::c("double", "integer", "character", "complex") && 
+    ##             base::length(x = tempo_for_seq1) >= 2 && tempo_for_seq1[1] > 
+    ##             tempo_for_seq1[2]) {
+    ##             base::warning("FOR SEQUENCE DECREASING", call. = FALSE, 
+    ##                 immediate. = FALSE, noBreaks. = FALSE, domain = NULL)
+    ##         }
+    ##         for (i2 in tempo_for_seq1) {
+    ##             base::print(i2)
+    ##         }
+    ##     }
+    ## }
+    ## <environment: 0x55f9343bd768>
+
+``` r
+
+# A for() loop inside an argument default is also checked.
+# Here, the loop is the body of function(y) without { }: the correction adds { } around it.
+fun6 <- function(f = function(y) for(i in y){ base::print(i) }) f(1)
+for_loop_nb_check(x = fun6)
+```
+
+    ## 
+    ## 
+    ## 
+    ## INSIDE fun6(), SOME for() SEQUENCES ARE NOT WRITTEN WITH HARD NUMBERS:
+    ## 
+    ## LINE CONSTRUCT       CODE
+    ## 1    for     function (f = function(y) for (i in y) {
+    ## 
+    ## MODIFIED FUNCTION RETURNED BY return().
+
+    ## function (f = function(y) {
+    ##     tempo_for_seq1 <- y
+    ##     if (base::length(x = tempo_for_seq1) == 0) {
+    ##         base::warning("FOR SEQUENCE EMPTY: 0 ITERATION", call. = FALSE, 
+    ##             immediate. = FALSE, noBreaks. = FALSE, domain = NULL)
+    ##     }
+    ##     else if (base::anyNA(x = tempo_for_seq1)) {
+    ##         base::warning("FOR SEQUENCE WITH NA VALUES", call. = FALSE, 
+    ##             immediate. = FALSE, noBreaks. = FALSE, domain = NULL)
+    ##     }
+    ##     else if (base::length(x = tempo_for_seq1) == 1) {
+    ##         base::warning("FOR SEQUENCE WITH A SINGLE VALUE (EQUAL BOUNDS?): SINGLE ITERATION", 
+    ##             call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, 
+    ##             domain = NULL)
+    ##     }
+    ##     else if (base::is.atomic(x = tempo_for_seq1) && base::any(base::is.infinite(x = tempo_for_seq1), 
+    ##         na.rm = TRUE)) {
+    ##         base::warning("FOR SEQUENCE WITH INFINITE VALUES: NO ENDLESS LOOP POSSIBLE BECAUSE THE for() CONTROLLER IS FULLY EVALUATED BEFORE ITERATING, BUT CHECK THAT AN INFINITE VALUE IS EXPECTED", 
+    ##             call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, 
+    ##             domain = NULL)
+    ##     }
+    ##     else if (base::is.atomic(x = tempo_for_seq1) && base::typeof(x = tempo_for_seq1) %in% 
+    ##         base::c("double", "integer") && base::all(x = tempo_for_seq1 < 
+    ##         0, na.rm = FALSE)) {
+    ##         base::warning("FOR SEQUENCE WITH ALL NEGATIVE VALUES", 
+    ##             call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, 
+    ##             domain = NULL)
+    ##     }
+    ##     else if (base::is.atomic(x = tempo_for_seq1) && base::typeof(x = tempo_for_seq1) %in% 
+    ##         base::c("double", "integer", "character", "complex") && 
+    ##         base::length(x = tempo_for_seq1) >= 2 && tempo_for_seq1[1] > 
+    ##         tempo_for_seq1[2]) {
+    ##         base::warning("FOR SEQUENCE DECREASING", call. = FALSE, 
+    ##             immediate. = FALSE, noBreaks. = FALSE, domain = NULL)
+    ##     }
+    ##     for (i in tempo_for_seq1) {
+    ##         base::print(i)
+    ##     }
+    ## }) 
+    ## f(1)
+    ## <environment: 0x55f93499d630>
+
+``` r
+
+# Only the writing is analyzed: 1:n is reported as a variable, whatever n.
+fun7 <- function(x){ n <- base::length(x = x) ; for(i in 1:n){ y <- i } ; y }
+for_loop_nb_check(x = fun7)
+```
+
+    ## 
+    ## 
+    ## 
+    ## INSIDE fun7(), SOME for() SEQUENCES ARE NOT WRITTEN WITH HARD NUMBERS:
+    ## 
+    ## LINE CONSTRUCT       CODE
+    ## 4    for     for (i in 1:n) {
+    ## 
+    ## MODIFIED FUNCTION RETURNED BY return().
+
+    ## function (x) 
+    ## {
+    ##     n <- base::length(x = x)
+    ##     tempo_for_seq1 <- 1:n
+    ##     if (base::length(x = tempo_for_seq1) == 0) {
+    ##         base::warning("FOR SEQUENCE EMPTY: 0 ITERATION", call. = FALSE, 
+    ##             immediate. = FALSE, noBreaks. = FALSE, domain = NULL)
+    ##     }
+    ##     else if (base::anyNA(x = tempo_for_seq1)) {
+    ##         base::warning("FOR SEQUENCE WITH NA VALUES", call. = FALSE, 
+    ##             immediate. = FALSE, noBreaks. = FALSE, domain = NULL)
+    ##     }
+    ##     else if (base::length(x = tempo_for_seq1) == 1) {
+    ##         base::warning("FOR SEQUENCE WITH A SINGLE VALUE (EQUAL BOUNDS?): SINGLE ITERATION", 
+    ##             call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, 
+    ##             domain = NULL)
+    ##     }
+    ##     else if (base::is.atomic(x = tempo_for_seq1) && base::any(base::is.infinite(x = tempo_for_seq1), 
+    ##         na.rm = TRUE)) {
+    ##         base::warning("FOR SEQUENCE WITH INFINITE VALUES: NO ENDLESS LOOP POSSIBLE BECAUSE THE for() CONTROLLER IS FULLY EVALUATED BEFORE ITERATING, BUT CHECK THAT AN INFINITE VALUE IS EXPECTED", 
+    ##             call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, 
+    ##             domain = NULL)
+    ##     }
+    ##     else if (base::is.atomic(x = tempo_for_seq1) && base::typeof(x = tempo_for_seq1) %in% 
+    ##         base::c("double", "integer") && base::all(x = tempo_for_seq1 < 
+    ##         0, na.rm = FALSE)) {
+    ##         base::warning("FOR SEQUENCE WITH ALL NEGATIVE VALUES", 
+    ##             call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, 
+    ##             domain = NULL)
+    ##     }
+    ##     else if (base::is.atomic(x = tempo_for_seq1) && base::typeof(x = tempo_for_seq1) %in% 
+    ##         base::c("double", "integer", "character", "complex") && 
+    ##         base::length(x = tempo_for_seq1) >= 2 && tempo_for_seq1[1] > 
+    ##         tempo_for_seq1[2]) {
+    ##         base::warning("FOR SEQUENCE DECREASING", call. = FALSE, 
+    ##             immediate. = FALSE, noBreaks. = FALSE, domain = NULL)
+    ##     }
+    ##     for (i in tempo_for_seq1) {
+    ##         y <- i
+    ##     }
+    ##     y
+    ## }
+    ## <environment: 0x55f934f7a038>
 
 \

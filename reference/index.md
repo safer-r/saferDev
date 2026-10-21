@@ -32,13 +32,16 @@
 
 - [`colons_check()`](colons_check.md) : Colons Check
 
-## curl_bracket_check
+## curly_bracket_check
 
-- [`curl_bracket_check()`](curl_bracket_check.md) : Curl Brackets Check
+- [`curly_bracket_check()`](curly_bracket_check.md) : Curly Brackets
+  Check
 
 ## for_loop_nb_check
 
-- [`for_loop_nb_check()`](for_loop_nb_check.md) : For Loop Number Check
+- [`for_loop_nb_check()`](for_loop_nb_check.md) :
+
+  `for` Loop Number Check
 
 ## true_false_check
 

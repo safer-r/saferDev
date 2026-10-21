@@ -3,7 +3,7 @@
 Locate the body expression of a construct (`if`, `else`, `for`, `while`,
 `repeat`, `function` or lambda `\(x)`) in the parse data of the checked
 code, for the construction of the modified function by
-[`curl_bracket_check`](curl_bracket_check.md). The body is the last
+[`curly_bracket_check`](curly_bracket_check.md). The body is the last
 `expr` child of the construct expression: for `if`, the condition `expr`
 comes first, the `then` body follows, and the `else` body (if any) is
 the last `expr` child; for `for`, the `forcond` (which owns the
@@ -57,7 +57,7 @@ parentheses) comes before the body `expr`; for `while`, `repeat`,
 
   Integer vector of the terminal rows (comments excluded) of `pd`,
   sorted by source position (as computed in
-  [`curl_bracket_check`](curl_bracket_check.md)).
+  [`curly_bracket_check`](curly_bracket_check.md)).
 
 - else_branch:
 
