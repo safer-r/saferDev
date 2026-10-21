@@ -31,13 +31,13 @@ testthat::test_that("true_false_check()", {
         base::print("ok")
     }
     fun17 <- function(x){ base::T ; x == base::F } # fully qualified symbols: reported (fix: base::TRUE)
-    fun18 <- function(x){ mean(x) } # unqualified function: pre-check error
-    fun19 <- function(x){ local_fun <- function(y){ y == T } ; local_fun(x) } # internal function def: pre-check ok, T reported
-    fun20 <- function(x){ f1 <- utils::getFromNamespace(x = "sum", ns = "base", pos = , envir = ) ; f1(TRUE) } # getFromNamespace def: pre-check ok
-    fun21 <- function(x){ T() } # function name T(): pre-check error (like colons_check)
+    fun18 <- function(x){ mean(x) } # unqualified function call: not checked (no colons pre-check): no T or F value: clean
+    fun19 <- function(x){ local_fun <- function(y){ y == T } ; local_fun(x) } # internal function definition: no error, T reported
+    fun20 <- function(x){ f1 <- utils::getFromNamespace(x = "sum", ns = "base", pos = , envir = ) ; f1(TRUE) } # getFromNamespace definition: no error, no T or F value: clean
+    fun21 <- function(x){ T() } # function name T(): not a value symbol: not reported
     fun22 <- function(x){ T ; F } # bare value symbols: reported
     fun23 <- function(x){ x == T ; T <- 1 ; x == T } # local definition of T: not reported
-    fun24 <- base::mean # UseMethod body: pre-check error (like colons_check)
+    fun24 <- base::mean # UseMethod body: no T or F value: clean
     fun25 <- function(x){ base::print(\(y) y == T) } # lambda body: reported
     fun26 <- function(x){ T -> y ; base::ifelse(test = x, yes = T, no = FALSE) } # T -> y: T is an assignment value (first one not reported), the ifelse T is reported
     fun27 <- function(x){ y -> T ; base::ifelse(test = x, yes = T, no = FALSE) } # y -> T: T is a definition target, nothing reported
@@ -48,9 +48,9 @@ testthat::test_that("true_false_check()", {
     fun32 <- function(x){ T ~ y ; base::print(x) } # formula left-hand side: not reported
     fun32b <- function(x){ y ~ x + T ; base::print(x) } # formula symbol anywhere in the formula: not reported
     fun32c <- function(x){ ?(((T))) ; base::print(x) } # deep-parenthesized help topic: not reported
-    fun33 <- function(df, x){ df$mean(x) ; base::print("ok") } # component function call: pre-check must NOT error (like colons_check)
-    fun34 <- function(df, x){ df$mean <- function(y){ y } ; mean(x) } # component assignment is NOT an internal function: the bare mean() is flagged by the pre-check
-    fun35 <- function(obj, x){ obj$x(T) ; base::print(x) } # component function call: pre-check must NOT error, T still reported
+    fun33 <- function(df, x){ df$mean(x) ; base::print("ok") } # component function call: not checked (no colons pre-check)
+    fun34 <- function(df, x){ df$mean <- function(y){ y } ; mean(x) } # component assignment and bare mean(): not checked (no colons pre-check): clean
+    fun35 <- function(obj, x){ obj$x(T) ; base::print(x) } # component function call: not checked (no colons pre-check), T still reported
     fun36 <- function(x){ df <- 1 ; ?(T) ; base::print(df) } # help parenthesized topic with a deparse without srcref: not reported either way
     fun37 <- function(x){ T ->> w2 ; base::ifelse(test = x, yes = T, no = FALSE) } # ->> behaves like ->: the ifelse T is reported once
     fun38 <- function(x){ T <<- 1 ; x == T } # T <<- 1 is a definition target: nothing reported
@@ -203,13 +203,12 @@ testthat::test_that("true_false_check()", {
     #### end second round of checking and data preparation
 
     #### main code
-    # package-association pre-check (like all_args_here(): colons_check() must be run first)
-    testthat::expect_error(true_false_check(x = fun18, safer_check = TRUE, lib_path = NULL, error_text = ""), regexp = "SOME FUNCTIONS ARE NOT ASSOCIATED TO THEIR PACKAGE", fixed = TRUE)
-    testthat::expect_error(true_false_check(x = fun18, safer_check = TRUE, lib_path = NULL, error_text = ""), regexp = "PLEASE, RUN saferDev::colons_check(fun18()) FIRST", fixed = TRUE)
-    testthat::expect_error(true_false_check(x = fun21, safer_check = TRUE, lib_path = NULL, error_text = ""), regexp = "SOME FUNCTIONS ARE NOT ASSOCIATED TO THEIR PACKAGE", fixed = TRUE)
-    testthat::expect_error(true_false_check(x = fun24, safer_check = TRUE, lib_path = NULL, error_text = ""), regexp = "SOME FUNCTIONS ARE NOT ASSOCIATED TO THEIR PACKAGE", fixed = TRUE) # UseMethod body: never passes colons_check()
-    testthat::expect_no_error(true_false_check(x = fun19, safer_check = TRUE, lib_path = NULL, error_text = "")) # internal function definition: pre-check ok
-    testthat::expect_no_error(true_false_check(x = fun20, safer_check = TRUE, lib_path = NULL, error_text = "")) # getFromNamespace function definition: pre-check ok
+    # true_false_check() only checks the T and F symbols used as values: no package-association pre-check (unlike all_args_here(), colons_check() does not have to be run first)
+    testthat::expect_message(true_false_check(x = fun18, safer_check = TRUE, lib_path = NULL, error_text = ""), regexp = "EVERYTHING SEEMS CLEAN", fixed = TRUE) # unqualified function call: not checked, no T or F value: clean
+    testthat::expect_message(true_false_check(x = fun21, safer_check = TRUE, lib_path = NULL, error_text = ""), regexp = "EVERYTHING SEEMS CLEAN", fixed = TRUE) # T used as function name: not a value symbol: not reported
+    testthat::expect_message(true_false_check(x = fun24, safer_check = TRUE, lib_path = NULL, error_text = ""), regexp = "EVERYTHING SEEMS CLEAN", fixed = TRUE) # UseMethod body: no T or F value: clean
+    testthat::expect_no_error(true_false_check(x = fun19, safer_check = TRUE, lib_path = NULL, error_text = "")) # internal function definition: no error, T still reported (see below)
+    testthat::expect_message(true_false_check(x = fun20, safer_check = TRUE, lib_path = NULL, error_text = ""), regexp = "EVERYTHING SEEMS CLEAN", fixed = TRUE) # getFromNamespace function definition: no T or F value: clean
     testthat::expect_no_error(true_false_check(x = fun3, safer_check = TRUE, lib_path = NULL, error_text = "")) # no function call at all: accepted
     # detection of T or F used as values
     testthat::expect_message(true_false_check(x = fun3, safer_check = TRUE, lib_path = NULL, error_text = ""), regexp = "EVERYTHING SEEMS CLEAN", fixed = TRUE)
@@ -250,9 +249,9 @@ testthat::test_that("true_false_check()", {
     testthat::expect_message(true_false_check(x = fun32, safer_check = TRUE, lib_path = NULL, error_text = ""), regexp = "EVERYTHING SEEMS CLEAN", fixed = TRUE) # formula left-hand side: not reported
     testthat::expect_message(true_false_check(x = fun32b, safer_check = TRUE, lib_path = NULL, error_text = ""), regexp = "EVERYTHING SEEMS CLEAN", fixed = TRUE) # formula symbol anywhere in the formula: not reported
     testthat::expect_message(true_false_check(x = fun32c, safer_check = TRUE, lib_path = NULL, error_text = ""), regexp = "EVERYTHING SEEMS CLEAN", fixed = TRUE) # deep-parenthesized help topic: not reported
-    testthat::expect_no_error(true_false_check(x = fun33, safer_check = TRUE, lib_path = NULL, error_text = "")) # component function call: pre-check does not error, like colons_check
-    testthat::expect_error(true_false_check(x = fun34, safer_check = TRUE, lib_path = NULL, error_text = ""), regexp = "SOME FUNCTIONS ARE NOT ASSOCIATED TO THEIR PACKAGE", fixed = TRUE) # component assignment is not an internal function: the bare mean() is flagged by the pre-check
-    testthat::expect_message(true_false_check(x = fun35, safer_check = TRUE, lib_path = NULL, error_text = ""), regexp = "SOME SYMBOLS T OR F MUST BE WRITTEN TRUE OR FALSE", fixed = TRUE) # component function call: pre-check ok, T still reported
+    testthat::expect_message(true_false_check(x = fun33, safer_check = TRUE, lib_path = NULL, error_text = ""), regexp = "EVERYTHING SEEMS CLEAN", fixed = TRUE) # component function call: not checked (no colons pre-check)
+    testthat::expect_message(true_false_check(x = fun34, safer_check = TRUE, lib_path = NULL, error_text = ""), regexp = "EVERYTHING SEEMS CLEAN", fixed = TRUE) # component assignment and bare mean(): not checked (no colons pre-check): clean
+    testthat::expect_message(true_false_check(x = fun35, safer_check = TRUE, lib_path = NULL, error_text = ""), regexp = "SOME SYMBOLS T OR F MUST BE WRITTEN TRUE OR FALSE", fixed = TRUE) # component function call: not checked, T still reported
     testthat::expect_message(true_false_check(x = fun36, safer_check = TRUE, lib_path = NULL, error_text = ""), regexp = "EVERYTHING SEEMS CLEAN", fixed = TRUE)
     fun36b <- base::eval(expr = base::parse(text = "function(x){ df <- 1 ; ?(T) ; base::print(df) }", file = "", n = NULL, prompt = "?", keep.source = FALSE, srcfile = NULL, encoding = "unknown")) # function built without srcref: deparsed as `?`((T)) by utils::capture.output()
     testthat::expect_message(true_false_check(x = fun36b, safer_check = TRUE, lib_path = NULL, error_text = ""), regexp = "EVERYTHING SEEMS CLEAN", fixed = TRUE) # deparsed `?` call: the `?` function-call token is skipped by the identifier check, and the topic is in the parent-of-parent subtree: not reported
