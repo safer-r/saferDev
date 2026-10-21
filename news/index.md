@@ -35,8 +35,12 @@
   for the whole loading.
 - true_false_check(): new function. Verifies that TRUE and FALSE are
   always written in full when used as values, and never abbreviated as T
-  or F. The corrected function (T replaced by TRUE and F by FALSE) is
-  returned, or exported with export = TRUE.
+  or F. The corrected function (T replaced by TRUE and F replaced by
+  FALSE) is returned, or exported with export = TRUE. Warning: the
+  pre-check of the package association of the function calls (which
+  required running saferDev::colons_check() first) is removed:
+  true_false_check() now only checks the T and F symbols used as values,
+  whatever the writing of the function calls.
 - colons_check(): the missing package attributions of the basic R
   functions are now added: the corrected function is returned, or
   exported with the new export and out_path arguments. These two

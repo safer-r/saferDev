@@ -96,29 +96,33 @@ true_false_check(x = fun2)
     ##         base::return(base::mean(x = 1:3, na.rm = FALSE))
     ##     }
     ## }
-    ## <environment: 0x5598da28f690>
+    ## <environment: 0x55e5b1596328>
 
 ``` r
 
-# Error: the functions called in x must first be written with their package (run colons_check() first).
+# The package association of the function calls is not checked: the bare mean() stays unchanged,
+# and only the T is replaced by TRUE (run colons_check() separately for the package association).
 fun3 <- function(x){ if(x == T){ mean(x = 1:3) } }
 true_false_check(x = fun3)
 ```
 
-    ## Error:
-    ## ! 
     ## 
-    ## ================
     ## 
-    ## ERROR IN saferDev::true_false_check().
     ## 
-    ## INSIDE fun3(), SOME FUNCTIONS ARE NOT ASSOCIATED TO THEIR PACKAGE.
+    ## INSIDE fun3(), SOME SYMBOLS T OR F MUST BE WRITTEN TRUE OR FALSE:
     ## 
-    ## PLEASE, RUN saferDev::colons_check(fun3()) FIRST,
-    ## ADD THE MISSING <PACKAGE>::<FUNCTION> (OR <PACKAGE>:::<FUNCTION> FOR FUNCTION STARTING BY A DOT)
-    ## AND RERUN saferDev::true_false_check(fun3()).
+    ## LINE SYMBOL      CODE
+    ## 3    T       if (x == T) {
     ## 
-    ## ================
+    ## MODIFIED FUNCTION RETURNED BY return().
+
+    ## function (x) 
+    ## {
+    ##     if (x == TRUE) {
+    ##         mean(x = 1:3)
+    ##     }
+    ## }
+    ## <environment: 0x55e5aec52860>
 
 \
 
@@ -223,7 +227,7 @@ fun2_safer # T replaced by TRUE, F replaced by FALSE.
     ##         base::return(base::mean(x = 1:3, na.rm = FALSE))
     ##     }
     ## }
-    ## <environment: 0x5598dab65d78>
+    ## <environment: 0x55e5b28a55e8>
 
 ``` r
 
@@ -262,7 +266,7 @@ true_false_check(
     ## 4    F       base::return(base::mean(x = 1:3, na.rm = F))
 
     ## MODIFIED CODE EXPORTED IN:
-    ## /tmp/Rtmp3VZt5O/dir1d5a7b6e7bc9/fun2_safer.R
+    ## /tmp/RtmpwicErU/dir19fa2f6917af/fun2_safer.R
 
 ``` r
 

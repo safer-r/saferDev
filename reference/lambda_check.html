@@ -144,7 +144,7 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span>         y * 2</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     })</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x55bc0bb23620&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x560c72bc8e58&gt;</span>
 <span class="r-in"><span><span class="co"># The \( writings that are not lambda writings are not reported nor modified:</span></span></span>
 <span class="r-in"><span><span class="co"># a backslash followed by ( inside a string, a raw string, a comment or a backquoted name is never a lambda writing, because the detection is token-based (the parser gives a STR_CONST, COMMENT or QUOTED_NAME token, never a '\' token)</span></span></span>
 <span class="r-in"><span><span class="va">fun3</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/eval.html" class="external-link">eval</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/parse.html" class="external-link">parse</a></span><span class="op">(</span>text <span class="op">=</span> <span class="st">"function(x){ y &lt;- \"the text \\\\(x) is inside a string\" ; z &lt;- r\"(raw \\(x))\" ; # a \\(x) in a comment\n    base::`\\\\`(x) ; x }"</span>, keep.source <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span></span></span>
@@ -168,7 +168,7 @@
 <span class="r-msg co"><span class="r-pr">#&gt;</span> 1	\(y)		function(x){ base::sapply(X = 1:3, FUN = \(y){ y * 2 }) }</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> MODIFIED CODE EXPORTED IN:</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> /tmp/RtmpJhwdve/dir17116e7ba2e6/fun2_safer.R</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> /tmp/RtmpCOGJEa/dir141164e52905/fun2_safer.R</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"><span></span></span>
 </code></pre></div>

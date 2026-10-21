@@ -156,31 +156,34 @@
 <span><span class="co">##         base::return(base::mean(x = 1:3, na.rm = FALSE))</span></span>
 <span><span class="co">##     }</span></span>
 <span><span class="co">## }</span></span>
-<span><span class="co">## &lt;environment: 0x5598da28f690&gt;</span></span></code></pre>
+<span><span class="co">## &lt;environment: 0x55e5b1596328&gt;</span></span></code></pre>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Error: the functions called in x must first be written with their package (run colons_check() first).</span></span>
+<code class="sourceCode R"><span><span class="co"># The package association of the function calls is not checked: the bare mean() stays unchanged,</span></span>
+<span><span class="co"># and only the T is replaced by TRUE (run colons_check() separately for the package association).</span></span>
 <span><span class="va">fun3</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">{</span> <span class="kw">if</span><span class="op">(</span><span class="va">x</span> <span class="op">==</span> <span class="cn">T</span><span class="op">)</span><span class="op">{</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">3</span><span class="op">)</span> <span class="op">}</span> <span class="op">}</span></span>
 <span><span class="fu"><a href="../reference/true_false_check.html">true_false_check</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">fun3</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## <span style="color: #BBBB00; font-weight: bold;">Error</span><span style="font-weight: bold;">:</span></span></span>
-<span><span class="co">## <span style="color: #BBBB00;">!</span> </span></span>
+<pre><code><span><span class="co">## </span></span>
 <span><span class="co">## </span></span>
-<span><span class="co">## ================</span></span>
 <span><span class="co">## </span></span>
-<span><span class="co">## ERROR IN saferDev::true_false_check().</span></span>
+<span><span class="co">## INSIDE fun3(), SOME SYMBOLS T OR F MUST BE WRITTEN TRUE OR FALSE:</span></span>
 <span><span class="co">## </span></span>
-<span><span class="co">## INSIDE fun3(), SOME FUNCTIONS ARE NOT ASSOCIATED TO THEIR PACKAGE.</span></span>
+<span><span class="co">## LINE SYMBOL      CODE</span></span>
+<span><span class="co">## 3    T       if (x == T) {</span></span>
 <span><span class="co">## </span></span>
-<span><span class="co">## PLEASE, RUN saferDev::colons_check(fun3()) FIRST,</span></span>
-<span><span class="co">## ADD THE MISSING &lt;PACKAGE&gt;::&lt;FUNCTION&gt; (OR &lt;PACKAGE&gt;:::&lt;FUNCTION&gt; FOR FUNCTION STARTING BY A DOT)</span></span>
-<span><span class="co">## AND RERUN saferDev::true_false_check(fun3()).</span></span>
-<span><span class="co">## </span></span>
-<span><span class="co">## ================</span></span></code></pre>
+<span><span class="co">## MODIFIED FUNCTION RETURNED BY return().</span></span></code></pre>
+<pre><code><span><span class="co">## function (x) </span></span>
+<span><span class="co">## {</span></span>
+<span><span class="co">##     if (x == TRUE) {</span></span>
+<span><span class="co">##         mean(x = 1:3)</span></span>
+<span><span class="co">##     }</span></span>
+<span><span class="co">## }</span></span>
+<span><span class="co">## &lt;environment: 0x55e5aec52860&gt;</span></span></code></pre>
 <p><br></p>
 </div>
 <div class="section level3">
 <h3 id="argument-safer_check">Argument <code>safer_check</code><a class="anchor" aria-label="anchor" href="#argument-safer_check"></a>
 </h3>
-<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Safer checkings are performed before main code running.</span></span>
 <span><span class="fu"><a href="../reference/true_false_check.html">true_false_check</a></span><span class="op">(</span></span>
 <span>    x <span class="op">=</span> <span class="va">fun1</span>, </span>
@@ -196,7 +199,7 @@
 <div class="section level3">
 <h3 id="argument-lib_path">Argument <code>lib_path</code><a class="anchor" aria-label="anchor" href="#argument-lib_path"></a>
 </h3>
-<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># The "NOTGOOD" path does not exists.</span></span>
 <span><span class="fu"><a href="../reference/true_false_check.html">true_false_check</a></span><span class="op">(</span></span>
 <span>    x <span class="op">=</span> <span class="va">fun1</span>,  </span>
@@ -218,7 +221,7 @@
 <div class="section level3">
 <h3 id="argument-error_text">Argument <code>error_text</code><a class="anchor" aria-label="anchor" href="#argument-error_text"></a>
 </h3>
-<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Add a text in error messages returned by true_false_check().</span></span>
 <span><span class="fu"><a href="../reference/true_false_check.html">true_false_check</a></span><span class="op">(</span></span>
 <span>    x <span class="op">=</span> <span class="va">fun1</span>, </span>
@@ -242,7 +245,7 @@
 <h3 id="arguments-export-and-out_path-return-or-export-the-corrected-function">Arguments <code>export</code> and <code>out_path</code>: return or
 export the corrected function<a class="anchor" aria-label="anchor" href="#arguments-export-and-out_path-return-or-export-the-corrected-function"></a>
 </h3>
-<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># The corrected function is returned (NULL if nothing has to be corrected).</span></span>
 <span><span class="va">fun2_safer</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/true_false_check.html">true_false_check</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">fun2</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## </span></span>
@@ -255,7 +258,7 @@ export the corrected function<a class="anchor" aria-label="anchor" href="#argume
 <span><span class="co">## 4    F       base::return(base::mean(x = 1:3, na.rm = F))</span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## MODIFIED FUNCTION RETURNED BY return().</span></span></code></pre>
-<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">fun2_safer</span> <span class="co"># T replaced by TRUE, F replaced by FALSE.</span></span></code></pre></div>
 <pre><code><span><span class="co">## function (x) </span></span>
 <span><span class="co">## {</span></span>
@@ -263,8 +266,8 @@ export the corrected function<a class="anchor" aria-label="anchor" href="#argume
 <span><span class="co">##         base::return(base::mean(x = 1:3, na.rm = FALSE))</span></span>
 <span><span class="co">##     }</span></span>
 <span><span class="co">## }</span></span>
-<span><span class="co">## &lt;environment: 0x5598dab65d78&gt;</span></span></code></pre>
-<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
+<span><span class="co">## &lt;environment: 0x55e5b28a55e8&gt;</span></span></code></pre>
+<div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># And it passes the check.</span></span>
 <span><span class="fu"><a href="../reference/true_false_check.html">true_false_check</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">fun2_safer</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## </span></span>
@@ -272,7 +275,7 @@ export the corrected function<a class="anchor" aria-label="anchor" href="#argume
 <span><span class="co">## AFTER RUNNING saferDev::true_false_check().</span></span>
 <span><span class="co">## INSIDE fun2_safer(), EVERYTHING SEEMS CLEAN.</span></span></code></pre>
 <pre><code><span><span class="co">## NULL</span></span></code></pre>
-<div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb30"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Export the corrected function into the fun2_safer.R file, here in a new temporary folder.</span></span>
 <span><span class="co"># out_path = "." (default) is the R working directory.</span></span>
 <span><span class="co"># An existing file is never overwritten (an error is returned instead).</span></span>
@@ -292,8 +295,8 @@ export the corrected function<a class="anchor" aria-label="anchor" href="#argume
 <span><span class="co">## 3    T       if (x == T) {</span></span>
 <span><span class="co">## 4    F       base::return(base::mean(x = 1:3, na.rm = F))</span></span></code></pre>
 <pre><code><span><span class="co">## MODIFIED CODE EXPORTED IN:</span></span>
-<span><span class="co">## /tmp/Rtmp3VZt5O/dir1d5a7b6e7bc9/fun2_safer.R</span></span></code></pre>
-<div class="sourceCode" id="cb32"><pre class="downlit sourceCode r">
+<span><span class="co">## /tmp/RtmpwicErU/dir19fa2f6917af/fun2_safer.R</span></span></code></pre>
+<div class="sourceCode" id="cb33"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># base::source() of this file recreates the corrected function, named fun2_safer.</span></span>
 <span><span class="fu">base</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/base/readLines.html" class="external-link">readLines</a></span><span class="op">(</span>con <span class="op">=</span> <span class="fu">base</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="va">tempo_dir</span>, <span class="st">"fun2_safer.R"</span>, fsep <span class="op">=</span> <span class="st">"/"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## [1] "fun2_safer &lt;- function (x) "                             </span></span>
@@ -307,7 +310,7 @@ export the corrected function<a class="anchor" aria-label="anchor" href="#argume
 <div class="section level3">
 <h3 id="all-the-arguments">All the arguments<a class="anchor" aria-label="anchor" href="#all-the-arguments"></a>
 </h3>
-<div class="sourceCode" id="cb34"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb35"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/true_false_check.html">true_false_check</a></span><span class="op">(</span></span>
 <span>    x <span class="op">=</span> <span class="va">fun1</span>, <span class="co"># function name to test.</span></span>
 <span>    export <span class="op">=</span> <span class="cn">FALSE</span>, <span class="co"># write the corrected function into a .R file instead of returning it?</span></span>
@@ -326,7 +329,7 @@ export the corrected function<a class="anchor" aria-label="anchor" href="#argume
 <div class="section level3">
 <h3 id="sophisticated-example">Sophisticated example<a class="anchor" aria-label="anchor" href="#sophisticated-example"></a>
 </h3>
-<div class="sourceCode" id="cb37"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb38"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># T and F used as names are not reported: they are user-defined objects.</span></span>
 <span><span class="va">fun4</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">{</span></span>
 <span>    <span class="va">df</span> <span class="op">&lt;-</span> <span class="fu">base</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>T <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">2</span>, stringsAsFactors <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
@@ -340,7 +343,7 @@ export the corrected function<a class="anchor" aria-label="anchor" href="#argume
 <span><span class="co">## AFTER RUNNING saferDev::true_false_check().</span></span>
 <span><span class="co">## INSIDE fun4(), EVERYTHING SEEMS CLEAN.</span></span></code></pre>
 <pre><code><span><span class="co">## NULL</span></span></code></pre>
-<div class="sourceCode" id="cb40"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb41"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># If T is defined in the function, its uses are not reported.</span></span>
 <span><span class="va">fun5</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">{</span></span>
 <span>    <span class="cn">T</span> <span class="op">&lt;-</span> <span class="fl">2</span></span>
@@ -352,7 +355,7 @@ export the corrected function<a class="anchor" aria-label="anchor" href="#argume
 <span><span class="co">## AFTER RUNNING saferDev::true_false_check().</span></span>
 <span><span class="co">## INSIDE fun5(), EVERYTHING SEEMS CLEAN.</span></span></code></pre>
 <pre><code><span><span class="co">## NULL</span></span></code></pre>
-<div class="sourceCode" id="cb43"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb44"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Strings and comments are ignored.</span></span>
 <span><span class="va">fun6</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">{</span></span>
 <span>    <span class="fu">base</span><span class="fu">::</span><span class="kw"><a href="https://rdrr.io/r/base/function.html" class="external-link">return</a></span><span class="op">(</span><span class="st">"T"</span><span class="op">)</span> <span class="co"># F</span></span>

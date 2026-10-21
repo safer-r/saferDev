@@ -91,16 +91,12 @@ is written in a file (see the `export` argument).
 
 ## Details
 
-Warning: all the functions called in `x` must first be written with
-their package, like [`base::mean()`](https://rdrr.io/r/base/mean.html).
-Otherwise, an error asks to run [`colons_check()`](colons_check.md)
-first. As in [`colons_check()`](colons_check.md), function names without
-brackets (e.g., `FUN = as.character`) or preceded by `$` are not
-checked, and internal functions must be written `name <- function(...)`,
-not `function(...) -> name`. A function without any call is accepted. A
-function like [`base::mean`](https://rdrr.io/r/base/mean.html)
-([`UseMethod()`](https://rdrr.io/r/base/UseMethod.html) body) never
-passes this pre-check.
+Warning: `true_false_check()` only checks the `T` and `F` symbols used
+as values: the package association of the function calls is not checked
+(run [`saferDev::colons_check()`](colons_check.md) separately for that).
+Function names written without brackets (e.g., `FUN = as.character`) or
+used as function names (e.g.,
+[`T()`](https://rdrr.io/r/base/logical.html)) are not reported.
 
 Reported: `T` or `F` used as a value, e.g., `f(log = T)`, `f(T)`,
 `if(T)`, `while(T)`, `x == T` or `x[T]`.
@@ -167,7 +163,7 @@ fun2_safer # corrected function
 #>         base::return(x)
 #>     }
 #> }
-#> <environment: 0x55bc0bea1568>
+#> <environment: 0x560c714a8df0>
 # Write the corrected function in the fun2_safer.R file of a new temporary folder:
 tempo_dir <- base::tempfile(pattern = "dir", tmpdir = base::tempdir(), fileext = "")
 base::dir.create(path = tempo_dir, showWarnings = TRUE, recursive = FALSE, mode = "0777")
@@ -181,6 +177,6 @@ saferDev::true_false_check(x = fun2, export = TRUE, out_path = tempo_dir)
 #> 3    T       if (x == T) {
 #> 
 #> MODIFIED CODE EXPORTED IN:
-#> /tmp/RtmpJhwdve/dir171132843c76/fun2_safer.R
+#> /tmp/RtmpCOGJEa/dir14116f4d2f47/fun2_safer.R
 #> 
 ```

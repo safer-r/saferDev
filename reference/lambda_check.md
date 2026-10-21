@@ -170,7 +170,7 @@ fun2_safer # corrected function
 #>         y * 2
 #>     })
 #> }
-#> <environment: 0x55bc0bb23620>
+#> <environment: 0x560c72bc8e58>
 # The \( writings that are not lambda writings are not reported nor modified:
 # a backslash followed by ( inside a string, a raw string, a comment or a backquoted name is never a lambda writing, because the detection is token-based (the parser gives a STR_CONST, COMMENT or QUOTED_NAME token, never a '\' token)
 fun3 <- eval(parse(text = "function(x){ y <- \"the text \\\\(x) is inside a string\" ; z <- r\"(raw \\(x))\" ; # a \\(x) in a comment\n    base::`\\\\`(x) ; x }", keep.source = TRUE))
@@ -194,6 +194,6 @@ saferDev::lambda_check(x = fun2, export = TRUE, out_path = tempo_dir)
 #> 1    \(y)        function(x){ base::sapply(X = 1:3, FUN = \(y){ y * 2 }) }
 #> 
 #> MODIFIED CODE EXPORTED IN:
-#> /tmp/RtmpJhwdve/dir17116e7ba2e6/fun2_safer.R
+#> /tmp/RtmpCOGJEa/dir141164e52905/fun2_safer.R
 #> 
 ```
