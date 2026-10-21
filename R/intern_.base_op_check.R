@@ -122,7 +122,7 @@
     ######## end mandatory arg of safer-r functions
 
     ######## arg with no default values
-    # no rrequired because error_text already used above. Specific of my internal functions that error_text has no default value
+    # no required because error_text already used above. Specific of my internal functions that error_text has no default value
     ######## end arg with no default values
 
     ######## management of NULL arguments

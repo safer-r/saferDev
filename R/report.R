@@ -509,10 +509,10 @@ report <- function(
             }
         }else if(base::is.vector(x = data, mode = "any") & base::all(base::class(x = data) != "list", na.rm = TRUE) & (base::length(x = data) == 1L | vector_cat == TRUE)){
             if(noquote == TRUE){
-                base::cat(base::noquote(obj = data, right = FALSE), file= out_path, append = append, type = NULL, sep =  , fill = FALSE, labels = NULL)
+                base::cat(base::noquote(obj = data, right = FALSE), file= out_path, append = append, sep = " ", fill = FALSE, labels = NULL)
                 sep <- base::ifelse(test = sep == 0, yes = 0, no = sep + 1) # because with cat(), no carriage return
             }else{
-                base::cat(data, file= out_path, append = append, type = NULL, sep = , fill = FALSE, labels = NULL)
+                base::cat(data, file= out_path, append = append, sep = " ", fill = FALSE, labels = NULL)
                 sep <- base::ifelse(test = sep == 0, yes = 0, no = sep + 1) # because with cat(), no carriage return
             }
         }else if(base::all(base::mode(x = data) == "character", na.rm = TRUE)){ # characters (array, list, factor or vector with vector_cat = FALSE)

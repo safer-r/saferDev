@@ -47,6 +47,9 @@ reference:
 - title: "for_loop_nb_check"
   contents: 
   - for_loop_nb_check
+- title: "lambda_check"
+  contents: 
+  - lambda_check
 - title: "true_false_check"
   contents: 
   - true_false_check

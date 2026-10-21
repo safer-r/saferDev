@@ -227,6 +227,15 @@ testthat::test_that("colons_check()", {
     #### end second round of checking and data preparation
 
     #### main code
+    # lambda pre-check: a function carrying srcref and containing a \(y) lambda writing is refused
+    fun_lambda <- base::eval(expr = base::parse(text = "function(x){ base::sapply(X = 1:3, FUN = \\(y){ y * 2 }) ; base::return(x) }", keep.source = TRUE))
+    testthat::expect_error(colons_check(x = fun_lambda, safer_check = FALSE, lib_path = NULL, error_text = ""), regexp = "RUN saferDev::lambda_check", fixed = TRUE)
+    # a function without srcref (compiled-style writing) prints function(y), which is not detected by lambda_check(): the pre-check silently passes
+    fun_lambda_compiled <- base::eval(expr = base::parse(text = "function(x){ base::sapply(X = 1:3, FUN = function(y){ y * 2 }) ; base::return(x) }", keep.source = FALSE))
+    testthat::expect_no_error(colons_check(x = fun_lambda_compiled, safer_check = FALSE, lib_path = NULL, error_text = ""))
+    # a function containing only the "\\(y)" string literal (STR_CONST token, not a lambda writing) passes the pre-check
+    fun_lambda_string <- base::eval(expr = base::parse(text = "function(x){ base::sapply(X = 1:3, FUN = function(y){ base::paste0(\"\\\\(y)\") }) ; base::return(x) }", keep.source = TRUE))
+    testthat::expect_no_error(colons_check(x = fun_lambda_string, safer_check = FALSE, lib_path = NULL, error_text = ""))
     testthat::expect_no_error(colons_check(x = base::mean, safer_check = TRUE, lib_path = NULL, error_text = ""))
     testthat::expect_no_error(colons_check(x = colons_check, safer_check = TRUE, lib_path = NULL, error_text = ""))
     testthat::expect_error(colons_check(x = fun1, safer_check = TRUE, lib_path = NULL, error_text = ""))
