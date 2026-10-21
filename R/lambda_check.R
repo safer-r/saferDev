@@ -355,6 +355,7 @@ lambda_check <- function(
                 "saferDev::arg_check"
                 # end functions required in this code
                 # internal functions required in this code
+                "saferDev:::.base_op_check", # also in internal functions
                 # end internal functions required in this code
             ),
             lib_path = lib_path, # write NULL if your function does not have any lib_path argument

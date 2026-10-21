@@ -29,6 +29,8 @@
 #' 
 #' The name of the exported file (when \code{export = TRUE}) is the name of the submitted function, as written by the user, with \code{_safer} added at the end, e.g., \code{test_safer.R} for \code{colons_check(x = test)}. If the submitted function was written as \code{package::function}, like \code{colons_check(x = saferDev::test)}, the name is \code{test_safer.R} (the package name is not part of the file name). The exported file contains an assignment of the modified function: \code{test_safer <- function(...) ...}, so that \code{base::source()}ing it recreates the modified function. Warning: the tested function must be designated by a function name (like \code{test} or \code{package::test}) when \code{export = TRUE}: an inline definition (like \code{function(x)\{x\}}) or a component writing (like \code{FUN_LIST$fun}) returns an error, because the name of the exported file could not be determined reliably.
 #' 
+#' Pre-check: the submitted function is first checked by \code{lambda_check()}: if some lambda functions are written with the \code{\\(x)} shorthand, an error is returned asking to run \code{saferDev::lambda_check()} first, because the \code{\\} writings are not managed by the text-based detection of \code{colons_check()}. As in \code{lambda_check()}, the \code{\\(x)} writing is only detectable in a function carrying its source references (attribute \code{srcref}): a compiled or loaded package function prints \code{function(x)}, so that the pre-check silently passes in that case.
+#' 
 #' More precisely, \code{colons_check()} verifies that all the strings before an opening bracket \code{(} are preceded by \code{::}.
 #' 
 #' \code{:::} are not checked per se, because incorrect writing, like \code{saferDev::.colons_check_message()} returns an error when executing the tested function, and because \code{base:::sum()} is as ok as \code{base::sum()}. In the same manner, more than three colons are not checked because it returns an error when executing the tested function.
@@ -387,6 +389,7 @@ colons_check <- function(
             fun = base::c(
                 # functions required in this code
                 "saferDev::arg_check", # also in internal functions
+                "saferDev::lambda_check",
                 # end functions required in this code
                 # internal functions required in this code
                 "saferDev:::.base_op_check", # also in internal functions
@@ -580,6 +583,24 @@ colons_check <- function(
         fun_bare_name <- base::as.character(x = arg_user_setting$x)[3] # form "package::function" or "package:::function"
     }else{
         fun_bare_name <- base::paste0(arg_user_setting$x, collapse = NULL, recycle0 = FALSE) # bare name of a single symbol
+    }
+    # pre-check of the lambda writings: lambda_check() must be run first, because the \\ writings are not managed by the text-based detection of colons_check(). Warning: out_path is inert here (export = FALSE: no file writing), so that the default "." writing is used
+    arg_user_setting_x_ini <- base::deparse(expr = arg_user_setting$x, width.cutoff = 60L, backtick = FALSE, control = base::c("keepNA", "keepInteger", "niceNames", "showAttributes"), nlines = -1L) # name of the submitted function as written by the user, for the error message below (recovered before the modification of arg_user_setting$x)
+    tempo_lambda <- base::suppressMessages(expr = saferDev::lambda_check(x = x, export = FALSE, out_path = ".", safer_check = FALSE, lib_path = lib_path, error_text = embed_error_text), classes = "message")
+    if( ! base::is.null(x = tempo_lambda)){
+        tempo_cat <- base::paste0(
+            error_text_start,
+            "SOME LAMBDA FUNCTIONS (WRITTEN \\(x)) ARE DETECTED IN THE CODE OF ",
+            arg_user_setting_x_ini,
+            ".\n\nPLEASE, RUN saferDev::lambda_check(",
+            arg_user_setting_x_ini,
+            ") FIRST,\nUSE THE CORRECTED FUNCTION RETURNED BY lambda_check() (OR EXPORT IT WITH export = TRUE),\nAND RERUN saferDev::colons_check(",
+            arg_user_setting_x_ini,
+            ").",
+            collapse = NULL,
+            recycle0 = FALSE
+        )
+        base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL)
     }
     # modification of arg_user_setting$x for clean messages
     if(base::as.character(x = arg_user_setting$x)[1] == "::" | base::as.character(x = arg_user_setting$x)[1] == ":::"){
