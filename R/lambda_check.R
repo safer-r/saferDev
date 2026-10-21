@@ -523,6 +523,9 @@ lambda_check <- function(
     code <- utils::capture.output(x = x, file = NULL, append = FALSE, type = NULL, split = FALSE)
     # removal of the attribute lines printed for compiled functions (e.g., "<bytecode: 0x...>", "<environment: ...>", "<srcref: ...>"). Warning: the pattern cannot be simply a line starting by "<", because a valid R code line can start by "<" (binary operator continuation)
     code <- code[ ! base::grepl(x = code, pattern = "^<(bytecode|environment|srcref): ", ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE)]
+    # warning: R only stores the parse data when the option keep.parse.data is TRUE, independently of the keep.source argument of base::parse(). The option can be FALSE when this function is called from a file loaded by base::sys.source() (which sets it to getOption("keep.parse.data.pkgs"), FALSE by default, for the whole loading), so that utils::getParseData() returns NULL and this would crash the function (issue found while validating the pre-check of all_args_here()). The option is set here and restored on exit
+    oop <- base::options(keep.parse.data = TRUE)
+    base::on.exit(expr = base::options(oop), add = TRUE, after = TRUE)
     pd <- utils::getParseData(x = base::parse(text = base::paste0(code, collapse = "\n", recycle0 = FALSE), keep.source = TRUE), includeText = NA) # warning: the short parse writing is required here: a fully-named writing with srcfile = NULL removes the srcref of the parsed code, so that utils::getParseData() returns 0 rows (the reference functions curly_bracket_check(), true_false_check() and for_loop_nb_check() use the same short writing)
     # terminal tokens (comments excluded), sorted by source position
     term_rows <- base::which(x = pd$terminal == TRUE & pd$token != "COMMENT", arr.ind = FALSE, useNames = TRUE)

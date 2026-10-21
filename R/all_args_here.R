@@ -45,6 +45,10 @@
 #' 
 #' The function works first by replacing in the code: 1) the three consecutive characters \code{'"'} or \code{'"'} by three spaces, 2) \code{"\"'"} and \code{'\'"'} by four spaces and 3) escape quotes like \code{\"} or \code{\'} by two spaces.
 #' 
+#' Pre-check: the submitted function is first checked by \code{lambda_check()}: if some lambda functions are written with the \code{\\(x)} shorthand, an error is returned asking to run \code{saferDev::lambda_check()} first, because the \code{\\} writings are not managed by the text-based detection of \code{all_args_here()}. As in \code{lambda_check()}, the \code{\\(x)} writing is only detectable in a function carrying its source references (attribute \code{srcref}): a compiled or loaded package function prints \code{function(x)}, so that the pre-check silently passes in that case.
+#' 
+#' Known limitation: a string literal containing an escaped backslash-quote, like \code{"'\\'"}, desynchronizes the in-quotes detection of \code{all_args_here()}, which can return an internal error (see the \code{dev/repro_all_args_here_internal_error_3.R} script of the package repository). Please, report \href{https://github.com/safer-r/saferDev/issues}{here} if it is the case.
+#' 
 #' See more examples \href{https://safer-r.github.io/saferDev/articles/all_args_here.html}{here}.
 #' 
 #' Warnings:
@@ -437,6 +441,7 @@ all_args_here <- function(
                 # functions required in this code
                 "saferDev::arg_check", # also in internal functions
                 "saferDev::is_function_here", 
+                "saferDev::lambda_check", 
                 # end functions required in this code
                 # internal functions required in this code
                 "saferDev:::.base_op_check", # also in internal functions
@@ -655,6 +660,23 @@ all_args_here <- function(
 
     # arg_user_setting$x <- base::as.character(arg_user_setting$x)
     arg_user_setting$x <- base::deparse(expr = arg_user_setting$x, width.cutoff = 60L, backtick = FALSE, control = base::c("keepNA", "keepInteger", "niceNames", "showAttributes"), nlines = -1L) # because arg_user_setting$x is str(arg_user_setting$x) "language saferDev::colons_check". When I use it as string, like as.character(arg_user_setting$x), it splits  "::"           "saferDev"     "colons_check"
+    # pre-check of the lambda writings: lambda_check() must be run first, because the \\ writings are not managed by the text-based detection of all_args_here(). Warning: out_path is inert here (export = FALSE: no file writing), so that the default "." writing is used
+    tempo_lambda <- base::suppressMessages(expr = saferDev::lambda_check(x = x, export = FALSE, out_path = ".", safer_check = FALSE, lib_path = lib_path, error_text = embed_error_text), classes = "message")
+    if( ! base::is.null(x = tempo_lambda)){
+        tempo_cat <- base::paste0(
+            error_text_start,
+            "SOME LAMBDA FUNCTIONS (WRITTEN \\(x)) ARE DETECTED IN THE CODE OF ",
+            arg_user_setting$x,
+            ".\n\nPLEASE, RUN saferDev::lambda_check(",
+            arg_user_setting$x,
+            ") FIRST,\nUSE THE CORRECTED FUNCTION RETURNED BY lambda_check() (OR EXPORT IT WITH export = TRUE),\nAND RERUN saferDev::all_args_here(",
+            arg_user_setting$x,
+            ").",
+            collapse = NULL,
+            recycle0 = FALSE
+        )
+        base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL)
+    }
     out_path <- base::paste0(out_path, "/", df_name, collapse = NULL, recycle0 = FALSE)
     out <- .functions_detect(
         x = x, 
