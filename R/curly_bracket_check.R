@@ -704,6 +704,7 @@ curly_bracket_check <- function(
         )
     }
     base::message(base::paste0("\n\n", tempo_cat, "\n\n", collapse = NULL, recycle0 = FALSE), domain = NULL, appendLF = TRUE)
+    ### end main code
 
     #### warning output
     #### end warning output
