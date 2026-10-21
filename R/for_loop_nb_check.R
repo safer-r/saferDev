@@ -751,7 +751,7 @@ for_loop_nb_check <- function(
         ev_col <- base::integer(length = 0)
         ev_shift <- base::double(length = 0)
         # tempo object names: specific names, refused if already present anywhere in the recovered code (including comments and strings), to avoid any masking
-        tempo_names <- base::paste0("tempo_for_seq", base::seq_len(length.out = base::length(x = findings_line)), collapse = NULL, recycle0 = FALSE, sep = "")
+        tempo_names <- base::paste0("tempo_for_seq", base::seq_len(length.out = base::length(x = findings_line)), collapse = NULL, recycle0 = FALSE)
         all_txt <- base::paste0(modified_code, collapse = "\n", recycle0 = FALSE)
         name_log <- base::vapply(X = tempo_names, FUN = function(x){base::grepl(x = all_txt, pattern = base::paste0("\\b", x, "\\b"), ignore.case = FALSE, perl = TRUE, fixed = FALSE, useBytes = FALSE)}, FUN.VALUE = base::logical(length = 1), USE.NAMES = FALSE) # word boundary so that tempo_for_seq1 does not match tempo_for_seq10
         if(base::any(name_log, na.rm = TRUE)){
