@@ -164,6 +164,16 @@ by a function name (like `test` or `package::test`) when
 component writing (like `FUN_LIST$fun`) returns an error, because the
 name of the exported file could not be determined reliably.
 
+Pre-check: the submitted function is first checked by
+[`lambda_check()`](lambda_check.md): if some lambda functions are
+written with the `\(x)` shorthand, an error is returned asking to run
+[`saferDev::lambda_check()`](lambda_check.md) first, because the `\`
+writings are not managed by the text-based detection of
+`colons_check()`. As in [`lambda_check()`](lambda_check.md), the `\(x)`
+writing is only detectable in a function carrying its source references
+(attribute `srcref`): a compiled or loaded package function prints
+`function(x)`, so that the pre-check silently passes in that case.
+
 More precisely, `colons_check()` verifies that all the strings before an
 opening bracket `(` are preceded by `::`.
 

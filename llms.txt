@@ -42,6 +42,7 @@ details.
 | **colons_check()** | Check that all the functions used inside a function are all referenced by their package attribution. For instance: [`base::mean()`](https://rdrr.io/r/base/mean.html) and not [`mean()`](https://rdrr.io/r/base/mean.html), or `saferDev:::.base_op_check()` and not [`.base_op_check()`](reference/dot-base_op_check.md). Return table message of the line with problems and a corrected version of the submitted function. |
 | **curly_bracket_check()** | Verify that all the bodies of the `if`, `else`, `for`, `while`, `repeat` and `function` are delimited by curly brackets [`{ }`](https://rdrr.io/r/base/Paren.html). Return table message of the line with problems and a corrected version of the submitted function. |
 | **for_loop_nb_check()** | Check the sequence expression of every `for` loop of a function. If the number of iterations is not fixed by the writing itself (e.g., `1:length(x)`), a checking line is added before the loop, issuing a warning at execution if the sequence is empty, contains `NA` or infinite values, has a single value, or is decreasing. Return a table-like message of the problematic lines and a corrected version of the submitted function. |
+| **lambda_check()** | Verify that the lambda functions written with the shorthand `\(x)` (like `\(x) x * 2`) are all written with the standard `function(x)` writing. Return table message of the line with problems and a corrected version of the submitted function. Warning: the `\(x)` writing is only kept in the code of a function carrying its source references (attribute `srcref`). |
 | **env_check()** | Verify that object names in the environment defined by the `pos` argument are identical or not to object names in the above environments (following R Scope). This can be used to verify that names used for objects inside a function or in the working environment do not override names of objects already present in the above R environments, following the R scope. |
 | **get_message()** | Return the error, warning or simple (non error non warning) message if ever exist of an instruction written between quotes. |
 | **is_function_here()** | Check if required functions are present in installed packages. This controls for instance modifications of function names depending on package versions. |
@@ -189,6 +190,10 @@ The Information Technology team of Institut Pasteur.
 
   `for` Loop Number Check
 
+## lambda_check
+
+- [`lambda_check()`](lambda_check.md) : Lambda Check
+
 ## true_false_check
 
 - [`true_false_check()`](true_false_check.md) : True False Check
@@ -206,6 +211,7 @@ The Information Technology team of Institut Pasteur.
 - [get_message(): more examples](get_message.md):
 - [is_function_here(): more examples](is_function_here.md):
 - [is_package_here(): more examples](is_package_here.md):
+- [lambda_check(): more examples](lambda_check.md):
 - [report(): more examples](report.md):
 - [saferDev](saferDev.md):
 - [true_false_check(): more examples](true_false_check.md):

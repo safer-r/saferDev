@@ -184,6 +184,23 @@ consecutive characters `'"'` or `'"'` by three spaces, 2) `"\"'"` and
 `'\'"'` by four spaces and 3) escape quotes like `\"` or `\'` by two
 spaces.
 
+Pre-check: the submitted function is first checked by
+[`lambda_check()`](lambda_check.md): if some lambda functions are
+written with the `\(x)` shorthand, an error is returned asking to run
+[`saferDev::lambda_check()`](lambda_check.md) first, because the `\`
+writings are not managed by the text-based detection of
+`all_args_here()`. As in [`lambda_check()`](lambda_check.md), the `\(x)`
+writing is only detectable in a function carrying its source references
+(attribute `srcref`): a compiled or loaded package function prints
+`function(x)`, so that the pre-check silently passes in that case.
+
+Known limitation: a string literal containing an escaped
+backslash-quote, like `"'\'"`, desynchronizes the in-quotes detection of
+`all_args_here()`, which can return an internal error (see the
+`dev/repro_all_args_here_internal_error_3.R` script of the package
+repository). Please, report
+[here](https://github.com/safer-r/saferDev/issues) if it is the case.
+
 See more examples
 [here](https://safer-r.github.io/saferDev/articles/all_args_here.html).
 

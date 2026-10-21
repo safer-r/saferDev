@@ -11,6 +11,7 @@
 - [get_message(): more examples](get_message.md):
 - [is_function_here(): more examples](is_function_here.md):
 - [is_package_here(): more examples](is_package_here.md):
+- [lambda_check(): more examples](lambda_check.md):
 - [report(): more examples](report.md):
 - [saferDev](saferDev.md):
 - [true_false_check(): more examples](true_false_check.md):

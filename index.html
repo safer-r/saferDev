@@ -51,6 +51,7 @@
     <li><a class="dropdown-item" href="articles/get_message.html">get_message(): more examples</a></li>
     <li><a class="dropdown-item" href="articles/is_function_here.html">is_function_here(): more examples</a></li>
     <li><a class="dropdown-item" href="articles/is_package_here.html">is_package_here(): more examples</a></li>
+    <li><a class="dropdown-item" href="articles/lambda_check.html">lambda_check(): more examples</a></li>
     <li><a class="dropdown-item" href="articles/report.html">report(): more examples</a></li>
     <li><a class="dropdown-item" href="articles/true_false_check.html">true_false_check(): more examples</a></li>
   </ul>
@@ -133,6 +134,10 @@
 <tr>
 <td align="left"><strong>for_loop_nb_check()</strong></td>
 <td align="left">Check the sequence expression of every <code>for</code> loop of a function. If the number of iterations is not fixed by the writing itself (e.g., <code>1:length(x)</code>), a checking line is added before the loop, issuing a warning at execution if the sequence is empty, contains <code>NA</code> or infinite values, has a single value, or is decreasing. Return a table-like message of the problematic lines and a corrected version of the submitted function.</td>
+</tr>
+<tr>
+<td align="left"><strong>lambda_check()</strong></td>
+<td align="left">Verify that the lambda functions written with the shorthand <code>\(x)</code> (like <code>\(x) x * 2</code>) are all written with the standard <code>function(x)</code> writing. Return table message of the line with problems and a corrected version of the submitted function. Warning: the <code>\(x)</code> writing is only kept in the code of a function carrying its source references (attribute <code>srcref</code>).</td>
 </tr>
 <tr>
 <td align="left"><strong>env_check()</strong></td>

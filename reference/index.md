@@ -43,6 +43,10 @@
 
   `for` Loop Number Check
 
+## lambda_check
+
+- [`lambda_check()`](lambda_check.md) : Lambda Check
+
 ## true_false_check
 
 - [`true_false_check()`](true_false_check.md) : True False Check

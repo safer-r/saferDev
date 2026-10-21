@@ -13,6 +13,26 @@
   warning at execution if the sequence is empty, contains NA or infinite
   values, has a single value, or is decreasing. The corrected function
   is returned, or exported with export = TRUE.
+- lambda_check(): new function. Verifies that the lambda functions
+  written with the shorthand (x) are all written with the standard
+  function(x) writing. The \\ token of each reported lambda writing is
+  replaced by function. Warning: the (x) writing is only kept in the
+  code of a function carrying its source references (attribute srcref),
+  so that compiled or loaded package functions cannot be checked. The
+  corrected function is returned, or exported with export = TRUE.
+- all_args_here(): a pre-check by lambda_check() is now performed: if
+  some lambda functions written with the (x) shorthand are detected in
+  the code of the submitted function, an error asking to run
+  saferDev::lambda_check() first is returned.
+- colons_check(): a pre-check by lambda_check() is now performed: if
+  some lambda functions written with the (x) shorthand are detected in
+  the code of the submitted function, an error asking to run
+  saferDev::lambda_check() first is returned.
+- lambda_check(): the parse data is now kept by the function (option
+  keep.parse.data set to TRUE and restored on exit), so that the
+  function does not crash anymore when it is called from a file loaded
+  by base::sys.source(), which sets the option keep.parse.data to FALSE
+  for the whole loading.
 - true_false_check(): new function. Verifies that TRUE and FALSE are
   always written in full when used as values, and never abbreviated as T
   or F. The corrected function (T replaced by TRUE and F by FALSE) is

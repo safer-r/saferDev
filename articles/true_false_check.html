@@ -49,6 +49,7 @@
     <li><a class="dropdown-item" href="../articles/get_message.html">get_message(): more examples</a></li>
     <li><a class="dropdown-item" href="../articles/is_function_here.html">is_function_here(): more examples</a></li>
     <li><a class="dropdown-item" href="../articles/is_package_here.html">is_package_here(): more examples</a></li>
+    <li><a class="dropdown-item" href="../articles/lambda_check.html">lambda_check(): more examples</a></li>
     <li><a class="dropdown-item" href="../articles/report.html">report(): more examples</a></li>
     <li><a class="dropdown-item" href="../articles/true_false_check.html">true_false_check(): more examples</a></li>
   </ul>
@@ -155,7 +156,7 @@
 <span><span class="co">##         base::return(base::mean(x = 1:3, na.rm = FALSE))</span></span>
 <span><span class="co">##     }</span></span>
 <span><span class="co">## }</span></span>
-<span><span class="co">## &lt;environment: 0x5563bf118f58&gt;</span></span></code></pre>
+<span><span class="co">## &lt;environment: 0x5598da28f690&gt;</span></span></code></pre>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Error: the functions called in x must first be written with their package (run colons_check() first).</span></span>
 <span><span class="va">fun3</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">{</span> <span class="kw">if</span><span class="op">(</span><span class="va">x</span> <span class="op">==</span> <span class="cn">T</span><span class="op">)</span><span class="op">{</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">3</span><span class="op">)</span> <span class="op">}</span> <span class="op">}</span></span>
@@ -262,7 +263,7 @@ export the corrected function<a class="anchor" aria-label="anchor" href="#argume
 <span><span class="co">##         base::return(base::mean(x = 1:3, na.rm = FALSE))</span></span>
 <span><span class="co">##     }</span></span>
 <span><span class="co">## }</span></span>
-<span><span class="co">## &lt;environment: 0x5563c01aced0&gt;</span></span></code></pre>
+<span><span class="co">## &lt;environment: 0x5598dab65d78&gt;</span></span></code></pre>
 <div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># And it passes the check.</span></span>
 <span><span class="fu"><a href="../reference/true_false_check.html">true_false_check</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">fun2_safer</span><span class="op">)</span></span></code></pre></div>
@@ -291,7 +292,7 @@ export the corrected function<a class="anchor" aria-label="anchor" href="#argume
 <span><span class="co">## 3    T       if (x == T) {</span></span>
 <span><span class="co">## 4    F       base::return(base::mean(x = 1:3, na.rm = F))</span></span></code></pre>
 <pre><code><span><span class="co">## MODIFIED CODE EXPORTED IN:</span></span>
-<span><span class="co">## /tmp/Rtmpi4jtKH/dir1c03668a262a/fun2_safer.R</span></span></code></pre>
+<span><span class="co">## /tmp/Rtmp3VZt5O/dir1d5a7b6e7bc9/fun2_safer.R</span></span></code></pre>
 <div class="sourceCode" id="cb32"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># base::source() of this file recreates the corrected function, named fun2_safer.</span></span>
 <span><span class="fu">base</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/base/readLines.html" class="external-link">readLines</a></span><span class="op">(</span>con <span class="op">=</span> <span class="fu">base</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="va">tempo_dir</span>, <span class="st">"fun2_safer.R"</span>, fsep <span class="op">=</span> <span class="st">"/"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>

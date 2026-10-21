@@ -10,6 +10,7 @@
 <url><loc>/articles/index.html</loc></url>
 <url><loc>/articles/is_function_here.html</loc></url>
 <url><loc>/articles/is_package_here.html</loc></url>
+<url><loc>/articles/lambda_check.html</loc></url>
 <url><loc>/articles/report.html</loc></url>
 <url><loc>/articles/saferDev.html</loc></url>
 <url><loc>/articles/true_false_check.html</loc></url>
@@ -39,6 +40,7 @@
 <url><loc>/reference/index.html</loc></url>
 <url><loc>/reference/is_function_here.html</loc></url>
 <url><loc>/reference/is_package_here.html</loc></url>
+<url><loc>/reference/lambda_check.html</loc></url>
 <url><loc>/reference/report.html</loc></url>
 <url><loc>/reference/true_false_check.html</loc></url>
 </urlset>
