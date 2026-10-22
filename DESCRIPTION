@@ -15,7 +15,7 @@ Description: Set of functions that perform checks according to the safer-r proje
 URL: <https://github.com/safer-r/saferDev>, <https://safer-r.github.io/saferDev/>
 License: GPL-3
 Depends: 
-    R (>= 4.5.0)
+    R (>= 4.6.0)
 Config/roxygen2/version: 8.0.0
 Imports: 
     ggplot2

@@ -6,7 +6,7 @@
 <!-- badges: start -->
 
 [![CRAN status](https://img.shields.io/cran/v/saferDev.svg)](https://cran.r-project.org/package=saferDev)
-[![R Version](https://img.shields.io/badge/R-%3E%3D%204.5.0-blue?logo=R)](https://cran.r-project.org/)
+[![R Version](https://img.shields.io/badge/R-%3E%3D%204.6.0-blue?logo=R)](https://cran.r-project.org/)
 [![Downloads](https://cranlogs.r-pkg.org/badges/saferDev)](https://r-pkg.org/pkg/saferDev)<br />
 [![Rworkflows](https://github.com/safer-r/saferDev/actions/workflows/rworkflows.yml/badge.svg)](https://github.com/safer-r/saferDev/actions/workflows/rworkflows.yml)
 [![Codecov](https://codecov.io/github/safer-r/saferDev/coverage.svg?branch=master)](https://app.codecov.io/github/safer-r/saferDev?branch=master)

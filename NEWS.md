@@ -17,6 +17,7 @@
 * all_args_here(): an incoherent arg_full_names argument no longer causes a raw crash, but a proper internal error.
 * all_args_here(): the modified function (returned, or exported with fun_export = TRUE) now keeps the comments and the indentation of the submitted function (when it carries its source references), instead of the normalized code without comments. A proposal is not applied (and is listed in the CORRECTIONS NOT APPLIED message) when the corrected call contains a string with consecutive spaces, which were formerly silently collapsed. The CORRECTIONS NOT APPLIED message no longer replaces the ARGUMENTS ARE MISSING message.
 * colons_check(): the modified function (returned, or exported with export = TRUE) now keeps the comments and the indentation of the submitted function: the package attributions are inserted in the printed code of the submitted function, and no longer in the analyzed code (comments removed and multiple spaces collapsed). Comments are only available when the submitted function carries its source references (attribute srcref).
+* R (>= 4.6.0) is now required (it was R (>= 4.5.0) in saferDev 2.0.0).
 
 # saferDev 2.0.0
 
