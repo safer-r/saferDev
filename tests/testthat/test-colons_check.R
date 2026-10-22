@@ -265,6 +265,21 @@ testthat::test_that("colons_check()", {
     testthat::expect_false(object = base::any(base::grepl(x = sum_test2_body, pattern = "base::sum_test2\\(", perl = TRUE), na.rm = TRUE), label = "recursive call not modified")
     testthat::expect_true(object = base::any(base::grepl(x = sum_test2_body, pattern = "base::sum\\(", perl = TRUE), na.rm = TRUE), label = "basic sum call modified")
 
+    # comments, indentation and multiple spaces of the submitted function are kept in the returned and exported functions: the package attributions are inserted in the printed code, not in the analyzed code (comments removed and multiple spaces collapsed)
+    # warning: the short parse writing is required here, since a fully-named writing with srcfile = NULL removes the srcref of the parsed code (thus the comments)
+    fun_com <- base::eval(expr = base::parse(text = "function(x){\n    # a comment with mean(\n    y   <-   mean(x = x)   # trailing   sum(1)\n        z <- \"a  b\" ; paste0(y, z)\n}", keep.source = TRUE)[[1]], envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL))
+    fun_com_expected <- base::c("function(x){", "    # a comment with mean(", "    y   <-   base::mean(x = x)   # trailing   sum(1)", "        z <- \"a  b\" ; base::paste0(y, z)", "}")
+    fun_com_safer <- colons_check(x = fun_com, safer_check = FALSE, lib_path = NULL, error_text = "")
+    fun_com_print <- utils::capture.output(fun_com_safer, file = NULL, append = FALSE, type = NULL, split = FALSE)
+    testthat::expect_identical(object = fun_com_print[1:5], expected = fun_com_expected, label = "comments and indentation kept in the returned function")
+    testthat::expect_identical(object = fun_com_safer(1:3), expected = fun_com(1:3), label = "returned function behaves like the submitted one")
+    tempo_dir_com <- base::tempfile(pattern = "cc_com_")
+    base::dir.create(path = tempo_dir_com, showWarnings = FALSE, recursive = TRUE, mode = "0777")
+    base::suppressMessages(expr = colons_check(x = fun_com, export = TRUE, out_path = tempo_dir_com, safer_check = FALSE, lib_path = NULL, error_text = ""), classes = "message")
+    fun_com_lines <- base::readLines(con = base::file.path(tempo_dir_com, "fun_com_safer.R", fsep = "/"), warn = FALSE, ok = TRUE)
+    testthat::expect_identical(object = fun_com_lines[1:5], expected = base::c(base::paste0("fun_com_safer <- ", fun_com_expected[1], collapse = NULL, recycle0 = FALSE), fun_com_expected[2:5]), label = "comments and indentation kept in the exported file")
+    base::unlink(x = tempo_dir_com, recursive = TRUE, force = TRUE, expand = TRUE)
+
     ######## export and out_path arguments
     # out_path cannot contain an empty string, whatever the value of export
     testthat::expect_error(colons_check(x = fun9, out_path = "", safer_check = FALSE, lib_path = NULL, error_text = ""), regexp = "CANNOT CONTAIN EMPTY STRING", fixed = TRUE)

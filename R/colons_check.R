@@ -2,7 +2,7 @@
 #' @description
 #' Verify that all the functions used inside a function are preceded by a package attribution. For instance: \code{base::mean()} and not \code{mean()}, or \code{saferDev:::.base_op_check()} and not \code{.base_op_check()}. Warning: does not check that the package is the good one. Use \code{all_args_here()} for that.
 #' @param x a function name, written without quotes and brackets.
-#' @param export Single logical value. Export the modified code into a \code{.R} file? If \code{TRUE}, the modified function is not returned but only exported. The name of the file is the name of the tested function, with \code{_safer} added at the end (e.g., \code{test_safer.R}). Warning: the written code is the analyzed code (see the \code{Details} section): comments removed and multiple spaces collapsed. An error is returned if the file already exists in \code{out_path}, and if the tested function is not designated by a function name (like \code{test} or \code{package::test}), i.e., written by an inline definition (like \code{function(x)\{x\}}) or by a component writing (like \code{FUN_LIST$fun}). If \code{FALSE} (default), the modified function is not written but returned. 
+#' @param export Single logical value. Export the modified code into a \code{.R} file? If \code{TRUE}, the modified function is not returned but only exported. The name of the file is the name of the tested function, with \code{_safer} added at the end (e.g., \code{test_safer.R}). The written code is the code of the submitted function, with its comments and indentation, only modified by the added package attributions (see the \code{Details} section). An error is returned if the file already exists in \code{out_path}, and if the tested function is not designated by a function name (like \code{test} or \code{package::test}), i.e., written by an inline definition (like \code{function(x)\{x\}}) or by a component writing (like \code{FUN_LIST$fun}). If \code{FALSE} (default), the modified function is not written but returned. 
 #' @param out_path Single character string indicating the pathway of the folder where to export the modified code. \code{out_path = "."} (default) means the R working directory set by the user. A non-existing directory, \code{NULL} or an empty string (\code{""}) returns an error. Ignored if \code{export} is \code{FALSE}.
 #' @param safer_check Single logical value. Perform some "safer" checks? If \code{TRUE}, checkings are performed before main code running (see the \href{https://github.com/safer-r}{safer-r project}): 1) correct \code{lib_path} argument value 2) required functions and related packages effectively present in local R libraries and 3) R classical operators (like \code{"<-"}) not overwritten by another package because of the R scope. Must be set to \code{FALSE} if this function is used inside another "safer" function to avoid pointless multiple checkings.
 #' @param lib_path Vector of characters specifying the absolute pathways of the directories containing the required packages for the function, if not in the default directories. Useful when R packages are not installed in the default directories because of lack of admin rights. More precisely, \code{lib_path} is passed through the \code{new} argument of \code{.libPaths()} so that the new library paths are \code{unique(c(new, .Library.site, .Library))}. Warning: \code{.libPaths()} is restored to the initial paths, after function execution. Ignored if \code{NULL} (default) or if the \code{safer_check} argument is \code{FALSE}: only the pathways specified by the current \code{.libPaths()} are used for package calling.
@@ -25,7 +25,7 @@
 #' 
 #' Since \code{saferDev} v3.0.0, the modified function is returned: the package attributions of the basic R functions, as indicated in the \code{"INSIDE test(), SOME :: OR ::: ARE MISSING BEFORE BASIC FUNCTIONS"} section of the returned message, are added to the submitted function code, and the modified function is returned using \code{return()}. The package attributions of the other functions, as indicated in the \code{"INSIDE test(), SOME :: OR ::: ARE MISSING BEFORE OTHER FUNCTIONS"} section of the returned message, are NOT added automatically, because the correct package cannot be determined reliably: a \code{base::warning()} is issued instead (in addition to the printed message). \code{NULL} is returned if no basic function required a package attribution.
 #' 
-#' The modification is only performed on the code lines indicated in the \code{"INSIDE test(), SOME :: OR ::: ARE MISSING BEFORE BASIC FUNCTIONS"} section of the message, which is the same analysis as the one performed by \code{colons_check()} itself: functions written between quotes or preceded by \code{$} are not modified, and internal functions (created inside the tested function) are not modified either. Beware: the modification can only be applied to the analyzed code, which is the code with comments removed and multiple spaces collapsed: the returned function therefore does not contain the comments of the submitted function (the modification cannot recover them, since \code{colons_check()} does not analyze the comments). The modified function is returned with the environment of the submitted function, so that the functions used inside it still resolve the same way. If the modified code does not parse (a rare situation, e.g., a function name split across lines in a way the analyzer could not handle correctly), this is an internal bug: an internal error is returned when \code{export = TRUE}, and the submitted function is returned unchanged, with no error, when \code{export = FALSE}.
+#' The modification is only performed on the code lines indicated in the \code{"INSIDE test(), SOME :: OR ::: ARE MISSING BEFORE BASIC FUNCTIONS"} section of the message, which is the same analysis as the one performed by \code{colons_check()} itself: functions written between quotes or preceded by \code{$} are not modified, and internal functions (created inside the tested function) are not modified either. The analysis is performed on the code with comments removed and multiple spaces collapsed, but the package attributions are added to the code of the submitted function as printed: the returned (and exported) function therefore keeps the comments and the indentation of the submitted function. Warning: comments are only present when the submitted function carries its source references (attribute \code{srcref}, e.g., a function defined in the console or in a file loaded with \code{keep.source = TRUE}). Otherwise, as for compiled package functions, the code printed by \code{R} (without comments and reindented) is used. The modified function is returned with the environment of the submitted function, so that the functions used inside it still resolve the same way. If the modified code does not parse (a rare situation, e.g., a function name split across lines in a way the analyzer could not handle correctly), this is an internal bug: an internal error is returned when \code{export = TRUE}, and the submitted function is returned unchanged, with no error, when \code{export = FALSE}.
 #' 
 #' The name of the exported file (when \code{export = TRUE}) is the name of the submitted function, as written by the user, with \code{_safer} added at the end, e.g., \code{test_safer.R} for \code{colons_check(x = test)}. If the submitted function was written as \code{package::function}, like \code{colons_check(x = saferDev::test)}, the name is \code{test_safer.R} (the package name is not part of the file name). The exported file contains an assignment of the modified function: \code{test_safer <- function(...) ...}, so that \code{base::source()}ing it recreates the modified function. Warning: the tested function must be designated by a function name (like \code{test} or \code{package::test}) when \code{export = TRUE}: an inline definition (like \code{function(x)\{x\}}) or a component writing (like \code{FUN_LIST$fun}) returns an error, because the name of the exported file could not be determined reliably.
 #' 
@@ -837,7 +837,16 @@ colons_check <- function(
         skip_log <- basic_col2 %in% out$internal_fun_names | basic_col2 == fun_bare_name # basic_col2 contains the bare function names (e.g. "mean"), so the comparison with fun_bare_name (bare name of the submitted function, as written by the user) excludes the recursive calls to the tested function itself (a same name can be the tested function and a basic R function)
         # modification of the code lines: insert <PACKAGE>:: (or <PACKAGE>::: for names starting by a dot) just before the function name, from the end of each line to the beginning, so that the positions of the not yet modified occurrences remain valid
         # the strings of basic_col3 are the code before each function name in the analyzed code (out$code), i.e., the name of the i3-th flagged occurrence starts at the position base::nchar(x = basic_col3[i3]) + 1 of the line basic_col1[i3]
-        code_mod <- out$code
+        # the package attributions are inserted in the code of the submitted function as printed (comments and indentation kept), and not in the analyzed code (out$code: comments removed and multiple spaces collapsed), so that the returned or exported function keeps the comments and the indentation of the submitted function
+        # the line i of out$code is the line i of the printed code (same utils::capture.output() call as in .functions_detect(), which never removes lines), with the comments removed and the multiple spaces collapsed: the positions in out$code are converted below into positions in the printed code
+        code_ini <- utils::capture.output(x, file = NULL, append = FALSE, type = NULL, split = FALSE) # printed code of the submitted function, not modified (used for the conversion of the positions)
+        if(base::length(x = code_ini) != base::length(x = out$code)){
+            # nocov start
+            # codecov inactivated because it is an internal control of code writing, impossible to cover with argument values, since the same utils::capture.output() call is used in .functions_detect()
+            tempo_cat <- base::paste0("INTERNAL ERROR 4 IN ", intern_error_text_start, "THE PRINTED CODE AND THE ANALYZED CODE OF THE SUBMITTED FUNCTION SHOULD HAVE THE SAME NUMBER OF LINES\nPRINTED CODE: ", base::length(x = code_ini), "\nANALYZED CODE: ", base::length(x = out$code), intern_error_text_end, collapse = NULL, recycle0 = FALSE) ; base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL)
+            # nocov end
+        }
+        code_mod <- code_ini # code to modify
         name_start_pos <- base::nchar(x = basic_col3, type = "chars", allowNA = FALSE, keepNA = NA) + 1L
         ord_flagged <- base::order(basic_col1, -name_start_pos, na.last = TRUE, decreasing = FALSE, method = "auto") # lines first, then reversed positions within a line
         for(i3 in ord_flagged){
@@ -848,14 +857,29 @@ colons_check <- function(
             pos_i3 <- name_start_pos[i3]
             fun_i3 <- basic_col2[i3]
             nchar_fun_i3 <- base::nchar(x = fun_i3, type = "chars", allowNA = FALSE, keepNA = NA)
-            # security check: the name must still be present at the expected position of the current line (the lines before, in the loop, are only modified after this position)
-            if(pos_i3 + nchar_fun_i3 - 1L > base::nchar(x = code_mod[line_i3], type = "chars", allowNA = FALSE, keepNA = NA)){
+            # security check: the name must be present at the expected position of the line in the analyzed code (out$code, never modified)
+            if(pos_i3 + nchar_fun_i3 - 1L > base::nchar(x = out$code[line_i3], type = "chars", allowNA = FALSE, keepNA = NA)){
                 # nocov start
                 # codecov inactivated because it is an internal control of code writing, impossible to cover with argument values, since positions come from the same analyzed code
                 next
                 # nocov end
             }
-            if(base::substr(x = code_mod[line_i3], start = pos_i3, stop = pos_i3 + nchar_fun_i3 - 1L) == fun_i3){
+            # conversion of the position in the analyzed line into the position in the printed line. The analyzed line is the printed line with: 1) each run of spaces collapsed into its first space, 2) the leading space removed, 3) the comment removed (end of the line) and 4) possibly a "(" added at the end. Steps 3 and 4 do not change the positions of the remaining characters
+            chars_i3 <- base::strsplit(x = code_ini[line_i3], split = "", fixed = TRUE, perl = FALSE, useBytes = FALSE)[[1]] # characters of the printed line, not modified
+            kept_pos_i3 <- base::which(x = ! (chars_i3 == " " & base::c(FALSE, chars_i3[-base::length(x = chars_i3)] == " ")), arr.ind = FALSE, useNames = TRUE) # positions of the characters kept by the collapsing of the multiple spaces (first space of each run kept)
+            if(base::length(x = kept_pos_i3) > 0){
+                if(chars_i3[kept_pos_i3[1]] == " "){
+                    kept_pos_i3 <- kept_pos_i3[-1] # removal of the leading space
+                }
+            }
+            if(pos_i3 + nchar_fun_i3 - 1L > base::length(x = kept_pos_i3)){
+                # nocov start
+                # codecov inactivated because it is an internal control of code writing, impossible to cover with argument values, since the analyzed line comes from the printed line
+                next
+                # nocov end
+            }
+            ini_pos_i3 <- kept_pos_i3[pos_i3] # position of the function name in the printed line (the printed line is modified from the end to the beginning, so that this position, computed on the not modified line, remains valid)
+            if(base::substr(x = out$code[line_i3], start = pos_i3, stop = pos_i3 + nchar_fun_i3 - 1L) == fun_i3 & base::substr(x = code_mod[line_i3], start = ini_pos_i3, stop = ini_pos_i3 + nchar_fun_i3 - 1L) == fun_i3){
                 colons_i3 <- base::ifelse(test = base::grepl(x = fun_i3, pattern = "^\\.", ignore.case = FALSE, perl = TRUE, fixed = FALSE, useBytes = FALSE), yes = ":::", no = "::")
                 if(base::is.na(x = package_of_flagged[i3]) | package_of_flagged[i3] == ""){
                     # nocov start
@@ -864,10 +888,10 @@ colons_check <- function(
                     # nocov end
                 }
                 code_mod[line_i3] <- base::paste0(
-                    base::substr(x = code_mod[line_i3], start = 1, stop = pos_i3 - 1L),
+                    base::substr(x = code_mod[line_i3], start = 1, stop = ini_pos_i3 - 1L),
                     package_of_flagged[i3],
                     colons_i3,
-                    base::substr(x = code_mod[line_i3], start = pos_i3, stop = base::nchar(x = code_mod[line_i3], type = "chars", allowNA = FALSE, keepNA = NA)),
+                    base::substr(x = code_mod[line_i3], start = ini_pos_i3, stop = base::nchar(x = code_mod[line_i3], type = "chars", allowNA = FALSE, keepNA = NA)),
                     collapse = NULL,
                     recycle0 = FALSE
                 )
@@ -881,7 +905,9 @@ colons_check <- function(
         # these lines are not R code and break the reconstruction below, so they are removed (the line numbers of the message table-like part, based on the initial analysis, are not affected because the removal is done after the modification)
         code_mod <- code_mod[ ! base::grepl(x = code_mod, pattern = "^\\s*<(bytecode|environment):", ignore.case = FALSE, perl = TRUE, fixed = FALSE, useBytes = FALSE)]
         # reconstruction of the modified function
-        tempo_parse <- base::try(expr = base::parse(text = base::paste0(code_mod, collapse = "\n", recycle0 = FALSE), file = "", n = NULL, prompt = "?", keep.source = base::getOption(x = "keep.source", default = NULL), srcfile = NULL, encoding = "unknown"), silent = TRUE)
+        # warning: keep.source = TRUE and an explicit srcfile are required to keep the source references (attribute srcref) of the returned function, i.e., its comments and indentation when printed. With srcfile = NULL, or with keep.source = FALSE (default of Rscript), the returned function is printed deparsed: comments removed and code reindented
+        code_mod_text <- base::paste0(code_mod, collapse = "\n", recycle0 = FALSE)
+        tempo_parse <- base::try(expr = base::parse(text = code_mod_text, file = "", n = NULL, prompt = "?", keep.source = TRUE, srcfile = base::srcfilecopy(filename = "<text>", lines = code_mod_text, timestamp = base::Sys.time(), isFile = FALSE), encoding = "unknown"), silent = TRUE)
         # nocov start
         # codecov inactivated because it is an internal control of the modification, impossible to cover with argument values (a modified code that does not parse would indicate a replacement bug)
         if(base::inherits(x = tempo_parse, what = "try-error") | base::length(x = tempo_parse) != 1){
