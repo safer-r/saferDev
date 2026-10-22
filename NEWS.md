@@ -15,6 +15,7 @@
 * arg_check(), env_check(), get_message(), all_args_here() and the other checking functions: dotted internal and local variable names renamed with underscores (backbone v21.0).
 * colons_check() and all_args_here(): the "in" symbol is now skipped during code parsing, which prevents spurious parsing problems with for(j in (n - 1L):2L) writings.
 * all_args_here(): an incoherent arg_full_names argument no longer causes a raw crash, but a proper internal error.
+* all_args_here(): the modified function (returned, or exported with fun_export = TRUE) now keeps the comments and the indentation of the submitted function (when it carries its source references), instead of the normalized code without comments. A proposal is not applied (and is listed in the CORRECTIONS NOT APPLIED message) when the corrected call contains a string with consecutive spaces, which were formerly silently collapsed. The CORRECTIONS NOT APPLIED message no longer replaces the ARGUMENTS ARE MISSING message.
 
 # saferDev 2.0.0
 

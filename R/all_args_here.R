@@ -14,7 +14,7 @@
 #' A data frame indicating the missing arguments or a message saying that everything seems fine.
 #' If \code{table_export} argument is \code{TRUE}, then the data frame is exported as \code{res.tsv} instead of being returned.
 #' If \code{fun_export} argument is \code{TRUE}, the modified function is exported as \code{<FUNCTION_NAME>_safer.R} instead of being returned (ignored if no correction has been applied).
-#' Otherwise, the modified function (an R function object rebuilt from the corrected code, with its comments removed) is returned, or \code{NULL} if no modification has been applied. The returned value is invisible when nothing is exported.
+#' Otherwise, the modified function (an R function object rebuilt from the corrected code, with its comments and indentation preserved if the submitted function carries its source references, see the details section) is returned, or \code{NULL} if no modification has been applied. The returned value is invisible when nothing is exported.
 #' Column descriptions: 
 #' \itemize{
 #'   \item \code{$LINE_NB}: the line number in the function code (starting at the \code{"<- function"} line, i.e., without counting the \code{#'} header lines).
@@ -48,6 +48,8 @@
 #' Pre-check: the submitted function is first checked by \code{lambda_check()}: if some lambda functions are written with the \code{\\(x)} shorthand, an error is returned asking to run \code{saferDev::lambda_check()} first, because the \code{\\} writings are not managed by the text-based detection of \code{all_args_here()}. As in \code{lambda_check()}, the \code{\\(x)} writing is only detectable in a function carrying its source references (attribute \code{srcref}): a compiled or loaded package function prints \code{function(x)}, so that the pre-check silently passes in that case.
 #' 
 #' Known limitation: a string literal containing an escaped backslash-quote, like \code{"'\\'"}, desynchronizes the in-quotes detection of \code{all_args_here()}, which can return an internal error (see the \code{dev/repro_all_args_here_internal_error_3.R} script of the package repository). Please, report \href{https://github.com/safer-r/saferDev/issues}{here} if it is the case.
+#' 
+#' Comments and indentation of the modified function (\code{fun_export} argument and returned function): the missing arguments are inserted into the printed code of the submitted function, so that its comments and indentation are kept. This requires that the submitted function carries its source references (attribute \code{srcref}, i.e., \code{options(keep.source = TRUE)} when the function was created, the default in interactive sessions). Otherwise (e.g., a function of an installed package, or a function created in an \code{Rscript} session), the printed code is the deparsed code, without comments and with a standard indentation. In addition, a proposal is not applied (and is indicated in the final message) if the corrected call contains a string with consecutive spaces (e.g., \code{"a  b"}), because the proposals are built from a code where consecutive spaces are collapsed.
 #' 
 #' See more examples \href{https://safer-r.github.io/saferDev/articles/all_args_here.html}{here}.
 #' 
@@ -1146,14 +1148,15 @@ all_args_here <- function(
             error_text = embed_error_text
         )
         if(base::length(x = tempo_insert$left) > 0){ # corrections that could not be applied: added to the final message
-            tempo_cat <- base::paste0(
+            # tempo_cat_left and not tempo_cat: the on.exit() expressions are evaluated at exit, so that reusing tempo_cat would also replace the message of the "ARGUMENTS ARE MISSING" on.exit() registered above
+            tempo_cat_left <- base::paste0(
                 "CORRECTIONS NOT APPLIED:\n",
                 base::paste0(tempo_insert$left, collapse = "\n", recycle0 = FALSE),
                 "\n\n",
                 collapse = NULL,
                 recycle0 = FALSE
             )
-            base::on.exit(expr = base::message(base::paste0(tempo_cat, collapse = NULL, recycle0 = FALSE), domain = NULL, appendLF = TRUE), add = TRUE, after = TRUE)
+            base::on.exit(expr = base::message(base::paste0(tempo_cat_left, collapse = NULL, recycle0 = FALSE), domain = NULL, appendLF = TRUE), add = TRUE, after = TRUE)
         }
         if(fun_export == TRUE & base::length(x = tempo_insert$inserted) > 0){
             tempo_fun_file <- base::paste0(out_dir, "/", tempo_fun_file_name, collapse = NULL, recycle0 = FALSE)

@@ -166,6 +166,74 @@ testthat::test_that(".all_args_insert()", {
     # The # nocov markers are set in R/intern_.all_args_insert.R accordingly.
     ######## end main code: final guard
 
+    ######## main code: comments and indentation preserved (corrections inserted into the printed lines of x, not into the normalized out$code)
+    # the function is built with its source references (srcref), whatever the keep.source option of the session running the tests
+    txt_com <- base::c(
+        "function(x, y){",
+        "    # first comment",
+        "    missing_arg1 <- base::sum(1:2, na.rm) # inline comment",
+        "        missing_arg2 <- base::paste0(\"a\", \"b\")   # misaligned line",
+        "}"
+    )
+    FUN_COM <- base::eval(expr = base::parse(file = "", n = NULL, text = txt_com, prompt = "?", keep.source = TRUE, srcfile = base::srcfilecopy(filename = "<text>", lines = txt_com, timestamp = base::Sys.time(), isFile = FALSE), encoding = "unknown")[[1]], envir = base::environment(fun = NULL))
+    out_com <- fd(x = FUN_COM, arg_user_setting = base::list(x = base::as.name(x = "FUN_COM")), skipped_base = base::c("function", "if", "for", "while", "repeat", "else"), lib_path = NULL, error_text = "")
+    line_com1 <- base::grep(x = out_com$code, pattern = "^missing_arg1", ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE)
+    line_com2 <- base::grep(x = out_com$code, pattern = "^missing_arg2", ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE)
+    pos_com1 <- base::regexpr(pattern = "sum(", text = out_com$code[line_com1], ignore.case = FALSE, perl = FALSE, fixed = TRUE, useBytes = FALSE)[1]
+    pos_com2 <- base::regexpr(pattern = "paste0(", text = out_com$code[line_com2], ignore.case = FALSE, perl = FALSE, fixed = TRUE, useBytes = FALSE)[1]
+    tempo_output <- output_fun1
+    tempo_output$LINE_NB <- base::c(line_com1, line_com2)
+    tempo_output$FUN_POS <- base::c(pos_com1, pos_com2)
+    tempo_output$STATUS[1] <- "sum(1:2, na.rm = FALSE)" # valid proposal (the STATUS of output_fun1 is routed to left by validation 5)
+    testthat::expect_no_error(tempo_out13 <- .all_args_insert(x = FUN_COM, out = out_com, output = tempo_output, lib_path = NULL, error_text = ""))
+    testthat::expect_true(object = base::length(x = tempo_out13$inserted) == 2)
+    testthat::expect_true(object = base::length(x = tempo_out13$left) == 0)
+    tempo_txt13 <- base::strsplit(x = tempo_out13$fun_txt, split = "\n", fixed = TRUE, perl = FALSE, useBytes = FALSE)[[1]]
+    testthat::expect_equal(object = tempo_txt13[2], expected = "    # first comment") # full comment line kept
+    testthat::expect_equal(object = tempo_txt13[3], expected = base::paste0("    missing_arg1 <- base::", tempo_output$STATUS[1], " # inline comment", collapse = NULL, recycle0 = FALSE)) # indentation and inline comment kept
+    testthat::expect_equal(object = tempo_txt13[4], expected = base::paste0("        missing_arg2 <- base::", tempo_output$STATUS[2], "   # misaligned line", collapse = NULL, recycle0 = FALSE)) # unusual indentation and spaces kept
+    testthat::expect_false(object = base::is.null(x = base::attr(x = tempo_out13$fun, which = "srcref", exact = TRUE))) # the returned function carries its source references, thus prints with its comments
+    ######## end main code: comments and indentation preserved
+
+    ######## main code: validation 6 (span not located in the printed lines of x: out not built from x)
+    tempo_x_lines <- txt_com # same line indexing as out_com$code (srcref printing)
+    tempo_x_lines[line_com1] <- "    x" # shorter than FUN_POS + nchar(FUN_ARGS): span beyond the line
+    tempo_x_lines[line_com2] <- base::sub(pattern = "paste0", replacement = "paste1", x = tempo_x_lines[line_com2], ignore.case = FALSE, perl = FALSE, fixed = TRUE, useBytes = FALSE) # same length but different text
+    FUN_DIFF <- base::eval(expr = base::parse(file = "", n = NULL, text = tempo_x_lines, prompt = "?", keep.source = TRUE, srcfile = base::srcfilecopy(filename = "<text>", lines = tempo_x_lines, timestamp = base::Sys.time(), isFile = FALSE), encoding = "unknown")[[1]], envir = base::environment(fun = NULL))
+    testthat::expect_no_error(tempo_out14 <- .all_args_insert(x = FUN_DIFF, out = out_com, output = tempo_output, lib_path = NULL, error_text = ""))
+    testthat::expect_true(object = base::is.null(x = tempo_out14$fun))
+    testthat::expect_true(object = base::length(x = tempo_out14$left) == 2)
+    ######## end main code: validation 6
+
+    ######## main code: validation 7 (string literal with consecutive spaces: routed to left, because the STATUS carries the collapsed string)
+    txt_str <- base::c(
+        "function(x){",
+        "    res <- base::paste0(\"a  b\", \"c\")",
+        "}"
+    )
+    FUN_STR <- base::eval(expr = base::parse(file = "", n = NULL, text = txt_str, prompt = "?", keep.source = TRUE, srcfile = base::srcfilecopy(filename = "<text>", lines = txt_str, timestamp = base::Sys.time(), isFile = FALSE), encoding = "unknown")[[1]], envir = base::environment(fun = NULL))
+    out_str <- fd(x = FUN_STR, arg_user_setting = base::list(x = base::as.name(x = "FUN_STR")), skipped_base = base::c("function", "if", "for", "while", "repeat", "else"), lib_path = NULL, error_text = "")
+    line_str <- base::grep(x = out_str$code, pattern = "^res <-", ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE)
+    pos_str <- base::regexpr(pattern = "paste0(", text = out_str$code[line_str], ignore.case = FALSE, perl = FALSE, fixed = TRUE, useBytes = FALSE)[1]
+    tempo_output <- base::data.frame(LINE_NB = line_str, FUN_NAME = "paste0", FUN_ARGS = "paste0(\"a b\", \"c\")", FUN_POS = pos_str, DEF_ARGS = "..., collapse = NULL, recycle0 = FALSE", MISSING_ARG_NAMES = "collapse, recycle0", MISSING_ARGS = "collapse = NULL, recycle0 = FALSE", STATUS = "paste0(\"a b\", \"c\", collapse = NULL, recycle0 = FALSE)", row.names = NULL, check.rows = FALSE, check.names = TRUE, fix.empty.names = TRUE, stringsAsFactors = FALSE)
+    testthat::expect_no_error(tempo_out15 <- .all_args_insert(x = FUN_STR, out = out_str, output = tempo_output, lib_path = NULL, error_text = ""))
+    testthat::expect_true(object = base::is.null(x = tempo_out15$fun))
+    testthat::expect_true(object = base::length(x = tempo_out15$left) == 1)
+    # runs of spaces outside string literals: the correction is applied
+    txt_sp <- base::c(
+        "function(x){",
+        "    res <- base::paste0(\"a\",    \"c\")",
+        "}"
+    )
+    FUN_SP <- base::eval(expr = base::parse(file = "", n = NULL, text = txt_sp, prompt = "?", keep.source = TRUE, srcfile = base::srcfilecopy(filename = "<text>", lines = txt_sp, timestamp = base::Sys.time(), isFile = FALSE), encoding = "unknown")[[1]], envir = base::environment(fun = NULL))
+    out_sp <- fd(x = FUN_SP, arg_user_setting = base::list(x = base::as.name(x = "FUN_SP")), skipped_base = base::c("function", "if", "for", "while", "repeat", "else"), lib_path = NULL, error_text = "")
+    tempo_output$FUN_ARGS <- "paste0(\"a\", \"c\")"
+    tempo_output$STATUS <- "paste0(\"a\", \"c\", collapse = NULL, recycle0 = FALSE)"
+    testthat::expect_no_error(tempo_out16 <- .all_args_insert(x = FUN_SP, out = out_sp, output = tempo_output, lib_path = NULL, error_text = ""))
+    testthat::expect_true(object = base::is.function(x = tempo_out16$fun))
+    testthat::expect_true(object = base::grepl(x = tempo_out16$fun_txt, pattern = "    res <- base::paste0(\"a\", \"c\", collapse = NULL, recycle0 = FALSE)", ignore.case = FALSE, perl = FALSE, fixed = TRUE, useBytes = FALSE))
+    ######## end main code: validation 7
+
     ## end tests
     base::rm(list = base::ls()) # to avoid a warning that block CRAN tests
 })

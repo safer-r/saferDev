@@ -455,6 +455,20 @@ testthat::test_that("all_args_here()", {
     a <- file.remove("./res.tsv")
     #### end main code
 
+    # corrections not applied (here, a string with consecutive spaces): both the "ARGUMENTS ARE MISSING" and the "CORRECTIONS NOT APPLIED" messages are printed (formerly, the second message replaced the first one, because both on.exit() used the same tempo_cat object)
+    FUN_STR <- function(x){
+        res <- base::paste0("a  b", "c")
+    }
+    tempo_msg <- base::character(length = 0L)
+    base::withCallingHandlers(
+        expr = all_args_here(x = FUN_STR, table_export = FALSE, fun_export = FALSE, out_path = ".", df_name = "res.tsv", overwrite = FALSE, safer_check = FALSE, lib_path = NULL, error_text = ""),
+        message = function(m){
+            tempo_msg <<- base::c(tempo_msg, base::conditionMessage(c = m))
+            base::invokeRestart(r = "muffleMessage")
+        }
+    )
+    testthat::expect_true(object = base::any(base::grepl(x = tempo_msg, pattern = "ARGUMENTS ARE MISSING", ignore.case = FALSE, perl = FALSE, fixed = TRUE, useBytes = FALSE), na.rm = FALSE))
+    testthat::expect_true(object = base::sum(base::grepl(x = tempo_msg, pattern = "CORRECTIONS NOT APPLIED", ignore.case = FALSE, perl = FALSE, fixed = TRUE, useBytes = FALSE), na.rm = FALSE) == 1)
     ## end tests (ordered by arg appearance and conditions in the code)
 
     ## other tests

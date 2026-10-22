@@ -349,11 +349,18 @@
     #### end second round of checking and data preparation
 
     #### main code
-    # work on out$code: these are the exact lines that FUN_POS indexes (the FUN_ARGS of the output table is sliced from these very lines in all_args_here()),
-    # so no position mapping is needed: FUN_POS is the 1-based position of FUN_NAME in out$code[LINE_NB]
-    # NOTE: out$code has the comments blanked by .functions_detect(): the corrected function therefore loses its comments, which is acceptable
-    # because the R code that parses and runs is strictly preserved. The original comments can be recovered in the source of the user function.
+    # two parallel versions of the code lines are used:
+    # 1) code_lines (out$code): the normalized lines read by all_args_here() (runs of spaces collapsed into a single space, leading spaces removed and comments blanked by .functions_detect()). These are the exact lines that FUN_POS indexes (the FUN_ARGS of the output table is sliced from these very lines in all_args_here()), so all the validations below are performed on them
+    # 2) orig_lines: the same lines as printed by the function object (same utils::capture.output() as in .functions_detect(), hence the same line indexing), with the comments and the indentation of the submitted function. Each correction is also inserted into these lines, and the modified function is rebuilt from them, so that the comments and the indentation are preserved
+    # Warning: the comments and the original indentation only exist if the submitted function carries its source references (srcref attribute, i.e., keep.source = TRUE when the function was created). Otherwise, the printed function is the deparsed code (no comments, standard indentation)
     code_lines <- out$code
+    orig_lines <- utils::capture.output(x, file = NULL, append = FALSE, type = NULL, split = FALSE)
+    if(base::length(x = orig_lines) != base::length(x = code_lines)){
+        # nocov start
+        # codecov inactivated because it is an internal control of code writing: out is built by .functions_detect() from the same function x, using the same utils::capture.output() call, which does not remove any line
+        tempo_cat <- base::paste0("INTERNAL ERROR 2 IN ", intern_error_text_start, "THE PRINTED CODE OF x AND out$code MUST HAVE THE SAME NUMBER OF LINES.\nHERE IT IS:\nPRINTED CODE OF x: ", base::length(x = orig_lines), "\nout$code: ", base::length(x = code_lines), intern_error_text_end, collapse = NULL, recycle0 = FALSE) ; base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL)
+        # nocov end
+    }
     # rows to apply: only rows where the correction is a complete call proposal (the STATUS proposals that are not "GOOD", not "HAS TO BE FULLY WRITTEN" messages, and not empty)
     keep <- base::nzchar(x = output$STATUS, keepNA = FALSE) & (output$STATUS != "GOOD") & ! base::grepl(x = output$STATUS, pattern = "HAS TO BE FULLY WRITTEN", fixed = TRUE) & ( ! base::is.na(x = output$MISSING_ARGS)) & base::nzchar(x = output$MISSING_ARGS, keepNA = FALSE)
     # IMPORTANT: rows with MISSING_ARGS non empty but STATUS being a message (HAS TO BE FULLY WRITTEN) are excluded by the grepl above
@@ -444,7 +451,59 @@
                 }
             }
         }
-        # apply on the out$code line: the prefix of the line before the corrected span is untouched, so the positions of the remaining rows on this same line (all with smaller FUN_POS, since rows are applied in decreasing order) stay valid
+        # validation 6: position of the FUN_ARGS span in the original line (orig_lines), where the correction is also inserted to preserve the comments and the indentation
+        # .functions_detect() collapses the runs of spaces into a single space (gsub(" +", " ")), then removes the remaining leading space (sub("^ +", "")), and the comment blanking only truncates the end of the line
+        # thus, the k-th character of the normalized line is the k-th kept character of the original line, a kept character being any character except a space preceded by a space, and except a leading space
+        orig_chars <- base::strsplit(x = orig_lines[line_i2], split = "", fixed = TRUE, perl = FALSE, useBytes = FALSE)[[1]]
+        orig_space_log <- orig_chars == " "
+        orig_kept_log <- ! (orig_space_log & base::c(FALSE, orig_space_log)[base::seq_along(along.with = orig_space_log)])
+        if(base::length(x = orig_chars) > 0){
+            if(orig_space_log[1] == TRUE){
+                orig_kept_log[1] <- FALSE
+            }
+        }
+        orig_kept_pos <- base::which(x = orig_kept_log, arr.ind = FALSE, useNames = TRUE)
+        orig_start <- orig_kept_pos[pos_i2] # NA if beyond the kept characters
+        orig_stop <- orig_kept_pos[pos_i2 + fun_args_len - 1] # NA if beyond the kept characters
+        orig_span <- NA
+        if( ! (base::is.na(x = orig_start) | base::is.na(x = orig_stop))){
+            orig_span <- base::substr(x = orig_lines[line_i2], start = orig_start, stop = orig_stop)
+        }
+        if(base::is.na(x = orig_span)){ # the span cannot be located in the original line (out$code not built from x)
+            left <- base::c(left, base::paste0("line ", line_i2, ": ", status_i2, collapse = NULL, recycle0 = FALSE))
+            next
+        }
+        if(base::gsub(pattern = " +", replacement = " ", x = orig_span, ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE) != fun_args_i2){ # the original span, once normalized, must be FUN_ARGS
+            left <- base::c(left, base::paste0("line ", line_i2, ": ", status_i2, collapse = NULL, recycle0 = FALSE))
+            next
+        }
+        # validation 7: the STATUS is built from the normalized FUN_ARGS: if the original span contains runs of spaces inside string literals (e.g., "a  b"), these strings are collapsed in the STATUS (e.g., "a b"), which would silently modify the values of the code
+        # in that case, the correction is routed to the left vector for manual correction
+        if(orig_span != fun_args_i2){
+            str_orig <- base::tryCatch(
+                expr = {
+                    tempo_parse_data <- utils::getParseData(x = base::parse(file = "", n = NULL, text = orig_span, prompt = "?", keep.source = TRUE, srcfile = base::srcfilecopy(filename = "<text>", lines = orig_span, timestamp = base::Sys.time(), isFile = FALSE), encoding = "unknown"), includeText = NA) # keep.source = TRUE and a srcfile object required by utils::getParseData(). Warning: srcfile = NULL (instead of a missing srcfile) prevents the creation of the source references by base::parse()
+                    tempo_parse_data$text[tempo_parse_data$token == "STR_CONST"]
+                },
+                error = function(e){NA} # nocov : defensive net, orig_span only differs from the parsable FUN_ARGS by runs of spaces
+            )
+            str_status <- utils::getParseData(x = base::parse(file = "", n = NULL, text = status_i2, prompt = "?", keep.source = TRUE, srcfile = base::srcfilecopy(filename = "<text>", lines = status_i2, timestamp = base::Sys.time(), isFile = FALSE), encoding = "unknown"), includeText = NA) # the STATUS is guaranteed to be parsable here (validation 1)
+            str_status <- str_status$text[str_status$token == "STR_CONST"]
+            if(base::any(base::is.na(x = str_orig), na.rm = FALSE) | base::any( ! str_orig %in% str_status, na.rm = FALSE)){
+                left <- base::c(left, base::paste0("line ", line_i2, ": ", status_i2, collapse = NULL, recycle0 = FALSE))
+                next
+            }
+        }
+        # apply on the original line (orig_lines): the prefix of the line before the corrected span is untouched
+        nch_orig_line <- base::nchar(x = orig_lines[line_i2], type = "chars", allowNA = FALSE, keepNA = NA)
+        orig_lines[line_i2] <- base::paste0(
+            base::substr(x = orig_lines[line_i2], start = 1, stop = orig_start - 1),
+            status_i2,
+            base::substr(x = orig_lines[line_i2], start = orig_stop + 1, stop = nch_orig_line),
+            collapse = NULL,
+            recycle0 = FALSE
+        )
+        # apply on the out$code line: the prefix of the line before the corrected span is untouched, so the positions of the remaining rows on this same line (all with smaller FUN_POS, since rows are applied in decreasing order) stay valid, in code_lines and in orig_lines
         nch_line <- base::nchar(x = code_lines[line_i2], type = "chars", allowNA = FALSE, keepNA = NA)
         code_lines[line_i2] <- base::paste0(
             base::substr(x = code_lines[line_i2], start = 1, stop = pos_i2 - 1),
@@ -461,10 +520,10 @@
         inserted <- base::c(inserted, base::paste0("line ", line_i2, ": ", status_i2, collapse = NULL, recycle0 = FALSE))
     }
     if(base::length(x = inserted) > 0){
-        # rebuild the corrected function: out$code comes from capture.output of the function object (as normalized in .functions_detect()), so the lines reassemble into a parsable function (the 1st line is the "function(...)" header, whatever the print style: "function (x) " or "function(a, b){" for srcref functions)
-        # the "<environment: ...>" line can be printed by capture.output() when the closure environment of the submitted function is not the global environment (e.g., inside testthat::test_that()): it is not R code and is removed, otherwise the final parse guard fails. It is always the last line of the printed function, so the code lines before it are untouched
-        code_lines_out <- code_lines[ ! base::grepl(x = code_lines, pattern = "^<environment:", ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE)]
-        fun_txt <- base::paste(code_lines_out, collapse = "\n", recycle0 = FALSE, sep = " ")
+        # rebuild the corrected function from orig_lines (comments and indentation preserved): orig_lines comes from capture.output of the function object, so the lines reassemble into a parsable function (the 1st line is the "function(...)" header, whatever the print style: "function (x) " or "function(a, b){" for srcref functions)
+        # the "<bytecode: ...>" and "<environment: ...>" lines can be printed by capture.output() when the submitted function is byte-compiled (e.g., a package function) or when its closure environment is not the global environment (e.g., inside testthat::test_that()): they are not R code and are removed, otherwise the final parse guard fails. They are always the last lines of the printed function, so the code lines before them are untouched
+        orig_lines_out <- orig_lines[ ! base::grepl(x = orig_lines, pattern = "^<(environment|bytecode):", ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE)]
+        fun_txt <- base::paste(orig_lines_out, collapse = "\n", recycle0 = FALSE, sep = " ")
         # final guard: never hand back code that does not parse
         ok_full <- base::tryCatch(
             expr = {
@@ -483,7 +542,8 @@
             # nocov end
         }
         # return the modified function as an R function object
-        fun <- base::eval(expr = base::parse(file = "", n = NULL, text = fun_txt, prompt = "?", keep.source = base::getOption(x = "keep.source", default = NULL), srcfile = NULL, encoding = "unknown")[[1]], envir = base::environment(fun = NULL))
+        # keep.source = TRUE (instead of the keep.source option, FALSE in Rscript sessions) and a srcfile object (srcfile = NULL prevents the creation of the source references by base::parse()), so that the returned function keeps its source references, i.e., prints with its comments and indentation
+        fun <- base::eval(expr = base::parse(file = "", n = NULL, text = fun_txt, prompt = "?", keep.source = TRUE, srcfile = base::srcfilecopy(filename = "<text>", lines = fun_txt, timestamp = base::Sys.time(), isFile = FALSE), encoding = "unknown")[[1]], envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL))
         output_list <- base::list(fun = fun, fun_txt = fun_txt, inserted = inserted, left = left)
     }else{
         output_list <- base::list(fun = NULL, fun_txt = NULL, inserted = inserted, left = left)
