@@ -892,7 +892,7 @@ all_args_here <- function(
                         col1[i2], 
                         ":\n\n", 
                         base::paste0(base::paste0(base::substr(x = code_for_col[i2], start = 1, stop = col4[i2] - 1), col3[i2], collapse = NULL, recycle0 = FALSE), collapse = "\n", recycle0 = FALSE), 
-                        "\n\nPLEASE, RUN saferDev::colons_check(", arg_user_setting$x, ") FIRST,\nADD THE MISSING <PACKAGE>::<FUNCTION> (OR <PACKAGE>:::<FUNCTION> FOR FUNCTION STARTING BY A DOT)\nAND RERUN saferDev::all_args_here(", arg_user_setting$x, 
+                        "\n\nPLEASE, RUN saferDev::colons_check(", arg_user_setting$x, ") FIRST,\nAND RERUN saferDev::all_args_here(", arg_user_setting$x, 
                         ").", 
                         collapse = NULL, 
                         recycle0 = FALSE
@@ -1084,14 +1084,14 @@ all_args_here <- function(
         if(base::all(col8 %in%base::c("", "GOOD"), na.rm = FALSE)){
             tempo_cat <- base::paste0("INSIDE ", base::as.character(x = out$arg_user_setting$x), "(), EVERYTHING SEEMS CLEAN.", collapse = NULL, recycle0 = FALSE)
             if(table_export == TRUE){
-                tempo_cat <- base::paste0("RESULT EXPORTED IN:\n", out_path, "\nBUT ", tempo_cat, collapse = NULL, recycle0 = FALSE)
+                tempo_cat <- base::paste0("RESULT EXPORTED IN:\n", base::normalizePath(path = out_path, winslash = "/", mustWork = FALSE), "\nBUT ", tempo_cat, collapse = NULL, recycle0 = FALSE)
             }
             tempo_cat <- base::paste0("AFTER RUNNING ", function_name, " OF THE ", package_name, " PACKAGE:\n", tempo_cat, collapse = NULL, recycle0 = FALSE)
             base::on.exit(expr = base::message(base::paste0("\n", tempo_cat, "\n\n", collapse = NULL, recycle0 = FALSE), domain = NULL, appendLF = TRUE), add = TRUE, after = TRUE)
         }else{
             tempo_cat <- base::paste0("INSIDE ", base::as.character(x = out$arg_user_setting$x), "(), ARGUMENTS ARE MISSING.", collapse = NULL, recycle0 = FALSE)
             if(table_export == TRUE){
-                tempo_cat <- base::paste0(tempo_cat, "\nRESULT EXPORTED IN:\n", out_path, collapse = NULL, recycle0 = FALSE)
+                tempo_cat <- base::paste0(tempo_cat, "\nRESULT EXPORTED IN:\n", base::normalizePath(path = out_path, winslash = "/", mustWork = FALSE), collapse = NULL, recycle0 = FALSE)
             }
             base::on.exit(expr = base::message(base::paste0("\n", tempo_cat, "\n\n", collapse = NULL, recycle0 = FALSE), domain = NULL, appendLF = TRUE), add = TRUE, after = TRUE)
         }
