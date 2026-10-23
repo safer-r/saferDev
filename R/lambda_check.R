@@ -702,9 +702,11 @@ lambda_check <- function(
         base::environment(fun = output) <- base::environment(fun = x)
     }
     if(export == TRUE){
-        base::return(base::invisible(x = output)) # NULL returned invisibly when export is TRUE (the invisibility is lost when assigned to output, hence invisible() here)
+        base::return(base::invisible(x = output)) # NULL returned invisibly when export is TRUE
+    }else if(base::is.null( x = output)){
+        base::return(base::invisible(x = output)) # NULL if everything is clean, but invisible meaning that not shown but can be assigned
     }else{
-        base::return(output) # NULL if everything is clean
+        base::return(output) 
     }
     #### end output
 
