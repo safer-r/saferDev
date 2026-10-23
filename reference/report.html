@@ -35,6 +35,7 @@
 <li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
       </ul><ul class="navbar-nav"><li class="nav-item"><form class="form-inline" role="search">
  <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json"></form></li>
+<li class="nav-item"><a class="external-link nav-link" href="https://github.com/safer-r/saferDev/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
       </ul></div>
 
 
@@ -44,7 +45,7 @@
   <main id="main" class="col-md-9"><div class="page-header">
 
       <h1>Report</h1>
-
+      <small class="dont-index">Source: <a href="https://github.com/safer-r/saferDev/blob/main/R/report.R" class="external-link"><code>R/report.R</code></a></small>
       <div class="d-none name"><code>report.Rd</code></div>
     </div>
 
@@ -137,21 +138,35 @@
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># Warning: these examples may not work well when using the "Run examples" link </span></span></span>
 <span class="r-in"><span><span class="co"># because of a particular environment. Please, copy-paste in a local environment.</span></span></span>
 <span class="r-in"><span><span class="co"># See also https://safer-r.github.io/saferDev/articles/report.html</span></span></span>
-<span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span> <span class="co"># \dontrun{</span></span></span>
-<span class="r-in"><span><span class="co"># Example that creates a file/folder in the working directory</span></span></span>
-<span class="r-in"><span><span class="fu">saferDev</span><span class="fu">::</span><span class="fu">report</span><span class="op">(</span>data <span class="op">=</span> <span class="st">"THE FOLLOWING VECTOR IS:\n"</span>, output <span class="op">=</span> <span class="st">"results.txt"</span>, path <span class="op">=</span> <span class="st">"."</span>, </span></span>
-<span class="r-in"><span>append <span class="op">=</span> <span class="cn">TRUE</span>, sep <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu">saferDev</span><span class="fu">::</span><span class="fu">report</span><span class="op">(</span>data <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">3</span>, output <span class="op">=</span> <span class="st">"results.txt"</span>, path <span class="op">=</span> <span class="st">"."</span>, append <span class="op">=</span> <span class="cn">TRUE</span>, </span></span>
-<span class="r-in"><span>rownames_kept <span class="op">=</span> <span class="cn">FALSE</span>, vector_cat <span class="op">=</span> <span class="cn">FALSE</span>, noquote <span class="op">=</span> <span class="cn">FALSE</span>, sep <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu">saferDev</span><span class="fu">::</span><span class="fu">report</span><span class="op">(</span>data <span class="op">=</span> <span class="st">"THE FOLLOWING MATRIX IS:\n"</span>, output <span class="op">=</span> <span class="st">"results.txt"</span>, path <span class="op">=</span> <span class="st">"."</span>, </span></span>
-<span class="r-in"><span>append <span class="op">=</span> <span class="cn">TRUE</span>, sep <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu">saferDev</span><span class="fu">::</span><span class="fu">report</span><span class="op">(</span>data <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">5</span><span class="op">)</span>, output <span class="op">=</span> <span class="st">"results.txt"</span>, path <span class="op">=</span> <span class="st">"."</span>, append <span class="op">=</span> <span class="cn">TRUE</span>, </span></span>
-<span class="r-in"><span>rownames_kept <span class="op">=</span> <span class="cn">FALSE</span>, vector_cat <span class="op">=</span> <span class="cn">FALSE</span>, noquote <span class="op">=</span> <span class="cn">FALSE</span>, sep <span class="op">=</span> <span class="fl">5</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu">saferDev</span><span class="fu">::</span><span class="fu">report</span><span class="op">(</span>data <span class="op">=</span> <span class="st">"THE FOLLOWING DATA FRAME IS:\n"</span>, output <span class="op">=</span> <span class="st">"results.txt"</span>, path <span class="op">=</span> <span class="st">"."</span>, </span></span>
-<span class="r-in"><span>append <span class="op">=</span> <span class="cn">TRUE</span>, sep <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu">saferDev</span><span class="fu">::</span><span class="fu">report</span><span class="op">(</span>data <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>A <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">8</span>, B <span class="op">=</span> <span class="va">letters</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">8</span><span class="op">]</span><span class="op">)</span>, output <span class="op">=</span> <span class="st">"results.txt"</span>, path <span class="op">=</span> <span class="st">"."</span>, </span></span>
-<span class="r-in"><span>append <span class="op">=</span> <span class="cn">TRUE</span>, rownames_kept <span class="op">=</span> <span class="cn">FALSE</span>, vector_cat <span class="op">=</span> <span class="cn">FALSE</span>, noquote <span class="op">=</span> <span class="cn">FALSE</span>, sep <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="op">}</span> <span class="co"># }</span></span></span>
+<span class="r-in"><span><span class="co"># Write in the results.txt file of a new temporary folder:</span></span></span>
+<span class="r-in"><span><span class="va">tempo_dir</span> <span class="op">&lt;-</span> <span class="fu">base</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempfile</a></span><span class="op">(</span>pattern <span class="op">=</span> <span class="st">"dir"</span>, tmpdir <span class="op">=</span> <span class="fu">base</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir</a></span><span class="op">(</span><span class="op">)</span>, fileext <span class="op">=</span> <span class="st">""</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">base</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/base/files2.html" class="external-link">dir.create</a></span><span class="op">(</span>path <span class="op">=</span> <span class="va">tempo_dir</span>, showWarnings <span class="op">=</span> <span class="cn">TRUE</span>, recursive <span class="op">=</span> <span class="cn">FALSE</span>, mode <span class="op">=</span> <span class="st">"0777"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">saferDev</span><span class="fu">::</span><span class="fu">report</span><span class="op">(</span>data <span class="op">=</span> <span class="st">"THE FOLLOWING VECTOR IS:\n"</span>, output <span class="op">=</span> <span class="st">"results.txt"</span>, path <span class="op">=</span> <span class="va">tempo_dir</span>,</span></span>
+<span class="r-in"><span>    append <span class="op">=</span> <span class="cn">TRUE</span>, sep <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">saferDev</span><span class="fu">::</span><span class="fu">report</span><span class="op">(</span>data <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">3</span>, output <span class="op">=</span> <span class="st">"results.txt"</span>, path <span class="op">=</span> <span class="va">tempo_dir</span>, append <span class="op">=</span> <span class="cn">TRUE</span>,</span></span>
+<span class="r-in"><span>    rownames_kept <span class="op">=</span> <span class="cn">FALSE</span>, vector_cat <span class="op">=</span> <span class="cn">FALSE</span>, noquote <span class="op">=</span> <span class="cn">FALSE</span>, sep <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">saferDev</span><span class="fu">::</span><span class="fu">report</span><span class="op">(</span>data <span class="op">=</span> <span class="st">"THE FOLLOWING DATA FRAME IS:\n"</span>, output <span class="op">=</span> <span class="st">"results.txt"</span>,</span></span>
+<span class="r-in"><span>    path <span class="op">=</span> <span class="va">tempo_dir</span>, append <span class="op">=</span> <span class="cn">TRUE</span>, sep <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">saferDev</span><span class="fu">::</span><span class="fu">report</span><span class="op">(</span>data <span class="op">=</span> <span class="fu">base</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>A <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">3</span>, B <span class="op">=</span> <span class="va">letters</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">3</span><span class="op">]</span><span class="op">)</span>, output <span class="op">=</span> <span class="st">"results.txt"</span>,</span></span>
+<span class="r-in"><span>    path <span class="op">=</span> <span class="va">tempo_dir</span>, append <span class="op">=</span> <span class="cn">TRUE</span>, rownames_kept <span class="op">=</span> <span class="cn">FALSE</span>, vector_cat <span class="op">=</span> <span class="cn">FALSE</span>,</span></span>
+<span class="r-in"><span>    noquote <span class="op">=</span> <span class="cn">FALSE</span>, sep <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">base</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="fu">base</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/base/readLines.html" class="external-link">readLines</a></span><span class="op">(</span>con <span class="op">=</span> <span class="fu">base</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="va">tempo_dir</span>, <span class="st">"results.txt"</span><span class="op">)</span><span class="op">)</span>, sep <span class="op">=</span> <span class="st">"\n"</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> THE FOLLOWING VECTOR IS:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 1 2 3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> THE FOLLOWING DATA FRAME IS:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    A B</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    1 a</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    2 b</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    3 c</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

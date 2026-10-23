@@ -35,6 +35,7 @@
 <li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
       </ul><ul class="navbar-nav"><li class="nav-item"><form class="form-inline" role="search">
  <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json"></form></li>
+<li class="nav-item"><a class="external-link nav-link" href="https://github.com/safer-r/saferDev/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
       </ul></div>
 
 
@@ -44,7 +45,7 @@
   <main id="main" class="col-md-9"><div class="page-header">
 
       <h1>Lambda Check</h1>
-
+      <small class="dont-index">Source: <a href="https://github.com/safer-r/saferDev/blob/main/R/lambda_check.R" class="external-link"><code>R/lambda_check.R</code></a></small>
       <div class="d-none name"><code>lambda_check.Rd</code></div>
     </div>
 
@@ -117,7 +118,10 @@
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># Warning: these examples may not work well when using the "Run examples" link</span></span></span>
 <span class="r-in"><span><span class="co"># because of a particular environment. Please, copy-paste in a local environment.</span></span></span>
 <span class="r-in"><span><span class="co"># See also https://safer-r.github.io/saferDev/articles/lambda_check.html</span></span></span>
-<span class="r-in"><span><span class="va">fun1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/eval.html" class="external-link">eval</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/parse.html" class="external-link">parse</a></span><span class="op">(</span>text <span class="op">=</span> <span class="st">"function(x){ base::sapply(X = 1:3, FUN = function(y){ y * 2 }) }"</span>, keep.source <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="co"># The \(x) writing is only kept in a function carrying its source references,</span></span></span>
+<span class="r-in"><span><span class="co"># hence the parse(keep.source = TRUE) writing used here:</span></span></span>
+<span class="r-in"><span><span class="va">code1</span> <span class="op">&lt;-</span> <span class="st">"function(x){ base::sapply(X = 1:3, FUN = function(y){ y * 2 }) }"</span></span></span>
+<span class="r-in"><span><span class="va">fun1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/eval.html" class="external-link">eval</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/parse.html" class="external-link">parse</a></span><span class="op">(</span>text <span class="op">=</span> <span class="va">code1</span>, keep.source <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu">saferDev</span><span class="fu">::</span><span class="fu">lambda_check</span><span class="op">(</span><span class="va">fun1</span><span class="op">)</span> <span class="co"># everything fine: NULL returned</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
@@ -125,7 +129,8 @@
 <span class="r-msg co"><span class="r-pr">#&gt;</span> INSIDE fun1(), EVERYTHING SEEMS CLEAN.</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> NULL</span>
-<span class="r-in"><span><span class="va">fun2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/eval.html" class="external-link">eval</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/parse.html" class="external-link">parse</a></span><span class="op">(</span>text <span class="op">=</span> <span class="st">"function(x){ base::sapply(X = 1:3, FUN = \\(y){ y * 2 }) }"</span>, keep.source <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">code2</span> <span class="op">&lt;-</span> <span class="st">"function(x){ base::sapply(X = 1:3, FUN = \\(y){ y * 2 }) }"</span></span></span>
+<span class="r-in"><span><span class="va">fun2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/eval.html" class="external-link">eval</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/parse.html" class="external-link">parse</a></span><span class="op">(</span>text <span class="op">=</span> <span class="va">code2</span>, keep.source <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">fun2_safer</span> <span class="op">&lt;-</span> <span class="fu">saferDev</span><span class="fu">::</span><span class="fu">lambda_check</span><span class="op">(</span><span class="va">fun2</span><span class="op">)</span> <span class="co"># lambda writing reported</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
@@ -144,10 +149,14 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span>         y * 2</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     })</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x560c72bc8e58&gt;</span>
-<span class="r-in"><span><span class="co"># The \( writings that are not lambda writings are not reported nor modified:</span></span></span>
-<span class="r-in"><span><span class="co"># a backslash followed by ( inside a string, a raw string, a comment or a backquoted name is never a lambda writing, because the detection is token-based (the parser gives a STR_CONST, COMMENT or QUOTED_NAME token, never a '\' token)</span></span></span>
-<span class="r-in"><span><span class="va">fun3</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/eval.html" class="external-link">eval</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/parse.html" class="external-link">parse</a></span><span class="op">(</span>text <span class="op">=</span> <span class="st">"function(x){ y &lt;- \"the text \\\\(x) is inside a string\" ; z &lt;- r\"(raw \\(x))\" ; # a \\(x) in a comment\n    base::`\\\\`(x) ; x }"</span>, keep.source <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x55a05dcf6820&gt;</span>
+<span class="r-in"><span><span class="co"># A backslash followed by ( in a string, a raw string, a comment or a backquoted name</span></span></span>
+<span class="r-in"><span><span class="co"># is not a lambda writing (token-based detection): not reported, not modified.</span></span></span>
+<span class="r-in"><span><span class="va">code3</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>    <span class="st">"function(x){ y &lt;- \"the text \\\\(x) is inside a string\" ; "</span>,</span></span>
+<span class="r-in"><span>    <span class="st">"z &lt;- r\"(raw \\(x))\" ; # a \\(x) in a comment\n    base::`\\\\`(x) ; x }"</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">fun3</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/eval.html" class="external-link">eval</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/parse.html" class="external-link">parse</a></span><span class="op">(</span>text <span class="op">=</span> <span class="va">code3</span>, keep.source <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu">saferDev</span><span class="fu">::</span><span class="fu">lambda_check</span><span class="op">(</span><span class="va">fun3</span><span class="op">)</span> <span class="co"># everything fine: NULL returned</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
@@ -168,7 +177,7 @@
 <span class="r-msg co"><span class="r-pr">#&gt;</span> 1	\(y)		function(x){ base::sapply(X = 1:3, FUN = \(y){ y * 2 }) }</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> MODIFIED CODE EXPORTED IN:</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> /tmp/RtmpCOGJEa/dir141164e52905/fun2_safer.R</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> /tmp/RtmpT24sDl/dir16a02d0efe87/fun2_safer.R</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"><span></span></span>
 </code></pre></div>

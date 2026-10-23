@@ -8,16 +8,20 @@
 
 - **Mia Legras**. Contributor.
 
-- **Gael Millot**. Maintainer, author, contributor.
+- **Gael Millot**. Author, maintainer.
   [](https://orcid.org/0000-0002-0591-3509)
 
 ## Citation
 
-Millot G (2026). *saferDev: Function and Pipeline Development*. R
-package version 3.0.0, <https://github.com/safer-r/saferDev>.
+Source:
+[`DESCRIPTION`](https://github.com/safer-r/saferDev/blob/main/DESCRIPTION)
+
+Millot G (2026). *saferDev: Checking Tools for Safer R Function
+Development*. R package version 3.0.0,
+<https://github.com/safer-r/saferDev>.
 
     @Manual{,
-      title = {saferDev: Function and Pipeline Development},
+      title = {saferDev: Checking Tools for Safer R Function Development},
       author = {Gael Millot},
       year = {2026},
       note = {R package version 3.0.0},

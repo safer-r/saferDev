@@ -111,14 +111,16 @@ Correction: each reported loop becomes
 `tempo_for_seqN <- <SEQUENCE> ; <CHECKS> ; for(i in tempo_for_seqN)<BODY>`,
 N being the rank of the report. The checks warn if the sequence is
 empty, contains `NA` or infinite values, has a single value, has only
-negative values, or is decreasing. The loop thus runs on the checked
-sequence. Errors of the sequence itself (like `1:NA`) are not caught. If
-the loop is not a standalone statement (e.g., unbraced body of an `if`,
-or argument value), the whole is enclosed in curly brackets. The rest of
-the code is unchanged. The comments are kept in the exported file, but
-can be lost in the returned function. The returned function is evaluated
-in a new environment whose parent is the environment of the submitted
-function: check it before replacing the original function.
+negative values, or is decreasing (these last two checks only for
+numeric sequences, i.e., not for factors, dates, characters or complex
+numbers). The loop thus runs on the checked sequence. Errors of the
+sequence itself (like `1:NA`) are not caught. If the loop is not a
+standalone statement (e.g., unbraced body of an `if`, or argument
+value), the whole is enclosed in curly brackets. The rest of the code is
+unchanged. The comments are kept in the exported file, but can be lost
+in the returned function. The returned function is evaluated in a new
+environment whose parent is the environment of the submitted function:
+check it before replacing the original function.
 
 Warning: a reported loop is left unchanged, and listed in the message,
 when:
@@ -199,17 +201,14 @@ fun2_safer # corrected function
 #>             call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, 
 #>             domain = NULL)
 #>     }
-#>     else if (base::is.atomic(x = tempo_for_seq1) && base::typeof(x = tempo_for_seq1) %in% 
-#>         base::c("double", "integer") && base::all(x = tempo_for_seq1 < 
+#>     else if (base::is.numeric(x = tempo_for_seq1) && base::all(tempo_for_seq1 < 
 #>         0, na.rm = FALSE)) {
 #>         base::warning("FOR SEQUENCE WITH ALL NEGATIVE VALUES", 
 #>             call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, 
 #>             domain = NULL)
 #>     }
-#>     else if (base::is.atomic(x = tempo_for_seq1) && base::typeof(x = tempo_for_seq1) %in% 
-#>         base::c("double", "integer", "character", "complex") && 
-#>         base::length(x = tempo_for_seq1) >= 2 && tempo_for_seq1[1] > 
-#>         tempo_for_seq1[2]) {
+#>     else if (base::is.numeric(x = tempo_for_seq1) && base::length(x = tempo_for_seq1) >= 
+#>         2 && tempo_for_seq1[1] > tempo_for_seq1[2]) {
 #>         base::warning("FOR SEQUENCE DECREASING", call. = FALSE, 
 #>             immediate. = FALSE, noBreaks. = FALSE, domain = NULL)
 #>     }
@@ -217,7 +216,7 @@ fun2_safer # corrected function
 #>         base::print(x = i)
 #>     }
 #> }
-#> <environment: 0x560c73abad58>
+#> <environment: 0x55a063aa41e0>
 fun2_safer(x = base::character()) # warning: 1:length(x) is c(1, 0), a decreasing sequence
 #> Warning: FOR SEQUENCE DECREASING
 #> [1] 1
@@ -235,6 +234,6 @@ saferDev::for_loop_nb_check(x = fun2, export = TRUE, out_path = tempo_dir)
 #> 3    for     for (i in 1:length(x)) {
 #> 
 #> MODIFIED CODE EXPORTED IN:
-#> /tmp/RtmpCOGJEa/dir14116a28ea06/fun2_safer.R
+#> /tmp/RtmpT24sDl/dir16a0be08e8d/fun2_safer.R
 #> 
 ```

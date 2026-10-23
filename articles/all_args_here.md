@@ -172,7 +172,7 @@ FUN2_safer # modified function (or NULL when the code was already clean).
     ##     middle_bracket2 <- base::do.call(what = base::c, args = code_for_col, 
     ##         quote = FALSE, envir = base::parent.frame(n = 1))
     ## }
-    ## <environment: 0x560752583b88>
+    ## <environment: 0x556bc79fd880>
 
 ``` r
 
@@ -280,10 +280,7 @@ all_args_here(
 ```
 
     ## 
-    ## CORRECTIONS NOT APPLIED:
-    ## line 8: mapply(x = x, y = y,FUN = function(x,  y) { base::rep(x = y, base::length(x = x)) }, MoreArgs = NULL, SIMPLIFY = TRUE, USE.NAMES = TRUE)
-    ## line 8: unlist(x = base::mapply(FUN = function(x,  y) { base::rep(x = y, base::length(x = x)) }, x = x, y = y), recursive = TRUE, use.names = TRUE)
-    ## line 8: as.vector(x = base::unlist(x = base::mapply(FUN = function(x,  y) { base::rep(x = y, base::length(x = x)) }, x = x, y = y)), mode = "any")
+    ## INSIDE FUN1(), ARGUMENTS ARE MISSING.
 
     ## CORRECTIONS NOT APPLIED:
     ## line 8: mapply(x = x, y = y,FUN = function(x,  y) { base::rep(x = y, base::length(x = x)) }, MoreArgs = NULL, SIMPLIFY = TRUE, USE.NAMES = TRUE)

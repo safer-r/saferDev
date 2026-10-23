@@ -35,6 +35,7 @@
 <li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
       </ul><ul class="navbar-nav"><li class="nav-item"><form class="form-inline" role="search">
  <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json"></form></li>
+<li class="nav-item"><a class="external-link nav-link" href="https://github.com/safer-r/saferDev/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
       </ul></div>
 
 
@@ -44,7 +45,7 @@
   <main id="main" class="col-md-9"><div class="page-header">
 
       <h1>Environment Check</h1>
-
+      <small class="dont-index">Source: <a href="https://github.com/safer-r/saferDev/blob/main/R/env_check.R" class="external-link"><code>R/env_check.R</code></a></small>
       <div class="d-none name"><code>env_check.Rd</code></div>
     </div>
 
@@ -107,91 +108,16 @@
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># Warning: these examples may not work well when using the "Run examples" link </span></span></span>
 <span class="r-in"><span><span class="co"># because of a particular environment. Please, copy-paste in a local environment.</span></span></span>
 <span class="r-in"><span><span class="co"># See also https://safer-r.github.io/saferDev/articles/env_check.html</span></span></span>
-<span class="r-in"><span><span class="co"># Examples in the working environment</span></span></span>
-<span class="r-in"><span><span class="co"># creation of the object mean with value 1 in the .GlobalEnv environment, </span></span></span>
-<span class="r-in"><span><span class="co"># knowing that the mean() function also exists in the environment base, above .GlobalEnv:</span></span></span>
-<span class="r-in"><span><span class="va">mean</span> <span class="op">&lt;-</span> <span class="fl">1</span> </span></span>
-<span class="r-in"><span><span class="co"># creation of the object t.test with value 1 in the .GlobalEnv environment, </span></span></span>
-<span class="r-in"><span><span class="co"># knowing that the t.test() function also exists in the environment stats, above .GlobalEnv:</span></span></span>
-<span class="r-in"><span><span class="va">t.test</span> <span class="op">&lt;-</span> <span class="fl">1</span> </span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/search.html" class="external-link">search</a></span><span class="op">(</span><span class="op">)</span> <span class="co"># current R scope (order of the successive R environments).</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [1] ".GlobalEnv"        "package:saferDev"  "package:stats"    </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [4] "package:graphics"  "package:grDevices" "package:utils"    </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [7] "package:datasets"  "package:methods"   "Autoloads"        </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [10] "package:base"     </span>
-<span class="r-in"><span><span class="fu">utils</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/utils/apropos.html" class="external-link">find</a></span><span class="op">(</span><span class="st">"mean"</span><span class="op">)</span> <span class="co"># where the objects with the name "mean" are present.</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "package:base"</span>
-<span class="r-in"><span><span class="fu">utils</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/utils/apropos.html" class="external-link">find</a></span><span class="op">(</span><span class="st">"t.test"</span><span class="op">)</span> <span class="co"># where the objects with the name "mean" are present.</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "package:stats"</span>
-<span class="r-in"><span><span class="co"># test if any object_name of the global environment are above environments:</span></span></span>
-<span class="r-in"><span><span class="va">a</span> <span class="op">&lt;-</span> <span class="fu">saferDev</span><span class="fu">::</span><span class="fu">env_check</span><span class="op">(</span>pos <span class="op">=</span> <span class="fl">1</span><span class="op">)</span> </span></span>
-<span class="r-in"><span><span class="va">a</span> <span class="co"># output string.</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "SOME VARIABLES OF THE CHECKED ENVIRONMENT UNNAMED ARE ALSO PRESENT IN :\npackage:stats: t.test\npackage:base: mean\nSEARCH PATH CHECKED:\n&lt;environment&gt;\n&lt;environment&gt;\n&lt;environment&gt;\n&lt;environment&gt;\n&lt;environment&gt;\n&lt;environment&gt;\n&lt;environment&gt;\n&lt;environment&gt;\n&lt;environment&gt;\n&lt;environment&gt;\n&lt;environment&gt;\n&lt;environment&gt;\n&lt;environment&gt;\n&lt;environment&gt;\n&lt;environment&gt;\n&lt;environment&gt;\n&lt;environment&gt;\n&lt;environment&gt;\n&lt;environment&gt;\n&lt;environment&gt;\n&lt;environment&gt;\n&lt;environment&gt;\n&lt;environment&gt;\n&lt;environment&gt;\n&lt;environment&gt;\n&lt;environment&gt;\n&lt;environment&gt;\n&lt;environment&gt;\n&lt;environment&gt;\n&lt;environment&gt;\n&lt;environment&gt;\n.GlobalEnv\npackage:saferDev\npackage:stats\npackage:graphics\npackage:grDevices\npackage:utils\npackage:datasets\npackage:methods\nAutoloads\npackage:base\n"</span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="va">a</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> SOME VARIABLES OF THE CHECKED ENVIRONMENT UNNAMED ARE ALSO PRESENT IN :</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> package:stats: t.test</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> package:base: mean</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> SEARCH PATH CHECKED:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> .GlobalEnv</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> package:saferDev</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> package:stats</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> package:graphics</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> package:grDevices</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> package:utils</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> package:datasets</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> package:methods</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Autoloads</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> package:base</span>
-<span class="r-in"><span><span class="co"># test if any object of the stats environment (one step above .GlobalEnv) </span></span></span>
-<span class="r-in"><span><span class="co"># are in upper environments of stats. Returns NULL since no object names of </span></span></span>
-<span class="r-in"><span><span class="co"># stats are in upper environments:</span></span></span>
-<span class="r-in"><span><span class="fu">saferDev</span><span class="fu">::</span><span class="fu">env_check</span><span class="op">(</span>pos <span class="op">=</span> <span class="fl">2</span><span class="op">)</span> </span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "SOME VARIABLES OF THE CHECKED ENVIRONMENT UNNAMED ARE ALSO PRESENT IN :\nwithCallingHandlers(code, message = function (cnd) \n{\n    watcher$capture_plot_and_output()\n    if (on_message$capture) {\n        watcher$push(cnd)\n    }\n    if (on_message$silence) {\n        invokeRestart(\"muffleMessage\")\n    }\n}, warning = function (cnd) \n{\n    if (getOption(\"warn\") &gt;= 2 || getOption(\"warn\") &lt; 0) {\n        return()\n    }\n    watcher$capture_plot_and_output()\n    if (on_warning$capture) {\n        cnd &lt;- sanitize_call(cnd)\n        watcher$push(cnd)\n    }\n    if (on_warning$silence) {\n        invokeRestart(\"muffleWarning\")\n    }\n}, error = function (cnd) \n{\n    watcher$capture_plot_and_output()\n    cnd &lt;- sanitize_call(cnd)\n    watcher$push(cnd)\n    switch(on_error, continue = invokeRestart(\"eval_continue\"), stop = invokeRestart(\"eval_stop\"), error = NULL)\n}): expr\neval(call): enclos envir expr\ndoWithOneRestart(return(expr), restart): expr\nwithOneRestart(expr, restarts[[1]]): expr\nwithRestartList(expr, restarts[-nr]): expr\ndoWithOneRestart(return(expr), restart): expr\nwithOneRestart(withRestartList(expr, restarts[-nr]), restarts[[nr]]): expr\nwithRestartList(expr, restarts): expr\nwithRestarts(with_handlers({\n    for (expr in tle$exprs) {\n        ev &lt;- withVisible(eval(expr, envir))\n        watcher$capture_plot_and_output()\n        watcher$print_value(ev$value, ev$visible, envir)\n    }\n    TRUE\n}, handlers), eval_continue = function() TRUE, eval_stop = function() FALSE): expr\nevaluate::evaluate(code, child_env(env), new_device = TRUE, output_handler = output_handler): enclos envir expr\nwithCallingHandlers(data_reference_topic(topic, pkg, examples_env = examples_env, run_dont_run = run_dont_run), error = function(err) {\n    cli::cli_abort(\"Failed to parse Rd in {.file {topic$file_in}}\", parent = err, call = quote(build_reference()))\n}): expr\nwithCallingHandlers(expr, error = function(cnd) {\n    if (i == 0) {\n    }\n    else {\n        message &lt;- c(i = \"In index: {i}.\")\n        if (!is.null(names) &amp;&amp; !is.na(names[[i]]) &amp;&amp; names[[i]] != \"\") {\n            name &lt;- names[[i]]\n            message &lt;- c(message, i = \"With name: {name}.\")\n        }\n        else {\n            name &lt;- NULL\n        }\n        cli::cli_abort(message, location = i, name = name, parent = cnd, call = error_call, class = \"purrr_error_indexed\")\n    }\n}): expr\nwith_indexed_errors(i = i, names = names, error_call = .purrr_error_call, call_with_cleanup(map_impl, environment(), .type, .progress, n, names, i)): expr\nwithCallingHandlers(code, purrr_error_indexed = function(err) {\n    cnd_signal(err$parent)\n}): expr\nSEARCH PATH CHECKED:\n&lt;environment&gt;\n&lt;environment&gt;\n&lt;environment&gt;\n&lt;environment&gt;\n&lt;environment&gt;\n&lt;environment&gt;\n&lt;environment&gt;\n&lt;environment&gt;\n&lt;environment&gt;\n&lt;environment&gt;\n&lt;environment&gt;\n&lt;environment&gt;\n&lt;environment&gt;\n&lt;environment&gt;\n&lt;environment&gt;\n&lt;environment&gt;\n&lt;environment&gt;\n&lt;environment&gt;\n&lt;environment&gt;\n&lt;environment&gt;\n&lt;environment&gt;\n&lt;environment&gt;\n&lt;environment&gt;\n&lt;environment&gt;\n&lt;environment&gt;\n&lt;environment&gt;\n&lt;environment&gt;\n&lt;environment&gt;\n&lt;environment&gt;\n&lt;environment&gt;\n.GlobalEnv\npackage:saferDev\npackage:stats\npackage:graphics\npackage:grDevices\npackage:utils\npackage:datasets\npackage:methods\nAutoloads\npackage:base\n"</span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/rm.html" class="external-link">rm</a></span><span class="op">(</span><span class="va">mean</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/rm.html" class="external-link">rm</a></span><span class="op">(</span><span class="va">t.test</span><span class="op">)</span></span></span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># Examples inside a function</span></span></span>
-<span class="r-in"><span><span class="co"># saferDev::env_check() checks if the object names inside the fun1 function </span></span></span>
-<span class="r-in"><span><span class="co"># exist in the .GlobalEnv environment and above:</span></span></span>
-<span class="r-in"><span><span class="va">fun1</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="op">)</span> <span class="op">{</span></span></span>
-<span class="r-in"><span>  <span class="va">t.test</span> <span class="op">&lt;-</span> <span class="fl">0</span></span></span>
-<span class="r-in"><span>  <span class="va">mean</span> <span class="op">&lt;-</span> <span class="fl">5</span></span></span>
-<span class="r-in"><span>  <span class="fu">saferDev</span><span class="fu">::</span><span class="fu">env_check</span><span class="op">(</span>pos <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="co"># Inside a function: the names t.test and mean, created inside fun1(),</span></span></span>
+<span class="r-in"><span><span class="co"># also exist in the stats and base environments located above:</span></span></span>
+<span class="r-in"><span><span class="va">fun1</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="op">)</span><span class="op">{</span></span></span>
+<span class="r-in"><span>    <span class="va">t.test</span> <span class="op">&lt;-</span> <span class="fl">0</span></span></span>
+<span class="r-in"><span>    <span class="va">mean</span> <span class="op">&lt;-</span> <span class="fl">5</span></span></span>
+<span class="r-in"><span>    <span class="fu">saferDev</span><span class="fu">::</span><span class="fu">env_check</span><span class="op">(</span>pos <span class="op">=</span> <span class="fl">1</span>, name <span class="op">=</span> <span class="st">"fun1"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">}</span></span></span>
 <span class="r-in"><span><span class="va">a</span> <span class="op">&lt;-</span> <span class="fu">fun1</span><span class="op">(</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="va">a</span><span class="op">)</span> <span class="co"># Warning: cat(fun1()) creates an additional layer of environment.</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> SOME VARIABLES OF THE CHECKED ENVIRONMENT UNNAMED ARE ALSO PRESENT IN :</span>
+<span class="r-in"><span><span class="fu">base</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="va">a</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> SOME VARIABLES OF THE CHECKED ENVIRONMENT fun1 ARE ALSO PRESENT IN :</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> package:stats: t.test</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> package:base: mean</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> SEARCH PATH CHECKED:</span>
@@ -237,192 +163,16 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span> package:methods</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Autoloads</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> package:base</span>
-<span class="r-in"><span><span class="co"># saferDev::env_check() checks if the object names inside the environment one step above fun2(), </span></span></span>
-<span class="r-in"><span><span class="co"># here .GlobalEnv, exist in the upper environments of .GlobalEnv:</span></span></span>
-<span class="r-in"><span><span class="va">fun2</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="op">)</span> <span class="op">{</span></span></span>
-<span class="r-in"><span>  <span class="va">sum</span> <span class="op">&lt;-</span> <span class="fl">0</span></span></span>
-<span class="r-in"><span>  <span class="fu">saferDev</span><span class="fu">::</span><span class="fu">env_check</span><span class="op">(</span>pos <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="co"># NULL returned when no name is also present in the environments above:</span></span></span>
+<span class="r-in"><span><span class="va">fun2</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="op">)</span><span class="op">{</span></span></span>
+<span class="r-in"><span>    <span class="va">tempo_name_used_nowhere_else</span> <span class="op">&lt;-</span> <span class="fl">0</span></span></span>
+<span class="r-in"><span>    <span class="fu">saferDev</span><span class="fu">::</span><span class="fu">env_check</span><span class="op">(</span>pos <span class="op">=</span> <span class="fl">1</span>, name <span class="op">=</span> <span class="st">"fun2"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">}</span></span></span>
 <span class="r-in"><span><span class="fu">fun2</span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> NULL</span>
-<span class="r-in"><span><span class="co"># Warning: cat(fun2()) does not return NULL, because the environment tested is not </span></span></span>
-<span class="r-in"><span><span class="co"># anymore .GlobalEnv but inside cat().</span></span></span>
-<span class="r-in"><span><span class="va">a</span> <span class="op">&lt;-</span> <span class="fu">fun2</span><span class="op">(</span><span class="op">)</span> </span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="va">a</span><span class="op">)</span> <span class="co"># nothing displayed because fun2() returns NULL</span></span></span>
-<span class="r-in"><span><span class="co"># With the name of the function fun3 indicated in the message:</span></span></span>
-<span class="r-in"><span><span class="va">fun3</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="op">)</span> <span class="op">{</span></span></span>
-<span class="r-in"><span>  <span class="va">t.test</span> <span class="op">&lt;-</span> <span class="fl">0</span></span></span>
-<span class="r-in"><span>  <span class="va">mean</span> <span class="op">&lt;-</span> <span class="fl">5</span></span></span>
-<span class="r-in"><span>  <span class="fu">saferDev</span><span class="fu">::</span><span class="fu">env_check</span><span class="op">(</span>pos <span class="op">=</span> <span class="fl">1</span>, name <span class="op">=</span> <span class="st">"fun3"</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="op">}</span></span></span>
-<span class="r-in"><span><span class="va">a</span> <span class="op">&lt;-</span> <span class="fu">fun3</span><span class="op">(</span><span class="op">)</span> </span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="va">a</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> SOME VARIABLES OF THE CHECKED ENVIRONMENT fun3 ARE ALSO PRESENT IN :</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> package:stats: t.test</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> package:base: mean</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> SEARCH PATH CHECKED:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> .GlobalEnv</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> package:saferDev</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> package:stats</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> package:graphics</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> package:grDevices</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> package:utils</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> package:datasets</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> package:methods</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Autoloads</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> package:base</span>
-<span class="r-in"><span><span class="co"># Alternative way:</span></span></span>
-<span class="r-in"><span><span class="co"># sys.calls() gives the name of the imbricated functions and </span></span></span>
-<span class="r-in"><span><span class="co"># sys.calls()[[length(sys.calls())]] the name of the function one step above.</span></span></span>
-<span class="r-in"><span><span class="va">fun4</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="op">)</span> <span class="op">{</span></span></span>
-<span class="r-in"><span>  <span class="va">t.test</span> <span class="op">&lt;-</span> <span class="fl">0</span></span></span>
-<span class="r-in"><span>  <span class="va">mean</span> <span class="op">&lt;-</span> <span class="fl">5</span></span></span>
-<span class="r-in"><span>  <span class="va">name</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">as.character</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sys.parent.html" class="external-link">sys.calls</a></span><span class="op">(</span><span class="op">)</span><span class="op">[[</span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sys.parent.html" class="external-link">sys.calls</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span><span class="op">]</span><span class="op">]</span><span class="op">)</span></span></span>
-<span class="r-in"><span>  <span class="fu">saferDev</span><span class="fu">::</span><span class="fu">env_check</span><span class="op">(</span>pos <span class="op">=</span> <span class="fl">1</span>, name <span class="op">=</span> <span class="va">name</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="op">}</span></span></span>
-<span class="r-in"><span><span class="va">a</span> <span class="op">&lt;-</span> <span class="fu">fun4</span><span class="op">(</span><span class="op">)</span> </span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="va">a</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> SOME VARIABLES OF THE CHECKED ENVIRONMENT fun4 ARE ALSO PRESENT IN :</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> package:stats: t.test</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> package:base: mean</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> SEARCH PATH CHECKED:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> .GlobalEnv</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> package:saferDev</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> package:stats</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> package:graphics</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> package:grDevices</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> package:utils</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> package:datasets</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> package:methods</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Autoloads</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> package:base</span>
-<span class="r-in"><span><span class="co"># A way to have the name of the tested environment according to test.pos value:</span></span></span>
-<span class="r-in"><span><span class="va">fun7</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="op">)</span> <span class="op">{</span></span></span>
-<span class="r-in"><span>  <span class="va">min</span> <span class="op">&lt;-</span> <span class="st">"VALUE"</span></span></span>
-<span class="r-in"><span>  <span class="va">fun8</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="op">)</span> <span class="op">{</span></span></span>
-<span class="r-in"><span>    <span class="va">test.pos</span> <span class="op">&lt;-</span> <span class="fl">1</span> <span class="co"># value 1 tests the fun8 env, 2 tests the fun7 env.</span></span></span>
-<span class="r-in"><span>    <span class="va">range</span> <span class="op">&lt;-</span> <span class="st">"VALUE"</span></span></span>
-<span class="r-in"><span>    <span class="va">name</span> <span class="op">&lt;-</span> <span class="kw">if</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sys.parent.html" class="external-link">sys.calls</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span> <span class="op">&gt;=</span> <span class="va">test.pos</span><span class="op">)</span> <span class="op">{</span></span></span>
-<span class="r-in"><span>      <span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">as.character</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sys.parent.html" class="external-link">sys.calls</a></span><span class="op">(</span><span class="op">)</span><span class="op">[[</span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sys.parent.html" class="external-link">sys.calls</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> <span class="fl">1</span> <span class="op">-</span> <span class="va">test.pos</span><span class="op">]</span><span class="op">]</span><span class="op">)</span></span></span>
-<span class="r-in"><span>    <span class="op">}</span> <span class="kw">else</span> <span class="op">{</span></span></span>
-<span class="r-in"><span>      <span class="fu"><a href="https://rdrr.io/r/base/search.html" class="external-link">search</a></span><span class="op">(</span><span class="op">)</span><span class="op">[</span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/search.html" class="external-link">search</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span><span class="op">)</span><span class="op">[</span><span class="va">test.pos</span> <span class="op">-</span> <span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sys.parent.html" class="external-link">sys.calls</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span><span class="op">]</span><span class="op">]</span></span></span>
-<span class="r-in"><span>    <span class="op">}</span></span></span>
-<span class="r-in"><span>    <span class="fu">saferDev</span><span class="fu">::</span><span class="fu">env_check</span><span class="op">(</span>pos <span class="op">=</span> <span class="va">test.pos</span>, name <span class="op">=</span> <span class="va">name</span><span class="op">)</span> </span></span>
-<span class="r-in"><span>  <span class="op">}</span></span></span>
-<span class="r-in"><span>  <span class="fu">fun8</span><span class="op">(</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="op">}</span></span></span>
-<span class="r-in"><span><span class="va">a</span> <span class="op">&lt;-</span> <span class="fu">fun7</span><span class="op">(</span><span class="op">)</span> </span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="va">a</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> SOME VARIABLES OF THE CHECKED ENVIRONMENT fun8 ARE ALSO PRESENT IN :</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> package:base: range</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> SEARCH PATH CHECKED:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> .GlobalEnv</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> package:saferDev</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> package:stats</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> package:graphics</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> package:grDevices</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> package:utils</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> package:datasets</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> package:methods</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Autoloads</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> package:base</span>
+<span class="r-in"><span><span class="co"># pos = 2 checks the environment one step above the function (here, the calling environment).</span></span></span>
+<span class="r-in"><span><span class="co"># See the env_check() article of the website for more examples.</span></span></span>
+<span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

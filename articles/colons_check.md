@@ -199,7 +199,7 @@ base::file.remove(base::file.path(out_path = base::tempdir(), "fun2_safer.R", fs
 ```
 
     ## Warning in base::file.remove(base::file.path(out_path = base::tempdir(), :
-    ## cannot remove file '/tmp/Rtmp3jhat8/fun2_safer.R', reason 'No such file or
+    ## cannot remove file '/tmp/Rtmp4A3MSO/fun2_safer.R', reason 'No such file or
     ## directory'
 
     ## [1] FALSE
@@ -221,7 +221,7 @@ colons_check(
     ## 3    sum     
 
     ## MODIFIED CODE EXPORTED IN:
-    ## /tmp/Rtmp3jhat8/fun2_safer.R
+    ## /tmp/Rtmp4A3MSO/fun2_safer.R
 
 ``` r
 
@@ -229,7 +229,7 @@ base::readLines(con = base::file.path(base::tempdir(), "fun2_safer.R", fsep = "/
 ```
 
     ## [1] "fun2_safer <- function () " "{"                         
-    ## [3] "base::sum(1, 3)"            "}"
+    ## [3] "    base::sum(1, 3)"        "}"
 
 \
 
@@ -302,8 +302,8 @@ colons_check(
     ## {
     ##     FUN1 <- function() {
     ##     }
-    ##     matches <- base::gregexpr(pattern = base::paste0(pattern, 
-    ##         "\\(#"), text = text)
+    ##     matches <- base::gregexpr(pattern = base::paste0(pattern, "\\(#"), 
+    ##         text = text)
     ##     dt <- base::c(2:8)
     ##     matched_strings <- base::regmatches(x = text, m = matches)[[1]]
     ##     FUN1()

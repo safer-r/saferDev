@@ -232,17 +232,14 @@ for_loop_nb_check(x = fun2)
     ##             call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, 
     ##             domain = NULL)
     ##     }
-    ##     else if (base::is.atomic(x = tempo_for_seq1) && base::typeof(x = tempo_for_seq1) %in% 
-    ##         base::c("double", "integer") && base::all(x = tempo_for_seq1 < 
+    ##     else if (base::is.numeric(x = tempo_for_seq1) && base::all(tempo_for_seq1 < 
     ##         0, na.rm = FALSE)) {
     ##         base::warning("FOR SEQUENCE WITH ALL NEGATIVE VALUES", 
     ##             call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, 
     ##             domain = NULL)
     ##     }
-    ##     else if (base::is.atomic(x = tempo_for_seq1) && base::typeof(x = tempo_for_seq1) %in% 
-    ##         base::c("double", "integer", "character", "complex") && 
-    ##         base::length(x = tempo_for_seq1) >= 2 && tempo_for_seq1[1] > 
-    ##         tempo_for_seq1[2]) {
+    ##     else if (base::is.numeric(x = tempo_for_seq1) && base::length(x = tempo_for_seq1) >= 
+    ##         2 && tempo_for_seq1[1] > tempo_for_seq1[2]) {
     ##         base::warning("FOR SEQUENCE DECREASING", call. = FALSE, 
     ##             immediate. = FALSE, noBreaks. = FALSE, domain = NULL)
     ##     }
@@ -269,17 +266,14 @@ for_loop_nb_check(x = fun2)
     ##             call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, 
     ##             domain = NULL)
     ##     }
-    ##     else if (base::is.atomic(x = tempo_for_seq2) && base::typeof(x = tempo_for_seq2) %in% 
-    ##         base::c("double", "integer") && base::all(x = tempo_for_seq2 < 
+    ##     else if (base::is.numeric(x = tempo_for_seq2) && base::all(tempo_for_seq2 < 
     ##         0, na.rm = FALSE)) {
     ##         base::warning("FOR SEQUENCE WITH ALL NEGATIVE VALUES", 
     ##             call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, 
     ##             domain = NULL)
     ##     }
-    ##     else if (base::is.atomic(x = tempo_for_seq2) && base::typeof(x = tempo_for_seq2) %in% 
-    ##         base::c("double", "integer", "character", "complex") && 
-    ##         base::length(x = tempo_for_seq2) >= 2 && tempo_for_seq2[1] > 
-    ##         tempo_for_seq2[2]) {
+    ##     else if (base::is.numeric(x = tempo_for_seq2) && base::length(x = tempo_for_seq2) >= 
+    ##         2 && tempo_for_seq2[1] > tempo_for_seq2[2]) {
     ##         base::warning("FOR SEQUENCE DECREASING", call. = FALSE, 
     ##             immediate. = FALSE, noBreaks. = FALSE, domain = NULL)
     ##     }
@@ -306,17 +300,14 @@ for_loop_nb_check(x = fun2)
     ##             call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, 
     ##             domain = NULL)
     ##     }
-    ##     else if (base::is.atomic(x = tempo_for_seq3) && base::typeof(x = tempo_for_seq3) %in% 
-    ##         base::c("double", "integer") && base::all(x = tempo_for_seq3 < 
+    ##     else if (base::is.numeric(x = tempo_for_seq3) && base::all(tempo_for_seq3 < 
     ##         0, na.rm = FALSE)) {
     ##         base::warning("FOR SEQUENCE WITH ALL NEGATIVE VALUES", 
     ##             call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, 
     ##             domain = NULL)
     ##     }
-    ##     else if (base::is.atomic(x = tempo_for_seq3) && base::typeof(x = tempo_for_seq3) %in% 
-    ##         base::c("double", "integer", "character", "complex") && 
-    ##         base::length(x = tempo_for_seq3) >= 2 && tempo_for_seq3[1] > 
-    ##         tempo_for_seq3[2]) {
+    ##     else if (base::is.numeric(x = tempo_for_seq3) && base::length(x = tempo_for_seq3) >= 
+    ##         2 && tempo_for_seq3[1] > tempo_for_seq3[2]) {
     ##         base::warning("FOR SEQUENCE DECREASING", call. = FALSE, 
     ##             immediate. = FALSE, noBreaks. = FALSE, domain = NULL)
     ##     }
@@ -343,17 +334,14 @@ for_loop_nb_check(x = fun2)
     ##             call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, 
     ##             domain = NULL)
     ##     }
-    ##     else if (base::is.atomic(x = tempo_for_seq4) && base::typeof(x = tempo_for_seq4) %in% 
-    ##         base::c("double", "integer") && base::all(x = tempo_for_seq4 < 
+    ##     else if (base::is.numeric(x = tempo_for_seq4) && base::all(tempo_for_seq4 < 
     ##         0, na.rm = FALSE)) {
     ##         base::warning("FOR SEQUENCE WITH ALL NEGATIVE VALUES", 
     ##             call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, 
     ##             domain = NULL)
     ##     }
-    ##     else if (base::is.atomic(x = tempo_for_seq4) && base::typeof(x = tempo_for_seq4) %in% 
-    ##         base::c("double", "integer", "character", "complex") && 
-    ##         base::length(x = tempo_for_seq4) >= 2 && tempo_for_seq4[1] > 
-    ##         tempo_for_seq4[2]) {
+    ##     else if (base::is.numeric(x = tempo_for_seq4) && base::length(x = tempo_for_seq4) >= 
+    ##         2 && tempo_for_seq4[1] > tempo_for_seq4[2]) {
     ##         base::warning("FOR SEQUENCE DECREASING", call. = FALSE, 
     ##             immediate. = FALSE, noBreaks. = FALSE, domain = NULL)
     ##     }
@@ -380,17 +368,14 @@ for_loop_nb_check(x = fun2)
     ##             call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, 
     ##             domain = NULL)
     ##     }
-    ##     else if (base::is.atomic(x = tempo_for_seq5) && base::typeof(x = tempo_for_seq5) %in% 
-    ##         base::c("double", "integer") && base::all(x = tempo_for_seq5 < 
+    ##     else if (base::is.numeric(x = tempo_for_seq5) && base::all(tempo_for_seq5 < 
     ##         0, na.rm = FALSE)) {
     ##         base::warning("FOR SEQUENCE WITH ALL NEGATIVE VALUES", 
     ##             call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, 
     ##             domain = NULL)
     ##     }
-    ##     else if (base::is.atomic(x = tempo_for_seq5) && base::typeof(x = tempo_for_seq5) %in% 
-    ##         base::c("double", "integer", "character", "complex") && 
-    ##         base::length(x = tempo_for_seq5) >= 2 && tempo_for_seq5[1] > 
-    ##         tempo_for_seq5[2]) {
+    ##     else if (base::is.numeric(x = tempo_for_seq5) && base::length(x = tempo_for_seq5) >= 
+    ##         2 && tempo_for_seq5[1] > tempo_for_seq5[2]) {
     ##         base::warning("FOR SEQUENCE DECREASING", call. = FALSE, 
     ##             immediate. = FALSE, noBreaks. = FALSE, domain = NULL)
     ##     }
@@ -417,17 +402,14 @@ for_loop_nb_check(x = fun2)
     ##             call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, 
     ##             domain = NULL)
     ##     }
-    ##     else if (base::is.atomic(x = tempo_for_seq6) && base::typeof(x = tempo_for_seq6) %in% 
-    ##         base::c("double", "integer") && base::all(x = tempo_for_seq6 < 
+    ##     else if (base::is.numeric(x = tempo_for_seq6) && base::all(tempo_for_seq6 < 
     ##         0, na.rm = FALSE)) {
     ##         base::warning("FOR SEQUENCE WITH ALL NEGATIVE VALUES", 
     ##             call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, 
     ##             domain = NULL)
     ##     }
-    ##     else if (base::is.atomic(x = tempo_for_seq6) && base::typeof(x = tempo_for_seq6) %in% 
-    ##         base::c("double", "integer", "character", "complex") && 
-    ##         base::length(x = tempo_for_seq6) >= 2 && tempo_for_seq6[1] > 
-    ##         tempo_for_seq6[2]) {
+    ##     else if (base::is.numeric(x = tempo_for_seq6) && base::length(x = tempo_for_seq6) >= 
+    ##         2 && tempo_for_seq6[1] > tempo_for_seq6[2]) {
     ##         base::warning("FOR SEQUENCE DECREASING", call. = FALSE, 
     ##             immediate. = FALSE, noBreaks. = FALSE, domain = NULL)
     ##     }
@@ -454,17 +436,14 @@ for_loop_nb_check(x = fun2)
     ##             call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, 
     ##             domain = NULL)
     ##     }
-    ##     else if (base::is.atomic(x = tempo_for_seq7) && base::typeof(x = tempo_for_seq7) %in% 
-    ##         base::c("double", "integer") && base::all(x = tempo_for_seq7 < 
+    ##     else if (base::is.numeric(x = tempo_for_seq7) && base::all(tempo_for_seq7 < 
     ##         0, na.rm = FALSE)) {
     ##         base::warning("FOR SEQUENCE WITH ALL NEGATIVE VALUES", 
     ##             call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, 
     ##             domain = NULL)
     ##     }
-    ##     else if (base::is.atomic(x = tempo_for_seq7) && base::typeof(x = tempo_for_seq7) %in% 
-    ##         base::c("double", "integer", "character", "complex") && 
-    ##         base::length(x = tempo_for_seq7) >= 2 && tempo_for_seq7[1] > 
-    ##         tempo_for_seq7[2]) {
+    ##     else if (base::is.numeric(x = tempo_for_seq7) && base::length(x = tempo_for_seq7) >= 
+    ##         2 && tempo_for_seq7[1] > tempo_for_seq7[2]) {
     ##         base::warning("FOR SEQUENCE DECREASING", call. = FALSE, 
     ##             immediate. = FALSE, noBreaks. = FALSE, domain = NULL)
     ##     }
@@ -491,17 +470,14 @@ for_loop_nb_check(x = fun2)
     ##             call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, 
     ##             domain = NULL)
     ##     }
-    ##     else if (base::is.atomic(x = tempo_for_seq8) && base::typeof(x = tempo_for_seq8) %in% 
-    ##         base::c("double", "integer") && base::all(x = tempo_for_seq8 < 
+    ##     else if (base::is.numeric(x = tempo_for_seq8) && base::all(tempo_for_seq8 < 
     ##         0, na.rm = FALSE)) {
     ##         base::warning("FOR SEQUENCE WITH ALL NEGATIVE VALUES", 
     ##             call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, 
     ##             domain = NULL)
     ##     }
-    ##     else if (base::is.atomic(x = tempo_for_seq8) && base::typeof(x = tempo_for_seq8) %in% 
-    ##         base::c("double", "integer", "character", "complex") && 
-    ##         base::length(x = tempo_for_seq8) >= 2 && tempo_for_seq8[1] > 
-    ##         tempo_for_seq8[2]) {
+    ##     else if (base::is.numeric(x = tempo_for_seq8) && base::length(x = tempo_for_seq8) >= 
+    ##         2 && tempo_for_seq8[1] > tempo_for_seq8[2]) {
     ##         base::warning("FOR SEQUENCE DECREASING", call. = FALSE, 
     ##             immediate. = FALSE, noBreaks. = FALSE, domain = NULL)
     ##     }
@@ -528,17 +504,14 @@ for_loop_nb_check(x = fun2)
     ##             call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, 
     ##             domain = NULL)
     ##     }
-    ##     else if (base::is.atomic(x = tempo_for_seq9) && base::typeof(x = tempo_for_seq9) %in% 
-    ##         base::c("double", "integer") && base::all(x = tempo_for_seq9 < 
+    ##     else if (base::is.numeric(x = tempo_for_seq9) && base::all(tempo_for_seq9 < 
     ##         0, na.rm = FALSE)) {
     ##         base::warning("FOR SEQUENCE WITH ALL NEGATIVE VALUES", 
     ##             call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, 
     ##             domain = NULL)
     ##     }
-    ##     else if (base::is.atomic(x = tempo_for_seq9) && base::typeof(x = tempo_for_seq9) %in% 
-    ##         base::c("double", "integer", "character", "complex") && 
-    ##         base::length(x = tempo_for_seq9) >= 2 && tempo_for_seq9[1] > 
-    ##         tempo_for_seq9[2]) {
+    ##     else if (base::is.numeric(x = tempo_for_seq9) && base::length(x = tempo_for_seq9) >= 
+    ##         2 && tempo_for_seq9[1] > tempo_for_seq9[2]) {
     ##         base::warning("FOR SEQUENCE DECREASING", call. = FALSE, 
     ##             immediate. = FALSE, noBreaks. = FALSE, domain = NULL)
     ##     }
@@ -565,17 +538,14 @@ for_loop_nb_check(x = fun2)
     ##             call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, 
     ##             domain = NULL)
     ##     }
-    ##     else if (base::is.atomic(x = tempo_for_seq10) && base::typeof(x = tempo_for_seq10) %in% 
-    ##         base::c("double", "integer") && base::all(x = tempo_for_seq10 < 
+    ##     else if (base::is.numeric(x = tempo_for_seq10) && base::all(tempo_for_seq10 < 
     ##         0, na.rm = FALSE)) {
     ##         base::warning("FOR SEQUENCE WITH ALL NEGATIVE VALUES", 
     ##             call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, 
     ##             domain = NULL)
     ##     }
-    ##     else if (base::is.atomic(x = tempo_for_seq10) && base::typeof(x = tempo_for_seq10) %in% 
-    ##         base::c("double", "integer", "character", "complex") && 
-    ##         base::length(x = tempo_for_seq10) >= 2 && tempo_for_seq10[1] > 
-    ##         tempo_for_seq10[2]) {
+    ##     else if (base::is.numeric(x = tempo_for_seq10) && base::length(x = tempo_for_seq10) >= 
+    ##         2 && tempo_for_seq10[1] > tempo_for_seq10[2]) {
     ##         base::warning("FOR SEQUENCE DECREASING", call. = FALSE, 
     ##             immediate. = FALSE, noBreaks. = FALSE, domain = NULL)
     ##     }
@@ -602,17 +572,14 @@ for_loop_nb_check(x = fun2)
     ##             call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, 
     ##             domain = NULL)
     ##     }
-    ##     else if (base::is.atomic(x = tempo_for_seq11) && base::typeof(x = tempo_for_seq11) %in% 
-    ##         base::c("double", "integer") && base::all(x = tempo_for_seq11 < 
+    ##     else if (base::is.numeric(x = tempo_for_seq11) && base::all(tempo_for_seq11 < 
     ##         0, na.rm = FALSE)) {
     ##         base::warning("FOR SEQUENCE WITH ALL NEGATIVE VALUES", 
     ##             call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, 
     ##             domain = NULL)
     ##     }
-    ##     else if (base::is.atomic(x = tempo_for_seq11) && base::typeof(x = tempo_for_seq11) %in% 
-    ##         base::c("double", "integer", "character", "complex") && 
-    ##         base::length(x = tempo_for_seq11) >= 2 && tempo_for_seq11[1] > 
-    ##         tempo_for_seq11[2]) {
+    ##     else if (base::is.numeric(x = tempo_for_seq11) && base::length(x = tempo_for_seq11) >= 
+    ##         2 && tempo_for_seq11[1] > tempo_for_seq11[2]) {
     ##         base::warning("FOR SEQUENCE DECREASING", call. = FALSE, 
     ##             immediate. = FALSE, noBreaks. = FALSE, domain = NULL)
     ##     }
@@ -639,17 +606,14 @@ for_loop_nb_check(x = fun2)
     ##             call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, 
     ##             domain = NULL)
     ##     }
-    ##     else if (base::is.atomic(x = tempo_for_seq12) && base::typeof(x = tempo_for_seq12) %in% 
-    ##         base::c("double", "integer") && base::all(x = tempo_for_seq12 < 
+    ##     else if (base::is.numeric(x = tempo_for_seq12) && base::all(tempo_for_seq12 < 
     ##         0, na.rm = FALSE)) {
     ##         base::warning("FOR SEQUENCE WITH ALL NEGATIVE VALUES", 
     ##             call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, 
     ##             domain = NULL)
     ##     }
-    ##     else if (base::is.atomic(x = tempo_for_seq12) && base::typeof(x = tempo_for_seq12) %in% 
-    ##         base::c("double", "integer", "character", "complex") && 
-    ##         base::length(x = tempo_for_seq12) >= 2 && tempo_for_seq12[1] > 
-    ##         tempo_for_seq12[2]) {
+    ##     else if (base::is.numeric(x = tempo_for_seq12) && base::length(x = tempo_for_seq12) >= 
+    ##         2 && tempo_for_seq12[1] > tempo_for_seq12[2]) {
     ##         base::warning("FOR SEQUENCE DECREASING", call. = FALSE, 
     ##             immediate. = FALSE, noBreaks. = FALSE, domain = NULL)
     ##     }
@@ -676,17 +640,14 @@ for_loop_nb_check(x = fun2)
     ##             call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, 
     ##             domain = NULL)
     ##     }
-    ##     else if (base::is.atomic(x = tempo_for_seq13) && base::typeof(x = tempo_for_seq13) %in% 
-    ##         base::c("double", "integer") && base::all(x = tempo_for_seq13 < 
+    ##     else if (base::is.numeric(x = tempo_for_seq13) && base::all(tempo_for_seq13 < 
     ##         0, na.rm = FALSE)) {
     ##         base::warning("FOR SEQUENCE WITH ALL NEGATIVE VALUES", 
     ##             call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, 
     ##             domain = NULL)
     ##     }
-    ##     else if (base::is.atomic(x = tempo_for_seq13) && base::typeof(x = tempo_for_seq13) %in% 
-    ##         base::c("double", "integer", "character", "complex") && 
-    ##         base::length(x = tempo_for_seq13) >= 2 && tempo_for_seq13[1] > 
-    ##         tempo_for_seq13[2]) {
+    ##     else if (base::is.numeric(x = tempo_for_seq13) && base::length(x = tempo_for_seq13) >= 
+    ##         2 && tempo_for_seq13[1] > tempo_for_seq13[2]) {
     ##         base::warning("FOR SEQUENCE DECREASING", call. = FALSE, 
     ##             immediate. = FALSE, noBreaks. = FALSE, domain = NULL)
     ##     }
@@ -713,17 +674,14 @@ for_loop_nb_check(x = fun2)
     ##             call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, 
     ##             domain = NULL)
     ##     }
-    ##     else if (base::is.atomic(x = tempo_for_seq14) && base::typeof(x = tempo_for_seq14) %in% 
-    ##         base::c("double", "integer") && base::all(x = tempo_for_seq14 < 
+    ##     else if (base::is.numeric(x = tempo_for_seq14) && base::all(tempo_for_seq14 < 
     ##         0, na.rm = FALSE)) {
     ##         base::warning("FOR SEQUENCE WITH ALL NEGATIVE VALUES", 
     ##             call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, 
     ##             domain = NULL)
     ##     }
-    ##     else if (base::is.atomic(x = tempo_for_seq14) && base::typeof(x = tempo_for_seq14) %in% 
-    ##         base::c("double", "integer", "character", "complex") && 
-    ##         base::length(x = tempo_for_seq14) >= 2 && tempo_for_seq14[1] > 
-    ##         tempo_for_seq14[2]) {
+    ##     else if (base::is.numeric(x = tempo_for_seq14) && base::length(x = tempo_for_seq14) >= 
+    ##         2 && tempo_for_seq14[1] > tempo_for_seq14[2]) {
     ##         base::warning("FOR SEQUENCE DECREASING", call. = FALSE, 
     ##             immediate. = FALSE, noBreaks. = FALSE, domain = NULL)
     ##     }
@@ -731,7 +689,7 @@ for_loop_nb_check(x = fun2)
     ##         base::print(i)
     ##     }
     ## }
-    ## <environment: 0x5591b9344de8>
+    ## <environment: 0x558603a589d8>
 
 \
 
@@ -875,17 +833,14 @@ fun9_safer # a checking line is added before the loop.
     ##             call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, 
     ##             domain = NULL)
     ##     }
-    ##     else if (base::is.atomic(x = tempo_for_seq1) && base::typeof(x = tempo_for_seq1) %in% 
-    ##         base::c("double", "integer") && base::all(x = tempo_for_seq1 < 
+    ##     else if (base::is.numeric(x = tempo_for_seq1) && base::all(tempo_for_seq1 < 
     ##         0, na.rm = FALSE)) {
     ##         base::warning("FOR SEQUENCE WITH ALL NEGATIVE VALUES", 
     ##             call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, 
     ##             domain = NULL)
     ##     }
-    ##     else if (base::is.atomic(x = tempo_for_seq1) && base::typeof(x = tempo_for_seq1) %in% 
-    ##         base::c("double", "integer", "character", "complex") && 
-    ##         base::length(x = tempo_for_seq1) >= 2 && tempo_for_seq1[1] > 
-    ##         tempo_for_seq1[2]) {
+    ##     else if (base::is.numeric(x = tempo_for_seq1) && base::length(x = tempo_for_seq1) >= 
+    ##         2 && tempo_for_seq1[1] > tempo_for_seq1[2]) {
     ##         base::warning("FOR SEQUENCE DECREASING", call. = FALSE, 
     ##             immediate. = FALSE, noBreaks. = FALSE, domain = NULL)
     ##     }
@@ -894,7 +849,7 @@ fun9_safer # a checking line is added before the loop.
     ##     }
     ##     y
     ## }
-    ## <environment: 0x5591bbcb9fb0>
+    ## <environment: 0x5586063c0f08>
 
 ``` r
 
@@ -929,19 +884,19 @@ for_loop_nb_check(
     ## 3    for     for (i in 1:length(x)) {
 
     ## MODIFIED CODE EXPORTED IN:
-    ## /tmp/RtmpbjlApY/dir182047d1d89f/fun9_safer.R
+    ## /tmp/RtmpSUVOsO/dir1ac6286cf5ed/fun9_safer.R
 
 ``` r
 
 base::readLines(con = base::file.path(tempo_dir, "fun9_safer.R", fsep = "/"))
 ```
 
-    ## [1] "fun9_safer <- function (x) "                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
-    ## [2] "{"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          
-    ## [3] "    tempo_for_seq1 <- 1:length(x) ; if(base::length(x = tempo_for_seq1) == 0){base::warning(\"FOR SEQUENCE EMPTY: 0 ITERATION\", call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, domain = NULL)}else if(base::anyNA(x = tempo_for_seq1)){base::warning(\"FOR SEQUENCE WITH NA VALUES\", call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, domain = NULL)}else if(base::length(x = tempo_for_seq1) == 1){base::warning(\"FOR SEQUENCE WITH A SINGLE VALUE (EQUAL BOUNDS?): SINGLE ITERATION\", call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, domain = NULL)}else if(base::is.atomic(x = tempo_for_seq1) && base::any(base::is.infinite(x = tempo_for_seq1), na.rm = TRUE)){base::warning(\"FOR SEQUENCE WITH INFINITE VALUES: NO ENDLESS LOOP POSSIBLE BECAUSE THE for() CONTROLLER IS FULLY EVALUATED BEFORE ITERATING, BUT CHECK THAT AN INFINITE VALUE IS EXPECTED\", call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, domain = NULL)}else if(base::is.atomic(x = tempo_for_seq1) && base::typeof(x = tempo_for_seq1) %in% base::c(\"double\", \"integer\") && base::all(x = tempo_for_seq1 < 0, na.rm = FALSE)){base::warning(\"FOR SEQUENCE WITH ALL NEGATIVE VALUES\", call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, domain = NULL)}else if(base::is.atomic(x = tempo_for_seq1) && base::typeof(x = tempo_for_seq1) %in% base::c(\"double\", \"integer\", \"character\", \"complex\") && base::length(x = tempo_for_seq1) >= 2 && tempo_for_seq1[1] > tempo_for_seq1[2]){base::warning(\"FOR SEQUENCE DECREASING\", call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, domain = NULL)} ; for (i in tempo_for_seq1) {"
-    ## [4] "        y <- i"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             
-    ## [5] "    }"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      
-    ## [6] "    y"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      
+    ## [1] "fun9_safer <- function (x) "                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              
+    ## [2] "{"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        
+    ## [3] "    tempo_for_seq1 <- 1:length(x) ; if(base::length(x = tempo_for_seq1) == 0){base::warning(\"FOR SEQUENCE EMPTY: 0 ITERATION\", call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, domain = NULL)}else if(base::anyNA(x = tempo_for_seq1)){base::warning(\"FOR SEQUENCE WITH NA VALUES\", call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, domain = NULL)}else if(base::length(x = tempo_for_seq1) == 1){base::warning(\"FOR SEQUENCE WITH A SINGLE VALUE (EQUAL BOUNDS?): SINGLE ITERATION\", call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, domain = NULL)}else if(base::is.atomic(x = tempo_for_seq1) && base::any(base::is.infinite(x = tempo_for_seq1), na.rm = TRUE)){base::warning(\"FOR SEQUENCE WITH INFINITE VALUES: NO ENDLESS LOOP POSSIBLE BECAUSE THE for() CONTROLLER IS FULLY EVALUATED BEFORE ITERATING, BUT CHECK THAT AN INFINITE VALUE IS EXPECTED\", call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, domain = NULL)}else if(base::is.numeric(x = tempo_for_seq1) && base::all(tempo_for_seq1 < 0, na.rm = FALSE)){base::warning(\"FOR SEQUENCE WITH ALL NEGATIVE VALUES\", call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, domain = NULL)}else if(base::is.numeric(x = tempo_for_seq1) && base::length(x = tempo_for_seq1) >= 2 && tempo_for_seq1[1] > tempo_for_seq1[2]){base::warning(\"FOR SEQUENCE DECREASING\", call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, domain = NULL)} ; for (i in tempo_for_seq1) {"
+    ## [4] "        y <- i"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           
+    ## [5] "    }"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    
+    ## [6] "    y"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    
     ## [7] "}"
 
 \
@@ -1004,17 +959,14 @@ for_loop_nb_check(x = fun4)
     ##             call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, 
     ##             domain = NULL)
     ##     }
-    ##     else if (base::is.atomic(x = tempo_for_seq1) && base::typeof(x = tempo_for_seq1) %in% 
-    ##         base::c("double", "integer") && base::all(x = tempo_for_seq1 < 
+    ##     else if (base::is.numeric(x = tempo_for_seq1) && base::all(tempo_for_seq1 < 
     ##         0, na.rm = FALSE)) {
     ##         base::warning("FOR SEQUENCE WITH ALL NEGATIVE VALUES", 
     ##             call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, 
     ##             domain = NULL)
     ##     }
-    ##     else if (base::is.atomic(x = tempo_for_seq1) && base::typeof(x = tempo_for_seq1) %in% 
-    ##         base::c("double", "integer", "character", "complex") && 
-    ##         base::length(x = tempo_for_seq1) >= 2 && tempo_for_seq1[1] > 
-    ##         tempo_for_seq1[2]) {
+    ##     else if (base::is.numeric(x = tempo_for_seq1) && base::length(x = tempo_for_seq1) >= 
+    ##         2 && tempo_for_seq1[1] > tempo_for_seq1[2]) {
     ##         base::warning("FOR SEQUENCE DECREASING", call. = FALSE, 
     ##             immediate. = FALSE, noBreaks. = FALSE, domain = NULL)
     ##     }
@@ -1023,7 +975,7 @@ for_loop_nb_check(x = fun4)
     ##     }
     ##     y
     ## }
-    ## <environment: 0x5591beb34290>
+    ## <environment: 0x5586090ebef0>
 
 ``` r
 
@@ -1072,17 +1024,14 @@ for_loop_nb_check(x = fun5)
     ##                 call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, 
     ##                 domain = NULL)
     ##         }
-    ##         else if (base::is.atomic(x = tempo_for_seq1) && base::typeof(x = tempo_for_seq1) %in% 
-    ##             base::c("double", "integer") && base::all(x = tempo_for_seq1 < 
+    ##         else if (base::is.numeric(x = tempo_for_seq1) && base::all(tempo_for_seq1 < 
     ##             0, na.rm = FALSE)) {
     ##             base::warning("FOR SEQUENCE WITH ALL NEGATIVE VALUES", 
     ##                 call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, 
     ##                 domain = NULL)
     ##         }
-    ##         else if (base::is.atomic(x = tempo_for_seq1) && base::typeof(x = tempo_for_seq1) %in% 
-    ##             base::c("double", "integer", "character", "complex") && 
-    ##             base::length(x = tempo_for_seq1) >= 2 && tempo_for_seq1[1] > 
-    ##             tempo_for_seq1[2]) {
+    ##         else if (base::is.numeric(x = tempo_for_seq1) && base::length(x = tempo_for_seq1) >= 
+    ##             2 && tempo_for_seq1[1] > tempo_for_seq1[2]) {
     ##             base::warning("FOR SEQUENCE DECREASING", call. = FALSE, 
     ##                 immediate. = FALSE, noBreaks. = FALSE, domain = NULL)
     ##         }
@@ -1091,7 +1040,7 @@ for_loop_nb_check(x = fun5)
     ##         }
     ##     }
     ## }
-    ## <environment: 0x5591bf121770>
+    ## <environment: 0x5586096d0690>
 
 ``` r
 
@@ -1132,17 +1081,14 @@ for_loop_nb_check(x = fun6)
     ##             call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, 
     ##             domain = NULL)
     ##     }
-    ##     else if (base::is.atomic(x = tempo_for_seq1) && base::typeof(x = tempo_for_seq1) %in% 
-    ##         base::c("double", "integer") && base::all(x = tempo_for_seq1 < 
+    ##     else if (base::is.numeric(x = tempo_for_seq1) && base::all(tempo_for_seq1 < 
     ##         0, na.rm = FALSE)) {
     ##         base::warning("FOR SEQUENCE WITH ALL NEGATIVE VALUES", 
     ##             call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, 
     ##             domain = NULL)
     ##     }
-    ##     else if (base::is.atomic(x = tempo_for_seq1) && base::typeof(x = tempo_for_seq1) %in% 
-    ##         base::c("double", "integer", "character", "complex") && 
-    ##         base::length(x = tempo_for_seq1) >= 2 && tempo_for_seq1[1] > 
-    ##         tempo_for_seq1[2]) {
+    ##     else if (base::is.numeric(x = tempo_for_seq1) && base::length(x = tempo_for_seq1) >= 
+    ##         2 && tempo_for_seq1[1] > tempo_for_seq1[2]) {
     ##         base::warning("FOR SEQUENCE DECREASING", call. = FALSE, 
     ##             immediate. = FALSE, noBreaks. = FALSE, domain = NULL)
     ##     }
@@ -1151,7 +1097,7 @@ for_loop_nb_check(x = fun6)
     ##     }
     ## }) 
     ## f(1)
-    ## <environment: 0x5591bf7023d8>
+    ## <environment: 0x558609cba6e8>
 
 ``` r
 
@@ -1193,17 +1139,14 @@ for_loop_nb_check(x = fun7)
     ##             call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, 
     ##             domain = NULL)
     ##     }
-    ##     else if (base::is.atomic(x = tempo_for_seq1) && base::typeof(x = tempo_for_seq1) %in% 
-    ##         base::c("double", "integer") && base::all(x = tempo_for_seq1 < 
+    ##     else if (base::is.numeric(x = tempo_for_seq1) && base::all(tempo_for_seq1 < 
     ##         0, na.rm = FALSE)) {
     ##         base::warning("FOR SEQUENCE WITH ALL NEGATIVE VALUES", 
     ##             call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, 
     ##             domain = NULL)
     ##     }
-    ##     else if (base::is.atomic(x = tempo_for_seq1) && base::typeof(x = tempo_for_seq1) %in% 
-    ##         base::c("double", "integer", "character", "complex") && 
-    ##         base::length(x = tempo_for_seq1) >= 2 && tempo_for_seq1[1] > 
-    ##         tempo_for_seq1[2]) {
+    ##     else if (base::is.numeric(x = tempo_for_seq1) && base::length(x = tempo_for_seq1) >= 
+    ##         2 && tempo_for_seq1[1] > tempo_for_seq1[2]) {
     ##         base::warning("FOR SEQUENCE DECREASING", call. = FALSE, 
     ##             immediate. = FALSE, noBreaks. = FALSE, domain = NULL)
     ##     }
@@ -1212,6 +1155,6 @@ for_loop_nb_check(x = fun7)
     ##     }
     ##     y
     ## }
-    ## <environment: 0x5591bfcdeef0>
+    ## <environment: 0x55860a292ed0>
 
 \

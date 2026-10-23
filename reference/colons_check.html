@@ -35,6 +35,7 @@
 <li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
       </ul><ul class="navbar-nav"><li class="nav-item"><form class="form-inline" role="search">
  <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json"></form></li>
+<li class="nav-item"><a class="external-link nav-link" href="https://github.com/safer-r/saferDev/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
       </ul></div>
 
 
@@ -44,7 +45,7 @@
   <main id="main" class="col-md-9"><div class="page-header">
 
       <h1>Colons Check</h1>
-
+      <small class="dont-index">Source: <a href="https://github.com/safer-r/saferDev/blob/main/R/colons_check.R" class="external-link"><code>R/colons_check.R</code></a></small>
       <div class="d-none name"><code>colons_check.Rd</code></div>
     </div>
 
@@ -73,7 +74,7 @@
 
 
 <dt id="arg-export">export<a class="anchor" aria-label="anchor" href="#arg-export"></a></dt>
-<dd><p>Single logical value. Export the modified code into a <code>.R</code> file? If <code>TRUE</code>, the modified function is not returned but only exported. The name of the file is the name of the tested function, with <code>_safer</code> added at the end (e.g., <code>test_safer.R</code>). Warning: the written code is the analyzed code (see the <code>Details</code> section): comments removed and multiple spaces collapsed. An error is returned if the file already exists in <code>out_path</code>, and if the tested function is not designated by a function name (like <code>test</code> or <code>package::test</code>), i.e., written by an inline definition (like <code>function(x){x}</code>) or by a component writing (like <code>FUN_LIST$fun</code>). If <code>FALSE</code> (default), the modified function is not written but returned.</p></dd>
+<dd><p>Single logical value. Export the modified code into a <code>.R</code> file? If <code>TRUE</code>, the modified function is not returned but only exported. The name of the file is the name of the tested function, with <code>_safer</code> added at the end (e.g., <code>test_safer.R</code>). The written code is the code of the submitted function, with its comments and indentation, only modified by the added package attributions (see the <code>Details</code> section). An error is returned if the file already exists in <code>out_path</code>, and if the tested function is not designated by a function name (like <code>test</code> or <code>package::test</code>), i.e., written by an inline definition (like <code>function(x){x}</code>) or by a component writing (like <code>FUN_LIST$fun</code>). If <code>FALSE</code> (default), the modified function is not written but returned.</p></dd>
 
 
 <dt id="arg-out-path">out_path<a class="anchor" aria-label="anchor" href="#arg-out-path"></a></dt>
@@ -105,7 +106,7 @@
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
     <p>The result is used to modify the code inside the tested function like this: <code>&lt;PACKAGE&gt;::&lt;FUNCTION&gt;</code> (or <code>&lt;PACKAGE&gt;:::&lt;FUNCTION&gt;</code> for function names starting by a dot).</p>
 <p>Since <code>saferDev</code> v3.0.0, the modified function is returned: the package attributions of the basic R functions, as indicated in the <code>"INSIDE test(), SOME :: OR ::: ARE MISSING BEFORE BASIC FUNCTIONS"</code> section of the returned message, are added to the submitted function code, and the modified function is returned using <code><a href="https://rdrr.io/r/base/function.html" class="external-link">return()</a></code>. The package attributions of the other functions, as indicated in the <code>"INSIDE test(), SOME :: OR ::: ARE MISSING BEFORE OTHER FUNCTIONS"</code> section of the returned message, are NOT added automatically, because the correct package cannot be determined reliably: a <code><a href="https://rdrr.io/r/base/warning.html" class="external-link">base::warning()</a></code> is issued instead (in addition to the printed message). <code>NULL</code> is returned if no basic function required a package attribution.</p>
-<p>The modification is only performed on the code lines indicated in the <code>"INSIDE test(), SOME :: OR ::: ARE MISSING BEFORE BASIC FUNCTIONS"</code> section of the message, which is the same analysis as the one performed by <code>colons_check()</code> itself: functions written between quotes or preceded by <code>$</code> are not modified, and internal functions (created inside the tested function) are not modified either. Beware: the modification can only be applied to the analyzed code, which is the code with comments removed and multiple spaces collapsed: the returned function therefore does not contain the comments of the submitted function (the modification cannot recover them, since <code>colons_check()</code> does not analyze the comments). The modified function is returned with the environment of the submitted function, so that the functions used inside it still resolve the same way. If the modified code does not parse (a rare situation, e.g., a function name split across lines in a way the analyzer could not handle correctly), this is an internal bug: an internal error is returned when <code>export = TRUE</code>, and the submitted function is returned unchanged, with no error, when <code>export = FALSE</code>.</p>
+<p>The modification is only performed on the code lines indicated in the <code>"INSIDE test(), SOME :: OR ::: ARE MISSING BEFORE BASIC FUNCTIONS"</code> section of the message, which is the same analysis as the one performed by <code>colons_check()</code> itself: functions written between quotes or preceded by <code>$</code> are not modified, and internal functions (created inside the tested function) are not modified either. The analysis is performed on the code with comments removed and multiple spaces collapsed, but the package attributions are added to the code of the submitted function as printed: the returned (and exported) function therefore keeps the comments and the indentation of the submitted function. Warning: comments are only present when the submitted function carries its source references (attribute <code>srcref</code>, e.g., a function defined in the console or in a file loaded with <code>keep.source = TRUE</code>). Otherwise, as for compiled package functions, the code printed by <code>R</code> (without comments and reindented) is used. The modified function is returned with the environment of the submitted function, so that the functions used inside it still resolve the same way. If the modified code does not parse (a rare situation, e.g., a function name split across lines in a way the analyzer could not handle correctly), this is an internal bug: an internal error is returned when <code>export = TRUE</code>, and the submitted function is returned unchanged, with no error, when <code>export = FALSE</code>.</p>
 <p>The name of the exported file (when <code>export = TRUE</code>) is the name of the submitted function, as written by the user, with <code>_safer</code> added at the end, e.g., <code>test_safer.R</code> for <code>colons_check(x = test)</code>. If the submitted function was written as <code>package::function</code>, like <code>colons_check(x = saferDev::test)</code>, the name is <code>test_safer.R</code> (the package name is not part of the file name). The exported file contains an assignment of the modified function: <code>test_safer &lt;- function(...) ...</code>, so that <code><a href="https://rdrr.io/r/base/source.html" class="external-link">base::source()</a></code>ing it recreates the modified function. Warning: the tested function must be designated by a function name (like <code>test</code> or <code>package::test</code>) when <code>export = TRUE</code>: an inline definition (like <code>function(x){x}</code>) or a component writing (like <code>FUN_LIST$fun</code>) returns an error, because the name of the exported file could not be determined reliably.</p>
 <p>Pre-check: the submitted function is first checked by <code><a href="lambda_check.html">lambda_check()</a></code>: if some lambda functions are written with the <code>\(x)</code> shorthand, an error is returned asking to run <code><a href="lambda_check.html">saferDev::lambda_check()</a></code> first, because the <code>\</code> writings are not managed by the text-based detection of <code>colons_check()</code>. As in <code><a href="lambda_check.html">lambda_check()</a></code>, the <code>\(x)</code> writing is only detectable in a function carrying its source references (attribute <code>srcref</code>): a compiled or loaded package function prints <code>function(x)</code>, so that the pre-check silently passes in that case.</p>
 <p>More precisely, <code>colons_check()</code> verifies that all the strings before an opening bracket <code>(</code> are preceded by <code>::</code>.</p>
@@ -137,69 +138,39 @@ checking dependencies in R code ... WARNING
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># Warning: these examples may not work well when using the "Run examples" link </span></span></span>
 <span class="r-in"><span><span class="co"># because of a particular environment. Please, copy-paste in a local environment.</span></span></span>
 <span class="r-in"><span><span class="co"># See also https://safer-r.github.io/saferDev/articles/colons_check.html</span></span></span>
-<span class="r-in"><span><span class="fu">saferDev</span><span class="fu">::</span><span class="fu">colons_check</span><span class="op">(</span><span class="va">mean</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">fun1</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">{</span></span></span>
+<span class="r-in"><span>    <span class="va">y</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="co"># mean() written without base::</span></span></span>
+<span class="r-in"><span>    <span class="fu">base</span><span class="fu">::</span><span class="kw"><a href="https://rdrr.io/r/base/function.html" class="external-link">return</a></span><span class="op">(</span><span class="va">y</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">}</span></span></span>
+<span class="r-in"><span><span class="va">fun1_safer</span> <span class="op">&lt;-</span> <span class="fu">saferDev</span><span class="fu">::</span><span class="fu">colons_check</span><span class="op">(</span><span class="va">fun1</span><span class="op">)</span> <span class="co"># base:: added before mean()</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> INSIDE mean(), SOME :: OR ::: ARE MISSING BEFORE BASIC FUNCTIONS:</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> LINE	FUN		STRING_BEFORE</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> 2	UseMethod		</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> function (x, ...) </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> base::UseMethod("mean")</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: namespace:base&gt;</span>
-<span class="r-in"><span><span class="fu">saferDev</span><span class="fu">::</span><span class="fu">colons_check</span><span class="op">(</span><span class="va">colons_check</span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> AFTER RUNNING saferDev::colons_check().</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> INSIDE colons_check(), EVERYTHING SEEMS CLEAN FOR R BASIC FUNCTIONS.</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> INSIDE colons_check(), INTERNAL FUNCTIONS DETECTED:</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> .pack_and_function_check</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> .base_op_check</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> .functions_detect</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> .colons_check_message</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> .extract_all_fun_names</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> .has_odd_number_of_quotes</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> .noclean_functions</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> NULL</span>
-<span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/source.html" class="external-link">source</a></span><span class="op">(</span><span class="st">"https://raw.githubusercontent.com/safer-r/saferDev/main/dev/other/test.R"</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">res</span> <span class="op">&lt;-</span> <span class="fu">saferDev</span><span class="fu">::</span><span class="fu">colons_check</span><span class="op">(</span><span class="va">test</span><span class="op">)</span> <span class="co"># res is the modified function, also printed in the message</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> INSIDE test(), SOME :: OR ::: ARE MISSING BEFORE BASIC FUNCTIONS:</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> INSIDE fun1(), SOME :: OR ::: ARE MISSING BEFORE BASIC FUNCTIONS:</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> LINE	FUN		STRING_BEFORE</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> 5	gregexpr		matches &lt;- </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> 8	regmatches		matched_strings &lt;- </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> 11	sum		</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> 18	sub		result &lt;- </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> 19	range		</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> 22	return		</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> 3	mean		y &lt;- </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> INSIDE test(), INTERNAL FUNCTION DETECTED:</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> FUN1</span>
+<span class="r-in"><span><span class="va">fun1_safer</span> <span class="co"># corrected function</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> function (x) </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     y &lt;- base::mean(x)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     base::return(y)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x55a062f9ada8&gt;</span>
+<span class="r-in"><span><span class="co"># Write the corrected function in the fun1_safer.R file of a new temporary folder:</span></span></span>
+<span class="r-in"><span><span class="va">tempo_dir</span> <span class="op">&lt;-</span> <span class="fu">base</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempfile</a></span><span class="op">(</span>pattern <span class="op">=</span> <span class="st">"dir"</span>, tmpdir <span class="op">=</span> <span class="fu">base</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir</a></span><span class="op">(</span><span class="op">)</span>, fileext <span class="op">=</span> <span class="st">""</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">base</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/base/files2.html" class="external-link">dir.create</a></span><span class="op">(</span>path <span class="op">=</span> <span class="va">tempo_dir</span>, showWarnings <span class="op">=</span> <span class="cn">TRUE</span>, recursive <span class="op">=</span> <span class="cn">FALSE</span>, mode <span class="op">=</span> <span class="st">"0777"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">saferDev</span><span class="fu">::</span><span class="fu">colons_check</span><span class="op">(</span>x <span class="op">=</span> <span class="va">fun1</span>, export <span class="op">=</span> <span class="cn">TRUE</span>, out_path <span class="op">=</span> <span class="va">tempo_dir</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> INSIDE test(), SOME :: OR ::: ARE MISSING BEFORE OTHER FUNCTIONS:</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> INSIDE fun1(), SOME :: OR ::: ARE MISSING BEFORE BASIC FUNCTIONS:</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> LINE	FUN		STRING_BEFORE</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> 16	roc1		base::length(</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> 20	roc4		tempo.cat &lt;- base::paste0("IAGE\nLENGTHS OF roc00() (", base::ks.test(</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> 3	mean		y &lt;- </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>FROM saferDev::colons_check().</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> (1) INSIDE test(), SOME :: OR ::: ARE MISSING BEFORE FUNCTIONS THAT ARE NOT R BASIC FUNCTIONS:</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> LINE	FUN		STRING_BEFORE</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> 16	roc1		base::length(</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> 20	roc4		tempo.cat &lt;- base::paste0("IAGE\nLENGTHS OF roc00() (", base::ks.test(</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> THE PACKAGE ATTRIBUTIONS OF THESE FUNCTIONS CANNOT BE ADDED AUTOMATICALLY, BECAUSE THE CORRECT PACKAGE CANNOT BE DETERMINED RELIABLY.</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> PLEASE, MODIFY THE CODE MANUALLY, WITH THE HELP OF THE MESSAGE PRINTED ABOVE.</span>
-<span class="r-in"><span><span class="co"># source("https://raw.githubusercontent.com/safer-r/saferDev/main/dev/other/test.R")</span></span></span>
-<span class="r-in"><span><span class="co"># saferDev::colons_check(x = test, export = TRUE, out_path = ".")</span></span></span>
-<span class="r-in"><span><span class="co"># writes test_safer.R in the R working directory</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> MODIFIED CODE EXPORTED IN:</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> /tmp/RtmpT24sDl/dir16a05373e6d0/fun1_safer.R</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>

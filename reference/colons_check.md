@@ -33,14 +33,15 @@ colons_check(
   Single logical value. Export the modified code into a `.R` file? If
   `TRUE`, the modified function is not returned but only exported. The
   name of the file is the name of the tested function, with `_safer`
-  added at the end (e.g., `test_safer.R`). Warning: the written code is
-  the analyzed code (see the `Details` section): comments removed and
-  multiple spaces collapsed. An error is returned if the file already
-  exists in `out_path`, and if the tested function is not designated by
-  a function name (like `test` or `package::test`), i.e., written by an
-  inline definition (like `function(x){x}`) or by a component writing
-  (like `FUN_LIST$fun`). If `FALSE` (default), the modified function is
-  not written but returned.
+  added at the end (e.g., `test_safer.R`). The written code is the code
+  of the submitted function, with its comments and indentation, only
+  modified by the added package attributions (see the `Details`
+  section). An error is returned if the file already exists in
+  `out_path`, and if the tested function is not designated by a function
+  name (like `test` or `package::test`), i.e., written by an inline
+  definition (like `function(x){x}`) or by a component writing (like
+  `FUN_LIST$fun`). If `FALSE` (default), the modified function is not
+  written but returned.
 
 - out_path:
 
@@ -136,12 +137,16 @@ The modification is only performed on the code lines indicated in the
 section of the message, which is the same analysis as the one performed
 by `colons_check()` itself: functions written between quotes or preceded
 by `$` are not modified, and internal functions (created inside the
-tested function) are not modified either. Beware: the modification can
-only be applied to the analyzed code, which is the code with comments
-removed and multiple spaces collapsed: the returned function therefore
-does not contain the comments of the submitted function (the
-modification cannot recover them, since `colons_check()` does not
-analyze the comments). The modified function is returned with the
+tested function) are not modified either. The analysis is performed on
+the code with comments removed and multiple spaces collapsed, but the
+package attributions are added to the code of the submitted function as
+printed: the returned (and exported) function therefore keeps the
+comments and the indentation of the submitted function. Warning:
+comments are only present when the submitted function carries its source
+references (attribute `srcref`, e.g., a function defined in the console
+or in a file loaded with `keep.source = TRUE`). Otherwise, as for
+compiled package functions, the code printed by `R` (without comments
+and reindented) is used. The modified function is returned with the
 environment of the submitted function, so that the functions used inside
 it still resolve the same way. If the modified code does not parse (a
 rare situation, e.g., a function name split across lines in a way the
@@ -238,67 +243,37 @@ Yushi Han
 # Warning: these examples may not work well when using the "Run examples" link 
 # because of a particular environment. Please, copy-paste in a local environment.
 # See also https://safer-r.github.io/saferDev/articles/colons_check.html
-saferDev::colons_check(mean)
+fun1 <- function(x){
+    y <- mean(x) # mean() written without base::
+    base::return(y)
+}
+fun1_safer <- saferDev::colons_check(fun1) # base:: added before mean()
 #> 
 #> 
-#> INSIDE mean(), SOME :: OR ::: ARE MISSING BEFORE BASIC FUNCTIONS:
-#> 
-#> LINE FUN     STRING_BEFORE
-#> 2    UseMethod       
-#> 
-#> function (x, ...) 
-#> base::UseMethod("mean")
-#> <environment: namespace:base>
-saferDev::colons_check(colons_check)
-#> 
-#> 
-#> AFTER RUNNING saferDev::colons_check().
-#> INSIDE colons_check(), EVERYTHING SEEMS CLEAN FOR R BASIC FUNCTIONS.
-#> 
-#> INSIDE colons_check(), INTERNAL FUNCTIONS DETECTED:
-#> .pack_and_function_check
-#> .base_op_check
-#> .functions_detect
-#> .colons_check_message
-#> .extract_all_fun_names
-#> .has_odd_number_of_quotes
-#> .noclean_functions
-#> 
-#> NULL
-source("https://raw.githubusercontent.com/safer-r/saferDev/main/dev/other/test.R")
-res <- saferDev::colons_check(test) # res is the modified function, also printed in the message
-#> 
-#> 
-#> INSIDE test(), SOME :: OR ::: ARE MISSING BEFORE BASIC FUNCTIONS:
+#> INSIDE fun1(), SOME :: OR ::: ARE MISSING BEFORE BASIC FUNCTIONS:
 #> 
 #> LINE FUN     STRING_BEFORE
-#> 5    gregexpr        matches <- 
-#> 8    regmatches      matched_strings <- 
-#> 11   sum     
-#> 18   sub     result <- 
-#> 19   range       
-#> 22   return      
+#> 3    mean        y <- 
 #> 
-#> INSIDE test(), INTERNAL FUNCTION DETECTED:
-#> FUN1
+fun1_safer # corrected function
+#> function (x) 
+#> {
+#>     y <- base::mean(x)
+#>     base::return(y)
+#> }
+#> <environment: 0x55a062f9ada8>
+# Write the corrected function in the fun1_safer.R file of a new temporary folder:
+tempo_dir <- base::tempfile(pattern = "dir", tmpdir = base::tempdir(), fileext = "")
+base::dir.create(path = tempo_dir, showWarnings = TRUE, recursive = FALSE, mode = "0777")
+saferDev::colons_check(x = fun1, export = TRUE, out_path = tempo_dir)
 #> 
-#> INSIDE test(), SOME :: OR ::: ARE MISSING BEFORE OTHER FUNCTIONS:
 #> 
-#> LINE FUN     STRING_BEFORE
-#> 16   roc1        base::length(
-#> 20   roc4        tempo.cat <- base::paste0("IAGE\nLENGTHS OF roc00() (", base::ks.test(
-#> 
-#> Warning: FROM saferDev::colons_check().
-#> 
-#> (1) INSIDE test(), SOME :: OR ::: ARE MISSING BEFORE FUNCTIONS THAT ARE NOT R BASIC FUNCTIONS:
+#> INSIDE fun1(), SOME :: OR ::: ARE MISSING BEFORE BASIC FUNCTIONS:
 #> 
 #> LINE FUN     STRING_BEFORE
-#> 16   roc1        base::length(
-#> 20   roc4        tempo.cat <- base::paste0("IAGE\nLENGTHS OF roc00() (", base::ks.test(
+#> 3    mean        y <- 
 #> 
-#> THE PACKAGE ATTRIBUTIONS OF THESE FUNCTIONS CANNOT BE ADDED AUTOMATICALLY, BECAUSE THE CORRECT PACKAGE CANNOT BE DETERMINED RELIABLY.
-#> PLEASE, MODIFY THE CODE MANUALLY, WITH THE HELP OF THE MESSAGE PRINTED ABOVE.
-# source("https://raw.githubusercontent.com/safer-r/saferDev/main/dev/other/test.R")
-# saferDev::colons_check(x = test, export = TRUE, out_path = ".")
-# writes test_safer.R in the R working directory
+#> MODIFIED CODE EXPORTED IN:
+#> /tmp/RtmpT24sDl/dir16a05373e6d0/fun1_safer.R
+#> 
 ```

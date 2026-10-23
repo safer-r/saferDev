@@ -60,6 +60,7 @@
 <li class="nav-item"><form class="form-inline" role="search">
  <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json">
 </form></li>
+<li class="nav-item"><a class="external-link nav-link" href="https://github.com/safer-r/saferDev/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
       </ul>
 </div>
 
@@ -76,7 +77,7 @@
       <h1>for_loop_nb_check(): more examples</h1>
             
       
-
+      <small class="dont-index">Source: <a href="https://github.com/safer-r/saferDev/blob/main/vignettes/articles/for_loop_nb_check.Rmd" class="external-link"><code>vignettes/articles/for_loop_nb_check.Rmd</code></a></small>
       <div class="d-none name"><code>for_loop_nb_check.Rmd</code></div>
     </div>
 
@@ -84,7 +85,7 @@
     
 <p><br></p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">saferDev</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/safer-r/saferDev" class="external-link">saferDev</a></span><span class="op">)</span></span></code></pre></div>
 <p><br></p>
 <div class="section level3">
 <h3 id="datasets">Datasets<a class="anchor" aria-label="anchor" href="#datasets"></a>
@@ -292,17 +293,14 @@
 <span><span class="co">##             call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, </span></span>
 <span><span class="co">##             domain = NULL)</span></span>
 <span><span class="co">##     }</span></span>
-<span><span class="co">##     else if (base::is.atomic(x = tempo_for_seq1) &amp;&amp; base::typeof(x = tempo_for_seq1) %in% </span></span>
-<span><span class="co">##         base::c("double", "integer") &amp;&amp; base::all(x = tempo_for_seq1 &lt; </span></span>
+<span><span class="co">##     else if (base::is.numeric(x = tempo_for_seq1) &amp;&amp; base::all(tempo_for_seq1 &lt; </span></span>
 <span><span class="co">##         0, na.rm = FALSE)) {</span></span>
 <span><span class="co">##         base::warning("FOR SEQUENCE WITH ALL NEGATIVE VALUES", </span></span>
 <span><span class="co">##             call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, </span></span>
 <span><span class="co">##             domain = NULL)</span></span>
 <span><span class="co">##     }</span></span>
-<span><span class="co">##     else if (base::is.atomic(x = tempo_for_seq1) &amp;&amp; base::typeof(x = tempo_for_seq1) %in% </span></span>
-<span><span class="co">##         base::c("double", "integer", "character", "complex") &amp;&amp; </span></span>
-<span><span class="co">##         base::length(x = tempo_for_seq1) &gt;= 2 &amp;&amp; tempo_for_seq1[1] &gt; </span></span>
-<span><span class="co">##         tempo_for_seq1[2]) {</span></span>
+<span><span class="co">##     else if (base::is.numeric(x = tempo_for_seq1) &amp;&amp; base::length(x = tempo_for_seq1) &gt;= </span></span>
+<span><span class="co">##         2 &amp;&amp; tempo_for_seq1[1] &gt; tempo_for_seq1[2]) {</span></span>
 <span><span class="co">##         base::warning("FOR SEQUENCE DECREASING", call. = FALSE, </span></span>
 <span><span class="co">##             immediate. = FALSE, noBreaks. = FALSE, domain = NULL)</span></span>
 <span><span class="co">##     }</span></span>
@@ -329,17 +327,14 @@
 <span><span class="co">##             call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, </span></span>
 <span><span class="co">##             domain = NULL)</span></span>
 <span><span class="co">##     }</span></span>
-<span><span class="co">##     else if (base::is.atomic(x = tempo_for_seq2) &amp;&amp; base::typeof(x = tempo_for_seq2) %in% </span></span>
-<span><span class="co">##         base::c("double", "integer") &amp;&amp; base::all(x = tempo_for_seq2 &lt; </span></span>
+<span><span class="co">##     else if (base::is.numeric(x = tempo_for_seq2) &amp;&amp; base::all(tempo_for_seq2 &lt; </span></span>
 <span><span class="co">##         0, na.rm = FALSE)) {</span></span>
 <span><span class="co">##         base::warning("FOR SEQUENCE WITH ALL NEGATIVE VALUES", </span></span>
 <span><span class="co">##             call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, </span></span>
 <span><span class="co">##             domain = NULL)</span></span>
 <span><span class="co">##     }</span></span>
-<span><span class="co">##     else if (base::is.atomic(x = tempo_for_seq2) &amp;&amp; base::typeof(x = tempo_for_seq2) %in% </span></span>
-<span><span class="co">##         base::c("double", "integer", "character", "complex") &amp;&amp; </span></span>
-<span><span class="co">##         base::length(x = tempo_for_seq2) &gt;= 2 &amp;&amp; tempo_for_seq2[1] &gt; </span></span>
-<span><span class="co">##         tempo_for_seq2[2]) {</span></span>
+<span><span class="co">##     else if (base::is.numeric(x = tempo_for_seq2) &amp;&amp; base::length(x = tempo_for_seq2) &gt;= </span></span>
+<span><span class="co">##         2 &amp;&amp; tempo_for_seq2[1] &gt; tempo_for_seq2[2]) {</span></span>
 <span><span class="co">##         base::warning("FOR SEQUENCE DECREASING", call. = FALSE, </span></span>
 <span><span class="co">##             immediate. = FALSE, noBreaks. = FALSE, domain = NULL)</span></span>
 <span><span class="co">##     }</span></span>
@@ -366,17 +361,14 @@
 <span><span class="co">##             call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, </span></span>
 <span><span class="co">##             domain = NULL)</span></span>
 <span><span class="co">##     }</span></span>
-<span><span class="co">##     else if (base::is.atomic(x = tempo_for_seq3) &amp;&amp; base::typeof(x = tempo_for_seq3) %in% </span></span>
-<span><span class="co">##         base::c("double", "integer") &amp;&amp; base::all(x = tempo_for_seq3 &lt; </span></span>
+<span><span class="co">##     else if (base::is.numeric(x = tempo_for_seq3) &amp;&amp; base::all(tempo_for_seq3 &lt; </span></span>
 <span><span class="co">##         0, na.rm = FALSE)) {</span></span>
 <span><span class="co">##         base::warning("FOR SEQUENCE WITH ALL NEGATIVE VALUES", </span></span>
 <span><span class="co">##             call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, </span></span>
 <span><span class="co">##             domain = NULL)</span></span>
 <span><span class="co">##     }</span></span>
-<span><span class="co">##     else if (base::is.atomic(x = tempo_for_seq3) &amp;&amp; base::typeof(x = tempo_for_seq3) %in% </span></span>
-<span><span class="co">##         base::c("double", "integer", "character", "complex") &amp;&amp; </span></span>
-<span><span class="co">##         base::length(x = tempo_for_seq3) &gt;= 2 &amp;&amp; tempo_for_seq3[1] &gt; </span></span>
-<span><span class="co">##         tempo_for_seq3[2]) {</span></span>
+<span><span class="co">##     else if (base::is.numeric(x = tempo_for_seq3) &amp;&amp; base::length(x = tempo_for_seq3) &gt;= </span></span>
+<span><span class="co">##         2 &amp;&amp; tempo_for_seq3[1] &gt; tempo_for_seq3[2]) {</span></span>
 <span><span class="co">##         base::warning("FOR SEQUENCE DECREASING", call. = FALSE, </span></span>
 <span><span class="co">##             immediate. = FALSE, noBreaks. = FALSE, domain = NULL)</span></span>
 <span><span class="co">##     }</span></span>
@@ -403,17 +395,14 @@
 <span><span class="co">##             call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, </span></span>
 <span><span class="co">##             domain = NULL)</span></span>
 <span><span class="co">##     }</span></span>
-<span><span class="co">##     else if (base::is.atomic(x = tempo_for_seq4) &amp;&amp; base::typeof(x = tempo_for_seq4) %in% </span></span>
-<span><span class="co">##         base::c("double", "integer") &amp;&amp; base::all(x = tempo_for_seq4 &lt; </span></span>
+<span><span class="co">##     else if (base::is.numeric(x = tempo_for_seq4) &amp;&amp; base::all(tempo_for_seq4 &lt; </span></span>
 <span><span class="co">##         0, na.rm = FALSE)) {</span></span>
 <span><span class="co">##         base::warning("FOR SEQUENCE WITH ALL NEGATIVE VALUES", </span></span>
 <span><span class="co">##             call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, </span></span>
 <span><span class="co">##             domain = NULL)</span></span>
 <span><span class="co">##     }</span></span>
-<span><span class="co">##     else if (base::is.atomic(x = tempo_for_seq4) &amp;&amp; base::typeof(x = tempo_for_seq4) %in% </span></span>
-<span><span class="co">##         base::c("double", "integer", "character", "complex") &amp;&amp; </span></span>
-<span><span class="co">##         base::length(x = tempo_for_seq4) &gt;= 2 &amp;&amp; tempo_for_seq4[1] &gt; </span></span>
-<span><span class="co">##         tempo_for_seq4[2]) {</span></span>
+<span><span class="co">##     else if (base::is.numeric(x = tempo_for_seq4) &amp;&amp; base::length(x = tempo_for_seq4) &gt;= </span></span>
+<span><span class="co">##         2 &amp;&amp; tempo_for_seq4[1] &gt; tempo_for_seq4[2]) {</span></span>
 <span><span class="co">##         base::warning("FOR SEQUENCE DECREASING", call. = FALSE, </span></span>
 <span><span class="co">##             immediate. = FALSE, noBreaks. = FALSE, domain = NULL)</span></span>
 <span><span class="co">##     }</span></span>
@@ -440,17 +429,14 @@
 <span><span class="co">##             call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, </span></span>
 <span><span class="co">##             domain = NULL)</span></span>
 <span><span class="co">##     }</span></span>
-<span><span class="co">##     else if (base::is.atomic(x = tempo_for_seq5) &amp;&amp; base::typeof(x = tempo_for_seq5) %in% </span></span>
-<span><span class="co">##         base::c("double", "integer") &amp;&amp; base::all(x = tempo_for_seq5 &lt; </span></span>
+<span><span class="co">##     else if (base::is.numeric(x = tempo_for_seq5) &amp;&amp; base::all(tempo_for_seq5 &lt; </span></span>
 <span><span class="co">##         0, na.rm = FALSE)) {</span></span>
 <span><span class="co">##         base::warning("FOR SEQUENCE WITH ALL NEGATIVE VALUES", </span></span>
 <span><span class="co">##             call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, </span></span>
 <span><span class="co">##             domain = NULL)</span></span>
 <span><span class="co">##     }</span></span>
-<span><span class="co">##     else if (base::is.atomic(x = tempo_for_seq5) &amp;&amp; base::typeof(x = tempo_for_seq5) %in% </span></span>
-<span><span class="co">##         base::c("double", "integer", "character", "complex") &amp;&amp; </span></span>
-<span><span class="co">##         base::length(x = tempo_for_seq5) &gt;= 2 &amp;&amp; tempo_for_seq5[1] &gt; </span></span>
-<span><span class="co">##         tempo_for_seq5[2]) {</span></span>
+<span><span class="co">##     else if (base::is.numeric(x = tempo_for_seq5) &amp;&amp; base::length(x = tempo_for_seq5) &gt;= </span></span>
+<span><span class="co">##         2 &amp;&amp; tempo_for_seq5[1] &gt; tempo_for_seq5[2]) {</span></span>
 <span><span class="co">##         base::warning("FOR SEQUENCE DECREASING", call. = FALSE, </span></span>
 <span><span class="co">##             immediate. = FALSE, noBreaks. = FALSE, domain = NULL)</span></span>
 <span><span class="co">##     }</span></span>
@@ -477,17 +463,14 @@
 <span><span class="co">##             call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, </span></span>
 <span><span class="co">##             domain = NULL)</span></span>
 <span><span class="co">##     }</span></span>
-<span><span class="co">##     else if (base::is.atomic(x = tempo_for_seq6) &amp;&amp; base::typeof(x = tempo_for_seq6) %in% </span></span>
-<span><span class="co">##         base::c("double", "integer") &amp;&amp; base::all(x = tempo_for_seq6 &lt; </span></span>
+<span><span class="co">##     else if (base::is.numeric(x = tempo_for_seq6) &amp;&amp; base::all(tempo_for_seq6 &lt; </span></span>
 <span><span class="co">##         0, na.rm = FALSE)) {</span></span>
 <span><span class="co">##         base::warning("FOR SEQUENCE WITH ALL NEGATIVE VALUES", </span></span>
 <span><span class="co">##             call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, </span></span>
 <span><span class="co">##             domain = NULL)</span></span>
 <span><span class="co">##     }</span></span>
-<span><span class="co">##     else if (base::is.atomic(x = tempo_for_seq6) &amp;&amp; base::typeof(x = tempo_for_seq6) %in% </span></span>
-<span><span class="co">##         base::c("double", "integer", "character", "complex") &amp;&amp; </span></span>
-<span><span class="co">##         base::length(x = tempo_for_seq6) &gt;= 2 &amp;&amp; tempo_for_seq6[1] &gt; </span></span>
-<span><span class="co">##         tempo_for_seq6[2]) {</span></span>
+<span><span class="co">##     else if (base::is.numeric(x = tempo_for_seq6) &amp;&amp; base::length(x = tempo_for_seq6) &gt;= </span></span>
+<span><span class="co">##         2 &amp;&amp; tempo_for_seq6[1] &gt; tempo_for_seq6[2]) {</span></span>
 <span><span class="co">##         base::warning("FOR SEQUENCE DECREASING", call. = FALSE, </span></span>
 <span><span class="co">##             immediate. = FALSE, noBreaks. = FALSE, domain = NULL)</span></span>
 <span><span class="co">##     }</span></span>
@@ -514,17 +497,14 @@
 <span><span class="co">##             call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, </span></span>
 <span><span class="co">##             domain = NULL)</span></span>
 <span><span class="co">##     }</span></span>
-<span><span class="co">##     else if (base::is.atomic(x = tempo_for_seq7) &amp;&amp; base::typeof(x = tempo_for_seq7) %in% </span></span>
-<span><span class="co">##         base::c("double", "integer") &amp;&amp; base::all(x = tempo_for_seq7 &lt; </span></span>
+<span><span class="co">##     else if (base::is.numeric(x = tempo_for_seq7) &amp;&amp; base::all(tempo_for_seq7 &lt; </span></span>
 <span><span class="co">##         0, na.rm = FALSE)) {</span></span>
 <span><span class="co">##         base::warning("FOR SEQUENCE WITH ALL NEGATIVE VALUES", </span></span>
 <span><span class="co">##             call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, </span></span>
 <span><span class="co">##             domain = NULL)</span></span>
 <span><span class="co">##     }</span></span>
-<span><span class="co">##     else if (base::is.atomic(x = tempo_for_seq7) &amp;&amp; base::typeof(x = tempo_for_seq7) %in% </span></span>
-<span><span class="co">##         base::c("double", "integer", "character", "complex") &amp;&amp; </span></span>
-<span><span class="co">##         base::length(x = tempo_for_seq7) &gt;= 2 &amp;&amp; tempo_for_seq7[1] &gt; </span></span>
-<span><span class="co">##         tempo_for_seq7[2]) {</span></span>
+<span><span class="co">##     else if (base::is.numeric(x = tempo_for_seq7) &amp;&amp; base::length(x = tempo_for_seq7) &gt;= </span></span>
+<span><span class="co">##         2 &amp;&amp; tempo_for_seq7[1] &gt; tempo_for_seq7[2]) {</span></span>
 <span><span class="co">##         base::warning("FOR SEQUENCE DECREASING", call. = FALSE, </span></span>
 <span><span class="co">##             immediate. = FALSE, noBreaks. = FALSE, domain = NULL)</span></span>
 <span><span class="co">##     }</span></span>
@@ -551,17 +531,14 @@
 <span><span class="co">##             call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, </span></span>
 <span><span class="co">##             domain = NULL)</span></span>
 <span><span class="co">##     }</span></span>
-<span><span class="co">##     else if (base::is.atomic(x = tempo_for_seq8) &amp;&amp; base::typeof(x = tempo_for_seq8) %in% </span></span>
-<span><span class="co">##         base::c("double", "integer") &amp;&amp; base::all(x = tempo_for_seq8 &lt; </span></span>
+<span><span class="co">##     else if (base::is.numeric(x = tempo_for_seq8) &amp;&amp; base::all(tempo_for_seq8 &lt; </span></span>
 <span><span class="co">##         0, na.rm = FALSE)) {</span></span>
 <span><span class="co">##         base::warning("FOR SEQUENCE WITH ALL NEGATIVE VALUES", </span></span>
 <span><span class="co">##             call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, </span></span>
 <span><span class="co">##             domain = NULL)</span></span>
 <span><span class="co">##     }</span></span>
-<span><span class="co">##     else if (base::is.atomic(x = tempo_for_seq8) &amp;&amp; base::typeof(x = tempo_for_seq8) %in% </span></span>
-<span><span class="co">##         base::c("double", "integer", "character", "complex") &amp;&amp; </span></span>
-<span><span class="co">##         base::length(x = tempo_for_seq8) &gt;= 2 &amp;&amp; tempo_for_seq8[1] &gt; </span></span>
-<span><span class="co">##         tempo_for_seq8[2]) {</span></span>
+<span><span class="co">##     else if (base::is.numeric(x = tempo_for_seq8) &amp;&amp; base::length(x = tempo_for_seq8) &gt;= </span></span>
+<span><span class="co">##         2 &amp;&amp; tempo_for_seq8[1] &gt; tempo_for_seq8[2]) {</span></span>
 <span><span class="co">##         base::warning("FOR SEQUENCE DECREASING", call. = FALSE, </span></span>
 <span><span class="co">##             immediate. = FALSE, noBreaks. = FALSE, domain = NULL)</span></span>
 <span><span class="co">##     }</span></span>
@@ -588,17 +565,14 @@
 <span><span class="co">##             call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, </span></span>
 <span><span class="co">##             domain = NULL)</span></span>
 <span><span class="co">##     }</span></span>
-<span><span class="co">##     else if (base::is.atomic(x = tempo_for_seq9) &amp;&amp; base::typeof(x = tempo_for_seq9) %in% </span></span>
-<span><span class="co">##         base::c("double", "integer") &amp;&amp; base::all(x = tempo_for_seq9 &lt; </span></span>
+<span><span class="co">##     else if (base::is.numeric(x = tempo_for_seq9) &amp;&amp; base::all(tempo_for_seq9 &lt; </span></span>
 <span><span class="co">##         0, na.rm = FALSE)) {</span></span>
 <span><span class="co">##         base::warning("FOR SEQUENCE WITH ALL NEGATIVE VALUES", </span></span>
 <span><span class="co">##             call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, </span></span>
 <span><span class="co">##             domain = NULL)</span></span>
 <span><span class="co">##     }</span></span>
-<span><span class="co">##     else if (base::is.atomic(x = tempo_for_seq9) &amp;&amp; base::typeof(x = tempo_for_seq9) %in% </span></span>
-<span><span class="co">##         base::c("double", "integer", "character", "complex") &amp;&amp; </span></span>
-<span><span class="co">##         base::length(x = tempo_for_seq9) &gt;= 2 &amp;&amp; tempo_for_seq9[1] &gt; </span></span>
-<span><span class="co">##         tempo_for_seq9[2]) {</span></span>
+<span><span class="co">##     else if (base::is.numeric(x = tempo_for_seq9) &amp;&amp; base::length(x = tempo_for_seq9) &gt;= </span></span>
+<span><span class="co">##         2 &amp;&amp; tempo_for_seq9[1] &gt; tempo_for_seq9[2]) {</span></span>
 <span><span class="co">##         base::warning("FOR SEQUENCE DECREASING", call. = FALSE, </span></span>
 <span><span class="co">##             immediate. = FALSE, noBreaks. = FALSE, domain = NULL)</span></span>
 <span><span class="co">##     }</span></span>
@@ -625,17 +599,14 @@
 <span><span class="co">##             call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, </span></span>
 <span><span class="co">##             domain = NULL)</span></span>
 <span><span class="co">##     }</span></span>
-<span><span class="co">##     else if (base::is.atomic(x = tempo_for_seq10) &amp;&amp; base::typeof(x = tempo_for_seq10) %in% </span></span>
-<span><span class="co">##         base::c("double", "integer") &amp;&amp; base::all(x = tempo_for_seq10 &lt; </span></span>
+<span><span class="co">##     else if (base::is.numeric(x = tempo_for_seq10) &amp;&amp; base::all(tempo_for_seq10 &lt; </span></span>
 <span><span class="co">##         0, na.rm = FALSE)) {</span></span>
 <span><span class="co">##         base::warning("FOR SEQUENCE WITH ALL NEGATIVE VALUES", </span></span>
 <span><span class="co">##             call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, </span></span>
 <span><span class="co">##             domain = NULL)</span></span>
 <span><span class="co">##     }</span></span>
-<span><span class="co">##     else if (base::is.atomic(x = tempo_for_seq10) &amp;&amp; base::typeof(x = tempo_for_seq10) %in% </span></span>
-<span><span class="co">##         base::c("double", "integer", "character", "complex") &amp;&amp; </span></span>
-<span><span class="co">##         base::length(x = tempo_for_seq10) &gt;= 2 &amp;&amp; tempo_for_seq10[1] &gt; </span></span>
-<span><span class="co">##         tempo_for_seq10[2]) {</span></span>
+<span><span class="co">##     else if (base::is.numeric(x = tempo_for_seq10) &amp;&amp; base::length(x = tempo_for_seq10) &gt;= </span></span>
+<span><span class="co">##         2 &amp;&amp; tempo_for_seq10[1] &gt; tempo_for_seq10[2]) {</span></span>
 <span><span class="co">##         base::warning("FOR SEQUENCE DECREASING", call. = FALSE, </span></span>
 <span><span class="co">##             immediate. = FALSE, noBreaks. = FALSE, domain = NULL)</span></span>
 <span><span class="co">##     }</span></span>
@@ -662,17 +633,14 @@
 <span><span class="co">##             call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, </span></span>
 <span><span class="co">##             domain = NULL)</span></span>
 <span><span class="co">##     }</span></span>
-<span><span class="co">##     else if (base::is.atomic(x = tempo_for_seq11) &amp;&amp; base::typeof(x = tempo_for_seq11) %in% </span></span>
-<span><span class="co">##         base::c("double", "integer") &amp;&amp; base::all(x = tempo_for_seq11 &lt; </span></span>
+<span><span class="co">##     else if (base::is.numeric(x = tempo_for_seq11) &amp;&amp; base::all(tempo_for_seq11 &lt; </span></span>
 <span><span class="co">##         0, na.rm = FALSE)) {</span></span>
 <span><span class="co">##         base::warning("FOR SEQUENCE WITH ALL NEGATIVE VALUES", </span></span>
 <span><span class="co">##             call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, </span></span>
 <span><span class="co">##             domain = NULL)</span></span>
 <span><span class="co">##     }</span></span>
-<span><span class="co">##     else if (base::is.atomic(x = tempo_for_seq11) &amp;&amp; base::typeof(x = tempo_for_seq11) %in% </span></span>
-<span><span class="co">##         base::c("double", "integer", "character", "complex") &amp;&amp; </span></span>
-<span><span class="co">##         base::length(x = tempo_for_seq11) &gt;= 2 &amp;&amp; tempo_for_seq11[1] &gt; </span></span>
-<span><span class="co">##         tempo_for_seq11[2]) {</span></span>
+<span><span class="co">##     else if (base::is.numeric(x = tempo_for_seq11) &amp;&amp; base::length(x = tempo_for_seq11) &gt;= </span></span>
+<span><span class="co">##         2 &amp;&amp; tempo_for_seq11[1] &gt; tempo_for_seq11[2]) {</span></span>
 <span><span class="co">##         base::warning("FOR SEQUENCE DECREASING", call. = FALSE, </span></span>
 <span><span class="co">##             immediate. = FALSE, noBreaks. = FALSE, domain = NULL)</span></span>
 <span><span class="co">##     }</span></span>
@@ -699,17 +667,14 @@
 <span><span class="co">##             call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, </span></span>
 <span><span class="co">##             domain = NULL)</span></span>
 <span><span class="co">##     }</span></span>
-<span><span class="co">##     else if (base::is.atomic(x = tempo_for_seq12) &amp;&amp; base::typeof(x = tempo_for_seq12) %in% </span></span>
-<span><span class="co">##         base::c("double", "integer") &amp;&amp; base::all(x = tempo_for_seq12 &lt; </span></span>
+<span><span class="co">##     else if (base::is.numeric(x = tempo_for_seq12) &amp;&amp; base::all(tempo_for_seq12 &lt; </span></span>
 <span><span class="co">##         0, na.rm = FALSE)) {</span></span>
 <span><span class="co">##         base::warning("FOR SEQUENCE WITH ALL NEGATIVE VALUES", </span></span>
 <span><span class="co">##             call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, </span></span>
 <span><span class="co">##             domain = NULL)</span></span>
 <span><span class="co">##     }</span></span>
-<span><span class="co">##     else if (base::is.atomic(x = tempo_for_seq12) &amp;&amp; base::typeof(x = tempo_for_seq12) %in% </span></span>
-<span><span class="co">##         base::c("double", "integer", "character", "complex") &amp;&amp; </span></span>
-<span><span class="co">##         base::length(x = tempo_for_seq12) &gt;= 2 &amp;&amp; tempo_for_seq12[1] &gt; </span></span>
-<span><span class="co">##         tempo_for_seq12[2]) {</span></span>
+<span><span class="co">##     else if (base::is.numeric(x = tempo_for_seq12) &amp;&amp; base::length(x = tempo_for_seq12) &gt;= </span></span>
+<span><span class="co">##         2 &amp;&amp; tempo_for_seq12[1] &gt; tempo_for_seq12[2]) {</span></span>
 <span><span class="co">##         base::warning("FOR SEQUENCE DECREASING", call. = FALSE, </span></span>
 <span><span class="co">##             immediate. = FALSE, noBreaks. = FALSE, domain = NULL)</span></span>
 <span><span class="co">##     }</span></span>
@@ -736,17 +701,14 @@
 <span><span class="co">##             call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, </span></span>
 <span><span class="co">##             domain = NULL)</span></span>
 <span><span class="co">##     }</span></span>
-<span><span class="co">##     else if (base::is.atomic(x = tempo_for_seq13) &amp;&amp; base::typeof(x = tempo_for_seq13) %in% </span></span>
-<span><span class="co">##         base::c("double", "integer") &amp;&amp; base::all(x = tempo_for_seq13 &lt; </span></span>
+<span><span class="co">##     else if (base::is.numeric(x = tempo_for_seq13) &amp;&amp; base::all(tempo_for_seq13 &lt; </span></span>
 <span><span class="co">##         0, na.rm = FALSE)) {</span></span>
 <span><span class="co">##         base::warning("FOR SEQUENCE WITH ALL NEGATIVE VALUES", </span></span>
 <span><span class="co">##             call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, </span></span>
 <span><span class="co">##             domain = NULL)</span></span>
 <span><span class="co">##     }</span></span>
-<span><span class="co">##     else if (base::is.atomic(x = tempo_for_seq13) &amp;&amp; base::typeof(x = tempo_for_seq13) %in% </span></span>
-<span><span class="co">##         base::c("double", "integer", "character", "complex") &amp;&amp; </span></span>
-<span><span class="co">##         base::length(x = tempo_for_seq13) &gt;= 2 &amp;&amp; tempo_for_seq13[1] &gt; </span></span>
-<span><span class="co">##         tempo_for_seq13[2]) {</span></span>
+<span><span class="co">##     else if (base::is.numeric(x = tempo_for_seq13) &amp;&amp; base::length(x = tempo_for_seq13) &gt;= </span></span>
+<span><span class="co">##         2 &amp;&amp; tempo_for_seq13[1] &gt; tempo_for_seq13[2]) {</span></span>
 <span><span class="co">##         base::warning("FOR SEQUENCE DECREASING", call. = FALSE, </span></span>
 <span><span class="co">##             immediate. = FALSE, noBreaks. = FALSE, domain = NULL)</span></span>
 <span><span class="co">##     }</span></span>
@@ -773,17 +735,14 @@
 <span><span class="co">##             call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, </span></span>
 <span><span class="co">##             domain = NULL)</span></span>
 <span><span class="co">##     }</span></span>
-<span><span class="co">##     else if (base::is.atomic(x = tempo_for_seq14) &amp;&amp; base::typeof(x = tempo_for_seq14) %in% </span></span>
-<span><span class="co">##         base::c("double", "integer") &amp;&amp; base::all(x = tempo_for_seq14 &lt; </span></span>
+<span><span class="co">##     else if (base::is.numeric(x = tempo_for_seq14) &amp;&amp; base::all(tempo_for_seq14 &lt; </span></span>
 <span><span class="co">##         0, na.rm = FALSE)) {</span></span>
 <span><span class="co">##         base::warning("FOR SEQUENCE WITH ALL NEGATIVE VALUES", </span></span>
 <span><span class="co">##             call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, </span></span>
 <span><span class="co">##             domain = NULL)</span></span>
 <span><span class="co">##     }</span></span>
-<span><span class="co">##     else if (base::is.atomic(x = tempo_for_seq14) &amp;&amp; base::typeof(x = tempo_for_seq14) %in% </span></span>
-<span><span class="co">##         base::c("double", "integer", "character", "complex") &amp;&amp; </span></span>
-<span><span class="co">##         base::length(x = tempo_for_seq14) &gt;= 2 &amp;&amp; tempo_for_seq14[1] &gt; </span></span>
-<span><span class="co">##         tempo_for_seq14[2]) {</span></span>
+<span><span class="co">##     else if (base::is.numeric(x = tempo_for_seq14) &amp;&amp; base::length(x = tempo_for_seq14) &gt;= </span></span>
+<span><span class="co">##         2 &amp;&amp; tempo_for_seq14[1] &gt; tempo_for_seq14[2]) {</span></span>
 <span><span class="co">##         base::warning("FOR SEQUENCE DECREASING", call. = FALSE, </span></span>
 <span><span class="co">##             immediate. = FALSE, noBreaks. = FALSE, domain = NULL)</span></span>
 <span><span class="co">##     }</span></span>
@@ -791,7 +750,7 @@
 <span><span class="co">##         base::print(i)</span></span>
 <span><span class="co">##     }</span></span>
 <span><span class="co">## }</span></span>
-<span><span class="co">## &lt;environment: 0x5591b9344de8&gt;</span></span></code></pre>
+<span><span class="co">## &lt;environment: 0x558603a589d8&gt;</span></span></code></pre>
 <p><br></p>
 </div>
 <div class="section level3">
@@ -915,17 +874,14 @@ export the corrected function<a class="anchor" aria-label="anchor" href="#argume
 <span><span class="co">##             call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, </span></span>
 <span><span class="co">##             domain = NULL)</span></span>
 <span><span class="co">##     }</span></span>
-<span><span class="co">##     else if (base::is.atomic(x = tempo_for_seq1) &amp;&amp; base::typeof(x = tempo_for_seq1) %in% </span></span>
-<span><span class="co">##         base::c("double", "integer") &amp;&amp; base::all(x = tempo_for_seq1 &lt; </span></span>
+<span><span class="co">##     else if (base::is.numeric(x = tempo_for_seq1) &amp;&amp; base::all(tempo_for_seq1 &lt; </span></span>
 <span><span class="co">##         0, na.rm = FALSE)) {</span></span>
 <span><span class="co">##         base::warning("FOR SEQUENCE WITH ALL NEGATIVE VALUES", </span></span>
 <span><span class="co">##             call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, </span></span>
 <span><span class="co">##             domain = NULL)</span></span>
 <span><span class="co">##     }</span></span>
-<span><span class="co">##     else if (base::is.atomic(x = tempo_for_seq1) &amp;&amp; base::typeof(x = tempo_for_seq1) %in% </span></span>
-<span><span class="co">##         base::c("double", "integer", "character", "complex") &amp;&amp; </span></span>
-<span><span class="co">##         base::length(x = tempo_for_seq1) &gt;= 2 &amp;&amp; tempo_for_seq1[1] &gt; </span></span>
-<span><span class="co">##         tempo_for_seq1[2]) {</span></span>
+<span><span class="co">##     else if (base::is.numeric(x = tempo_for_seq1) &amp;&amp; base::length(x = tempo_for_seq1) &gt;= </span></span>
+<span><span class="co">##         2 &amp;&amp; tempo_for_seq1[1] &gt; tempo_for_seq1[2]) {</span></span>
 <span><span class="co">##         base::warning("FOR SEQUENCE DECREASING", call. = FALSE, </span></span>
 <span><span class="co">##             immediate. = FALSE, noBreaks. = FALSE, domain = NULL)</span></span>
 <span><span class="co">##     }</span></span>
@@ -934,7 +890,7 @@ export the corrected function<a class="anchor" aria-label="anchor" href="#argume
 <span><span class="co">##     }</span></span>
 <span><span class="co">##     y</span></span>
 <span><span class="co">## }</span></span>
-<span><span class="co">## &lt;environment: 0x5591bbcb9fb0&gt;</span></span></code></pre>
+<span><span class="co">## &lt;environment: 0x5586063c0f08&gt;</span></span></code></pre>
 <div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># The corrected function warns when x is empty, because 1:length(x) is then c(1, 0), a decreasing sequence.</span></span>
 <span><span class="fu">fun9_safer</span><span class="op">(</span>x <span class="op">=</span> <span class="fu">base</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">character</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
@@ -959,15 +915,15 @@ export the corrected function<a class="anchor" aria-label="anchor" href="#argume
 <span><span class="co">## LINE CONSTRUCT       CODE</span></span>
 <span><span class="co">## 3    for     for (i in 1:length(x)) {</span></span></code></pre>
 <pre><code><span><span class="co">## MODIFIED CODE EXPORTED IN:</span></span>
-<span><span class="co">## /tmp/RtmpbjlApY/dir182047d1d89f/fun9_safer.R</span></span></code></pre>
+<span><span class="co">## /tmp/RtmpSUVOsO/dir1ac6286cf5ed/fun9_safer.R</span></span></code></pre>
 <div class="sourceCode" id="cb33"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">base</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/base/readLines.html" class="external-link">readLines</a></span><span class="op">(</span>con <span class="op">=</span> <span class="fu">base</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="va">tempo_dir</span>, <span class="st">"fun9_safer.R"</span>, fsep <span class="op">=</span> <span class="st">"/"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## [1] "fun9_safer &lt;- function (x) "                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                </span></span>
-<span><span class="co">## [2] "{"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          </span></span>
-<span><span class="co">## [3] "    tempo_for_seq1 &lt;- 1:length(x) ; if(base::length(x = tempo_for_seq1) == 0){base::warning(\"FOR SEQUENCE EMPTY: 0 ITERATION\", call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, domain = NULL)}else if(base::anyNA(x = tempo_for_seq1)){base::warning(\"FOR SEQUENCE WITH NA VALUES\", call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, domain = NULL)}else if(base::length(x = tempo_for_seq1) == 1){base::warning(\"FOR SEQUENCE WITH A SINGLE VALUE (EQUAL BOUNDS?): SINGLE ITERATION\", call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, domain = NULL)}else if(base::is.atomic(x = tempo_for_seq1) &amp;&amp; base::any(base::is.infinite(x = tempo_for_seq1), na.rm = TRUE)){base::warning(\"FOR SEQUENCE WITH INFINITE VALUES: NO ENDLESS LOOP POSSIBLE BECAUSE THE for() CONTROLLER IS FULLY EVALUATED BEFORE ITERATING, BUT CHECK THAT AN INFINITE VALUE IS EXPECTED\", call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, domain = NULL)}else if(base::is.atomic(x = tempo_for_seq1) &amp;&amp; base::typeof(x = tempo_for_seq1) %in% base::c(\"double\", \"integer\") &amp;&amp; base::all(x = tempo_for_seq1 &lt; 0, na.rm = FALSE)){base::warning(\"FOR SEQUENCE WITH ALL NEGATIVE VALUES\", call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, domain = NULL)}else if(base::is.atomic(x = tempo_for_seq1) &amp;&amp; base::typeof(x = tempo_for_seq1) %in% base::c(\"double\", \"integer\", \"character\", \"complex\") &amp;&amp; base::length(x = tempo_for_seq1) &gt;= 2 &amp;&amp; tempo_for_seq1[1] &gt; tempo_for_seq1[2]){base::warning(\"FOR SEQUENCE DECREASING\", call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, domain = NULL)} ; for (i in tempo_for_seq1) {"</span></span>
-<span><span class="co">## [4] "        y &lt;- i"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             </span></span>
-<span><span class="co">## [5] "    }"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      </span></span>
-<span><span class="co">## [6] "    y"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      </span></span>
+<pre><code><span><span class="co">## [1] "fun9_safer &lt;- function (x) "                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              </span></span>
+<span><span class="co">## [2] "{"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        </span></span>
+<span><span class="co">## [3] "    tempo_for_seq1 &lt;- 1:length(x) ; if(base::length(x = tempo_for_seq1) == 0){base::warning(\"FOR SEQUENCE EMPTY: 0 ITERATION\", call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, domain = NULL)}else if(base::anyNA(x = tempo_for_seq1)){base::warning(\"FOR SEQUENCE WITH NA VALUES\", call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, domain = NULL)}else if(base::length(x = tempo_for_seq1) == 1){base::warning(\"FOR SEQUENCE WITH A SINGLE VALUE (EQUAL BOUNDS?): SINGLE ITERATION\", call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, domain = NULL)}else if(base::is.atomic(x = tempo_for_seq1) &amp;&amp; base::any(base::is.infinite(x = tempo_for_seq1), na.rm = TRUE)){base::warning(\"FOR SEQUENCE WITH INFINITE VALUES: NO ENDLESS LOOP POSSIBLE BECAUSE THE for() CONTROLLER IS FULLY EVALUATED BEFORE ITERATING, BUT CHECK THAT AN INFINITE VALUE IS EXPECTED\", call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, domain = NULL)}else if(base::is.numeric(x = tempo_for_seq1) &amp;&amp; base::all(tempo_for_seq1 &lt; 0, na.rm = FALSE)){base::warning(\"FOR SEQUENCE WITH ALL NEGATIVE VALUES\", call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, domain = NULL)}else if(base::is.numeric(x = tempo_for_seq1) &amp;&amp; base::length(x = tempo_for_seq1) &gt;= 2 &amp;&amp; tempo_for_seq1[1] &gt; tempo_for_seq1[2]){base::warning(\"FOR SEQUENCE DECREASING\", call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, domain = NULL)} ; for (i in tempo_for_seq1) {"</span></span>
+<span><span class="co">## [4] "        y &lt;- i"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           </span></span>
+<span><span class="co">## [5] "    }"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    </span></span>
+<span><span class="co">## [6] "    y"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    </span></span>
 <span><span class="co">## [7] "}"</span></span></code></pre>
 <p><br></p>
 </div>
@@ -1021,17 +977,14 @@ export the corrected function<a class="anchor" aria-label="anchor" href="#argume
 <span><span class="co">##             call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, </span></span>
 <span><span class="co">##             domain = NULL)</span></span>
 <span><span class="co">##     }</span></span>
-<span><span class="co">##     else if (base::is.atomic(x = tempo_for_seq1) &amp;&amp; base::typeof(x = tempo_for_seq1) %in% </span></span>
-<span><span class="co">##         base::c("double", "integer") &amp;&amp; base::all(x = tempo_for_seq1 &lt; </span></span>
+<span><span class="co">##     else if (base::is.numeric(x = tempo_for_seq1) &amp;&amp; base::all(tempo_for_seq1 &lt; </span></span>
 <span><span class="co">##         0, na.rm = FALSE)) {</span></span>
 <span><span class="co">##         base::warning("FOR SEQUENCE WITH ALL NEGATIVE VALUES", </span></span>
 <span><span class="co">##             call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, </span></span>
 <span><span class="co">##             domain = NULL)</span></span>
 <span><span class="co">##     }</span></span>
-<span><span class="co">##     else if (base::is.atomic(x = tempo_for_seq1) &amp;&amp; base::typeof(x = tempo_for_seq1) %in% </span></span>
-<span><span class="co">##         base::c("double", "integer", "character", "complex") &amp;&amp; </span></span>
-<span><span class="co">##         base::length(x = tempo_for_seq1) &gt;= 2 &amp;&amp; tempo_for_seq1[1] &gt; </span></span>
-<span><span class="co">##         tempo_for_seq1[2]) {</span></span>
+<span><span class="co">##     else if (base::is.numeric(x = tempo_for_seq1) &amp;&amp; base::length(x = tempo_for_seq1) &gt;= </span></span>
+<span><span class="co">##         2 &amp;&amp; tempo_for_seq1[1] &gt; tempo_for_seq1[2]) {</span></span>
 <span><span class="co">##         base::warning("FOR SEQUENCE DECREASING", call. = FALSE, </span></span>
 <span><span class="co">##             immediate. = FALSE, noBreaks. = FALSE, domain = NULL)</span></span>
 <span><span class="co">##     }</span></span>
@@ -1040,7 +993,7 @@ export the corrected function<a class="anchor" aria-label="anchor" href="#argume
 <span><span class="co">##     }</span></span>
 <span><span class="co">##     y</span></span>
 <span><span class="co">## }</span></span>
-<span><span class="co">## &lt;environment: 0x5591beb34290&gt;</span></span></code></pre>
+<span><span class="co">## &lt;environment: 0x5586090ebef0&gt;</span></span></code></pre>
 <div class="sourceCode" id="cb41"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Nested for() loops are all checked.</span></span>
 <span><span class="va">fun5</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">{</span></span>
@@ -1084,17 +1037,14 @@ export the corrected function<a class="anchor" aria-label="anchor" href="#argume
 <span><span class="co">##                 call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, </span></span>
 <span><span class="co">##                 domain = NULL)</span></span>
 <span><span class="co">##         }</span></span>
-<span><span class="co">##         else if (base::is.atomic(x = tempo_for_seq1) &amp;&amp; base::typeof(x = tempo_for_seq1) %in% </span></span>
-<span><span class="co">##             base::c("double", "integer") &amp;&amp; base::all(x = tempo_for_seq1 &lt; </span></span>
+<span><span class="co">##         else if (base::is.numeric(x = tempo_for_seq1) &amp;&amp; base::all(tempo_for_seq1 &lt; </span></span>
 <span><span class="co">##             0, na.rm = FALSE)) {</span></span>
 <span><span class="co">##             base::warning("FOR SEQUENCE WITH ALL NEGATIVE VALUES", </span></span>
 <span><span class="co">##                 call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, </span></span>
 <span><span class="co">##                 domain = NULL)</span></span>
 <span><span class="co">##         }</span></span>
-<span><span class="co">##         else if (base::is.atomic(x = tempo_for_seq1) &amp;&amp; base::typeof(x = tempo_for_seq1) %in% </span></span>
-<span><span class="co">##             base::c("double", "integer", "character", "complex") &amp;&amp; </span></span>
-<span><span class="co">##             base::length(x = tempo_for_seq1) &gt;= 2 &amp;&amp; tempo_for_seq1[1] &gt; </span></span>
-<span><span class="co">##             tempo_for_seq1[2]) {</span></span>
+<span><span class="co">##         else if (base::is.numeric(x = tempo_for_seq1) &amp;&amp; base::length(x = tempo_for_seq1) &gt;= </span></span>
+<span><span class="co">##             2 &amp;&amp; tempo_for_seq1[1] &gt; tempo_for_seq1[2]) {</span></span>
 <span><span class="co">##             base::warning("FOR SEQUENCE DECREASING", call. = FALSE, </span></span>
 <span><span class="co">##                 immediate. = FALSE, noBreaks. = FALSE, domain = NULL)</span></span>
 <span><span class="co">##         }</span></span>
@@ -1103,7 +1053,7 @@ export the corrected function<a class="anchor" aria-label="anchor" href="#argume
 <span><span class="co">##         }</span></span>
 <span><span class="co">##     }</span></span>
 <span><span class="co">## }</span></span>
-<span><span class="co">## &lt;environment: 0x5591bf121770&gt;</span></span></code></pre>
+<span><span class="co">## &lt;environment: 0x5586096d0690&gt;</span></span></code></pre>
 <div class="sourceCode" id="cb44"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># A for() loop inside an argument default is also checked.</span></span>
 <span><span class="co"># Here, the loop is the body of function(y) without { }: the correction adds { } around it.</span></span>
@@ -1139,17 +1089,14 @@ export the corrected function<a class="anchor" aria-label="anchor" href="#argume
 <span><span class="co">##             call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, </span></span>
 <span><span class="co">##             domain = NULL)</span></span>
 <span><span class="co">##     }</span></span>
-<span><span class="co">##     else if (base::is.atomic(x = tempo_for_seq1) &amp;&amp; base::typeof(x = tempo_for_seq1) %in% </span></span>
-<span><span class="co">##         base::c("double", "integer") &amp;&amp; base::all(x = tempo_for_seq1 &lt; </span></span>
+<span><span class="co">##     else if (base::is.numeric(x = tempo_for_seq1) &amp;&amp; base::all(tempo_for_seq1 &lt; </span></span>
 <span><span class="co">##         0, na.rm = FALSE)) {</span></span>
 <span><span class="co">##         base::warning("FOR SEQUENCE WITH ALL NEGATIVE VALUES", </span></span>
 <span><span class="co">##             call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, </span></span>
 <span><span class="co">##             domain = NULL)</span></span>
 <span><span class="co">##     }</span></span>
-<span><span class="co">##     else if (base::is.atomic(x = tempo_for_seq1) &amp;&amp; base::typeof(x = tempo_for_seq1) %in% </span></span>
-<span><span class="co">##         base::c("double", "integer", "character", "complex") &amp;&amp; </span></span>
-<span><span class="co">##         base::length(x = tempo_for_seq1) &gt;= 2 &amp;&amp; tempo_for_seq1[1] &gt; </span></span>
-<span><span class="co">##         tempo_for_seq1[2]) {</span></span>
+<span><span class="co">##     else if (base::is.numeric(x = tempo_for_seq1) &amp;&amp; base::length(x = tempo_for_seq1) &gt;= </span></span>
+<span><span class="co">##         2 &amp;&amp; tempo_for_seq1[1] &gt; tempo_for_seq1[2]) {</span></span>
 <span><span class="co">##         base::warning("FOR SEQUENCE DECREASING", call. = FALSE, </span></span>
 <span><span class="co">##             immediate. = FALSE, noBreaks. = FALSE, domain = NULL)</span></span>
 <span><span class="co">##     }</span></span>
@@ -1158,7 +1105,7 @@ export the corrected function<a class="anchor" aria-label="anchor" href="#argume
 <span><span class="co">##     }</span></span>
 <span><span class="co">## }) </span></span>
 <span><span class="co">## f(1)</span></span>
-<span><span class="co">## &lt;environment: 0x5591bf7023d8&gt;</span></span></code></pre>
+<span><span class="co">## &lt;environment: 0x558609cba6e8&gt;</span></span></code></pre>
 <div class="sourceCode" id="cb47"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Only the writing is analyzed: 1:n is reported as a variable, whatever n.</span></span>
 <span><span class="va">fun7</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">{</span> <span class="va">n</span> <span class="op">&lt;-</span> <span class="fu">base</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">x</span><span class="op">)</span> ; <span class="kw">for</span><span class="op">(</span><span class="va">i</span> <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="va">n</span><span class="op">)</span><span class="op">{</span> <span class="va">y</span> <span class="op">&lt;-</span> <span class="va">i</span> <span class="op">}</span> ; <span class="va">y</span> <span class="op">}</span></span>
@@ -1195,17 +1142,14 @@ export the corrected function<a class="anchor" aria-label="anchor" href="#argume
 <span><span class="co">##             call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, </span></span>
 <span><span class="co">##             domain = NULL)</span></span>
 <span><span class="co">##     }</span></span>
-<span><span class="co">##     else if (base::is.atomic(x = tempo_for_seq1) &amp;&amp; base::typeof(x = tempo_for_seq1) %in% </span></span>
-<span><span class="co">##         base::c("double", "integer") &amp;&amp; base::all(x = tempo_for_seq1 &lt; </span></span>
+<span><span class="co">##     else if (base::is.numeric(x = tempo_for_seq1) &amp;&amp; base::all(tempo_for_seq1 &lt; </span></span>
 <span><span class="co">##         0, na.rm = FALSE)) {</span></span>
 <span><span class="co">##         base::warning("FOR SEQUENCE WITH ALL NEGATIVE VALUES", </span></span>
 <span><span class="co">##             call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, </span></span>
 <span><span class="co">##             domain = NULL)</span></span>
 <span><span class="co">##     }</span></span>
-<span><span class="co">##     else if (base::is.atomic(x = tempo_for_seq1) &amp;&amp; base::typeof(x = tempo_for_seq1) %in% </span></span>
-<span><span class="co">##         base::c("double", "integer", "character", "complex") &amp;&amp; </span></span>
-<span><span class="co">##         base::length(x = tempo_for_seq1) &gt;= 2 &amp;&amp; tempo_for_seq1[1] &gt; </span></span>
-<span><span class="co">##         tempo_for_seq1[2]) {</span></span>
+<span><span class="co">##     else if (base::is.numeric(x = tempo_for_seq1) &amp;&amp; base::length(x = tempo_for_seq1) &gt;= </span></span>
+<span><span class="co">##         2 &amp;&amp; tempo_for_seq1[1] &gt; tempo_for_seq1[2]) {</span></span>
 <span><span class="co">##         base::warning("FOR SEQUENCE DECREASING", call. = FALSE, </span></span>
 <span><span class="co">##             immediate. = FALSE, noBreaks. = FALSE, domain = NULL)</span></span>
 <span><span class="co">##     }</span></span>
@@ -1214,7 +1158,7 @@ export the corrected function<a class="anchor" aria-label="anchor" href="#argume
 <span><span class="co">##     }</span></span>
 <span><span class="co">##     y</span></span>
 <span><span class="co">## }</span></span>
-<span><span class="co">## &lt;environment: 0x5591bfcdeef0&gt;</span></span></code></pre>
+<span><span class="co">## &lt;environment: 0x55860a292ed0&gt;</span></span></code></pre>
 <p><br></p>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

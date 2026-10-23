@@ -112,10 +112,11 @@ data frame is exported as `res.tsv` instead of being returned. If
 `fun_export` argument is `TRUE`, the modified function is exported as
 `<FUNCTION_NAME>_safer.R` instead of being returned (ignored if no
 correction has been applied). Otherwise, the modified function (an R
-function object rebuilt from the corrected code, with its comments
-removed) is returned, or `NULL` if no modification has been applied. The
-returned value is invisible when nothing is exported. Column
-descriptions:
+function object rebuilt from the corrected code, with its comments and
+indentation preserved if the submitted function carries its source
+references, see the details section) is returned, or `NULL` if no
+modification has been applied. The returned value is invisible when
+nothing is exported. Column descriptions:
 
 - `$LINE_NB`: the line number in the function code (starting at the
   `"<- function"` line, i.e., without counting the `#'` header lines).
@@ -201,6 +202,20 @@ backslash-quote, like `"'\'"`, desynchronizes the in-quotes detection of
 repository). Please, report
 [here](https://github.com/safer-r/saferDev/issues) if it is the case.
 
+Comments and indentation of the modified function (`fun_export` argument
+and returned function): the missing arguments are inserted into the
+printed code of the submitted function, so that its comments and
+indentation are kept. This requires that the submitted function carries
+its source references (attribute `srcref`, i.e.,
+`options(keep.source = TRUE)` when the function was created, the default
+in interactive sessions). Otherwise (e.g., a function of an installed
+package, or a function created in an `Rscript` session), the printed
+code is the deparsed code, without comments and with a standard
+indentation. In addition, a proposal is not applied (and is indicated in
+the final message) if the corrected call contains a string with
+consecutive spaces (e.g., `"a b"`), because the proposals are built from
+a code where consecutive spaces are collapsed.
+
 See more examples
 [here](https://safer-r.github.io/saferDev/articles/all_args_here.html).
 
@@ -208,8 +223,8 @@ Warnings:
 
 1.  The following R functions are also skipped (as indicated by
     `"SKIPPED"` in the `DEF_ARGS` column of the returned data frame):
-    [`as.environment()`](https://bugs.r-project.org/show_bug.cgi?id=18849).
-    Click to see the explanation.
+    [`as.environment()`](https://rdrr.io/r/base/as.environment.html)
+    (see the R bug report 18849 in the R bug tracker).
 
 2.  Some functions, like
     [`rownames()`](https://rdrr.io/r/base/colnames.html), have different
@@ -244,42 +259,30 @@ Yushi Han
 # Warning: these examples may not work well when using the "Run examples" link 
 # because of a particular environment. Please, copy-paste in a local environment.
 # See also https://safer-r.github.io/saferDev/articles/all_args_here.html
-if (FALSE) { # \dontrun{
-# Example that returns an error
-saferDev::all_args_here(mean) # Example that returns an error
-source("https://raw.githubusercontent.com/safer-r/saferDev/main/dev/other/test2.R")
-saferDev::all_args_here(test2) # the checked function must be executable
-} # }
-
-FUN2 <- function(x, y){
-    middle_bracket2 <- base::do.call(
-        what = base::c, 
-        args = code_for_col, 
-        quote = FALSE, 
-        envir = base::parent.frame()
-    )
+fun1 <- function(x){
+    base::paste0(x, "a") # collapse and recycle0 arguments not written
 }
-saferDev::all_args_here(FUN2, safer_check = FALSE)
+fun1_safer <- saferDev::all_args_here(x = fun1, safer_check = FALSE) # arguments added
 #> 
-#> INSIDE FUN2(), ARGUMENTS ARE MISSING.
+#> INSIDE fun1(), ARGUMENTS ARE MISSING.
 #> 
-
-if (FALSE) { # \dontrun{
-# Example that creates a file/folder in the working directory
-source("https://raw.githubusercontent.com/safer-r/.github/refs/heads/main/profile/backbone.R")
-saferDev::all_args_here(BACKBONE, table_export = TRUE, fun_export = TRUE, safer_check = FALSE)
-} # }
-
-FUN2 <- function(x, y){
-    middle_bracket2 <- base::do.call(
-        what = base::c,
-        args = code_for_col,
-        quote = FALSE,
-        envir = base::parent.frame()
-    )
-}
-FUN2_safer <- saferDev::all_args_here(FUN2, fun_export = FALSE, safer_check = FALSE) # returns the modified function (missing arguments added) or NULL if nothing was modified
+fun1_safer # corrected function
+#> function (x) 
+#> {
+#>     base::paste0(x, "a", collapse = NULL, recycle0 = FALSE)
+#> }
+#> <environment: 0x55a0647a5168>
+# Write the table (res.tsv) and the corrected function (fun1_safer.R) in a new temporary folder:
+tempo_dir <- base::tempfile(pattern = "dir", tmpdir = base::tempdir(), fileext = "")
+base::dir.create(path = tempo_dir, showWarnings = TRUE, recursive = FALSE, mode = "0777")
+saferDev::all_args_here(x = fun1, table_export = TRUE, fun_export = TRUE, out_path = tempo_dir,
+    safer_check = FALSE)
 #> 
-#> INSIDE FUN2(), ARGUMENTS ARE MISSING.
+#> INSIDE fun1(), ARGUMENTS ARE MISSING.
+#> RESULT EXPORTED IN:
+#> /tmp/RtmpT24sDl/dir16a0e196037/res.tsv
+#> 
+#> MODIFIED CODE EXPORTED IN:
+#> /tmp/RtmpT24sDl/dir16a0e196037/fun1_safer.R
 #> 
 ```
