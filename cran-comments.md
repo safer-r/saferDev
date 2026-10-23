@@ -7,7 +7,8 @@
 * Linux (Ubuntu 22.04, x86_64), R 4.6.1: `R CMD check --as-cran --no-manual`,
   3316 tests passed (run in three batches). The only NOTE ("unable to verify current time") came from the
   absence of internet access during this check.
-* TO COMPLETE BEFORE SUBMISSION: Windows, R 4.6.x (local `R CMD check --as-cran`).
+* Windows 11 (x86_64), R 4.6.0: `R CMD check --as-cran` (with PDF manual and CRAN
+  incoming feasibility checks, internet access available): Status OK, 3316 tests passed.
 * TO COMPLETE BEFORE SUBMISSION: win-builder, R-devel and R-release.
 * TO COMPLETE BEFORE SUBMISSION: GitHub Actions (ubuntu, macOS, windows).
 
