@@ -16,84 +16,24 @@
 #' # Warning: these examples may not work well when using the "Run examples" link 
 #' # because of a particular environment. Please, copy-paste in a local environment.
 #' # See also https://safer-r.github.io/saferDev/articles/env_check.html
-#' # Examples in the working environment
-#' # creation of the object mean with value 1 in the .GlobalEnv environment, 
-#' # knowing that the mean() function also exists in the environment base, above .GlobalEnv:
-#' mean <- 1 
-#' # creation of the object t.test with value 1 in the .GlobalEnv environment, 
-#' # knowing that the t.test() function also exists in the environment stats, above .GlobalEnv:
-#' t.test <- 1 
-#' search() # current R scope (order of the successive R environments).
-#' utils::find("mean") # where the objects with the name "mean" are present.
-#' utils::find("t.test") # where the objects with the name "mean" are present.
-#' # test if any object_name of the global environment are above environments:
-#' a <- saferDev::env_check(pos = 1) 
-#' a # output string.
-#' cat(a)
-#' # test if any object of the stats environment (one step above .GlobalEnv) 
-#' # are in upper environments of stats. Returns NULL since no object names of 
-#' # stats are in upper environments:
-#' saferDev::env_check(pos = 2) 
-#' rm(mean)
-#' rm(t.test)
-#' 
-#' # Examples inside a function
-#' # saferDev::env_check() checks if the object names inside the fun1 function 
-#' # exist in the .GlobalEnv environment and above:
-#' fun1 <- function() {
-#'   t.test <- 0
-#'   mean <- 5
-#'   saferDev::env_check(pos = 1)
+#' # Inside a function: the names t.test and mean, created inside fun1(),
+#' # also exist in the stats and base environments located above:
+#' fun1 <- function(){
+#'     t.test <- 0
+#'     mean <- 5
+#'     saferDev::env_check(pos = 1, name = "fun1")
 #' }
 #' a <- fun1()
-#' cat(a) # Warning: cat(fun1()) creates an additional layer of environment.
-#' # saferDev::env_check() checks if the object names inside the environment one step above fun2(), 
-#' # here .GlobalEnv, exist in the upper environments of .GlobalEnv:
-#' fun2 <- function() {
-#'   sum <- 0
-#'   saferDev::env_check(pos = 2)
+#' base::cat(a)
+#' # NULL returned when no name is also present in the environments above:
+#' fun2 <- function(){
+#'     tempo_name_used_nowhere_else <- 0
+#'     saferDev::env_check(pos = 1, name = "fun2")
 #' }
 #' fun2()
-#' # Warning: cat(fun2()) does not return NULL, because the environment tested is not 
-#' # anymore .GlobalEnv but inside cat().
-#' a <- fun2() 
-#' cat(a) # nothing displayed because fun2() returns NULL
-#' # With the name of the function fun3 indicated in the message:
-#' fun3 <- function() {
-#'   t.test <- 0
-#'   mean <- 5
-#'   saferDev::env_check(pos = 1, name = "fun3")
-#' }
-#' a <- fun3() 
-#' cat(a)
-#' # Alternative way:
-#' # sys.calls() gives the name of the imbricated functions and 
-#' # sys.calls()[[length(sys.calls())]] the name of the function one step above.
-#' fun4 <- function() {
-#'   t.test <- 0
-#'   mean <- 5
-#'   name <- as.character(sys.calls()[[length(sys.calls())]])
-#'   saferDev::env_check(pos = 1, name = name)
-#' }
-#' a <- fun4() 
-#' cat(a)
-#' # A way to have the name of the tested environment according to test.pos value:
-#' fun7 <- function() {
-#'   min <- "VALUE"
-#'   fun8 <- function() {
-#'     test.pos <- 1 # value 1 tests the fun8 env, 2 tests the fun7 env.
-#'     range <- "VALUE"
-#'     name <- if(length(sys.calls()) >= test.pos) {
-#'       as.character(sys.calls()[[length(sys.calls()) + 1 - test.pos]])
-#'     } else {
-#'       search()[(1:length(search()))[test.pos - length(sys.calls())]]
-#'     }
-#'     saferDev::env_check(pos = test.pos, name = name) 
-#'   }
-#'   fun8()
-#' }
-#' a <- fun7() 
-#' cat(a)
+#' # pos = 2 checks the environment one step above the function (here, the calling environment).
+#' # See the env_check() article of the website for more examples.
+#' 
 #' @export
 env_check <- function(
     pos = 1, 

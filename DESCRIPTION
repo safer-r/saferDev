@@ -1,18 +1,19 @@
 Package: saferDev
 Type: Package
-Title: Function and Pipeline Development
+Title: Checking Tools for Safer R Function Development
 Version: 3.0.0
-Date: 2026-10-21
+Date: 2026-10-23
 Authors@R: c(
     person(given = "Haiding", family = "Wang", role = "ctb"),
     person(given = "Yushi", family = "Han", role = "ctb"),
     person(given = "Mia", family = "Legras", role = "ctb"),
-    person(given = "Gael", family = "Millot",  email = "gael.millot@pasteur.fr", role = c("cre", "aut", "ctb"), comment = c(ORCID = "0000-0002-0591-3509"))
+    person(given = "Gael", family = "Millot",  email = "gael.millot@pasteur.fr", role = c("aut", "cre"), comment = c(ORCID = "0000-0002-0591-3509"))
   )
 Encoding: UTF-8
 Maintainer: Gael Millot <gael.millot@pasteur.fr>
-Description: Set of functions that perform checks according to the safer-r project recommendations for R function development (see <https://github.com/safer-r>). This includes checking argument values, ensuring correct specification of all mandatory arguments for embedded functions, as well as their explicit package namespace qualification, among other things.
-URL: <https://github.com/safer-r/saferDev>, <https://safer-r.github.io/saferDev/>
+Description: Set of functions that check and correct the code of R functions according to the safer-r project recommendations (see <https://github.com/safer-r>): argument value checking, explicit package namespace qualification of the function calls, complete writing of the arguments of the called functions, curly brackets around the bodies of if, else, for, while, repeat and function, TRUE and FALSE written in full, controlled for() loop sequences and standard function() writing of lambda functions. The corrected function is returned or written into a file. Other functions check the R scope, catch messages, check the presence of packages and functions, and write log files.
+URL: https://github.com/safer-r/saferDev, https://safer-r.github.io/saferDev/
+BugReports: https://github.com/safer-r/saferDev/issues
 License: GPL-3
 Depends: 
     R (>= 4.6.0)

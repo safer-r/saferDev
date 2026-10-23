@@ -39,7 +39,7 @@ all_args_here(
 A data frame indicating the missing arguments or a message saying that everything seems fine.
 If \code{table_export} argument is \code{TRUE}, then the data frame is exported as \code{res.tsv} instead of being returned.
 If \code{fun_export} argument is \code{TRUE}, the modified function is exported as \code{<FUNCTION_NAME>_safer.R} instead of being returned (ignored if no correction has been applied).
-Otherwise, the modified function (an R function object rebuilt from the corrected code, with its comments removed) is returned, or \code{NULL} if no modification has been applied. The returned value is invisible when nothing is exported.
+Otherwise, the modified function (an R function object rebuilt from the corrected code, with its comments and indentation preserved if the submitted function carries its source references, see the details section) is returned, or \code{NULL} if no modification has been applied. The returned value is invisible when nothing is exported.
 Column descriptions: 
 \itemize{
   \item \code{$LINE_NB}: the line number in the function code (starting at the \code{"<- function"} line, i.e., without counting the \code{#'} header lines).
@@ -78,11 +78,13 @@ Pre-check: the submitted function is first checked by \code{lambda_check()}: if 
 
 Known limitation: a string literal containing an escaped backslash-quote, like \code{"'\\'"}, desynchronizes the in-quotes detection of \code{all_args_here()}, which can return an internal error (see the \code{dev/repro_all_args_here_internal_error_3.R} script of the package repository). Please, report \href{https://github.com/safer-r/saferDev/issues}{here} if it is the case.
 
+Comments and indentation of the modified function (\code{fun_export} argument and returned function): the missing arguments are inserted into the printed code of the submitted function, so that its comments and indentation are kept. This requires that the submitted function carries its source references (attribute \code{srcref}, i.e., \code{options(keep.source = TRUE)} when the function was created, the default in interactive sessions). Otherwise (e.g., a function of an installed package, or a function created in an \code{Rscript} session), the printed code is the deparsed code, without comments and with a standard indentation. In addition, a proposal is not applied (and is indicated in the final message) if the corrected call contains a string with consecutive spaces (e.g., \code{"a  b"}), because the proposals are built from a code where consecutive spaces are collapsed.
+
 See more examples \href{https://safer-r.github.io/saferDev/articles/all_args_here.html}{here}.
 
 Warnings:
 \enumerate{
-  \item The following R functions are also skipped (as indicated by \code{"SKIPPED"} in the \code{DEF_ARGS} column of the returned data frame): \href{https://bugs.r-project.org/show_bug.cgi?id=18849}{\code{as.environment()}}. Click to see the explanation.
+  \item The following R functions are also skipped (as indicated by \code{"SKIPPED"} in the \code{DEF_ARGS} column of the returned data frame): \code{as.environment()} (see the R bug report 18849 in the R bug tracker).
   \item Some functions, like \code{rownames()}, have different arguments depending on whether something is assigned to it (e.g., \code{rownames(x) <- "a"}) or not. The \code{all_args_here()} function always proposes the arguments defined in the help page without assignment, meaning that it cannot detect the assignment. A way to bypass this is to use the "exact" writing of the function. For instance, \code{base::"rownames<-"(x, "a")} instead of using \code{base::rownames(x) <- "a"}, and use \code{getAnywhere("rownames<-")} to see the arguments of the function.
   \item The function could not properly work if any comma is present in default argument values. Please, report \href{https://github.com/safer-r/saferDev/issues}{here} if it is the case.
   \item Proposals in the \code{STATUS} column are only suggestions, as it is difficult to anticipate all the exceptions with arguments writing.
@@ -92,38 +94,16 @@ Warnings:
 # Warning: these examples may not work well when using the "Run examples" link 
 # because of a particular environment. Please, copy-paste in a local environment.
 # See also https://safer-r.github.io/saferDev/articles/all_args_here.html
-\dontrun{
-# Example that returns an error
-saferDev::all_args_here(mean) # Example that returns an error
-source("https://raw.githubusercontent.com/safer-r/saferDev/main/dev/other/test2.R")
-saferDev::all_args_here(test2) # the checked function must be executable
+fun1 <- function(x){
+    base::paste0(x, "a") # collapse and recycle0 arguments not written
 }
-
-FUN2 <- function(x, y){
-    middle_bracket2 <- base::do.call(
-        what = base::c, 
-        args = code_for_col, 
-        quote = FALSE, 
-        envir = base::parent.frame()
-    )
-}
-saferDev::all_args_here(FUN2, safer_check = FALSE)
-
-\dontrun{
-# Example that creates a file/folder in the working directory
-source("https://raw.githubusercontent.com/safer-r/.github/refs/heads/main/profile/backbone.R")
-saferDev::all_args_here(BACKBONE, table_export = TRUE, fun_export = TRUE, safer_check = FALSE)
-}
-
-FUN2 <- function(x, y){
-    middle_bracket2 <- base::do.call(
-        what = base::c,
-        args = code_for_col,
-        quote = FALSE,
-        envir = base::parent.frame()
-    )
-}
-FUN2_safer <- saferDev::all_args_here(FUN2, fun_export = FALSE, safer_check = FALSE) # returns the modified function (missing arguments added) or NULL if nothing was modified
+fun1_safer <- saferDev::all_args_here(x = fun1, safer_check = FALSE) # arguments added
+fun1_safer # corrected function
+# Write the table (res.tsv) and the corrected function (fun1_safer.R) in a new temporary folder:
+tempo_dir <- base::tempfile(pattern = "dir", tmpdir = base::tempdir(), fileext = "")
+base::dir.create(path = tempo_dir, showWarnings = TRUE, recursive = FALSE, mode = "0777")
+saferDev::all_args_here(x = fun1, table_export = TRUE, fun_export = TRUE, out_path = tempo_dir,
+    safer_check = FALSE)
 
 }
 \author{

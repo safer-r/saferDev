@@ -16,7 +16,7 @@ colons_check(
 \arguments{
 \item{x}{a function name, written without quotes and brackets.}
 
-\item{export}{Single logical value. Export the modified code into a \code{.R} file? If \code{TRUE}, the modified function is not returned but only exported. The name of the file is the name of the tested function, with \code{_safer} added at the end (e.g., \code{test_safer.R}). Warning: the written code is the analyzed code (see the \code{Details} section): comments removed and multiple spaces collapsed. An error is returned if the file already exists in \code{out_path}, and if the tested function is not designated by a function name (like \code{test} or \code{package::test}), i.e., written by an inline definition (like \code{function(x)\{x\}}) or by a component writing (like \code{FUN_LIST$fun}). If \code{FALSE} (default), the modified function is not written but returned.}
+\item{export}{Single logical value. Export the modified code into a \code{.R} file? If \code{TRUE}, the modified function is not returned but only exported. The name of the file is the name of the tested function, with \code{_safer} added at the end (e.g., \code{test_safer.R}). The written code is the code of the submitted function, with its comments and indentation, only modified by the added package attributions (see the \code{Details} section). An error is returned if the file already exists in \code{out_path}, and if the tested function is not designated by a function name (like \code{test} or \code{package::test}), i.e., written by an inline definition (like \code{function(x)\{x\}}) or by a component writing (like \code{FUN_LIST$fun}). If \code{FALSE} (default), the modified function is not written but returned.}
 
 \item{out_path}{Single character string indicating the pathway of the folder where to export the modified code. \code{out_path = "."} (default) means the R working directory set by the user. A non-existing directory, \code{NULL} or an empty string (\code{""}) returns an error. Ignored if \code{export} is \code{FALSE}.}
 
@@ -47,7 +47,7 @@ The result is used to modify the code inside the tested function like this: \cod
 
 Since \code{saferDev} v3.0.0, the modified function is returned: the package attributions of the basic R functions, as indicated in the \code{"INSIDE test(), SOME :: OR ::: ARE MISSING BEFORE BASIC FUNCTIONS"} section of the returned message, are added to the submitted function code, and the modified function is returned using \code{return()}. The package attributions of the other functions, as indicated in the \code{"INSIDE test(), SOME :: OR ::: ARE MISSING BEFORE OTHER FUNCTIONS"} section of the returned message, are NOT added automatically, because the correct package cannot be determined reliably: a \code{base::warning()} is issued instead (in addition to the printed message). \code{NULL} is returned if no basic function required a package attribution.
 
-The modification is only performed on the code lines indicated in the \code{"INSIDE test(), SOME :: OR ::: ARE MISSING BEFORE BASIC FUNCTIONS"} section of the message, which is the same analysis as the one performed by \code{colons_check()} itself: functions written between quotes or preceded by \code{$} are not modified, and internal functions (created inside the tested function) are not modified either. Beware: the modification can only be applied to the analyzed code, which is the code with comments removed and multiple spaces collapsed: the returned function therefore does not contain the comments of the submitted function (the modification cannot recover them, since \code{colons_check()} does not analyze the comments). The modified function is returned with the environment of the submitted function, so that the functions used inside it still resolve the same way. If the modified code does not parse (a rare situation, e.g., a function name split across lines in a way the analyzer could not handle correctly), this is an internal bug: an internal error is returned when \code{export = TRUE}, and the submitted function is returned unchanged, with no error, when \code{export = FALSE}.
+The modification is only performed on the code lines indicated in the \code{"INSIDE test(), SOME :: OR ::: ARE MISSING BEFORE BASIC FUNCTIONS"} section of the message, which is the same analysis as the one performed by \code{colons_check()} itself: functions written between quotes or preceded by \code{$} are not modified, and internal functions (created inside the tested function) are not modified either. The analysis is performed on the code with comments removed and multiple spaces collapsed, but the package attributions are added to the code of the submitted function as printed: the returned (and exported) function therefore keeps the comments and the indentation of the submitted function. Warning: comments are only present when the submitted function carries its source references (attribute \code{srcref}, e.g., a function defined in the console or in a file loaded with \code{keep.source = TRUE}). Otherwise, as for compiled package functions, the code printed by \code{R} (without comments and reindented) is used. The modified function is returned with the environment of the submitted function, so that the functions used inside it still resolve the same way. If the modified code does not parse (a rare situation, e.g., a function name split across lines in a way the analyzer could not handle correctly), this is an internal bug: an internal error is returned when \code{export = TRUE}, and the submitted function is returned unchanged, with no error, when \code{export = FALSE}.
 
 The name of the exported file (when \code{export = TRUE}) is the name of the submitted function, as written by the user, with \code{_safer} added at the end, e.g., \code{test_safer.R} for \code{colons_check(x = test)}. If the submitted function was written as \code{package::function}, like \code{colons_check(x = saferDev::test)}, the name is \code{test_safer.R} (the package name is not part of the file name). The exported file contains an assignment of the modified function: \code{test_safer <- function(...) ...}, so that \code{base::source()}ing it recreates the modified function. Warning: the tested function must be designated by a function name (like \code{test} or \code{package::test}) when \code{export = TRUE}: an inline definition (like \code{function(x)\{x\}}) or a component writing (like \code{FUN_LIST$fun}) returns an error, because the name of the exported file could not be determined reliably.
 
@@ -83,13 +83,16 @@ checking dependencies in R code ... WARNING
 # Warning: these examples may not work well when using the "Run examples" link 
 # because of a particular environment. Please, copy-paste in a local environment.
 # See also https://safer-r.github.io/saferDev/articles/colons_check.html
-saferDev::colons_check(mean)
-saferDev::colons_check(colons_check)
-source("https://raw.githubusercontent.com/safer-r/saferDev/main/dev/other/test.R")
-res <- saferDev::colons_check(test) # res is the modified function, also printed in the message
-# source("https://raw.githubusercontent.com/safer-r/saferDev/main/dev/other/test.R")
-# saferDev::colons_check(x = test, export = TRUE, out_path = ".")
-# writes test_safer.R in the R working directory
+fun1 <- function(x){
+    y <- mean(x) # mean() written without base::
+    base::return(y)
+}
+fun1_safer <- saferDev::colons_check(fun1) # base:: added before mean()
+fun1_safer # corrected function
+# Write the corrected function in the fun1_safer.R file of a new temporary folder:
+tempo_dir <- base::tempfile(pattern = "dir", tmpdir = base::tempdir(), fileext = "")
+base::dir.create(path = tempo_dir, showWarnings = TRUE, recursive = FALSE, mode = "0777")
+saferDev::colons_check(x = fun1, export = TRUE, out_path = tempo_dir)
 
 }
 \author{

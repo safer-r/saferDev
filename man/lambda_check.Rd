@@ -53,14 +53,22 @@ Line numbers are indicative. They start at the \code{<- function} line (\code{#'
 # Warning: these examples may not work well when using the "Run examples" link
 # because of a particular environment. Please, copy-paste in a local environment.
 # See also https://safer-r.github.io/saferDev/articles/lambda_check.html
-fun1 <- eval(parse(text = "function(x){ base::sapply(X = 1:3, FUN = function(y){ y * 2 }) }", keep.source = TRUE))
+# The \\(x) writing is only kept in a function carrying its source references,
+# hence the parse(keep.source = TRUE) writing used here:
+code1 <- "function(x){ base::sapply(X = 1:3, FUN = function(y){ y * 2 }) }"
+fun1 <- eval(parse(text = code1, keep.source = TRUE))
 saferDev::lambda_check(fun1) # everything fine: NULL returned
-fun2 <- eval(parse(text = "function(x){ base::sapply(X = 1:3, FUN = \\\\(y){ y * 2 }) }", keep.source = TRUE))
+code2 <- "function(x){ base::sapply(X = 1:3, FUN = \\\\(y){ y * 2 }) }"
+fun2 <- eval(parse(text = code2, keep.source = TRUE))
 fun2_safer <- saferDev::lambda_check(fun2) # lambda writing reported
 fun2_safer # corrected function
-# The \\( writings that are not lambda writings are not reported nor modified:
-# a backslash followed by ( inside a string, a raw string, a comment or a backquoted name is never a lambda writing, because the detection is token-based (the parser gives a STR_CONST, COMMENT or QUOTED_NAME token, never a '\\' token)
-fun3 <- eval(parse(text = "function(x){ y <- \"the text \\\\\\\\(x) is inside a string\" ; z <- r\"(raw \\\\(x))\" ; # a \\\\(x) in a comment\n    base::`\\\\\\\\`(x) ; x }", keep.source = TRUE))
+# A backslash followed by ( in a string, a raw string, a comment or a backquoted name
+# is not a lambda writing (token-based detection): not reported, not modified.
+code3 <- paste0(
+    "function(x){ y <- \"the text \\\\\\\\(x) is inside a string\" ; ",
+    "z <- r\"(raw \\\\(x))\" ; # a \\\\(x) in a comment\n    base::`\\\\\\\\`(x) ; x }"
+)
+fun3 <- eval(parse(text = code3, keep.source = TRUE))
 saferDev::lambda_check(fun3) # everything fine: NULL returned
 # Write the corrected function in the fun2_safer.R file of a new temporary folder:
 tempo_dir <- base::tempfile(pattern = "dir", tmpdir = base::tempdir(), fileext = "")

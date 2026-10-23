@@ -51,21 +51,19 @@ Print a character string or a data object into a same output file. Convenient fo
 # Warning: these examples may not work well when using the "Run examples" link 
 # because of a particular environment. Please, copy-paste in a local environment.
 # See also https://safer-r.github.io/saferDev/articles/report.html
-\dontrun{
-# Example that creates a file/folder in the working directory
-saferDev::report(data = "THE FOLLOWING VECTOR IS:\n", output = "results.txt", path = ".", 
-append = TRUE, sep = 1)
-saferDev::report(data = 1:3, output = "results.txt", path = ".", append = TRUE, 
-rownames_kept = FALSE, vector_cat = FALSE, noquote = FALSE, sep = 2)
-saferDev::report(data = "THE FOLLOWING MATRIX IS:\n", output = "results.txt", path = ".", 
-append = TRUE, sep = 1)
-saferDev::report(data = matrix(1:5), output = "results.txt", path = ".", append = TRUE, 
-rownames_kept = FALSE, vector_cat = FALSE, noquote = FALSE, sep = 5)
-saferDev::report(data = "THE FOLLOWING DATA FRAME IS:\n", output = "results.txt", path = ".", 
-append = TRUE, sep = 1)
-saferDev::report(data = data.frame(A = 1:8, B = letters[1:8]), output = "results.txt", path = ".", 
-append = TRUE, rownames_kept = FALSE, vector_cat = FALSE, noquote = FALSE, sep = 1)
-}
+# Write in the results.txt file of a new temporary folder:
+tempo_dir <- base::tempfile(pattern = "dir", tmpdir = base::tempdir(), fileext = "")
+base::dir.create(path = tempo_dir, showWarnings = TRUE, recursive = FALSE, mode = "0777")
+saferDev::report(data = "THE FOLLOWING VECTOR IS:\n", output = "results.txt", path = tempo_dir,
+    append = TRUE, sep = 1)
+saferDev::report(data = 1:3, output = "results.txt", path = tempo_dir, append = TRUE,
+    rownames_kept = FALSE, vector_cat = FALSE, noquote = FALSE, sep = 2)
+saferDev::report(data = "THE FOLLOWING DATA FRAME IS:\n", output = "results.txt",
+    path = tempo_dir, append = TRUE, sep = 1)
+saferDev::report(data = base::data.frame(A = 1:3, B = letters[1:3]), output = "results.txt",
+    path = tempo_dir, append = TRUE, rownames_kept = FALSE, vector_cat = FALSE,
+    noquote = FALSE, sep = 1)
+base::cat(base::readLines(con = base::file.path(tempo_dir, "results.txt")), sep = "\n")
 }
 \seealso{
 \code{\link{capture.output}}.

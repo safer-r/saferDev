@@ -55,7 +55,7 @@
 #' 
 #' Warnings:
 #' \enumerate{
-#'   \item The following R functions are also skipped (as indicated by \code{"SKIPPED"} in the \code{DEF_ARGS} column of the returned data frame): \href{https://bugs.r-project.org/show_bug.cgi?id=18849}{\code{as.environment()}}. Click to see the explanation.
+#'   \item The following R functions are also skipped (as indicated by \code{"SKIPPED"} in the \code{DEF_ARGS} column of the returned data frame): \code{as.environment()} (see the R bug report 18849 in the R bug tracker).
 #'   \item Some functions, like \code{rownames()}, have different arguments depending on whether something is assigned to it (e.g., \code{rownames(x) <- "a"}) or not. The \code{all_args_here()} function always proposes the arguments defined in the help page without assignment, meaning that it cannot detect the assignment. A way to bypass this is to use the "exact" writing of the function. For instance, \code{base::"rownames<-"(x, "a")} instead of using \code{base::rownames(x) <- "a"}, and use \code{getAnywhere("rownames<-")} to see the arguments of the function.
 #'   \item The function could not properly work if any comma is present in default argument values. Please, report \href{https://github.com/safer-r/saferDev/issues}{here} if it is the case.
 #'   \item Proposals in the \code{STATUS} column are only suggestions, as it is difficult to anticipate all the exceptions with arguments writing.
@@ -67,38 +67,16 @@
 #' # Warning: these examples may not work well when using the "Run examples" link 
 #' # because of a particular environment. Please, copy-paste in a local environment.
 #' # See also https://safer-r.github.io/saferDev/articles/all_args_here.html
-#' \dontrun{
-#' # Example that returns an error
-#' saferDev::all_args_here(mean) # Example that returns an error
-#' source("https://raw.githubusercontent.com/safer-r/saferDev/main/dev/other/test2.R")
-#' saferDev::all_args_here(test2) # the checked function must be executable
+#' fun1 <- function(x){
+#'     base::paste0(x, "a") # collapse and recycle0 arguments not written
 #' }
-#' 
-#' FUN2 <- function(x, y){
-#'     middle_bracket2 <- base::do.call(
-#'         what = base::c, 
-#'         args = code_for_col, 
-#'         quote = FALSE, 
-#'         envir = base::parent.frame()
-#'     )
-#' }
-#' saferDev::all_args_here(FUN2, safer_check = FALSE)
-#' 
-#' \dontrun{
-#' # Example that creates a file/folder in the working directory
-#' source("https://raw.githubusercontent.com/safer-r/.github/refs/heads/main/profile/backbone.R")
-#' saferDev::all_args_here(BACKBONE, table_export = TRUE, fun_export = TRUE, safer_check = FALSE)
-#' }
-#'
-#' FUN2 <- function(x, y){
-#'     middle_bracket2 <- base::do.call(
-#'         what = base::c,
-#'         args = code_for_col,
-#'         quote = FALSE,
-#'         envir = base::parent.frame()
-#'     )
-#' }
-#' FUN2_safer <- saferDev::all_args_here(FUN2, fun_export = FALSE, safer_check = FALSE) # returns the modified function (missing arguments added) or NULL if nothing was modified
+#' fun1_safer <- saferDev::all_args_here(x = fun1, safer_check = FALSE) # arguments added
+#' fun1_safer # corrected function
+#' # Write the table (res.tsv) and the corrected function (fun1_safer.R) in a new temporary folder:
+#' tempo_dir <- base::tempfile(pattern = "dir", tmpdir = base::tempdir(), fileext = "")
+#' base::dir.create(path = tempo_dir, showWarnings = TRUE, recursive = FALSE, mode = "0777")
+#' saferDev::all_args_here(x = fun1, table_export = TRUE, fun_export = TRUE, out_path = tempo_dir,
+#'     safer_check = FALSE)
 #'
 #' @export
 all_args_here <- function(

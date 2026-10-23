@@ -86,3 +86,35 @@ env_check(
     error_text = "" # add information in error messages returned by the function.
 ) 
 ```
+<br>
+
+### Sophisticated examples
+```{r}
+# The name of the function one step above can be retrieved with base::sys.calls():
+fun4 <- function(){
+    t.test <- 0
+    mean <- 5
+    name <- base::as.character(x = base::sys.calls()[[base::length(x = base::sys.calls())]])
+    saferDev::env_check(pos = 1, name = name)
+}
+a <- fun4()
+base::cat(a)
+
+# Name of the tested environment according to the test_pos value, in nested functions:
+fun7 <- function(){
+    min <- "VALUE"
+    fun8 <- function(){
+        test_pos <- 1 # value 1 tests the fun8 environment, 2 tests the fun7 environment
+        range <- "VALUE"
+        if(base::length(x = base::sys.calls()) >= test_pos){
+            name <- base::as.character(x = base::sys.calls()[[base::length(x = base::sys.calls()) + 1 - test_pos]])
+        }else{
+            name <- base::search()[test_pos - base::length(x = base::sys.calls())]
+        }
+        saferDev::env_check(pos = test_pos, name = name)
+    }
+    fun8()
+}
+a <- fun7()
+base::cat(a)
+```

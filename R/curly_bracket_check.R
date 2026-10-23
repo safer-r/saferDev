@@ -528,8 +528,13 @@ curly_bracket_check <- function(
     # terminal tokens (comments excluded), sorted by source position
     term_rows <- base::which(x = pd$terminal == TRUE & pd$token != "COMMENT", arr.ind = FALSE, useNames = TRUE)
     term_rows <- term_rows[base::order(x = pd$line1[term_rows], pd$col1[term_rows])]
-    # positions in term_rows of the terminal tokens of the checked constructs (keyword tokens). Warning: the lambda function \(x) gives the "'\\\\'" token (and not the LAMBDA token) in the R versions checked so far
-    kid_idx <- base::which(x = pd$token[term_rows] %in% base::c("IF", "FOR", "WHILE", "REPEAT", "FUNCTION", "LAMBDA", "'\\\\'"), arr.ind = FALSE, useNames = TRUE)
+    # positions in term_rows of the terminal tokens of the checked constructs (keyword tokens). Warning: the lambda function \(x) gives the token made of a backslash between single quotes (and not the LAMBDA token) in the R versions checked so far
+    # warning: the name of this token is built by pieces, as in lambda_check(), because a single string mixing single quotes and backslashes is misread by the in-quotes replacement of all_args_here() (INTERNAL ERROR 3 of .fun_args_pos())
+    token_quote1 <- "'"
+    token_bs <- "\\\\"
+    token_quote2 <- "'"
+    lambda_token_name <- base::paste0(token_quote1, token_bs, token_quote2, collapse = NULL, recycle0 = FALSE)
+    kid_idx <- base::which(x = pd$token[term_rows] %in% base::c("IF", "FOR", "WHILE", "REPEAT", "FUNCTION", "LAMBDA", lambda_token_name), arr.ind = FALSE, useNames = TRUE)
     findings_line <- base::integer(length = 0)
     findings_kind <- base::character(length = 0)
     findings_code <- base::character(length = 0)
@@ -580,7 +585,7 @@ curly_bracket_check <- function(
         ft_text <- pd$text[term_rows[body_start_pos + 1]]
         # detection of bodies made of a single .Primitive() call: these bodies are skipped, because primitive functions cannot be delimited by curly brackets. The .Primitive() call must be the whole body: the terminal token following the ) of the .Primitive() call must belong to another expr (otherwise, the body contains more code, like in function(x) .Primitive('+') + 1, which must be reported)
         prim_log <- FALSE
-        if((pd$token[kid] == "FUNCTION" || pd$token[kid] == "LAMBDA" || pd$token[kid] == "'\\\\'") && ft_token == "SYMBOL_FUNCTION_CALL" && ft_text == ".Primitive"){
+        if((pd$token[kid] == "FUNCTION" || pd$token[kid] == "LAMBDA" || pd$token[kid] == lambda_token_name) && ft_token == "SYMBOL_FUNCTION_CALL" && ft_text == ".Primitive"){
             prim_call_close_pos <- body_start_pos + 1
             depth <- 0
             k <- body_start_pos + 1 # the scan includes the .Primitive token itself, so that the ( of the call is found
@@ -611,7 +616,7 @@ curly_bracket_check <- function(
         if(prim_log == FALSE){
             if(ft_token != "'{'"){
                 findings_line <- base::c(findings_line, pd$line1[kid], recursive = TRUE, use.names = TRUE)
-                findings_kind <- base::c(findings_kind, base::ifelse(test = pd$token[kid] %in% base::c("LAMBDA", "'\\\\'"), yes = "function", no = pd$text[kid]), recursive = TRUE, use.names = TRUE)
+                findings_kind <- base::c(findings_kind, base::ifelse(test = pd$token[kid] %in% base::c("LAMBDA", lambda_token_name), yes = "function", no = pd$text[kid]), recursive = TRUE, use.names = TRUE)
                 findings_code <- base::c(findings_code, base::trimws(x = code[pd$line1[kid]], which = "left", whitespace = "[ \\t]"), recursive = TRUE, use.names = TRUE)
                 tempo_body <- .find_construct_body(pd = pd, kid = kid, body_start = body_start, body_start_pos = body_start_pos, term_rows = term_rows, else_branch = FALSE, else_tok = NULL, intern_error_text_start = intern_error_text_start, intern_error_text_end = intern_error_text_end, lib_path = lib_path, error_text = embed_error_text)
                 mods_line <- base::c(mods_line, tempo_body$line1, pd$line2[tempo_body$row], recursive = TRUE, use.names = TRUE)

@@ -457,6 +457,23 @@ testthat::test_that("for_loop_nb_check()", {
     ## end tests (ordered by arg appearance and conditions in the code)
 
     ## other tests
+    # checks added by the correction and executed by the corrected function: the negative and decreasing checks only concern the numeric sequences (no error for factors or complex numbers, no pointless warning for decreasing characters or dates)
+    fun_seq_kind <- function(x){
+        for(v in x){
+            base::invisible(x = v)
+        }
+    }
+    fun_seq_kind_safer <- base::suppressMessages(expr = saferDev::for_loop_nb_check(x = fun_seq_kind, export = FALSE, out_path = ".", safer_check = FALSE, lib_path = NULL, error_text = ""), classes = "message")
+    testthat::expect_true(object = base::is.function(x = fun_seq_kind_safer))
+    testthat::expect_no_error(object = fun_seq_kind_safer(x = base::c(1i, 2i))) # complex: no ordering, previously an error
+    testthat::expect_no_warning(object = fun_seq_kind_safer(x = base::c(2i, 1i)))
+    testthat::expect_no_error(object = fun_seq_kind_safer(x = base::factor(x = base::c("b", "a"), levels = base::c("a", "b"), labels = base::c("a", "b"), exclude = NA, ordered = FALSE, nmax = NA))) # factor: previously an error (NA in the negative check)
+    testthat::expect_no_warning(object = fun_seq_kind_safer(x = base::factor(x = base::c("b", "a"), levels = base::c("a", "b"), labels = base::c("a", "b"), exclude = NA, ordered = FALSE, nmax = NA)))
+    testthat::expect_no_warning(object = fun_seq_kind_safer(x = base::c("b", "a"))) # decreasing characters, like for(nm in base::names(x = x)): previously a FOR SEQUENCE DECREASING warning
+    testthat::expect_no_warning(object = fun_seq_kind_safer(x = base::as.Date(x = base::c("2024-02-01", "2024-01-01"), format = "%Y-%m-%d"))) # decreasing dates: previously a FOR SEQUENCE DECREASING warning
+    testthat::expect_no_warning(object = fun_seq_kind_safer(x = base::list(2, 1))) # list
+    testthat::expect_warning(object = fun_seq_kind_safer(x = base::c(3, 1)), regexp = "FOR SEQUENCE DECREASING", fixed = TRUE) # numeric decreasing: still reported
+    testthat::expect_warning(object = fun_seq_kind_safer(x = base::c(-1L, -2L, -3L)), regexp = "FOR SEQUENCE WITH ALL NEGATIVE VALUES", fixed = TRUE) # integer negative: still reported
     ## end other tests
 
 })

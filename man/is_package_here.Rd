@@ -32,11 +32,11 @@ Check if required packages are installed locally.
 # See also https://safer-r.github.io/saferDev/articles/is_package_here.html
 \dontrun{
 # Example that returns an error
-is_package_here(req_package = "nopackage", error_text = " INSIDE P1::F1")
+saferDev::is_package_here(req_package = "nopackage", error_text = " INSIDE P1::F1")
 # Example that returns an error
-is_package_here(req_package = "ggplot2", lib_path = "NOTGOOD")
+saferDev::is_package_here(req_package = "ggplot2", lib_path = "NOTGOOD")
 }
-is_package_here(req_package = "ggplot2")
+saferDev::is_package_here(req_package = "ggplot2")
 
 }
 \seealso{

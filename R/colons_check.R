@@ -63,13 +63,16 @@
 #' # Warning: these examples may not work well when using the "Run examples" link 
 #' # because of a particular environment. Please, copy-paste in a local environment.
 #' # See also https://safer-r.github.io/saferDev/articles/colons_check.html
-#' saferDev::colons_check(mean)
-#' saferDev::colons_check(colons_check)
-#' source("https://raw.githubusercontent.com/safer-r/saferDev/main/dev/other/test.R")
-#' res <- saferDev::colons_check(test) # res is the modified function, also printed in the message
-#' # source("https://raw.githubusercontent.com/safer-r/saferDev/main/dev/other/test.R")
-#' # saferDev::colons_check(x = test, export = TRUE, out_path = ".")
-#' # writes test_safer.R in the R working directory
+#' fun1 <- function(x){
+#'     y <- mean(x) # mean() written without base::
+#'     base::return(y)
+#' }
+#' fun1_safer <- saferDev::colons_check(fun1) # base:: added before mean()
+#' fun1_safer # corrected function
+#' # Write the corrected function in the fun1_safer.R file of a new temporary folder:
+#' tempo_dir <- base::tempfile(pattern = "dir", tmpdir = base::tempdir(), fileext = "")
+#' base::dir.create(path = tempo_dir, showWarnings = TRUE, recursive = FALSE, mode = "0777")
+#' saferDev::colons_check(x = fun1, export = TRUE, out_path = tempo_dir)
 #' 
 #' @export
 colons_check <- function(

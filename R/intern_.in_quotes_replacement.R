@@ -437,6 +437,9 @@
     # [1] "c(\"\\\") \"\"a\"\""
     # > capture.output(string)
     # [1] "[1] \"c(\\\"\\\\\\\") \\\"\\\"a\\\"\\\"\""
+    # removal of the escaped backslashes \\ (two backslash characters, replaced by two spaces, so that the positions are kept). Warning: must be done first, because a backslash preceded by another backslash does not escape the next character: in the code "\\\\" (a string made of two backslashes), the last \" is not an escaped quote but the closing quote. Without this removal, the closing quote was removed below as an escaped quote, so that the rest of the line was considered as inside quotes
+    string <- base::gsub( x = string, pattern = "\\\\\\\\", replacement = '  ', ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE)
+    # end removal of the escaped backslashes
     # removal of "\"'" and '\'"'
     # test with base::gsub( x = "a\"\\\"'\"a", pattern = '"\\\\"\'"', replacement = '     ')
     string <- base::gsub( x = string, pattern = '"\\\\"\'"', replacement = '     ', ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE)
