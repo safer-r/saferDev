@@ -11,10 +11,9 @@
 #' @param lib_path Vector of characters specifying the absolute pathways of the directories containing the required packages for the function, if not in the default directories. Useful when R packages are not installed in the default directories because of lack of admin rights. More precisely, \code{lib_path} is passed through the \code{new} argument of \code{.libPaths()} so that the new library paths are \code{c(lib_path, .libPaths())}. Warning: \code{.libPaths()} is restored to the initial paths, after function execution. Ignored if \code{NULL} (default) or if the \code{safer_check} argument is \code{FALSE}: only the pathways specified by the current \code{.libPaths()} are used for package calling.
 #' @param error_text Single character string used to add information in error messages returned by the function, notably if the function is inside other functions, which is practical for debugging. Example: \code{error_text = " INSIDE <PACKAGE_1>::<FUNCTION_1> INSIDE <PACKAGE_2>::<FUNCTION_2>."}. If \code{NULL}, converted into \code{""}.
 #' @returns 
-#' A data frame indicating the missing arguments or a message saying that everything seems fine.
-#' If \code{table_export} argument is \code{TRUE}, then the data frame is exported as \code{res.tsv} instead of being returned.
-#' If \code{fun_export} argument is \code{TRUE}, the modified function is exported as \code{<FUNCTION_NAME>_safer.R} instead of being returned (ignored if no correction has been applied).
-#' Otherwise, the modified function (an R function object rebuilt from the corrected code, with its comments and indentation preserved if the submitted function carries its source references, see the details section) is returned, or \code{NULL} if no modification has been applied. The returned value is invisible when nothing is exported.
+#' A message saying whether arguments are missing or everything seems fine, and a data frame indicating the missing arguments (see the column descriptions below).
+#' If \code{table_export} argument is \code{FALSE}, the data frame is returned as a message. If \code{TRUE}, it is exported as \code{df_name} in \code{out_path}.
+#' If \code{fun_export} argument is \code{FALSE}, the modified function (an R function object rebuilt from the corrected code, with its comments and indentation preserved if the submitted function carries its source references, see the details section) is returned, or \code{NULL} (invisible) if no modification has been applied. If \code{TRUE}, the modified function is exported as \code{<FUNCTION_NAME>_safer.R} in \code{out_path} and \code{NULL} is returned (invisible), or nothing is exported if no modification has been applied.
 #' Column descriptions: 
 #' \itemize{
 #'   \item \code{$LINE_NB}: the line number in the function code (starting at the \code{"<- function"} line, i.e., without counting the \code{#'} header lines).
@@ -1116,6 +1115,11 @@ all_args_here <- function(
 
         #### output
         output <- base::data.frame(LINE_NB = col1, FUN_NAME = col2, FUN_ARGS = col3, FUN_POS = col4, DEF_ARGS = col5, MISSING_ARG_NAMES = col6, MISSING_ARGS = col7, STATUS = col8, row.names = NULL, check.rows = FALSE, check.names = TRUE, fix.empty.names = TRUE, stringsAsFactors = FALSE)
+        if(table_export == FALSE){
+            # the table is returned as a message with on.exit(), after the EVERYTHING SEEMS CLEAN or ARGUMENTS ARE MISSING message registered above, and before the CORRECTIONS NOT APPLIED and MODIFIED CODE EXPORTED IN messages registered below
+            tempo_cat_table <- base::paste0(utils::capture.output(output, file = NULL, append = FALSE, type = "output", split = FALSE), collapse = "\n", recycle0 = FALSE)
+            base::on.exit(expr = base::message(base::paste0(tempo_cat_table, "\n\n", collapse = NULL, recycle0 = FALSE), domain = NULL, appendLF = TRUE), add = TRUE, after = TRUE)
+        }
         # modification of the submitted function with the missing arguments
         .all_args_insert <- utils::getFromNamespace(x = ".all_args_insert", ns = "saferDev", pos = , envir = )
         tempo_insert <- .all_args_insert(
@@ -1162,12 +1166,11 @@ all_args_here <- function(
         #### end output
 
         #### return
-        if(table_export == TRUE){
-            base::return(base::invisible(x = NULL)) # the data frame is not returned when exported
-        }else if(fun_export == TRUE & base::length(x = tempo_insert$inserted) > 0){
+        # the table is never returned: message if table_export = FALSE, file if table_export = TRUE
+        if(fun_export == TRUE & base::length(x = tempo_insert$inserted) > 0){
             base::return(base::invisible(x = NULL)) # the modified function is not returned when exported
         }else if(base::length(x = tempo_insert$inserted) > 0){
-            base::return(base::invisible(x = tempo_insert$fun)) # return the modified function
+            base::return(tempo_insert$fun) # return the modified function
         }else{
             base::return(base::invisible(x = NULL)) # return NULL if no modification has been applied
         }

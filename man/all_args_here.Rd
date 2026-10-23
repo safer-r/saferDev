@@ -36,10 +36,9 @@ all_args_here(
 \item{error_text}{Single character string used to add information in error messages returned by the function, notably if the function is inside other functions, which is practical for debugging. Example: \code{error_text = " INSIDE <PACKAGE_1>::<FUNCTION_1> INSIDE <PACKAGE_2>::<FUNCTION_2>."}. If \code{NULL}, converted into \code{""}.}
 }
 \value{
-A data frame indicating the missing arguments or a message saying that everything seems fine.
-If \code{table_export} argument is \code{TRUE}, then the data frame is exported as \code{res.tsv} instead of being returned.
-If \code{fun_export} argument is \code{TRUE}, the modified function is exported as \code{<FUNCTION_NAME>_safer.R} instead of being returned (ignored if no correction has been applied).
-Otherwise, the modified function (an R function object rebuilt from the corrected code, with its comments and indentation preserved if the submitted function carries its source references, see the details section) is returned, or \code{NULL} if no modification has been applied. The returned value is invisible when nothing is exported.
+A message saying whether arguments are missing or everything seems fine, and a data frame indicating the missing arguments (see the column descriptions below).
+If \code{table_export} argument is \code{FALSE}, the data frame is returned as a message. If \code{TRUE}, it is exported as \code{df_name} in \code{out_path}.
+If \code{fun_export} argument is \code{FALSE}, the modified function (an R function object rebuilt from the corrected code, with its comments and indentation preserved if the submitted function carries its source references, see the details section) is returned, or \code{NULL} (invisible) if no modification has been applied. If \code{TRUE}, the modified function is exported as \code{<FUNCTION_NAME>_safer.R} in \code{out_path} and \code{NULL} is returned (invisible), or nothing is exported if no modification has been applied.
 Column descriptions: 
 \itemize{
   \item \code{$LINE_NB}: the line number in the function code (starting at the \code{"<- function"} line, i.e., without counting the \code{#'} header lines).

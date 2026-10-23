@@ -441,6 +441,17 @@ testthat::test_that("all_args_here()", {
     }
     tempo_msg2 <- testthat::capture_messages(code = {tempo_fun_posarg <- all_args_here(x = FUN_POSARG, table_export = FALSE, fun_export = FALSE, out_path = ".", df_name = "res.tsv", overwrite = FALSE, safer_check = FALSE, lib_path = NULL, error_text = "")})
     testthat::expect_true(object = base::any(base::grepl(x = tempo_msg2, pattern = "CORRECTIONS NOT APPLIED", fixed = TRUE, ignore.case = FALSE, perl = FALSE), na.rm = TRUE))
+    # table returned as a message when table_export = FALSE, exported (no table message) when table_export = TRUE. The modified function is returned when fun_export = FALSE, whatever table_export
+    FUN_TABLE <- function(v){
+        res <- base::mean(1:2)
+    }
+    tempo_msg3 <- testthat::capture_messages(code = {tempo_fun_table <- all_args_here(x = FUN_TABLE, table_export = FALSE, fun_export = FALSE, out_path = ".", df_name = "res.tsv", overwrite = FALSE, safer_check = FALSE, lib_path = NULL, error_text = "")})
+    testthat::expect_true(object = base::any(base::grepl(x = tempo_msg3, pattern = "MISSING_ARG_NAMES", fixed = TRUE, ignore.case = FALSE, perl = FALSE, useBytes = FALSE), na.rm = TRUE))
+    testthat::expect_true(object = base::is.function(x = tempo_fun_table))
+    tempo_msg4 <- testthat::capture_messages(code = {tempo_fun_table2 <- all_args_here(x = FUN_TABLE, table_export = TRUE, fun_export = FALSE, out_path = tempo_dir, df_name = "res_table.tsv", overwrite = TRUE, safer_check = FALSE, lib_path = NULL, error_text = "")})
+    testthat::expect_false(object = base::any(base::grepl(x = tempo_msg4, pattern = "MISSING_ARG_NAMES", fixed = TRUE, ignore.case = FALSE, perl = FALSE, useBytes = FALSE), na.rm = TRUE))
+    testthat::expect_true(object = base::file.exists(base::paste0(tempo_dir, "/res_table.tsv", collapse = NULL, recycle0 = FALSE)))
+    testthat::expect_true(object = base::is.function(x = tempo_fun_table2))
     # two independent calls on the same line: both corrections applied
     FUN_SAME_LINE_BAD <- function(v){
         res <- base::mean(1:2) + base::mean(3:4)
