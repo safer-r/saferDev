@@ -164,8 +164,6 @@ fun2_safer <- saferDev::lambda_check(fun2) # lambda writing reported
 #> LINE SYMBOL      CODE
 #> 1    \(y)        function(x){ base::sapply(X = 1:3, FUN = \(y){ y * 2 }) }
 #> 
-#> MODIFIED FUNCTION RETURNED BY return().
-#> 
 fun2_safer # corrected function
 #> function (x) 
 #> {
@@ -173,7 +171,7 @@ fun2_safer # corrected function
 #>         y * 2
 #>     })
 #> }
-#> <environment: 0x55f9a56b70b0>
+#> <environment: 0x55e57cd7d8d0>
 # A backslash followed by ( in a string, a raw string, a comment or a backquoted name
 # is not a lambda writing (token-based detection): not reported, not modified.
 code3 <- paste0(
@@ -200,6 +198,6 @@ saferDev::lambda_check(x = fun2, export = TRUE, out_path = tempo_dir)
 #> 1    \(y)        function(x){ base::sapply(X = 1:3, FUN = \(y){ y * 2 }) }
 #> 
 #> MODIFIED CODE EXPORTED IN:
-#> /tmp/RtmpvlxsPN/dir142f26cf042c/fun2_safer.R
+#> /tmp/Rtmp1CKyzG/dir16d07fb04839/fun2_safer.R
 #> 
 ```

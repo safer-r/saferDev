@@ -87,8 +87,6 @@ true_false_check(x = fun2)
     ## LINE SYMBOL      CODE
     ## 3    T       if (x == T) {
     ## 4    F       base::return(base::mean(x = 1:3, na.rm = F))
-    ## 
-    ## MODIFIED FUNCTION RETURNED BY return().
 
     ## function (x) 
     ## {
@@ -96,7 +94,7 @@ true_false_check(x = fun2)
     ##         base::return(base::mean(x = 1:3, na.rm = FALSE))
     ##     }
     ## }
-    ## <environment: 0x559930cacb18>
+    ## <environment: 0x55fe0b1026a8>
 
 ``` r
 
@@ -113,8 +111,6 @@ true_false_check(x = fun3)
     ## 
     ## LINE SYMBOL      CODE
     ## 3    T       if (x == T) {
-    ## 
-    ## MODIFIED FUNCTION RETURNED BY return().
 
     ## function (x) 
     ## {
@@ -122,7 +118,7 @@ true_false_check(x = fun3)
     ##         mean(x = 1:3)
     ##     }
     ## }
-    ## <environment: 0x55992e3fcaf0>
+    ## <environment: 0x55fe08854b90>
 
 \
 
@@ -213,8 +209,6 @@ fun2_safer <- true_false_check(x = fun2)
     ## LINE SYMBOL      CODE
     ## 3    T       if (x == T) {
     ## 4    F       base::return(base::mean(x = 1:3, na.rm = F))
-    ## 
-    ## MODIFIED FUNCTION RETURNED BY return().
 
 ``` r
 
@@ -227,7 +221,7 @@ fun2_safer # T replaced by TRUE, F replaced by FALSE.
     ##         base::return(base::mean(x = 1:3, na.rm = FALSE))
     ##     }
     ## }
-    ## <environment: 0x559931ff5c30>
+    ## <environment: 0x55fe0c44a590>
 
 ``` r
 
@@ -266,7 +260,7 @@ true_false_check(
     ## 4    F       base::return(base::mean(x = 1:3, na.rm = F))
 
     ## MODIFIED CODE EXPORTED IN:
-    ## /tmp/RtmpUnjWmY/dir1a1732d43350/fun2_safer.R
+    ## /tmp/Rtmp594RU9/dir1ce879746c26/fun2_safer.R
 
 ``` r
 

@@ -207,8 +207,6 @@ for_loop_nb_check(x = fun2)
     ## 36   for     for (i in base::rev(x = x)) {
     ## 39   for     for (i in base::seq(x = x)) {
     ## 42   for     for (i in base::names(x = x)) {
-    ## 
-    ## MODIFIED FUNCTION RETURNED BY return().
 
     ## function (x) 
     ## {
@@ -689,7 +687,7 @@ for_loop_nb_check(x = fun2)
     ##         base::print(i)
     ##     }
     ## }
-    ## <environment: 0x563dd4a1b168>
+    ## <environment: 0x55bec6f88ac0>
 
 \
 
@@ -803,8 +801,6 @@ fun9_safer <- for_loop_nb_check(x = fun9)
     ## 
     ## LINE CONSTRUCT       CODE
     ## 3    for     for (i in 1:length(x)) {
-    ## 
-    ## MODIFIED FUNCTION RETURNED BY return().
 
 ``` r
 
@@ -849,7 +845,7 @@ fun9_safer # a checking line is added before the loop.
     ##     }
     ##     y
     ## }
-    ## <environment: 0x563dd7381d90>
+    ## <environment: 0x55bec98e51c8>
 
 ``` r
 
@@ -884,7 +880,7 @@ for_loop_nb_check(
     ## 3    for     for (i in 1:length(x)) {
 
     ## MODIFIED CODE EXPORTED IN:
-    ## /tmp/RtmpqRxej0/dir182541ab08bb/fun9_safer.R
+    ## /tmp/RtmpH3gmle/dir1ade1e3708bf/fun9_safer.R
 
 ``` r
 
@@ -933,8 +929,6 @@ for_loop_nb_check(x = fun4)
     ## 
     ## LINE CONSTRUCT       CODE
     ## 4    for     for (i in 1:length(x)) {
-    ## 
-    ## MODIFIED FUNCTION RETURNED BY return().
 
     ## function (x) 
     ## {
@@ -975,7 +969,7 @@ for_loop_nb_check(x = fun4)
     ##     }
     ##     y
     ## }
-    ## <environment: 0x563dda0aebc0>
+    ## <environment: 0x55becc60ce60>
 
 ``` r
 
@@ -997,8 +991,6 @@ for_loop_nb_check(x = fun5)
     ## 
     ## LINE CONSTRUCT       CODE
     ## 4    for     for (i2 in 1:length(x)) {
-    ## 
-    ## MODIFIED FUNCTION RETURNED BY return().
 
     ## function (x) 
     ## {
@@ -1040,7 +1032,7 @@ for_loop_nb_check(x = fun5)
     ##         }
     ##     }
     ## }
-    ## <environment: 0x563dda693f70>
+    ## <environment: 0x55beccbf0a00>
 
 ``` r
 
@@ -1057,8 +1049,6 @@ for_loop_nb_check(x = fun6)
     ## 
     ## LINE CONSTRUCT       CODE
     ## 1    for     function (f = function(y) for (i in y) {
-    ## 
-    ## MODIFIED FUNCTION RETURNED BY return().
 
     ## function (f = function(y) {
     ##     tempo_for_seq1 <- y
@@ -1097,7 +1087,7 @@ for_loop_nb_check(x = fun6)
     ##     }
     ## }) 
     ## f(1)
-    ## <environment: 0x563ddac7dfc8>
+    ## <environment: 0x55becd1d6828>
 
 ``` r
 
@@ -1113,8 +1103,6 @@ for_loop_nb_check(x = fun7)
     ## 
     ## LINE CONSTRUCT       CODE
     ## 4    for     for (i in 1:n) {
-    ## 
-    ## MODIFIED FUNCTION RETURNED BY return().
 
     ## function (x) 
     ## {
@@ -1155,6 +1143,6 @@ for_loop_nb_check(x = fun7)
     ##     }
     ##     y
     ## }
-    ## <environment: 0x563ddb256720>
+    ## <environment: 0x55becd7b2f50>
 
 \

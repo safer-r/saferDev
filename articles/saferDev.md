@@ -99,9 +99,7 @@ fun5 <- true_false_check(x = fun4) # T replaced by TRUE
     ## INSIDE fun4(), SOME SYMBOLS T OR F MUST BE WRITTEN TRUE OR FALSE:
     ## 
     ## LINE SYMBOL      CODE
-    ## 1    T       function (x, y = T) 
-    ## 
-    ## MODIFIED FUNCTION RETURNED BY return().
+    ## 1    T       function (x, y = T)
 
 ``` r
 
@@ -118,7 +116,7 @@ fun5
     ##     }
     ##     z
     ## }
-    ## <environment: 0x56363c17b318>
+    ## <environment: 0x563cda5b3740>
 
 ``` r
 
@@ -132,8 +130,6 @@ fun6 <- for_loop_nb_check(x = fun5) # checking line added before the for() loop
     ## 
     ## LINE CONSTRUCT       CODE
     ## 6    for     for (i in 1:base::length(x = y)) {
-    ## 
-    ## MODIFIED FUNCTION RETURNED BY return().
 
 ``` r
 

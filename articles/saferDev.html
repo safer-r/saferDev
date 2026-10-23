@@ -256,9 +256,7 @@ require the previous steps), then <code><a href="../reference/curly_bracket_chec
 <span><span class="co">## INSIDE fun4(), SOME SYMBOLS T OR F MUST BE WRITTEN TRUE OR FALSE:</span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## LINE SYMBOL      CODE</span></span>
-<span><span class="co">## 1    T       function (x, y = T) </span></span>
-<span><span class="co">## </span></span>
-<span><span class="co">## MODIFIED FUNCTION RETURNED BY return().</span></span></code></pre>
+<span><span class="co">## 1    T       function (x, y = T)</span></span></code></pre>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">fun5</span></span></code></pre></div>
 <pre><code><span><span class="co">## function (x, y = TRUE) </span></span>
@@ -271,7 +269,7 @@ require the previous steps), then <code><a href="../reference/curly_bracket_chec
 <span><span class="co">##     }</span></span>
 <span><span class="co">##     z</span></span>
 <span><span class="co">## }</span></span>
-<span><span class="co">## &lt;environment: 0x56363c17b318&gt;</span></span></code></pre>
+<span><span class="co">## &lt;environment: 0x563cda5b3740&gt;</span></span></code></pre>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">fun6</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/for_loop_nb_check.html">for_loop_nb_check</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">fun5</span><span class="op">)</span> <span class="co"># checking line added before the for() loop</span></span></code></pre></div>
 <pre><code><span><span class="co">## </span></span>
@@ -280,9 +278,7 @@ require the previous steps), then <code><a href="../reference/curly_bracket_chec
 <span><span class="co">## INSIDE fun5(), SOME for() SEQUENCES ARE NOT WRITTEN WITH HARD NUMBERS:</span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## LINE CONSTRUCT       CODE</span></span>
-<span><span class="co">## 6    for     for (i in 1:base::length(x = y)) {</span></span>
-<span><span class="co">## </span></span>
-<span><span class="co">## MODIFIED FUNCTION RETURNED BY return().</span></span></code></pre>
+<span><span class="co">## 6    for     for (i in 1:base::length(x = y)) {</span></span></code></pre>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">fun6</span><span class="op">(</span>x <span class="op">=</span> <span class="fl">2</span>, y <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span> <span class="co"># 1:length(NULL) is c(1, 0): a warning is now returned</span></span></code></pre></div>
 <pre><code><span><span class="co">## Warning: FOR SEQUENCE DECREASING</span></span></code></pre>

@@ -172,7 +172,7 @@ FUN2_safer # modified function (or NULL when the code was already clean).
     ##     middle_bracket2 <- base::do.call(what = base::c, args = code_for_col, 
     ##         quote = FALSE, envir = base::parent.frame(n = 1))
     ## }
-    ## <environment: 0x562256824478>
+    ## <environment: 0x55c371fddad8>
 
 ``` r
 
@@ -189,7 +189,7 @@ all_args_here(
     ## INSIDE FUN2(), ARGUMENTS ARE MISSING.
 
     ## MODIFIED CODE EXPORTED IN:
-    ## ./FUN2_safer.R
+    ## /__w/saferDev/saferDev/vignettes/articles/FUN2_safer.R
 
 When `fun_export = TRUE`, the modified function is not returned by the
 function but only exported (the file is not created when no correction
