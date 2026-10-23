@@ -43,7 +43,7 @@ Bodies reduced to \code{.Primitive(...)}, like in \code{base::`+`}, are skipped,
 
 Correction: a \code{\{} is added before each reported body and a \code{\}} after it, separated from the body by a space. The rest of the code is unchanged. The corrected code is checked by parsing it. Lines can become longer than 80 characters. The returned function keeps the environment of the submitted function.
 
-Warning: the comments of the submitted function are lost, in the returned function and in the exported file.
+The comments and the indentation of the submitted function are kept, in the returned function and in the exported file. Warning: comments are only available when the submitted function carries its source references (attribute srcref). Otherwise (e.g., compiled package functions, or functions created with \code{options(keep.source = FALSE)}, default of Rscript), the code is the deparsed one: no comments and standard indentation.
 
 Constructs written with backquotes, like \code{`if`(x > 1, x, 0)}, may not be checked: use the standard writing.
 

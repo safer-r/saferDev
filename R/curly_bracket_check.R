@@ -20,7 +20,7 @@
 #'
 #' Correction: a \code{\{} is added before each reported body and a \code{\}} after it, separated from the body by a space. The rest of the code is unchanged. The corrected code is checked by parsing it. Lines can become longer than 80 characters. The returned function keeps the environment of the submitted function.
 #'
-#' Warning: the comments of the submitted function are lost, in the returned function and in the exported file.
+#' The comments and the indentation of the submitted function are kept, in the returned function and in the exported file. Warning: comments are only available when the submitted function carries its source references (attribute srcref). Otherwise (e.g., compiled package functions, or functions created with \code{options(keep.source = FALSE)}, default of Rscript), the code is the deparsed one: no comments and standard indentation.
 #'
 #' Constructs written with backquotes, like \code{`if`(x > 1, x, 0)}, may not be checked: use the standard writing.
 #'
@@ -734,7 +734,9 @@ curly_bracket_check <- function(
     }
     mod_text <- base::paste0(mod_code, collapse = "\n", recycle0 = FALSE)
     # validation of the modified code: it must parse
-    parse_ok <- base::inherits(x = base::try(expr = base::parse(text = mod_text, keep.source = FALSE), silent = TRUE), what = "try-error") == FALSE
+    # warning: keep.source = TRUE and an explicit srcfile are required to keep the source references (attribute srcref) of the returned function, i.e., its comments and indentation when printed. With srcfile = NULL, or with keep.source = FALSE (default of Rscript), the returned function is printed deparsed: comments removed and code reindented
+    parsed_mod <- base::try(expr = base::parse(text = mod_text, file = "", n = NULL, prompt = "?", keep.source = TRUE, srcfile = base::srcfilecopy(filename = "<text>", lines = mod_text, timestamp = base::Sys.time(), isFile = FALSE), encoding = "unknown"), silent = TRUE)
+    parse_ok <- base::inherits(x = parsed_mod, what = "try-error") == FALSE
     if(parse_ok == FALSE){
         # nocov start
         # codecov inactivated because the modifications above are driven by the parse tree of the submitted code, so the modified code always parses (this branch is unreachable unless the parser itself is inconsistent).
@@ -743,7 +745,6 @@ curly_bracket_check <- function(
         # nocov end
     }
     # name of the modified function: the file name (out_name, "<FUNCTION_NAME>_safer.R") and the assignment name (tempo_fun_name, <FUNCTION_NAME>) have already been determined in the other checkings section when export == TRUE. When export == FALSE, no file is written, so no name is needed
-    parsed_mod <- base::parse(text = mod_text, keep.source = FALSE)
     if(base::length(x = parsed_mod) == 1){
         mod_fun <- base::eval(expr = parsed_mod[[1]], envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL)) # evaluates the assignment fun <- function(...)... : returns the assigned function
     }else{
@@ -756,8 +757,8 @@ curly_bracket_check <- function(
     base::environment(fun = mod_fun) <- base::environment(fun = x)
     if(export == TRUE){
         # file content: assignment of the modified function, so that base::source()ing the file recreates it. The file name (out_name) and the assignment name (tempo_fun_name) have been determined in the other checkings section
-        deparsed <- base::deparse(expr = mod_fun, width.cutoff = 500L, backtick = TRUE, control = base::c("keepNA", "keepInteger", "niceNames", "showAttributes"), nlines = -1L)
-        file_text <- base::paste0(tempo_fun_name, "_safer <- ", base::paste0(deparsed, collapse = "\n", recycle0 = FALSE), "\n", collapse = NULL, recycle0 = FALSE)
+        # the modified code lines (mod_text) are written, and not the deparsed function, so that the comments and the indentation of the submitted function are kept
+        file_text <- base::paste0(tempo_fun_name, "_safer <- ", mod_text, "\n", collapse = NULL, recycle0 = FALSE)
         file_path <- base::paste0(out_path, "/", out_name, collapse = NULL, recycle0 = FALSE)
         base::cat(x = file_text, file = file_path, append = FALSE, sep = "")
         # the export message is printed with on.exit(), after the message of the main code: it only claims an export that actually happened, because the file writing is performed just above and no on.exit() is registered when no modification is inserted
