@@ -605,7 +605,7 @@ all_args_here <- function(
                     error_text_start,
                     "FILE NAME ALREADY EXISTS AT THE INDICATED PATH:\n",
                     base::paste0(out_path, "/", tempo_fun_file_name, collapse = NULL, recycle0 = FALSE),
-                    "\n\nPLEASE, RENAME OR REMOVE THIS FILE, OR CHANGE THE out_path ARGUMENT BEFORE RERUNNING ",
+                    "\n\nPLEASE, RENAME OR REMOVE THIS FILE, OR CHANGE THE out_path ARGUMENT, AND RERUN ",
                     package_function_name,
                     ".",
                     collapse = NULL,
@@ -1154,7 +1154,7 @@ all_args_here <- function(
             # file content: assignment of the modified function, so that base::source()ing the file recreates it. tempo_insert$fun_txt is the bare "function(...) ..." writing of the modified function, so the assignment name is the name of the submitted function with _safer added at the end
             base::writeLines(text = base::paste0(tempo_fun_name, "_safer <- ", tempo_insert$fun_txt, collapse = NULL, recycle0 = FALSE), con = tempo_fun_file, sep = "\n", useBytes = FALSE)
             # the export message is printed with on.exit(), after the messages of the main code: it only claims an export that actually happened, because the file writing is performed just above and no on.exit() is registered when no modification is inserted
-            base::on.exit(expr = base::message(base::paste0("MODIFIED CODE EXPORTED IN:\n", tempo_fun_file, "\n\n", collapse = NULL, recycle0 = FALSE), domain = NULL, appendLF = TRUE), add = TRUE, after = TRUE)
+            base::on.exit(expr = base::message(base::paste0("MODIFIED CODE EXPORTED IN:\n", base::normalizePath(path = tempo_fun_file, winslash = "/", mustWork = FALSE), "\n\n", collapse = NULL, recycle0 = FALSE), domain = NULL, appendLF = TRUE), add = TRUE, after = TRUE)
         }
         if(table_export == TRUE){
             utils::write.table(x = output, file = out_path, row.names = FALSE, col.names = TRUE, append = FALSE, quote = FALSE, sep = "\t", eol = "\n", na = "", dec = ".", qmethod = base::c("escape", "double"), fileEncoding = "")

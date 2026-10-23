@@ -512,7 +512,7 @@ for_loop_nb_check <- function(
                 error_text_start, 
                 "FILE NAME ALREADY EXISTS AT THE INDICATED PATH:\n", 
                 out_file_path, 
-                "\n\nPLEASE, RENAME OR REMOVE THIS FILE, OR CHANGE THE out_path ARGUMENT BEFORE RERUNNING ", 
+                "\n\nPLEASE, RENAME OR REMOVE THIS FILE, OR CHANGE THE out_path ARGUMENT, AND RERUN ", 
                 package_function_name, 
                 ".", 
                 collapse = NULL, 
@@ -1074,14 +1074,7 @@ for_loop_nb_check <- function(
                 export_code[1] <- base::paste0(out_fun_name, "_safer <- ", export_code[1], collapse = NULL, recycle0 = FALSE)
                 utils::write.table(x = export_code, file = out_file_path, row.names = FALSE, col.names = FALSE, append = FALSE, quote = FALSE, sep = "", eol = "\n", na = "", dec = ".", qmethod = base::c("escape", "double"), fileEncoding = "") # write each line of the modified code, without any quoting, in a plain text R script
                 # the export message is printed with on.exit(), after the message of the main code: it only claims an export that actually happened, because the file writing is performed just above and no on.exit() is registered when no modification is inserted
-                base::on.exit(expr = base::message(base::paste0("MODIFIED CODE EXPORTED IN:\n", out_file_path, "\n\n", collapse = NULL, recycle0 = FALSE), domain = NULL, appendLF = TRUE), add = TRUE, after = TRUE)
-            }else{
-                tempo_cat <- base::paste0(
-                    tempo_cat, 
-                    "\n\nMODIFIED FUNCTION RETURNED BY return().", 
-                    collapse = NULL, 
-                    recycle0 = FALSE
-                )
+                base::on.exit(expr = base::message(base::paste0("MODIFIED CODE EXPORTED IN:\n", base::normalizePath(path = out_file_path, winslash = "/", mustWork = FALSE), "\n\n", collapse = NULL, recycle0 = FALSE), domain = NULL, appendLF = TRUE), add = TRUE, after = TRUE)
             }
         }
     }

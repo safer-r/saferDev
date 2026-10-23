@@ -563,7 +563,7 @@ colons_check <- function(
                 error_text_start,
                 "FILE NAME ALREADY EXISTS AT THE INDICATED PATH:\n",
                 out_file_name,
-                "\n\nPLEASE, RENAME OR REMOVE THIS FILE, OR CHANGE THE out_path ARGUMENT BEFORE RERUNNING ",
+                "\n\nPLEASE, RENAME OR REMOVE THIS FILE, OR CHANGE THE out_path ARGUMENT, AND RERUN ",
                 package_function_name,
                 ".",
                 collapse = NULL, 
@@ -943,7 +943,7 @@ colons_check <- function(
                 )
                 base::writeLines(text = tempo_content, con = out_file_name, sep = "\n", useBytes = FALSE)
                 # the message is printed with on.exit(), so that it is printed at the end of the function, after the messages issued earlier by the main code (all the message() calls of the main code are issued before this one)
-                base::on.exit(expr = base::message(base::paste0("MODIFIED CODE EXPORTED IN:\n", base::paste0(out_path, "/", out_name, collapse = NULL, recycle0 = FALSE), "\n\n", collapse = NULL, recycle0 = FALSE), domain = NULL, appendLF = TRUE), add = TRUE, after = TRUE)
+                base::on.exit(expr = base::message(base::paste0("MODIFIED CODE EXPORTED IN:\n", base::normalizePath(path = base::paste0(out_path, "/", out_name, collapse = NULL, recycle0 = FALSE), winslash = "/", mustWork = FALSE), "\n\n", collapse = NULL, recycle0 = FALSE), domain = NULL, appendLF = TRUE), add = TRUE, after = TRUE)
                 base::return(base::invisible(NULL)) # the modified code is not returned but saved (export argument)
             }else{
                 base::return(output_fun) # the modified function is returned

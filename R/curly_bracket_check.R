@@ -506,7 +506,7 @@ curly_bracket_check <- function(
                 error_text_start,
                 "FILE NAME ALREADY EXISTS AT THE INDICATED PATH:\n",
                 base::paste0(out_path, "/", out_name, collapse = NULL, recycle0 = FALSE),
-                "\n\nPLEASE, RENAME OR REMOVE THIS FILE, OR CHANGE THE out_path ARGUMENT BEFORE RERUNNING ",
+                "\n\nPLEASE, RENAME OR REMOVE THIS FILE, OR CHANGE THE out_path ARGUMENT, AND RERUN ",
                 package_function_name,
                 ".",
                 collapse = NULL, 
@@ -761,7 +761,7 @@ curly_bracket_check <- function(
         file_path <- base::paste0(out_path, "/", out_name, collapse = NULL, recycle0 = FALSE)
         base::cat(x = file_text, file = file_path, append = FALSE, sep = "")
         # the export message is printed with on.exit(), after the message of the main code: it only claims an export that actually happened, because the file writing is performed just above and no on.exit() is registered when no modification is inserted
-        base::on.exit(expr = base::message(base::paste0("MODIFIED CODE EXPORTED IN:\n", file_path, "\n\n", collapse = NULL, recycle0 = FALSE), domain = NULL, appendLF = TRUE), add = TRUE, after = TRUE)
+        base::on.exit(expr = base::message(base::paste0("MODIFIED CODE EXPORTED IN:\n", base::normalizePath(path = file_path, winslash = "/", mustWork = FALSE), "\n\n", collapse = NULL, recycle0 = FALSE), domain = NULL, appendLF = TRUE), add = TRUE, after = TRUE)
         base::return(value = base::invisible(x = NULL)) # NULL returned invisibly (the invisibility would be lost if assigned to an object first)
     }else{
         base::return(value = mod_fun)
