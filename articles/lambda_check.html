@@ -120,8 +120,7 @@
 <span><span class="co">## </span></span>
 <span><span class="co">## AFTER RUNNING saferDev::lambda_check().</span></span>
 <span><span class="co">## INSIDE fun1(), EVERYTHING SEEMS CLEAN.</span></span></code></pre>
-<pre><code><span><span class="co">## NULL</span></span></code></pre>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Here some anonymous functions are written with the lambda writing.</span></span>
 <span><span class="fu"><a href="../reference/lambda_check.html">lambda_check</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">fun2</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## </span></span>
@@ -146,7 +145,7 @@
 <div class="section level3">
 <h3 id="argument-safer_check">Argument <code>safer_check</code><a class="anchor" aria-label="anchor" href="#argument-safer_check"></a>
 </h3>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Safer checkings are performed before main code running.</span></span>
 <span><span class="fu"><a href="../reference/lambda_check.html">lambda_check</a></span><span class="op">(</span></span>
 <span>    x <span class="op">=</span> <span class="va">fun1</span>, </span>
@@ -156,13 +155,12 @@
 <span><span class="co">## </span></span>
 <span><span class="co">## AFTER RUNNING saferDev::lambda_check().</span></span>
 <span><span class="co">## INSIDE fun1(), EVERYTHING SEEMS CLEAN.</span></span></code></pre>
-<pre><code><span><span class="co">## NULL</span></span></code></pre>
 <p><br></p>
 </div>
 <div class="section level3">
 <h3 id="argument-lib_path">Argument <code>lib_path</code><a class="anchor" aria-label="anchor" href="#argument-lib_path"></a>
 </h3>
-<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># The "NOTGOOD" path does not exists.</span></span>
 <span><span class="fu"><a href="../reference/lambda_check.html">lambda_check</a></span><span class="op">(</span></span>
 <span>    x <span class="op">=</span> <span class="va">fun1</span>,  </span>
@@ -184,7 +182,7 @@
 <div class="section level3">
 <h3 id="argument-error_text">Argument <code>error_text</code><a class="anchor" aria-label="anchor" href="#argument-error_text"></a>
 </h3>
-<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Add a text in error messages returned by lambda_check().</span></span>
 <span><span class="fu"><a href="../reference/lambda_check.html">lambda_check</a></span><span class="op">(</span></span>
 <span>    x <span class="op">=</span> <span class="va">fun1</span>, </span>
@@ -208,7 +206,7 @@
 <h3 id="arguments-export-and-out_path-return-or-export-the-corrected-function">Arguments <code>export</code> and <code>out_path</code>: return or
 export the corrected function<a class="anchor" aria-label="anchor" href="#arguments-export-and-out_path-return-or-export-the-corrected-function"></a>
 </h3>
-<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># The corrected function is returned (NULL if nothing has to be corrected).</span></span>
 <span><span class="va">fun2_safer</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/lambda_check.html">lambda_check</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">fun2</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## </span></span>
@@ -221,7 +219,7 @@ export the corrected function<a class="anchor" aria-label="anchor" href="#argume
 <span><span class="co">## 1    \(z)        function(x){ base::sapply(X = 1:3, FUN = \(y){ y * 2 }) ; base::lapply(X = x, FUN = \(z) z + 1) }</span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## MODIFIED FUNCTION RETURNED BY return().</span></span></code></pre>
-<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">fun2_safer</span> <span class="co"># \\() replaced by function().</span></span></code></pre></div>
 <pre><code><span><span class="co">## function (x) </span></span>
 <span><span class="co">## {</span></span>
@@ -230,24 +228,23 @@ export the corrected function<a class="anchor" aria-label="anchor" href="#argume
 <span><span class="co">##     })</span></span>
 <span><span class="co">##     base::lapply(X = x, FUN = function(z) z + 1)</span></span>
 <span><span class="co">## }</span></span></code></pre>
-<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># The corrected function behaves like the submitted one.</span></span>
 <span><span class="fu">fun2</span><span class="op">(</span><span class="fl">1</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## [[1]]</span></span>
 <span><span class="co">## [1] 2</span></span></code></pre>
-<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">fun2_safer</span><span class="op">(</span><span class="fl">1</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## [[1]]</span></span>
 <span><span class="co">## [1] 2</span></span></code></pre>
-<div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># And it passes the check.</span></span>
 <span><span class="fu"><a href="../reference/lambda_check.html">lambda_check</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">fun2_safer</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## </span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## AFTER RUNNING saferDev::lambda_check().</span></span>
 <span><span class="co">## INSIDE fun2_safer(), EVERYTHING SEEMS CLEAN.</span></span></code></pre>
-<pre><code><span><span class="co">## NULL</span></span></code></pre>
-<div class="sourceCode" id="cb31"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Export the corrected function into the fun2_safer.R file, here in a new temporary folder.</span></span>
 <span><span class="co"># out_path = "." (default) is the R working directory.</span></span>
 <span><span class="co"># An existing file is never overwritten (an error is returned instead).</span></span>
@@ -267,8 +264,8 @@ export the corrected function<a class="anchor" aria-label="anchor" href="#argume
 <span><span class="co">## 1    \(y)        function(x){ base::sapply(X = 1:3, FUN = \(y){ y * 2 }) ; base::lapply(X = x, FUN = \(z) z + 1) }</span></span>
 <span><span class="co">## 1    \(z)        function(x){ base::sapply(X = 1:3, FUN = \(y){ y * 2 }) ; base::lapply(X = x, FUN = \(z) z + 1) }</span></span></code></pre>
 <pre><code><span><span class="co">## MODIFIED CODE EXPORTED IN:</span></span>
-<span><span class="co">## /tmp/Rtmpnxl93n/dir1be66e9aee7d/fun2_safer.R</span></span></code></pre>
-<div class="sourceCode" id="cb34"><pre class="downlit sourceCode r">
+<span><span class="co">## /tmp/RtmpxpaSZF/dir19454918cec/fun2_safer.R</span></span></code></pre>
+<div class="sourceCode" id="cb31"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># base::source() of this file recreates the corrected function, named fun2_safer.</span></span>
 <span><span class="fu">base</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/base/readLines.html" class="external-link">readLines</a></span><span class="op">(</span>con <span class="op">=</span> <span class="fu">base</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="va">tempo_dir</span>, <span class="st">"fun2_safer.R"</span>, fsep <span class="op">=</span> <span class="st">"/"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## [1] "fun2_safer &lt;- function(x){ base::sapply(X = 1:3, FUN = function(y){ y * 2 }) ; base::lapply(X = x, FUN = function(z) z + 1) }"</span></span></code></pre>
@@ -277,7 +274,7 @@ export the corrected function<a class="anchor" aria-label="anchor" href="#argume
 <div class="section level3">
 <h3 id="all-the-arguments">All the arguments<a class="anchor" aria-label="anchor" href="#all-the-arguments"></a>
 </h3>
-<div class="sourceCode" id="cb36"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb33"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/lambda_check.html">lambda_check</a></span><span class="op">(</span></span>
 <span>    x <span class="op">=</span> <span class="va">fun1</span>, <span class="co"># function name to test.</span></span>
 <span>    export <span class="op">=</span> <span class="cn">FALSE</span>, <span class="co"># write the corrected function into a .R file instead of returning it?</span></span>
@@ -290,22 +287,21 @@ export the corrected function<a class="anchor" aria-label="anchor" href="#argume
 <span><span class="co">## </span></span>
 <span><span class="co">## AFTER RUNNING saferDev::lambda_check().</span></span>
 <span><span class="co">## INSIDE fun1(), EVERYTHING SEEMS CLEAN.</span></span></code></pre>
-<pre><code><span><span class="co">## NULL</span></span></code></pre>
 <p><br></p>
 </div>
 <div class="section level3">
 <h3 id="sophisticated-example">Sophisticated example<a class="anchor" aria-label="anchor" href="#sophisticated-example"></a>
 </h3>
-<div class="sourceCode" id="cb39"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb35"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># A lambda written in a string or in a comment is ignored.</span></span>
 <span><span class="va">fun3</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/eval.html" class="external-link">eval</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/parse.html" class="external-link">parse</a></span><span class="op">(</span>text <span class="op">=</span> <span class="st">"function(x){ if(x &gt; 1){ y &lt;- \"the \\(x) writing in a string\" } ; x }"</span>, keep.source <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## <span style="color: #BBBB00; font-weight: bold;">Error</span><span style="font-weight: bold;">:</span></span></span>
 <span><span class="co">## <span style="color: #BBBB00;">!</span> '\(' is an unrecognized escape in character string (&lt;text&gt;:1:36)</span></span></code></pre>
-<div class="sourceCode" id="cb41"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb37"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/lambda_check.html">lambda_check</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">fun3</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## <span style="color: #BBBB00; font-weight: bold;">Error</span><span style="font-weight: bold;">:</span></span></span>
 <span><span class="co">## <span style="color: #BBBB00;">!</span> object 'fun3' not found</span></span></code></pre>
-<div class="sourceCode" id="cb43"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb39"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># The backquoted `\\` call (the deprecated function() writing) is not a lambda writing: ignored.</span></span>
 <span><span class="va">fun4</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/eval.html" class="external-link">eval</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/parse.html" class="external-link">parse</a></span><span class="op">(</span>text <span class="op">=</span> <span class="st">"function(x){ base::`\\\\`(x) }"</span>, keep.source <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/lambda_check.html">lambda_check</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">fun4</span><span class="op">)</span></span></code></pre></div>
@@ -313,7 +309,6 @@ export the corrected function<a class="anchor" aria-label="anchor" href="#argume
 <span><span class="co">## </span></span>
 <span><span class="co">## AFTER RUNNING saferDev::lambda_check().</span></span>
 <span><span class="co">## INSIDE fun4(), EVERYTHING SEEMS CLEAN.</span></span></code></pre>
-<pre><code><span><span class="co">## NULL</span></span></code></pre>
 <p><br></p>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

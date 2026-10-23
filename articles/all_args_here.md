@@ -172,7 +172,7 @@ FUN2_safer # modified function (or NULL when the code was already clean).
     ##     middle_bracket2 <- base::do.call(what = base::c, args = code_for_col, 
     ##         quote = FALSE, envir = base::parent.frame(n = 1))
     ## }
-    ## <environment: 0x556bc79fd880>
+    ## <environment: 0x562256824478>
 
 ``` r
 

@@ -271,7 +271,7 @@ fun1_safer # corrected function
 #> {
 #>     base::paste0(x, "a", collapse = NULL, recycle0 = FALSE)
 #> }
-#> <environment: 0x55a0647a5168>
+#> <environment: 0x55f9ac04f8e8>
 # Write the table (res.tsv) and the corrected function (fun1_safer.R) in a new temporary folder:
 tempo_dir <- base::tempfile(pattern = "dir", tmpdir = base::tempdir(), fileext = "")
 base::dir.create(path = tempo_dir, showWarnings = TRUE, recursive = FALSE, mode = "0777")
@@ -280,9 +280,9 @@ saferDev::all_args_here(x = fun1, table_export = TRUE, fun_export = TRUE, out_pa
 #> 
 #> INSIDE fun1(), ARGUMENTS ARE MISSING.
 #> RESULT EXPORTED IN:
-#> /tmp/RtmpT24sDl/dir16a0e196037/res.tsv
+#> /tmp/RtmpvlxsPN/dir142f71b92412/res.tsv
 #> 
 #> MODIFIED CODE EXPORTED IN:
-#> /tmp/RtmpT24sDl/dir16a0e196037/fun1_safer.R
+#> /tmp/RtmpvlxsPN/dir142f71b92412/fun1_safer.R
 #> 
 ```

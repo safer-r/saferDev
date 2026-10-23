@@ -54,8 +54,6 @@ lambda_check(x = fun1)
     ## AFTER RUNNING saferDev::lambda_check().
     ## INSIDE fun1(), EVERYTHING SEEMS CLEAN.
 
-    ## NULL
-
 ``` r
 
 # Here some anonymous functions are written with the lambda writing.
@@ -98,8 +96,6 @@ lambda_check(
     ## 
     ## AFTER RUNNING saferDev::lambda_check().
     ## INSIDE fun1(), EVERYTHING SEEMS CLEAN.
-
-    ## NULL
 
 \
 
@@ -214,8 +210,6 @@ lambda_check(x = fun2_safer)
     ## AFTER RUNNING saferDev::lambda_check().
     ## INSIDE fun2_safer(), EVERYTHING SEEMS CLEAN.
 
-    ## NULL
-
 ``` r
 
 # Export the corrected function into the fun2_safer.R file, here in a new temporary folder.
@@ -240,7 +234,7 @@ lambda_check(
     ## 1    \(z)        function(x){ base::sapply(X = 1:3, FUN = \(y){ y * 2 }) ; base::lapply(X = x, FUN = \(z) z + 1) }
 
     ## MODIFIED CODE EXPORTED IN:
-    ## /tmp/Rtmpnxl93n/dir1be66e9aee7d/fun2_safer.R
+    ## /tmp/RtmpxpaSZF/dir19454918cec/fun2_safer.R
 
 ``` r
 
@@ -270,8 +264,6 @@ lambda_check(
     ## 
     ## AFTER RUNNING saferDev::lambda_check().
     ## INSIDE fun1(), EVERYTHING SEEMS CLEAN.
-
-    ## NULL
 
 \
 
@@ -305,7 +297,5 @@ lambda_check(x = fun4)
     ## 
     ## AFTER RUNNING saferDev::lambda_check().
     ## INSIDE fun4(), EVERYTHING SEEMS CLEAN.
-
-    ## NULL
 
 \

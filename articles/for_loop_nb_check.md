@@ -689,7 +689,7 @@ for_loop_nb_check(x = fun2)
     ##         base::print(i)
     ##     }
     ## }
-    ## <environment: 0x558603a589d8>
+    ## <environment: 0x563dd4a1b168>
 
 \
 
@@ -849,7 +849,7 @@ fun9_safer # a checking line is added before the loop.
     ##     }
     ##     y
     ## }
-    ## <environment: 0x5586063c0f08>
+    ## <environment: 0x563dd7381d90>
 
 ``` r
 
@@ -884,7 +884,7 @@ for_loop_nb_check(
     ## 3    for     for (i in 1:length(x)) {
 
     ## MODIFIED CODE EXPORTED IN:
-    ## /tmp/RtmpSUVOsO/dir1ac6286cf5ed/fun9_safer.R
+    ## /tmp/RtmpqRxej0/dir182541ab08bb/fun9_safer.R
 
 ``` r
 
@@ -975,7 +975,7 @@ for_loop_nb_check(x = fun4)
     ##     }
     ##     y
     ## }
-    ## <environment: 0x5586090ebef0>
+    ## <environment: 0x563dda0aebc0>
 
 ``` r
 
@@ -1040,7 +1040,7 @@ for_loop_nb_check(x = fun5)
     ##         }
     ##     }
     ## }
-    ## <environment: 0x5586096d0690>
+    ## <environment: 0x563dda693f70>
 
 ``` r
 
@@ -1097,7 +1097,7 @@ for_loop_nb_check(x = fun6)
     ##     }
     ## }) 
     ## f(1)
-    ## <environment: 0x558609cba6e8>
+    ## <environment: 0x563ddac7dfc8>
 
 ``` r
 
@@ -1155,6 +1155,6 @@ for_loop_nb_check(x = fun7)
     ##     }
     ##     y
     ## }
-    ## <environment: 0x55860a292ed0>
+    ## <environment: 0x563ddb256720>
 
 \
