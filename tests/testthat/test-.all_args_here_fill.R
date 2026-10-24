@@ -429,9 +429,14 @@ testthat::test_that(".all_args_here_fill()", {
 
     # checking if arg name are not fully written
     # without ... in args
-    testthat::expect_error(.all_args_here_fill(arg_full = list_fun3, arg_full_names = arg_full_names_4, tempo_split = NULL, three_dots_log = c(FALSE, FALSE, FALSE, FALSE, FALSE, FALSE), i2 = 1, col1_i2 = 1, col2_i2 = col2_i2_2, arg_user_setting_x = arg_user_setting_x_1, warn = NULL, warn_count = 0, lib_path = NULL, error_text = ""))
-    result <- get_message(data = '.all_args_here_fill(arg_full = list_fun3, arg_full_names = arg_full_names_4, tempo_split = NULL, three_dots_log = c(FALSE, FALSE, FALSE, FALSE, FALSE, FALSE), i2 = 1, col1_i2 = 1, col2_i2 = col2_i2_2, arg_user_setting_x = arg_user_setting_x_1, warn = NULL, warn_count = 0, lib_path = NULL, error_text = "")', kind = "error")
-    expected <- "ERROR MESSAGE REPORTED:\nError : \n\n================\n\nERROR IN saferDev:::.all_args_here_fill().\n\nTHE TESTED FUNCTION \"FUN1\" SEEMS TO HAVE A WRITING ERROR IN LINE 1 AND FUNCTION sum.\nPLEASE, RUN THE TESTED FUNCTION FIRST.\n\n================\n\n\n"
+    # no arg written while some args have no default value: no error, these args are proposed with an empty value (e.g., base::.libPaths(new = , include.site = TRUE))
+    testthat::expect_no_error(.all_args_here_fill(arg_full = list_fun3, arg_full_names = arg_full_names_4, tempo_split = NULL, three_dots_log = c(FALSE, FALSE, FALSE, FALSE, FALSE, FALSE), i2 = 1, col1_i2 = 1, col2_i2 = col2_i2_2, arg_user_setting_x = arg_user_setting_x_1, warn = NULL, warn_count = 0, lib_path = NULL, error_text = ""))
+    result <- .all_args_here_fill(arg_full = list_fun3, arg_full_names = arg_full_names_4, tempo_split = NULL, three_dots_log = c(FALSE, FALSE, FALSE, FALSE, FALSE, FALSE), i2 = 1, col1_i2 = 1, col2_i2 = col2_i2_2, arg_user_setting_x = arg_user_setting_x_1, warn = NULL, warn_count = 0, lib_path = NULL, error_text = "")
+    expected <- list(col6 = "pattern, x, ignore.case, perl, fixed, useBytes", col7 = "pattern = , x = , ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE", col8 = "sum(pattern = , x = , ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE)")
+    testthat::expect_equal(result, expected)
+    # arg after ... cannot take a value written without arg name: list_fun2 is sum(..., na.rm = FALSE) with na.rm emptied, as done by all_args_here() for a non copiable default value
+    result <- .all_args_here_fill(arg_full = list(... = quote(expr = ), na.rm = quote(expr = )), arg_full_names = c("...", "na.rm"), tempo_split = "1:2", three_dots_log = c(TRUE, FALSE), i2 = 1, col1_i2 = 1, col2_i2 = col2_i2_2, arg_user_setting_x = arg_user_setting_x_1, warn = NULL, warn_count = 0, lib_path = NULL, error_text = "")
+    expected <- list(col6 = "na.rm", col7 = "na.rm = ", col8 = "sum(na.rm = , 1:2)")
     testthat::expect_equal(result, expected)
     testthat::expect_no_error(.all_args_here_fill(arg_full = list_fun4, arg_full_names = arg_full_names_5, tempo_split = tempo_split_9, three_dots_log = c(FALSE, FALSE, FALSE, FALSE, FALSE, FALSE), i2 = 1, col1_i2 = 1, col2_i2 = col2_i2_3, arg_user_setting_x = arg_user_setting_x_1, warn = NULL, warn_count = 0, lib_path = NULL, error_text = ""))
     testthat::expect_error(.all_args_here_fill(arg_full = list_fun10, arg_full_names = arg_full_names_10, tempo_split = tempo_split_10, three_dots_log = c(FALSE, FALSE, FALSE), i2 = 1, col1_i2 = 1, col2_i2 = col2_i2_10, arg_user_setting_x = arg_user_setting_x_1, warn = NULL, warn_count = 0, lib_path = NULL, error_text = ""))

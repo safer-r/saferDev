@@ -476,7 +476,10 @@
     missing_args <- NULL
     missing_args_names <- NULL
     missing_full_arg_name_log <- base::logical(length = 0L)
+    before_dots_log <- base::rep(x = TRUE, times = base::length(x = arg_full_names)) # args that can take a value written without arg name (positional matching): only the args before ... in the function definition
     if(base::any(three_dots_log, na.rm = TRUE)){
+        before_dots_log <- base::seq_along(along.with = three_dots_log) < base::which(x = three_dots_log, arr.ind = FALSE, useNames = TRUE)[1]
+        before_dots_log <- before_dots_log[ ! three_dots_log]
         arg_full_names <- arg_full_names[ ! three_dots_log]
         arg_full <- arg_full[ ! three_dots_log]
     }
@@ -554,21 +557,7 @@
         # end detection of arguments that starts by the same string in the sub function (example: path_in and path_out)
         # checking if arg name are not fully written
         arg_full_symbol_type <- base::sapply(X = arg_full, FUN = function(x){base::all(base::typeof(x = x) == "symbol", na.rm =TRUE)}, simplify = TRUE, USE.NAMES = TRUE) # to check if any arg without optional value are completed with obs arg values
-        if(base::any(arg_full_symbol_type, na.rm =TRUE) & base::length(x = tempo_split) == 0){
-            tempo_cat <- base::paste0(
-                error_text_start,
-                "THE TESTED FUNCTION ", 
-                arg_user_setting_x, 
-                " SEEMS TO HAVE A WRITING ERROR IN LINE ",  
-                col1_i2, 
-                " AND FUNCTION ", 
-                col2_i2, 
-                ".\nPLEASE, RUN THE TESTED FUNCTION FIRST.", 
-                collapse = NULL, 
-                recycle0 = FALSE
-            )
-            base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", base::ifelse(test = base::is.null(x = warn), yes = "", no = base::paste0("IN ADDITION\nWARNING", base::ifelse(test = warn_count > 1, yes = "S", no = ""), ":\n\n", warn, collapse = NULL, recycle0 = FALSE)), collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL)
-        }
+        # no error if args without default value (or with a non copiable default value, emptied by all_args_here()) are not written: absence of value can mean something (e.g., base::.libPaths(new = , include.site = TRUE) returns the library paths) and the proposal writes them with an empty value (e.g., new = ), which does not change the behavior of the code
         tempo_col8 <- NULL
         if(( ! base::is.null(x = missing_args_names)) & base::length(x = tempo_split) != 0){
             for(i3 in base::seq_along(along.with = tempo_split)){ # seq_along() instead of 1:base::length() avoids iterating over c(1, 0) when tempo_split is NULL or empty
@@ -631,7 +620,7 @@
             # missing_args <-  NULL # already above
             for(i3 in base::seq_along(arg_full_names)){ # here I cannot have more args than base::length(arg_full_names) ; seq_along() instead of 1:base::length() avoids iterating over c(1, 0) when arg_full_names is NULL or empty
                 if(missing_arg_log[i3] == TRUE){
-                    if(base::sum(missing_full_arg_name_log, na.rm = FALSE) > 0){ # this means that remains obs arg with no arg names written
+                    if(base::sum(missing_full_arg_name_log, na.rm = FALSE) > 0 & before_dots_log[i3]){ # this means that remains obs arg with no arg names written. Warning: an arg after ... cannot take a value written without arg name
                         tempo <- base::paste0(arg_full_names[i3], " = ", tempo_split[base::which(x = missing_full_arg_name_log == TRUE, arr.ind = FALSE, useNames = TRUE)[1]], collapse = NULL, recycle0 = FALSE)
                         missing_full_arg_name_log[base::which(x = missing_full_arg_name_log == TRUE, arr.ind = FALSE, useNames = TRUE)[1]] <- FALSE
                     }else{
@@ -641,7 +630,11 @@
                     final <- base::c(final, base::ifelse(test = i3 == 1, yes = tempo, no = base::paste0(" ", tempo, collapse = NULL, recycle0 = FALSE))) # take the first pos always of the args with no arg names
                 }else{
                     count_good_args <- count_good_args + 1
-                    final <- base::c(final, good_args[count_good_args])
+                    tempo <- good_args[count_good_args]
+                    if(i3 > 1 & ! base::grepl(x = tempo, pattern = "^\\s", ignore.case = FALSE, perl = TRUE, fixed = FALSE, useBytes = FALSE)){
+                        tempo <- base::paste0(" ", tempo, collapse = NULL, recycle0 = FALSE) # a space after the comma, like for the missing args (e.g., "new = , include.site = TRUE" and not "new = ,include.site = TRUE")
+                    }
+                    final <- base::c(final, tempo)
                 }
                 arg_full_symbol_type[i3] <- FALSE
             }
@@ -666,7 +659,7 @@
             }
             if(base::any(three_dots_log, na.rm = TRUE) & base::any(missing_full_arg_name_log, na.rm =TRUE)){ # obs values not yet in good_args
                 if(count_good_args + 1 <= base::length(x = tempo_split)){
-                    good_args <- base::c(good_args, tempo_split[missing_full_arg_name_log])
+                    good_args <- base::c(good_args, base::sub(pattern = "^(\\S)", replacement = " \\1", x = tempo_split[missing_full_arg_name_log], ignore.case = FALSE, perl = TRUE, fixed = FALSE, useBytes = FALSE)) # a space after the comma
                 }
             }
         }

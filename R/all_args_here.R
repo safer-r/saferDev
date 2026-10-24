@@ -27,6 +27,8 @@
 #' }
 #' 
 #' An additional message \code{"EVERYTHING SEEMS CLEAN"} if the \code{$STATUS} column is only made of \code{""} and \code{"GOOD"}.
+#'
+#' An additional message \code{"ARGUMENTS WITH EMPTY VALUE"} listing, for each line and function, the arguments written (or proposed in the \code{$STATUS} column) with an empty value (like \code{envir = }), with their default value, i.e., the potential flaws of the code (see the details section). Use \code{"= ,"} or \code{"= )"} to seek each case in the code.
 #' @details
 #' More precisely, \code{all_args_here()} verifies that all the strings before an opening bracket \code{(} are written with all their arguments. Thus, it cannot check function names written without brackets, like in the \code{FUN} argument of some functions, e.g., \code{sapply(1:3, FUN = as.character)}.
 #' 
@@ -37,6 +39,8 @@
 #' Function names preceded by \code{$} are not considered.
 #'  
 #' The following R functions are skipped: \code{function}, \code{if}, \code{for}, \code{while}, \code{repeat} and \code{else}.
+#'
+#' Empty argument values (see the \href{https://github.com/safer-r}{safer-r rules}): 1) a default value that cannot be copied into the call is proposed with an empty value, meaning that the default value is used but cannot be fixed. This is the case when the default value depends on another argument (e.g., \code{envir = as.environment(pos)} in \code{utils::getFromNamespace()}, proposed as \code{utils::getFromNamespace(x, ns, pos = -1, envir = )}), on a variable of the internal environment of the function, or on the frame where it is evaluated (e.g., \code{parent.frame()}), because such a default value would be evaluated in the environment of the tested function and not in the one of the called function. 2) An argument with no default value and not written is also proposed with an empty value, because absence of value can mean something (e.g., \code{base::.libPaths(new = , include.site = TRUE)} returns the paths of the R libraries, whereas \code{base::.libPaths(new = base::.libPaths(), include.site = TRUE)} sets them). In both cases, the behavior of the code is not changed. It is recommended to test (using \code{testthat}) that these default values are unchanged, for instance \code{testthat::expect_identical(object = base::formals(fun = utils::getFromNamespace)$envir, expected = base::quote(expr = as.environment(pos)))}.
 #' 
 #' Most of the time, \code{all_args_here()} does not check inside comments, but some unexpected writing could dupe \code{all_args_here()}. Please, report \href{https://github.com/safer-r/saferDev/issues}{here} if it is the case.
 #' 
@@ -873,6 +877,8 @@ all_args_here <- function(
         col6 <- NULL # missing arg names
         col7 <- NULL # potential missing args with values
         col8 <- NULL # reconstructed function with all arg
+        empty_args <- NULL # args written (or proposed) with an empty value, like envir =
+        frame_dep_funs <- base::c("parent.frame", "environment", "sys.call", "sys.calls", "sys.function", "sys.frame", "sys.frames", "sys.nframe", "sys.parent", "sys.parents", "sys.on.exit", "match.call", "missing", "nargs") # functions that make a default value depend on the frame where it is evaluated
         for(i2 in 1:base::length(x = col1)){
             if(col3[i2] != reserved_words){
                 # check if internal function
@@ -959,6 +965,31 @@ all_args_here <- function(
                         tempo <- base::paste(base::paste0(base::names(x = tempo), tempo, collapse = NULL, recycle0 = FALSE), collapse = ", ", recycle0 = FALSE, sep = " ")
                         col5 <- base::c(col5, tempo)
                         # end all arguments of the function with default value in col5
+                        # default values that cannot be copied into the call: replaced by an empty value (e.g., envir = ), meaning that the default value is used but cannot be fixed
+                        # a default value cannot be copied if it depends on another argument (e.g., envir = as.environment(pos) in utils::getFromNamespace()), on the internal environment of the function (e.g., a variable created in the body of the function), or on the frame where it is evaluated (e.g., parent.frame()), because it would be evaluated in the environment of the tested function and not in the one of the called function
+                        tempo_fun_env <- base::environment(fun = tempo_fun2)
+                        if(base::is.null(x = tempo_fun_env)){
+                            tempo_fun_env <- base::asNamespace(ns = tempo_package_name, base.OK = TRUE) # primitive functions have no environment
+                        }
+                        non_copiable_log <- base::sapply(
+                            X = arg_full,
+                            FUN = function(x){
+                                if(base::is.call(x = x) | base::is.name(x = x)){
+                                    tempo_vars <- base::all.vars(expr = x, functions = FALSE, max.names = -1L, unique = TRUE)
+                                    tempo_names <- base::all.names(expr = x, functions = TRUE, max.names = -1L, unique = TRUE)
+                                    base::any(tempo_vars %in% base::names(x = arg_full), na.rm = TRUE) | ! base::all(base::sapply(X = tempo_vars, FUN = function(y){base::exists(x = y, where = -1, envir = tempo_fun_env, frame = , mode = "any", inherits = TRUE)}, simplify = TRUE, USE.NAMES = TRUE), na.rm = TRUE) | base::any(tempo_names %in% frame_dep_funs, na.rm = TRUE) # frame = written empty because absence of value means something in base::exists()
+                                }else{
+                                    FALSE
+                                }
+                            },
+                            simplify = TRUE,
+                            USE.NAMES = TRUE
+                        ) # empty symbols (args without default value) return FALSE because all.vars() of an empty symbol is character(0)
+                        arg_full_fill <- arg_full
+                        if(base::any(non_copiable_log, na.rm = TRUE)){
+                            arg_full_fill[non_copiable_log] <- base::list(base::quote(expr = ))
+                        }
+                        # end default values that cannot be copied into the call
                         # arguments: replacement of all the commas between quotes
                         tempo_col3 <- col3[i2]
                         tempo <- .in_quotes_replacement(
@@ -1053,7 +1084,7 @@ all_args_here <- function(
                         }
                         # end checking
                         tempo_out <- .all_args_here_fill(
-                            arg_full = arg_full, 
+                            arg_full = arg_full_fill,
                             arg_full_names = arg_full_names, 
                             tempo_split = tempo_split, 
                             three_dots_log = three_dots_log, 
@@ -1070,6 +1101,32 @@ all_args_here <- function(
                         col7 <- base::c(col7, tempo_out$col7)
                         col8 <- base::c(col8, tempo_out$col8)
                         # end working on each observed arg
+                        # args with empty value in the call, as written (GOOD) or as proposed
+                        tempo_call <- base::ifelse(test = base::grepl(x = tempo_out$col8, pattern = base::paste0("^", col2[i2], "\\(", collapse = NULL, recycle0 = FALSE), ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE), yes = tempo_out$col8, no = col3[i2]) # col3[i2] if col8 is GOOD or a warning about non fully written arg names
+                        tempo_call <- base::tryCatch(expr = base::str2lang(s = tempo_call), error = function(e){NULL}, finally = ) # NULL if the call cannot be parsed (e.g., multi-line call): not considered
+                        if(base::is.call(x = tempo_call) & ! col2[i2] %in% "quote"){ # quote(expr = ) not considered, because it is the writing of an empty value, not a potential flaw
+                            tempo_call_args <- base::as.list(x = tempo_call)[-1]
+                            if(base::length(x = tempo_call_args) > 0 & ! base::is.null(x = base::names(x = tempo_call_args))){
+                                tempo_log <- base::vapply(X = base::seq_along(along.with = tempo_call_args), FUN = function(k){base::identical(x = tempo_call_args[[k]], y = base::quote(expr = ), num.eq = TRUE, single.NA = TRUE, attrib.as.set = TRUE, ignore.bytecode = TRUE, ignore.environment = FALSE, ignore.srcref = TRUE, extptr.as.ref = FALSE)}, FUN.VALUE = base::logical(length = 1L), USE.NAMES = TRUE) # index based because an empty value cannot be passed as an argument of a function
+                                tempo_log <- tempo_log & base::names(x = tempo_call_args) %in% base::names(x = arg_full)
+                                if(base::any(tempo_log, na.rm = TRUE)){
+                                    tempo_empty <- base::sapply(
+                                        X = base::names(x = tempo_call_args)[tempo_log],
+                                        FUN = function(y){
+                                            if(base::identical(x = arg_full[[y]], y = base::quote(expr = ), num.eq = TRUE, single.NA = TRUE, attrib.as.set = TRUE, ignore.bytecode = TRUE, ignore.environment = FALSE, ignore.srcref = TRUE, extptr.as.ref = FALSE)){
+                                                base::paste0(y, " (NO DEFAULT VALUE)", collapse = NULL, recycle0 = FALSE)
+                                            }else{
+                                                base::paste0(y, " (DEFAULT: ", base::paste0(base::deparse(expr = arg_full[[y]], width.cutoff = 60L, backtick = FALSE, control = base::c("keepNA", "keepInteger", "niceNames", "showAttributes"), nlines = -1L), collapse = " ", recycle0 = FALSE), ")", collapse = NULL, recycle0 = FALSE)
+                                            }
+                                        },
+                                        simplify = TRUE,
+                                        USE.NAMES = FALSE
+                                    )
+                                    empty_args <- base::c(empty_args, base::paste0("line ", col1[i2], ": ", tempo_package_name_colons, col2[i2], "(): ", base::paste0(tempo_empty, collapse = ", ", recycle0 = FALSE), collapse = NULL, recycle0 = FALSE))
+                                }
+                            }
+                        }
+                        # end args with empty value in the call, as written (GOOD) or as proposed
                     }
                 }
             }else{
@@ -1119,6 +1176,16 @@ all_args_here <- function(
             # the table is returned as a message with on.exit(), after the EVERYTHING SEEMS CLEAN or ARGUMENTS ARE MISSING message registered above, and before the CORRECTIONS NOT APPLIED and MODIFIED CODE EXPORTED IN messages registered below
             tempo_cat_table <- base::paste0(utils::capture.output(output, file = NULL, append = FALSE, type = "output", split = FALSE), collapse = "\n", recycle0 = FALSE)
             base::on.exit(expr = base::message(base::paste0(tempo_cat_table, "\n\n", collapse = NULL, recycle0 = FALSE), domain = NULL, appendLF = TRUE), add = TRUE, after = TRUE)
+        }
+        if( ! base::is.null(x = empty_args)){ # recap of the args with empty value (written, or proposed in the STATUS column), i.e., the potential flaws of the code: default value used but not fixed, or absence of value meaningful
+            tempo_cat_empty <- base::paste0(
+                "ARGUMENTS WITH EMPTY VALUE (DEFAULT VALUE USED BUT CANNOT BE FIXED, OR NO DEFAULT VALUE):\n",
+                base::paste0(empty_args, collapse = "\n", recycle0 = FALSE),
+                "\nUSE \"= ,\" OR \"= )\" TO SEEK EACH CASE IN THE CODE, AND, IF POSSIBLE, TEST THAT THE DEFAULT VALUES ARE UNCHANGED, FOR INSTANCE:\ntestthat::expect_identical(object = base::formals(fun = utils::getFromNamespace)$envir, expected = base::quote(expr = as.environment(pos)))\n\n",
+                collapse = NULL,
+                recycle0 = FALSE
+            )
+            base::on.exit(expr = base::message(tempo_cat_empty, domain = NULL, appendLF = TRUE), add = TRUE, after = TRUE)
         }
         # modification of the submitted function with the missing arguments
         .all_args_insert <- utils::getFromNamespace(x = ".all_args_insert", ns = "saferDev", pos = , envir = )

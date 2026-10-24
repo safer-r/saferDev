@@ -52,6 +52,8 @@ Column descriptions:
 }
 
 An additional message \code{"EVERYTHING SEEMS CLEAN"} if the \code{$STATUS} column is only made of \code{""} and \code{"GOOD"}.
+
+An additional message \code{"ARGUMENTS WITH EMPTY VALUE"} listing, for each line and function, the arguments written (or proposed in the \code{$STATUS} column) with an empty value (like \code{envir = }), with their default value, i.e., the potential flaws of the code (see the details section). Use \code{"= ,"} or \code{"= )"} to seek each case in the code.
 }
 \description{
 Verify that all the functions used inside a function are written with all their arguments. For instance: \code{base::paste0(letters[1:2], collapse = NULL, recycle0 = FALSE)} and not \code{paste0(letters[1:2])}.
@@ -66,6 +68,8 @@ Currently, \code{all_args_here()} cannot detect functions written between quotes
 Function names preceded by \code{$} are not considered.
  
 The following R functions are skipped: \code{function}, \code{if}, \code{for}, \code{while}, \code{repeat} and \code{else}.
+
+Empty argument values (see the \href{https://github.com/safer-r}{safer-r rules}): 1) a default value that cannot be copied into the call is proposed with an empty value, meaning that the default value is used but cannot be fixed. This is the case when the default value depends on another argument (e.g., \code{envir = as.environment(pos)} in \code{utils::getFromNamespace()}, proposed as \code{utils::getFromNamespace(x, ns, pos = -1, envir = )}), on a variable of the internal environment of the function, or on the frame where it is evaluated (e.g., \code{parent.frame()}), because such a default value would be evaluated in the environment of the tested function and not in the one of the called function. 2) An argument with no default value and not written is also proposed with an empty value, because absence of value can mean something (e.g., \code{base::.libPaths(new = , include.site = TRUE)} returns the paths of the R libraries, whereas \code{base::.libPaths(new = base::.libPaths(), include.site = TRUE)} sets them). In both cases, the behavior of the code is not changed. It is recommended to test (using \code{testthat}) that these default values are unchanged, for instance \code{testthat::expect_identical(object = base::formals(fun = utils::getFromNamespace)$envir, expected = base::quote(expr = as.environment(pos)))}.
 
 Most of the time, \code{all_args_here()} does not check inside comments, but some unexpected writing could dupe \code{all_args_here()}. Please, report \href{https://github.com/safer-r/saferDev/issues}{here} if it is the case.
 

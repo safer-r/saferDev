@@ -382,19 +382,14 @@
         status_i2 <- rows$STATUS[i2]
         pos_i2 <- rows$FUN_POS[i2]
         line_i2 <- rows$LINE_NB[i2]
-        # validation 1: the STATUS must parse as R code AND must not contain an empty argument value (" = )" or " =,"): R parses those as a "missing" argument, which would insert a no-op correction with odd formatting
-        ok_parse <- FALSE
-        status_parsed <- NULL
-        empty_val <- base::grepl(x = status_i2, pattern = "=\\s*[,)]", ignore.case = FALSE, perl = TRUE, fixed = FALSE, useBytes = FALSE)
-        if( ! empty_val){
-            status_parsed <- base::tryCatch(
-                expr = {
-                    base::parse(file = "", n = NULL, text = status_i2, prompt = "?", keep.source = base::getOption(x = "keep.source", default = NULL), srcfile = NULL, encoding = "unknown")
-                },
-                error = function(e){NULL}
-            )
-            ok_parse <- ( ! base::is.null(x = status_parsed))
-        }
+        # validation 1: the STATUS must parse as R code. Of note, an empty argument value (like "envir = )" or "new = ,") is accepted: R parses it as a "missing" argument, meaning that the default value is used (safer-r rule for args with no default value, or with a default value that cannot be copied)
+        status_parsed <- base::tryCatch(
+            expr = {
+                base::parse(file = "", n = NULL, text = status_i2, prompt = "?", keep.source = base::getOption(x = "keep.source", default = NULL), srcfile = NULL, encoding = "unknown")
+            },
+            error = function(e){NULL}
+        )
+        ok_parse <- ( ! base::is.null(x = status_parsed))
         if( ! ok_parse){
             left <- base::c(left, base::paste0("line ", line_i2, ": ", status_i2, collapse = NULL, recycle0 = FALSE))
             next

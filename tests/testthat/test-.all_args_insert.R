@@ -95,11 +95,17 @@ testthat::test_that(".all_args_insert()", {
     testthat::expect_true(object = base::is.function(x = tempo_out4$fun)) # the other correction (paste0) is still applied
     testthat::expect_true(object = base::length(x = tempo_out4$left) == 1)
     testthat::expect_true(object = base::length(x = tempo_out4$inserted) == 1)
-    # validation 1: STATUS with empty argument value " = )" (parses as missing arg)
+    # validation 1: STATUS with empty argument value " = )" (parses as missing arg): applied, because empty values are allowed by the safer-r rules (default value that cannot be copied, or no default value)
     tempo_output <- output_fun1
     tempo_output$STATUS[1] <- "sum(1:2, na.rm = )" # the " = )" empty value
     testthat::expect_no_error(tempo_out5 <- .all_args_insert(x = FUN1, out = out_fun1, output = tempo_output, lib_path = NULL, error_text = ""))
-    testthat::expect_true(object = base::is.function(x = tempo_out5$fun)) # the other correction (paste0) is still applied
+    testthat::expect_true(object = base::is.function(x = tempo_out5$fun))
+    testthat::expect_true(object = base::length(x = tempo_out5$left) == 0)
+    testthat::expect_true(object = base::length(x = tempo_out5$inserted) == 2)
+    testthat::expect_true(object = base::grepl(x = tempo_out5$fun_txt, pattern = "sum(1:2, na.rm = )", fixed = TRUE, ignore.case = FALSE, perl = FALSE, useBytes = FALSE))
+    # validation 1: STATUS that does not parse
+    tempo_output$STATUS[1] <- "sum(1:2, na.rm = FALSE" # missing closing bracket
+    testthat::expect_no_error(tempo_out5 <- .all_args_insert(x = FUN1, out = out_fun1, output = tempo_output, lib_path = NULL, error_text = ""))
     testthat::expect_true(object = base::length(x = tempo_out5$left) == 1)
     testthat::expect_true(object = base::length(x = tempo_out5$inserted) == 1)
     # validation 1: LINE_NB beyond the length of out$code: this is caught by the coherence check of the second round of checking (INTERNAL ERROR 1), not routed to left
