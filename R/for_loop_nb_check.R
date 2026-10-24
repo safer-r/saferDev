@@ -161,7 +161,7 @@ for_loop_nb_check <- function(
     ######## mandatory arg of safer-r functions
     mandat_args <- base::c("lib_path", "safer_check", "error_text")
     tempo_log <- ! mandat_args %in% arg_names
-    if(base::any(x = tempo_log, na.rm = TRUE)) {
+    if(base::any(tempo_log, na.rm = TRUE)) {
         # This check is here in case the developer has not correctly written the argument of its function
         tempo_cat <- base::paste0(
             error_text_start, 
@@ -269,7 +269,7 @@ for_loop_nb_check <- function(
                     }
                 ), 
                 FUN = function(x){
-                    base::all(x = x, na.rm = TRUE) & base::length(x = x) > 0 # if x is empty, return FALSE, so OK
+                    base::all(x, na.rm = TRUE) & base::length(x = x) > 0 # if x is empty, return FALSE, so OK
                 }, 
                 simplify = TRUE, 
                 USE.NAMES = TRUE
@@ -529,13 +529,13 @@ for_loop_nb_check <- function(
 
     #### main code
     # recover the code of the checked function
-    code <- utils::capture.output(x = x, file = NULL, append = FALSE, type = NULL, split = FALSE)
+    code <- utils::capture.output(x, file = NULL, append = FALSE, type = NULL, split = FALSE)
     # removal of the attribute lines printed for compiled functions (e.g., "<bytecode: 0x...>", "<environment: ...>", "<srcref: ...>"). Warning: the pattern cannot be simply a line starting by "<", because a valid R code line can start by "<" (binary operator continuation)
     code <- code[ ! base::grepl(x = code, pattern = "^<(bytecode|environment|srcref): ", ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE)]
     pd <- utils::getParseData(x = base::parse(text = base::paste0(code, collapse = "\n", recycle0 = FALSE), keep.source = TRUE))
     # terminal tokens (comments excluded), sorted by source position
     term_rows <- base::which(x = pd$terminal == TRUE & pd$token != "COMMENT", arr.ind = FALSE, useNames = TRUE)
-    term_rows <- term_rows[base::order(x = pd$line1[term_rows], pd$col1[term_rows])]
+    term_rows <- term_rows[base::order(pd$line1[term_rows], pd$col1[term_rows])]
     # positions in term_rows of the FOR keyword tokens
     for_idx <- base::which(x = pd$token[term_rows] == "FOR", arr.ind = FALSE, useNames = TRUE)
     findings_line <- base::integer(length = 0)
@@ -611,7 +611,7 @@ for_loop_nb_check <- function(
             tempo_cat <- base::paste0("INTERNAL ERROR 7 IN ", intern_error_text_start, "UNEXPECTED NUMBER OF CHILDREN FOR A for() CONSTRUCT IN THE PARSE TREE", intern_error_text_end, collapse = NULL, recycle0 = FALSE) ; base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL)
             # nocov end
         }
-        siblings <- siblings[base::order(x = pd$line1[siblings], pd$col1[siblings])]
+        siblings <- siblings[base::order(pd$line1[siblings], pd$col1[siblings])]
         body_row <- siblings[2]
         body_span <- base::c(pd$line1[body_row], pd$col1[body_row], pd$line2[body_row], pd$col2[body_row])
         # tokens of the sequence expression: between the IN token and the ) of the condition
@@ -827,13 +827,13 @@ for_loop_nb_check <- function(
             for(m in base::seq_along(along.with = findings_body_line2)){
                 same_end <- body_end_key == body_end_key[m]
                 later_log <- (findings_for_line1 > findings_for_line1[m]) | (findings_for_line1 == findings_for_line1[m] & findings_for_col1 > findings_for_col1[m])
-                if(base::any(x = same_end & later_log & findings_braced == FALSE, na.rm = TRUE)){
+                if(base::any(same_end & later_log & findings_braced == FALSE, na.rm = TRUE)){
                     shared_log[m] <- TRUE
                 }
             }
         }
         # apply back-to-front: highest (line, column) first, so that the positions of the not-yet-applied constructs remain valid. Per construct, the sequence expression replacement (at the IN position) comes after the insertion (at the for keyword position) in source order
-        ord <- base::order(x = findings_for_line1, findings_for_col1, decreasing = TRUE)
+        ord <- base::order(findings_for_line1, findings_for_col1, decreasing = TRUE)
         ord_len <- base::length(x = ord)
         for(k in base::seq_len(length.out = ord_len)){
             i <- ord[k]

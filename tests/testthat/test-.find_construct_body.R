@@ -21,7 +21,7 @@ testthat::test_that(".find_construct_body()", {
     get_args <- function(txt, token_kind = "IF", kind = "then"){
         pd <- utils::getParseData(x = base::parse(text = txt, keep.source = TRUE))
         term_rows <- base::which(x = pd$terminal == TRUE & pd$token != "COMMENT", arr.ind = FALSE, useNames = TRUE)
-        term_rows <- term_rows[base::order(x = pd$line1[term_rows], pd$col1[term_rows])]
+        term_rows <- term_rows[base::order(pd$line1[term_rows], pd$col1[term_rows])]
         kid_idx <- base::which(x = pd$token[term_rows] == token_kind, arr.ind = FALSE, useNames = TRUE)
         kid <- term_rows[kid_idx[1]]
         kid_expr_id <- pd$parent[kid]

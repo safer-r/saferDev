@@ -394,7 +394,7 @@ testthat::test_that("all_args_here()", {
     }
     # clean call: no modification -> NULL returned
     FUN2 <- function(x, y){
-        base::sum(x = x, y = y, na.rm = FALSE)
+        base::sum(x, y, na.rm = FALSE)
     }
     testthat::expect_null(object = all_args_here(x = FUN2, table_export = FALSE, fun_export = FALSE, out_path = ".", df_name = "res.tsv", overwrite = FALSE, safer_check = TRUE, lib_path = NULL, error_text = ""))
     # modification returned as a function object
@@ -427,7 +427,7 @@ testthat::test_that("all_args_here()", {
     # x = obj$fun writing form and inline definitions are refused when fun_export = TRUE (the written form is not reliable for the file name)
     FUN_LIST <- base::list(fun = FUN2)
     testthat::expect_error(all_args_here(x = FUN_LIST$fun, table_export = FALSE, fun_export = TRUE, out_path = tempo_dir, df_name = "res.tsv", overwrite = FALSE, safer_check = FALSE, lib_path = NULL, error_text = ""), regexp = "MUST BE DESIGNATED BY A FUNCTION NAME", fixed = TRUE) # clean function: nothing written anyway
-    testthat::expect_error(all_args_here(x = function(y){ base::sum(x = y) }, table_export = FALSE, fun_export = TRUE, out_path = tempo_dir, df_name = "res.tsv", overwrite = FALSE, safer_check = FALSE, lib_path = NULL, error_text = ""), regexp = "MUST BE DESIGNATED BY A FUNCTION NAME", fixed = TRUE)
+    testthat::expect_error(all_args_here(x = function(y){ base::sum(y) }, table_export = FALSE, fun_export = TRUE, out_path = tempo_dir, df_name = "res.tsv", overwrite = FALSE, safer_check = FALSE, lib_path = NULL, error_text = ""), regexp = "MUST BE DESIGNATED BY A FUNCTION NAME", fixed = TRUE)
     # nested calls on the same line: the innermost correction is applied, the outer one is reported in the final message (CORRECTIONS NOT APPLIED)
     FUN_NESTED <- function(v){
         res <- base::paste0(base::mean(1:2))

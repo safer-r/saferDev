@@ -130,7 +130,7 @@
     # personalized for internal functions: lib_path and error_text are mandatory; safer_check does not exist in internal functions
     mandat_args <- base::c("lib_path", "error_text")
     tempo_log <- ! mandat_args %in% arg_names
-    if(base::any(x = tempo_log, na.rm = TRUE)) {
+    if(base::any(tempo_log, na.rm = TRUE)) {
         # This check is here in case the developer has not correctly written the argument of its function
         tempo_cat <- base::paste0(
             error_text_start, 
@@ -250,7 +250,7 @@
                     }
                 ), 
                 FUN = function(x){
-                    base::all(x = x, na.rm = TRUE) & base::length(x = x) > 0 # if x is empty, return FALSE, so OK
+                    base::all(x, na.rm = TRUE) & base::length(x = x) > 0 # if x is empty, return FALSE, so OK
                 }, 
                 simplify = TRUE, 
                 USE.NAMES = TRUE
@@ -358,7 +358,7 @@
         tempo_cat <- base::paste0("INTERNAL ERROR 7 IN ", intern_error_text_start, "NO EXPR CHILD FOUND FOR THE CONSTRUCT\ntoken: ", pd$token[kid], intern_error_text_end, collapse = NULL, recycle0 = FALSE) ; base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL)
         # nocov end
     }
-    child_expr_rows <- child_expr_rows[base::order(x = pd$line1[child_expr_rows], y = pd$col1[child_expr_rows], method = "radix")] # multi-key sort: no arithmetic key, to avoid integer overflow on long functions (line * 1e6 overflows R integers for line > 2147)
+    child_expr_rows <- child_expr_rows[base::order(pd$line1[child_expr_rows], pd$col1[child_expr_rows], method = "radix")] # multi-key sort: no arithmetic key, to avoid integer overflow on long functions (line * 1e6 overflows R integers for line > 2147)
     # the else body is the last expr child of the if() construct expression
     # the then body of an if() with an else is the second-to-last expr child (the last one is the else body)
     # for all the other constructs (for, while, repeat, function, lambda), the body is the last expr child

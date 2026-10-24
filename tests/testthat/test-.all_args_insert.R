@@ -9,7 +9,7 @@ testthat::test_that(".all_args_insert()", {
         missing_arg2 <- base::paste0("a", "b")
     }
     FUN2 <- function(x, y){
-        base::sum(x = x, y = y, na.rm = FALSE)
+        base::sum(x, y, na.rm = FALSE)
     }
     fd <- utils::getFromNamespace(x = ".functions_detect", ns = "saferDev", pos = , envir = )
     out_fun1 <- fd(x = FUN1, arg_user_setting = base::list(x = base::as.name(x = "FUN1")), skipped_base = base::c("function", "if", "for", "while", "repeat", "else"), lib_path = NULL, error_text = "")

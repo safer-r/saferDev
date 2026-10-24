@@ -78,7 +78,7 @@ fun2 <- function(x){
     for(i in base::rev(x = x)){ # non seq_len()/seq_along() call
         base::print(i)
     }
-    for(i in base::seq(x = x)){ # 2 loops when x = 0
+    for(i in base::seq(x)){ # 2 loops when x = 0
         base::print(i)
     }
     for(i in base::names(x = x)){ # non seq_len()/seq_along() call

@@ -47,7 +47,7 @@ testthat::test_that("for_loop_nb_check()", {
     fun30 <- function(x){ for(i in 1:TRUE){ base::print(i) } } # TRUE is not a numeric literal
     fun31 <- function(x){ for(i in x){ base::print(i) } } # plain object
     fun32 <- function(x){ for(i in base::rev(x = x)){ base::print(i) } } # non seq_len/seq_along call
-    fun33 <- function(x){ for(i in base::seq(x = x)){ base::print(i) } } # 2 loops when x = 0
+    fun33 <- function(x){ for(i in base::seq(x)){ base::print(i) } } # 2 loops when x = 0
     fun34 <- function(x){ for(i in names(x)){ base::print(i) } } # unnamespaced call
     fun35 <- function(x){ for(i in 1:nrow(df)){ base::print(i) } } # 1:0 when df has 0 rows
     fun36 <- function(x){ for(i in 1:length(x) - 1){ base::print(i) } } # 0:-1 when x is empty: 2 loops

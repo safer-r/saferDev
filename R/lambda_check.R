@@ -162,7 +162,7 @@ lambda_check <- function(
     ######## mandatory arg of safer-r functions
     mandat_args <- base::c("lib_path", "safer_check", "error_text")
     tempo_log <- ! mandat_args %in% arg_names
-    if(base::any(x = tempo_log, na.rm = TRUE)) {
+    if(base::any(tempo_log, na.rm = TRUE)) {
         # This check is here in case the developer has not correctly written the argument of its function
         tempo_cat <- base::paste0(
             error_text_start,
@@ -270,7 +270,7 @@ lambda_check <- function(
                     }
                 ),
                 FUN = function(x){
-                    base::all(x = x, na.rm = TRUE) & base::length(x = x) > 0 # if x is empty, return FALSE, so OK
+                    base::all(x, na.rm = TRUE) & base::length(x = x) > 0 # if x is empty, return FALSE, so OK
                 },
                 simplify = TRUE,
                 USE.NAMES = TRUE
@@ -529,7 +529,7 @@ lambda_check <- function(
 
     #### main code
     # recover the code of the checked function
-    code <- utils::capture.output(x = x, file = NULL, append = FALSE, type = NULL, split = FALSE)
+    code <- utils::capture.output(x, file = NULL, append = FALSE, type = NULL, split = FALSE)
     # removal of the attribute lines printed for compiled functions (e.g., "<bytecode: 0x...>", "<environment: ...>", "<srcref: ...>"). Warning: the pattern cannot be simply a line starting by "<", because a valid R code line can start by "<" (binary operator continuation)
     code <- code[ ! base::grepl(x = code, pattern = "^<(bytecode|environment|srcref): ", ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE)]
     # warning: R only stores the parse data when the option keep.parse.data is TRUE, independently of the keep.source argument of base::parse(). The option can be FALSE when this function is called from a file loaded by base::sys.source() (which sets it to getOption("keep.parse.data.pkgs"), FALSE by default, for the whole loading), so that utils::getParseData() returns NULL and this would crash the function (issue found while validating the pre-check of all_args_here()). The option is set here and restored on exit
@@ -538,7 +538,7 @@ lambda_check <- function(
     pd <- utils::getParseData(x = base::parse(text = base::paste0(code, collapse = "\n", recycle0 = FALSE), keep.source = TRUE), includeText = NA) # warning: the short parse writing is required here: a fully-named writing with srcfile = NULL removes the srcref of the parsed code, so that utils::getParseData() returns 0 rows (the reference functions curly_bracket_check(), true_false_check() and for_loop_nb_check() use the same short writing)
     # terminal tokens (comments excluded), sorted by source position
     term_rows <- base::which(x = pd$terminal == TRUE & pd$token != "COMMENT", arr.ind = FALSE, useNames = TRUE)
-    term_rows <- term_rows[base::order(x = pd$line1[term_rows], y = pd$col1[term_rows], method = "radix", na.last = TRUE, decreasing = FALSE)]
+    term_rows <- term_rows[base::order(pd$line1[term_rows], pd$col1[term_rows], method = "radix", na.last = TRUE, decreasing = FALSE)]
     # positions in term_rows of the terminal tokens of the reported lambda writings. Warning: the R versions checked so far always give the "'\\'" token (and not the LAMBDA token), but both are scanned: the LAMBDA token is reported in the R documentation of utils::getParseData(). The '\\' text of a backquoted `\\` call (the deprecated function(x) function writing, e.g., `\\`(x)) is given by the QUOTED_NAME token, not by the '\\' token, so that it is not scanned below. Warning: the "'\\'" token name (4 characters: quote, backslash, backslash, quote) is assembled below by base::paste0() from its 3 parts, so that no full "'\\'" string literal appears in the source code: the capture.output() form of such a literal triggers a known parsing bug of saferDev::all_args_here() (see dev/repro_all_args_here_internal_error_3.R and dev/lambda_token_diag.R)
     token_quote1 <- "'"
     token_bs <- "\\\\"

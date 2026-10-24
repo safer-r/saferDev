@@ -135,7 +135,7 @@
     # personalized for internal functions: lib_path and error_text are mandatory; safer_check does not exist in internal functions
     mandat_args <- base::c("lib_path", "error_text")
     tempo_log <- ! mandat_args %in% arg_names
-    if(base::any(x = tempo_log, na.rm = TRUE)) {
+    if(base::any(tempo_log, na.rm = TRUE)) {
         # This check is here in case the developer has not correctly written the argument of its function
         tempo_cat <- base::paste0(
             error_text_start,
@@ -244,7 +244,7 @@
                     }
                 ),
                 FUN = function(x){
-                    base::all(x = x, na.rm = TRUE) & base::length(x = x) > 0 # if x is empty, return FALSE, so OK
+                    base::all(x, na.rm = TRUE) & base::length(x = x) > 0 # if x is empty, return FALSE, so OK
                 },
                 simplify = TRUE,
                 USE.NAMES = TRUE
@@ -374,7 +374,7 @@
     # but the proposals of nested calls overlap (e.g. paste0(base::mean(1:2)) with corrections inside mean() and inside paste0()):
     # only the innermost one (the highest FUN_POS) is applied, because the outer proposal embeds the ORIGINAL inner text and would revert the inner correction if applied after.
     # The outer proposals of the same line are therefore routed to the left vector, so that the user can apply them manually after checking.
-    ord <- base::order(x = rows$LINE_NB, rows$FUN_POS, decreasing = TRUE)
+    ord <- base::order(rows$LINE_NB, rows$FUN_POS, decreasing = TRUE)
     inserted <- base::character(length = 0L)
     left <- base::character(length = 0L)
     applied_starts <- base::list() # FUN_POS of the already applied corrections, by line number (as character key), to detect overlapping spans on the same line

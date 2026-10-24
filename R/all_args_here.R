@@ -217,7 +217,7 @@ all_args_here <- function(
     ######## mandatory arg of safer-r functions
     mandat_args <- base::c("lib_path", "safer_check", "error_text")
     tempo_log <- ! mandat_args %in% arg_names
-    if(base::any(x = tempo_log, na.rm = TRUE)) {
+    if(base::any(tempo_log, na.rm = TRUE)) {
         # This check is here in case the developer has not correctly written the argument of its function
         tempo_cat <- base::paste0(
             error_text_start, 
@@ -331,7 +331,7 @@ all_args_here <- function(
                     }
                 ), 
                 FUN = function(x){
-                    base::all(x = x, na.rm = TRUE) & base::length(x = x) > 0 # if x is empty, return FALSE, so OK
+                    base::all(x, na.rm = TRUE) & base::length(x = x) > 0 # if x is empty, return FALSE, so OK
                 }, 
                 simplify = TRUE, 
                 USE.NAMES = TRUE
@@ -603,7 +603,7 @@ all_args_here <- function(
             }
             tempo_fun_file_name <- base::paste0(tempo_fun_name, "_safer.R", collapse = NULL, recycle0 = FALSE)
             # the file existence check is performed here, like in the other safer functions having the export argument: the check is performed before the main code, so a pre-existing file is never silently overwritten (except when overwrite = TRUE)
-            if(overwrite == FALSE & base::file.exists(x = base::paste0(out_path, "/", tempo_fun_file_name, collapse = NULL, recycle0 = FALSE))){
+            if(overwrite == FALSE & base::file.exists(base::paste0(out_path, "/", tempo_fun_file_name, collapse = NULL, recycle0 = FALSE))){
                 tempo_cat <- base::paste0(
                     error_text_start,
                     "FILE NAME ALREADY EXISTS AT THE INDICATED PATH:\n",
@@ -1209,7 +1209,7 @@ all_args_here <- function(
         }
         if(fun_export == TRUE & base::length(x = tempo_insert$inserted) > 0){
             tempo_fun_file <- base::paste0(out_dir, "/", tempo_fun_file_name, collapse = NULL, recycle0 = FALSE)
-            if(overwrite == FALSE & base::file.exists(x = tempo_fun_file)){
+            if(overwrite == FALSE & base::file.exists(tempo_fun_file)){
                 # nocov start
                 # codecov inactivated because the file existence check has already been performed in the other checkings section: this branch can only be reached if the file was created between the two checks
                 tempo_cat <- base::paste0(

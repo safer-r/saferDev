@@ -130,7 +130,7 @@
     # personalized for internal functions: lib_path and error_text are mandatory; safer_check does not exist in internal functions
     mandat_args <- base::c("lib_path", "error_text")
     tempo_log <- ! mandat_args %in% arg_names
-    if(base::any(x = tempo_log, na.rm = TRUE)) {
+    if(base::any(tempo_log, na.rm = TRUE)) {
         # This check is here in case the developer has not correctly written the argument of its function
         tempo_cat <- base::paste0(
             error_text_start, 
@@ -242,7 +242,7 @@
                     }
                 ), 
                 FUN = function(x){
-                    base::all(x = x, na.rm = TRUE) & base::length(x = x) > 0 # if x is empty, return FALSE, so OK
+                    base::all(x, na.rm = TRUE) & base::length(x = x) > 0 # if x is empty, return FALSE, so OK
                 }, 
                 simplify = TRUE, 
                 USE.NAMES = TRUE
@@ -397,7 +397,7 @@
         tempo_cat <- base::paste0(
             error_text_start, 
             "col1 CANNOT BE OVER THE LENGTH OF ini.\ncol1:\n", 
-            base::paste0(x = col1, collapse = "\n", recycle0 = FALSE), 
+            base::paste0(col1, collapse = "\n", recycle0 = FALSE), 
             "\nLENGTH OF ini:\n", 
             base::length(x = ini), 
             collapse = NULL, 

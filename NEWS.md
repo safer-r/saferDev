@@ -1,6 +1,7 @@
 
 # saferDev 3.0.0
 
+* Backbone v21.1: the invented `x` argument names (absent from the called function signature, for instance `base::any(x = ...)`, `base::all(x = ...)`, `base::sum(x = ...)`, `base::order(x = ...)`) are removed from all the function calls.
 * curly_bracket_check(): new function. Verifies that all the bodies of the if, else, for, while, repeat and function are delimited by curly brackets {}. The corrected function is returned, or exported with export = TRUE.
 * for_loop_nb_check(): new function. Verifies that the sequence expression of every for loop is written with hard numbers (like 1:3) or with a single seq_len() or seq_along() call. Otherwise (like 1:length(x)), a checking line is added before the loop, issuing a warning at execution if the sequence is empty, contains NA or infinite values, has a single value, or, for numeric sequences, has only negative values or is decreasing. The corrected function is returned, or exported with export = TRUE.
 * lambda_check(): new function. Verifies that the lambda functions written with the shorthand \(x) are all written with the standard function(x) writing. The \\ token of each reported lambda writing is replaced by function. Warning: the \(x) writing is only kept in the code of a function carrying its source references (attribute srcref), so that compiled or loaded package functions cannot be checked. The corrected function is returned, or exported with export = TRUE.

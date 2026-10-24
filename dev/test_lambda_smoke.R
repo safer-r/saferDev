@@ -28,7 +28,7 @@ if(base::file.exists(fp)){
 }
 # clean + export: no file
 invisible(saferDev::lambda_check(x = fun1, safer_check = FALSE, lib_path = NULL, error_text = "", export = TRUE, out_path = td))
-cat("NO FILE FOR CLEAN:", ! base::file.exists(x = base::file.path(td, "fun1_safer.R")), "\n")
+cat("NO FILE FOR CLEAN:", ! base::file.exists(base::file.path(td, "fun1_safer.R")), "\n")
 # backquoted `\\` immune
 fun4 <- eval(parse(text = "function(x){ base::`\\\\`(x) }", keep.source = TRUE))
 out4 <- saferDev::lambda_check(x = fun4, safer_check = FALSE, lib_path = NULL, error_text = "", export = FALSE, out_path = ".")

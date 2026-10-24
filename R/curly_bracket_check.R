@@ -153,7 +153,7 @@ curly_bracket_check <- function(
     ######## mandatory arg of safer-r functions
     mandat_args <- base::c("lib_path", "safer_check", "error_text")
     tempo_log <- ! mandat_args %in% arg_names
-    if(base::any(x = tempo_log, na.rm = TRUE)) {
+    if(base::any(tempo_log, na.rm = TRUE)) {
         # This check is here in case the developer has not correctly written the argument of its function
         tempo_cat <- base::paste0(
             error_text_start, 
@@ -261,7 +261,7 @@ curly_bracket_check <- function(
                     }
                 ), 
                 FUN = function(x){
-                    base::all(x = x, na.rm = TRUE) & base::length(x = x) > 0 # if x is empty, return FALSE, so OK
+                    base::all(x, na.rm = TRUE) & base::length(x = x) > 0 # if x is empty, return FALSE, so OK
                 }, 
                 simplify = TRUE, 
                 USE.NAMES = TRUE
@@ -521,13 +521,13 @@ curly_bracket_check <- function(
 
     #### main code
     # recover the code of the checked function
-    code <- utils::capture.output(x = x, file = NULL, append = FALSE, type = NULL, split = FALSE)
+    code <- utils::capture.output(x, file = NULL, append = FALSE, type = NULL, split = FALSE)
     # removal of the attribute lines printed for compiled functions (e.g., "<bytecode: 0x...>", "<environment: ...>", "<srcref: ...>"). Warning: the pattern cannot be simply a line starting by "<", because a valid R code line can start by "<" (binary operator continuation)
     code <- code[ ! base::grepl(x = code, pattern = "^<(bytecode|environment|srcref): ", ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE)]
     pd <- utils::getParseData(x = base::parse(text = base::paste0(code, collapse = "\n", recycle0 = FALSE), keep.source = TRUE))
     # terminal tokens (comments excluded), sorted by source position
     term_rows <- base::which(x = pd$terminal == TRUE & pd$token != "COMMENT", arr.ind = FALSE, useNames = TRUE)
-    term_rows <- term_rows[base::order(x = pd$line1[term_rows], pd$col1[term_rows])]
+    term_rows <- term_rows[base::order(pd$line1[term_rows], pd$col1[term_rows])]
     # positions in term_rows of the terminal tokens of the checked constructs (keyword tokens). Warning: the lambda function \(x) gives the token made of a backslash between single quotes (and not the LAMBDA token) in the R versions checked so far
     # warning: the name of this token is built by pieces, as in lambda_check(), because a single string mixing single quotes and backslashes is misread by the in-quotes replacement of all_args_here() (INTERNAL ERROR 3 of .fun_args_pos())
     token_quote1 <- "'"
@@ -609,7 +609,7 @@ curly_bracket_check <- function(
                 # the whole body expr is the largest expr starting at the first body terminal token. If its end is the ) of the .Primitive() call, the body is exactly the .Primitive() call (e.g., function(x) .Primitive('+')). Otherwise, the body contains more code (e.g., function(x) .Primitive('+') + 1, which must be reported)
                 body_term_pos1 <- pd$line1[term_rows[body_start_pos + 1]] * 1000000 + pd$col1[term_rows[body_start_pos + 1]]
                 cand <- pd[base::which(x = pd$token == "expr" & pd$line1 * 1000000 + pd$col1 == body_term_pos1, arr.ind = FALSE, useNames = TRUE), ]
-                body_end_pos <- cand[base::order(x = cand$line2 * 1000000 + cand$col2, decreasing = TRUE), ][1, "line2"] * 1000000 + cand[base::order(x = cand$line2 * 1000000 + cand$col2, decreasing = TRUE), ][1, "col2"]
+                body_end_pos <- cand[base::order(cand$line2 * 1000000 + cand$col2, decreasing = TRUE), ][1, "line2"] * 1000000 + cand[base::order(cand$line2 * 1000000 + cand$col2, decreasing = TRUE), ][1, "col2"]
                 prim_log <- body_end_pos == pd$line1[term_rows[prim_call_close_pos]] * 1000000 + pd$col1[term_rows[prim_call_close_pos]]
             }
         }
@@ -722,7 +722,7 @@ curly_bracket_check <- function(
     mod_code <- code
     if(base::length(x = mods_line) != 0){
         mod_type_key <- base::ifelse(test = mods_kind == "after", yes = 1L, no = 0L)
-        mod_ord <- base::order(x = mods_line, y = mods_col, z = mod_type_key, decreasing = TRUE, method = "radix", na.last = NA) # multi-key sort: no arithmetic key, to avoid integer overflow on long functions (line * 1e8 overflows R integers for line > 21)
+        mod_ord <- base::order(mods_line, mods_col, mod_type_key, decreasing = TRUE, method = "radix", na.last = NA) # multi-key sort: no arithmetic key, to avoid integer overflow on long functions (line * 1e8 overflows R integers for line > 21)
         for(k in mod_ord){
             s <- mod_code[mods_line[k]]
             if(mods_kind[k] == "after"){
@@ -760,7 +760,7 @@ curly_bracket_check <- function(
         # the modified code lines (mod_text) are written, and not the deparsed function, so that the comments and the indentation of the submitted function are kept
         file_text <- base::paste0(tempo_fun_name, "_safer <- ", mod_text, "\n", collapse = NULL, recycle0 = FALSE)
         file_path <- base::paste0(out_path, "/", out_name, collapse = NULL, recycle0 = FALSE)
-        base::cat(x = file_text, file = file_path, append = FALSE, sep = "")
+        base::cat(file_text, file = file_path, append = FALSE, sep = "")
         # the export message is printed with on.exit(), after the message of the main code: it only claims an export that actually happened, because the file writing is performed just above and no on.exit() is registered when no modification is inserted
         base::on.exit(expr = base::message(base::paste0("MODIFIED CODE EXPORTED IN:\n", base::normalizePath(path = file_path, winslash = "/", mustWork = FALSE), "\n\n", collapse = NULL, recycle0 = FALSE), domain = NULL, appendLF = TRUE), add = TRUE, after = TRUE)
         base::return(value = base::invisible(x = NULL)) # NULL returned invisibly (the invisibility would be lost if assigned to an object first)

@@ -146,7 +146,7 @@ report <- function(
     ######## mandatory arg of safer-r functions
     mandat_args <- base::c("lib_path", "safer_check", "error_text")
     tempo_log <- ! mandat_args %in% arg_names
-    if(base::any(x = tempo_log, na.rm = TRUE)) {
+    if(base::any(tempo_log, na.rm = TRUE)) {
         # This check is here in case the developer has not correctly written the argument of its function
         tempo_cat <- base::paste0(
             error_text_start, 
@@ -265,7 +265,7 @@ report <- function(
                     }
                 ), 
                 FUN = function(x){
-                    base::all(x = x, na.rm = TRUE) & base::length(x = x) > 0 # if x is empty, return FALSE, so OK
+                    base::all(x, na.rm = TRUE) & base::length(x = x) > 0 # if x is empty, return FALSE, so OK
                 }, 
                 simplify = TRUE, 
                 USE.NAMES = TRUE
@@ -468,7 +468,7 @@ report <- function(
         )
         base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL)
     }
-    if(base::file.exists(paths = base::paste0(path, "/", output, collapse = NULL, recycle0 = FALSE)) & append == FALSE){
+    if(base::file.exists(base::paste0(path, "/", output, collapse = NULL, recycle0 = FALSE)) & append == FALSE){
         tempo_cat <- base::paste0(
             error_text_start, 
             "FILE DEFINED BY THE path AND output ARGUMENTS\n",
