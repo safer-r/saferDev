@@ -17,6 +17,8 @@
 #'   \item \code{internal_fun_names}: vector of string of names of internal functions in the code of the tested function.
 #'   \item \code{arg_user_setting}: list of argument user settings of the tested function.
 #' }
+#'
+#' \code{NULL}, with a warning, if the tested function is empty of function, or only made of comments, or only made of the \code{skipped_base} functions.
 #' @details
 #' Does not check if the functions inside the code exist.
 #' 
@@ -493,16 +495,19 @@
     fun_name_wo_op <- base::mapply(FUN = function(x, y){x[y]}, x = fun_name, y = tempo_log, MoreArgs = NULL, SIMPLIFY = FALSE, USE.NAMES = TRUE)
     fun_name_pos_wo_op <- base::mapply(FUN = function(x, y){x[y]}, x = fun_name_pos, y = tempo_log, MoreArgs = NULL, SIMPLIFY = FALSE, USE.NAMES = TRUE)
     if(base::length(x = base::unlist(x = fun_name_wo_op, recursive = TRUE, use.names = TRUE)) == 0 | base::length(x = base::unlist(x = fun_name_pos_wo_op, recursive = TRUE, use.names = TRUE)) == 0){
-        tempo_cat <- base::paste0(
-            error_text_start, 
-            "THE TESTED FUNCTION ", 
-            arg_user_setting2$x, 
-            " IS EMPTY OF FUNCTION OR ONLY MADE OF COMMENTS OR ONLY MADE OF THE SKIPPED FUNCTIONS:\n", 
-            base::paste0(skipped_base, collapse = "\n", recycle0 = FALSE), 
-            collapse = NULL, 
+        # warning and NULL returned, not an error: nothing to check is not a problem of the tested function
+        tempo_warn <- base::paste0(
+            base::sub(pattern = "^ERROR IN ", replacement = "FROM ", x = error_text_start, ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE),
+            "THE TESTED FUNCTION ",
+            arg_user_setting2$x,
+            " IS EMPTY OF FUNCTION OR ONLY MADE OF COMMENTS OR ONLY MADE OF THE SKIPPED FUNCTIONS:\n",
+            base::paste0(skipped_base, collapse = "\n", recycle0 = FALSE),
+            "\n\nNOTHING TO CHECK.",
+            collapse = NULL,
             recycle0 = FALSE
         )
-        base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL)
+        base::warning(tempo_warn, call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, domain = NULL)
+        base::return(NULL)
     }
     # end removal of special functions
     # removal of empty string

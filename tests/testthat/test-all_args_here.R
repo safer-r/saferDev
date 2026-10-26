@@ -238,7 +238,8 @@ testthat::test_that("all_args_here()", {
     testthat::expect_error(all_args_here(x = mat1, table_export = FALSE, out_path = ".", df_name = "res.tsv", overwrite = FALSE, safer_check = TRUE, lib_path = NULL, error_text = ""))
     testthat::expect_error(all_args_here(x = factor1, table_export = FALSE, out_path = ".", df_name = "res.tsv", overwrite = FALSE, safer_check = TRUE, lib_path = NULL, error_text = ""))
     testthat::expect_error(all_args_here(x = expr1, table_export = FALSE, out_path = ".", df_name = "res.tsv", overwrite = FALSE, safer_check = TRUE, lib_path = NULL, error_text = ""))
-    testthat::expect_error(all_args_here(x = fun1, table_export = FALSE, out_path = ".", df_name = "res.tsv", overwrite = FALSE, safer_check = TRUE, lib_path = NULL, error_text = "")) # empty function
+    testthat::expect_warning(all_args_here(x = fun1, table_export = FALSE, out_path = ".", df_name = "res.tsv", overwrite = FALSE, safer_check = TRUE, lib_path = NULL, error_text = ""), regexp = "IS EMPTY OF FUNCTION", fixed = TRUE) # empty function: warning, not error
+    testthat::expect_null(object = base::suppressWarnings(all_args_here(x = fun1, table_export = FALSE, out_path = ".", df_name = "res.tsv", overwrite = FALSE, safer_check = TRUE, lib_path = NULL, error_text = ""), classes = "warning"))
     # end x
     # table_export
     testthat::expect_no_error(all_args_here(x = test, table_export = FALSE, out_path = ".", df_name = "res.tsv", overwrite = FALSE, safer_check = TRUE, lib_path = NULL, error_text = ""))

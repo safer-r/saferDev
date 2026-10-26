@@ -194,7 +194,8 @@ testthat::test_that("colons_check()", {
     testthat::expect_error(colons_check(x = mat1, safer_check = TRUE, lib_path = NULL, error_text = ""))
     testthat::expect_error(colons_check(x = factor1, safer_check = TRUE, lib_path = NULL, error_text = ""))
     testthat::expect_error(colons_check(x = expr1, safer_check = TRUE, lib_path = NULL, error_text = ""))
-    testthat::expect_error(colons_check(x = fun1, safer_check = TRUE, lib_path = NULL, error_text = "")) # empty function
+    testthat::expect_warning(colons_check(x = fun1, safer_check = TRUE, lib_path = NULL, error_text = ""), regexp = "IS EMPTY OF FUNCTION", fixed = TRUE) # empty function: warning, not error
+    testthat::expect_null(object = base::suppressWarnings(colons_check(x = fun1, safer_check = TRUE, lib_path = NULL, error_text = ""), classes = "warning"))
     # end x
     # lib_path already checked above
     # safer_check already checked above
@@ -238,7 +239,7 @@ testthat::test_that("colons_check()", {
     testthat::expect_no_error(colons_check(x = fun_lambda_string, safer_check = FALSE, lib_path = NULL, error_text = ""))
     testthat::expect_no_error(colons_check(x = base::mean, safer_check = TRUE, lib_path = NULL, error_text = ""))
     testthat::expect_no_error(colons_check(x = colons_check, safer_check = TRUE, lib_path = NULL, error_text = ""))
-    testthat::expect_error(colons_check(x = fun1, safer_check = TRUE, lib_path = NULL, error_text = ""))
+    testthat::expect_warning(colons_check(x = fun1, safer_check = TRUE, lib_path = NULL, error_text = ""), regexp = "IS EMPTY OF FUNCTION", fixed = TRUE)
     testthat::expect_no_error(colons_check(x = fun2, safer_check = TRUE, lib_path = NULL, error_text = ""))
     testthat::expect_no_error(colons_check(x = fun3, safer_check = TRUE, lib_path = NULL, error_text = ""))
     testthat::expect_no_error(colons_check(x = fun4, safer_check = TRUE, lib_path = NULL, error_text = ""))

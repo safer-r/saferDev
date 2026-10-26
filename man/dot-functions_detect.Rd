@@ -28,6 +28,8 @@ A list:
   \item \code{internal_fun_names}: vector of string of names of internal functions in the code of the tested function.
   \item \code{arg_user_setting}: list of argument user settings of the tested function.
 }
+
+\code{NULL}, with a warning, if the tested function is empty of function, or only made of comments, or only made of the \code{skipped_base} functions.
 }
 \description{
 Detect all the functions names inside a function.
