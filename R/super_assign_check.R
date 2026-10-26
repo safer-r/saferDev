@@ -448,7 +448,7 @@ super_assign_check <- function(
             error_text_start,
             "INSIDE ",
             base::as.character(x = arg_user_setting$x),
-            ", THE SUPERASSIGNMENT OPERATORS <<- AND ->> ARE NOT ALLOWED IN SAFER-R FUNCTIONS:\nWHAT THEY MODIFY DEPENDS ON THE ENVIRONMENTS WHERE THE FUNCTION IS DEFINED AND CALLED, SO THAT IT IS DIFFICULT TO GUESS WHAT IS EXPECTED.\nPLEASE, REWRITE THE CODE, FOR INSTANCE BY RETURNING THE VALUE, OR BY USING base::assign() WITH AN EXPLICIT envir ARGUMENT.\n\n",
+            ", THE SUPERASSIGNMENT OPERATORS <<- AND ->> ARE NOT ALLOWED IN SAFER-R FUNCTIONS:\nPLEASE, REWRITE THE CODE ACCORDINGLY.\n\n",
             "LINE\tSYMBOL\t\tCODE\n",
             base::paste0(base::paste0(findings_line, "\t", findings_symbol, "\t\t", findings_code, collapse = NULL, recycle0 = FALSE), collapse = "\n", recycle0 = FALSE),
             collapse = NULL,
