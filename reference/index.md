@@ -50,3 +50,8 @@
 ## true_false_check
 
 - [`true_false_check()`](true_false_check.md) : True False Check
+
+## super_assign_check
+
+- [`super_assign_check()`](super_assign_check.md) : Superassignment
+  Check

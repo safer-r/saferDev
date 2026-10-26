@@ -13,6 +13,7 @@
 <url><loc>/articles/lambda_check.html</loc></url>
 <url><loc>/articles/report.html</loc></url>
 <url><loc>/articles/saferDev.html</loc></url>
+<url><loc>/articles/super_assign_check.html</loc></url>
 <url><loc>/articles/true_false_check.html</loc></url>
 <url><loc>/authors.html</loc></url>
 <url><loc>/index.html</loc></url>
@@ -42,6 +43,7 @@
 <url><loc>/reference/is_package_here.html</loc></url>
 <url><loc>/reference/lambda_check.html</loc></url>
 <url><loc>/reference/report.html</loc></url>
+<url><loc>/reference/super_assign_check.html</loc></url>
 <url><loc>/reference/true_false_check.html</loc></url>
 </urlset>
 

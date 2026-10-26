@@ -51,6 +51,7 @@
     <li><a class="dropdown-item" href="../articles/is_package_here.html">is_package_here(): more examples</a></li>
     <li><a class="dropdown-item" href="../articles/lambda_check.html">lambda_check(): more examples</a></li>
     <li><a class="dropdown-item" href="../articles/report.html">report(): more examples</a></li>
+    <li><a class="dropdown-item" href="../articles/super_assign_check.html">super_assign_check(): more examples</a></li>
     <li><a class="dropdown-item" href="../articles/true_false_check.html">true_false_check(): more examples</a></li>
   </ul>
 </li>
@@ -191,6 +192,16 @@ depending on package versions.</td>
 log file.</td>
 </tr>
 <tr class="even">
+<td align="left"><strong>super_assign_check()</strong></td>
+<td align="left">Verify that the superassignment operators
+<code>&lt;&lt;-</code> and <code>-&gt;&gt;</code> are not used in a
+function. Return an error with a table of the lines with problems if
+any: these operators are not allowed in safer-r functions, because what
+they modify depends on the environments where the function is defined
+and called, so that it is difficult to guess what the writer had in mind
+(nothing can be corrected automatically).</td>
+</tr>
+<tr class="odd">
 <td align="left"><strong>true_false_check()</strong></td>
 <td align="left">Verify that the <code>TRUE</code> and
 <code>FALSE</code> logical constants are always written in full when
@@ -210,8 +221,12 @@ and a corrected version of the submitted function.</td>
 lines and returns the corrected function (or <code>NULL</code> if
 nothing has to be corrected). With <code>export = TRUE</code>, the
 corrected function is written into a
-<code>&lt;function name&gt;_safer.R</code> file instead.</p>
-<p>Recommended order: <code><a href="../reference/lambda_check.html">lambda_check()</a></code>,
+<code>&lt;function name&gt;_safer.R</code> file instead. Exception:
+<code><a href="../reference/super_assign_check.html">super_assign_check()</a></code> returns an error if any
+<code>&lt;&lt;-</code> or <code>-&gt;&gt;</code> is detected, because
+what these operators modify cannot be guessed from the code.</p>
+<p>Recommended order: <code><a href="../reference/super_assign_check.html">super_assign_check()</a></code> (error only,
+nothing corrected automatically), <code><a href="../reference/lambda_check.html">lambda_check()</a></code>,
 <code><a href="../reference/colons_check.html">colons_check()</a></code> and <code><a href="../reference/all_args_here.html">all_args_here()</a></code> (these two
 require the previous steps), then <code><a href="../reference/curly_bracket_check.html">curly_bracket_check()</a></code>,
 <code><a href="../reference/true_false_check.html">true_false_check()</a></code> and
@@ -281,7 +296,7 @@ require the previous steps), then <code><a href="../reference/curly_bracket_chec
 <span><span class="co">##     }</span></span>
 <span><span class="co">##     z</span></span>
 <span><span class="co">## }</span></span>
-<span><span class="co">## &lt;environment: 0x55d4b60c0fc0&gt;</span></span></code></pre>
+<span><span class="co">## &lt;environment: 0x55d4a2e4cb18&gt;</span></span></code></pre>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">fun6</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/for_loop_nb_check.html">for_loop_nb_check</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">fun5</span><span class="op">)</span> <span class="co"># checking line added before the for() loop</span></span></code></pre></div>
 <pre><code><span><span class="co">## </span></span>

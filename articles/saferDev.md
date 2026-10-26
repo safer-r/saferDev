@@ -25,6 +25,7 @@ specifications.
 | **is_function_here()** | Check if required functions are present in installed packages. This controls for instance modifications of function names depending on package versions. |
 | **is_package_here()** | Check if required packages are installed locally. |
 | **report()** | Print a character string or a data object into a same log file. |
+| **super_assign_check()** | Verify that the superassignment operators `<<-` and `->>` are not used in a function. Return an error with a table of the lines with problems if any: these operators are not allowed in safer-r functions, because what they modify depends on the environments where the function is defined and called, so that it is difficult to guess what the writer had in mind (nothing can be corrected automatically). |
 | **true_false_check()** | Verify that the `TRUE` and `FALSE` logical constants are always written in full when used as values (argument values, conditions, comparisons, indexing) and never abbreviated as `T` or `F`, which can be overwritten by the user. Return table message of the line with problems and a corrected version of the submitted function. |
 
 \
@@ -34,9 +35,15 @@ specifications.
 Each checking function prints a table-like message of the problematic
 lines and returns the corrected function (or `NULL` if nothing has to be
 corrected). With `export = TRUE`, the corrected function is written into
-a `<function name>_safer.R` file instead.
+a `<function name>_safer.R` file instead. Exception:
+[`super_assign_check()`](../reference/super_assign_check.md) returns an
+error if any `<<-` or `->>` is detected, because what these operators
+modify cannot be guessed from the code.
 
-Recommended order: [`lambda_check()`](../reference/lambda_check.md),
+Recommended order:
+[`super_assign_check()`](../reference/super_assign_check.md) (error
+only, nothing corrected automatically),
+[`lambda_check()`](../reference/lambda_check.md),
 [`colons_check()`](../reference/colons_check.md) and
 [`all_args_here()`](../reference/all_args_here.md) (these two require
 the previous steps), then
@@ -129,7 +136,7 @@ fun5
     ##     }
     ##     z
     ## }
-    ## <environment: 0x55d4b60c0fc0>
+    ## <environment: 0x55d4a2e4cb18>
 
 ``` r
 

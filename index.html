@@ -53,6 +53,7 @@
     <li><a class="dropdown-item" href="articles/is_package_here.html">is_package_here(): more examples</a></li>
     <li><a class="dropdown-item" href="articles/lambda_check.html">lambda_check(): more examples</a></li>
     <li><a class="dropdown-item" href="articles/report.html">report(): more examples</a></li>
+    <li><a class="dropdown-item" href="articles/super_assign_check.html">super_assign_check(): more examples</a></li>
     <li><a class="dropdown-item" href="articles/true_false_check.html">true_false_check(): more examples</a></li>
   </ul>
 </li>
@@ -159,6 +160,10 @@
 <tr>
 <td align="left"><strong>report()</strong></td>
 <td align="left">Print a character string or a data object into a same log file.</td>
+</tr>
+<tr>
+<td align="left"><strong>super_assign_check()</strong></td>
+<td align="left">Verify that the superassignment operators <code>&lt;&lt;-</code> and <code>-&gt;&gt;</code> are not used in a function. Return an error with a table of the lines with problems if any: these operators are not allowed in safer-r functions, because what they modify depends on the environments where the function is defined and called, so that it is difficult to guess what the writer had in mind (nothing can be corrected automatically).</td>
 </tr>
 <tr>
 <td align="left"><strong>true_false_check()</strong></td>

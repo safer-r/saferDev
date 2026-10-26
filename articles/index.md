@@ -14,4 +14,5 @@
 - [lambda_check(): more examples](lambda_check.md):
 - [report(): more examples](report.md):
 - [saferDev](saferDev.md):
+- [super_assign_check(): more examples](super_assign_check.md):
 - [true_false_check(): more examples](true_false_check.md):

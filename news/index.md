@@ -25,6 +25,13 @@
   code of a function carrying its source references (attribute srcref),
   so that compiled or loaded package functions cannot be checked. The
   corrected function is returned, or exported with export = TRUE.
+- super_assign_check(): new function. Verifies that the superassignment
+  operators \<\<- and -\>\> are not used in a function. An error is
+  returned with the table of the lines with problems if any, because
+  what these operators modify depends on the environments where the
+  function is defined and called (difficult to guess what the writer had
+  in mind, nothing can be corrected automatically). NULL is returned
+  invisibly otherwise.
 - all_args_here() and colons_check(): a pre-check by lambda_check() is
   now performed: if some lambda functions written with the (x) shorthand
   are detected in the code of the submitted function, an error asking to

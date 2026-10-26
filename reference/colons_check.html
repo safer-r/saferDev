@@ -30,6 +30,7 @@
     <li><a class="dropdown-item" href="../articles/is_package_here.html">is_package_here(): more examples</a></li>
     <li><a class="dropdown-item" href="../articles/lambda_check.html">lambda_check(): more examples</a></li>
     <li><a class="dropdown-item" href="../articles/report.html">report(): more examples</a></li>
+    <li><a class="dropdown-item" href="../articles/super_assign_check.html">super_assign_check(): more examples</a></li>
     <li><a class="dropdown-item" href="../articles/true_false_check.html">true_false_check(): more examples</a></li>
   </ul></li>
 <li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
@@ -156,7 +157,7 @@ checking dependencies in R code ... WARNING
 <span class="r-out co"><span class="r-pr">#&gt;</span>     y &lt;- base::mean(x)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     base::return(y)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x559f9eb95e60&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x55e99daa67d8&gt;</span>
 <span class="r-in"><span><span class="co"># Write the corrected function in the fun1_safer.R file of a new temporary folder:</span></span></span>
 <span class="r-in"><span><span class="va">tempo_dir</span> <span class="op">&lt;-</span> <span class="fu">base</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempfile</a></span><span class="op">(</span>pattern <span class="op">=</span> <span class="st">"dir"</span>, tmpdir <span class="op">=</span> <span class="fu">base</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir</a></span><span class="op">(</span><span class="op">)</span>, fileext <span class="op">=</span> <span class="st">""</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu">base</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/base/files2.html" class="external-link">dir.create</a></span><span class="op">(</span>path <span class="op">=</span> <span class="va">tempo_dir</span>, showWarnings <span class="op">=</span> <span class="cn">TRUE</span>, recursive <span class="op">=</span> <span class="cn">FALSE</span>, mode <span class="op">=</span> <span class="st">"0777"</span><span class="op">)</span></span></span>
@@ -169,7 +170,7 @@ checking dependencies in R code ... WARNING
 <span class="r-msg co"><span class="r-pr">#&gt;</span> 3	mean		y &lt;- </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> MODIFIED CODE EXPORTED IN:</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> /tmp/RtmplIblwY/dir16ea6bc53f3d/fun1_safer.R</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> /tmp/RtmpSIxeUR/dir13d165ccdd6a/fun1_safer.R</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
