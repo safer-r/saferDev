@@ -57,6 +57,7 @@ Read this [webpage](https://safer-r.github.io/saferDev) for more details.
 | **is_function_here()** | Check if required functions are present in installed packages. This controls for instance modifications of function names depending on package versions. |
 | **is_package_here()** | Check if required packages are installed locally. |
 | **report()** | Print a character string or a data object into a same log file. |
+| **super_assign_check()** | Verify that the superassignment operators `<<-` and `->>` are not used in a function. Return an error with a table of the lines with problems if any: these operators are not allowed in safer-r functions, because what they modify depends on the environments where the function is defined and called, so that it is difficult to guess what the writer had in mind (nothing can be corrected automatically). |
 | **true_false_check()** | Verify that the `TRUE` and `FALSE` logical constants are always written in full when used as values (argument values, conditions, comparisons, indexing) and never abbreviated as `T` or `F`, which can be overwritten by the user. Return table message of the line with problems and a corrected version of the submitted function. |
 
 <br />

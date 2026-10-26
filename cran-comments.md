@@ -21,8 +21,8 @@
     `colons_check()` changes, and the `object.name` output component of
     `arg_check()` is renamed `object_name`. We prefer to release these changes
     before users start depending on the 2.0.0 interface;
-  * it adds four checking functions (`curly_bracket_check()`, `for_loop_nb_check()`,
-    `lambda_check()`, `true_false_check()`), and `colons_check()` and
+  * it adds five checking functions (`curly_bracket_check()`, `for_loop_nb_check()`,
+    `lambda_check()`, `super_assign_check()`, `true_false_check()`), and `colons_check()` and
     `all_args_here()` now return the corrected function;
   * it fixes a bug of `all_args_here()` (strings ending with an escaped backslash).
 

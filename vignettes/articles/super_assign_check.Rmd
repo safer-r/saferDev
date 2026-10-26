@@ -1,0 +1,114 @@
+---
+title: "super_assign_check(): more examples"
+---
+<br>
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+    error = TRUE, 
+    collapse = FALSE,
+    comment = "##"
+)
+```
+
+```{r setup}
+library(saferDev)
+```
+<br>
+
+### Datasets
+
+```{r}
+# Function without superassignment operator.
+fun1 <- function(x){ y <- x ; base::return(y) }
+# Function with superassignment operators <<- and ->>, including one inside a nested function.
+fun2 <- function(x){ y <<- x ; base::lapply(X = 1:2, FUN = function(i){ i ->> z }) ; base::return(y) }
+```
+<br>
+
+### Datasets info
+
+```{r}
+fun1 # Function.
+fun2 # Function.
+```
+<br>
+
+### Argument <code>x</code>
+```{r, echo = TRUE, error = TRUE}
+# Test if fun1 uses the superassignment operators <<- or ->>.
+# Here everything is fine: NULL is returned invisibly.
+super_assign_check(x = fun1)
+
+# Here fun2 uses them: an error is returned, with the lines to rewrite.
+super_assign_check(x = fun2)
+```
+<br>
+
+### Why an error and not a corrected function?
+```{r, echo = TRUE, error = TRUE}
+# What <<- modifies depends on the environments where the function is defined and called.
+# Here, a y object is created in the global environment:
+exists("y", envir = globalenv(), inherits = FALSE)
+fun2(1)
+exists("y", envir = globalenv(), inherits = FALSE)
+rm(y, z, envir = globalenv())
+
+# Here, the y object of the enclosing function is modified instead:
+fun3 <- function(){ y <- 0 ; fun4 <- function(x){ y <<- x } ; fun4(1) ; y }
+fun3()
+exists("y", envir = globalenv(), inherits = FALSE)
+
+# The writer intention cannot be guessed: the code must be rewritten, for instance by
+# returning the value, or by using base::assign() with an explicit envir argument.
+```
+<br>
+
+### Argument <code>safer_check</code> 
+```{r, echo = TRUE, error = TRUE}
+# Safer checkings are performed before main code running.
+super_assign_check(
+    x = fun1, 
+    safer_check = TRUE
+)
+```
+<br>
+
+### Argument <code>lib_path</code>
+```{r}
+# The "NOTGOOD" path does not exists.
+super_assign_check(
+    x = fun1,  
+    lib_path = "NOTGOOD"
+)
+```
+<br>
+
+### Argument <code>error_text</code>
+```{r}
+# Add a text in error messages returned by super_assign_check().
+super_assign_check(
+    x = fun2, 
+    error_text = " === TEXT ADDED ==="
+)
+```
+<br>
+
+### All the arguments
+```{r, echo = TRUE, error = TRUE}
+super_assign_check(
+    x = fun1, # function name to test.
+    safer_check = TRUE, # perform some "safer" checks (see https://github.com/safer-r)?
+    lib_path = NULL, # where the required packages are if not in the default directories.
+    error_text = "" # add information in error messages returned by the function.
+)
+```
+<br>
+
+### Sophisticated example
+```{r, echo = TRUE, error = TRUE}
+# A <<- written in a string, in a comment or as a backquoted name is not an operator: ignored.
+fun5 <- function(x){ y <- "the <<- writing in a string" ; base::`<<-` ; x } # a <<- in a comment
+super_assign_check(x = fun5)
+```
+<br>

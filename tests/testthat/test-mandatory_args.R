@@ -17,6 +17,7 @@ testthat::test_that("mandatory arg block of safer-r functions (public functions)
         is_function_here = base::quote(is_function_here(fun = sum, safer_check = FALSE, error_text = "")),
         is_package_here = base::quote(is_package_here(req_package = "base", safer_check = FALSE, error_text = "")),
         lambda_check = base::quote(lambda_check(x = "a", export = FALSE, out_path = ".", safer_check = FALSE, error_text = "")),
+        super_assign_check = base::quote(super_assign_check(x = "a", safer_check = FALSE, error_text = "")),
         curly_bracket_check = base::quote(curly_bracket_check(x = "a", safer_check = FALSE, error_text = "")),
         true_false_check = base::quote(true_false_check(x = "a", safer_check = FALSE, error_text = "")),
         report = base::quote(report(data = data.frame(a = 1), output = "log.txt", path = ".", append = FALSE, rownames_kept = FALSE, vector_cat = FALSE, noquote = TRUE, sep = 2, safer_check = FALSE, error_text = ""))
