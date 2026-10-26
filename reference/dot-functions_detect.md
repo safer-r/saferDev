@@ -73,6 +73,9 @@ A list:
 - `arg_user_setting`: list of argument user settings of the tested
   function.
 
+`NULL`, with a warning, if the tested function is empty of function, or
+only made of comments, or only made of the `skipped_base` functions.
+
 ## Details
 
 Does not check if the functions inside the code exist.

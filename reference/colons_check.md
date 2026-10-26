@@ -93,6 +93,10 @@ message saying that everything seems fine.
 
 The message is always printed (see the `Details` section).
 
+A warning and `NULL` are returned if the submitted function is empty of
+function, or only made of comments, or only made of `function`, `if`,
+`for`, `while`, `repeat`, `else`.
+
 In addition, if the `export` argument is `FALSE` (default), the function
 returns `NULL` if no basic function required a package attribution, or
 the modified function if basic functions were modified (see the
@@ -261,7 +265,7 @@ fun1_safer # corrected function
 #>     y <- base::mean(x)
 #>     base::return(y)
 #> }
-#> <environment: 0x55f34d033040>
+#> <environment: 0x558e6e86bea0>
 # Write the corrected function in the fun1_safer.R file of a new temporary folder:
 tempo_dir <- base::tempfile(pattern = "dir", tmpdir = base::tempdir(), fileext = "")
 base::dir.create(path = tempo_dir, showWarnings = TRUE, recursive = FALSE, mode = "0777")
@@ -274,6 +278,6 @@ saferDev::colons_check(x = fun1, export = TRUE, out_path = tempo_dir)
 #> 3    mean        y <- 
 #> 
 #> MODIFIED CODE EXPORTED IN:
-#> /tmp/Rtmpo3eZx2/dir175e2a09f087/fun1_safer.R
+#> /tmp/RtmpBNefhH/dir176213966162/fun1_safer.R
 #> 
 ```

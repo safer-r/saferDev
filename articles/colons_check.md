@@ -199,7 +199,7 @@ base::file.remove(base::file.path(out_path = base::tempdir(), "fun2_safer.R", fs
 ```
 
     ## Warning in base::file.remove(base::file.path(out_path = base::tempdir(), :
-    ## cannot remove file '/tmp/RtmpLIkbYQ/fun2_safer.R', reason 'No such file or
+    ## cannot remove file '/tmp/RtmpjY48Ll/fun2_safer.R', reason 'No such file or
     ## directory'
 
     ## [1] FALSE
@@ -221,7 +221,7 @@ colons_check(
     ## 3    sum     
 
     ## MODIFIED CODE EXPORTED IN:
-    ## /tmp/RtmpLIkbYQ/fun2_safer.R
+    ## /tmp/RtmpjY48Ll/fun2_safer.R
 
 ``` r
 

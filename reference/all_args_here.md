@@ -117,7 +117,10 @@ source references, see the details section) is returned, or `NULL`
 (invisible) if no modification has been applied. If `TRUE`, the modified
 function is exported as `<FUNCTION_NAME>_safer.R` in `out_path` and
 `NULL` is returned (invisible), or nothing is exported if no
-modification has been applied. Column descriptions:
+modification has been applied. A warning and `NULL` (invisible) are
+returned if the submitted function is empty of function, or only made of
+comments, or only made of `function`, `if`, `for`, `while`, `repeat`,
+`else`. Column descriptions:
 
 - `$LINE_NB`: the line number in the function code (starting at the
   `"<- function"` line, i.e., without counting the `#'` header lines).
@@ -310,7 +313,7 @@ fun1_safer # corrected function
 #> {
 #>     base::paste0(x, "a", collapse = NULL, recycle0 = FALSE)
 #> }
-#> <environment: 0x55f34e8a9898>
+#> <environment: 0x558e70ee9b58>
 # Write the table (res.tsv) and the corrected function (fun1_safer.R) in a new temporary folder:
 tempo_dir <- base::tempfile(pattern = "dir", tmpdir = base::tempdir(), fileext = "")
 base::dir.create(path = tempo_dir, showWarnings = TRUE, recursive = FALSE, mode = "0777")
@@ -319,9 +322,9 @@ saferDev::all_args_here(x = fun1, table_export = TRUE, fun_export = TRUE, out_pa
 #> 
 #> INSIDE fun1(), ARGUMENTS ARE MISSING.
 #> RESULT EXPORTED IN:
-#> /tmp/Rtmpo3eZx2/dir175e4f5a573f/res.tsv
+#> /tmp/RtmpBNefhH/dir1762432531f2/res.tsv
 #> 
 #> MODIFIED CODE EXPORTED IN:
-#> /tmp/Rtmpo3eZx2/dir175e4f5a573f/fun1_safer.R
+#> /tmp/RtmpBNefhH/dir1762432531f2/fun1_safer.R
 #> 
 ```

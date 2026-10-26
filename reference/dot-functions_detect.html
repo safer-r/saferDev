@@ -92,7 +92,8 @@
 <li><p><code>code_line_nb</code>: vector of integers of the code line numbers of code for each non empty compartment of <code>fun_names</code> and <code>fun_names_pos</code>.</p></li>
 <li><p><code>internal_fun_names</code>: vector of string of names of internal functions in the code of the tested function.</p></li>
 <li><p><code>arg_user_setting</code>: list of argument user settings of the tested function.</p></li>
-</ul></div>
+</ul><p><code>NULL</code>, with a warning, if the tested function is empty of function, or only made of comments, or only made of the <code>skipped_base</code> functions.</p>
+    </div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
     <p>Does not check if the functions inside the code exist.</p>
