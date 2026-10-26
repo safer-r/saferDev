@@ -160,7 +160,7 @@ fun2_safer # corrected function
 #>     if (x > 1) 
 #>         { base::return(x) }
 #> }
-#> <environment: 0x55e99f2c0bc0>
+#> <environment: 0x55f34d435eb8>
 # Write the corrected function in the fun2_safer.R file of a new temporary folder:
 tempo_dir <- base::tempfile(pattern = "dir", tmpdir = base::tempdir(), fileext = "")
 base::dir.create(path = tempo_dir, showWarnings = TRUE, recursive = FALSE, mode = "0777")
@@ -174,6 +174,6 @@ saferDev::curly_bracket_check(x = fun2, export = TRUE, out_path = tempo_dir)
 #> 3    if      if (x > 1) 
 #> 
 #> MODIFIED CODE EXPORTED IN:
-#> /tmp/RtmpSIxeUR/dir13d1302278c8/fun2_safer.R
+#> /tmp/Rtmpo3eZx2/dir175e4e6db351/fun2_safer.R
 #> 
 ```

@@ -94,7 +94,7 @@ true_false_check(x = fun2)
     ##         base::return(base::mean(x = 1:3, na.rm = FALSE))
     ##     }
     ## }
-    ## <environment: 0x55bc20a43d10>
+    ## <environment: 0x55cad4f13628>
 
 ``` r
 
@@ -118,7 +118,7 @@ true_false_check(x = fun3)
     ##         mean(x = 1:3)
     ##     }
     ## }
-    ## <environment: 0x55bc1ddae008>
+    ## <environment: 0x55cad227b840>
 
 \
 
@@ -221,7 +221,7 @@ fun2_safer # T replaced by TRUE, F replaced by FALSE.
     ##         base::return(base::mean(x = 1:3, na.rm = FALSE))
     ##     }
     ## }
-    ## <environment: 0x55bc21b86958>
+    ## <environment: 0x55cad6054218>
 
 ``` r
 
@@ -260,7 +260,7 @@ true_false_check(
     ## 4    F       base::return(base::mean(x = 1:3, na.rm = F))
 
     ## MODIFIED CODE EXPORTED IN:
-    ## /tmp/RtmpgwHkht/dir1a0743365ad3/fun2_safer.R
+    ## /tmp/Rtmp1Madr4/dir1e0c5a0d02ca/fun2_safer.R
 
 ``` r
 

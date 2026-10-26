@@ -163,7 +163,7 @@
 </tr>
 <tr>
 <td align="left"><strong>super_assign_check()</strong></td>
-<td align="left">Verify that the superassignment operators <code>&lt;&lt;-</code> and <code>-&gt;&gt;</code> are not used in a function. Return an error with a table of the lines with problems if any: these operators are not allowed in safer-r functions, because what they modify depends on the environments where the function is defined and called, so that it is difficult to guess what the writer had in mind (nothing can be corrected automatically).</td>
+<td align="left">Verify that the superassignment operators <code>&lt;&lt;-</code> and <code>-&gt;&gt;</code> are not used in a function. Return an error with a table of the lines with problems if any, since these operators are not allowed in safer-r functions.</td>
 </tr>
 <tr>
 <td align="left"><strong>true_false_check()</strong></td>
