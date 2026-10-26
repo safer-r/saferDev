@@ -1,4 +1,4 @@
-# saferDev [](https://safer-r.github.io/saferDev)[![](reference/figures/new_saferDev.png)](https://safer-r.github.io/saferDev/)
+# saferDev [](https://safer-r.github.io/saferDev)[![](reference/figures/saferDev.png)](https://safer-r.github.io/saferDev/)
 
 \
 

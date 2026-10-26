@@ -140,7 +140,7 @@ all_args_here(
     ##     middle_bracket2 <- base::do.call(what = base::c, args = code_for_col, 
     ##         quote = FALSE, envir = base::parent.frame(n = 1))
     ## }
-    ## <environment: 0x55c86683d358>
+    ## <environment: 0x55601d544348>
 
 \
 
@@ -169,7 +169,7 @@ all_args_here(
     ##     middle_bracket2 <- base::do.call(what = base::c, args = code_for_col, 
     ##         quote = FALSE, envir = base::parent.frame(n = 1))
     ## }
-    ## <environment: 0x55c866720fe8>
+    ## <environment: 0x55601d42af98>
 
 \
 
@@ -216,7 +216,7 @@ FUN2_safer # modified function (or NULL when the code was already clean).
     ##     middle_bracket2 <- base::do.call(what = base::c, args = code_for_col, 
     ##         quote = FALSE, envir = base::parent.frame(n = 1))
     ## }
-    ## <environment: 0x55c866688a28>
+    ## <environment: 0x55601d390310>
 
 ``` r
 
@@ -285,7 +285,7 @@ all_args_here(
     ##     middle_bracket2 <- base::do.call(what = base::c, args = code_for_col, 
     ##         quote = FALSE, envir = base::parent.frame(n = 1))
     ## }
-    ## <environment: 0x55c8661fed38>
+    ## <environment: 0x55601cf0f7a8>
 
 \
 
@@ -470,6 +470,6 @@ all_args_here(
     ##     middle_bracket2 <- base::do.call(what = base::c, args = code_for_col, 
     ##         quote = FALSE, envir = base::parent.frame(n = 1))
     ## }
-    ## <environment: 0x55c867dfaf38>
+    ## <environment: 0x55601eaff048>
 
 \
