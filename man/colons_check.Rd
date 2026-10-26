@@ -31,6 +31,8 @@ A table-like text message indicating the missing \code{::} or \code{:::} or a me
 
 The message is always printed (see the \code{Details} section).
 
+A warning and \code{NULL} are returned if the submitted function is empty of function, or only made of comments, or only made of \code{function}, \code{if}, \code{for}, \code{while}, \code{repeat}, \code{else}.
+
 In addition, if the \code{export} argument is \code{FALSE} (default), the function returns \code{NULL} if no basic function required a package attribution, or the modified function if basic functions were modified (see the \code{Details} section).
 
 If the \code{export} argument is \code{TRUE}, the modified code is exported in the \code{.R} file specified by the \code{out_path} argument, instead of being returned, and a message indicating where the modified code has been exported is printed.

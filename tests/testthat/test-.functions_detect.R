@@ -164,7 +164,7 @@ testthat::test_that(".functions_detect()", {
     testthat::expect_error(.functions_detect(x = mat1, arg_user_setting2 = arg_user_setting2_1, skipped_base = vec1, lib_path = NULL, error_text = ""))
     testthat::expect_error(.functions_detect(x = factor1, arg_user_setting2 = arg_user_setting2_1, skipped_base = vec1, lib_path = NULL, error_text = ""))
     testthat::expect_error(.functions_detect(x = expr1, arg_user_setting2 = arg_user_setting2_1, skipped_base = vec1, lib_path = NULL, error_text = ""))
-    testthat::expect_error(.functions_detect(x = fun1, arg_user_setting2 = arg_user_setting2_1, skipped_base = vec1, lib_path = NULL, error_text = ""))
+    testthat::expect_warning(.functions_detect(x = fun1, arg_user_setting2 = arg_user_setting2_1, skipped_base = vec1, lib_path = NULL, error_text = ""), regexp = "IS EMPTY OF FUNCTION", fixed = TRUE) # empty function: warning, not error
     # end x
     # arg_user_setting2
     testthat::expect_no_error(.functions_detect(x = test, arg_user_setting2 = arg_user_setting2_1, skipped_base = vec1, lib_path = NULL, error_text = ""))
@@ -244,9 +244,10 @@ testthat::test_that(".functions_detect()", {
     # end recovering the basic functions of R
 
     # removal of special functions
-    testthat::expect_error(.functions_detect(x = fun2, arg_user_setting2 = base::list(x =  as.name(x = "fun2")), skipped_base = vec1, lib_path = NULL, error_text = ""))
-    result <- saferDev::get_message('.functions_detect(x = fun2, arg_user_setting2 = base::list(x =  as.name(x = "fun2")), skipped_base = vec1, lib_path = NULL, error_text = "")', kind = "error", print_no = TRUE, text = NULL) 
-    expected <- "ERROR MESSAGE REPORTED:\nError : \n\n================\n\nERROR IN saferDev:::.functions_detect().\n\nTHE TESTED FUNCTION fun2 IS EMPTY OF FUNCTION OR ONLY MADE OF COMMENTS OR ONLY MADE OF THE SKIPPED FUNCTIONS:\nfunction\nif\nfor\nwhile\nrepeat\nelse\n\n================\n\n\n"
+    testthat::expect_warning(.functions_detect(x = fun2, arg_user_setting2 = base::list(x =  as.name(x = "fun2")), skipped_base = vec1, lib_path = NULL, error_text = ""))
+    testthat::expect_null(object = base::suppressWarnings(.functions_detect(x = fun2, arg_user_setting2 = base::list(x =  as.name(x = "fun2")), skipped_base = vec1, lib_path = NULL, error_text = ""), classes = "warning"))
+    result <- saferDev::get_message('.functions_detect(x = fun2, arg_user_setting2 = base::list(x =  as.name(x = "fun2")), skipped_base = vec1, lib_path = NULL, error_text = "")', kind = "warning", print_no = TRUE, text = NULL) 
+    expected <- "WARNING MESSAGE REPORTED:\nsimpleWarning: FROM saferDev:::.functions_detect().\n\nTHE TESTED FUNCTION fun2 IS EMPTY OF FUNCTION OR ONLY MADE OF COMMENTS OR ONLY MADE OF THE SKIPPED FUNCTIONS:\nfunction\nif\nfor\nwhile\nrepeat\nelse\n\nNOTHING TO CHECK.\n"
     testthat::expect_equal(result, expected)
     # end removal of special functions
 

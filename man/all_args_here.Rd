@@ -39,7 +39,8 @@ all_args_here(
 A message saying whether arguments are missing or everything seems fine, and a data frame indicating the missing arguments (see the column descriptions below).
 If \code{table_export} argument is \code{FALSE}, the data frame is returned as a message. If \code{TRUE}, it is exported as \code{df_name} in \code{out_path}.
 If \code{fun_export} argument is \code{FALSE}, the modified function (an R function object rebuilt from the corrected code, with its comments and indentation preserved if the submitted function carries its source references, see the details section) is returned, or \code{NULL} (invisible) if no modification has been applied. If \code{TRUE}, the modified function is exported as \code{<FUNCTION_NAME>_safer.R} in \code{out_path} and \code{NULL} is returned (invisible), or nothing is exported if no modification has been applied.
-Column descriptions: 
+A warning and \code{NULL} (invisible) are returned if the submitted function is empty of function, or only made of comments, or only made of \code{function}, \code{if}, \code{for}, \code{while}, \code{repeat}, \code{else}.
+Column descriptions:
 \itemize{
   \item \code{$LINE_NB}: the line number in the function code (starting at the \code{"<- function"} line, i.e., without counting the \code{#'} header lines).
   \item \code{$FUN_NAME}: the function name.

@@ -11,7 +11,9 @@
 #' A table-like text message indicating the missing \code{::} or \code{:::} or a message saying that everything seems fine.
 #' 
 #' The message is always printed (see the \code{Details} section).
-#' 
+#'
+#' A warning and \code{NULL} are returned if the submitted function is empty of function, or only made of comments, or only made of \code{function}, \code{if}, \code{for}, \code{while}, \code{repeat}, \code{else}.
+#'
 #' In addition, if the \code{export} argument is \code{FALSE} (default), the function returns \code{NULL} if no basic function required a package attribution, or the modified function if basic functions were modified (see the \code{Details} section).
 #' 
 #' If the \code{export} argument is \code{TRUE}, the modified code is exported in the \code{.R} file specified by the \code{out_path} argument, instead of being returned, and a message indicating where the modified code has been exported is printed.
@@ -631,6 +633,9 @@ colons_check <- function(
         lib_path = lib_path, 
         error_text = embed_error_text
     )
+    if(base::is.null(x = out)){
+        base::return(NULL) # tested function empty of function: warning already returned by .functions_detect()
+    }
     if( ! (base::all(base::typeof(x = out$fun_names) == "list", na.rm = TRUE) & base::all(base::typeof(x = out$fun_names_pos) == "list", na.rm = TRUE))){
         # nocov start
         # codecov inactivated because it is an internal control of code writing, impossible to cover with argument values.
