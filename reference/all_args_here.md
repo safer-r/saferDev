@@ -106,17 +106,18 @@ all_args_here(
 
 ## Value
 
-A data frame indicating the missing arguments or a message saying that
-everything seems fine. If `table_export` argument is `TRUE`, then the
-data frame is exported as `res.tsv` instead of being returned. If
-`fun_export` argument is `TRUE`, the modified function is exported as
-`<FUNCTION_NAME>_safer.R` instead of being returned (ignored if no
-correction has been applied). Otherwise, the modified function (an R
-function object rebuilt from the corrected code, with its comments and
-indentation preserved if the submitted function carries its source
-references, see the details section) is returned, or `NULL` if no
-modification has been applied. The returned value is invisible when
-nothing is exported. Column descriptions:
+A message saying whether arguments are missing or everything seems fine,
+and a data frame indicating the missing arguments (see the column
+descriptions below). If `table_export` argument is `FALSE`, the data
+frame is returned as a message. If `TRUE`, it is exported as `df_name`
+in `out_path`. If `fun_export` argument is `FALSE`, the modified
+function (an R function object rebuilt from the corrected code, with its
+comments and indentation preserved if the submitted function carries its
+source references, see the details section) is returned, or `NULL`
+(invisible) if no modification has been applied. If `TRUE`, the modified
+function is exported as `<FUNCTION_NAME>_safer.R` in `out_path` and
+`NULL` is returned (invisible), or nothing is exported if no
+modification has been applied. Column descriptions:
 
 - `$LINE_NB`: the line number in the function code (starting at the
   `"<- function"` line, i.e., without counting the `#'` header lines).
@@ -148,6 +149,12 @@ nothing is exported. Column descriptions:
 An additional message `"EVERYTHING SEEMS CLEAN"` if the `$STATUS` column
 is only made of `""` and `"GOOD"`.
 
+An additional message `"ARGUMENTS WITH EMPTY VALUE"` listing, for each
+line and function, the arguments written (or proposed in the `$STATUS`
+column) with an empty value (like `envir = `), with their default value,
+i.e., the potential flaws of the code (see the details section). Use
+`"= ,"` or `"= )"` to seek each case in the code.
+
 ## Details
 
 More precisely, `all_args_here()` verifies that all the strings before
@@ -166,6 +173,29 @@ Function names preceded by `$` are not considered.
 
 The following R functions are skipped: `function`, `if`, `for`, `while`,
 `repeat` and `else`.
+
+Empty argument values (see the [safer-r
+rules](https://github.com/safer-r)): 1) a default value that cannot be
+copied into the call is proposed with an empty value, meaning that the
+default value is used but cannot be fixed. This is the case when the
+default value depends on another argument (e.g.,
+`envir = as.environment(pos)` in
+[`utils::getFromNamespace()`](https://rdrr.io/r/utils/getFromNamespace.html),
+proposed as `utils::getFromNamespace(x, ns, pos = -1, envir = )`), on a
+variable of the internal environment of the function, or on the frame
+where it is evaluated (e.g.,
+[`parent.frame()`](https://rdrr.io/r/base/sys.parent.html)), because
+such a default value would be evaluated in the environment of the tested
+function and not in the one of the called function. 2) An argument with
+no default value and not written is also proposed with an empty value,
+because absence of value can mean something (e.g.,
+`base::.libPaths(new = , include.site = TRUE)` returns the paths of the
+R libraries, whereas
+`base::.libPaths(new = base::.libPaths(), include.site = TRUE)` sets
+them). In both cases, the behavior of the code is not changed. It is
+recommended to test (using `testthat`) that these default values are
+unchanged, for instance
+`testthat::expect_identical(object = base::formals(fun = utils::getFromNamespace)$envir, expected = base::quote(expr = as.environment(pos)))`.
 
 Most of the time, `all_args_here()` does not check inside comments, but
 some unexpected writing could dupe `all_args_here()`. Please, report
@@ -266,12 +296,21 @@ fun1_safer <- saferDev::all_args_here(x = fun1, safer_check = FALSE) # arguments
 #> 
 #> INSIDE fun1(), ARGUMENTS ARE MISSING.
 #> 
+#>   LINE_NB FUN_NAME       FUN_ARGS FUN_POS
+#> 1       3   paste0 paste0(x, "a")       7
+#>                                 DEF_ARGS  MISSING_ARG_NAMES
+#> 1 ..., collapse = NULL, recycle0 = FALSE collapse, recycle0
+#>                        MISSING_ARGS
+#> 1 collapse = NULL, recycle0 = FALSE
+#>                                              STATUS
+#> 1 paste0(x, "a", collapse = NULL, recycle0 = FALSE)
+#> 
 fun1_safer # corrected function
 #> function (x) 
 #> {
 #>     base::paste0(x, "a", collapse = NULL, recycle0 = FALSE)
 #> }
-#> <environment: 0x55e58373e488>
+#> <environment: 0x56555ccaf800>
 # Write the table (res.tsv) and the corrected function (fun1_safer.R) in a new temporary folder:
 tempo_dir <- base::tempfile(pattern = "dir", tmpdir = base::tempdir(), fileext = "")
 base::dir.create(path = tempo_dir, showWarnings = TRUE, recursive = FALSE, mode = "0777")
@@ -280,9 +319,9 @@ saferDev::all_args_here(x = fun1, table_export = TRUE, fun_export = TRUE, out_pa
 #> 
 #> INSIDE fun1(), ARGUMENTS ARE MISSING.
 #> RESULT EXPORTED IN:
-#> /tmp/Rtmp1CKyzG/dir16d03af2c3ff/res.tsv
+#> /tmp/RtmpCGuf8f/dir173268d3bd27/res.tsv
 #> 
 #> MODIFIED CODE EXPORTED IN:
-#> /tmp/Rtmp1CKyzG/dir16d03af2c3ff/fun1_safer.R
+#> /tmp/RtmpCGuf8f/dir173268d3bd27/fun1_safer.R
 #> 
 ```

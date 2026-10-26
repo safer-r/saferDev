@@ -104,7 +104,7 @@
     <p>Comments are ignored. In <code>else if</code> chains, the <code>else</code> is not reported: the chained <code>if</code> is checked on its own.</p>
 <p>Bodies reduced to <code>.Primitive(...)</code>, like in <code><a href="https://rdrr.io/r/base/Arithmetic.html" class="external-link">base::`+`</a></code>, are skipped, because they cannot be enclosed in curly brackets. Bodies made of <code>UseMethod(...)</code>, like in <code><a href="https://rdrr.io/r/base/mean.html" class="external-link">base::mean</a></code>, are reported.</p>
 <p>Correction: a <code>{</code> is added before each reported body and a <code>}</code> after it, separated from the body by a space. The rest of the code is unchanged. The corrected code is checked by parsing it. Lines can become longer than 80 characters. The returned function keeps the environment of the submitted function.</p>
-<p>Warning: the comments of the submitted function are lost, in the returned function and in the exported file.</p>
+<p>The comments and the indentation of the submitted function are kept, in the returned function and in the exported file. Warning: comments are only available when the submitted function carries its source references (attribute srcref). Otherwise (e.g., compiled package functions, or functions created with <code>options(keep.source = FALSE)</code>, default of Rscript), the code is the deparsed one: no comments and standard indentation.</p>
 <p>Constructs written with backquotes, like <code>`if`(x &gt; 1, x, 0)</code>, may not be checked: use the standard writing.</p>
 <p>Line numbers are indicative. They start at the <code>&lt;- function</code> line (<code>#'</code> header lines not counted). Compiled functions, like <code><a href="colons_check.html">saferDev::colons_check</a></code>, have no comments: their line numbers differ from their source file.</p>
     </div>
@@ -140,11 +140,10 @@
 <span class="r-in"><span><span class="va">fun2_safer</span> <span class="co"># corrected function</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> function (x) </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> {</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     if (x &gt; 1) {</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         base::return(x)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     }</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     if (x &gt; 1) </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         { base::return(x) }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x55e57f7d64e0&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x56555a8e6b38&gt;</span>
 <span class="r-in"><span><span class="co"># Write the corrected function in the fun2_safer.R file of a new temporary folder:</span></span></span>
 <span class="r-in"><span><span class="va">tempo_dir</span> <span class="op">&lt;-</span> <span class="fu">base</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempfile</a></span><span class="op">(</span>pattern <span class="op">=</span> <span class="st">"dir"</span>, tmpdir <span class="op">=</span> <span class="fu">base</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir</a></span><span class="op">(</span><span class="op">)</span>, fileext <span class="op">=</span> <span class="st">""</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu">base</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/base/files2.html" class="external-link">dir.create</a></span><span class="op">(</span>path <span class="op">=</span> <span class="va">tempo_dir</span>, showWarnings <span class="op">=</span> <span class="cn">TRUE</span>, recursive <span class="op">=</span> <span class="cn">FALSE</span>, mode <span class="op">=</span> <span class="st">"0777"</span><span class="op">)</span></span></span>
@@ -158,7 +157,7 @@
 <span class="r-msg co"><span class="r-pr">#&gt;</span> 3	if		if (x &gt; 1) </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> MODIFIED CODE EXPORTED IN:</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> /tmp/Rtmp1CKyzG/dir16d0e736884/fun2_safer.R</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> /tmp/RtmpCGuf8f/dir173226906fa2/fun2_safer.R</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"><span></span></span>
 </code></pre></div>

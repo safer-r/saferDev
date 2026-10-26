@@ -153,7 +153,6 @@
 <span><span class="co">## UseMethod("mean")</span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## PLEASE, RUN saferDev::colons_check(mean) FIRST,</span></span>
-<span><span class="co">## ADD THE MISSING &lt;PACKAGE&gt;::&lt;FUNCTION&gt; (OR &lt;PACKAGE&gt;:::&lt;FUNCTION&gt; FOR FUNCTION STARTING BY A DOT)</span></span>
 <span><span class="co">## AND RERUN saferDev::all_args_here(mean).</span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## ================</span></span></code></pre>
@@ -165,10 +164,15 @@
 <span><span class="co">## </span></span>
 <span><span class="co">## ================</span></span>
 <span><span class="co">## </span></span>
-<span><span class="co">## ERROR IN saferDev:::.all_args_here_fill() INSIDE saferDev::all_args_here().</span></span>
+<span><span class="co">## ERROR IN saferDev::is_function_here() INSIDE saferDev::all_args_here().</span></span>
 <span><span class="co">## </span></span>
-<span><span class="co">## THE TESTED FUNCTION test2 SEEMS TO HAVE A WRITING ERROR IN LINE 13 AND FUNCTION length.</span></span>
-<span><span class="co">## PLEASE, RUN THE TESTED FUNCTION FIRST.</span></span>
+<span><span class="co">## REQUIRED FUNCTION IS MISSING IN THE INSTALLED PACKAGE:</span></span>
+<span><span class="co">## base::ks.test</span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## IN ONE OF THESE FOLDERS:</span></span>
+<span><span class="co">## /__w/_temp/Library</span></span>
+<span><span class="co">## /usr/local/lib/R/site-library</span></span>
+<span><span class="co">## /usr/local/lib/R/library</span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## ================</span></span></code></pre>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
@@ -178,6 +182,24 @@
 <span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## </span></span>
 <span><span class="co">## INSIDE FUN2(), ARGUMENTS ARE MISSING.</span></span></code></pre>
+<pre><code><span><span class="co">##   LINE_NB     FUN_NAME</span></span>
+<span><span class="co">## 1       3      do.call</span></span>
+<span><span class="co">## 2       4 parent.frame</span></span>
+<span><span class="co">##                                                                                     FUN_ARGS</span></span>
+<span><span class="co">## 1 do.call(what = base::c, args = code_for_col,  quote = FALSE, envir = base::parent.frame())</span></span>
+<span><span class="co">## 2                                                                             parent.frame()</span></span>
+<span><span class="co">##   FUN_POS                                          DEF_ARGS MISSING_ARG_NAMES</span></span>
+<span><span class="co">## 1      26 what, args, quote = FALSE, envir = parent.frame()                  </span></span>
+<span><span class="co">## 2      30                                             n = 1                 n</span></span>
+<span><span class="co">##   MISSING_ARGS              STATUS</span></span>
+<span><span class="co">## 1                             GOOD</span></span>
+<span><span class="co">## 2        n = 1 parent.frame(n = 1)</span></span></code></pre>
+<pre><code><span><span class="co">## function (x, y) </span></span>
+<span><span class="co">## {</span></span>
+<span><span class="co">##     middle_bracket2 &lt;- base::do.call(what = base::c, args = code_for_col, </span></span>
+<span><span class="co">##         quote = FALSE, envir = base::parent.frame(n = 1))</span></span>
+<span><span class="co">## }</span></span>
+<span><span class="co">## &lt;environment: 0x55c86683d358&gt;</span></span></code></pre>
 <p><br></p>
 </div>
 <div class="section level3">
@@ -185,7 +207,7 @@
 <code>out_path</code>, <code>df_name</code> and
 <code>overwrite</code><a class="anchor" aria-label="anchor" href="#arguments-table_export-fun_export-out_path-df_name-and-overwrite"></a>
 </h3>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Print the results into the res.tsv file written in the "." path, </span></span>
 <span><span class="co"># and overwrite if res.tsv already exists in ".".</span></span>
 <span><span class="fu"><a href="../reference/all_args_here.html">all_args_here</a></span><span class="op">(</span></span>
@@ -198,7 +220,13 @@
 <pre><code><span><span class="co">## </span></span>
 <span><span class="co">## INSIDE FUN2(), ARGUMENTS ARE MISSING.</span></span>
 <span><span class="co">## RESULT EXPORTED IN:</span></span>
-<span><span class="co">## ./res.tsv</span></span></code></pre>
+<span><span class="co">## /__w/saferDev/saferDev/vignettes/articles/res.tsv</span></span></code></pre>
+<pre><code><span><span class="co">## function (x, y) </span></span>
+<span><span class="co">## {</span></span>
+<span><span class="co">##     middle_bracket2 &lt;- base::do.call(what = base::c, args = code_for_col, </span></span>
+<span><span class="co">##         quote = FALSE, envir = base::parent.frame(n = 1))</span></span>
+<span><span class="co">## }</span></span>
+<span><span class="co">## &lt;environment: 0x55c866720fe8&gt;</span></span></code></pre>
 <p><br></p>
 </div>
 <div class="section level3">
@@ -211,22 +239,34 @@ missing arguments written as proposed in the <code>$STATUS</code> column
 of the output data frame), or export its code into a <code>.R</code>
 file named with the submitted function name and <code>_safer</code>
 added at the end:</p>
-<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Returns the modified function, or NULL if nothing has to be modified.</span></span>
 <span><span class="va">FUN2_safer</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/all_args_here.html">all_args_here</a></span><span class="op">(</span></span>
 <span>    x <span class="op">=</span> <span class="va">FUN2</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## </span></span>
 <span><span class="co">## INSIDE FUN2(), ARGUMENTS ARE MISSING.</span></span></code></pre>
-<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<pre><code><span><span class="co">##   LINE_NB     FUN_NAME</span></span>
+<span><span class="co">## 1       3      do.call</span></span>
+<span><span class="co">## 2       4 parent.frame</span></span>
+<span><span class="co">##                                                                                     FUN_ARGS</span></span>
+<span><span class="co">## 1 do.call(what = base::c, args = code_for_col,  quote = FALSE, envir = base::parent.frame())</span></span>
+<span><span class="co">## 2                                                                             parent.frame()</span></span>
+<span><span class="co">##   FUN_POS                                          DEF_ARGS MISSING_ARG_NAMES</span></span>
+<span><span class="co">## 1      26 what, args, quote = FALSE, envir = parent.frame()                  </span></span>
+<span><span class="co">## 2      30                                             n = 1                 n</span></span>
+<span><span class="co">##   MISSING_ARGS              STATUS</span></span>
+<span><span class="co">## 1                             GOOD</span></span>
+<span><span class="co">## 2        n = 1 parent.frame(n = 1)</span></span></code></pre>
+<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">FUN2_safer</span> <span class="co"># modified function (or NULL when the code was already clean).</span></span></code></pre></div>
 <pre><code><span><span class="co">## function (x, y) </span></span>
 <span><span class="co">## {</span></span>
 <span><span class="co">##     middle_bracket2 &lt;- base::do.call(what = base::c, args = code_for_col, </span></span>
 <span><span class="co">##         quote = FALSE, envir = base::parent.frame(n = 1))</span></span>
 <span><span class="co">## }</span></span>
-<span><span class="co">## &lt;environment: 0x55c371fddad8&gt;</span></span></code></pre>
-<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
+<span><span class="co">## &lt;environment: 0x55c866688a28&gt;</span></span></code></pre>
+<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Export the modified function into the FUN2_safer.R file, in the "." path.</span></span>
 <span><span class="fu"><a href="../reference/all_args_here.html">all_args_here</a></span><span class="op">(</span></span>
 <span>    x <span class="op">=</span> <span class="va">FUN2</span>,</span>
@@ -235,7 +275,21 @@ added at the end:</p>
 <span>    overwrite <span class="op">=</span> <span class="cn">TRUE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## </span></span>
-<span><span class="co">## INSIDE FUN2(), ARGUMENTS ARE MISSING.</span></span></code></pre>
+<span><span class="co">## INSIDE FUN2(), ARGUMENTS ARE MISSING.</span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">##   LINE_NB     FUN_NAME</span></span>
+<span><span class="co">## 1       3      do.call</span></span>
+<span><span class="co">## 2       4 parent.frame</span></span>
+<span><span class="co">##                                                                                     FUN_ARGS</span></span>
+<span><span class="co">## 1 do.call(what = base::c, args = code_for_col,  quote = FALSE, envir = base::parent.frame())</span></span>
+<span><span class="co">## 2                                                                             parent.frame()</span></span>
+<span><span class="co">##   FUN_POS                                          DEF_ARGS MISSING_ARG_NAMES</span></span>
+<span><span class="co">## 1      26 what, args, quote = FALSE, envir = parent.frame()                  </span></span>
+<span><span class="co">## 2      30                                             n = 1                 n</span></span>
+<span><span class="co">##   MISSING_ARGS              STATUS</span></span>
+<span><span class="co">## 1                             GOOD</span></span>
+<span><span class="co">## 2        n = 1 parent.frame(n = 1)</span></span></code></pre>
 <pre><code><span><span class="co">## MODIFIED CODE EXPORTED IN:</span></span>
 <span><span class="co">## /__w/saferDev/saferDev/vignettes/articles/FUN2_safer.R</span></span></code></pre>
 <p>When <code>fun_export = TRUE</code>, the modified function is not
@@ -245,7 +299,7 @@ no correction has been applied). <br></p>
 <div class="section level3">
 <h3 id="argument-safer_check">Argument <code>safer_check</code><a class="anchor" aria-label="anchor" href="#argument-safer_check"></a>
 </h3>
-<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Safer checkings are performed before main code running.</span></span>
 <span><span class="fu"><a href="../reference/all_args_here.html">all_args_here</a></span><span class="op">(</span></span>
 <span>    x <span class="op">=</span> <span class="va">FUN2</span>, </span>
@@ -253,12 +307,30 @@ no correction has been applied). <br></p>
 <span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## </span></span>
 <span><span class="co">## INSIDE FUN2(), ARGUMENTS ARE MISSING.</span></span></code></pre>
+<pre><code><span><span class="co">##   LINE_NB     FUN_NAME</span></span>
+<span><span class="co">## 1       3      do.call</span></span>
+<span><span class="co">## 2       4 parent.frame</span></span>
+<span><span class="co">##                                                                                     FUN_ARGS</span></span>
+<span><span class="co">## 1 do.call(what = base::c, args = code_for_col,  quote = FALSE, envir = base::parent.frame())</span></span>
+<span><span class="co">## 2                                                                             parent.frame()</span></span>
+<span><span class="co">##   FUN_POS                                          DEF_ARGS MISSING_ARG_NAMES</span></span>
+<span><span class="co">## 1      26 what, args, quote = FALSE, envir = parent.frame()                  </span></span>
+<span><span class="co">## 2      30                                             n = 1                 n</span></span>
+<span><span class="co">##   MISSING_ARGS              STATUS</span></span>
+<span><span class="co">## 1                             GOOD</span></span>
+<span><span class="co">## 2        n = 1 parent.frame(n = 1)</span></span></code></pre>
+<pre><code><span><span class="co">## function (x, y) </span></span>
+<span><span class="co">## {</span></span>
+<span><span class="co">##     middle_bracket2 &lt;- base::do.call(what = base::c, args = code_for_col, </span></span>
+<span><span class="co">##         quote = FALSE, envir = base::parent.frame(n = 1))</span></span>
+<span><span class="co">## }</span></span>
+<span><span class="co">## &lt;environment: 0x55c8661fed38&gt;</span></span></code></pre>
 <p><br></p>
 </div>
 <div class="section level3">
 <h3 id="argument-lib_path">Argument <code>lib_path</code><a class="anchor" aria-label="anchor" href="#argument-lib_path"></a>
 </h3>
-<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># The "NOTGOOD" path does not exists.</span></span>
 <span><span class="fu"><a href="../reference/all_args_here.html">all_args_here</a></span><span class="op">(</span></span>
 <span>    x <span class="op">=</span> <span class="va">FUN2</span>,  </span>
@@ -280,7 +352,7 @@ no correction has been applied). <br></p>
 <div class="section level3">
 <h3 id="argument-error_text">Argument <code>error_text</code><a class="anchor" aria-label="anchor" href="#argument-error_text"></a>
 </h3>
-<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb31"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Add a text in error messages returned by all_args_here().</span></span>
 <span><span class="fu"><a href="../reference/all_args_here.html">all_args_here</a></span><span class="op">(</span></span>
 <span>    x <span class="op">=</span> <span class="va">FUN2</span>, </span>
@@ -303,7 +375,7 @@ no correction has been applied). <br></p>
 <div class="section level3">
 <h3 id="all-the-arguments">All the arguments<a class="anchor" aria-label="anchor" href="#all-the-arguments"></a>
 </h3>
-<div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb33"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/all_args_here.html">all_args_here</a></span><span class="op">(</span></span>
 <span>    x <span class="op">=</span> <span class="va">FUN1</span>, <span class="co"># R function.</span></span>
 <span>    table_export <span class="op">=</span> <span class="cn">FALSE</span>, <span class="co"># export the data frame into a .tsv file?</span></span>
@@ -317,10 +389,114 @@ no correction has been applied). <br></p>
 <span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## </span></span>
 <span><span class="co">## INSIDE FUN1(), ARGUMENTS ARE MISSING.</span></span></code></pre>
+<pre><code><span><span class="co">##    LINE_NB     FUN_NAME</span></span>
+<span><span class="co">## 1        3    as.vector</span></span>
+<span><span class="co">## 2        3       unlist</span></span>
+<span><span class="co">## 3        3       mapply</span></span>
+<span><span class="co">## 4        5          rep</span></span>
+<span><span class="co">## 5        5       length</span></span>
+<span><span class="co">## 6        8    as.vector</span></span>
+<span><span class="co">## 7        8       unlist</span></span>
+<span><span class="co">## 8        8       mapply</span></span>
+<span><span class="co">## 9       10          rep</span></span>
+<span><span class="co">## 10      10       length</span></span>
+<span><span class="co">## 11      12      do.call</span></span>
+<span><span class="co">## 12      13      do.call</span></span>
+<span><span class="co">## 13      14 parent.frame</span></span>
+<span><span class="co">##                                                                                                                                                                                                                               FUN_ARGS</span></span>
+<span><span class="co">## 1  as.vector(x = base::unlist(x = base::mapply(FUN = function(x,  y) { base::rep(x = y, base::length(x = x)) }, x = x, y = y, MoreArgs = NULL, SIMPLIFY = TRUE, USE.NAMES = TRUE),  recursive = TRUE, use.names = TRUE), mode = "any")</span></span>
+<span><span class="co">## 2                                     unlist(x = base::mapply(FUN = function(x,  y) { base::rep(x = y, base::length(x = x)) }, x = x, y = y, MoreArgs = NULL, SIMPLIFY = TRUE, USE.NAMES = TRUE),  recursive = TRUE, use.names = TRUE)</span></span>
+<span><span class="co">## 3                                                                                            mapply(FUN = function(x,  y) { base::rep(x = y, base::length(x = x)) }, x = x, y = y, MoreArgs = NULL, SIMPLIFY = TRUE, USE.NAMES = TRUE)</span></span>
+<span><span class="co">## 4                                                                                                                                                                                                      rep(x = y, base::length(x = x))</span></span>
+<span><span class="co">## 5                                                                                                                                                                                                                        length(x = x)</span></span>
+<span><span class="co">## 6                                                                                                         as.vector(x = base::unlist(x = base::mapply(FUN = function(x,  y) { base::rep(x = y, base::length(x = x)) }, x = x, y = y)))</span></span>
+<span><span class="co">## 7                                                                                                                              unlist(x = base::mapply(FUN = function(x,  y) { base::rep(x = y, base::length(x = x)) }, x = x, y = y))</span></span>
+<span><span class="co">## 8                                                                                                                                                mapply(FUN = function(x,  y) { base::rep(x = y, base::length(x = x)) }, x = x, y = y)</span></span>
+<span><span class="co">## 9                                                                                                                                                                                                      rep(x = y, base::length(x = x))</span></span>
+<span><span class="co">## 10                                                                                                                                                                                                                       length(x = x)</span></span>
+<span><span class="co">## 11                                                                                                                                                                                        do.call(what = base::c, args = code_for_col)</span></span>
+<span><span class="co">## 12                                                                                                                                          do.call(what = base::c, args = code_for_col,  quote = FALSE, envir = base::parent.frame())</span></span>
+<span><span class="co">## 13                                                                                                                                                                                                                      parent.frame()</span></span>
+<span><span class="co">##    FUN_POS                                                     DEF_ARGS</span></span>
+<span><span class="co">## 1       23                                              x, mode = "any"</span></span>
+<span><span class="co">## 2       43                        x, recursive = TRUE, use.names = TRUE</span></span>
+<span><span class="co">## 3       60 FUN, ..., MoreArgs = NULL, SIMPLIFY = TRUE, USE.NAMES = TRUE</span></span>
+<span><span class="co">## 4        7                                                       x, ...</span></span>
+<span><span class="co">## 5       24                                                            x</span></span>
+<span><span class="co">## 6       24                                              x, mode = "any"</span></span>
+<span><span class="co">## 7       44                        x, recursive = TRUE, use.names = TRUE</span></span>
+<span><span class="co">## 8       61 FUN, ..., MoreArgs = NULL, SIMPLIFY = TRUE, USE.NAMES = TRUE</span></span>
+<span><span class="co">## 9        7                                                       x, ...</span></span>
+<span><span class="co">## 10      24                                                            x</span></span>
+<span><span class="co">## 11      25            what, args, quote = FALSE, envir = parent.frame()</span></span>
+<span><span class="co">## 12      26            what, args, quote = FALSE, envir = parent.frame()</span></span>
+<span><span class="co">## 13      30                                                        n = 1</span></span>
+<span><span class="co">##                MISSING_ARG_NAMES</span></span>
+<span><span class="co">## 1                               </span></span>
+<span><span class="co">## 2                               </span></span>
+<span><span class="co">## 3                               </span></span>
+<span><span class="co">## 4                               </span></span>
+<span><span class="co">## 5                               </span></span>
+<span><span class="co">## 6                           mode</span></span>
+<span><span class="co">## 7           recursive, use.names</span></span>
+<span><span class="co">## 8  MoreArgs, SIMPLIFY, USE.NAMES</span></span>
+<span><span class="co">## 9                               </span></span>
+<span><span class="co">## 10                              </span></span>
+<span><span class="co">## 11                  quote, envir</span></span>
+<span><span class="co">## 12                              </span></span>
+<span><span class="co">## 13                             n</span></span>
+<span><span class="co">##                                          MISSING_ARGS</span></span>
+<span><span class="co">## 1                                                    </span></span>
+<span><span class="co">## 2                                                    </span></span>
+<span><span class="co">## 3                                                    </span></span>
+<span><span class="co">## 4                                                    </span></span>
+<span><span class="co">## 5                                                    </span></span>
+<span><span class="co">## 6                                        mode = "any"</span></span>
+<span><span class="co">## 7                  recursive = TRUE, use.names = TRUE</span></span>
+<span><span class="co">## 8  MoreArgs = NULL, SIMPLIFY = TRUE, USE.NAMES = TRUE</span></span>
+<span><span class="co">## 9                                                    </span></span>
+<span><span class="co">## 10                                                   </span></span>
+<span><span class="co">## 11                            quote = FALSE, envir = </span></span>
+<span><span class="co">## 12                                                   </span></span>
+<span><span class="co">## 13                                              n = 1</span></span>
+<span><span class="co">##                                                                                                                                         STATUS</span></span>
+<span><span class="co">## 1                                                                                                                                         GOOD</span></span>
+<span><span class="co">## 2                                                                                                                                         GOOD</span></span>
+<span><span class="co">## 3                                                                                                                                         GOOD</span></span>
+<span><span class="co">## 4                                                                                                                                         GOOD</span></span>
+<span><span class="co">## 5                                                                                                                                         GOOD</span></span>
+<span><span class="co">## 6   as.vector(x = base::unlist(x = base::mapply(FUN = function(x,  y) { base::rep(x = y, base::length(x = x)) }, x = x, y = y)), mode = "any")</span></span>
+<span><span class="co">## 7  unlist(x = base::mapply(FUN = function(x,  y) { base::rep(x = y, base::length(x = x)) }, x = x, y = y), recursive = TRUE, use.names = TRUE)</span></span>
+<span><span class="co">## 8     mapply(x = x, y = y,FUN = function(x,  y) { base::rep(x = y, base::length(x = x)) }, MoreArgs = NULL, SIMPLIFY = TRUE, USE.NAMES = TRUE)</span></span>
+<span><span class="co">## 9                                                                                                                                         GOOD</span></span>
+<span><span class="co">## 10                                                                                                                                        GOOD</span></span>
+<span><span class="co">## 11                                                                       do.call(what = base::c, args = code_for_col, quote = FALSE, envir = )</span></span>
+<span><span class="co">## 12                                                                                                                                        GOOD</span></span>
+<span><span class="co">## 13                                                                                                                         parent.frame(n = 1)</span></span></code></pre>
+<pre><code><span><span class="co">## ARGUMENTS WITH EMPTY VALUE (DEFAULT VALUE USED BUT CANNOT BE FIXED, OR NO DEFAULT VALUE):</span></span>
+<span><span class="co">## line 12: base::do.call(): envir (DEFAULT: parent.frame())</span></span>
+<span><span class="co">## USE "= ," OR "= )" TO SEEK EACH CASE IN THE CODE, AND, IF POSSIBLE, TEST THAT THE DEFAULT VALUES ARE UNCHANGED, FOR INSTANCE:</span></span>
+<span><span class="co">## testthat::expect_identical(object = base::formals(fun = utils::getFromNamespace)$envir, expected = base::quote(expr = as.environment(pos)))</span></span></code></pre>
 <pre><code><span><span class="co">## CORRECTIONS NOT APPLIED:</span></span>
 <span><span class="co">## line 8: mapply(x = x, y = y,FUN = function(x,  y) { base::rep(x = y, base::length(x = x)) }, MoreArgs = NULL, SIMPLIFY = TRUE, USE.NAMES = TRUE)</span></span>
 <span><span class="co">## line 8: unlist(x = base::mapply(FUN = function(x,  y) { base::rep(x = y, base::length(x = x)) }, x = x, y = y), recursive = TRUE, use.names = TRUE)</span></span>
 <span><span class="co">## line 8: as.vector(x = base::unlist(x = base::mapply(FUN = function(x,  y) { base::rep(x = y, base::length(x = x)) }, x = x, y = y)), mode = "any")</span></span></code></pre>
+<pre><code><span><span class="co">## function (x, y) </span></span>
+<span><span class="co">## {</span></span>
+<span><span class="co">##     code_for_col &lt;- base::as.vector(x = base::unlist(x = base::mapply(FUN = function(x, </span></span>
+<span><span class="co">##         y) {</span></span>
+<span><span class="co">##         base::rep(x = y, base::length(x = x))</span></span>
+<span><span class="co">##     }, x = x, y = y, MoreArgs = NULL, SIMPLIFY = TRUE, USE.NAMES = TRUE), </span></span>
+<span><span class="co">##         recursive = TRUE, use.names = TRUE), mode = "any")</span></span>
+<span><span class="co">##     code_for_col2 &lt;- base::as.vector(x = base::unlist(x = base::mapply(FUN = function(x, </span></span>
+<span><span class="co">##         y) {</span></span>
+<span><span class="co">##         base::rep(x = y, base::length(x = x))</span></span>
+<span><span class="co">##     }, x = x, y = y)))</span></span>
+<span><span class="co">##     middle_bracket &lt;- base::do.call(what = base::c, args = code_for_col, quote = FALSE, envir = )</span></span>
+<span><span class="co">##     middle_bracket2 &lt;- base::do.call(what = base::c, args = code_for_col, </span></span>
+<span><span class="co">##         quote = FALSE, envir = base::parent.frame(n = 1))</span></span>
+<span><span class="co">## }</span></span>
+<span><span class="co">## &lt;environment: 0x55c867dfaf38&gt;</span></span></code></pre>
 <p><br></p>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

@@ -2,6 +2,10 @@
 
 ## saferDev 3.0.0
 
+- Backbone v21.1: the invented `x` argument names (absent from the
+  called function signature, for instance `base::any(x = ...)`,
+  `base::all(x = ...)`, `base::sum(x = ...)`, `base::order(x = ...)`)
+  are removed from all the function calls.
 - curly_bracket_check(): new function. Verifies that all the bodies of
   the if, else, for, while, repeat and function are delimited by curly
   brackets {}. The corrected function is returned, or exported with
@@ -37,6 +41,10 @@
 - all_args_here(): the missing arguments are now added: the corrected
   function is returned, or exported with the new fun_export argument.
   The former export argument is renamed table_export (breaking change).
+  The table of the missing arguments is returned as a message
+  (table_export = FALSE) or exported (table_export = TRUE). The modified
+  function is returned (fun_export = FALSE, whatever table_export) or
+  exported (fun_export = TRUE).
 - curly_bracket_check(), for_loop_nb_check(), lambda_check(),
   true_false_check(), colons_check() and all_args_here(): the exported
   file is named \_safer.R and written in out_path (default “.”, the R
@@ -61,6 +69,21 @@
   call contains a string with consecutive spaces, which were formerly
   silently collapsed. The CORRECTIONS NOT APPLIED message no longer
   replaces the ARGUMENTS ARE MISSING message.
+- all_args_here(): safer-r rules about empty argument values. A default
+  value that cannot be copied into the call (depending on another
+  argument, like envir = as.environment(pos) in
+  utils::getFromNamespace(), on the internal environment of the
+  function, or on the frame of evaluation, like parent.frame()) is now
+  proposed with an empty value (like envir = ), instead of being copied
+  (which changed its evaluation environment). An argument with no
+  default value is now proposed with an empty value (like
+  base::.libPaths(new = , include.site = TRUE)) when no argument is
+  written, instead of returning a writing error. Proposals with empty
+  values are now applied to the modified function. A new ARGUMENTS WITH
+  EMPTY VALUE message lists the arguments written or proposed with an
+  empty value, with their default value. An argument placed after … in
+  the function definition no longer takes a value written without
+  argument name.
 - colons_check(): the modified function (returned, or exported with
   export = TRUE) now keeps the comments and the indentation of the
   submitted function: the package attributions are inserted in the
@@ -68,6 +91,11 @@
   code (comments removed and multiple spaces collapsed). Comments are
   only available when the submitted function carries its source
   references (attribute srcref).
+- curly_bracket_check(): the modified function (returned, or exported
+  with export = TRUE) now keeps the comments and the indentation of the
+  submitted function, instead of the deparsed code (comments removed and
+  code reindented). Comments are only available when the submitted
+  function carries its source references (attribute srcref).
 - all_args_here(): a string ending with an escaped backslash (like “\\”)
   no longer makes the rest of the line considered as inside quotes,
   which caused spurious reports or an INTERNAL ERROR 3 of

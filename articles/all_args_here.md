@@ -84,7 +84,6 @@ all_args_here(mean)
     ## UseMethod("mean")
     ## 
     ## PLEASE, RUN saferDev::colons_check(mean) FIRST,
-    ## ADD THE MISSING <PACKAGE>::<FUNCTION> (OR <PACKAGE>:::<FUNCTION> FOR FUNCTION STARTING BY A DOT)
     ## AND RERUN saferDev::all_args_here(mean).
     ## 
     ## ================
@@ -100,10 +99,15 @@ all_args_here(test2)
     ## 
     ## ================
     ## 
-    ## ERROR IN saferDev:::.all_args_here_fill() INSIDE saferDev::all_args_here().
+    ## ERROR IN saferDev::is_function_here() INSIDE saferDev::all_args_here().
     ## 
-    ## THE TESTED FUNCTION test2 SEEMS TO HAVE A WRITING ERROR IN LINE 13 AND FUNCTION length.
-    ## PLEASE, RUN THE TESTED FUNCTION FIRST.
+    ## REQUIRED FUNCTION IS MISSING IN THE INSTALLED PACKAGE:
+    ## base::ks.test
+    ## 
+    ## IN ONE OF THESE FOLDERS:
+    ## /__w/_temp/Library
+    ## /usr/local/lib/R/site-library
+    ## /usr/local/lib/R/library
     ## 
     ## ================
 
@@ -117,6 +121,26 @@ all_args_here(
 
     ## 
     ## INSIDE FUN2(), ARGUMENTS ARE MISSING.
+
+    ##   LINE_NB     FUN_NAME
+    ## 1       3      do.call
+    ## 2       4 parent.frame
+    ##                                                                                     FUN_ARGS
+    ## 1 do.call(what = base::c, args = code_for_col,  quote = FALSE, envir = base::parent.frame())
+    ## 2                                                                             parent.frame()
+    ##   FUN_POS                                          DEF_ARGS MISSING_ARG_NAMES
+    ## 1      26 what, args, quote = FALSE, envir = parent.frame()                  
+    ## 2      30                                             n = 1                 n
+    ##   MISSING_ARGS              STATUS
+    ## 1                             GOOD
+    ## 2        n = 1 parent.frame(n = 1)
+
+    ## function (x, y) 
+    ## {
+    ##     middle_bracket2 <- base::do.call(what = base::c, args = code_for_col, 
+    ##         quote = FALSE, envir = base::parent.frame(n = 1))
+    ## }
+    ## <environment: 0x55c86683d358>
 
 \
 
@@ -138,7 +162,14 @@ all_args_here(
     ## 
     ## INSIDE FUN2(), ARGUMENTS ARE MISSING.
     ## RESULT EXPORTED IN:
-    ## ./res.tsv
+    ## /__w/saferDev/saferDev/vignettes/articles/res.tsv
+
+    ## function (x, y) 
+    ## {
+    ##     middle_bracket2 <- base::do.call(what = base::c, args = code_for_col, 
+    ##         quote = FALSE, envir = base::parent.frame(n = 1))
+    ## }
+    ## <environment: 0x55c866720fe8>
 
 \
 
@@ -162,6 +193,19 @@ FUN2_safer <- all_args_here(
     ## 
     ## INSIDE FUN2(), ARGUMENTS ARE MISSING.
 
+    ##   LINE_NB     FUN_NAME
+    ## 1       3      do.call
+    ## 2       4 parent.frame
+    ##                                                                                     FUN_ARGS
+    ## 1 do.call(what = base::c, args = code_for_col,  quote = FALSE, envir = base::parent.frame())
+    ## 2                                                                             parent.frame()
+    ##   FUN_POS                                          DEF_ARGS MISSING_ARG_NAMES
+    ## 1      26 what, args, quote = FALSE, envir = parent.frame()                  
+    ## 2      30                                             n = 1                 n
+    ##   MISSING_ARGS              STATUS
+    ## 1                             GOOD
+    ## 2        n = 1 parent.frame(n = 1)
+
 ``` r
 
 FUN2_safer # modified function (or NULL when the code was already clean).
@@ -172,7 +216,7 @@ FUN2_safer # modified function (or NULL when the code was already clean).
     ##     middle_bracket2 <- base::do.call(what = base::c, args = code_for_col, 
     ##         quote = FALSE, envir = base::parent.frame(n = 1))
     ## }
-    ## <environment: 0x55c371fddad8>
+    ## <environment: 0x55c866688a28>
 
 ``` r
 
@@ -187,6 +231,20 @@ all_args_here(
 
     ## 
     ## INSIDE FUN2(), ARGUMENTS ARE MISSING.
+    ## 
+    ## 
+    ##   LINE_NB     FUN_NAME
+    ## 1       3      do.call
+    ## 2       4 parent.frame
+    ##                                                                                     FUN_ARGS
+    ## 1 do.call(what = base::c, args = code_for_col,  quote = FALSE, envir = base::parent.frame())
+    ## 2                                                                             parent.frame()
+    ##   FUN_POS                                          DEF_ARGS MISSING_ARG_NAMES
+    ## 1      26 what, args, quote = FALSE, envir = parent.frame()                  
+    ## 2      30                                             n = 1                 n
+    ##   MISSING_ARGS              STATUS
+    ## 1                             GOOD
+    ## 2        n = 1 parent.frame(n = 1)
 
     ## MODIFIED CODE EXPORTED IN:
     ## /__w/saferDev/saferDev/vignettes/articles/FUN2_safer.R
@@ -208,6 +266,26 @@ all_args_here(
 
     ## 
     ## INSIDE FUN2(), ARGUMENTS ARE MISSING.
+
+    ##   LINE_NB     FUN_NAME
+    ## 1       3      do.call
+    ## 2       4 parent.frame
+    ##                                                                                     FUN_ARGS
+    ## 1 do.call(what = base::c, args = code_for_col,  quote = FALSE, envir = base::parent.frame())
+    ## 2                                                                             parent.frame()
+    ##   FUN_POS                                          DEF_ARGS MISSING_ARG_NAMES
+    ## 1      26 what, args, quote = FALSE, envir = parent.frame()                  
+    ## 2      30                                             n = 1                 n
+    ##   MISSING_ARGS              STATUS
+    ## 1                             GOOD
+    ## 2        n = 1 parent.frame(n = 1)
+
+    ## function (x, y) 
+    ## {
+    ##     middle_bracket2 <- base::do.call(what = base::c, args = code_for_col, 
+    ##         quote = FALSE, envir = base::parent.frame(n = 1))
+    ## }
+    ## <environment: 0x55c8661fed38>
 
 \
 
@@ -282,9 +360,116 @@ all_args_here(
     ## 
     ## INSIDE FUN1(), ARGUMENTS ARE MISSING.
 
+    ##    LINE_NB     FUN_NAME
+    ## 1        3    as.vector
+    ## 2        3       unlist
+    ## 3        3       mapply
+    ## 4        5          rep
+    ## 5        5       length
+    ## 6        8    as.vector
+    ## 7        8       unlist
+    ## 8        8       mapply
+    ## 9       10          rep
+    ## 10      10       length
+    ## 11      12      do.call
+    ## 12      13      do.call
+    ## 13      14 parent.frame
+    ##                                                                                                                                                                                                                               FUN_ARGS
+    ## 1  as.vector(x = base::unlist(x = base::mapply(FUN = function(x,  y) { base::rep(x = y, base::length(x = x)) }, x = x, y = y, MoreArgs = NULL, SIMPLIFY = TRUE, USE.NAMES = TRUE),  recursive = TRUE, use.names = TRUE), mode = "any")
+    ## 2                                     unlist(x = base::mapply(FUN = function(x,  y) { base::rep(x = y, base::length(x = x)) }, x = x, y = y, MoreArgs = NULL, SIMPLIFY = TRUE, USE.NAMES = TRUE),  recursive = TRUE, use.names = TRUE)
+    ## 3                                                                                            mapply(FUN = function(x,  y) { base::rep(x = y, base::length(x = x)) }, x = x, y = y, MoreArgs = NULL, SIMPLIFY = TRUE, USE.NAMES = TRUE)
+    ## 4                                                                                                                                                                                                      rep(x = y, base::length(x = x))
+    ## 5                                                                                                                                                                                                                        length(x = x)
+    ## 6                                                                                                         as.vector(x = base::unlist(x = base::mapply(FUN = function(x,  y) { base::rep(x = y, base::length(x = x)) }, x = x, y = y)))
+    ## 7                                                                                                                              unlist(x = base::mapply(FUN = function(x,  y) { base::rep(x = y, base::length(x = x)) }, x = x, y = y))
+    ## 8                                                                                                                                                mapply(FUN = function(x,  y) { base::rep(x = y, base::length(x = x)) }, x = x, y = y)
+    ## 9                                                                                                                                                                                                      rep(x = y, base::length(x = x))
+    ## 10                                                                                                                                                                                                                       length(x = x)
+    ## 11                                                                                                                                                                                        do.call(what = base::c, args = code_for_col)
+    ## 12                                                                                                                                          do.call(what = base::c, args = code_for_col,  quote = FALSE, envir = base::parent.frame())
+    ## 13                                                                                                                                                                                                                      parent.frame()
+    ##    FUN_POS                                                     DEF_ARGS
+    ## 1       23                                              x, mode = "any"
+    ## 2       43                        x, recursive = TRUE, use.names = TRUE
+    ## 3       60 FUN, ..., MoreArgs = NULL, SIMPLIFY = TRUE, USE.NAMES = TRUE
+    ## 4        7                                                       x, ...
+    ## 5       24                                                            x
+    ## 6       24                                              x, mode = "any"
+    ## 7       44                        x, recursive = TRUE, use.names = TRUE
+    ## 8       61 FUN, ..., MoreArgs = NULL, SIMPLIFY = TRUE, USE.NAMES = TRUE
+    ## 9        7                                                       x, ...
+    ## 10      24                                                            x
+    ## 11      25            what, args, quote = FALSE, envir = parent.frame()
+    ## 12      26            what, args, quote = FALSE, envir = parent.frame()
+    ## 13      30                                                        n = 1
+    ##                MISSING_ARG_NAMES
+    ## 1                               
+    ## 2                               
+    ## 3                               
+    ## 4                               
+    ## 5                               
+    ## 6                           mode
+    ## 7           recursive, use.names
+    ## 8  MoreArgs, SIMPLIFY, USE.NAMES
+    ## 9                               
+    ## 10                              
+    ## 11                  quote, envir
+    ## 12                              
+    ## 13                             n
+    ##                                          MISSING_ARGS
+    ## 1                                                    
+    ## 2                                                    
+    ## 3                                                    
+    ## 4                                                    
+    ## 5                                                    
+    ## 6                                        mode = "any"
+    ## 7                  recursive = TRUE, use.names = TRUE
+    ## 8  MoreArgs = NULL, SIMPLIFY = TRUE, USE.NAMES = TRUE
+    ## 9                                                    
+    ## 10                                                   
+    ## 11                            quote = FALSE, envir = 
+    ## 12                                                   
+    ## 13                                              n = 1
+    ##                                                                                                                                         STATUS
+    ## 1                                                                                                                                         GOOD
+    ## 2                                                                                                                                         GOOD
+    ## 3                                                                                                                                         GOOD
+    ## 4                                                                                                                                         GOOD
+    ## 5                                                                                                                                         GOOD
+    ## 6   as.vector(x = base::unlist(x = base::mapply(FUN = function(x,  y) { base::rep(x = y, base::length(x = x)) }, x = x, y = y)), mode = "any")
+    ## 7  unlist(x = base::mapply(FUN = function(x,  y) { base::rep(x = y, base::length(x = x)) }, x = x, y = y), recursive = TRUE, use.names = TRUE)
+    ## 8     mapply(x = x, y = y,FUN = function(x,  y) { base::rep(x = y, base::length(x = x)) }, MoreArgs = NULL, SIMPLIFY = TRUE, USE.NAMES = TRUE)
+    ## 9                                                                                                                                         GOOD
+    ## 10                                                                                                                                        GOOD
+    ## 11                                                                       do.call(what = base::c, args = code_for_col, quote = FALSE, envir = )
+    ## 12                                                                                                                                        GOOD
+    ## 13                                                                                                                         parent.frame(n = 1)
+
+    ## ARGUMENTS WITH EMPTY VALUE (DEFAULT VALUE USED BUT CANNOT BE FIXED, OR NO DEFAULT VALUE):
+    ## line 12: base::do.call(): envir (DEFAULT: parent.frame())
+    ## USE "= ," OR "= )" TO SEEK EACH CASE IN THE CODE, AND, IF POSSIBLE, TEST THAT THE DEFAULT VALUES ARE UNCHANGED, FOR INSTANCE:
+    ## testthat::expect_identical(object = base::formals(fun = utils::getFromNamespace)$envir, expected = base::quote(expr = as.environment(pos)))
+
     ## CORRECTIONS NOT APPLIED:
     ## line 8: mapply(x = x, y = y,FUN = function(x,  y) { base::rep(x = y, base::length(x = x)) }, MoreArgs = NULL, SIMPLIFY = TRUE, USE.NAMES = TRUE)
     ## line 8: unlist(x = base::mapply(FUN = function(x,  y) { base::rep(x = y, base::length(x = x)) }, x = x, y = y), recursive = TRUE, use.names = TRUE)
     ## line 8: as.vector(x = base::unlist(x = base::mapply(FUN = function(x,  y) { base::rep(x = y, base::length(x = x)) }, x = x, y = y)), mode = "any")
+
+    ## function (x, y) 
+    ## {
+    ##     code_for_col <- base::as.vector(x = base::unlist(x = base::mapply(FUN = function(x, 
+    ##         y) {
+    ##         base::rep(x = y, base::length(x = x))
+    ##     }, x = x, y = y, MoreArgs = NULL, SIMPLIFY = TRUE, USE.NAMES = TRUE), 
+    ##         recursive = TRUE, use.names = TRUE), mode = "any")
+    ##     code_for_col2 <- base::as.vector(x = base::unlist(x = base::mapply(FUN = function(x, 
+    ##         y) {
+    ##         base::rep(x = y, base::length(x = x))
+    ##     }, x = x, y = y)))
+    ##     middle_bracket <- base::do.call(what = base::c, args = code_for_col, quote = FALSE, envir = )
+    ##     middle_bracket2 <- base::do.call(what = base::c, args = code_for_col, 
+    ##         quote = FALSE, envir = base::parent.frame(n = 1))
+    ## }
+    ## <environment: 0x55c867dfaf38>
 
 \

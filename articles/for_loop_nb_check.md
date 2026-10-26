@@ -72,7 +72,7 @@ fun2 <- function(x){
     for(i in base::rev(x = x)){ # non seq_len()/seq_along() call
         base::print(i)
     }
-    for(i in base::seq(x = x)){ # 2 loops when x = 0
+    for(i in base::seq(x)){ # 2 loops when x = 0
         base::print(i)
     }
     for(i in base::names(x = x)){ # non seq_len()/seq_along() call
@@ -155,7 +155,7 @@ fun2 # Function.
     ##     for (i in base::rev(x = x)) {
     ##         base::print(i)
     ##     }
-    ##     for (i in base::seq(x = x)) {
+    ##     for (i in base::seq(x)) {
     ##         base::print(i)
     ##     }
     ##     for (i in base::names(x = x)) {
@@ -205,7 +205,7 @@ for_loop_nb_check(x = fun2)
     ## 30   for     for (i in 1:TRUE) {
     ## 33   for     for (i in x) {
     ## 36   for     for (i in base::rev(x = x)) {
-    ## 39   for     for (i in base::seq(x = x)) {
+    ## 39   for     for (i in base::seq(x)) {
     ## 42   for     for (i in base::names(x = x)) {
 
     ## function (x) 
@@ -618,7 +618,7 @@ for_loop_nb_check(x = fun2)
     ##     for (i in tempo_for_seq12) {
     ##         base::print(i)
     ##     }
-    ##     tempo_for_seq13 <- base::seq(x = x)
+    ##     tempo_for_seq13 <- base::seq(x)
     ##     if (base::length(x = tempo_for_seq13) == 0) {
     ##         base::warning("FOR SEQUENCE EMPTY: 0 ITERATION", call. = FALSE, 
     ##             immediate. = FALSE, noBreaks. = FALSE, domain = NULL)
@@ -687,7 +687,7 @@ for_loop_nb_check(x = fun2)
     ##         base::print(i)
     ##     }
     ## }
-    ## <environment: 0x55bec6f88ac0>
+    ## <environment: 0x5631aaf8b018>
 
 \
 
@@ -845,7 +845,7 @@ fun9_safer # a checking line is added before the loop.
     ##     }
     ##     y
     ## }
-    ## <environment: 0x55bec98e51c8>
+    ## <environment: 0x5631ad8f4828>
 
 ``` r
 
@@ -880,7 +880,7 @@ for_loop_nb_check(
     ## 3    for     for (i in 1:length(x)) {
 
     ## MODIFIED CODE EXPORTED IN:
-    ## /tmp/RtmpH3gmle/dir1ade1e3708bf/fun9_safer.R
+    ## /tmp/RtmpPOzNsp/dir1b583e98cac1/fun9_safer.R
 
 ``` r
 
@@ -969,7 +969,7 @@ for_loop_nb_check(x = fun4)
     ##     }
     ##     y
     ## }
-    ## <environment: 0x55becc60ce60>
+    ## <environment: 0x5631b076a870>
 
 ``` r
 
@@ -1032,7 +1032,7 @@ for_loop_nb_check(x = fun5)
     ##         }
     ##     }
     ## }
-    ## <environment: 0x55beccbf0a00>
+    ## <environment: 0x5631b0d4c5b0>
 
 ``` r
 
@@ -1087,7 +1087,7 @@ for_loop_nb_check(x = fun6)
     ##     }
     ## }) 
     ## f(1)
-    ## <environment: 0x55becd1d6828>
+    ## <environment: 0x5631b13308f0>
 
 ``` r
 
@@ -1143,6 +1143,6 @@ for_loop_nb_check(x = fun7)
     ##     }
     ##     y
     ## }
-    ## <environment: 0x55becd7b2f50>
+    ## <environment: 0x5631b190b270>
 
 \

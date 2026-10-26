@@ -239,7 +239,19 @@ require the previous steps), then <code><a href="../reference/curly_bracket_chec
 <code class="sourceCode R"><span><span class="va">fun3</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/all_args_here.html">all_args_here</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">fun2</span><span class="op">)</span> <span class="co"># missing arguments added</span></span></code></pre></div>
 <pre><code><span><span class="co">## </span></span>
 <span><span class="co">## INSIDE fun2(), ARGUMENTS ARE MISSING.</span></span></code></pre>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<pre><code><span><span class="co">##   LINE_NB FUN_NAME     FUN_ARGS FUN_POS                               DEF_ARGS</span></span>
+<span><span class="co">## 1       4     mean      mean(x)      12                                 x, ...</span></span>
+<span><span class="co">## 2       5   length    length(y)      19                                      x</span></span>
+<span><span class="co">## 3       6   paste0 paste0(z, i)      12 ..., collapse = NULL, recycle0 = FALSE</span></span>
+<span><span class="co">##    MISSING_ARG_NAMES                      MISSING_ARGS</span></span>
+<span><span class="co">## 1                  x                             x = x</span></span>
+<span><span class="co">## 2                  x                             x = y</span></span>
+<span><span class="co">## 3 collapse, recycle0 collapse = NULL, recycle0 = FALSE</span></span>
+<span><span class="co">##                                            STATUS</span></span>
+<span><span class="co">## 1                                     mean(x = x)</span></span>
+<span><span class="co">## 2                                   length(x = y)</span></span>
+<span><span class="co">## 3 paste0(z, i, collapse = NULL, recycle0 = FALSE)</span></span></code></pre>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">fun4</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/curly_bracket_check.html">curly_bracket_check</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">fun3</span><span class="op">)</span> <span class="co"># { } added after if()</span></span></code></pre></div>
 <pre><code><span><span class="co">## </span></span>
 <span><span class="co">## </span></span>
@@ -248,7 +260,7 @@ require the previous steps), then <code><a href="../reference/curly_bracket_chec
 <span><span class="co">## </span></span>
 <span><span class="co">## LINE CONSTRUCT       CODE</span></span>
 <span><span class="co">## 3    if      if (x &gt; 1)</span></span></code></pre>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">fun5</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/true_false_check.html">true_false_check</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">fun4</span><span class="op">)</span> <span class="co"># T replaced by TRUE</span></span></code></pre></div>
 <pre><code><span><span class="co">## </span></span>
 <span><span class="co">## </span></span>
@@ -257,7 +269,7 @@ require the previous steps), then <code><a href="../reference/curly_bracket_chec
 <span><span class="co">## </span></span>
 <span><span class="co">## LINE SYMBOL      CODE</span></span>
 <span><span class="co">## 1    T       function (x, y = T)</span></span></code></pre>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">fun5</span></span></code></pre></div>
 <pre><code><span><span class="co">## function (x, y = TRUE) </span></span>
 <span><span class="co">## {</span></span>
@@ -269,8 +281,8 @@ require the previous steps), then <code><a href="../reference/curly_bracket_chec
 <span><span class="co">##     }</span></span>
 <span><span class="co">##     z</span></span>
 <span><span class="co">## }</span></span>
-<span><span class="co">## &lt;environment: 0x563cda5b3740&gt;</span></span></code></pre>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<span><span class="co">## &lt;environment: 0x5620ca0d44e8&gt;</span></span></code></pre>
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">fun6</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/for_loop_nb_check.html">for_loop_nb_check</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">fun5</span><span class="op">)</span> <span class="co"># checking line added before the for() loop</span></span></code></pre></div>
 <pre><code><span><span class="co">## </span></span>
 <span><span class="co">## </span></span>
@@ -279,7 +291,7 @@ require the previous steps), then <code><a href="../reference/curly_bracket_chec
 <span><span class="co">## </span></span>
 <span><span class="co">## LINE CONSTRUCT       CODE</span></span>
 <span><span class="co">## 6    for     for (i in 1:base::length(x = y)) {</span></span></code></pre>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">fun6</span><span class="op">(</span>x <span class="op">=</span> <span class="fl">2</span>, y <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span> <span class="co"># 1:length(NULL) is c(1, 0): a warning is now returned</span></span></code></pre></div>
 <pre><code><span><span class="co">## Warning: FOR SEQUENCE DECREASING</span></span></code></pre>
 <pre><code><span><span class="co">## [1] "210"</span></span></code></pre>

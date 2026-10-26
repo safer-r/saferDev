@@ -75,6 +75,19 @@ fun3 <- all_args_here(x = fun2) # missing arguments added
     ## 
     ## INSIDE fun2(), ARGUMENTS ARE MISSING.
 
+    ##   LINE_NB FUN_NAME     FUN_ARGS FUN_POS                               DEF_ARGS
+    ## 1       4     mean      mean(x)      12                                 x, ...
+    ## 2       5   length    length(y)      19                                      x
+    ## 3       6   paste0 paste0(z, i)      12 ..., collapse = NULL, recycle0 = FALSE
+    ##    MISSING_ARG_NAMES                      MISSING_ARGS
+    ## 1                  x                             x = x
+    ## 2                  x                             x = y
+    ## 3 collapse, recycle0 collapse = NULL, recycle0 = FALSE
+    ##                                            STATUS
+    ## 1                                     mean(x = x)
+    ## 2                                   length(x = y)
+    ## 3 paste0(z, i, collapse = NULL, recycle0 = FALSE)
+
 ``` r
 
 fun4 <- curly_bracket_check(x = fun3) # { } added after if()
@@ -116,7 +129,7 @@ fun5
     ##     }
     ##     z
     ## }
-    ## <environment: 0x563cda5b3740>
+    ## <environment: 0x5620ca0d44e8>
 
 ``` r
 

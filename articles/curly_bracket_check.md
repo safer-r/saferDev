@@ -133,24 +133,13 @@ curly_bracket_check(x = fun2)
 
     ## function (x) 
     ## {
-    ##     if (x > 1) {
-    ##         base::return(x)
-    ##     }
-    ##     else {
-    ##         base::return(0)
-    ##     }
-    ##     for (i in 1:3) {
-    ##         base::print(i)
-    ##     }
-    ##     while (x > 1) {
-    ##         x <- x - 1
-    ##     }
-    ##     repeat {
-    ##         x <- x + 1
-    ##     }
-    ##     base::sapply(X = 1:3, FUN = function(y) {
-    ##         y * 2
-    ##     })
+    ##     if (x > 1) 
+    ##         { base::return(x) }
+    ##     else { base::return(0) }
+    ##     for (i in 1:3) { base::print(i) }
+    ##     while (x > 1) { x <- x - 1 }
+    ##     repeat { x <- x + 1 }
+    ##     base::sapply(X = 1:3, FUN = function(y) { y * 2 })
     ## }
 
 \
@@ -252,24 +241,13 @@ fun2_safer # { } added around each reported body.
 
     ## function (x) 
     ## {
-    ##     if (x > 1) {
-    ##         base::return(x)
-    ##     }
-    ##     else {
-    ##         base::return(0)
-    ##     }
-    ##     for (i in 1:3) {
-    ##         base::print(i)
-    ##     }
-    ##     while (x > 1) {
-    ##         x <- x - 1
-    ##     }
-    ##     repeat {
-    ##         x <- x + 1
-    ##     }
-    ##     base::sapply(X = 1:3, FUN = function(y) {
-    ##         y * 2
-    ##     })
+    ##     if (x > 1) 
+    ##         { base::return(x) }
+    ##     else { base::return(0) }
+    ##     for (i in 1:3) { base::print(i) }
+    ##     while (x > 1) { x <- x - 1 }
+    ##     repeat { x <- x + 1 }
+    ##     base::sapply(X = 1:3, FUN = function(y) { y * 2 })
     ## }
 
 ``` r
@@ -326,7 +304,7 @@ curly_bracket_check(
     ## 9    function        base::sapply(X = 1:3, FUN = function(y) y * 2)
 
     ## MODIFIED CODE EXPORTED IN:
-    ## /tmp/Rtmpqtgoln/dir1a5a32935622/fun2_safer.R
+    ## /tmp/Rtmp4bWx9X/dir1abc2a9a32a2/fun2_safer.R
 
 ``` r
 
@@ -334,27 +312,16 @@ curly_bracket_check(
 base::readLines(con = base::file.path(tempo_dir, "fun2_safer.R", fsep = "/"))
 ```
 
-    ##  [1] "fun2_safer <- function (x) "                  
-    ##  [2] "{"                                            
-    ##  [3] "    if (x > 1) {"                             
-    ##  [4] "        base::return(x)"                      
-    ##  [5] "    }"                                        
-    ##  [6] "    else {"                                   
-    ##  [7] "        base::return(0)"                      
-    ##  [8] "    }"                                        
-    ##  [9] "    for (i in 1:3) {"                         
-    ## [10] "        base::print(i)"                       
-    ## [11] "    }"                                        
-    ## [12] "    while (x > 1) {"                          
-    ## [13] "        x <- x - 1"                           
-    ## [14] "    }"                                        
-    ## [15] "    repeat {"                                 
-    ## [16] "        x <- x + 1"                           
-    ## [17] "    }"                                        
-    ## [18] "    base::sapply(X = 1:3, FUN = function(y) {"
-    ## [19] "        y * 2"                                
-    ## [20] "    })"                                       
-    ## [21] "}"
+    ##  [1] "fun2_safer <- function (x) "                           
+    ##  [2] "{"                                                     
+    ##  [3] "    if (x > 1) "                                       
+    ##  [4] "        { base::return(x) }"                           
+    ##  [5] "    else { base::return(0) }"                          
+    ##  [6] "    for (i in 1:3) { base::print(i) }"                 
+    ##  [7] "    while (x > 1) { x <- x - 1 }"                      
+    ##  [8] "    repeat { x <- x + 1 }"                             
+    ##  [9] "    base::sapply(X = 1:3, FUN = function(y) { y * 2 })"
+    ## [10] "}"
 
 \
 
@@ -407,9 +374,7 @@ curly_bracket_check(x = base::mean)
     ## 1    function        function (x, ...)
 
     ## function (x, ...) 
-    ## {
-    ##     UseMethod("mean")
-    ## }
+    ## { UseMethod("mean") }
     ## <environment: namespace:base>
 
 \

@@ -107,8 +107,13 @@ The corrected code is checked by parsing it. Lines can become longer
 than 80 characters. The returned function keeps the environment of the
 submitted function.
 
-Warning: the comments of the submitted function are lost, in the
-returned function and in the exported file.
+The comments and the indentation of the submitted function are kept, in
+the returned function and in the exported file. Warning: comments are
+only available when the submitted function carries its source references
+(attribute srcref). Otherwise (e.g., compiled package functions, or
+functions created with `options(keep.source = FALSE)`, default of
+Rscript), the code is the deparsed one: no comments and standard
+indentation.
 
 Constructs written with backquotes, like `` `if`(x > 1, x, 0) ``, may
 not be checked: use the standard writing.
@@ -152,11 +157,10 @@ fun2_safer <- saferDev::curly_bracket_check(fun2) # missing { } reported
 fun2_safer # corrected function
 #> function (x) 
 #> {
-#>     if (x > 1) {
-#>         base::return(x)
-#>     }
+#>     if (x > 1) 
+#>         { base::return(x) }
 #> }
-#> <environment: 0x55e57f7d64e0>
+#> <environment: 0x56555a8e6b38>
 # Write the corrected function in the fun2_safer.R file of a new temporary folder:
 tempo_dir <- base::tempfile(pattern = "dir", tmpdir = base::tempdir(), fileext = "")
 base::dir.create(path = tempo_dir, showWarnings = TRUE, recursive = FALSE, mode = "0777")
@@ -170,6 +174,6 @@ saferDev::curly_bracket_check(x = fun2, export = TRUE, out_path = tempo_dir)
 #> 3    if      if (x > 1) 
 #> 
 #> MODIFIED CODE EXPORTED IN:
-#> /tmp/Rtmp1CKyzG/dir16d0e736884/fun2_safer.R
+#> /tmp/RtmpCGuf8f/dir173226906fa2/fun2_safer.R
 #> 
 ```
