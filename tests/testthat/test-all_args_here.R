@@ -429,14 +429,40 @@ testthat::test_that("all_args_here()", {
     FUN_LIST <- base::list(fun = FUN2)
     testthat::expect_error(all_args_here(x = FUN_LIST$fun, table_export = FALSE, fun_export = TRUE, out_path = tempo_dir, df_name = "res.tsv", overwrite = FALSE, safer_check = FALSE, lib_path = NULL, error_text = ""), regexp = "MUST BE DESIGNATED BY A FUNCTION NAME", fixed = TRUE) # clean function: nothing written anyway
     testthat::expect_error(all_args_here(x = function(y){ base::sum(y) }, table_export = FALSE, fun_export = TRUE, out_path = tempo_dir, df_name = "res.tsv", overwrite = FALSE, safer_check = FALSE, lib_path = NULL, error_text = ""), regexp = "MUST BE DESIGNATED BY A FUNCTION NAME", fixed = TRUE)
-    # nested calls on the same line: the innermost correction is applied, the outer one is reported in the final message (CORRECTIONS NOT APPLIED)
+    # nested calls on the same line: both corrections applied (the missing arguments are inserted, not the STATUS proposals, which embed the original nested calls)
     FUN_NESTED <- function(v){
         res <- base::paste0(base::mean(1:2))
     }
     tempo_msg <- testthat::capture_messages(code = {tempo_fun_nested <- all_args_here(x = FUN_NESTED, table_export = FALSE, fun_export = FALSE, out_path = ".", df_name = "res.tsv", overwrite = FALSE, safer_check = FALSE, lib_path = NULL, error_text = "")})
     testthat::expect_true(object = base::is.function(x = tempo_fun_nested))
-    testthat::expect_true(object = base::any(base::grepl(x = tempo_msg, pattern = "CORRECTIONS NOT APPLIED", fixed = TRUE, ignore.case = FALSE, perl = FALSE), na.rm = TRUE))
-    testthat::expect_true(object = base::any(base::grepl(x = tempo_msg, pattern = "REASON: another call is nested inside this call", fixed = TRUE, ignore.case = FALSE, perl = FALSE), na.rm = TRUE)) # the reason of the correction not applied is written in the final message
+    testthat::expect_false(object = base::any(base::grepl(x = tempo_msg, pattern = "CORRECTIONS NOT APPLIED", fixed = TRUE, ignore.case = FALSE, perl = FALSE), na.rm = TRUE))
+    tempo_txt <- base::paste0(utils::capture.output(tempo_fun_nested, file = NULL, append = FALSE, type = "output", split = FALSE), collapse = "\n", recycle0 = FALSE)
+    testthat::expect_true(object = base::grepl(x = tempo_txt, pattern = "base::paste0(base::mean(x = 1:2), collapse = NULL, recycle0 = FALSE)", fixed = TRUE, ignore.case = FALSE, perl = FALSE, useBytes = FALSE))
+    # call written on several lines, with comments and several statements inside {} (as in stats::p.adjust()): the proposal of STATUS is built from the joined lines and does not parse, but the missing arguments are inserted into the original lines, keeping the line breaks, the indentation, the comments and the strings
+    txt_multi <- base::c(
+        "function(v){",
+        "    # first comment",
+        "    res <- base::switch(v, a = {",
+        "        i <- 1 # comment inside the call",
+        "        base::paste0(\"a  b\", i)",
+        "    }, # comment after a",
+        "    b = 2) # end comment",
+        "}"
+    )
+    FUN_MULTI <- base::eval(expr = base::parse(file = "", n = NULL, text = txt_multi, prompt = "?", keep.source = TRUE, srcfile = base::srcfilecopy(filename = "<text>", lines = txt_multi, timestamp = base::Sys.time(), isFile = FALSE), encoding = "unknown")[[1]], envir = base::environment(fun = NULL))
+    tempo_msg_multi <- testthat::capture_messages(code = {tempo_fun_multi <- all_args_here(x = FUN_MULTI, table_export = FALSE, fun_export = FALSE, out_path = ".", df_name = "res.tsv", overwrite = FALSE, safer_check = FALSE, lib_path = NULL, error_text = "")})
+    testthat::expect_false(object = base::any(base::grepl(x = tempo_msg_multi, pattern = "CORRECTIONS NOT APPLIED", fixed = TRUE, ignore.case = FALSE, perl = FALSE), na.rm = TRUE))
+    tempo_txt <- utils::capture.output(tempo_fun_multi, file = NULL, append = FALSE, type = "output", split = FALSE)
+    testthat::expect_equal(object = tempo_txt[base::seq_along(along.with = txt_multi)], expected = base::c(
+        "function(v){",
+        "    # first comment",
+        "    res <- base::switch(EXPR = v, a = {",
+        "        i <- 1 # comment inside the call",
+        "        base::paste0(\"a  b\", i, collapse = NULL, recycle0 = FALSE)",
+        "    }, # comment after a",
+        "    b = 2) # end comment",
+        "}"
+    ))
     # positional missing argument (bare symbol written positionally and proposed as named): routed to CORRECTIONS NOT APPLIED, the returned function keeps the original call
     FUN_POSARG <- function(v){
         res <- base::sum(v, na.rm)
@@ -497,9 +523,9 @@ testthat::test_that("all_args_here()", {
     a <- file.remove("./res.tsv")
     #### end main code
 
-    # corrections not applied (here, a string with consecutive spaces): both the "ARGUMENTS ARE MISSING" and the "CORRECTIONS NOT APPLIED" messages are printed (formerly, the second message replaced the first one, because both on.exit() used the same tempo_cat object)
+    # corrections not applied (here, a positional bare symbol proposed as named argument): both the "ARGUMENTS ARE MISSING" and the "CORRECTIONS NOT APPLIED" messages are printed (formerly, the second message replaced the first one, because both on.exit() used the same tempo_cat object)
     FUN_STR <- function(x){
-        res <- base::paste0("a  b", "c")
+        res <- base::sum(x, na.rm)
     }
     tempo_msg <- base::character(length = 0L)
     base::withCallingHandlers(

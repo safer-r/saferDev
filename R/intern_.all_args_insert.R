@@ -1,9 +1,9 @@
 #' @title Function for All Arguments Here
 #' @description
-#' Insert the missing arguments detected by \code{all_args_here()} into the code of the submitted function and return the modified function.
+#' Insert the missing arguments detected by \code{all_args_here()} into the printed code of the submitted function, at the positions given by the R parser, so that the line breaks, the indentation and the comments are kept, and return the modified function.
 #' @param x Function to modify. Function object.
 #' @param out List returned by \code{.functions_detect()}: \code{$code}, \code{$fun_names}, \code{$fun_names_pos}, \code{$code_line_nb}, \code{$internal_fun_names} and \code{$arg_user_setting}. The \code{$code} compartment is the normalized code read by \code{all_args_here()} and must have the same line indexing as the \code{$LINE_NB} column of the \code{output} data frame.
-#' @param output Data frame returned by the main code of \code{all_args_here()}: the \code{$LINE_NB}, \code{$FUN_POS}, \code{$FUN_ARGS} and \code{$STATUS} columns are used to apply the corrections.
+#' @param output Data frame returned by the main code of \code{all_args_here()}: the \code{$LINE_NB}, \code{$FUN_NAME}, \code{$FUN_POS}, \code{$DEF_ARGS}, \code{$MISSING_ARGS} and \code{$STATUS} columns are used to apply the corrections (\code{$FUN_ARGS} is not used).
 #' @param lib_path Vector of characters specifying the absolute pathways of the directories containing the required packages for the function, if not in the default directories. Useful when R packages are not installed in the default directories because of lack of admin rights. More precisely, \code{lib_path} is passed through the \code{new} argument of \code{.libPaths()} so that the new library paths are \code{unique(c(new, .Library.site, .Library))}. Warning: \code{.libPaths()} is restored to the initial paths, after function execution. Ignored if \code{NULL} (default) or if the \code{safer_check} argument is \code{FALSE}: only the pathways specified by the current \code{.libPaths()} are used for package calling.
 #' @param error_text Single character string used to add information in error messages returned by the function, notably if the function is inside other functions, which is practical for debugging. Example: \code{error_text = " INSIDE <PACKAGE_1>::<FUNCTION_1> INSIDE <PACKAGE_2>::<FUNCTION_2>."}. If \code{NULL}, converted into \code{""}.
 #' @returns
@@ -350,8 +350,9 @@
 
     #### main code
     # two parallel versions of the code lines are used:
-    # 1) code_lines (out$code): the normalized lines read by all_args_here() (runs of spaces collapsed into a single space, leading spaces removed and comments blanked by .functions_detect()). These are the exact lines that FUN_POS indexes (the FUN_ARGS of the output table is sliced from these very lines in all_args_here()), so all the validations below are performed on them
-    # 2) orig_lines: the same lines as printed by the function object (same utils::capture.output() as in .functions_detect(), hence the same line indexing), with the comments and the indentation of the submitted function. Each correction is also inserted into these lines, and the modified function is rebuilt from them, so that the comments and the indentation are preserved
+    # 1) code_lines (out$code): the normalized lines read by all_args_here() (runs of spaces collapsed into a single space, leading spaces removed and comments blanked by .functions_detect()). FUN_POS indexes these lines, and is used to locate each call in orig_lines
+    # 2) orig_lines: the same lines as printed by the function object (same utils::capture.output() as in .functions_detect(), hence the same line indexing), with the comments, the line breaks and the indentation of the submitted function. The modified function is rebuilt from them
+    # The corrections are not made by replacing the calls by the STATUS proposals (built from the normalized code, where a call written on several lines is joined into a single line), but by inserting the missing arguments into orig_lines, at the positions given by the R parser (utils::getParseData()): a missing argument whose value is written without name gets its name inserted before this value, and the other missing arguments are inserted after the last argument of the call. Thus, the line breaks, the indentation, the comments and the strings of the submitted function are kept, including inside the corrected calls
     # Warning: the comments and the original indentation only exist if the submitted function carries its source references (srcref attribute, i.e., keep.source = TRUE when the function was created). Otherwise, the printed function is the deparsed code (no comments, standard indentation)
     code_lines <- out$code
     orig_lines <- utils::capture.output(x, file = NULL, append = FALSE, type = NULL, split = FALSE)
@@ -369,93 +370,158 @@
         output_list <- base::list(fun = NULL, fun_txt = NULL, inserted = base::character(length = 0L), left = base::character(length = 0L))
         base::return(output_list)
     }
-    # apply back-to-front: highest LINE_NB first, then highest FUN_POS, so that replacing a span never invalidates the position of a not-yet-applied row
-    # on a single line, several proposals can be applied when their spans do not overlap (e.g. sum(1:2) + paste0("a", "b")),
-    # but the proposals of nested calls overlap (e.g. paste0(base::mean(1:2)) with corrections inside mean() and inside paste0()):
-    # only the innermost one (the highest FUN_POS) is applied, because the outer proposal embeds the ORIGINAL inner text and would revert the inner correction if applied after.
-    # The outer proposals of the same line are therefore routed to the left vector, so that the user can apply them manually after checking.
-    ord <- base::order(rows$LINE_NB, rows$FUN_POS, decreasing = TRUE)
+    # reasons written below each correction of the left vector, in the final message of all_args_here(), so that the user knows why the correction has not been applied and what to do. Of note, an empty argument value (like "envir = )") is never a reason
+    left_reason <- base::c(
+        unreadable = "the MISSING_ARGS or DEF_ARGS column of the call cannot be read. Apply the proposal manually.",
+        not_located = "the call cannot be located in the code of the function. Apply the proposal manually.",
+        not_parsable = "the corrected call does not parse as R code. Apply the proposal manually.",
+        pos_and_named = "an argument is written without its name (positionally) and is also proposed with its name, e.g., sum(x, na.rm) proposed as sum(x, na.rm, na.rm = FALSE), which would fail at call time. Check the positional value and write it with its name.",
+        differs = "the corrected call does not match the proposal of the STATUS column. Apply the proposal manually."
+    )
+    # parse data of the printed code of x: the "<bytecode: ...>" and "<environment: ...>" lines (printed after the code, e.g., for a byte-compiled function) are not R code and are blanked, to keep the line indexing
+    orig_attr_log <- base::grepl(x = orig_lines, pattern = "^<(environment|bytecode):", ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE)
+    orig_parse_lines <- orig_lines
+    orig_parse_lines[orig_attr_log] <- ""
+    pd <- base::tryCatch(
+        expr = {
+            utils::getParseData(x = base::parse(file = "", n = NULL, text = orig_parse_lines, prompt = "?", keep.source = TRUE, srcfile = base::srcfilecopy(filename = "<text>", lines = orig_parse_lines, timestamp = base::Sys.time(), isFile = FALSE), encoding = "unknown"), includeText = NA) # keep.source = TRUE and a srcfile object required by utils::getParseData()
+        },
+        error = function(e){NULL} # nocov : defensive net, the printed code of a function always parses
+    )
+    # conversion of a column of the parse data into a character position of the line: the parse data columns are display columns, where a tab moves to the next multiple of 8. end = TRUE for the last column of a token (col2), FALSE for the first one (col1). NA if not found
+    col_to_char <- function(line_txt, col, end){
+        chars <- base::strsplit(x = line_txt, split = "", fixed = TRUE, perl = FALSE, useBytes = FALSE)[[1]]
+        end_col <- base::integer(length = base::length(x = chars))
+        cur <- 0
+        for(k in base::seq_along(along.with = chars)){
+            if(chars[k] == "\t"){
+                cur <- (cur %/% 8 + 1) * 8
+            }else{
+                cur <- cur + 1
+            }
+            end_col[k] <- cur
+        }
+        start_col <- base::c(0, end_col)[base::seq_along(along.with = chars)] + 1
+        if(end == TRUE){
+            tempo_pos <- base::which(x = end_col == col, arr.ind = FALSE, useNames = FALSE)
+        }else{
+            tempo_pos <- base::which(x = start_col == col, arr.ind = FALSE, useNames = FALSE)
+        }
+        if(base::length(x = tempo_pos) != 1){
+            base::return(NA_integer_) # nocov : defensive net, a column of the parse data always matches a character of its line
+        }
+        base::return(tempo_pos)
+    }
+    # arguments of the call whose expression has the id call_id in the parse data pdata: list of arguments, each being a list with named (logical), name, start and end (line1, col1, line2, col2 of the argument in the parse data), and value_col1 (col1 of the value of a named argument, NA if no value written, e.g., "envir = ")
+    # NULL if the call has an empty argument (e.g., "f(a, )"), which is not managed
+    call_args_get <- function(pdata, call_id){
+        child <- pdata[pdata$parent == call_id & pdata$token != "COMMENT", , drop = FALSE]
+        child <- child[base::order(child$line1, child$col1, na.last = TRUE, decreasing = FALSE, method = "radix"), , drop = FALSE]
+        open_pos <- base::which(x = child$token == "'('", arr.ind = FALSE, useNames = FALSE)[1]
+        close_pos <- base::nrow(x = child)
+        args <- base::list()
+        if(close_pos - open_pos <= 1){ # no argument
+            base::return(base::list(args = args, open = child[open_pos, , drop = FALSE], close = child[close_pos, , drop = FALSE]))
+        }
+        inside <- child[(open_pos + 1):(close_pos - 1), , drop = FALSE]
+        seg_nb <- base::cumsum(x = inside$token == "','")
+        for(k in base::seq_len(length.out = base::max(seg_nb, na.rm = FALSE) + 1)){ # k - 1 is the number of commas before the argument
+            seg <- inside[seg_nb == k - 1 & inside$token != "','", , drop = FALSE]
+            if(base::nrow(x = seg) == 0){
+                base::return(NULL)
+            }
+            named <- base::nrow(x = seg) >= 2 & seg$token[1] %in% base::c("SYMBOL_SUB", "STR_CONST", "NULL_CONST") & seg$token[base::min(2, base::nrow(x = seg), na.rm = FALSE)] == "EQ_SUB"
+            args[[base::length(x = args) + 1]] <- base::list(
+                named = named,
+                name = base::ifelse(test = named, yes = seg$text[1], no = ""),
+                line1 = seg$line1[1],
+                col1 = seg$col1[1],
+                line2 = seg$line2[base::nrow(x = seg)],
+                col2 = seg$col2[base::nrow(x = seg)],
+                value_col1 = base::ifelse(test = named & base::nrow(x = seg) >= 3, yes = seg$col1[base::min(3, base::nrow(x = seg), na.rm = FALSE)], no = NA)
+            )
+        }
+        base::return(base::list(args = args, open = child[open_pos, , drop = FALSE], close = child[close_pos, , drop = FALSE]))
+    }
+    # text of the code between the positions (line1, col1) and (line2, col2) of the parse data pdata, without spaces and comments: concatenation of the terminal tokens
+    span_text <- function(pdata, line1, col1, line2, col2){
+        tempo_log <- pdata$terminal == TRUE & pdata$token != "COMMENT" & (pdata$line1 > line1 | (pdata$line1 == line1 & pdata$col1 >= col1)) & (pdata$line2 < line2 | (pdata$line2 == line2 & pdata$col2 <= col2))
+        tempo_pdata <- pdata[tempo_log, , drop = FALSE]
+        tempo_pdata <- tempo_pdata[base::order(tempo_pdata$line1, tempo_pdata$col1, na.last = TRUE, decreasing = FALSE, method = "radix"), , drop = FALSE]
+        base::return(base::paste0(tempo_pdata$text, collapse = "", recycle0 = FALSE))
+    }
+    # insertion of texts into lines, at character positions (each text is inserted before the character of the position). The insertions are made from the end of the code, so that each insertion does not shift the positions of the following ones
+    insert_txt <- function(lines, ins_line, ins_char, ins_text){
+        tempo_ord <- base::order(ins_line, ins_char, na.last = TRUE, decreasing = TRUE, method = "radix")
+        for(k in base::seq_along(along.with = tempo_ord)){
+            k2 <- tempo_ord[k]
+            nch <- base::nchar(x = lines[ins_line[k2]], type = "chars", allowNA = FALSE, keepNA = NA)
+            lines[ins_line[k2]] <- base::paste0(
+                base::substr(x = lines[ins_line[k2]], start = 1, stop = ins_char[k2] - 1),
+                ins_text[k2],
+                base::substr(x = lines[ins_line[k2]], start = ins_char[k2], stop = nch),
+                collapse = NULL,
+                recycle0 = FALSE
+            )
+        }
+        base::return(lines)
+    }
+    # call made of the function name f and of the arguments of a call, with the unnamed arguments first (in their order) and then the named arguments ordered by name, deparsed without spaces: used to compare two calls whatever the order of the named arguments and the writing of the spaces (the proposals of STATUS are built from the normalized code, where the runs of spaces are collapsed, including inside strings)
+    call_canonical <- function(tempo_call){
+        tempo_args <- base::as.list(x = tempo_call)[-1]
+        tempo_names <- base::names(x = tempo_args)
+        if(base::is.null(x = tempo_names)){
+            tempo_names <- base::rep(x = "", times = base::length(x = tempo_args))
+        }
+        tempo_ord <- base::c(base::which(x = tempo_names == "", arr.ind = FALSE, useNames = FALSE), base::which(x = tempo_names != "", arr.ind = FALSE, useNames = FALSE)[base::order(tempo_names[tempo_names != ""], na.last = TRUE, decreasing = FALSE, method = "radix")])
+        tempo_call2 <- base::as.call(x = base::c(base::list(base::as.name(x = "f")), tempo_args[tempo_ord]))
+        tempo_txt <- base::paste0(base::deparse(expr = tempo_call2, width.cutoff = 500L, backtick = FALSE, control = base::c("keepNA", "keepInteger", "niceNames", "showAttributes"), nlines = -1L), collapse = "", recycle0 = FALSE)
+        base::return(base::gsub(pattern = "\\s", replacement = "", x = tempo_txt, ignore.case = FALSE, perl = TRUE, fixed = FALSE, useBytes = FALSE))
+    }
     inserted <- base::character(length = 0L)
     left <- base::character(length = 0L)
-    # reasons written below each correction of the left vector, in the final message of all_args_here(), so that the user knows why the correction has not been applied and what to do. Of note, an empty argument value (like "envir = )") is never a reason (see validation 1)
-    left_reason <- base::c(
-        not_parsable = "the proposed call does not parse as R code. Correct it manually.",
-        multi_line = "the call is written on several lines (all_args_here() only modifies calls written on a single line). Apply the proposal manually.",
-        nested = "another call is nested inside this call on the same line and has been corrected first. This proposal still contains the original nested call, so applying it would undo that correction. Apply manually only the missing arguments of this call (MISSING_ARGS column).",
-        pos_and_named = "an argument is written without its name (positionally) and is also proposed with its name, e.g., sum(x, na.rm) proposed as sum(x, na.rm, na.rm = FALSE), which would fail at call time. Check the positional value and write it with its name.",
-        not_located = "the call cannot be located in the printed code of the function. Apply the proposal manually.",
-        spaces = "a string of the call contains consecutive spaces (e.g., \"a  b\"), which are collapsed in the proposal (\"a b\"): applying it would modify the string. Apply manually only the missing arguments (MISSING_ARGS column)."
-    )
-    applied_starts <- base::list() # FUN_POS of the already applied corrections, by line number (as character key), to detect overlapping spans on the same line
-    for(i2 in ord){
+    all_ins_line <- base::integer(length = 0L) # insertions of all the applied corrections
+    all_ins_char <- base::integer(length = 0L)
+    all_ins_text <- base::character(length = 0L)
+    for(i2 in base::seq_len(length.out = base::nrow(x = rows))){
         status_i2 <- rows$STATUS[i2]
         pos_i2 <- rows$FUN_POS[i2]
         line_i2 <- rows$LINE_NB[i2]
-        # validation 1: the STATUS must parse as R code. Of note, an empty argument value (like "envir = )" or "new = ,") is accepted: R parses it as a "missing" argument, meaning that the default value is used (safer-r rule for args with no default value, or with a default value that cannot be copied)
-        status_parsed <- base::tryCatch(
+        left_i2 <- base::paste0("line ", line_i2, ": ", status_i2, "\n    REASON: ", collapse = NULL, recycle0 = FALSE)
+        # reading of the missing arguments (MISSING_ARGS, e.g., "x = , na.rm = FALSE") and of the arguments of the called function (DEF_ARGS, e.g., "x, ..., na.rm = FALSE"), using the parser
+        miss_txt <- base::paste0("f(", rows$MISSING_ARGS[i2], ")", collapse = NULL, recycle0 = FALSE)
+        miss_pd <- base::tryCatch(
             expr = {
-                base::parse(file = "", n = NULL, text = status_i2, prompt = "?", keep.source = base::getOption(x = "keep.source", default = NULL), srcfile = NULL, encoding = "unknown")
+                utils::getParseData(x = base::parse(file = "", n = NULL, text = miss_txt, prompt = "?", keep.source = TRUE, srcfile = base::srcfilecopy(filename = "<text>", lines = miss_txt, timestamp = base::Sys.time(), isFile = FALSE), encoding = "unknown"), includeText = NA)
             },
             error = function(e){NULL}
         )
-        ok_parse <- ( ! base::is.null(x = status_parsed))
-        if( ! ok_parse){
-            left <- base::c(left, base::paste0("line ", line_i2, ": ", status_i2, "\n    REASON: ", left_reason[["not_parsable"]], collapse = NULL, recycle0 = FALSE))
-            next
-        }
-        # validation 2: FUN_ARGS must be a complete one-line call: parse it (a multi-line call is truncated at the line end and does not parse, and a call containing a "(" string still parses)
-        fun_args_i2 <- rows$FUN_ARGS[i2]
-        fun_args_len <- base::nchar(x = fun_args_i2, type = "chars", allowNA = FALSE, keepNA = NA)
-        if(fun_args_len == 0 | ! base::tryCatch(
+        def_names <- base::tryCatch(
             expr = {
-                base::parse(file = "", n = NULL, text = fun_args_i2, prompt = "?", keep.source = base::getOption(x = "keep.source", default = NULL), srcfile = NULL, encoding = "unknown")
-                TRUE
+                base::names(x = base::str2lang(s = base::paste0("function(", rows$DEF_ARGS[i2], ") NULL", collapse = NULL, recycle0 = FALSE))[[2]])
             },
-            error = function(e){FALSE}
-        )){
-            left <- base::c(left, base::paste0("line ", line_i2, ": ", status_i2, "\n    REASON: ", left_reason[["multi_line"]], collapse = NULL, recycle0 = FALSE))
+            error = function(e){NULL}
+        )
+        miss <- NULL
+        if( ! base::is.null(x = miss_pd)){
+            miss_fun_expr_id <- miss_pd$parent[miss_pd$token == "SYMBOL_FUNCTION_CALL" & miss_pd$line1 == 1 & miss_pd$col1 == 1][1] # expression of the function name f
+            miss_call_id <- miss_pd$parent[miss_pd$id == miss_fun_expr_id] # expression of the call
+            miss <- call_args_get(pdata = miss_pd, call_id = miss_call_id)$args
+        }
+        if(base::is.null(x = miss) | base::is.null(x = def_names) | base::length(x = miss) == 0){
+            left <- base::c(left, base::paste0(left_i2, left_reason[["unreadable"]], collapse = NULL, recycle0 = FALSE))
             next
         }
-        # validation 3: the span must not overlap an already applied correction on the same line (the rows are processed in decreasing FUN_POS, so an already applied span starts at or after pos_i2):
-        # this can only happen for nested or overlapping calls, and only the innermost correction is applied (the outer proposal embeds the ORIGINAL inner text and would revert the inner correction if applied after)
-        # this check is run before the FUN_ARGS position check below, because once the innermost correction is applied on the line, the outer FUN_ARGS text no longer matches the line, which would report a misleading position error
-        key_i2 <- base::as.character(x = line_i2)
-        if( ! base::is.null(x = applied_starts[[key_i2]])){
-            if(base::any(applied_starts[[key_i2]] <= pos_i2 + fun_args_len - 1, na.rm = TRUE)){
-                left <- base::c(left, base::paste0("line ", line_i2, ": ", status_i2, "\n    REASON: ", left_reason[["nested"]], collapse = NULL, recycle0 = FALSE))
-                next
-            }
-        }
-        # validation 4: FUN_ARGS must sit exactly at FUN_POS in the out$code line (substr() returns "" when the span goes beyond the end of the line, which fails the comparison)
-        at <- base::substr(x = code_lines[line_i2], start = pos_i2, stop = pos_i2 + fun_args_len - 1)
-        if(base::is.na(x = at) | at != fun_args_i2){
-            left <- base::c(left, base::paste0("line ", line_i2, ": ", status_i2, "\n    REASON: ", left_reason[["not_located"]], collapse = NULL, recycle0 = FALSE))
+        if( ! base::all(base::vapply(X = miss, FUN = function(y){y$named}, FUN.VALUE = base::logical(length = 1L), USE.NAMES = FALSE), na.rm = FALSE)){
+            left <- base::c(left, base::paste0(left_i2, left_reason[["unreadable"]], collapse = NULL, recycle0 = FALSE))
             next
         }
-        # validation 5: the STATUS must not contain an argument name written both positionally (bare symbol without written name) and as a named argument (e.g. "sum(1:2, na.rm, na.rm = FALSE)"):
-        # such a proposal, although parsable, produces a function that fails at call time (the positional bare symbol is evaluated as a value in the caller environment), so it is routed to the left vector for manual correction
-        # status_parsed is already available from validation 1 (the STATUS is guaranteed to be parsable here)
-        if(base::length(x = status_parsed) == 1 & base::is.call(x = status_parsed[[1]]) & base::length(x = status_parsed[[1]]) > 1){
-            status_args <- status_parsed[[1]][-1]
-            status_arg_names <- base::names(x = status_args)
-            if(base::is.null(x = status_arg_names)){
-                status_arg_names <- base::rep(x = "", times = base::length(x = status_args))
-            }
-            pos_sym_names <- base::character(length = 0L)
-            for(k in base::seq_along(along.with = status_args)){
-                if(status_arg_names[k] == "" & base::is.symbol(x = status_args[[k]])){
-                    pos_sym_names <- base::c(pos_sym_names, base::as.character(x = status_args[[k]]))
-                }
-            }
-            named_names <- status_arg_names[status_arg_names != ""]
-            if(base::length(x = pos_sym_names) > 0 & base::length(x = named_names) > 0){
-                if(base::any(pos_sym_names %in% named_names, na.rm = TRUE)){
-                    left <- base::c(left, base::paste0("line ", line_i2, ": ", status_i2, "\n    REASON: ", left_reason[["pos_and_named"]], collapse = NULL, recycle0 = FALSE))
-                    next
-                }
-            }
+        # arguments that can take a value written without name (positional matching): those before ... in the called function
+        before_dots <- def_names
+        if("..." %in% def_names){
+            before_dots <- def_names[base::seq_len(length.out = base::match(x = "...", table = def_names, nomatch = 0L, incomparables = NULL) - 1)]
         }
-        # validation 6: position of the FUN_ARGS span in the original line (orig_lines), where the correction is also inserted to preserve the comments and the indentation
+        # location of the call in the parse data of orig_lines: the function name token at the position FUN_POS of the normalized line, i.e., at the FUN_POS-th kept character of the original line
         # .functions_detect() collapses the runs of spaces into a single space (gsub(" +", " ")), then removes the remaining leading space (sub("^ +", "")), and the comment blanking only truncates the end of the line
         # thus, the k-th character of the normalized line is the k-th kept character of the original line, a kept character being any character except a space preceded by a space, and except a leading space
         orig_chars <- base::strsplit(x = orig_lines[line_i2], split = "", fixed = TRUE, perl = FALSE, useBytes = FALSE)[[1]]
@@ -466,63 +532,137 @@
                 orig_kept_log[1] <- FALSE
             }
         }
-        orig_kept_pos <- base::which(x = orig_kept_log, arr.ind = FALSE, useNames = TRUE)
-        orig_start <- orig_kept_pos[pos_i2] # NA if beyond the kept characters
-        orig_stop <- orig_kept_pos[pos_i2 + fun_args_len - 1] # NA if beyond the kept characters
-        orig_span <- NA
-        if( ! (base::is.na(x = orig_start) | base::is.na(x = orig_stop))){
-            orig_span <- base::substr(x = orig_lines[line_i2], start = orig_start, stop = orig_stop)
-        }
-        if(base::is.na(x = orig_span)){ # the span cannot be located in the original line (out$code not built from x)
-            left <- base::c(left, base::paste0("line ", line_i2, ": ", status_i2, "\n    REASON: ", left_reason[["not_located"]], collapse = NULL, recycle0 = FALSE))
-            next
-        }
-        if(base::gsub(pattern = " +", replacement = " ", x = orig_span, ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE) != fun_args_i2){ # the original span, once normalized, must be FUN_ARGS
-            left <- base::c(left, base::paste0("line ", line_i2, ": ", status_i2, "\n    REASON: ", left_reason[["not_located"]], collapse = NULL, recycle0 = FALSE))
-            next
-        }
-        # validation 7: the STATUS is built from the normalized FUN_ARGS: if the original span contains runs of spaces inside string literals (e.g., "a  b"), these strings are collapsed in the STATUS (e.g., "a b"), which would silently modify the values of the code
-        # in that case, the correction is routed to the left vector for manual correction
-        if(orig_span != fun_args_i2){
-            str_orig <- base::tryCatch(
-                expr = {
-                    tempo_parse_data <- utils::getParseData(x = base::parse(file = "", n = NULL, text = orig_span, prompt = "?", keep.source = TRUE, srcfile = base::srcfilecopy(filename = "<text>", lines = orig_span, timestamp = base::Sys.time(), isFile = FALSE), encoding = "unknown"), includeText = NA) # keep.source = TRUE and a srcfile object required by utils::getParseData(). Warning: srcfile = NULL (instead of a missing srcfile) prevents the creation of the source references by base::parse()
-                    tempo_parse_data$text[tempo_parse_data$token == "STR_CONST"]
-                },
-                error = function(e){NA} # nocov : defensive net, orig_span only differs from the parsable FUN_ARGS by runs of spaces
-            )
-            str_status <- utils::getParseData(x = base::parse(file = "", n = NULL, text = status_i2, prompt = "?", keep.source = TRUE, srcfile = base::srcfilecopy(filename = "<text>", lines = status_i2, timestamp = base::Sys.time(), isFile = FALSE), encoding = "unknown"), includeText = NA) # the STATUS is guaranteed to be parsable here (validation 1)
-            str_status <- str_status$text[str_status$token == "STR_CONST"]
-            if(base::any(base::is.na(x = str_orig), na.rm = FALSE) | base::any( ! str_orig %in% str_status, na.rm = FALSE)){
-                left <- base::c(left, base::paste0("line ", line_i2, ": ", status_i2, "\n    REASON: ", left_reason[["spaces"]], collapse = NULL, recycle0 = FALSE))
-                next
+        orig_start <- base::which(x = orig_kept_log, arr.ind = FALSE, useNames = TRUE)[pos_i2] # NA if beyond the kept characters
+        fun_tok <- NULL
+        if(( ! base::is.null(x = pd)) & ! base::is.na(x = orig_start)){
+            fun_tok <- pd[pd$token == "SYMBOL_FUNCTION_CALL" & pd$line1 == line_i2 & pd$text == rows$FUN_NAME[i2], , drop = FALSE]
+            if(base::nrow(x = fun_tok) > 0){
+                tempo_char <- base::vapply(X = fun_tok$col1, FUN = function(y){col_to_char(line_txt = orig_lines[line_i2], col = y, end = FALSE)}, FUN.VALUE = base::integer(length = 1L), USE.NAMES = FALSE)
+                fun_tok <- fun_tok[ ! base::is.na(x = tempo_char) & tempo_char == orig_start, , drop = FALSE]
             }
         }
-        # apply on the original line (orig_lines): the prefix of the line before the corrected span is untouched
-        nch_orig_line <- base::nchar(x = orig_lines[line_i2], type = "chars", allowNA = FALSE, keepNA = NA)
-        orig_lines[line_i2] <- base::paste0(
-            base::substr(x = orig_lines[line_i2], start = 1, stop = orig_start - 1),
-            status_i2,
-            base::substr(x = orig_lines[line_i2], start = orig_stop + 1, stop = nch_orig_line),
-            collapse = NULL,
-            recycle0 = FALSE
-        )
-        # apply on the out$code line: the prefix of the line before the corrected span is untouched, so the positions of the remaining rows on this same line (all with smaller FUN_POS, since rows are applied in decreasing order) stay valid, in code_lines and in orig_lines
-        nch_line <- base::nchar(x = code_lines[line_i2], type = "chars", allowNA = FALSE, keepNA = NA)
-        code_lines[line_i2] <- base::paste0(
-            base::substr(x = code_lines[line_i2], start = 1, stop = pos_i2 - 1),
-            status_i2,
-            base::substr(x = code_lines[line_i2], start = pos_i2 + fun_args_len, stop = nch_line),
-            collapse = NULL,
-            recycle0 = FALSE
-        )
-        if(base::is.null(x = applied_starts[[key_i2]])){
-            applied_starts[[key_i2]] <- pos_i2
-        }else{
-            applied_starts[[key_i2]] <- base::c(applied_starts[[key_i2]], pos_i2)
+        if(base::is.null(x = fun_tok)){
+            left <- base::c(left, base::paste0(left_i2, left_reason[["not_located"]], collapse = NULL, recycle0 = FALSE))
+            next
         }
+        if(base::nrow(x = fun_tok) != 1){
+            left <- base::c(left, base::paste0(left_i2, left_reason[["not_located"]], collapse = NULL, recycle0 = FALSE))
+            next
+        }
+        fun_expr_id <- fun_tok$parent[1] # expression of the function name (e.g., base::sum)
+        call_id <- pd$parent[pd$id == fun_expr_id] # expression of the call
+        call_args <- call_args_get(pdata = pd, call_id = call_id)
+        if(base::is.null(x = call_args)){
+            left <- base::c(left, base::paste0(left_i2, left_reason[["not_located"]], collapse = NULL, recycle0 = FALSE))
+            next
+        }
+        unnamed <- call_args$args[ ! base::vapply(X = call_args$args, FUN = function(y){y$named}, FUN.VALUE = base::logical(length = 1L), USE.NAMES = FALSE)]
+        # insertions: a missing argument whose value is the next value written without name (positional matching, as in all_args_here()) gets its name inserted before this value. The other missing arguments are inserted after the last argument of the call (before the closing bracket if the call has no argument), so that a comment following the last argument stays after the insertion
+        ins_line <- base::integer(length = 0L)
+        ins_char <- base::integer(length = 0L)
+        ins_text <- base::character(length = 0L)
+        added <- base::character(length = 0L)
+        unnamed_pos <- 1
+        for(i3 in base::seq_along(along.with = miss)){
+            miss_value <- ""
+            if( ! base::is.na(x = miss[[i3]]$value_col1)){
+                miss_value <- base::substr(x = miss_txt, start = col_to_char(line_txt = miss_txt, col = miss[[i3]]$value_col1, end = FALSE), stop = col_to_char(line_txt = miss_txt, col = miss[[i3]]$col2, end = TRUE))
+            }
+            positional <- FALSE
+            if(miss[[i3]]$name %in% before_dots & unnamed_pos <= base::length(x = unnamed)){
+                tempo_unnamed <- unnamed[[unnamed_pos]]
+                positional <- base::gsub(pattern = "\\s", replacement = "", x = miss_value, ignore.case = FALSE, perl = TRUE, fixed = FALSE, useBytes = FALSE) == span_text(pdata = pd, line1 = tempo_unnamed$line1, col1 = tempo_unnamed$col1, line2 = tempo_unnamed$line2, col2 = tempo_unnamed$col2)
+            }
+            if(positional == TRUE){
+                ins_line <- base::c(ins_line, tempo_unnamed$line1)
+                ins_char <- base::c(ins_char, col_to_char(line_txt = orig_lines[tempo_unnamed$line1], col = tempo_unnamed$col1, end = FALSE))
+                ins_text <- base::c(ins_text, base::paste0(miss[[i3]]$name, " = ", collapse = NULL, recycle0 = FALSE))
+                unnamed_pos <- unnamed_pos + 1
+            }else{
+                added <- base::c(added, base::paste0(miss[[i3]]$name, " = ", miss_value, collapse = NULL, recycle0 = FALSE))
+            }
+        }
+        if(base::length(x = added) > 0){
+            if(base::length(x = call_args$args) == 0){
+                ins_line <- base::c(ins_line, call_args$close$line1)
+                ins_char <- base::c(ins_char, col_to_char(line_txt = orig_lines[call_args$close$line1], col = call_args$close$col1, end = FALSE))
+                ins_text <- base::c(ins_text, base::paste0(added, collapse = ", ", recycle0 = FALSE))
+            }else{
+                tempo_last <- call_args$args[[base::length(x = call_args$args)]]
+                ins_line <- base::c(ins_line, tempo_last$line2)
+                ins_char <- base::c(ins_char, col_to_char(line_txt = orig_lines[tempo_last$line2], col = tempo_last$col2, end = TRUE) + 1)
+                ins_text <- base::c(ins_text, base::paste0(", ", base::paste0(added, collapse = ", ", recycle0 = FALSE), collapse = NULL, recycle0 = FALSE))
+            }
+        }
+        if(base::any(base::is.na(x = ins_char), na.rm = FALSE)){
+            # nocov start
+            # codecov inactivated because it is a defensive net: a column of the parse data always matches a character of its line
+            left <- base::c(left, base::paste0(left_i2, left_reason[["not_located"]], collapse = NULL, recycle0 = FALSE))
+            next
+            # nocov end
+        }
+        # validation 1: the corrected call (this correction only, the nested calls being kept as written) must parse
+        call_line1 <- pd$line1[pd$id == call_id]
+        call_line2 <- pd$line2[pd$id == call_id]
+        call_char1 <- col_to_char(line_txt = orig_lines[call_line1], col = pd$col1[pd$id == call_id], end = FALSE)
+        call_char2 <- col_to_char(line_txt = orig_lines[call_line2], col = pd$col2[pd$id == call_id], end = TRUE)
+        tempo_lines <- insert_txt(lines = orig_lines, ins_line = ins_line, ins_char = ins_char, ins_text = ins_text)
+        call_char2 <- call_char2 + base::sum(base::nchar(x = ins_text[ins_line == call_line2], type = "chars", allowNA = FALSE, keepNA = NA), na.rm = FALSE) # all the insertions are inside the call, thus before its last character
+        tempo_lines <- tempo_lines[call_line1:call_line2]
+        tempo_lines[base::length(x = tempo_lines)] <- base::substr(x = tempo_lines[base::length(x = tempo_lines)], start = 1, stop = call_char2)
+        tempo_lines[1] <- base::substr(x = tempo_lines[1], start = call_char1, stop = base::nchar(x = tempo_lines[1], type = "chars", allowNA = FALSE, keepNA = NA))
+        new_call <- base::tryCatch(
+            expr = {
+                base::str2lang(s = base::paste0(tempo_lines, collapse = "\n", recycle0 = FALSE))
+            },
+            error = function(e){NULL} # nocov : defensive net, the insertions of "name = " before a value and of ", name = value" after the last argument cannot break a parsable call
+        )
+        if(base::is.null(x = new_call)){
+            # nocov start
+            left <- base::c(left, base::paste0(left_i2, left_reason[["not_parsable"]], collapse = NULL, recycle0 = FALSE))
+            next
+            # nocov end
+        }
+        # validation 2: the corrected call must not contain an argument name written both positionally (bare symbol without written name) and as a named argument (e.g. "sum(1:2, na.rm, na.rm = FALSE)"):
+        # such a correction, although parsable, produces a function that fails at call time (the positional bare symbol is evaluated as a value in the caller environment), so it is routed to the left vector for manual correction
+        new_args <- base::as.list(x = new_call)[-1]
+        new_arg_names <- base::names(x = new_args)
+        if(base::is.null(x = new_arg_names)){
+            new_arg_names <- base::rep(x = "", times = base::length(x = new_args))
+        }
+        pos_sym_names <- base::character(length = 0L)
+        for(k in base::seq_along(along.with = new_args)){
+            if(new_arg_names[k] == "" & base::is.symbol(x = new_args[[k]])){
+                pos_sym_names <- base::c(pos_sym_names, base::as.character(x = new_args[[k]]))
+            }
+        }
+        if(base::any(pos_sym_names %in% new_arg_names[new_arg_names != ""], na.rm = FALSE)){
+            left <- base::c(left, base::paste0(left_i2, left_reason[["pos_and_named"]], collapse = NULL, recycle0 = FALSE))
+            next
+        }
+        # validation 3: the corrected call must be the STATUS proposal, whatever the order of the named arguments, the spaces, the line breaks and the comments. If the STATUS does not parse (e.g., call written on several lines with several statements inside {}, joined into a single line in the STATUS), the corrected call must at least contain all the missing argument names
+        status_call <- base::tryCatch(
+            expr = {
+                base::str2lang(s = status_i2)
+            },
+            error = function(e){NULL}
+        )
+        if(base::is.call(x = status_call)){
+            same_log <- call_canonical(tempo_call = new_call) == call_canonical(tempo_call = status_call)
+        }else{
+            same_log <- base::all(base::vapply(X = miss, FUN = function(y){y$name}, FUN.VALUE = base::character(length = 1L), USE.NAMES = FALSE) %in% new_arg_names, na.rm = FALSE)
+        }
+        if( ! same_log){
+            left <- base::c(left, base::paste0(left_i2, left_reason[["differs"]], collapse = NULL, recycle0 = FALSE))
+            next
+        }
+        all_ins_line <- base::c(all_ins_line, ins_line)
+        all_ins_char <- base::c(all_ins_char, ins_char)
+        all_ins_text <- base::c(all_ins_text, ins_text)
         inserted <- base::c(inserted, base::paste0("line ", line_i2, ": ", status_i2, collapse = NULL, recycle0 = FALSE))
     }
+    # application of all the insertions into orig_lines: the insertions of the different calls (e.g., nested calls) never overlap, since they are insertions of text without removal
+    orig_lines <- insert_txt(lines = orig_lines, ins_line = all_ins_line, ins_char = all_ins_char, ins_text = all_ins_text)
     if(base::length(x = inserted) > 0){
         # rebuild the corrected function from orig_lines (comments and indentation preserved): orig_lines comes from capture.output of the function object, so the lines reassemble into a parsable function (the 1st line is the "function(...)" header, whatever the print style: "function (x) " or "function(a, b){" for srcref functions)
         # the "<bytecode: ...>" and "<environment: ...>" lines can be printed by capture.output() when the submitted function is byte-compiled (e.g., a package function) or when its closure environment is not the global environment (e.g., inside testthat::test_that()): they are not R code and are removed, otherwise the final parse guard fails. They are always the last lines of the printed function, so the code lines before them are untouched
@@ -538,7 +678,7 @@
         )
         if( ! ok_full){
             # nocov start
-            # codecov inactivated because it is a defensive net: each applied STATUS and FUN_ARGS is individually validated as parsable, and a parsable span is replaced by another parsable span at the same position, so the reassembled code cannot fail to parse without a bug in the validations above.
+            # codecov inactivated because it is a defensive net: each corrected call is individually validated as parsable, and the insertions of the different calls never overlap, so the reassembled code cannot fail to parse without a bug in the validations above.
             left <- base::c(left, inserted, "corrected code does not parse: all corrections discarded")
             inserted <- base::character(length = 0L)
             output_list <- base::list(fun = NULL, fun_txt = NULL, inserted = inserted, left = left)

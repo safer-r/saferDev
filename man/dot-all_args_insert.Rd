@@ -11,7 +11,7 @@
 
 \item{out}{List returned by \code{.functions_detect()}: \code{$code}, \code{$fun_names}, \code{$fun_names_pos}, \code{$code_line_nb}, \code{$internal_fun_names} and \code{$arg_user_setting}. The \code{$code} compartment is the normalized code read by \code{all_args_here()} and must have the same line indexing as the \code{$LINE_NB} column of the \code{output} data frame.}
 
-\item{output}{Data frame returned by the main code of \code{all_args_here()}: the \code{$LINE_NB}, \code{$FUN_POS}, \code{$FUN_ARGS} and \code{$STATUS} columns are used to apply the corrections.}
+\item{output}{Data frame returned by the main code of \code{all_args_here()}: the \code{$LINE_NB}, \code{$FUN_NAME}, \code{$FUN_POS}, \code{$DEF_ARGS}, \code{$MISSING_ARGS} and \code{$STATUS} columns are used to apply the corrections (\code{$FUN_ARGS} is not used).}
 
 \item{lib_path}{Vector of characters specifying the absolute pathways of the directories containing the required packages for the function, if not in the default directories. Useful when R packages are not installed in the default directories because of lack of admin rights. More precisely, \code{lib_path} is passed through the \code{new} argument of \code{.libPaths()} so that the new library paths are \code{unique(c(new, .Library.site, .Library))}. Warning: \code{.libPaths()} is restored to the initial paths, after function execution. Ignored if \code{NULL} (default) or if the \code{safer_check} argument is \code{FALSE}: only the pathways specified by the current \code{.libPaths()} are used for package calling.}
 
@@ -27,7 +27,7 @@ A list:
 }
 }
 \description{
-Insert the missing arguments detected by \code{all_args_here()} into the code of the submitted function and return the modified function.
+Insert the missing arguments detected by \code{all_args_here()} into the printed code of the submitted function, at the positions given by the R parser, so that the line breaks, the indentation and the comments are kept, and return the modified function.
 }
 \details{
 Warnings:
