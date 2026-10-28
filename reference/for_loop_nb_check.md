@@ -188,7 +188,7 @@ fun2_safer # corrected function
 #>         base::print(x = i)
 #>     }
 #> }
-#> <environment: 0x561a7252ab88>
+#> <environment: 0x5604068c51a8>
 fun2_safer(x = base::character()) # warning: 1:length(x) is c(1, 0), a decreasing sequence
 #> Warning: FOR SEQUENCE DECREASING
 #> [1] 1
@@ -206,6 +206,6 @@ saferDev::for_loop_nb_check(x = fun2, export = TRUE, out_path = tempo_dir)
 #> 3    for     for (i in 1:length(x)) {
 #> 
 #> MODIFIED CODE EXPORTED IN:
-#> /tmp/RtmpgFv7ID/dir17925cb7a8ac/fun2_safer.R
+#> /tmp/RtmpSPiQGU/dir12b07e16c687/fun2_safer.R
 #> 
 ```

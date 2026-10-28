@@ -304,7 +304,7 @@ curly_bracket_check(
     ## 9    function        base::sapply(X = 1:3, FUN = function(y) y * 2)
 
     ## MODIFIED CODE EXPORTED IN:
-    ## /tmp/RtmpuVxBFY/dir1b3439e26f07/fun2_safer.R
+    ## /tmp/RtmpA4EGN3/dir16223fd7048a/fun2_safer.R
 
 ``` r
 
