@@ -969,7 +969,8 @@ all_args_here <- function(
                         col8 <- base::c(col8, "")
                     }else{
                         # all arguments of the function with default value in col5
-                        tempo <- base::sapply(X = arg_full, FUN = function(x){base::paste0(base::ifelse(test = base::all(base::typeof(x = x) == "symbol", na.rm =TRUE), yes = "", no = " = "), base::deparse(expr = x, width.cutoff = 60L, backtick = FALSE, control = base::c("keepNA", "keepInteger", "niceNames", "showAttributes"), nlines = -1L), collapse = NULL, recycle0 = FALSE)}, simplify = TRUE, USE.NAMES = TRUE)
+                        # an argument without default value is the empty symbol (not any symbol: a default value can be a symbol, e.g., object = nm in stats::setNames())
+                        tempo <- base::sapply(X = arg_full, FUN = function(x){base::paste0(base::ifelse(test = base::identical(x = x, y = base::quote(expr = ), num.eq = TRUE, single.NA = TRUE, attrib.as.set = TRUE, ignore.bytecode = TRUE, ignore.environment = FALSE, ignore.srcref = TRUE, extptr.as.ref = FALSE), yes = "", no = " = "), base::deparse(expr = x, width.cutoff = 60L, backtick = FALSE, control = base::c("keepNA", "keepInteger", "niceNames", "showAttributes"), nlines = -1L), collapse = NULL, recycle0 = FALSE)}, simplify = TRUE, USE.NAMES = TRUE)
                         tempo <- base::paste(base::paste0(base::names(x = tempo), tempo, collapse = NULL, recycle0 = FALSE), collapse = ", ", recycle0 = FALSE, sep = " ")
                         col5 <- base::c(col5, tempo)
                         # end all arguments of the function with default value in col5

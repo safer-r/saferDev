@@ -518,6 +518,16 @@ testthat::test_that("all_args_here()", {
     tempo_body <- base::deparse(expr = base::body(fun = tempo_fun_same_line), width.cutoff = 500L, backtick = FALSE, control = base::c("keepNA", "keepInteger", "niceNames", "showAttributes"), nlines = -1L)
     testthat::expect_true(object = base::any(base::grepl(x = tempo_body, pattern = "base::mean\\(x = 1:2\\)", ignore.case = FALSE, perl = TRUE, fixed = FALSE), na.rm = TRUE))
     testthat::expect_true(object = base::any(base::grepl(x = tempo_body, pattern = "base::mean\\(x = 3:4\\)", ignore.case = FALSE, perl = TRUE, fixed = FALSE), na.rm = TRUE))
+    # default value that is a symbol (object = nm in stats::setNames(object = nm, nm)): the argument is not taken as an argument without default value, thus the positional values are named (formerly, DEF_ARGS was "objectnm, nm" and the correction was routed to CORRECTIONS NOT APPLIED)
+    FUN_SYMBOL_DEFAULT <- function(p){
+        nm <- base::letters[1:2]
+        stats::setNames(p, nm)
+    }
+    tempo_msg6 <- testthat::capture_messages(code = {tempo_fun_symbol_default <- all_args_here(x = FUN_SYMBOL_DEFAULT, table_export = FALSE, fun_export = FALSE, out_path = ".", df_name = "res.tsv", overwrite = FALSE, safer_check = FALSE, lib_path = NULL, error_text = "")})
+    testthat::expect_true(object = base::any(base::grepl(x = tempo_msg6, pattern = "object = nm, nm", fixed = TRUE, ignore.case = FALSE, perl = FALSE, useBytes = FALSE), na.rm = TRUE))
+    testthat::expect_false(object = base::any(base::grepl(x = tempo_msg6, pattern = "CORRECTIONS NOT APPLIED", fixed = TRUE, ignore.case = FALSE, perl = FALSE, useBytes = FALSE), na.rm = TRUE))
+    tempo_body <- base::deparse(expr = base::body(fun = tempo_fun_symbol_default), width.cutoff = 500L, backtick = FALSE, control = base::c("keepNA", "keepInteger", "niceNames", "showAttributes"), nlines = -1L)
+    testthat::expect_true(object = base::any(base::grepl(x = tempo_body, pattern = "stats::setNames(object = p, nm = nm)", ignore.case = FALSE, perl = FALSE, fixed = TRUE), na.rm = TRUE))
     # table_export = TRUE: the modified function is not returned
     testthat::expect_no_error(all_args_here(x = FUN1, table_export = TRUE, fun_export = FALSE, out_path = ".", df_name = "res.tsv", overwrite = FALSE, safer_check = TRUE, lib_path = NULL, error_text = ""))
     a <- file.remove("./res.tsv")
