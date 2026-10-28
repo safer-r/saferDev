@@ -12,7 +12,7 @@
 #'   \item \code{fun}: the modified function object, or \code{NULL} if no correction has been applied.
 #'   \item \code{fun_txt}: the modified code as a single string (\code{NULL} if no correction has been applied).
 #'   \item \code{inserted}: character vector of the applied corrections ("line <n>: <status>" for each).
-#'   \item \code{left}: character vector of the corrections that could not be applied (with line number and status), for the final message of \code{all_args_here()}.
+#'   \item \code{left}: character vector of the corrections that could not be applied ("line <n>: <status>", followed by a "REASON:" line explaining why the correction has not been applied), for the final message of \code{all_args_here()}.
 #' }
 #' @details
 #' Warnings:
@@ -377,6 +377,15 @@
     ord <- base::order(rows$LINE_NB, rows$FUN_POS, decreasing = TRUE)
     inserted <- base::character(length = 0L)
     left <- base::character(length = 0L)
+    # reasons written below each correction of the left vector, in the final message of all_args_here(), so that the user knows why the correction has not been applied and what to do. Of note, an empty argument value (like "envir = )") is never a reason (see validation 1)
+    left_reason <- base::c(
+        not_parsable = "the proposed call does not parse as R code. Correct it manually.",
+        multi_line = "the call is written on several lines (all_args_here() only modifies calls written on a single line). Apply the proposal manually.",
+        nested = "another call is nested inside this call on the same line and has been corrected first. This proposal still contains the original nested call, so applying it would undo that correction. Apply manually only the missing arguments of this call (MISSING_ARGS column).",
+        pos_and_named = "an argument is written without its name (positionally) and is also proposed with its name, e.g., sum(x, na.rm) proposed as sum(x, na.rm, na.rm = FALSE), which would fail at call time. Check the positional value and write it with its name.",
+        not_located = "the call cannot be located in the printed code of the function. Apply the proposal manually.",
+        spaces = "a string of the call contains consecutive spaces (e.g., \"a  b\"), which are collapsed in the proposal (\"a b\"): applying it would modify the string. Apply manually only the missing arguments (MISSING_ARGS column)."
+    )
     applied_starts <- base::list() # FUN_POS of the already applied corrections, by line number (as character key), to detect overlapping spans on the same line
     for(i2 in ord){
         status_i2 <- rows$STATUS[i2]
@@ -391,7 +400,7 @@
         )
         ok_parse <- ( ! base::is.null(x = status_parsed))
         if( ! ok_parse){
-            left <- base::c(left, base::paste0("line ", line_i2, ": ", status_i2, collapse = NULL, recycle0 = FALSE))
+            left <- base::c(left, base::paste0("line ", line_i2, ": ", status_i2, "\n    REASON: ", left_reason[["not_parsable"]], collapse = NULL, recycle0 = FALSE))
             next
         }
         # validation 2: FUN_ARGS must be a complete one-line call: parse it (a multi-line call is truncated at the line end and does not parse, and a call containing a "(" string still parses)
@@ -404,7 +413,7 @@
             },
             error = function(e){FALSE}
         )){
-            left <- base::c(left, base::paste0("line ", line_i2, ": ", status_i2, collapse = NULL, recycle0 = FALSE))
+            left <- base::c(left, base::paste0("line ", line_i2, ": ", status_i2, "\n    REASON: ", left_reason[["multi_line"]], collapse = NULL, recycle0 = FALSE))
             next
         }
         # validation 3: the span must not overlap an already applied correction on the same line (the rows are processed in decreasing FUN_POS, so an already applied span starts at or after pos_i2):
@@ -413,14 +422,14 @@
         key_i2 <- base::as.character(x = line_i2)
         if( ! base::is.null(x = applied_starts[[key_i2]])){
             if(base::any(applied_starts[[key_i2]] <= pos_i2 + fun_args_len - 1, na.rm = TRUE)){
-                left <- base::c(left, base::paste0("line ", line_i2, ": ", status_i2, collapse = NULL, recycle0 = FALSE))
+                left <- base::c(left, base::paste0("line ", line_i2, ": ", status_i2, "\n    REASON: ", left_reason[["nested"]], collapse = NULL, recycle0 = FALSE))
                 next
             }
         }
         # validation 4: FUN_ARGS must sit exactly at FUN_POS in the out$code line (substr() returns "" when the span goes beyond the end of the line, which fails the comparison)
         at <- base::substr(x = code_lines[line_i2], start = pos_i2, stop = pos_i2 + fun_args_len - 1)
         if(base::is.na(x = at) | at != fun_args_i2){
-            left <- base::c(left, base::paste0("line ", line_i2, ": ", status_i2, collapse = NULL, recycle0 = FALSE))
+            left <- base::c(left, base::paste0("line ", line_i2, ": ", status_i2, "\n    REASON: ", left_reason[["not_located"]], collapse = NULL, recycle0 = FALSE))
             next
         }
         # validation 5: the STATUS must not contain an argument name written both positionally (bare symbol without written name) and as a named argument (e.g. "sum(1:2, na.rm, na.rm = FALSE)"):
@@ -441,7 +450,7 @@
             named_names <- status_arg_names[status_arg_names != ""]
             if(base::length(x = pos_sym_names) > 0 & base::length(x = named_names) > 0){
                 if(base::any(pos_sym_names %in% named_names, na.rm = TRUE)){
-                    left <- base::c(left, base::paste0("line ", line_i2, ": ", status_i2, collapse = NULL, recycle0 = FALSE))
+                    left <- base::c(left, base::paste0("line ", line_i2, ": ", status_i2, "\n    REASON: ", left_reason[["pos_and_named"]], collapse = NULL, recycle0 = FALSE))
                     next
                 }
             }
@@ -465,11 +474,11 @@
             orig_span <- base::substr(x = orig_lines[line_i2], start = orig_start, stop = orig_stop)
         }
         if(base::is.na(x = orig_span)){ # the span cannot be located in the original line (out$code not built from x)
-            left <- base::c(left, base::paste0("line ", line_i2, ": ", status_i2, collapse = NULL, recycle0 = FALSE))
+            left <- base::c(left, base::paste0("line ", line_i2, ": ", status_i2, "\n    REASON: ", left_reason[["not_located"]], collapse = NULL, recycle0 = FALSE))
             next
         }
         if(base::gsub(pattern = " +", replacement = " ", x = orig_span, ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE) != fun_args_i2){ # the original span, once normalized, must be FUN_ARGS
-            left <- base::c(left, base::paste0("line ", line_i2, ": ", status_i2, collapse = NULL, recycle0 = FALSE))
+            left <- base::c(left, base::paste0("line ", line_i2, ": ", status_i2, "\n    REASON: ", left_reason[["not_located"]], collapse = NULL, recycle0 = FALSE))
             next
         }
         # validation 7: the STATUS is built from the normalized FUN_ARGS: if the original span contains runs of spaces inside string literals (e.g., "a  b"), these strings are collapsed in the STATUS (e.g., "a b"), which would silently modify the values of the code
@@ -485,7 +494,7 @@
             str_status <- utils::getParseData(x = base::parse(file = "", n = NULL, text = status_i2, prompt = "?", keep.source = TRUE, srcfile = base::srcfilecopy(filename = "<text>", lines = status_i2, timestamp = base::Sys.time(), isFile = FALSE), encoding = "unknown"), includeText = NA) # the STATUS is guaranteed to be parsable here (validation 1)
             str_status <- str_status$text[str_status$token == "STR_CONST"]
             if(base::any(base::is.na(x = str_orig), na.rm = FALSE) | base::any( ! str_orig %in% str_status, na.rm = FALSE)){
-                left <- base::c(left, base::paste0("line ", line_i2, ": ", status_i2, collapse = NULL, recycle0 = FALSE))
+                left <- base::c(left, base::paste0("line ", line_i2, ": ", status_i2, "\n    REASON: ", left_reason[["spaces"]], collapse = NULL, recycle0 = FALSE))
                 next
             }
         }

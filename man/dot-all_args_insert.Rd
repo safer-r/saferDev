@@ -23,7 +23,7 @@ A list:
   \item \code{fun}: the modified function object, or \code{NULL} if no correction has been applied.
   \item \code{fun_txt}: the modified code as a single string (\code{NULL} if no correction has been applied).
   \item \code{inserted}: character vector of the applied corrections ("line <n>: <status>" for each).
-  \item \code{left}: character vector of the corrections that could not be applied (with line number and status), for the final message of \code{all_args_here()}.
+  \item \code{left}: character vector of the corrections that could not be applied ("line <n>: <status>", followed by a "REASON:" line explaining why the correction has not been applied), for the final message of \code{all_args_here()}.
 }
 }
 \description{

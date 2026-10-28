@@ -94,6 +94,7 @@ testthat::test_that(".all_args_insert()", {
     testthat::expect_no_error(tempo_out4 <- .all_args_insert(x = FUN1, out = out_fun1, output = tempo_output, lib_path = NULL, error_text = ""))
     testthat::expect_true(object = base::is.function(x = tempo_out4$fun)) # the other correction (paste0) is still applied
     testthat::expect_true(object = base::length(x = tempo_out4$left) == 1)
+    testthat::expect_true(object = base::all(base::grepl(x = tempo_out4$left, pattern = "\n    REASON: the proposed call does not parse as R code", fixed = TRUE, ignore.case = FALSE, perl = FALSE, useBytes = FALSE), na.rm = FALSE)) # the reason is written below each correction not applied
     testthat::expect_true(object = base::length(x = tempo_out4$inserted) == 1)
     # validation 1: STATUS with empty argument value " = )" (parses as missing arg): applied, because empty values are allowed by the safer-r rules (default value that cannot be copied, or no default value)
     tempo_output <- output_fun1
@@ -122,6 +123,7 @@ testthat::test_that(".all_args_insert()", {
     testthat::expect_no_error(tempo_out8 <- .all_args_insert(x = FUN1, out = out_fun1, output = tempo_output, lib_path = NULL, error_text = ""))
     testthat::expect_true(object = base::is.function(x = tempo_out8$fun)) # the other correction (paste0) is still applied
     testthat::expect_true(object = base::length(x = tempo_out8$left) == 1)
+    testthat::expect_true(object = base::all(base::grepl(x = tempo_out8$left, pattern = "\n    REASON: the call is written on several lines", fixed = TRUE, ignore.case = FALSE, perl = FALSE, useBytes = FALSE), na.rm = FALSE)) # the reason is written below each correction not applied
     testthat::expect_true(object = base::length(x = tempo_out8$inserted) == 1)
     # validation 3: FUN_ARGS not at FUN_POS in the out$code line
     tempo_output <- output_fun1
@@ -129,6 +131,7 @@ testthat::test_that(".all_args_insert()", {
     testthat::expect_no_error(tempo_out9 <- .all_args_insert(x = FUN1, out = out_fun1, output = tempo_output, lib_path = NULL, error_text = ""))
     testthat::expect_true(object = base::is.function(x = tempo_out9$fun)) # the other correction (paste0) is still applied
     testthat::expect_true(object = base::length(x = tempo_out9$left) == 1)
+    testthat::expect_true(object = base::all(base::grepl(x = tempo_out9$left, pattern = "\n    REASON: the call cannot be located in the printed code", fixed = TRUE, ignore.case = FALSE, perl = FALSE, useBytes = FALSE), na.rm = FALSE)) # the reason is written below each correction not applied
     testthat::expect_true(object = base::length(x = tempo_out9$inserted) == 1)
     ######## end main code: validations 1-3 (left routing)
 
@@ -145,6 +148,7 @@ testthat::test_that(".all_args_insert()", {
     testthat::expect_true(object = base::is.function(x = tempo_out10$fun))
     testthat::expect_true(object = base::length(x = tempo_out10$inserted) == 1) # only the innermost (mean) applied
     testthat::expect_true(object = base::length(x = tempo_out10$left) == 1) # the outer paste0 proposal routed to left
+    testthat::expect_true(object = base::all(base::grepl(x = tempo_out10$left, pattern = "\n    REASON: another call is nested inside this call", fixed = TRUE, ignore.case = FALSE, perl = FALSE, useBytes = FALSE), na.rm = FALSE)) # the reason is written below each correction not applied
     ######## end main code: validation 4 (overlapping span)
 
     ######## main code: validation 5 (positional bare symbol duplicated as named arg: routed to left)
@@ -158,6 +162,7 @@ testthat::test_that(".all_args_insert()", {
     testthat::expect_no_error(tempo_out11 <- .all_args_insert(x = FUN_POSARG, out = out_posarg, output = tempo_output, lib_path = NULL, error_text = ""))
     testthat::expect_true(object = base::is.null(x = tempo_out11$fun))
     testthat::expect_true(object = base::length(x = tempo_out11$left) == 1)
+    testthat::expect_true(object = base::all(base::grepl(x = tempo_out11$left, pattern = "\n    REASON: an argument is written without its name", fixed = TRUE, ignore.case = FALSE, perl = FALSE, useBytes = FALSE), na.rm = FALSE)) # the reason is written below each correction not applied
     # validation 5 with an empty named set: the STATUS has no named argument (all positional): applied without triggering validation 5
     tempo_output <- output_fun1
     tempo_output$STATUS[1] <- "sum(1:2, na.rm)" # identical to FUN_ARGS: applied, no change
@@ -209,6 +214,7 @@ testthat::test_that(".all_args_insert()", {
     testthat::expect_no_error(tempo_out14 <- .all_args_insert(x = FUN_DIFF, out = out_com, output = tempo_output, lib_path = NULL, error_text = ""))
     testthat::expect_true(object = base::is.null(x = tempo_out14$fun))
     testthat::expect_true(object = base::length(x = tempo_out14$left) == 2)
+    testthat::expect_true(object = base::all(base::grepl(x = tempo_out14$left, pattern = "\n    REASON: the call cannot be located in the printed code", fixed = TRUE, ignore.case = FALSE, perl = FALSE, useBytes = FALSE), na.rm = FALSE)) # the reason is written below each correction not applied
     ######## end main code: validation 6
 
     ######## main code: validation 7 (string literal with consecutive spaces: routed to left, because the STATUS carries the collapsed string)
@@ -225,6 +231,7 @@ testthat::test_that(".all_args_insert()", {
     testthat::expect_no_error(tempo_out15 <- .all_args_insert(x = FUN_STR, out = out_str, output = tempo_output, lib_path = NULL, error_text = ""))
     testthat::expect_true(object = base::is.null(x = tempo_out15$fun))
     testthat::expect_true(object = base::length(x = tempo_out15$left) == 1)
+    testthat::expect_true(object = base::all(base::grepl(x = tempo_out15$left, pattern = "\n    REASON: a string of the call contains consecutive spaces", fixed = TRUE, ignore.case = FALSE, perl = FALSE, useBytes = FALSE), na.rm = FALSE)) # the reason is written below each correction not applied
     # runs of spaces outside string literals: the correction is applied
     txt_sp <- base::c(
         "function(x){",

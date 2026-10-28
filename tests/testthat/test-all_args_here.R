@@ -436,6 +436,7 @@ testthat::test_that("all_args_here()", {
     tempo_msg <- testthat::capture_messages(code = {tempo_fun_nested <- all_args_here(x = FUN_NESTED, table_export = FALSE, fun_export = FALSE, out_path = ".", df_name = "res.tsv", overwrite = FALSE, safer_check = FALSE, lib_path = NULL, error_text = "")})
     testthat::expect_true(object = base::is.function(x = tempo_fun_nested))
     testthat::expect_true(object = base::any(base::grepl(x = tempo_msg, pattern = "CORRECTIONS NOT APPLIED", fixed = TRUE, ignore.case = FALSE, perl = FALSE), na.rm = TRUE))
+    testthat::expect_true(object = base::any(base::grepl(x = tempo_msg, pattern = "REASON: another call is nested inside this call", fixed = TRUE, ignore.case = FALSE, perl = FALSE), na.rm = TRUE)) # the reason of the correction not applied is written in the final message
     # positional missing argument (bare symbol written positionally and proposed as named): routed to CORRECTIONS NOT APPLIED, the returned function keeps the original call
     FUN_POSARG <- function(v){
         res <- base::sum(v, na.rm)
