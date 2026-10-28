@@ -377,6 +377,10 @@ testthat::test_that("true_false_check() export argument", {
     ## end tests
 
     ## other tests
+    # comments, line breaks and indentation of the submitted function kept in the returned function (srcref of the returned function)
+    fun_com <- base::eval(expr = base::parse(text = "function(x){\n    # comment 1\n    base::print(T)  # comment 2\n}", keep.source = TRUE)[[1]]) # warning: the short parse writing is required here: a fully-named writing with srcfile = NULL removes the srcref of the parsed code
+    fun_com_safer <- base::suppressMessages(expr = true_false_check(x = fun_com, safer_check = FALSE, lib_path = NULL, error_text = "", export = FALSE, out_path = "."), classes = "message")
+    testthat::expect_identical(object = utils::capture.output(fun_com_safer, file = NULL, append = FALSE, type = NULL, split = FALSE)[1:4], expected = base::c("function(x){", "    # comment 1", "    base::print(TRUE)  # comment 2", "}"))
     ## end other tests
 
     base::rm(list = base::setdiff(x = base::ls(), y = "ini_wd")) # ini_wd is kept because used by the on.exit() handler above

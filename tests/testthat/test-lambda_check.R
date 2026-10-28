@@ -336,6 +336,10 @@ testthat::test_that("lambda_check()", {
     # fun19 (escaped brackets in string, raw string and comment): clean and behavior unchanged
     testthat::expect_null(object = lambda_check(x = fun19, safer_check = FALSE, lib_path = NULL, error_text = "", export = FALSE, out_path = "."))
     testthat::expect_identical(object = fun19(1), expected = fun19(1))
+    # comments, line breaks and indentation of the submitted function kept in the returned function (srcref of the returned function)
+    fun_com <- eval(parse(text = "function(x){\n    # comment 1\n    h <- \\(z) z  # comment 2\n    h(x)\n}", keep.source = TRUE))
+    fun_com_safer <- base::suppressMessages(expr = lambda_check(x = fun_com, safer_check = FALSE, lib_path = NULL, error_text = "", export = FALSE, out_path = "."), classes = "message")
+    testthat::expect_identical(object = utils::capture.output(fun_com_safer, file = NULL, append = FALSE, type = NULL, split = FALSE)[1:5], expected = base::c("function(x){", "    # comment 1", "    h <- function(z) z  # comment 2", "    h(x)", "}"))
     ## end other tests
     # restore the working directory (on.exit() of the test block is evaluated after the rm() above)
     base::setwd(dir = tempo_wd)

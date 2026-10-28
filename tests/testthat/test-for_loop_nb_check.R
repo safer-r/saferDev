@@ -474,6 +474,12 @@ testthat::test_that("for_loop_nb_check()", {
     testthat::expect_no_warning(object = fun_seq_kind_safer(x = base::list(2, 1))) # list
     testthat::expect_warning(object = fun_seq_kind_safer(x = base::c(3, 1)), regexp = "FOR SEQUENCE DECREASING", fixed = TRUE) # numeric decreasing: still reported
     testthat::expect_warning(object = fun_seq_kind_safer(x = base::c(-1L, -2L, -3L)), regexp = "FOR SEQUENCE WITH ALL NEGATIVE VALUES", fixed = TRUE) # integer negative: still reported
+    # comments, line breaks and indentation of the submitted function kept in the returned function (srcref of the returned function)
+    fun_com <- base::eval(expr = base::parse(text = "function(x){\n    # comment 1\n    for(i in 1:length(x)){ # comment 2\n        base::print(i)\n    }\n}", keep.source = TRUE)[[1]]) # warning: the short parse writing is required here: a fully-named writing with srcfile = NULL removes the srcref of the parsed code
+    fun_com_safer <- base::suppressMessages(expr = saferDev::for_loop_nb_check(x = fun_com, export = FALSE, out_path = ".", safer_check = FALSE, lib_path = NULL, error_text = ""), classes = "message")
+    tempo_print <- utils::capture.output(fun_com_safer, file = NULL, append = FALSE, type = NULL, split = FALSE)
+    testthat::expect_identical(object = tempo_print[base::c(1:2, 4:6)], expected = base::c("function(x){", "    # comment 1", "        base::print(i)", "    }", "}"))
+    testthat::expect_true(object = base::grepl(x = tempo_print[3], pattern = "; for(i in tempo_for_seq1){ # comment 2", fixed = TRUE))
     ## end other tests
 
 })

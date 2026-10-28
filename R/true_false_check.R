@@ -20,7 +20,7 @@
 #'
 #' Not reported: \code{T} or \code{F} used as a name or assigned, e.g., \code{T <- 1}, \code{x <- T}, \code{function(T)}, \code{f(T = 1)}, \code{df$T}, \code{for(T in 1:3)}, \code{T()}, \code{?T} or \code{y ~ T}. Strings, comments and backquoted names (\code{`T`}) are ignored. If \code{T} or \code{F} is defined anywhere in the function (argument, loop variable or assignment), none of its uses is reported.
 #'
-#' Correction: each reported \code{T} is replaced by \code{TRUE} and each \code{F} by \code{FALSE} (\code{base::T} also becomes \code{TRUE}). The rest of the code is unchanged. The comments are kept in the exported file, but can be lost in the returned function. The returned function is evaluated in a new environment whose parent is the environment of the submitted function: check it before replacing the original function.
+#' Correction: each reported \code{T} is replaced by \code{TRUE} and each \code{F} by \code{FALSE} (\code{base::T} also becomes \code{TRUE}). The rest of the code is unchanged. The comments and the indentation of the submitted function are kept, in the returned function and in the exported file. Warning: comments are only available when the submitted function carries its source references (attribute srcref). Otherwise (e.g., compiled package functions, or functions created with \code{options(keep.source = FALSE)}, default of Rscript), the code is the deparsed one: no comments and standard indentation. The returned function is evaluated in a new environment whose parent is the environment of the submitted function: check it before replacing the original function.
 #'
 #' Line numbers are indicative. They start at the \code{<- function} line (\code{#'} header lines not counted). Compiled functions, like \code{saferDev::colons_check}, have no comments: their line numbers differ from their source file.
 #' @author \href{mailto:gael.millot@pasteur.fr}{Gael Millot}
@@ -728,7 +728,8 @@ true_false_check <- function(
     }else if(export == TRUE){
         output <- base::invisible(x = NULL) # the modified code has already been written in the exported file above
     }else{
-        output <- base::eval(expr = base::parse(text = base::paste0(modified_code, collapse = "\n", recycle0 = FALSE), file = "", n = NULL, prompt = "?", keep.source = base::getOption(x = "keep.source", default = NULL), srcfile = NULL, encoding = "unknown")[[1]], envir = base::new.env(parent = base::environment(fun = x)), enclos = base::globalenv())
+        # warning: keep.source = TRUE and an explicit srcfile are required to keep the source references (attribute srcref) of the returned function, i.e., its comments and indentation when printed. With srcfile = NULL, or with keep.source = FALSE (default of Rscript), the returned function is printed deparsed: comments removed and code reindented
+        output <- base::eval(expr = base::parse(text = base::paste0(modified_code, collapse = "\n", recycle0 = FALSE), file = "", n = NULL, prompt = "?", keep.source = TRUE, srcfile = base::srcfilecopy(filename = "<text>", lines = modified_code, timestamp = base::Sys.time(), isFile = FALSE), encoding = "unknown")[[1]], envir = base::new.env(parent = base::environment(fun = x)), enclos = base::globalenv())
     }
     if(export == TRUE){
         base::return(base::invisible(x = output)) # NULL returned invisibly when export is TRUE (the invisibility is lost when assigned to output, hence invisible() here)

@@ -22,7 +22,7 @@
 #'
 #' Correction: each reported \code{\\} lambda writing is replaced by \code{function} (e.g., \code{\\(x) x * 2} becomes \code{function(x) x * 2}). The rest of the code is unchanged. The corrected code is checked by parsing it. Lines can become longer than 80 characters. The returned function keeps the environment of the submitted function.
 #'
-#' Warning: the comments of the submitted function are lost in the returned function (its code is re-parsed). They are kept in the exported file, which contains the recovered code verbatim, only modified by the \code{\\} -> \code{function} replacements.
+#' The comments and the indentation of the submitted function are kept, in the returned function and in the exported file, which contain the recovered code verbatim, only modified by the \code{\\} -> \code{function} replacements. Warning: comments are only available when the submitted function carries its source references (attribute srcref). Otherwise (e.g., compiled package functions, or functions created with \code{options(keep.source = FALSE)}, default of Rscript), the code is the deparsed one: no comments and standard indentation.
 #'
 #' Line numbers are indicative. They start at the \code{<- function} line (\code{#'} header lines not counted). Compiled functions, like \code{saferDev::colons_check}, have no comments: their line numbers differ from their source file.
 #' @author \href{mailto:gael.millot@pasteur.fr}{Gael Millot}
@@ -690,7 +690,8 @@ lambda_check <- function(
     }else if(export == TRUE){
         output <- base::invisible(x = NULL) # the modified code has already been written in the exported file above
     }else{
-        output <- base::eval(expr = base::parse(text = base::paste0(modified_code, collapse = "\n", recycle0 = FALSE), file = "", n = NULL, prompt = "?", keep.source = base::getOption(x = "keep.source", default = NULL), srcfile = NULL, encoding = "unknown")[[1]], envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL))
+        # warning: keep.source = TRUE and an explicit srcfile are required to keep the source references (attribute srcref) of the returned function, i.e., its comments and indentation when printed. With srcfile = NULL, or with keep.source = FALSE (default of Rscript), the returned function is printed deparsed: comments removed and code reindented
+        output <- base::eval(expr = base::parse(text = base::paste0(modified_code, collapse = "\n", recycle0 = FALSE), file = "", n = NULL, prompt = "?", keep.source = TRUE, srcfile = base::srcfilecopy(filename = "<text>", lines = modified_code, timestamp = base::Sys.time(), isFile = FALSE), encoding = "unknown")[[1]], envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL))
         # restore the environment of the submitted function: without this, the modified function would keep the evaluation environment of lambda_check() as closure environment, which would break closures of the submitted function and could resolve names wrongly
         base::environment(fun = output) <- base::environment(fun = x)
     }
