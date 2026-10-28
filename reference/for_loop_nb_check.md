@@ -117,8 +117,13 @@ numbers). The loop thus runs on the checked sequence. Errors of the
 sequence itself (like `1:NA`) are not caught. If the loop is not a
 standalone statement (e.g., unbraced body of an `if`, or argument
 value), the whole is enclosed in curly brackets. The rest of the code is
-unchanged. The comments are kept in the exported file, but can be lost
-in the returned function. The returned function is evaluated in a new
+unchanged. The comments and the indentation of the submitted function
+are kept, in the returned function and in the exported file. Warning:
+comments are only available when the submitted function carries its
+source references (attribute srcref). Otherwise (e.g., compiled package
+functions, or functions created with `options(keep.source = FALSE)`,
+default of Rscript), the code is the deparsed one: no comments and
+standard indentation. The returned function is evaluated in a new
 environment whose parent is the environment of the submitted function:
 check it before replacing the original function.
 
@@ -179,42 +184,11 @@ fun2_safer <- saferDev::for_loop_nb_check(fun2) # 1:length(x) reported
 fun2_safer # corrected function
 #> function (x) 
 #> {
-#>     tempo_for_seq1 <- 1:length(x)
-#>     if (base::length(x = tempo_for_seq1) == 0) {
-#>         base::warning("FOR SEQUENCE EMPTY: 0 ITERATION", call. = FALSE, 
-#>             immediate. = FALSE, noBreaks. = FALSE, domain = NULL)
-#>     }
-#>     else if (base::anyNA(x = tempo_for_seq1)) {
-#>         base::warning("FOR SEQUENCE WITH NA VALUES", call. = FALSE, 
-#>             immediate. = FALSE, noBreaks. = FALSE, domain = NULL)
-#>     }
-#>     else if (base::length(x = tempo_for_seq1) == 1) {
-#>         base::warning("FOR SEQUENCE WITH A SINGLE VALUE (EQUAL BOUNDS?): SINGLE ITERATION", 
-#>             call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, 
-#>             domain = NULL)
-#>     }
-#>     else if (base::is.atomic(x = tempo_for_seq1) && base::any(base::is.infinite(x = tempo_for_seq1), 
-#>         na.rm = TRUE)) {
-#>         base::warning("FOR SEQUENCE WITH INFINITE VALUES: NO ENDLESS LOOP POSSIBLE BECAUSE THE for() CONTROLLER IS FULLY EVALUATED BEFORE ITERATING, BUT CHECK THAT AN INFINITE VALUE IS EXPECTED", 
-#>             call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, 
-#>             domain = NULL)
-#>     }
-#>     else if (base::is.numeric(x = tempo_for_seq1) && base::all(tempo_for_seq1 < 
-#>         0, na.rm = FALSE)) {
-#>         base::warning("FOR SEQUENCE WITH ALL NEGATIVE VALUES", 
-#>             call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, 
-#>             domain = NULL)
-#>     }
-#>     else if (base::is.numeric(x = tempo_for_seq1) && base::length(x = tempo_for_seq1) >= 
-#>         2 && tempo_for_seq1[1] > tempo_for_seq1[2]) {
-#>         base::warning("FOR SEQUENCE DECREASING", call. = FALSE, 
-#>             immediate. = FALSE, noBreaks. = FALSE, domain = NULL)
-#>     }
-#>     for (i in tempo_for_seq1) {
+#>     tempo_for_seq1 <- 1:length(x) ; if(base::length(x = tempo_for_seq1) == 0){base::warning("FOR SEQUENCE EMPTY: 0 ITERATION", call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, domain = NULL)}else if(base::anyNA(x = tempo_for_seq1)){base::warning("FOR SEQUENCE WITH NA VALUES", call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, domain = NULL)}else if(base::length(x = tempo_for_seq1) == 1){base::warning("FOR SEQUENCE WITH A SINGLE VALUE (EQUAL BOUNDS?): SINGLE ITERATION", call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, domain = NULL)}else if(base::is.atomic(x = tempo_for_seq1) && base::any(base::is.infinite(x = tempo_for_seq1), na.rm = TRUE)){base::warning("FOR SEQUENCE WITH INFINITE VALUES: NO ENDLESS LOOP POSSIBLE BECAUSE THE for() CONTROLLER IS FULLY EVALUATED BEFORE ITERATING, BUT CHECK THAT AN INFINITE VALUE IS EXPECTED", call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, domain = NULL)}else if(base::is.numeric(x = tempo_for_seq1) && base::all(tempo_for_seq1 < 0, na.rm = FALSE)){base::warning("FOR SEQUENCE WITH ALL NEGATIVE VALUES", call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, domain = NULL)}else if(base::is.numeric(x = tempo_for_seq1) && base::length(x = tempo_for_seq1) >= 2 && tempo_for_seq1[1] > tempo_for_seq1[2]){base::warning("FOR SEQUENCE DECREASING", call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, domain = NULL)} ; for (i in tempo_for_seq1) {
 #>         base::print(x = i)
 #>     }
 #> }
-#> <environment: 0x558e6fe96ab8>
+#> <environment: 0x561a7252ab88>
 fun2_safer(x = base::character()) # warning: 1:length(x) is c(1, 0), a decreasing sequence
 #> Warning: FOR SEQUENCE DECREASING
 #> [1] 1
@@ -232,6 +206,6 @@ saferDev::for_loop_nb_check(x = fun2, export = TRUE, out_path = tempo_dir)
 #> 3    for     for (i in 1:length(x)) {
 #> 
 #> MODIFIED CODE EXPORTED IN:
-#> /tmp/RtmpBNefhH/dir1762175310ac/fun2_safer.R
+#> /tmp/RtmpgFv7ID/dir17925cb7a8ac/fun2_safer.R
 #> 
 ```

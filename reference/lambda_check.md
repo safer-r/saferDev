@@ -123,10 +123,14 @@ is unchanged. The corrected code is checked by parsing it. Lines can
 become longer than 80 characters. The returned function keeps the
 environment of the submitted function.
 
-Warning: the comments of the submitted function are lost in the returned
-function (its code is re-parsed). They are kept in the exported file,
-which contains the recovered code verbatim, only modified by the `\` -\>
-`function` replacements.
+The comments and the indentation of the submitted function are kept, in
+the returned function and in the exported file, which contain the
+recovered code verbatim, only modified by the `\` -\> `function`
+replacements. Warning: comments are only available when the submitted
+function carries its source references (attribute srcref). Otherwise
+(e.g., compiled package functions, or functions created with
+`options(keep.source = FALSE)`, default of Rscript), the code is the
+deparsed one: no comments and standard indentation.
 
 Line numbers are indicative. They start at the `<- function` line (`#'`
 header lines not counted). Compiled functions, like
@@ -165,13 +169,8 @@ fun2_safer <- saferDev::lambda_check(fun2) # lambda writing reported
 #> 1    \(y)        function(x){ base::sapply(X = 1:3, FUN = \(y){ y * 2 }) }
 #> 
 fun2_safer # corrected function
-#> function (x) 
-#> {
-#>     base::sapply(X = 1:3, FUN = function(y) {
-#>         y * 2
-#>     })
-#> }
-#> <environment: 0x558e6f310030>
+#> function(x){ base::sapply(X = 1:3, FUN = function(y){ y * 2 }) }
+#> <environment: 0x561a783855f8>
 # A backslash followed by ( in a string, a raw string, a comment or a backquoted name
 # is not a lambda writing (token-based detection): not reported, not modified.
 code3 <- paste0(
@@ -198,6 +197,6 @@ saferDev::lambda_check(x = fun2, export = TRUE, out_path = tempo_dir)
 #> 1    \(y)        function(x){ base::sapply(X = 1:3, FUN = \(y){ y * 2 }) }
 #> 
 #> MODIFIED CODE EXPORTED IN:
-#> /tmp/RtmpBNefhH/dir17627aff41c8/fun2_safer.R
+#> /tmp/RtmpgFv7ID/dir17927924b80b/fun2_safer.R
 #> 
 ```

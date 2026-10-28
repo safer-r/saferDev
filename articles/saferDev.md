@@ -128,15 +128,14 @@ fun5
 
     ## function (x, y = TRUE) 
     ## {
-    ##     if (x > 1) {
-    ##         z <- base::mean(x = x)
-    ##     }
+    ##     if (x > 1) 
+    ##         { z <- base::mean(x = x) }
     ##     for (i in 1:base::length(x = y)) {
     ##         z <- base::paste0(z, i, collapse = NULL, recycle0 = FALSE)
     ##     }
     ##     z
     ## }
-    ## <environment: 0x559fd49d9a80>
+    ## <environment: 0x555f7b0599b0>
 
 ``` r
 
@@ -149,7 +148,7 @@ fun6 <- for_loop_nb_check(x = fun5) # checking line added before the for() loop
     ## INSIDE fun5(), SOME for() SEQUENCES ARE NOT WRITTEN WITH HARD NUMBERS:
     ## 
     ## LINE CONSTRUCT       CODE
-    ## 6    for     for (i in 1:base::length(x = y)) {
+    ## 5    for     for (i in 1:base::length(x = y)) {
 
 ``` r
 

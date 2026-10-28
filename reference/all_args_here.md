@@ -158,6 +158,12 @@ column) with an empty value (like `envir = `), with their default value,
 i.e., the potential flaws of the code (see the details section). Use
 `"= ,"` or `"= )"` to seek each case in the code.
 
+An additional message `"CORRECTIONS NOT APPLIED"` listing the proposals
+of the `$STATUS` column that have not been inserted into the modified
+function, each followed by a `REASON:` line explaining why. These calls
+are left unchanged in the modified function and must be corrected
+manually (see the details section).
+
 ## Details
 
 More precisely, `all_args_here()` verifies that all the strings before
@@ -235,19 +241,38 @@ backslash-quote, like `"'\'"`, desynchronizes the in-quotes detection of
 repository). Please, report
 [here](https://github.com/safer-r/saferDev/issues) if it is the case.
 
-Comments and indentation of the modified function (`fun_export` argument
-and returned function): the missing arguments are inserted into the
-printed code of the submitted function, so that its comments and
-indentation are kept. This requires that the submitted function carries
-its source references (attribute `srcref`, i.e.,
+Line breaks, comments and indentation of the modified function
+(`fun_export` argument and returned function): the `$STATUS` proposals
+are not pasted in place of the calls. Instead, the missing arguments are
+inserted into the printed code of the submitted function, at the
+positions given by the R parser: a missing argument whose value is
+written without its name (e.g., `round(v)`) gets its name inserted
+before this value (`round(x = v, digits = 0)`), and the other missing
+arguments are inserted after the last argument of the call. Thus, the
+line breaks, the indentation, the comments and the strings of the
+submitted function are kept, including inside calls written on several
+lines, and nested calls (e.g., `paste0(mean(1:2))`) are all corrected.
+The comments and the original indentation require that the submitted
+function carries its source references (attribute `srcref`, i.e.,
 `options(keep.source = TRUE)` when the function was created, the default
 in interactive sessions). Otherwise (e.g., a function of an installed
 package, or a function created in an `Rscript` session), the printed
 code is the deparsed code, without comments and with a standard
-indentation. In addition, a proposal is not applied (and is indicated in
-the final message) if the corrected call contains a string with
-consecutive spaces (e.g., `"a b"`), because the proposals are built from
-a code where consecutive spaces are collapsed.
+indentation, but its line breaks are kept.
+
+Corrections not applied: the call is left unchanged in the modified
+function and its proposal is listed in the `"CORRECTIONS NOT APPLIED"`
+message, with one of the following reasons: 1) the `$MISSING_ARGS` or
+`$DEF_ARGS` column of the call cannot be read; 2) the call cannot be
+located in the code of the function (e.g., call with an empty argument,
+like `c(1, )`); 3) the corrected call does not parse as R code; 4) an
+argument is written positionally and is also proposed with its name
+(e.g., `sum(x, na.rm)` proposed as `sum(x, na.rm, na.rm = FALSE)`),
+which would fail at call time; 5) the corrected call does not match the
+`$STATUS` proposal (compared whatever the order of the named arguments,
+the spaces, the line breaks and the comments). Of note, an empty
+argument value in a proposal (like `envir = `, see above) is never a
+reason: such a proposal is applied.
 
 See more examples
 [here](https://safer-r.github.io/saferDev/articles/all_args_here.html).
@@ -313,7 +338,7 @@ fun1_safer # corrected function
 #> {
 #>     base::paste0(x, "a", collapse = NULL, recycle0 = FALSE)
 #> }
-#> <environment: 0x558e70ee9b58>
+#> <environment: 0x561a7a5855d8>
 # Write the table (res.tsv) and the corrected function (fun1_safer.R) in a new temporary folder:
 tempo_dir <- base::tempfile(pattern = "dir", tmpdir = base::tempdir(), fileext = "")
 base::dir.create(path = tempo_dir, showWarnings = TRUE, recursive = FALSE, mode = "0777")
@@ -322,9 +347,9 @@ saferDev::all_args_here(x = fun1, table_export = TRUE, fun_export = TRUE, out_pa
 #> 
 #> INSIDE fun1(), ARGUMENTS ARE MISSING.
 #> RESULT EXPORTED IN:
-#> /tmp/RtmpBNefhH/dir1762432531f2/res.tsv
+#> /tmp/RtmpgFv7ID/dir17921c227840/res.tsv
 #> 
 #> MODIFIED CODE EXPORTED IN:
-#> /tmp/RtmpBNefhH/dir1762432531f2/fun1_safer.R
+#> /tmp/RtmpgFv7ID/dir17921c227840/fun1_safer.R
 #> 
 ```

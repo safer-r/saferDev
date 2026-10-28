@@ -105,7 +105,7 @@
     <p>Not reported: hard numbers, i.e., an integer-valued number, possibly negative, or two such numbers joined by <code>:</code> (e.g., <code>3</code>, <code>1:3</code>, <code>1e3</code>, <code>1L:3L</code>, <code>0:0</code>, <code>-3:-1</code>, <code>1:0</code>), and a single <code>seq_len(...)</code> or <code>seq_along(...)</code> call. These writings fully fix the iterations, and their control is left to the writer.</p>
 <p>Reported: everything else, e.g., <code>for(i in x)</code>, <code>1:n</code>, <code>1:length(x)</code>, <code>1:nrow(df)</code>, <code>1:(n - 1)</code>, <code>seq_along(x) - 1</code>, <code>1:2.5</code>, <code>1:NA</code> or <code>1:Inf</code>. Comments and strings are ignored.</p>
 <p>Why: with <code>x &lt;- character()</code>, <code>for(i in 1:length(x))</code> runs twice, because <code>1:length(x)</code> is <code>c(1, 0)</code>. Use <code>base::seq_along(along.with = x)</code> instead.</p>
-<p>Correction: each reported loop becomes <code>tempo_for_seqN &lt;- &lt;SEQUENCE&gt; ; &lt;CHECKS&gt; ; for(i in tempo_for_seqN)&lt;BODY&gt;</code>, N being the rank of the report. The checks warn if the sequence is empty, contains <code>NA</code> or infinite values, has a single value, has only negative values, or is decreasing (these last two checks only for numeric sequences, i.e., not for factors, dates, characters or complex numbers). The loop thus runs on the checked sequence. Errors of the sequence itself (like <code>1:NA</code>) are not caught. If the loop is not a standalone statement (e.g., unbraced body of an <code>if</code>, or argument value), the whole is enclosed in curly brackets. The rest of the code is unchanged. The comments are kept in the exported file, but can be lost in the returned function. The returned function is evaluated in a new environment whose parent is the environment of the submitted function: check it before replacing the original function.</p>
+<p>Correction: each reported loop becomes <code>tempo_for_seqN &lt;- &lt;SEQUENCE&gt; ; &lt;CHECKS&gt; ; for(i in tempo_for_seqN)&lt;BODY&gt;</code>, N being the rank of the report. The checks warn if the sequence is empty, contains <code>NA</code> or infinite values, has a single value, has only negative values, or is decreasing (these last two checks only for numeric sequences, i.e., not for factors, dates, characters or complex numbers). The loop thus runs on the checked sequence. Errors of the sequence itself (like <code>1:NA</code>) are not caught. If the loop is not a standalone statement (e.g., unbraced body of an <code>if</code>, or argument value), the whole is enclosed in curly brackets. The rest of the code is unchanged. The comments and the indentation of the submitted function are kept, in the returned function and in the exported file. Warning: comments are only available when the submitted function carries its source references (attribute srcref). Otherwise (e.g., compiled package functions, or functions created with <code>options(keep.source = FALSE)</code>, default of Rscript), the code is the deparsed one: no comments and standard indentation. The returned function is evaluated in a new environment whose parent is the environment of the submitted function: check it before replacing the original function.</p>
 <p>Warning: a reported loop is left unchanged, and listed in the message, when:</p><ul><li><p>the name <code>tempo_for_seqN</code> is already used in the function code (including comments and strings);</p></li>
 <li><p>the loop is inside the sequence expression of another reported loop;</p></li>
 <li><p>the loop must be enclosed in curly brackets and contains comments;</p></li>
@@ -146,42 +146,11 @@
 <span class="r-in"><span><span class="va">fun2_safer</span> <span class="co"># corrected function</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> function (x) </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> {</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     tempo_for_seq1 &lt;- 1:length(x)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     if (base::length(x = tempo_for_seq1) == 0) {</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         base::warning("FOR SEQUENCE EMPTY: 0 ITERATION", call. = FALSE, </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>             immediate. = FALSE, noBreaks. = FALSE, domain = NULL)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     }</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     else if (base::anyNA(x = tempo_for_seq1)) {</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         base::warning("FOR SEQUENCE WITH NA VALUES", call. = FALSE, </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>             immediate. = FALSE, noBreaks. = FALSE, domain = NULL)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     }</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     else if (base::length(x = tempo_for_seq1) == 1) {</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         base::warning("FOR SEQUENCE WITH A SINGLE VALUE (EQUAL BOUNDS?): SINGLE ITERATION", </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>             call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>             domain = NULL)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     }</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     else if (base::is.atomic(x = tempo_for_seq1) &amp;&amp; base::any(base::is.infinite(x = tempo_for_seq1), </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         na.rm = TRUE)) {</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         base::warning("FOR SEQUENCE WITH INFINITE VALUES: NO ENDLESS LOOP POSSIBLE BECAUSE THE for() CONTROLLER IS FULLY EVALUATED BEFORE ITERATING, BUT CHECK THAT AN INFINITE VALUE IS EXPECTED", </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>             call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>             domain = NULL)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     }</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     else if (base::is.numeric(x = tempo_for_seq1) &amp;&amp; base::all(tempo_for_seq1 &lt; </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         0, na.rm = FALSE)) {</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         base::warning("FOR SEQUENCE WITH ALL NEGATIVE VALUES", </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>             call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>             domain = NULL)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     }</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     else if (base::is.numeric(x = tempo_for_seq1) &amp;&amp; base::length(x = tempo_for_seq1) &gt;= </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         2 &amp;&amp; tempo_for_seq1[1] &gt; tempo_for_seq1[2]) {</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         base::warning("FOR SEQUENCE DECREASING", call. = FALSE, </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>             immediate. = FALSE, noBreaks. = FALSE, domain = NULL)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     }</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     for (i in tempo_for_seq1) {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     tempo_for_seq1 &lt;- 1:length(x) ; if(base::length(x = tempo_for_seq1) == 0){base::warning("FOR SEQUENCE EMPTY: 0 ITERATION", call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, domain = NULL)}else if(base::anyNA(x = tempo_for_seq1)){base::warning("FOR SEQUENCE WITH NA VALUES", call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, domain = NULL)}else if(base::length(x = tempo_for_seq1) == 1){base::warning("FOR SEQUENCE WITH A SINGLE VALUE (EQUAL BOUNDS?): SINGLE ITERATION", call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, domain = NULL)}else if(base::is.atomic(x = tempo_for_seq1) &amp;&amp; base::any(base::is.infinite(x = tempo_for_seq1), na.rm = TRUE)){base::warning("FOR SEQUENCE WITH INFINITE VALUES: NO ENDLESS LOOP POSSIBLE BECAUSE THE for() CONTROLLER IS FULLY EVALUATED BEFORE ITERATING, BUT CHECK THAT AN INFINITE VALUE IS EXPECTED", call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, domain = NULL)}else if(base::is.numeric(x = tempo_for_seq1) &amp;&amp; base::all(tempo_for_seq1 &lt; 0, na.rm = FALSE)){base::warning("FOR SEQUENCE WITH ALL NEGATIVE VALUES", call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, domain = NULL)}else if(base::is.numeric(x = tempo_for_seq1) &amp;&amp; base::length(x = tempo_for_seq1) &gt;= 2 &amp;&amp; tempo_for_seq1[1] &gt; tempo_for_seq1[2]){base::warning("FOR SEQUENCE DECREASING", call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, domain = NULL)} ; for (i in tempo_for_seq1) {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>         base::print(x = i)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x558e6fe96ab8&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x561a7252ab88&gt;</span>
 <span class="r-in"><span><span class="fu">fun2_safer</span><span class="op">(</span>x <span class="op">=</span> <span class="fu">base</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">character</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span> <span class="co"># warning: 1:length(x) is c(1, 0), a decreasing sequence</span></span></span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>FOR SEQUENCE DECREASING</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 1</span>
@@ -199,7 +168,7 @@
 <span class="r-msg co"><span class="r-pr">#&gt;</span> 3	for		for (i in 1:length(x)) {</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> MODIFIED CODE EXPORTED IN:</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> /tmp/RtmpBNefhH/dir1762175310ac/fun2_safer.R</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> /tmp/RtmpgFv7ID/dir17925cb7a8ac/fun2_safer.R</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"><span></span></span>
 </code></pre></div>

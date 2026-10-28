@@ -210,484 +210,50 @@ for_loop_nb_check(x = fun2)
 
     ## function (x) 
     ## {
-    ##     tempo_for_seq1 <- 1:length(x)
-    ##     if (base::length(x = tempo_for_seq1) == 0) {
-    ##         base::warning("FOR SEQUENCE EMPTY: 0 ITERATION", call. = FALSE, 
-    ##             immediate. = FALSE, noBreaks. = FALSE, domain = NULL)
-    ##     }
-    ##     else if (base::anyNA(x = tempo_for_seq1)) {
-    ##         base::warning("FOR SEQUENCE WITH NA VALUES", call. = FALSE, 
-    ##             immediate. = FALSE, noBreaks. = FALSE, domain = NULL)
-    ##     }
-    ##     else if (base::length(x = tempo_for_seq1) == 1) {
-    ##         base::warning("FOR SEQUENCE WITH A SINGLE VALUE (EQUAL BOUNDS?): SINGLE ITERATION", 
-    ##             call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, 
-    ##             domain = NULL)
-    ##     }
-    ##     else if (base::is.atomic(x = tempo_for_seq1) && base::any(base::is.infinite(x = tempo_for_seq1), 
-    ##         na.rm = TRUE)) {
-    ##         base::warning("FOR SEQUENCE WITH INFINITE VALUES: NO ENDLESS LOOP POSSIBLE BECAUSE THE for() CONTROLLER IS FULLY EVALUATED BEFORE ITERATING, BUT CHECK THAT AN INFINITE VALUE IS EXPECTED", 
-    ##             call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, 
-    ##             domain = NULL)
-    ##     }
-    ##     else if (base::is.numeric(x = tempo_for_seq1) && base::all(tempo_for_seq1 < 
-    ##         0, na.rm = FALSE)) {
-    ##         base::warning("FOR SEQUENCE WITH ALL NEGATIVE VALUES", 
-    ##             call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, 
-    ##             domain = NULL)
-    ##     }
-    ##     else if (base::is.numeric(x = tempo_for_seq1) && base::length(x = tempo_for_seq1) >= 
-    ##         2 && tempo_for_seq1[1] > tempo_for_seq1[2]) {
-    ##         base::warning("FOR SEQUENCE DECREASING", call. = FALSE, 
-    ##             immediate. = FALSE, noBreaks. = FALSE, domain = NULL)
-    ##     }
-    ##     for (i in tempo_for_seq1) {
+    ##     tempo_for_seq1 <- 1:length(x) ; if(base::length(x = tempo_for_seq1) == 0){base::warning("FOR SEQUENCE EMPTY: 0 ITERATION", call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, domain = NULL)}else if(base::anyNA(x = tempo_for_seq1)){base::warning("FOR SEQUENCE WITH NA VALUES", call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, domain = NULL)}else if(base::length(x = tempo_for_seq1) == 1){base::warning("FOR SEQUENCE WITH A SINGLE VALUE (EQUAL BOUNDS?): SINGLE ITERATION", call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, domain = NULL)}else if(base::is.atomic(x = tempo_for_seq1) && base::any(base::is.infinite(x = tempo_for_seq1), na.rm = TRUE)){base::warning("FOR SEQUENCE WITH INFINITE VALUES: NO ENDLESS LOOP POSSIBLE BECAUSE THE for() CONTROLLER IS FULLY EVALUATED BEFORE ITERATING, BUT CHECK THAT AN INFINITE VALUE IS EXPECTED", call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, domain = NULL)}else if(base::is.numeric(x = tempo_for_seq1) && base::all(tempo_for_seq1 < 0, na.rm = FALSE)){base::warning("FOR SEQUENCE WITH ALL NEGATIVE VALUES", call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, domain = NULL)}else if(base::is.numeric(x = tempo_for_seq1) && base::length(x = tempo_for_seq1) >= 2 && tempo_for_seq1[1] > tempo_for_seq1[2]){base::warning("FOR SEQUENCE DECREASING", call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, domain = NULL)} ; for (i in tempo_for_seq1) {
     ##         base::print(i)
     ##     }
-    ##     tempo_for_seq2 <- 1:length(x) - 1
-    ##     if (base::length(x = tempo_for_seq2) == 0) {
-    ##         base::warning("FOR SEQUENCE EMPTY: 0 ITERATION", call. = FALSE, 
-    ##             immediate. = FALSE, noBreaks. = FALSE, domain = NULL)
-    ##     }
-    ##     else if (base::anyNA(x = tempo_for_seq2)) {
-    ##         base::warning("FOR SEQUENCE WITH NA VALUES", call. = FALSE, 
-    ##             immediate. = FALSE, noBreaks. = FALSE, domain = NULL)
-    ##     }
-    ##     else if (base::length(x = tempo_for_seq2) == 1) {
-    ##         base::warning("FOR SEQUENCE WITH A SINGLE VALUE (EQUAL BOUNDS?): SINGLE ITERATION", 
-    ##             call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, 
-    ##             domain = NULL)
-    ##     }
-    ##     else if (base::is.atomic(x = tempo_for_seq2) && base::any(base::is.infinite(x = tempo_for_seq2), 
-    ##         na.rm = TRUE)) {
-    ##         base::warning("FOR SEQUENCE WITH INFINITE VALUES: NO ENDLESS LOOP POSSIBLE BECAUSE THE for() CONTROLLER IS FULLY EVALUATED BEFORE ITERATING, BUT CHECK THAT AN INFINITE VALUE IS EXPECTED", 
-    ##             call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, 
-    ##             domain = NULL)
-    ##     }
-    ##     else if (base::is.numeric(x = tempo_for_seq2) && base::all(tempo_for_seq2 < 
-    ##         0, na.rm = FALSE)) {
-    ##         base::warning("FOR SEQUENCE WITH ALL NEGATIVE VALUES", 
-    ##             call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, 
-    ##             domain = NULL)
-    ##     }
-    ##     else if (base::is.numeric(x = tempo_for_seq2) && base::length(x = tempo_for_seq2) >= 
-    ##         2 && tempo_for_seq2[1] > tempo_for_seq2[2]) {
-    ##         base::warning("FOR SEQUENCE DECREASING", call. = FALSE, 
-    ##             immediate. = FALSE, noBreaks. = FALSE, domain = NULL)
-    ##     }
-    ##     for (i in tempo_for_seq2) {
+    ##     tempo_for_seq2 <- 1:length(x) - 1 ; if(base::length(x = tempo_for_seq2) == 0){base::warning("FOR SEQUENCE EMPTY: 0 ITERATION", call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, domain = NULL)}else if(base::anyNA(x = tempo_for_seq2)){base::warning("FOR SEQUENCE WITH NA VALUES", call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, domain = NULL)}else if(base::length(x = tempo_for_seq2) == 1){base::warning("FOR SEQUENCE WITH A SINGLE VALUE (EQUAL BOUNDS?): SINGLE ITERATION", call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, domain = NULL)}else if(base::is.atomic(x = tempo_for_seq2) && base::any(base::is.infinite(x = tempo_for_seq2), na.rm = TRUE)){base::warning("FOR SEQUENCE WITH INFINITE VALUES: NO ENDLESS LOOP POSSIBLE BECAUSE THE for() CONTROLLER IS FULLY EVALUATED BEFORE ITERATING, BUT CHECK THAT AN INFINITE VALUE IS EXPECTED", call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, domain = NULL)}else if(base::is.numeric(x = tempo_for_seq2) && base::all(tempo_for_seq2 < 0, na.rm = FALSE)){base::warning("FOR SEQUENCE WITH ALL NEGATIVE VALUES", call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, domain = NULL)}else if(base::is.numeric(x = tempo_for_seq2) && base::length(x = tempo_for_seq2) >= 2 && tempo_for_seq2[1] > tempo_for_seq2[2]){base::warning("FOR SEQUENCE DECREASING", call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, domain = NULL)} ; for (i in tempo_for_seq2) {
     ##         base::print(i)
     ##     }
-    ##     tempo_for_seq3 <- 1:n
-    ##     if (base::length(x = tempo_for_seq3) == 0) {
-    ##         base::warning("FOR SEQUENCE EMPTY: 0 ITERATION", call. = FALSE, 
-    ##             immediate. = FALSE, noBreaks. = FALSE, domain = NULL)
-    ##     }
-    ##     else if (base::anyNA(x = tempo_for_seq3)) {
-    ##         base::warning("FOR SEQUENCE WITH NA VALUES", call. = FALSE, 
-    ##             immediate. = FALSE, noBreaks. = FALSE, domain = NULL)
-    ##     }
-    ##     else if (base::length(x = tempo_for_seq3) == 1) {
-    ##         base::warning("FOR SEQUENCE WITH A SINGLE VALUE (EQUAL BOUNDS?): SINGLE ITERATION", 
-    ##             call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, 
-    ##             domain = NULL)
-    ##     }
-    ##     else if (base::is.atomic(x = tempo_for_seq3) && base::any(base::is.infinite(x = tempo_for_seq3), 
-    ##         na.rm = TRUE)) {
-    ##         base::warning("FOR SEQUENCE WITH INFINITE VALUES: NO ENDLESS LOOP POSSIBLE BECAUSE THE for() CONTROLLER IS FULLY EVALUATED BEFORE ITERATING, BUT CHECK THAT AN INFINITE VALUE IS EXPECTED", 
-    ##             call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, 
-    ##             domain = NULL)
-    ##     }
-    ##     else if (base::is.numeric(x = tempo_for_seq3) && base::all(tempo_for_seq3 < 
-    ##         0, na.rm = FALSE)) {
-    ##         base::warning("FOR SEQUENCE WITH ALL NEGATIVE VALUES", 
-    ##             call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, 
-    ##             domain = NULL)
-    ##     }
-    ##     else if (base::is.numeric(x = tempo_for_seq3) && base::length(x = tempo_for_seq3) >= 
-    ##         2 && tempo_for_seq3[1] > tempo_for_seq3[2]) {
-    ##         base::warning("FOR SEQUENCE DECREASING", call. = FALSE, 
-    ##             immediate. = FALSE, noBreaks. = FALSE, domain = NULL)
-    ##     }
-    ##     for (i in tempo_for_seq3) {
+    ##     tempo_for_seq3 <- 1:n ; if(base::length(x = tempo_for_seq3) == 0){base::warning("FOR SEQUENCE EMPTY: 0 ITERATION", call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, domain = NULL)}else if(base::anyNA(x = tempo_for_seq3)){base::warning("FOR SEQUENCE WITH NA VALUES", call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, domain = NULL)}else if(base::length(x = tempo_for_seq3) == 1){base::warning("FOR SEQUENCE WITH A SINGLE VALUE (EQUAL BOUNDS?): SINGLE ITERATION", call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, domain = NULL)}else if(base::is.atomic(x = tempo_for_seq3) && base::any(base::is.infinite(x = tempo_for_seq3), na.rm = TRUE)){base::warning("FOR SEQUENCE WITH INFINITE VALUES: NO ENDLESS LOOP POSSIBLE BECAUSE THE for() CONTROLLER IS FULLY EVALUATED BEFORE ITERATING, BUT CHECK THAT AN INFINITE VALUE IS EXPECTED", call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, domain = NULL)}else if(base::is.numeric(x = tempo_for_seq3) && base::all(tempo_for_seq3 < 0, na.rm = FALSE)){base::warning("FOR SEQUENCE WITH ALL NEGATIVE VALUES", call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, domain = NULL)}else if(base::is.numeric(x = tempo_for_seq3) && base::length(x = tempo_for_seq3) >= 2 && tempo_for_seq3[1] > tempo_for_seq3[2]){base::warning("FOR SEQUENCE DECREASING", call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, domain = NULL)} ; for (i in tempo_for_seq3) {
     ##         base::print(i)
     ##     }
-    ##     tempo_for_seq4 <- 1:(3 - 1)
-    ##     if (base::length(x = tempo_for_seq4) == 0) {
-    ##         base::warning("FOR SEQUENCE EMPTY: 0 ITERATION", call. = FALSE, 
-    ##             immediate. = FALSE, noBreaks. = FALSE, domain = NULL)
-    ##     }
-    ##     else if (base::anyNA(x = tempo_for_seq4)) {
-    ##         base::warning("FOR SEQUENCE WITH NA VALUES", call. = FALSE, 
-    ##             immediate. = FALSE, noBreaks. = FALSE, domain = NULL)
-    ##     }
-    ##     else if (base::length(x = tempo_for_seq4) == 1) {
-    ##         base::warning("FOR SEQUENCE WITH A SINGLE VALUE (EQUAL BOUNDS?): SINGLE ITERATION", 
-    ##             call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, 
-    ##             domain = NULL)
-    ##     }
-    ##     else if (base::is.atomic(x = tempo_for_seq4) && base::any(base::is.infinite(x = tempo_for_seq4), 
-    ##         na.rm = TRUE)) {
-    ##         base::warning("FOR SEQUENCE WITH INFINITE VALUES: NO ENDLESS LOOP POSSIBLE BECAUSE THE for() CONTROLLER IS FULLY EVALUATED BEFORE ITERATING, BUT CHECK THAT AN INFINITE VALUE IS EXPECTED", 
-    ##             call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, 
-    ##             domain = NULL)
-    ##     }
-    ##     else if (base::is.numeric(x = tempo_for_seq4) && base::all(tempo_for_seq4 < 
-    ##         0, na.rm = FALSE)) {
-    ##         base::warning("FOR SEQUENCE WITH ALL NEGATIVE VALUES", 
-    ##             call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, 
-    ##             domain = NULL)
-    ##     }
-    ##     else if (base::is.numeric(x = tempo_for_seq4) && base::length(x = tempo_for_seq4) >= 
-    ##         2 && tempo_for_seq4[1] > tempo_for_seq4[2]) {
-    ##         base::warning("FOR SEQUENCE DECREASING", call. = FALSE, 
-    ##             immediate. = FALSE, noBreaks. = FALSE, domain = NULL)
-    ##     }
-    ##     for (i in tempo_for_seq4) {
+    ##     tempo_for_seq4 <- 1:(3 - 1) ; if(base::length(x = tempo_for_seq4) == 0){base::warning("FOR SEQUENCE EMPTY: 0 ITERATION", call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, domain = NULL)}else if(base::anyNA(x = tempo_for_seq4)){base::warning("FOR SEQUENCE WITH NA VALUES", call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, domain = NULL)}else if(base::length(x = tempo_for_seq4) == 1){base::warning("FOR SEQUENCE WITH A SINGLE VALUE (EQUAL BOUNDS?): SINGLE ITERATION", call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, domain = NULL)}else if(base::is.atomic(x = tempo_for_seq4) && base::any(base::is.infinite(x = tempo_for_seq4), na.rm = TRUE)){base::warning("FOR SEQUENCE WITH INFINITE VALUES: NO ENDLESS LOOP POSSIBLE BECAUSE THE for() CONTROLLER IS FULLY EVALUATED BEFORE ITERATING, BUT CHECK THAT AN INFINITE VALUE IS EXPECTED", call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, domain = NULL)}else if(base::is.numeric(x = tempo_for_seq4) && base::all(tempo_for_seq4 < 0, na.rm = FALSE)){base::warning("FOR SEQUENCE WITH ALL NEGATIVE VALUES", call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, domain = NULL)}else if(base::is.numeric(x = tempo_for_seq4) && base::length(x = tempo_for_seq4) >= 2 && tempo_for_seq4[1] > tempo_for_seq4[2]){base::warning("FOR SEQUENCE DECREASING", call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, domain = NULL)} ; for (i in tempo_for_seq4) {
     ##         base::print(i)
     ##     }
-    ##     tempo_for_seq5 <- 1:3 - 1
-    ##     if (base::length(x = tempo_for_seq5) == 0) {
-    ##         base::warning("FOR SEQUENCE EMPTY: 0 ITERATION", call. = FALSE, 
-    ##             immediate. = FALSE, noBreaks. = FALSE, domain = NULL)
-    ##     }
-    ##     else if (base::anyNA(x = tempo_for_seq5)) {
-    ##         base::warning("FOR SEQUENCE WITH NA VALUES", call. = FALSE, 
-    ##             immediate. = FALSE, noBreaks. = FALSE, domain = NULL)
-    ##     }
-    ##     else if (base::length(x = tempo_for_seq5) == 1) {
-    ##         base::warning("FOR SEQUENCE WITH A SINGLE VALUE (EQUAL BOUNDS?): SINGLE ITERATION", 
-    ##             call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, 
-    ##             domain = NULL)
-    ##     }
-    ##     else if (base::is.atomic(x = tempo_for_seq5) && base::any(base::is.infinite(x = tempo_for_seq5), 
-    ##         na.rm = TRUE)) {
-    ##         base::warning("FOR SEQUENCE WITH INFINITE VALUES: NO ENDLESS LOOP POSSIBLE BECAUSE THE for() CONTROLLER IS FULLY EVALUATED BEFORE ITERATING, BUT CHECK THAT AN INFINITE VALUE IS EXPECTED", 
-    ##             call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, 
-    ##             domain = NULL)
-    ##     }
-    ##     else if (base::is.numeric(x = tempo_for_seq5) && base::all(tempo_for_seq5 < 
-    ##         0, na.rm = FALSE)) {
-    ##         base::warning("FOR SEQUENCE WITH ALL NEGATIVE VALUES", 
-    ##             call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, 
-    ##             domain = NULL)
-    ##     }
-    ##     else if (base::is.numeric(x = tempo_for_seq5) && base::length(x = tempo_for_seq5) >= 
-    ##         2 && tempo_for_seq5[1] > tempo_for_seq5[2]) {
-    ##         base::warning("FOR SEQUENCE DECREASING", call. = FALSE, 
-    ##             immediate. = FALSE, noBreaks. = FALSE, domain = NULL)
-    ##     }
-    ##     for (i in tempo_for_seq5) {
+    ##     tempo_for_seq5 <- 1:3 - 1 ; if(base::length(x = tempo_for_seq5) == 0){base::warning("FOR SEQUENCE EMPTY: 0 ITERATION", call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, domain = NULL)}else if(base::anyNA(x = tempo_for_seq5)){base::warning("FOR SEQUENCE WITH NA VALUES", call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, domain = NULL)}else if(base::length(x = tempo_for_seq5) == 1){base::warning("FOR SEQUENCE WITH A SINGLE VALUE (EQUAL BOUNDS?): SINGLE ITERATION", call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, domain = NULL)}else if(base::is.atomic(x = tempo_for_seq5) && base::any(base::is.infinite(x = tempo_for_seq5), na.rm = TRUE)){base::warning("FOR SEQUENCE WITH INFINITE VALUES: NO ENDLESS LOOP POSSIBLE BECAUSE THE for() CONTROLLER IS FULLY EVALUATED BEFORE ITERATING, BUT CHECK THAT AN INFINITE VALUE IS EXPECTED", call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, domain = NULL)}else if(base::is.numeric(x = tempo_for_seq5) && base::all(tempo_for_seq5 < 0, na.rm = FALSE)){base::warning("FOR SEQUENCE WITH ALL NEGATIVE VALUES", call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, domain = NULL)}else if(base::is.numeric(x = tempo_for_seq5) && base::length(x = tempo_for_seq5) >= 2 && tempo_for_seq5[1] > tempo_for_seq5[2]){base::warning("FOR SEQUENCE DECREASING", call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, domain = NULL)} ; for (i in tempo_for_seq5) {
     ##         base::print(i)
     ##     }
-    ##     tempo_for_seq6 <- seq_along(along.with = x) - 1
-    ##     if (base::length(x = tempo_for_seq6) == 0) {
-    ##         base::warning("FOR SEQUENCE EMPTY: 0 ITERATION", call. = FALSE, 
-    ##             immediate. = FALSE, noBreaks. = FALSE, domain = NULL)
-    ##     }
-    ##     else if (base::anyNA(x = tempo_for_seq6)) {
-    ##         base::warning("FOR SEQUENCE WITH NA VALUES", call. = FALSE, 
-    ##             immediate. = FALSE, noBreaks. = FALSE, domain = NULL)
-    ##     }
-    ##     else if (base::length(x = tempo_for_seq6) == 1) {
-    ##         base::warning("FOR SEQUENCE WITH A SINGLE VALUE (EQUAL BOUNDS?): SINGLE ITERATION", 
-    ##             call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, 
-    ##             domain = NULL)
-    ##     }
-    ##     else if (base::is.atomic(x = tempo_for_seq6) && base::any(base::is.infinite(x = tempo_for_seq6), 
-    ##         na.rm = TRUE)) {
-    ##         base::warning("FOR SEQUENCE WITH INFINITE VALUES: NO ENDLESS LOOP POSSIBLE BECAUSE THE for() CONTROLLER IS FULLY EVALUATED BEFORE ITERATING, BUT CHECK THAT AN INFINITE VALUE IS EXPECTED", 
-    ##             call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, 
-    ##             domain = NULL)
-    ##     }
-    ##     else if (base::is.numeric(x = tempo_for_seq6) && base::all(tempo_for_seq6 < 
-    ##         0, na.rm = FALSE)) {
-    ##         base::warning("FOR SEQUENCE WITH ALL NEGATIVE VALUES", 
-    ##             call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, 
-    ##             domain = NULL)
-    ##     }
-    ##     else if (base::is.numeric(x = tempo_for_seq6) && base::length(x = tempo_for_seq6) >= 
-    ##         2 && tempo_for_seq6[1] > tempo_for_seq6[2]) {
-    ##         base::warning("FOR SEQUENCE DECREASING", call. = FALSE, 
-    ##             immediate. = FALSE, noBreaks. = FALSE, domain = NULL)
-    ##     }
-    ##     for (i in tempo_for_seq6) {
+    ##     tempo_for_seq6 <- seq_along(along.with = x) - 1 ; if(base::length(x = tempo_for_seq6) == 0){base::warning("FOR SEQUENCE EMPTY: 0 ITERATION", call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, domain = NULL)}else if(base::anyNA(x = tempo_for_seq6)){base::warning("FOR SEQUENCE WITH NA VALUES", call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, domain = NULL)}else if(base::length(x = tempo_for_seq6) == 1){base::warning("FOR SEQUENCE WITH A SINGLE VALUE (EQUAL BOUNDS?): SINGLE ITERATION", call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, domain = NULL)}else if(base::is.atomic(x = tempo_for_seq6) && base::any(base::is.infinite(x = tempo_for_seq6), na.rm = TRUE)){base::warning("FOR SEQUENCE WITH INFINITE VALUES: NO ENDLESS LOOP POSSIBLE BECAUSE THE for() CONTROLLER IS FULLY EVALUATED BEFORE ITERATING, BUT CHECK THAT AN INFINITE VALUE IS EXPECTED", call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, domain = NULL)}else if(base::is.numeric(x = tempo_for_seq6) && base::all(tempo_for_seq6 < 0, na.rm = FALSE)){base::warning("FOR SEQUENCE WITH ALL NEGATIVE VALUES", call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, domain = NULL)}else if(base::is.numeric(x = tempo_for_seq6) && base::length(x = tempo_for_seq6) >= 2 && tempo_for_seq6[1] > tempo_for_seq6[2]){base::warning("FOR SEQUENCE DECREASING", call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, domain = NULL)} ; for (i in tempo_for_seq6) {
     ##         base::print(i)
     ##     }
-    ##     tempo_for_seq7 <- 1:2.5
-    ##     if (base::length(x = tempo_for_seq7) == 0) {
-    ##         base::warning("FOR SEQUENCE EMPTY: 0 ITERATION", call. = FALSE, 
-    ##             immediate. = FALSE, noBreaks. = FALSE, domain = NULL)
-    ##     }
-    ##     else if (base::anyNA(x = tempo_for_seq7)) {
-    ##         base::warning("FOR SEQUENCE WITH NA VALUES", call. = FALSE, 
-    ##             immediate. = FALSE, noBreaks. = FALSE, domain = NULL)
-    ##     }
-    ##     else if (base::length(x = tempo_for_seq7) == 1) {
-    ##         base::warning("FOR SEQUENCE WITH A SINGLE VALUE (EQUAL BOUNDS?): SINGLE ITERATION", 
-    ##             call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, 
-    ##             domain = NULL)
-    ##     }
-    ##     else if (base::is.atomic(x = tempo_for_seq7) && base::any(base::is.infinite(x = tempo_for_seq7), 
-    ##         na.rm = TRUE)) {
-    ##         base::warning("FOR SEQUENCE WITH INFINITE VALUES: NO ENDLESS LOOP POSSIBLE BECAUSE THE for() CONTROLLER IS FULLY EVALUATED BEFORE ITERATING, BUT CHECK THAT AN INFINITE VALUE IS EXPECTED", 
-    ##             call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, 
-    ##             domain = NULL)
-    ##     }
-    ##     else if (base::is.numeric(x = tempo_for_seq7) && base::all(tempo_for_seq7 < 
-    ##         0, na.rm = FALSE)) {
-    ##         base::warning("FOR SEQUENCE WITH ALL NEGATIVE VALUES", 
-    ##             call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, 
-    ##             domain = NULL)
-    ##     }
-    ##     else if (base::is.numeric(x = tempo_for_seq7) && base::length(x = tempo_for_seq7) >= 
-    ##         2 && tempo_for_seq7[1] > tempo_for_seq7[2]) {
-    ##         base::warning("FOR SEQUENCE DECREASING", call. = FALSE, 
-    ##             immediate. = FALSE, noBreaks. = FALSE, domain = NULL)
-    ##     }
-    ##     for (i in tempo_for_seq7) {
+    ##     tempo_for_seq7 <- 1:2.5 ; if(base::length(x = tempo_for_seq7) == 0){base::warning("FOR SEQUENCE EMPTY: 0 ITERATION", call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, domain = NULL)}else if(base::anyNA(x = tempo_for_seq7)){base::warning("FOR SEQUENCE WITH NA VALUES", call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, domain = NULL)}else if(base::length(x = tempo_for_seq7) == 1){base::warning("FOR SEQUENCE WITH A SINGLE VALUE (EQUAL BOUNDS?): SINGLE ITERATION", call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, domain = NULL)}else if(base::is.atomic(x = tempo_for_seq7) && base::any(base::is.infinite(x = tempo_for_seq7), na.rm = TRUE)){base::warning("FOR SEQUENCE WITH INFINITE VALUES: NO ENDLESS LOOP POSSIBLE BECAUSE THE for() CONTROLLER IS FULLY EVALUATED BEFORE ITERATING, BUT CHECK THAT AN INFINITE VALUE IS EXPECTED", call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, domain = NULL)}else if(base::is.numeric(x = tempo_for_seq7) && base::all(tempo_for_seq7 < 0, na.rm = FALSE)){base::warning("FOR SEQUENCE WITH ALL NEGATIVE VALUES", call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, domain = NULL)}else if(base::is.numeric(x = tempo_for_seq7) && base::length(x = tempo_for_seq7) >= 2 && tempo_for_seq7[1] > tempo_for_seq7[2]){base::warning("FOR SEQUENCE DECREASING", call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, domain = NULL)} ; for (i in tempo_for_seq7) {
     ##         base::print(i)
     ##     }
-    ##     tempo_for_seq8 <- 1:NA
-    ##     if (base::length(x = tempo_for_seq8) == 0) {
-    ##         base::warning("FOR SEQUENCE EMPTY: 0 ITERATION", call. = FALSE, 
-    ##             immediate. = FALSE, noBreaks. = FALSE, domain = NULL)
-    ##     }
-    ##     else if (base::anyNA(x = tempo_for_seq8)) {
-    ##         base::warning("FOR SEQUENCE WITH NA VALUES", call. = FALSE, 
-    ##             immediate. = FALSE, noBreaks. = FALSE, domain = NULL)
-    ##     }
-    ##     else if (base::length(x = tempo_for_seq8) == 1) {
-    ##         base::warning("FOR SEQUENCE WITH A SINGLE VALUE (EQUAL BOUNDS?): SINGLE ITERATION", 
-    ##             call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, 
-    ##             domain = NULL)
-    ##     }
-    ##     else if (base::is.atomic(x = tempo_for_seq8) && base::any(base::is.infinite(x = tempo_for_seq8), 
-    ##         na.rm = TRUE)) {
-    ##         base::warning("FOR SEQUENCE WITH INFINITE VALUES: NO ENDLESS LOOP POSSIBLE BECAUSE THE for() CONTROLLER IS FULLY EVALUATED BEFORE ITERATING, BUT CHECK THAT AN INFINITE VALUE IS EXPECTED", 
-    ##             call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, 
-    ##             domain = NULL)
-    ##     }
-    ##     else if (base::is.numeric(x = tempo_for_seq8) && base::all(tempo_for_seq8 < 
-    ##         0, na.rm = FALSE)) {
-    ##         base::warning("FOR SEQUENCE WITH ALL NEGATIVE VALUES", 
-    ##             call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, 
-    ##             domain = NULL)
-    ##     }
-    ##     else if (base::is.numeric(x = tempo_for_seq8) && base::length(x = tempo_for_seq8) >= 
-    ##         2 && tempo_for_seq8[1] > tempo_for_seq8[2]) {
-    ##         base::warning("FOR SEQUENCE DECREASING", call. = FALSE, 
-    ##             immediate. = FALSE, noBreaks. = FALSE, domain = NULL)
-    ##     }
-    ##     for (i in tempo_for_seq8) {
+    ##     tempo_for_seq8 <- 1:NA ; if(base::length(x = tempo_for_seq8) == 0){base::warning("FOR SEQUENCE EMPTY: 0 ITERATION", call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, domain = NULL)}else if(base::anyNA(x = tempo_for_seq8)){base::warning("FOR SEQUENCE WITH NA VALUES", call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, domain = NULL)}else if(base::length(x = tempo_for_seq8) == 1){base::warning("FOR SEQUENCE WITH A SINGLE VALUE (EQUAL BOUNDS?): SINGLE ITERATION", call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, domain = NULL)}else if(base::is.atomic(x = tempo_for_seq8) && base::any(base::is.infinite(x = tempo_for_seq8), na.rm = TRUE)){base::warning("FOR SEQUENCE WITH INFINITE VALUES: NO ENDLESS LOOP POSSIBLE BECAUSE THE for() CONTROLLER IS FULLY EVALUATED BEFORE ITERATING, BUT CHECK THAT AN INFINITE VALUE IS EXPECTED", call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, domain = NULL)}else if(base::is.numeric(x = tempo_for_seq8) && base::all(tempo_for_seq8 < 0, na.rm = FALSE)){base::warning("FOR SEQUENCE WITH ALL NEGATIVE VALUES", call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, domain = NULL)}else if(base::is.numeric(x = tempo_for_seq8) && base::length(x = tempo_for_seq8) >= 2 && tempo_for_seq8[1] > tempo_for_seq8[2]){base::warning("FOR SEQUENCE DECREASING", call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, domain = NULL)} ; for (i in tempo_for_seq8) {
     ##         base::print(i)
     ##     }
-    ##     tempo_for_seq9 <- 1:Inf
-    ##     if (base::length(x = tempo_for_seq9) == 0) {
-    ##         base::warning("FOR SEQUENCE EMPTY: 0 ITERATION", call. = FALSE, 
-    ##             immediate. = FALSE, noBreaks. = FALSE, domain = NULL)
-    ##     }
-    ##     else if (base::anyNA(x = tempo_for_seq9)) {
-    ##         base::warning("FOR SEQUENCE WITH NA VALUES", call. = FALSE, 
-    ##             immediate. = FALSE, noBreaks. = FALSE, domain = NULL)
-    ##     }
-    ##     else if (base::length(x = tempo_for_seq9) == 1) {
-    ##         base::warning("FOR SEQUENCE WITH A SINGLE VALUE (EQUAL BOUNDS?): SINGLE ITERATION", 
-    ##             call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, 
-    ##             domain = NULL)
-    ##     }
-    ##     else if (base::is.atomic(x = tempo_for_seq9) && base::any(base::is.infinite(x = tempo_for_seq9), 
-    ##         na.rm = TRUE)) {
-    ##         base::warning("FOR SEQUENCE WITH INFINITE VALUES: NO ENDLESS LOOP POSSIBLE BECAUSE THE for() CONTROLLER IS FULLY EVALUATED BEFORE ITERATING, BUT CHECK THAT AN INFINITE VALUE IS EXPECTED", 
-    ##             call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, 
-    ##             domain = NULL)
-    ##     }
-    ##     else if (base::is.numeric(x = tempo_for_seq9) && base::all(tempo_for_seq9 < 
-    ##         0, na.rm = FALSE)) {
-    ##         base::warning("FOR SEQUENCE WITH ALL NEGATIVE VALUES", 
-    ##             call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, 
-    ##             domain = NULL)
-    ##     }
-    ##     else if (base::is.numeric(x = tempo_for_seq9) && base::length(x = tempo_for_seq9) >= 
-    ##         2 && tempo_for_seq9[1] > tempo_for_seq9[2]) {
-    ##         base::warning("FOR SEQUENCE DECREASING", call. = FALSE, 
-    ##             immediate. = FALSE, noBreaks. = FALSE, domain = NULL)
-    ##     }
-    ##     for (i in tempo_for_seq9) {
+    ##     tempo_for_seq9 <- 1:Inf ; if(base::length(x = tempo_for_seq9) == 0){base::warning("FOR SEQUENCE EMPTY: 0 ITERATION", call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, domain = NULL)}else if(base::anyNA(x = tempo_for_seq9)){base::warning("FOR SEQUENCE WITH NA VALUES", call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, domain = NULL)}else if(base::length(x = tempo_for_seq9) == 1){base::warning("FOR SEQUENCE WITH A SINGLE VALUE (EQUAL BOUNDS?): SINGLE ITERATION", call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, domain = NULL)}else if(base::is.atomic(x = tempo_for_seq9) && base::any(base::is.infinite(x = tempo_for_seq9), na.rm = TRUE)){base::warning("FOR SEQUENCE WITH INFINITE VALUES: NO ENDLESS LOOP POSSIBLE BECAUSE THE for() CONTROLLER IS FULLY EVALUATED BEFORE ITERATING, BUT CHECK THAT AN INFINITE VALUE IS EXPECTED", call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, domain = NULL)}else if(base::is.numeric(x = tempo_for_seq9) && base::all(tempo_for_seq9 < 0, na.rm = FALSE)){base::warning("FOR SEQUENCE WITH ALL NEGATIVE VALUES", call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, domain = NULL)}else if(base::is.numeric(x = tempo_for_seq9) && base::length(x = tempo_for_seq9) >= 2 && tempo_for_seq9[1] > tempo_for_seq9[2]){base::warning("FOR SEQUENCE DECREASING", call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, domain = NULL)} ; for (i in tempo_for_seq9) {
     ##         base::print(i)
     ##     }
-    ##     tempo_for_seq10 <- 1:TRUE
-    ##     if (base::length(x = tempo_for_seq10) == 0) {
-    ##         base::warning("FOR SEQUENCE EMPTY: 0 ITERATION", call. = FALSE, 
-    ##             immediate. = FALSE, noBreaks. = FALSE, domain = NULL)
-    ##     }
-    ##     else if (base::anyNA(x = tempo_for_seq10)) {
-    ##         base::warning("FOR SEQUENCE WITH NA VALUES", call. = FALSE, 
-    ##             immediate. = FALSE, noBreaks. = FALSE, domain = NULL)
-    ##     }
-    ##     else if (base::length(x = tempo_for_seq10) == 1) {
-    ##         base::warning("FOR SEQUENCE WITH A SINGLE VALUE (EQUAL BOUNDS?): SINGLE ITERATION", 
-    ##             call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, 
-    ##             domain = NULL)
-    ##     }
-    ##     else if (base::is.atomic(x = tempo_for_seq10) && base::any(base::is.infinite(x = tempo_for_seq10), 
-    ##         na.rm = TRUE)) {
-    ##         base::warning("FOR SEQUENCE WITH INFINITE VALUES: NO ENDLESS LOOP POSSIBLE BECAUSE THE for() CONTROLLER IS FULLY EVALUATED BEFORE ITERATING, BUT CHECK THAT AN INFINITE VALUE IS EXPECTED", 
-    ##             call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, 
-    ##             domain = NULL)
-    ##     }
-    ##     else if (base::is.numeric(x = tempo_for_seq10) && base::all(tempo_for_seq10 < 
-    ##         0, na.rm = FALSE)) {
-    ##         base::warning("FOR SEQUENCE WITH ALL NEGATIVE VALUES", 
-    ##             call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, 
-    ##             domain = NULL)
-    ##     }
-    ##     else if (base::is.numeric(x = tempo_for_seq10) && base::length(x = tempo_for_seq10) >= 
-    ##         2 && tempo_for_seq10[1] > tempo_for_seq10[2]) {
-    ##         base::warning("FOR SEQUENCE DECREASING", call. = FALSE, 
-    ##             immediate. = FALSE, noBreaks. = FALSE, domain = NULL)
-    ##     }
-    ##     for (i in tempo_for_seq10) {
+    ##     tempo_for_seq10 <- 1:TRUE ; if(base::length(x = tempo_for_seq10) == 0){base::warning("FOR SEQUENCE EMPTY: 0 ITERATION", call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, domain = NULL)}else if(base::anyNA(x = tempo_for_seq10)){base::warning("FOR SEQUENCE WITH NA VALUES", call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, domain = NULL)}else if(base::length(x = tempo_for_seq10) == 1){base::warning("FOR SEQUENCE WITH A SINGLE VALUE (EQUAL BOUNDS?): SINGLE ITERATION", call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, domain = NULL)}else if(base::is.atomic(x = tempo_for_seq10) && base::any(base::is.infinite(x = tempo_for_seq10), na.rm = TRUE)){base::warning("FOR SEQUENCE WITH INFINITE VALUES: NO ENDLESS LOOP POSSIBLE BECAUSE THE for() CONTROLLER IS FULLY EVALUATED BEFORE ITERATING, BUT CHECK THAT AN INFINITE VALUE IS EXPECTED", call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, domain = NULL)}else if(base::is.numeric(x = tempo_for_seq10) && base::all(tempo_for_seq10 < 0, na.rm = FALSE)){base::warning("FOR SEQUENCE WITH ALL NEGATIVE VALUES", call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, domain = NULL)}else if(base::is.numeric(x = tempo_for_seq10) && base::length(x = tempo_for_seq10) >= 2 && tempo_for_seq10[1] > tempo_for_seq10[2]){base::warning("FOR SEQUENCE DECREASING", call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, domain = NULL)} ; for (i in tempo_for_seq10) {
     ##         base::print(i)
     ##     }
-    ##     tempo_for_seq11 <- x
-    ##     if (base::length(x = tempo_for_seq11) == 0) {
-    ##         base::warning("FOR SEQUENCE EMPTY: 0 ITERATION", call. = FALSE, 
-    ##             immediate. = FALSE, noBreaks. = FALSE, domain = NULL)
-    ##     }
-    ##     else if (base::anyNA(x = tempo_for_seq11)) {
-    ##         base::warning("FOR SEQUENCE WITH NA VALUES", call. = FALSE, 
-    ##             immediate. = FALSE, noBreaks. = FALSE, domain = NULL)
-    ##     }
-    ##     else if (base::length(x = tempo_for_seq11) == 1) {
-    ##         base::warning("FOR SEQUENCE WITH A SINGLE VALUE (EQUAL BOUNDS?): SINGLE ITERATION", 
-    ##             call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, 
-    ##             domain = NULL)
-    ##     }
-    ##     else if (base::is.atomic(x = tempo_for_seq11) && base::any(base::is.infinite(x = tempo_for_seq11), 
-    ##         na.rm = TRUE)) {
-    ##         base::warning("FOR SEQUENCE WITH INFINITE VALUES: NO ENDLESS LOOP POSSIBLE BECAUSE THE for() CONTROLLER IS FULLY EVALUATED BEFORE ITERATING, BUT CHECK THAT AN INFINITE VALUE IS EXPECTED", 
-    ##             call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, 
-    ##             domain = NULL)
-    ##     }
-    ##     else if (base::is.numeric(x = tempo_for_seq11) && base::all(tempo_for_seq11 < 
-    ##         0, na.rm = FALSE)) {
-    ##         base::warning("FOR SEQUENCE WITH ALL NEGATIVE VALUES", 
-    ##             call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, 
-    ##             domain = NULL)
-    ##     }
-    ##     else if (base::is.numeric(x = tempo_for_seq11) && base::length(x = tempo_for_seq11) >= 
-    ##         2 && tempo_for_seq11[1] > tempo_for_seq11[2]) {
-    ##         base::warning("FOR SEQUENCE DECREASING", call. = FALSE, 
-    ##             immediate. = FALSE, noBreaks. = FALSE, domain = NULL)
-    ##     }
-    ##     for (i in tempo_for_seq11) {
+    ##     tempo_for_seq11 <- x ; if(base::length(x = tempo_for_seq11) == 0){base::warning("FOR SEQUENCE EMPTY: 0 ITERATION", call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, domain = NULL)}else if(base::anyNA(x = tempo_for_seq11)){base::warning("FOR SEQUENCE WITH NA VALUES", call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, domain = NULL)}else if(base::length(x = tempo_for_seq11) == 1){base::warning("FOR SEQUENCE WITH A SINGLE VALUE (EQUAL BOUNDS?): SINGLE ITERATION", call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, domain = NULL)}else if(base::is.atomic(x = tempo_for_seq11) && base::any(base::is.infinite(x = tempo_for_seq11), na.rm = TRUE)){base::warning("FOR SEQUENCE WITH INFINITE VALUES: NO ENDLESS LOOP POSSIBLE BECAUSE THE for() CONTROLLER IS FULLY EVALUATED BEFORE ITERATING, BUT CHECK THAT AN INFINITE VALUE IS EXPECTED", call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, domain = NULL)}else if(base::is.numeric(x = tempo_for_seq11) && base::all(tempo_for_seq11 < 0, na.rm = FALSE)){base::warning("FOR SEQUENCE WITH ALL NEGATIVE VALUES", call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, domain = NULL)}else if(base::is.numeric(x = tempo_for_seq11) && base::length(x = tempo_for_seq11) >= 2 && tempo_for_seq11[1] > tempo_for_seq11[2]){base::warning("FOR SEQUENCE DECREASING", call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, domain = NULL)} ; for (i in tempo_for_seq11) {
     ##         base::print(i)
     ##     }
-    ##     tempo_for_seq12 <- base::rev(x = x)
-    ##     if (base::length(x = tempo_for_seq12) == 0) {
-    ##         base::warning("FOR SEQUENCE EMPTY: 0 ITERATION", call. = FALSE, 
-    ##             immediate. = FALSE, noBreaks. = FALSE, domain = NULL)
-    ##     }
-    ##     else if (base::anyNA(x = tempo_for_seq12)) {
-    ##         base::warning("FOR SEQUENCE WITH NA VALUES", call. = FALSE, 
-    ##             immediate. = FALSE, noBreaks. = FALSE, domain = NULL)
-    ##     }
-    ##     else if (base::length(x = tempo_for_seq12) == 1) {
-    ##         base::warning("FOR SEQUENCE WITH A SINGLE VALUE (EQUAL BOUNDS?): SINGLE ITERATION", 
-    ##             call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, 
-    ##             domain = NULL)
-    ##     }
-    ##     else if (base::is.atomic(x = tempo_for_seq12) && base::any(base::is.infinite(x = tempo_for_seq12), 
-    ##         na.rm = TRUE)) {
-    ##         base::warning("FOR SEQUENCE WITH INFINITE VALUES: NO ENDLESS LOOP POSSIBLE BECAUSE THE for() CONTROLLER IS FULLY EVALUATED BEFORE ITERATING, BUT CHECK THAT AN INFINITE VALUE IS EXPECTED", 
-    ##             call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, 
-    ##             domain = NULL)
-    ##     }
-    ##     else if (base::is.numeric(x = tempo_for_seq12) && base::all(tempo_for_seq12 < 
-    ##         0, na.rm = FALSE)) {
-    ##         base::warning("FOR SEQUENCE WITH ALL NEGATIVE VALUES", 
-    ##             call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, 
-    ##             domain = NULL)
-    ##     }
-    ##     else if (base::is.numeric(x = tempo_for_seq12) && base::length(x = tempo_for_seq12) >= 
-    ##         2 && tempo_for_seq12[1] > tempo_for_seq12[2]) {
-    ##         base::warning("FOR SEQUENCE DECREASING", call. = FALSE, 
-    ##             immediate. = FALSE, noBreaks. = FALSE, domain = NULL)
-    ##     }
-    ##     for (i in tempo_for_seq12) {
+    ##     tempo_for_seq12 <- base::rev(x = x) ; if(base::length(x = tempo_for_seq12) == 0){base::warning("FOR SEQUENCE EMPTY: 0 ITERATION", call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, domain = NULL)}else if(base::anyNA(x = tempo_for_seq12)){base::warning("FOR SEQUENCE WITH NA VALUES", call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, domain = NULL)}else if(base::length(x = tempo_for_seq12) == 1){base::warning("FOR SEQUENCE WITH A SINGLE VALUE (EQUAL BOUNDS?): SINGLE ITERATION", call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, domain = NULL)}else if(base::is.atomic(x = tempo_for_seq12) && base::any(base::is.infinite(x = tempo_for_seq12), na.rm = TRUE)){base::warning("FOR SEQUENCE WITH INFINITE VALUES: NO ENDLESS LOOP POSSIBLE BECAUSE THE for() CONTROLLER IS FULLY EVALUATED BEFORE ITERATING, BUT CHECK THAT AN INFINITE VALUE IS EXPECTED", call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, domain = NULL)}else if(base::is.numeric(x = tempo_for_seq12) && base::all(tempo_for_seq12 < 0, na.rm = FALSE)){base::warning("FOR SEQUENCE WITH ALL NEGATIVE VALUES", call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, domain = NULL)}else if(base::is.numeric(x = tempo_for_seq12) && base::length(x = tempo_for_seq12) >= 2 && tempo_for_seq12[1] > tempo_for_seq12[2]){base::warning("FOR SEQUENCE DECREASING", call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, domain = NULL)} ; for (i in tempo_for_seq12) {
     ##         base::print(i)
     ##     }
-    ##     tempo_for_seq13 <- base::seq(x)
-    ##     if (base::length(x = tempo_for_seq13) == 0) {
-    ##         base::warning("FOR SEQUENCE EMPTY: 0 ITERATION", call. = FALSE, 
-    ##             immediate. = FALSE, noBreaks. = FALSE, domain = NULL)
-    ##     }
-    ##     else if (base::anyNA(x = tempo_for_seq13)) {
-    ##         base::warning("FOR SEQUENCE WITH NA VALUES", call. = FALSE, 
-    ##             immediate. = FALSE, noBreaks. = FALSE, domain = NULL)
-    ##     }
-    ##     else if (base::length(x = tempo_for_seq13) == 1) {
-    ##         base::warning("FOR SEQUENCE WITH A SINGLE VALUE (EQUAL BOUNDS?): SINGLE ITERATION", 
-    ##             call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, 
-    ##             domain = NULL)
-    ##     }
-    ##     else if (base::is.atomic(x = tempo_for_seq13) && base::any(base::is.infinite(x = tempo_for_seq13), 
-    ##         na.rm = TRUE)) {
-    ##         base::warning("FOR SEQUENCE WITH INFINITE VALUES: NO ENDLESS LOOP POSSIBLE BECAUSE THE for() CONTROLLER IS FULLY EVALUATED BEFORE ITERATING, BUT CHECK THAT AN INFINITE VALUE IS EXPECTED", 
-    ##             call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, 
-    ##             domain = NULL)
-    ##     }
-    ##     else if (base::is.numeric(x = tempo_for_seq13) && base::all(tempo_for_seq13 < 
-    ##         0, na.rm = FALSE)) {
-    ##         base::warning("FOR SEQUENCE WITH ALL NEGATIVE VALUES", 
-    ##             call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, 
-    ##             domain = NULL)
-    ##     }
-    ##     else if (base::is.numeric(x = tempo_for_seq13) && base::length(x = tempo_for_seq13) >= 
-    ##         2 && tempo_for_seq13[1] > tempo_for_seq13[2]) {
-    ##         base::warning("FOR SEQUENCE DECREASING", call. = FALSE, 
-    ##             immediate. = FALSE, noBreaks. = FALSE, domain = NULL)
-    ##     }
-    ##     for (i in tempo_for_seq13) {
+    ##     tempo_for_seq13 <- base::seq(x) ; if(base::length(x = tempo_for_seq13) == 0){base::warning("FOR SEQUENCE EMPTY: 0 ITERATION", call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, domain = NULL)}else if(base::anyNA(x = tempo_for_seq13)){base::warning("FOR SEQUENCE WITH NA VALUES", call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, domain = NULL)}else if(base::length(x = tempo_for_seq13) == 1){base::warning("FOR SEQUENCE WITH A SINGLE VALUE (EQUAL BOUNDS?): SINGLE ITERATION", call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, domain = NULL)}else if(base::is.atomic(x = tempo_for_seq13) && base::any(base::is.infinite(x = tempo_for_seq13), na.rm = TRUE)){base::warning("FOR SEQUENCE WITH INFINITE VALUES: NO ENDLESS LOOP POSSIBLE BECAUSE THE for() CONTROLLER IS FULLY EVALUATED BEFORE ITERATING, BUT CHECK THAT AN INFINITE VALUE IS EXPECTED", call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, domain = NULL)}else if(base::is.numeric(x = tempo_for_seq13) && base::all(tempo_for_seq13 < 0, na.rm = FALSE)){base::warning("FOR SEQUENCE WITH ALL NEGATIVE VALUES", call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, domain = NULL)}else if(base::is.numeric(x = tempo_for_seq13) && base::length(x = tempo_for_seq13) >= 2 && tempo_for_seq13[1] > tempo_for_seq13[2]){base::warning("FOR SEQUENCE DECREASING", call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, domain = NULL)} ; for (i in tempo_for_seq13) {
     ##         base::print(i)
     ##     }
-    ##     tempo_for_seq14 <- base::names(x = x)
-    ##     if (base::length(x = tempo_for_seq14) == 0) {
-    ##         base::warning("FOR SEQUENCE EMPTY: 0 ITERATION", call. = FALSE, 
-    ##             immediate. = FALSE, noBreaks. = FALSE, domain = NULL)
-    ##     }
-    ##     else if (base::anyNA(x = tempo_for_seq14)) {
-    ##         base::warning("FOR SEQUENCE WITH NA VALUES", call. = FALSE, 
-    ##             immediate. = FALSE, noBreaks. = FALSE, domain = NULL)
-    ##     }
-    ##     else if (base::length(x = tempo_for_seq14) == 1) {
-    ##         base::warning("FOR SEQUENCE WITH A SINGLE VALUE (EQUAL BOUNDS?): SINGLE ITERATION", 
-    ##             call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, 
-    ##             domain = NULL)
-    ##     }
-    ##     else if (base::is.atomic(x = tempo_for_seq14) && base::any(base::is.infinite(x = tempo_for_seq14), 
-    ##         na.rm = TRUE)) {
-    ##         base::warning("FOR SEQUENCE WITH INFINITE VALUES: NO ENDLESS LOOP POSSIBLE BECAUSE THE for() CONTROLLER IS FULLY EVALUATED BEFORE ITERATING, BUT CHECK THAT AN INFINITE VALUE IS EXPECTED", 
-    ##             call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, 
-    ##             domain = NULL)
-    ##     }
-    ##     else if (base::is.numeric(x = tempo_for_seq14) && base::all(tempo_for_seq14 < 
-    ##         0, na.rm = FALSE)) {
-    ##         base::warning("FOR SEQUENCE WITH ALL NEGATIVE VALUES", 
-    ##             call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, 
-    ##             domain = NULL)
-    ##     }
-    ##     else if (base::is.numeric(x = tempo_for_seq14) && base::length(x = tempo_for_seq14) >= 
-    ##         2 && tempo_for_seq14[1] > tempo_for_seq14[2]) {
-    ##         base::warning("FOR SEQUENCE DECREASING", call. = FALSE, 
-    ##             immediate. = FALSE, noBreaks. = FALSE, domain = NULL)
-    ##     }
-    ##     for (i in tempo_for_seq14) {
+    ##     tempo_for_seq14 <- base::names(x = x) ; if(base::length(x = tempo_for_seq14) == 0){base::warning("FOR SEQUENCE EMPTY: 0 ITERATION", call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, domain = NULL)}else if(base::anyNA(x = tempo_for_seq14)){base::warning("FOR SEQUENCE WITH NA VALUES", call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, domain = NULL)}else if(base::length(x = tempo_for_seq14) == 1){base::warning("FOR SEQUENCE WITH A SINGLE VALUE (EQUAL BOUNDS?): SINGLE ITERATION", call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, domain = NULL)}else if(base::is.atomic(x = tempo_for_seq14) && base::any(base::is.infinite(x = tempo_for_seq14), na.rm = TRUE)){base::warning("FOR SEQUENCE WITH INFINITE VALUES: NO ENDLESS LOOP POSSIBLE BECAUSE THE for() CONTROLLER IS FULLY EVALUATED BEFORE ITERATING, BUT CHECK THAT AN INFINITE VALUE IS EXPECTED", call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, domain = NULL)}else if(base::is.numeric(x = tempo_for_seq14) && base::all(tempo_for_seq14 < 0, na.rm = FALSE)){base::warning("FOR SEQUENCE WITH ALL NEGATIVE VALUES", call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, domain = NULL)}else if(base::is.numeric(x = tempo_for_seq14) && base::length(x = tempo_for_seq14) >= 2 && tempo_for_seq14[1] > tempo_for_seq14[2]){base::warning("FOR SEQUENCE DECREASING", call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, domain = NULL)} ; for (i in tempo_for_seq14) {
     ##         base::print(i)
     ##     }
     ## }
-    ## <environment: 0x55ae008dc410>
+    ## <environment: 0x556ba1890340>
 
 \
 
@@ -809,43 +375,12 @@ fun9_safer # a checking line is added before the loop.
 
     ## function (x) 
     ## {
-    ##     tempo_for_seq1 <- 1:length(x)
-    ##     if (base::length(x = tempo_for_seq1) == 0) {
-    ##         base::warning("FOR SEQUENCE EMPTY: 0 ITERATION", call. = FALSE, 
-    ##             immediate. = FALSE, noBreaks. = FALSE, domain = NULL)
-    ##     }
-    ##     else if (base::anyNA(x = tempo_for_seq1)) {
-    ##         base::warning("FOR SEQUENCE WITH NA VALUES", call. = FALSE, 
-    ##             immediate. = FALSE, noBreaks. = FALSE, domain = NULL)
-    ##     }
-    ##     else if (base::length(x = tempo_for_seq1) == 1) {
-    ##         base::warning("FOR SEQUENCE WITH A SINGLE VALUE (EQUAL BOUNDS?): SINGLE ITERATION", 
-    ##             call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, 
-    ##             domain = NULL)
-    ##     }
-    ##     else if (base::is.atomic(x = tempo_for_seq1) && base::any(base::is.infinite(x = tempo_for_seq1), 
-    ##         na.rm = TRUE)) {
-    ##         base::warning("FOR SEQUENCE WITH INFINITE VALUES: NO ENDLESS LOOP POSSIBLE BECAUSE THE for() CONTROLLER IS FULLY EVALUATED BEFORE ITERATING, BUT CHECK THAT AN INFINITE VALUE IS EXPECTED", 
-    ##             call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, 
-    ##             domain = NULL)
-    ##     }
-    ##     else if (base::is.numeric(x = tempo_for_seq1) && base::all(tempo_for_seq1 < 
-    ##         0, na.rm = FALSE)) {
-    ##         base::warning("FOR SEQUENCE WITH ALL NEGATIVE VALUES", 
-    ##             call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, 
-    ##             domain = NULL)
-    ##     }
-    ##     else if (base::is.numeric(x = tempo_for_seq1) && base::length(x = tempo_for_seq1) >= 
-    ##         2 && tempo_for_seq1[1] > tempo_for_seq1[2]) {
-    ##         base::warning("FOR SEQUENCE DECREASING", call. = FALSE, 
-    ##             immediate. = FALSE, noBreaks. = FALSE, domain = NULL)
-    ##     }
-    ##     for (i in tempo_for_seq1) {
+    ##     tempo_for_seq1 <- 1:length(x) ; if(base::length(x = tempo_for_seq1) == 0){base::warning("FOR SEQUENCE EMPTY: 0 ITERATION", call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, domain = NULL)}else if(base::anyNA(x = tempo_for_seq1)){base::warning("FOR SEQUENCE WITH NA VALUES", call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, domain = NULL)}else if(base::length(x = tempo_for_seq1) == 1){base::warning("FOR SEQUENCE WITH A SINGLE VALUE (EQUAL BOUNDS?): SINGLE ITERATION", call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, domain = NULL)}else if(base::is.atomic(x = tempo_for_seq1) && base::any(base::is.infinite(x = tempo_for_seq1), na.rm = TRUE)){base::warning("FOR SEQUENCE WITH INFINITE VALUES: NO ENDLESS LOOP POSSIBLE BECAUSE THE for() CONTROLLER IS FULLY EVALUATED BEFORE ITERATING, BUT CHECK THAT AN INFINITE VALUE IS EXPECTED", call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, domain = NULL)}else if(base::is.numeric(x = tempo_for_seq1) && base::all(tempo_for_seq1 < 0, na.rm = FALSE)){base::warning("FOR SEQUENCE WITH ALL NEGATIVE VALUES", call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, domain = NULL)}else if(base::is.numeric(x = tempo_for_seq1) && base::length(x = tempo_for_seq1) >= 2 && tempo_for_seq1[1] > tempo_for_seq1[2]){base::warning("FOR SEQUENCE DECREASING", call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, domain = NULL)} ; for (i in tempo_for_seq1) {
     ##         y <- i
     ##     }
     ##     y
     ## }
-    ## <environment: 0x55ae036159c8>
+    ## <environment: 0x556ba4596e58>
 
 ``` r
 
@@ -880,7 +415,7 @@ for_loop_nb_check(
     ## 3    for     for (i in 1:length(x)) {
 
     ## MODIFIED CODE EXPORTED IN:
-    ## /tmp/Rtmp4zRN2Q/dir1ba04f33e667/fun9_safer.R
+    ## /tmp/Rtmph7e57K/dir1bd0f17508f/fun9_safer.R
 
 ``` r
 
@@ -933,43 +468,12 @@ for_loop_nb_check(x = fun4)
     ## function (x) 
     ## {
     ##     x <- character()
-    ##     tempo_for_seq1 <- 1:length(x)
-    ##     if (base::length(x = tempo_for_seq1) == 0) {
-    ##         base::warning("FOR SEQUENCE EMPTY: 0 ITERATION", call. = FALSE, 
-    ##             immediate. = FALSE, noBreaks. = FALSE, domain = NULL)
-    ##     }
-    ##     else if (base::anyNA(x = tempo_for_seq1)) {
-    ##         base::warning("FOR SEQUENCE WITH NA VALUES", call. = FALSE, 
-    ##             immediate. = FALSE, noBreaks. = FALSE, domain = NULL)
-    ##     }
-    ##     else if (base::length(x = tempo_for_seq1) == 1) {
-    ##         base::warning("FOR SEQUENCE WITH A SINGLE VALUE (EQUAL BOUNDS?): SINGLE ITERATION", 
-    ##             call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, 
-    ##             domain = NULL)
-    ##     }
-    ##     else if (base::is.atomic(x = tempo_for_seq1) && base::any(base::is.infinite(x = tempo_for_seq1), 
-    ##         na.rm = TRUE)) {
-    ##         base::warning("FOR SEQUENCE WITH INFINITE VALUES: NO ENDLESS LOOP POSSIBLE BECAUSE THE for() CONTROLLER IS FULLY EVALUATED BEFORE ITERATING, BUT CHECK THAT AN INFINITE VALUE IS EXPECTED", 
-    ##             call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, 
-    ##             domain = NULL)
-    ##     }
-    ##     else if (base::is.numeric(x = tempo_for_seq1) && base::all(tempo_for_seq1 < 
-    ##         0, na.rm = FALSE)) {
-    ##         base::warning("FOR SEQUENCE WITH ALL NEGATIVE VALUES", 
-    ##             call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, 
-    ##             domain = NULL)
-    ##     }
-    ##     else if (base::is.numeric(x = tempo_for_seq1) && base::length(x = tempo_for_seq1) >= 
-    ##         2 && tempo_for_seq1[1] > tempo_for_seq1[2]) {
-    ##         base::warning("FOR SEQUENCE DECREASING", call. = FALSE, 
-    ##             immediate. = FALSE, noBreaks. = FALSE, domain = NULL)
-    ##     }
-    ##     for (i in tempo_for_seq1) {
+    ##     tempo_for_seq1 <- 1:length(x) ; if(base::length(x = tempo_for_seq1) == 0){base::warning("FOR SEQUENCE EMPTY: 0 ITERATION", call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, domain = NULL)}else if(base::anyNA(x = tempo_for_seq1)){base::warning("FOR SEQUENCE WITH NA VALUES", call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, domain = NULL)}else if(base::length(x = tempo_for_seq1) == 1){base::warning("FOR SEQUENCE WITH A SINGLE VALUE (EQUAL BOUNDS?): SINGLE ITERATION", call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, domain = NULL)}else if(base::is.atomic(x = tempo_for_seq1) && base::any(base::is.infinite(x = tempo_for_seq1), na.rm = TRUE)){base::warning("FOR SEQUENCE WITH INFINITE VALUES: NO ENDLESS LOOP POSSIBLE BECAUSE THE for() CONTROLLER IS FULLY EVALUATED BEFORE ITERATING, BUT CHECK THAT AN INFINITE VALUE IS EXPECTED", call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, domain = NULL)}else if(base::is.numeric(x = tempo_for_seq1) && base::all(tempo_for_seq1 < 0, na.rm = FALSE)){base::warning("FOR SEQUENCE WITH ALL NEGATIVE VALUES", call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, domain = NULL)}else if(base::is.numeric(x = tempo_for_seq1) && base::length(x = tempo_for_seq1) >= 2 && tempo_for_seq1[1] > tempo_for_seq1[2]){base::warning("FOR SEQUENCE DECREASING", call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, domain = NULL)} ; for (i in tempo_for_seq1) {
     ##         y <- i
     ##     }
     ##     y
     ## }
-    ## <environment: 0x55ae065b6828>
+    ## <environment: 0x556ba75b7490>
 
 ``` r
 
@@ -995,44 +499,12 @@ for_loop_nb_check(x = fun5)
     ## function (x) 
     ## {
     ##     for (i in 1:3) {
-    ##         tempo_for_seq1 <- 1:length(x)
-    ##         if (base::length(x = tempo_for_seq1) == 0) {
-    ##             base::warning("FOR SEQUENCE EMPTY: 0 ITERATION", 
-    ##                 call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, 
-    ##                 domain = NULL)
-    ##         }
-    ##         else if (base::anyNA(x = tempo_for_seq1)) {
-    ##             base::warning("FOR SEQUENCE WITH NA VALUES", call. = FALSE, 
-    ##                 immediate. = FALSE, noBreaks. = FALSE, domain = NULL)
-    ##         }
-    ##         else if (base::length(x = tempo_for_seq1) == 1) {
-    ##             base::warning("FOR SEQUENCE WITH A SINGLE VALUE (EQUAL BOUNDS?): SINGLE ITERATION", 
-    ##                 call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, 
-    ##                 domain = NULL)
-    ##         }
-    ##         else if (base::is.atomic(x = tempo_for_seq1) && base::any(base::is.infinite(x = tempo_for_seq1), 
-    ##             na.rm = TRUE)) {
-    ##             base::warning("FOR SEQUENCE WITH INFINITE VALUES: NO ENDLESS LOOP POSSIBLE BECAUSE THE for() CONTROLLER IS FULLY EVALUATED BEFORE ITERATING, BUT CHECK THAT AN INFINITE VALUE IS EXPECTED", 
-    ##                 call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, 
-    ##                 domain = NULL)
-    ##         }
-    ##         else if (base::is.numeric(x = tempo_for_seq1) && base::all(tempo_for_seq1 < 
-    ##             0, na.rm = FALSE)) {
-    ##             base::warning("FOR SEQUENCE WITH ALL NEGATIVE VALUES", 
-    ##                 call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, 
-    ##                 domain = NULL)
-    ##         }
-    ##         else if (base::is.numeric(x = tempo_for_seq1) && base::length(x = tempo_for_seq1) >= 
-    ##             2 && tempo_for_seq1[1] > tempo_for_seq1[2]) {
-    ##             base::warning("FOR SEQUENCE DECREASING", call. = FALSE, 
-    ##                 immediate. = FALSE, noBreaks. = FALSE, domain = NULL)
-    ##         }
-    ##         for (i2 in tempo_for_seq1) {
+    ##         tempo_for_seq1 <- 1:length(x) ; if(base::length(x = tempo_for_seq1) == 0){base::warning("FOR SEQUENCE EMPTY: 0 ITERATION", call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, domain = NULL)}else if(base::anyNA(x = tempo_for_seq1)){base::warning("FOR SEQUENCE WITH NA VALUES", call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, domain = NULL)}else if(base::length(x = tempo_for_seq1) == 1){base::warning("FOR SEQUENCE WITH A SINGLE VALUE (EQUAL BOUNDS?): SINGLE ITERATION", call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, domain = NULL)}else if(base::is.atomic(x = tempo_for_seq1) && base::any(base::is.infinite(x = tempo_for_seq1), na.rm = TRUE)){base::warning("FOR SEQUENCE WITH INFINITE VALUES: NO ENDLESS LOOP POSSIBLE BECAUSE THE for() CONTROLLER IS FULLY EVALUATED BEFORE ITERATING, BUT CHECK THAT AN INFINITE VALUE IS EXPECTED", call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, domain = NULL)}else if(base::is.numeric(x = tempo_for_seq1) && base::all(tempo_for_seq1 < 0, na.rm = FALSE)){base::warning("FOR SEQUENCE WITH ALL NEGATIVE VALUES", call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, domain = NULL)}else if(base::is.numeric(x = tempo_for_seq1) && base::length(x = tempo_for_seq1) >= 2 && tempo_for_seq1[1] > tempo_for_seq1[2]){base::warning("FOR SEQUENCE DECREASING", call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, domain = NULL)} ; for (i2 in tempo_for_seq1) {
     ##             base::print(i2)
     ##         }
     ##     }
     ## }
-    ## <environment: 0x55ae06b96468>
+    ## <environment: 0x556ba7ba59f0>
 
 ``` r
 
@@ -1050,44 +522,11 @@ for_loop_nb_check(x = fun6)
     ## LINE CONSTRUCT       CODE
     ## 1    for     function (f = function(y) for (i in y) {
 
-    ## function (f = function(y) {
-    ##     tempo_for_seq1 <- y
-    ##     if (base::length(x = tempo_for_seq1) == 0) {
-    ##         base::warning("FOR SEQUENCE EMPTY: 0 ITERATION", call. = FALSE, 
-    ##             immediate. = FALSE, noBreaks. = FALSE, domain = NULL)
-    ##     }
-    ##     else if (base::anyNA(x = tempo_for_seq1)) {
-    ##         base::warning("FOR SEQUENCE WITH NA VALUES", call. = FALSE, 
-    ##             immediate. = FALSE, noBreaks. = FALSE, domain = NULL)
-    ##     }
-    ##     else if (base::length(x = tempo_for_seq1) == 1) {
-    ##         base::warning("FOR SEQUENCE WITH A SINGLE VALUE (EQUAL BOUNDS?): SINGLE ITERATION", 
-    ##             call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, 
-    ##             domain = NULL)
-    ##     }
-    ##     else if (base::is.atomic(x = tempo_for_seq1) && base::any(base::is.infinite(x = tempo_for_seq1), 
-    ##         na.rm = TRUE)) {
-    ##         base::warning("FOR SEQUENCE WITH INFINITE VALUES: NO ENDLESS LOOP POSSIBLE BECAUSE THE for() CONTROLLER IS FULLY EVALUATED BEFORE ITERATING, BUT CHECK THAT AN INFINITE VALUE IS EXPECTED", 
-    ##             call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, 
-    ##             domain = NULL)
-    ##     }
-    ##     else if (base::is.numeric(x = tempo_for_seq1) && base::all(tempo_for_seq1 < 
-    ##         0, na.rm = FALSE)) {
-    ##         base::warning("FOR SEQUENCE WITH ALL NEGATIVE VALUES", 
-    ##             call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, 
-    ##             domain = NULL)
-    ##     }
-    ##     else if (base::is.numeric(x = tempo_for_seq1) && base::length(x = tempo_for_seq1) >= 
-    ##         2 && tempo_for_seq1[1] > tempo_for_seq1[2]) {
-    ##         base::warning("FOR SEQUENCE DECREASING", call. = FALSE, 
-    ##             immediate. = FALSE, noBreaks. = FALSE, domain = NULL)
-    ##     }
-    ##     for (i in tempo_for_seq1) {
-    ##         base::print(i)
-    ##     }
-    ## }) 
+    ## function (f = function(y) { tempo_for_seq1 <- y ; if(base::length(x = tempo_for_seq1) == 0){base::warning("FOR SEQUENCE EMPTY: 0 ITERATION", call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, domain = NULL)}else if(base::anyNA(x = tempo_for_seq1)){base::warning("FOR SEQUENCE WITH NA VALUES", call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, domain = NULL)}else if(base::length(x = tempo_for_seq1) == 1){base::warning("FOR SEQUENCE WITH A SINGLE VALUE (EQUAL BOUNDS?): SINGLE ITERATION", call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, domain = NULL)}else if(base::is.atomic(x = tempo_for_seq1) && base::any(base::is.infinite(x = tempo_for_seq1), na.rm = TRUE)){base::warning("FOR SEQUENCE WITH INFINITE VALUES: NO ENDLESS LOOP POSSIBLE BECAUSE THE for() CONTROLLER IS FULLY EVALUATED BEFORE ITERATING, BUT CHECK THAT AN INFINITE VALUE IS EXPECTED", call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, domain = NULL)}else if(base::is.numeric(x = tempo_for_seq1) && base::all(tempo_for_seq1 < 0, na.rm = FALSE)){base::warning("FOR SEQUENCE WITH ALL NEGATIVE VALUES", call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, domain = NULL)}else if(base::is.numeric(x = tempo_for_seq1) && base::length(x = tempo_for_seq1) >= 2 && tempo_for_seq1[1] > tempo_for_seq1[2]){base::warning("FOR SEQUENCE DECREASING", call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, domain = NULL)} ; for (i in tempo_for_seq1) {     base::print(i) } }
+    ## 
+    ## ) 
     ## f(1)
-    ## <environment: 0x55ae07174a78>
+    ## <environment: 0x556ba81948c0>
 
 ``` r
 
@@ -1107,42 +546,11 @@ for_loop_nb_check(x = fun7)
     ## function (x) 
     ## {
     ##     n <- base::length(x = x)
-    ##     tempo_for_seq1 <- 1:n
-    ##     if (base::length(x = tempo_for_seq1) == 0) {
-    ##         base::warning("FOR SEQUENCE EMPTY: 0 ITERATION", call. = FALSE, 
-    ##             immediate. = FALSE, noBreaks. = FALSE, domain = NULL)
-    ##     }
-    ##     else if (base::anyNA(x = tempo_for_seq1)) {
-    ##         base::warning("FOR SEQUENCE WITH NA VALUES", call. = FALSE, 
-    ##             immediate. = FALSE, noBreaks. = FALSE, domain = NULL)
-    ##     }
-    ##     else if (base::length(x = tempo_for_seq1) == 1) {
-    ##         base::warning("FOR SEQUENCE WITH A SINGLE VALUE (EQUAL BOUNDS?): SINGLE ITERATION", 
-    ##             call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, 
-    ##             domain = NULL)
-    ##     }
-    ##     else if (base::is.atomic(x = tempo_for_seq1) && base::any(base::is.infinite(x = tempo_for_seq1), 
-    ##         na.rm = TRUE)) {
-    ##         base::warning("FOR SEQUENCE WITH INFINITE VALUES: NO ENDLESS LOOP POSSIBLE BECAUSE THE for() CONTROLLER IS FULLY EVALUATED BEFORE ITERATING, BUT CHECK THAT AN INFINITE VALUE IS EXPECTED", 
-    ##             call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, 
-    ##             domain = NULL)
-    ##     }
-    ##     else if (base::is.numeric(x = tempo_for_seq1) && base::all(tempo_for_seq1 < 
-    ##         0, na.rm = FALSE)) {
-    ##         base::warning("FOR SEQUENCE WITH ALL NEGATIVE VALUES", 
-    ##             call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, 
-    ##             domain = NULL)
-    ##     }
-    ##     else if (base::is.numeric(x = tempo_for_seq1) && base::length(x = tempo_for_seq1) >= 
-    ##         2 && tempo_for_seq1[1] > tempo_for_seq1[2]) {
-    ##         base::warning("FOR SEQUENCE DECREASING", call. = FALSE, 
-    ##             immediate. = FALSE, noBreaks. = FALSE, domain = NULL)
-    ##     }
-    ##     for (i in tempo_for_seq1) {
+    ##     tempo_for_seq1 <- 1:n ; if(base::length(x = tempo_for_seq1) == 0){base::warning("FOR SEQUENCE EMPTY: 0 ITERATION", call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, domain = NULL)}else if(base::anyNA(x = tempo_for_seq1)){base::warning("FOR SEQUENCE WITH NA VALUES", call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, domain = NULL)}else if(base::length(x = tempo_for_seq1) == 1){base::warning("FOR SEQUENCE WITH A SINGLE VALUE (EQUAL BOUNDS?): SINGLE ITERATION", call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, domain = NULL)}else if(base::is.atomic(x = tempo_for_seq1) && base::any(base::is.infinite(x = tempo_for_seq1), na.rm = TRUE)){base::warning("FOR SEQUENCE WITH INFINITE VALUES: NO ENDLESS LOOP POSSIBLE BECAUSE THE for() CONTROLLER IS FULLY EVALUATED BEFORE ITERATING, BUT CHECK THAT AN INFINITE VALUE IS EXPECTED", call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, domain = NULL)}else if(base::is.numeric(x = tempo_for_seq1) && base::all(tempo_for_seq1 < 0, na.rm = FALSE)){base::warning("FOR SEQUENCE WITH ALL NEGATIVE VALUES", call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, domain = NULL)}else if(base::is.numeric(x = tempo_for_seq1) && base::length(x = tempo_for_seq1) >= 2 && tempo_for_seq1[1] > tempo_for_seq1[2]){base::warning("FOR SEQUENCE DECREASING", call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, domain = NULL)} ; for (i in tempo_for_seq1) {
     ##         y <- i
     ##     }
     ##     y
     ## }
-    ## <environment: 0x55ae0774b6e8>
+    ## <environment: 0x556ba877ced0>
 
 \

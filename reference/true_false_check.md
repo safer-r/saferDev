@@ -111,8 +111,13 @@ assignment), none of its uses is reported.
 
 Correction: each reported `T` is replaced by `TRUE` and each `F` by
 `FALSE` ([`base::T`](https://rdrr.io/r/base/logical.html) also becomes
-`TRUE`). The rest of the code is unchanged. The comments are kept in the
-exported file, but can be lost in the returned function. The returned
+`TRUE`). The rest of the code is unchanged. The comments and the
+indentation of the submitted function are kept, in the returned function
+and in the exported file. Warning: comments are only available when the
+submitted function carries its source references (attribute srcref).
+Otherwise (e.g., compiled package functions, or functions created with
+`options(keep.source = FALSE)`, default of Rscript), the code is the
+deparsed one: no comments and standard indentation. The returned
 function is evaluated in a new environment whose parent is the
 environment of the submitted function: check it before replacing the
 original function.
@@ -161,7 +166,7 @@ fun2_safer # corrected function
 #>         base::return(x)
 #>     }
 #> }
-#> <environment: 0x558e6fce6db8>
+#> <environment: 0x561a78cb5378>
 # Write the corrected function in the fun2_safer.R file of a new temporary folder:
 tempo_dir <- base::tempfile(pattern = "dir", tmpdir = base::tempdir(), fileext = "")
 base::dir.create(path = tempo_dir, showWarnings = TRUE, recursive = FALSE, mode = "0777")
@@ -175,6 +180,6 @@ saferDev::true_false_check(x = fun2, export = TRUE, out_path = tempo_dir)
 #> 3    T       if (x == T) {
 #> 
 #> MODIFIED CODE EXPORTED IN:
-#> /tmp/RtmpBNefhH/dir176220ab8c00/fun2_safer.R
+#> /tmp/RtmpgFv7ID/dir17921a9d4c82/fun2_safer.R
 #> 
 ```

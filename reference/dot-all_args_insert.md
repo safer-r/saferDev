@@ -1,8 +1,10 @@
 # Function for All Arguments Here
 
 Insert the missing arguments detected by
-[`all_args_here()`](all_args_here.md) into the code of the submitted
-function and return the modified function.
+[`all_args_here()`](all_args_here.md) into the printed code of the
+submitted function, at the positions given by the R parser, so that the
+line breaks, the indentation and the comments are kept, and return the
+modified function.
 
 ## Usage
 
@@ -28,8 +30,9 @@ function and return the modified function.
 - output:
 
   Data frame returned by the main code of
-  [`all_args_here()`](all_args_here.md): the `$LINE_NB`, `$FUN_POS`,
-  `$FUN_ARGS` and `$STATUS` columns are used to apply the corrections.
+  [`all_args_here()`](all_args_here.md): the `$LINE_NB`, `$FUN_NAME`,
+  `$FUN_POS`, `$DEF_ARGS`, `$MISSING_ARGS` and `$STATUS` columns are
+  used to apply the corrections (`$FUN_ARGS` is not used).
 
 - lib_path:
 
@@ -69,7 +72,8 @@ A list:
   \<status\>" for each).
 
 - `left`: character vector of the corrections that could not be applied
-  (with line number and status), for the final message of
+  ("line \<n\>: \<status\>", followed by a "REASON:" line explaining why
+  the correction has not been applied), for the final message of
   [`all_args_here()`](all_args_here.md).
 
 ## Details

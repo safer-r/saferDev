@@ -69,13 +69,7 @@ lambda_check(x = fun2)
     ## 1    \(y)        function(x){ base::sapply(X = 1:3, FUN = \(y){ y * 2 }) ; base::lapply(X = x, FUN = \(z) z + 1) }
     ## 1    \(z)        function(x){ base::sapply(X = 1:3, FUN = \(y){ y * 2 }) ; base::lapply(X = x, FUN = \(z) z + 1) }
 
-    ## function (x) 
-    ## {
-    ##     base::sapply(X = 1:3, FUN = function(y) {
-    ##         y * 2
-    ##     })
-    ##     base::lapply(X = x, FUN = function(z) z + 1)
-    ## }
+    ## function(x){ base::sapply(X = 1:3, FUN = function(y){ y * 2 }) ; base::lapply(X = x, FUN = function(z) z + 1) }
 
 \
 
@@ -170,13 +164,7 @@ fun2_safer <- lambda_check(x = fun2)
 fun2_safer # \\() replaced by function().
 ```
 
-    ## function (x) 
-    ## {
-    ##     base::sapply(X = 1:3, FUN = function(y) {
-    ##         y * 2
-    ##     })
-    ##     base::lapply(X = x, FUN = function(z) z + 1)
-    ## }
+    ## function(x){ base::sapply(X = 1:3, FUN = function(y){ y * 2 }) ; base::lapply(X = x, FUN = function(z) z + 1) }
 
 ``` r
 
@@ -230,7 +218,7 @@ lambda_check(
     ## 1    \(z)        function(x){ base::sapply(X = 1:3, FUN = \(y){ y * 2 }) ; base::lapply(X = x, FUN = \(z) z + 1) }
 
     ## MODIFIED CODE EXPORTED IN:
-    ## /tmp/RtmpeE0Q78/dir1cc039657eed/fun2_safer.R
+    ## /tmp/RtmpNfHg6h/dir1cf03b607a7a/fun2_safer.R
 
 ``` r
 

@@ -200,7 +200,7 @@
 <span><span class="co">##     middle_bracket2 &lt;- base::do.call(what = base::c, args = code_for_col, </span></span>
 <span><span class="co">##         quote = FALSE, envir = base::parent.frame(n = 1))</span></span>
 <span><span class="co">## }</span></span>
-<span><span class="co">## &lt;environment: 0x55ef31e2fb78&gt;</span></span></code></pre>
+<span><span class="co">## &lt;environment: 0x563c57c75350&gt;</span></span></code></pre>
 <p><br></p>
 </div>
 <div class="section level3">
@@ -227,7 +227,7 @@
 <span><span class="co">##     middle_bracket2 &lt;- base::do.call(what = base::c, args = code_for_col, </span></span>
 <span><span class="co">##         quote = FALSE, envir = base::parent.frame(n = 1))</span></span>
 <span><span class="co">## }</span></span>
-<span><span class="co">## &lt;environment: 0x55ef31bfdcd8&gt;</span></span></code></pre>
+<span><span class="co">## &lt;environment: 0x563c57ce8458&gt;</span></span></code></pre>
 <p><br></p>
 </div>
 <div class="section level3">
@@ -266,7 +266,7 @@ added at the end:</p>
 <span><span class="co">##     middle_bracket2 &lt;- base::do.call(what = base::c, args = code_for_col, </span></span>
 <span><span class="co">##         quote = FALSE, envir = base::parent.frame(n = 1))</span></span>
 <span><span class="co">## }</span></span>
-<span><span class="co">## &lt;environment: 0x55ef31a747f0&gt;</span></span></code></pre>
+<span><span class="co">## &lt;environment: 0x563c57d7f390&gt;</span></span></code></pre>
 <div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Export the modified function into the FUN2_safer.R file, in the "." path.</span></span>
 <span><span class="fu"><a href="../reference/all_args_here.html">all_args_here</a></span><span class="op">(</span></span>
@@ -325,7 +325,7 @@ no correction has been applied). <br></p>
 <span><span class="co">##     middle_bracket2 &lt;- base::do.call(what = base::c, args = code_for_col, </span></span>
 <span><span class="co">##         quote = FALSE, envir = base::parent.frame(n = 1))</span></span>
 <span><span class="co">## }</span></span>
-<span><span class="co">## &lt;environment: 0x55ef31628950&gt;</span></span></code></pre>
+<span><span class="co">## &lt;environment: 0x563c57c00990&gt;</span></span></code></pre>
 <p><br></p>
 </div>
 <div class="section level3">
@@ -478,10 +478,6 @@ no correction has been applied). <br></p>
 <span><span class="co">## line 12: base::do.call(): envir (DEFAULT: parent.frame())</span></span>
 <span><span class="co">## USE "= ," OR "= )" TO SEEK EACH CASE IN THE CODE, AND, IF POSSIBLE, TEST THAT THE DEFAULT VALUES ARE UNCHANGED, FOR INSTANCE:</span></span>
 <span><span class="co">## testthat::expect_identical(object = base::formals(fun = utils::getFromNamespace)$envir, expected = base::quote(expr = as.environment(pos)))</span></span></code></pre>
-<pre><code><span><span class="co">## CORRECTIONS NOT APPLIED:</span></span>
-<span><span class="co">## line 8: mapply(x = x, y = y,FUN = function(x,  y) { base::rep(x = y, base::length(x = x)) }, MoreArgs = NULL, SIMPLIFY = TRUE, USE.NAMES = TRUE)</span></span>
-<span><span class="co">## line 8: unlist(x = base::mapply(FUN = function(x,  y) { base::rep(x = y, base::length(x = x)) }, x = x, y = y), recursive = TRUE, use.names = TRUE)</span></span>
-<span><span class="co">## line 8: as.vector(x = base::unlist(x = base::mapply(FUN = function(x,  y) { base::rep(x = y, base::length(x = x)) }, x = x, y = y)), mode = "any")</span></span></code></pre>
 <pre><code><span><span class="co">## function (x, y) </span></span>
 <span><span class="co">## {</span></span>
 <span><span class="co">##     code_for_col &lt;- base::as.vector(x = base::unlist(x = base::mapply(FUN = function(x, </span></span>
@@ -492,12 +488,12 @@ no correction has been applied). <br></p>
 <span><span class="co">##     code_for_col2 &lt;- base::as.vector(x = base::unlist(x = base::mapply(FUN = function(x, </span></span>
 <span><span class="co">##         y) {</span></span>
 <span><span class="co">##         base::rep(x = y, base::length(x = x))</span></span>
-<span><span class="co">##     }, x = x, y = y)))</span></span>
+<span><span class="co">##     }, x = x, y = y, MoreArgs = NULL, SIMPLIFY = TRUE, USE.NAMES = TRUE), recursive = TRUE, use.names = TRUE), mode = "any")</span></span>
 <span><span class="co">##     middle_bracket &lt;- base::do.call(what = base::c, args = code_for_col, quote = FALSE, envir = )</span></span>
 <span><span class="co">##     middle_bracket2 &lt;- base::do.call(what = base::c, args = code_for_col, </span></span>
 <span><span class="co">##         quote = FALSE, envir = base::parent.frame(n = 1))</span></span>
 <span><span class="co">## }</span></span>
-<span><span class="co">## &lt;environment: 0x55ef32f16710&gt;</span></span></code></pre>
+<span><span class="co">## &lt;environment: 0x563c5973b518&gt;</span></span></code></pre>
 <p><br></p>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

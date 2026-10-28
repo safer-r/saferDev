@@ -140,7 +140,7 @@ all_args_here(
     ##     middle_bracket2 <- base::do.call(what = base::c, args = code_for_col, 
     ##         quote = FALSE, envir = base::parent.frame(n = 1))
     ## }
-    ## <environment: 0x55ef31e2fb78>
+    ## <environment: 0x563c57c75350>
 
 \
 
@@ -169,7 +169,7 @@ all_args_here(
     ##     middle_bracket2 <- base::do.call(what = base::c, args = code_for_col, 
     ##         quote = FALSE, envir = base::parent.frame(n = 1))
     ## }
-    ## <environment: 0x55ef31bfdcd8>
+    ## <environment: 0x563c57ce8458>
 
 \
 
@@ -216,7 +216,7 @@ FUN2_safer # modified function (or NULL when the code was already clean).
     ##     middle_bracket2 <- base::do.call(what = base::c, args = code_for_col, 
     ##         quote = FALSE, envir = base::parent.frame(n = 1))
     ## }
-    ## <environment: 0x55ef31a747f0>
+    ## <environment: 0x563c57d7f390>
 
 ``` r
 
@@ -285,7 +285,7 @@ all_args_here(
     ##     middle_bracket2 <- base::do.call(what = base::c, args = code_for_col, 
     ##         quote = FALSE, envir = base::parent.frame(n = 1))
     ## }
-    ## <environment: 0x55ef31628950>
+    ## <environment: 0x563c57c00990>
 
 \
 
@@ -450,11 +450,6 @@ all_args_here(
     ## USE "= ," OR "= )" TO SEEK EACH CASE IN THE CODE, AND, IF POSSIBLE, TEST THAT THE DEFAULT VALUES ARE UNCHANGED, FOR INSTANCE:
     ## testthat::expect_identical(object = base::formals(fun = utils::getFromNamespace)$envir, expected = base::quote(expr = as.environment(pos)))
 
-    ## CORRECTIONS NOT APPLIED:
-    ## line 8: mapply(x = x, y = y,FUN = function(x,  y) { base::rep(x = y, base::length(x = x)) }, MoreArgs = NULL, SIMPLIFY = TRUE, USE.NAMES = TRUE)
-    ## line 8: unlist(x = base::mapply(FUN = function(x,  y) { base::rep(x = y, base::length(x = x)) }, x = x, y = y), recursive = TRUE, use.names = TRUE)
-    ## line 8: as.vector(x = base::unlist(x = base::mapply(FUN = function(x,  y) { base::rep(x = y, base::length(x = x)) }, x = x, y = y)), mode = "any")
-
     ## function (x, y) 
     ## {
     ##     code_for_col <- base::as.vector(x = base::unlist(x = base::mapply(FUN = function(x, 
@@ -465,11 +460,11 @@ all_args_here(
     ##     code_for_col2 <- base::as.vector(x = base::unlist(x = base::mapply(FUN = function(x, 
     ##         y) {
     ##         base::rep(x = y, base::length(x = x))
-    ##     }, x = x, y = y)))
+    ##     }, x = x, y = y, MoreArgs = NULL, SIMPLIFY = TRUE, USE.NAMES = TRUE), recursive = TRUE, use.names = TRUE), mode = "any")
     ##     middle_bracket <- base::do.call(what = base::c, args = code_for_col, quote = FALSE, envir = )
     ##     middle_bracket2 <- base::do.call(what = base::c, args = code_for_col, 
     ##         quote = FALSE, envir = base::parent.frame(n = 1))
     ## }
-    ## <environment: 0x55ef32f16710>
+    ## <environment: 0x563c5973b518>
 
 \
