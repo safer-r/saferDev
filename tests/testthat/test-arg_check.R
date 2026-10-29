@@ -389,8 +389,9 @@ testthat::test_that("arg_check()", {
     testthat::expect_no_error(arg_check(data = vec7, class = NULL, typeof = NULL, mode = NULL, prop = TRUE))
     testthat::expect_no_error(arg_check(data = vec7, class = "numeric", typeof = "double", mode = "numeric", prop = FALSE))
     # end THE class, typeof AND mode ARGUMENTS MUST BE NULL IF THE prop ARGUMENT IS TRUE.
-    # THE neg_values ARGUMENT CANNOT BE SWITCHED FROM TRUE (DEFAULT VALUE) TO FALSE IF class, typeof AND mode ARGUMENTS ARE NULL.
-    testthat::expect_error(arg_check(data = vec1, class = NULL, typeof = NULL, mode = NULL, neg_values = FALSE, prop = TRUE))
+    # THE neg_values ARGUMENT CANNOT BE SWITCHED FROM TRUE (DEFAULT VALUE) TO FALSE IF class, typeof AND mode ARGUMENTS ARE NULL AND prop IS FALSE.
+    testthat::expect_error(arg_check(data = vec1, class = NULL, typeof = NULL, mode = NULL, length = 5, neg_values = FALSE, prop = FALSE), regexp = "THE neg_values ARGUMENT CANNOT BE SWITCHED FROM TRUE \\(DEFAULT VALUE\\) TO FALSE IF typeof AND mode ARGUMENTS ARE NULL AND prop IS FALSE")
+    testthat::expect_no_error(arg_check(data = vec1, class = NULL, typeof = NULL, mode = NULL, neg_values = FALSE, prop = TRUE)) # neg_values = FALSE allowed with prop = TRUE: range 0 to 1
     # end THE neg_values ARGUMENT CANNOT BE SWITCHED FROM TRUE (DEFAULT VALUE) TO FALSE IF class, typeof AND mode ARGUMENTS ARE NULL.
     # THE inf_values ARGUMENT CANNOT BE SWITCHED FROM TRUE (DEFAULT VALUE) TO FALSE IF class, typeof AND mode ARGUMENTS ARE NULL.
     testthat::expect_error(arg_check(data = vec1, class = NULL, typeof = NULL, mode = NULL, inf_values = FALSE, prop = TRUE))
@@ -479,12 +480,32 @@ testthat::test_that("arg_check()", {
     testthat::expect_error(arg_check(data = vec1, mode = "numeric", prop = 1))
     testthat::expect_error(arg_check(data = vec1, mode = "numeric", prop = c(TRUE, FALSE)))
     result <- arg_check(data = vec1, prop = TRUE)
-    expect <- list(problem = TRUE, text = "ERROR\n\nTHE vec1 ARGUMENT MUST BE DECIMAL VALUES BETWEEN 0 AND 1.", object_name = "vec1")
+    expect <- list(problem = TRUE, text = "ERROR\n\nTHE vec1 ARGUMENT MUST BE DECIMAL VALUES BETWEEN -1 AND 1.", object_name = "vec1")
     testthat::expect_equal(result, expect)
     result <- arg_check(data = vec5, prop = TRUE)
-    expect <- list(problem = TRUE, text = "ERROR\n\nTHE vec5 ARGUMENT MUST BE DECIMAL VALUES BETWEEN 0 AND 1.", object_name = "vec5")
+    expect <- list(problem = TRUE, text = "ERROR\n\nTHE vec5 ARGUMENT MUST BE DECIMAL VALUES BETWEEN -1 AND 1.", object_name = "vec5")
     testthat::expect_equal(result, expect)
     testthat::expect_no_error(arg_check(data = mat2, prop = TRUE, na_contain = TRUE))
+    # prop with neg_values: range -1 to 1 if neg_values = TRUE (default), 0 to 1 if neg_values = FALSE
+    vec_prop_neg <- base::c(-0.5, 0, 0.5)
+    result <- arg_check(data = vec_prop_neg, prop = TRUE)
+    expect <- list(problem = FALSE, text = "NO PROBLEM DETECTED FOR THE vec_prop_neg ARGUMENT.", object_name = "vec_prop_neg")
+    testthat::expect_equal(result, expect)
+    result <- arg_check(data = vec_prop_neg, prop = TRUE, neg_values = FALSE)
+    expect <- list(problem = TRUE, text = "ERROR\n\nTHE vec_prop_neg ARGUMENT MUST BE DECIMAL VALUES BETWEEN 0 AND 1.", object_name = "vec_prop_neg")
+    testthat::expect_equal(result, expect)
+    vec_prop_neg2 <- base::c(-1.5, 0.5)
+    result <- arg_check(data = vec_prop_neg2, prop = TRUE)
+    expect <- list(problem = TRUE, text = "ERROR\n\nTHE vec_prop_neg2 ARGUMENT MUST BE DECIMAL VALUES BETWEEN -1 AND 1.", object_name = "vec_prop_neg2")
+    testthat::expect_equal(result, expect)
+    result <- arg_check(data = vec7, prop = TRUE, neg_values = FALSE)
+    expect <- list(problem = TRUE, text = "ERROR\n\nTHE vec7 ARGUMENT MUST BE DECIMAL VALUES BETWEEN 0 AND 1.", object_name = "vec7")
+    testthat::expect_equal(result, expect)
+    result <- arg_check(data = vec5, prop = TRUE, neg_values = FALSE)
+    expect <- list(problem = TRUE, text = "ERROR\n\nTHE vec5 ARGUMENT MUST BE DECIMAL VALUES BETWEEN 0 AND 1.", object_name = "vec5")
+    testthat::expect_equal(result, expect)
+    testthat::expect_error(arg_check(data = vec_prop_neg, prop = TRUE, inf_values = FALSE), regexp = "THE inf_values ARGUMENT CANNOT BE SWITCHED FROM TRUE") # inf_values rule unchanged
+    # end prop with neg_values
     testthat::expect_error(arg_check(data = vec1, class = "vector", prop = TRUE))
     testthat::expect_no_error(arg_check(data = vec1, class = "vector", prop = FALSE))
     testthat::expect_error(arg_check(data = vec5, mode = "character", prop = TRUE))
@@ -812,21 +833,21 @@ testthat::test_that("arg_check()", {
 
     # if(prop == TRUE & base::all(base::typeof(data) == "double")){
     result <- arg_check(data = vec7, prop = TRUE)
-    expect <- list(problem = TRUE, text = "ERROR\n\nTHE vec7 ARGUMENT MUST BE DECIMAL VALUES BETWEEN 0 AND 1.", object_name = "vec7")
+    expect <- list(problem = TRUE, text = "ERROR\n\nTHE vec7 ARGUMENT MUST BE DECIMAL VALUES BETWEEN -1 AND 1.", object_name = "vec7")
     testthat::expect_equal(result, expect)
     result <- arg_check(data = vec7, length = 1, prop = TRUE)
-    expect <- list(problem = TRUE, text = "ERROR\n\nTHE vec7 ARGUMENT MUST BE LENGTH 1 AND THE vec7 ARGUMENT MUST BE DECIMAL VALUES BETWEEN 0 AND 1.", object_name = "vec7")
+    expect <- list(problem = TRUE, text = "ERROR\n\nTHE vec7 ARGUMENT MUST BE LENGTH 1 AND THE vec7 ARGUMENT MUST BE DECIMAL VALUES BETWEEN -1 AND 1.", object_name = "vec7")
     testthat::expect_equal(result, expect)
     result <- arg_check(data = vec1, prop = TRUE)
-    expect <- list(problem = TRUE, text = "ERROR\n\nTHE vec1 ARGUMENT MUST BE DECIMAL VALUES BETWEEN 0 AND 1.", object_name = "vec1")
+    expect <- list(problem = TRUE, text = "ERROR\n\nTHE vec1 ARGUMENT MUST BE DECIMAL VALUES BETWEEN -1 AND 1.", object_name = "vec1")
     testthat::expect_equal(result, expect)
     result <- arg_check(data = vec1, prop = TRUE, length = 1)
-    expect <- list(problem = TRUE, text = "ERROR\n\nTHE vec1 ARGUMENT MUST BE LENGTH 1 AND THE vec1 ARGUMENT MUST BE DECIMAL VALUES BETWEEN 0 AND 1.", object_name = "vec1")
+    expect <- list(problem = TRUE, text = "ERROR\n\nTHE vec1 ARGUMENT MUST BE LENGTH 1 AND THE vec1 ARGUMENT MUST BE DECIMAL VALUES BETWEEN -1 AND 1.", object_name = "vec1")
     testthat::expect_equal(result, expect)
     # end if(prop == TRUE & base::all(base::typeof(data) == "double")){
     # if(base::all(base::class(data) %in% "expression")){
     result <- arg_check(data = expr1, prop = TRUE, length = 2)
-    expect <- list(problem = TRUE, text = "ERROR\n\nTHE expr1 ARGUMENT MUST BE LENGTH 2 AND THE expr1 ARGUMENT MUST BE DECIMAL VALUES BETWEEN 0 AND 1.", object_name = "expr1")
+    expect <- list(problem = TRUE, text = "ERROR\n\nTHE expr1 ARGUMENT MUST BE LENGTH 2 AND THE expr1 ARGUMENT MUST BE DECIMAL VALUES BETWEEN -1 AND 1.", object_name = "expr1")
     testthat::expect_equal(result, expect)
     # end if(base::all(base::class(data) %in% "expression")){
     # if(na_contain == FALSE & (base::mode(data) %in% base::c("logical", "numeric", "complex", "character", "list"))){
@@ -957,7 +978,7 @@ testthat::test_that("arg_check()", {
     expect23 <- "ERROR MESSAGE REPORTED:\nError : \n\n================\n\nERROR IN saferDev::arg_check().\n\nTHE class, typeof, mode ARGUMENTS MUST BE NULL, AND prop FALSE, IF THE options ARGUMENT IS SPECIFIED\nTHE options ARGUMENT MUST BE NULL IF THE class AND/OR typeof AND/OR mode AND/OR prop ARGUMENT IS SPECIFIED.\n\n================\n\n\n"
     testthat::expect_equal(result23, expect23)
     result24 <- saferDev::get_message("arg_check(data = base::list(x = 'a', y = '2'), length = 2, options = NULL, prop = FALSE, all_options_in_data = FALSE, neg_values = FALSE, safer_check = FALSE)", kind = "error", print_no = TRUE, text = NULL)
-    expect24 <- "ERROR MESSAGE REPORTED:\nError : \n\n================\n\nERROR IN saferDev::arg_check().\n\nTHE neg_values ARGUMENT CANNOT BE SWITCHED FROM TRUE (DEFAULT VALUE) TO FALSE IF typeof AND mode ARGUMENTS ARE NULL.\n\n================\n\n\n"
+    expect24 <- "ERROR MESSAGE REPORTED:\nError : \n\n================\n\nERROR IN saferDev::arg_check().\n\nTHE neg_values ARGUMENT CANNOT BE SWITCHED FROM TRUE (DEFAULT VALUE) TO FALSE IF typeof AND mode ARGUMENTS ARE NULL AND prop IS FALSE.\n\n================\n\n\n"
     testthat::expect_equal(result24, expect24)
     result25 <- saferDev::get_message("arg_check(data = base::list(x = 'a', y = '2'), length = 2, options = NULL, prop = FALSE, all_options_in_data = FALSE, inf_values = FALSE, safer_check = FALSE)", kind = "error", print_no = TRUE, text = NULL)
     expect25 <- "ERROR MESSAGE REPORTED:\nError : \n\n================\n\nERROR IN saferDev::arg_check().\n\nTHE inf_values ARGUMENT CANNOT BE SWITCHED FROM TRUE (DEFAULT VALUE) TO FALSE IF typeof AND mode ARGUMENTS ARE NULL.\n\n================\n\n\n"

@@ -6,12 +6,12 @@
 #' @param typeof Character string or vector of character strings, tested exactly (same values, in the same order) against \code{typeof(data)}. Since \code{typeof(data)} always returns a single string, a vector of more than one value in the \code{typeof} argument always returns a problem. Write NULL to do not test the type.
 #' @param mode Character string or vector of character strings, tested exactly (same values, in the same order) against \code{mode(data)}. Since \code{mode(data)} always returns a single string, a vector of more than one value in the \code{mode} argument always returns a problem. Write NULL to do not test the mode.
 #' @param length Single numeric value indicating the length of the object. Not considered if \code{NULL}.
-#' @param prop Single logical value. Are the numeric values between 0 and 1 (proportion)? If \code{TRUE}, the tested object must be of type \code{"double"} with all its values between 0 and 1, and the \code{class}, \code{typeof} and \code{mode} arguments must be \code{NULL} (otherwise an error message is returned). To check the class of a proportion object (a matrix for instance), use a second \code{arg_check()} call with \code{prop = FALSE}.
+#' @param prop Single logical value. Are the numeric values between 0 and 1 (proportion)? If \code{TRUE}, the tested object must be of type \code{"double"} with all its values between -1 and 1 if \code{neg_values} is \code{TRUE} (default), or between 0 and 1 if \code{neg_values} is \code{FALSE}, and the \code{class}, \code{typeof} and \code{mode} arguments must be \code{NULL}. To check the class of a proportion object (a matrix for instance), use a second \code{arg_check()} call with \code{prop = FALSE}.
 #' @param options Vector of character strings or integers indicating all the possible option values for the \code{data} argument, or \code{NULL}. Numbers of type \code{"double"} are accepted if they have a 0 modulo (i.e., are integer like).
 #' @param double_as_integer_allowed Single logical value. If \code{TRUE}, no error is reported in the checking message if the \code{typeof} argument is set to \code{"integer"}, while the reality is type \code{"double"} but with zero as modulo (reminder of a division). This means that \code{i <- 1}, which is \code{typeof(i) == "double"} is considered as an integer when setting \code{double_as_integer_allowed = TRUE}. The same rescue is performed when the \code{class} argument is set to \code{"integer"} and the tested object is of type \code{"double"} with a zero as modulo (because \code{class()} of such objects is \code{"numeric"}, not \code{"integer"}). Warning: \code{double_as_integer_allowed = TRUE} uses \code{data \%\% 1 == 0L} but not \code{isTRUE(all.equal(data \%\% 1, 0))} is used here because the argument checks for integers stored as double (does not check for decimal numbers that are approximate integers).
 #' @param all_options_in_data Single logical value. If \code{FALSE}, the tested object must be made of at least one of the options and nothing else. Example returning no error: \code{data = c(1, 1, 2)} and \code{options = c(1, 2, 3)}. Example returning an error: \code{data = c(1, 4)} and \code{options = c(1, 2, 3)}. If \code{TRUE}, the tested object must contain all of the options, at least once, and nothing else. Example returning no error: \code{data = c(1, 1, 2, 3} and \code{options = c(1, 2, 3)}. Example returning an error (missing 3): \code{data = c(1, 1, 2} and \code{options = c(1, 2, 3)}. Example returning an error (unwanted 4): \code{data = c(1, 1, 4} and \code{options = c(1, 2, 3)}. Ignored if the \code{options} argument is \code{NULL}.
 #' @param na_contain Single logical value. Can the \code{data} argument contain \code{NA}?
-#' @param neg_values Single logical value. Are negative numeric values authorized? Warning: the default setting is \code{TRUE}, meaning that, in that case, no check is performed for the presence of negative values. The checking is activated only when set to \code{FALSE}. In addition, \code{FALSE} can only be used when the \code{typeof} argument is set to \code{"double"} or \code{"integer"}, or the \code{mode} argument to \code{"numeric"}. Otherwise an error message is returned. Finally, the presence of negative values is not checked with \code{FALSE} if the tested object is a factor and a message is returned: \code{"OBJECT MUST BE MADE OF NON NEGATIVE VALUES BUT IS A FACTOR"}.
+#' @param neg_values Single logical value. Are negative numeric values authorized? Warning: the default setting is \code{TRUE}, meaning that, in that case, no check is performed for the presence of negative values. The checking is activated only when set to \code{FALSE}. In addition, \code{FALSE} can only be used when the \code{typeof} argument is set to \code{"double"} or \code{"integer"}, or the \code{mode} argument to \code{"numeric"}, or the \code{prop} argument to \code{TRUE} (values between 0 and 1 instead of -1 and 1). Otherwise an error message is returned. Finally, the presence of negative values is not checked with \code{FALSE} if the tested object is a factor and a message is returned: \code{"OBJECT MUST BE MADE OF NON NEGATIVE VALUES BUT IS A FACTOR"}.
 #' @param inf_values Single logical value. Are infinite \code{Inf} or \code{-Inf} values authorized? Warning: the default setting is \code{TRUE}, meaning that, in that case, no check is performed for the presence of infinite values. The checking is activated only when set to \code{FALSE}. In addition, \code{FALSE} can only be used when the \code{typeof} argument is set to \code{"double"}, or the \code{mode} argument to \code{"numeric"}. Otherwise an error message is returned. Finally, the presence of infinite values is not checked with \code{FALSE} if the tested object is a factor and a message is returned: \code{"OBJECT MUST BE MADE OF NON NEGATIVE VALUES BUT IS A FACTOR"}.
 #' @param print Single logical value. Print the message if the \code{$problem} output is \code{TRUE}? Warning: set by default to \code{FALSE}, which facilitates the control of the checking message output when using \code{arg_check()} inside functions. See the example section.
 #' @param data_name Single character string indicating the name of the object to test. If \code{NULL}, use what is assigned to the \code{data} argument for the returned message.
@@ -33,7 +33,7 @@
 #'  
 #' If \code{options} is non-null, then \code{class}, \code{type} and \code{mode} must be \code{NULL}, and \code{length} can be \code{NULL} or specified.
 #'
-#' If \code{prop} is \code{TRUE}, then \code{class}, \code{type} and \code{mode} must be \code{NULL}, and \code{length} can be \code{NULL} or specified. Consequently, \code{neg_values} and \code{inf_values} must stay \code{TRUE} (pointless anyway, since proportions are neither negative nor infinite).
+#' If \code{prop} is \code{TRUE}, then \code{class}, \code{type} and \code{mode} must be \code{NULL}, and \code{length} can be \code{NULL} or specified. The values must be between -1 and 1 with \code{neg_values = TRUE} (default), and between 0 and 1 with \code{neg_values = FALSE}. Consequently, \code{inf_values} must stay \code{TRUE} (pointless anyway, since proportions are not infinite).
 #'
 #' The function tests what is written in its arguments, even if what is written is incoherent. For instance with \code{arg_check(data = factor(1), class = "factor", mode = "character")}, the function tests that data is class \code{"factor"} and mode \code{"character"}, even if no factor object can be class \code{"factor"} and mode \code{"character"} (factors are class \code{"factor"} and mode \code{"numeric"}). Thus, \code{arg_check(data = factor(1), class = "factor", mode = "character")} will return a problem.
 #' 
@@ -647,10 +647,10 @@ arg_check <- function(
         )
         base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL)
     }
-    if(prop == TRUE & ( ! base::is.null(x = class) | ! base::is.null(x = typeof) | ! base::is.null(x = mode))){ # prop = TRUE already checks that data is of type "double" with values between 0 and 1, so it must be used alone
+    if(prop == TRUE & ( ! base::is.null(x = class) | ! base::is.null(x = typeof) | ! base::is.null(x = mode))){ # prop = TRUE already checks that data is of type "double" with values between -1 (or 0 if neg_values = FALSE) and 1, so it must be used alone
         tempo_cat <- base::paste0(
             error_text_start,
-            "THE class, typeof AND mode ARGUMENTS MUST BE NULL IF THE prop ARGUMENT IS TRUE.\nprop = TRUE ALREADY CHECKS THAT THE TESTED OBJECT IS MADE OF DECIMAL VALUES (TYPE \"double\") BETWEEN 0 AND 1.",
+            "THE class, typeof AND mode ARGUMENTS MUST BE NULL IF THE prop ARGUMENT IS TRUE.\nprop = TRUE ALREADY CHECKS THAT THE TESTED OBJECT IS MADE OF DECIMAL VALUES (TYPE \"double\") BETWEEN -1 AND 1, OR BETWEEN 0 AND 1 IF neg_values IS FALSE.",
             collapse = NULL,
             recycle0 = FALSE
         )
@@ -692,10 +692,10 @@ arg_check <- function(
             }
         }
     }
-    if(neg_values == FALSE & base::is.null(x = typeof) & base::is.null(x = mode)){
+    if(neg_values == FALSE & base::is.null(x = typeof) & base::is.null(x = mode) & prop == FALSE){ # with prop = TRUE, neg_values = FALSE sets the range to 0 and 1 (instead of -1 and 1)
         tempo_cat <- base::paste0(
-            error_text_start, 
-            "THE neg_values ARGUMENT CANNOT BE SWITCHED FROM TRUE (DEFAULT VALUE) TO FALSE IF typeof AND mode ARGUMENTS ARE NULL.",
+            error_text_start,
+            "THE neg_values ARGUMENT CANNOT BE SWITCHED FROM TRUE (DEFAULT VALUE) TO FALSE IF typeof AND mode ARGUMENTS ARE NULL AND prop IS FALSE.",
             collapse = NULL, 
             recycle0 = FALSE
         )
@@ -944,14 +944,14 @@ arg_check <- function(
         }
     }
     if(prop == TRUE & base::all(base::typeof(x = data) == "double", na.rm = TRUE)){ # base::all() without na.rm -> ok because base::typeof(NA) is "logical"
-        if(base::is.null(x = data) | base::any(data < 0 | data > 1, na.rm = TRUE)){ # works if data base::is.null # Warning: na.rm = TRUE required here for base::any() # base::typeof(data) == "double" means no factor allowed
+        if(base::is.null(x = data) | base::any(data < base::ifelse(test = neg_values, yes = -1, no = 0) | data > 1, na.rm = TRUE)){ # works if data base::is.null # Warning: na.rm = TRUE required here for base::any() # base::typeof(data) == "double" means no factor allowed # lower limit: -1 if negative values are authorized, 0 otherwise
             problem <- TRUE
             if(base::identical(x = text, y = text_ok, num.eq = TRUE, single.NA = TRUE, attrib.as.set = TRUE, ignore.bytecode = TRUE, ignore.environment = FALSE, ignore.srcref = TRUE, extptr.as.ref = FALSE)){
                 text <- base::paste0("ERROR", base::ifelse(test = error_text == "", yes = "", no = error_text), "\n\n", collapse = NULL, recycle0 = FALSE)
             }else{
                 text <- base::paste0(text, " AND ", collapse = NULL, recycle0 = FALSE)
             }
-            text <- base::paste0(text, "THE ", data_name, " ", base::ifelse(test = data_arg, yes = "ARGUMENT", no = "OBJECT"), " MUST BE DECIMAL VALUES BETWEEN 0 AND 1.", collapse = NULL, recycle0 = FALSE)
+            text <- base::paste0(text, "THE ", data_name, " ", base::ifelse(test = data_arg, yes = "ARGUMENT", no = "OBJECT"), " MUST BE DECIMAL VALUES BETWEEN ", base::ifelse(test = neg_values, yes = "-1", no = "0"), " AND 1.", collapse = NULL, recycle0 = FALSE)
         }
     }else if(prop == TRUE){
         problem <- TRUE
@@ -960,7 +960,7 @@ arg_check <- function(
         }else{
             text <- base::paste0(text, " AND ", collapse = NULL, recycle0 = FALSE)
         }
-        text <- base::paste0(text, "THE ", data_name, " ", base::ifelse(test = data_arg, yes = "ARGUMENT", no = "OBJECT"), " MUST BE DECIMAL VALUES BETWEEN 0 AND 1.", collapse = NULL, recycle0 = FALSE)
+        text <- base::paste0(text, "THE ", data_name, " ", base::ifelse(test = data_arg, yes = "ARGUMENT", no = "OBJECT"), " MUST BE DECIMAL VALUES BETWEEN ", base::ifelse(test = neg_values, yes = "-1", no = "0"), " AND 1.", collapse = NULL, recycle0 = FALSE)
     }
     if(base::all(base::class(x = data) %in% "expression", na.rm = TRUE)){ # no need of na.rm = TRUE for base::all() because %in% does not output NA
         data <- base::as.character(x = data) # to evaluate the presence of NA

@@ -126,10 +126,12 @@ arg_check(
 
 ### Argument <code>prop</code>
 ```{r}
-# Check for values between 0 and 1 only.
+# Check for values between 0 and 1 only (neg_values = FALSE).
+# With neg_values = TRUE (default), values between -1 and 1 are accepted.
 arg_check(
     data = vec2, 
-    prop = TRUE 
+    prop = TRUE, 
+    neg_values = FALSE 
 )
 ```
 <br>
@@ -189,6 +191,7 @@ arg_check(
 arg_check(
     data = mat2,
     prop = TRUE,
+    neg_values = FALSE,
     na_contain = FALSE 
 )
 ```
