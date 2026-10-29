@@ -63,6 +63,11 @@
   returned (invisibly).
 - arg_check(): output component object.name renamed object_name
   (breaking change).
+- arg_check(): with prop = TRUE, the class, typeof and mode arguments
+  must be NULL, otherwise an error is returned (breaking change). prop =
+  TRUE already checks that the tested object is of type “double” with
+  values between 0 and 1. To also check the class of the object (a
+  matrix for instance), use a second arg_check() call with prop = FALSE.
 - colons_check() and all_args_here(): the “in” symbol is now skipped
   during code parsing, which prevents spurious parsing problems with
   for(j in (n - 1L):2L) writings.

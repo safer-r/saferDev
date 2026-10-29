@@ -69,8 +69,11 @@ arg_check(
 - prop:
 
   Single logical value. Are the numeric values between 0 and 1
-  (proportion)? If `TRUE`, can be used alone, i.e., without necessarily
-  checking the class, mode, etc., of the object to test.
+  (proportion)? If `TRUE`, the tested object must be of type `"double"`
+  with all its values between 0 and 1, and the `class`, `typeof` and
+  `mode` arguments must be `NULL` (otherwise an error message is
+  returned). To check the class of a proportion object (a matrix for
+  instance), use a second `arg_check()` call with `prop = FALSE`.
 
 - options:
 
@@ -215,6 +218,11 @@ If `options == NULL`, then at least `class` or `type` or `mode` or
 
 If `options` is non-null, then `class`, `type` and `mode` must be
 `NULL`, and `length` can be `NULL` or specified.
+
+If `prop` is `TRUE`, then `class`, `type` and `mode` must be `NULL`, and
+`length` can be `NULL` or specified. Consequently, `neg_values` and
+`inf_values` must stay `TRUE` (pointless anyway, since proportions are
+neither negative nor infinite).
 
 The function tests what is written in its arguments, even if what is
 written is incoherent. For instance with
