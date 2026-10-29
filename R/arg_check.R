@@ -6,7 +6,7 @@
 #' @param typeof Character string or vector of character strings, tested exactly (same values, in the same order) against \code{typeof(data)}. Since \code{typeof(data)} always returns a single string, a vector of more than one value in the \code{typeof} argument always returns a problem. Write NULL to do not test the type.
 #' @param mode Character string or vector of character strings, tested exactly (same values, in the same order) against \code{mode(data)}. Since \code{mode(data)} always returns a single string, a vector of more than one value in the \code{mode} argument always returns a problem. Write NULL to do not test the mode.
 #' @param length Single numeric value indicating the length of the object. Not considered if \code{NULL}.
-#' @param prop Single logical value. Are the numeric values between 0 and 1 (proportion)? If \code{TRUE}, can be used alone, i.e., without necessarily checking the class, mode, etc., of the object to test.
+#' @param prop Single logical value. Are the numeric values between 0 and 1 (proportion)? If \code{TRUE}, the tested object must be of type \code{"double"} with all its values between 0 and 1, and the \code{class}, \code{typeof} and \code{mode} arguments must be \code{NULL} (otherwise an error message is returned). To check the class of a proportion object (a matrix for instance), use a second \code{arg_check()} call with \code{prop = FALSE}.
 #' @param options Vector of character strings or integers indicating all the possible option values for the \code{data} argument, or \code{NULL}. Numbers of type \code{"double"} are accepted if they have a 0 modulo (i.e., are integer like).
 #' @param double_as_integer_allowed Single logical value. If \code{TRUE}, no error is reported in the checking message if the \code{typeof} argument is set to \code{"integer"}, while the reality is type \code{"double"} but with zero as modulo (reminder of a division). This means that \code{i <- 1}, which is \code{typeof(i) == "double"} is considered as an integer when setting \code{double_as_integer_allowed = TRUE}. The same rescue is performed when the \code{class} argument is set to \code{"integer"} and the tested object is of type \code{"double"} with a zero as modulo (because \code{class()} of such objects is \code{"numeric"}, not \code{"integer"}). Warning: \code{double_as_integer_allowed = TRUE} uses \code{data \%\% 1 == 0L} but not \code{isTRUE(all.equal(data \%\% 1, 0))} is used here because the argument checks for integers stored as double (does not check for decimal numbers that are approximate integers).
 #' @param all_options_in_data Single logical value. If \code{FALSE}, the tested object must be made of at least one of the options and nothing else. Example returning no error: \code{data = c(1, 1, 2)} and \code{options = c(1, 2, 3)}. Example returning an error: \code{data = c(1, 4)} and \code{options = c(1, 2, 3)}. If \code{TRUE}, the tested object must contain all of the options, at least once, and nothing else. Example returning no error: \code{data = c(1, 1, 2, 3} and \code{options = c(1, 2, 3)}. Example returning an error (missing 3): \code{data = c(1, 1, 2} and \code{options = c(1, 2, 3)}. Example returning an error (unwanted 4): \code{data = c(1, 1, 4} and \code{options = c(1, 2, 3)}. Ignored if the \code{options} argument is \code{NULL}.
@@ -32,7 +32,9 @@
 #' If \code{options == NULL}, then at least \code{class} or \code{type} or \code{mode} or \code{length} argument must be non-null.
 #'  
 #' If \code{options} is non-null, then \code{class}, \code{type} and \code{mode} must be \code{NULL}, and \code{length} can be \code{NULL} or specified.
-#'  
+#'
+#' If \code{prop} is \code{TRUE}, then \code{class}, \code{type} and \code{mode} must be \code{NULL}, and \code{length} can be \code{NULL} or specified. Consequently, \code{neg_values} and \code{inf_values} must stay \code{TRUE} (pointless anyway, since proportions are neither negative nor infinite).
+#'
 #' The function tests what is written in its arguments, even if what is written is incoherent. For instance with \code{arg_check(data = factor(1), class = "factor", mode = "character")}, the function tests that data is class \code{"factor"} and mode \code{"character"}, even if no factor object can be class \code{"factor"} and mode \code{"character"} (factors are class \code{"factor"} and mode \code{"numeric"}). Thus, \code{arg_check(data = factor(1), class = "factor", mode = "character")} will return a problem.
 #' 
 #' If the tested object is \code{NULL}, then the function will always return a checking problem.
@@ -645,6 +647,15 @@ arg_check <- function(
         )
         base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL)
     }
+    if(prop == TRUE & ( ! base::is.null(x = class) | ! base::is.null(x = typeof) | ! base::is.null(x = mode))){ # prop = TRUE already checks that data is of type "double" with values between 0 and 1, so it must be used alone
+        tempo_cat <- base::paste0(
+            error_text_start,
+            "THE class, typeof AND mode ARGUMENTS MUST BE NULL IF THE prop ARGUMENT IS TRUE.\nprop = TRUE ALREADY CHECKS THAT THE TESTED OBJECT IS MADE OF DECIMAL VALUES (TYPE \"double\") BETWEEN 0 AND 1.",
+            collapse = NULL,
+            recycle0 = FALSE
+        )
+        base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL)
+    }
     if( ! base::is.null(x = options)){
         if( ! base::all(base::typeof(x = options) %in% base::c("character", "integer", "double"), na.rm = TRUE)){
             tempo_cat <- base::paste0(
@@ -752,30 +763,6 @@ arg_check <- function(
                 recycle0 = FALSE
             )
             base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL)
-        }
-    }
-    if(prop == TRUE){
-        if( ! base::is.null(x = mode)){
-            if( ! base::all(mode == "numeric", na.rm = TRUE) | base::length(x = mode) != 1L){ # only a single "numeric" is compatible with the prop checking of decimal values
-                tempo_cat <- base::paste0(
-                    error_text_start, 
-                    "THE mode ARGUMENT CANNOT BE OTHER THAN NULL OR \"numeric\" IF prop ARGUMENT IS TRUE.",
-                    collapse = NULL, 
-                    recycle0 = FALSE
-                )
-                base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL)
-            }
-        }
-        if( ! base::is.null(x = typeof)){
-            if( ! base::all(typeof == "double", na.rm = TRUE) | base::length(x = typeof) != 1L){ # only a single "double" is compatible with the prop checking of decimal values
-                tempo_cat <- base::paste0(
-                    error_text_start, 
-                    "THE typeof ARGUMENT CANNOT BE OTHER THAN NULL OR \"double\" IF prop ARGUMENT IS TRUE.",
-                    collapse = NULL, 
-                    recycle0 = FALSE
-                )
-                base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL)
-            }
         }
     }
 

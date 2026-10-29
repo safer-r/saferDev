@@ -36,7 +36,7 @@ arg_check(
 
 \item{length}{Single numeric value indicating the length of the object. Not considered if \code{NULL}.}
 
-\item{prop}{Single logical value. Are the numeric values between 0 and 1 (proportion)? If \code{TRUE}, can be used alone, i.e., without necessarily checking the class, mode, etc., of the object to test.}
+\item{prop}{Single logical value. Are the numeric values between 0 and 1 (proportion)? If \code{TRUE}, the tested object must be of type \code{"double"} with all its values between 0 and 1, and the \code{class}, \code{typeof} and \code{mode} arguments must be \code{NULL} (otherwise an error message is returned). To check the class of a proportion object (a matrix for instance), use a second \code{arg_check()} call with \code{prop = FALSE}.}
 
 \item{options}{Vector of character strings or integers indicating all the possible option values for the \code{data} argument, or \code{NULL}. Numbers of type \code{"double"} are accepted if they have a 0 modulo (i.e., are integer like).}
 
@@ -79,7 +79,9 @@ At least one of the \code{class}, \code{type}, \code{mode}, \code{length}, \code
 If \code{options == NULL}, then at least \code{class} or \code{type} or \code{mode} or \code{length} argument must be non-null.
  
 If \code{options} is non-null, then \code{class}, \code{type} and \code{mode} must be \code{NULL}, and \code{length} can be \code{NULL} or specified.
- 
+
+If \code{prop} is \code{TRUE}, then \code{class}, \code{type} and \code{mode} must be \code{NULL}, and \code{length} can be \code{NULL} or specified. Consequently, \code{neg_values} and \code{inf_values} must stay \code{TRUE} (pointless anyway, since proportions are neither negative nor infinite).
+
 The function tests what is written in its arguments, even if what is written is incoherent. For instance with \code{arg_check(data = factor(1), class = "factor", mode = "character")}, the function tests that data is class \code{"factor"} and mode \code{"character"}, even if no factor object can be class \code{"factor"} and mode \code{"character"} (factors are class \code{"factor"} and mode \code{"numeric"}). Thus, \code{arg_check(data = factor(1), class = "factor", mode = "character")} will return a problem.
 
 If the tested object is \code{NULL}, then the function will always return a checking problem.

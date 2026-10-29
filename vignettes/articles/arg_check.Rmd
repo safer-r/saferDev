@@ -187,8 +187,7 @@ arg_check(
 # Check for the absence of NA.
 # Warning: na_contain = TRUE means "no check". Thus, NA can be present or not. 
 arg_check(
-    data = mat2, 
-    class = c("matrix", "array"), 
+    data = mat2,
     prop = TRUE,
     na_contain = FALSE 
 )

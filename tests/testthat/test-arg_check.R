@@ -376,10 +376,19 @@ testthat::test_that("arg_check()", {
     result <- arg_check(data = vec1, options = "a", class = NULL, typeof = NULL, mode = NULL, prop = FALSE)
     expect <- list(problem = TRUE, text = "ERROR\n\nTHE vec1 ARGUMENT MUST BE SOME OF THESE OPTIONS:\na\nTHE PROBLEMATIC ELEMENTS OF vec1 ARE:\n-1\n0\n1\n2\n3", object_name = "vec1")
     testthat::expect_equal(result, expect)
-    result <- arg_check(data = vec1, options = NULL, class = "vector", typeof = "double", mode = "numeric", prop = TRUE) # class = "vector" is not a shorthand anymore: class(vec1) is "integer"
-    expect <- list(problem = TRUE, text = "ERROR\n\nTHE vec1 ARGUMENT MUST BE CLASS vector AND TYPEOF double AND THE vec1 ARGUMENT MUST BE DECIMAL VALUES BETWEEN 0 AND 1.", object_name = "vec1")
+    result <- arg_check(data = vec1, options = NULL, class = "vector", typeof = "double", mode = "numeric", prop = FALSE) # class = "vector" is not a shorthand anymore: class(vec1) is "integer"
+    expect <- list(problem = TRUE, text = "ERROR\n\nTHE vec1 ARGUMENT MUST BE CLASS vector AND TYPEOF double", object_name = "vec1")
     testthat::expect_equal(result, expect)
     # end THE class, typeof, mode ARGUMENTS MUST BE NULL, AND prop FALSE, IF THE options ARGUMENT IS SPECIFIED\nTHE options ARGUMENT MUST BE NULL IF THE class AND/OR typeof AND/OR mode AND/OR prop ARGUMENT IS SPECIFIED.
+    # THE class, typeof AND mode ARGUMENTS MUST BE NULL IF THE prop ARGUMENT IS TRUE.
+    testthat::expect_error(arg_check(data = vec7, class = "numeric", typeof = NULL, mode = NULL, prop = TRUE), regexp = "THE class, typeof AND mode ARGUMENTS MUST BE NULL IF THE prop ARGUMENT IS TRUE")
+    testthat::expect_error(arg_check(data = vec7, class = NULL, typeof = "double", mode = NULL, prop = TRUE), regexp = "THE class, typeof AND mode ARGUMENTS MUST BE NULL IF THE prop ARGUMENT IS TRUE")
+    testthat::expect_error(arg_check(data = vec7, class = NULL, typeof = NULL, mode = "numeric", prop = TRUE), regexp = "THE class, typeof AND mode ARGUMENTS MUST BE NULL IF THE prop ARGUMENT IS TRUE")
+    testthat::expect_error(arg_check(data = mat2, class = c("matrix", "array"), typeof = "double", mode = "numeric", prop = TRUE), regexp = "THE class, typeof AND mode ARGUMENTS MUST BE NULL IF THE prop ARGUMENT IS TRUE")
+    testthat::expect_error(arg_check(data = vec7, class = NULL, typeof = NULL, mode = "numeric", neg_values = FALSE, prop = TRUE), regexp = "THE class, typeof AND mode ARGUMENTS MUST BE NULL IF THE prop ARGUMENT IS TRUE")
+    testthat::expect_no_error(arg_check(data = vec7, class = NULL, typeof = NULL, mode = NULL, prop = TRUE))
+    testthat::expect_no_error(arg_check(data = vec7, class = "numeric", typeof = "double", mode = "numeric", prop = FALSE))
+    # end THE class, typeof AND mode ARGUMENTS MUST BE NULL IF THE prop ARGUMENT IS TRUE.
     # THE neg_values ARGUMENT CANNOT BE SWITCHED FROM TRUE (DEFAULT VALUE) TO FALSE IF class, typeof AND mode ARGUMENTS ARE NULL.
     testthat::expect_error(arg_check(data = vec1, class = NULL, typeof = NULL, mode = NULL, neg_values = FALSE, prop = TRUE))
     # end THE neg_values ARGUMENT CANNOT BE SWITCHED FROM TRUE (DEFAULT VALUE) TO FALSE IF class, typeof AND mode ARGUMENTS ARE NULL.
@@ -469,13 +478,14 @@ testthat::test_that("arg_check()", {
     testthat::expect_error(arg_check(data = vec1, mode = "numeric", prop = NA))
     testthat::expect_error(arg_check(data = vec1, mode = "numeric", prop = 1))
     testthat::expect_error(arg_check(data = vec1, mode = "numeric", prop = c(TRUE, FALSE)))
-    result <- arg_check(data = vec1, mode = "numeric", prop = TRUE)
+    result <- arg_check(data = vec1, prop = TRUE)
     expect <- list(problem = TRUE, text = "ERROR\n\nTHE vec1 ARGUMENT MUST BE DECIMAL VALUES BETWEEN 0 AND 1.", object_name = "vec1")
     testthat::expect_equal(result, expect)
-    result <- arg_check(data = vec5, mode = "numeric", prop = TRUE)
-    expect <- list(problem = TRUE, text = "ERROR\n\nTHE vec5 ARGUMENT MUST BE MODE numeric AND THE vec5 ARGUMENT MUST BE DECIMAL VALUES BETWEEN 0 AND 1.", object_name = "vec5")
+    result <- arg_check(data = vec5, prop = TRUE)
+    expect <- list(problem = TRUE, text = "ERROR\n\nTHE vec5 ARGUMENT MUST BE DECIMAL VALUES BETWEEN 0 AND 1.", object_name = "vec5")
     testthat::expect_equal(result, expect)
-    testthat::expect_no_error(arg_check(data = vec1, class = "vector", prop = TRUE))
+    testthat::expect_no_error(arg_check(data = mat2, prop = TRUE, na_contain = TRUE))
+    testthat::expect_error(arg_check(data = vec1, class = "vector", prop = TRUE))
     testthat::expect_no_error(arg_check(data = vec1, class = "vector", prop = FALSE))
     testthat::expect_error(arg_check(data = vec5, mode = "character", prop = TRUE))
     testthat::expect_no_error(arg_check(data = vec5, mode = "character", prop = FALSE))
@@ -483,7 +493,7 @@ testthat::test_that("arg_check()", {
     testthat::expect_no_error(arg_check(data = vec1, typeof = "character", prop = FALSE))
     testthat::expect_error(arg_check(data = vec7, typeof = "character", prop = TRUE))
     testthat::expect_no_error(arg_check(data = vec7, typeof = "character", prop = FALSE))
-    testthat::expect_no_error(arg_check(data = vec7, typeof = "double", prop = TRUE))
+    testthat::expect_error(arg_check(data = vec7, typeof = "double", prop = TRUE))
     testthat::expect_no_error(arg_check(data = vec7, typeof = "double", prop = FALSE))
     #  end prop
     # other checkings of the arguments by order
@@ -632,6 +642,9 @@ testthat::test_that("arg_check()", {
     testthat::expect_equal(result, expect)
     result <- arg_check(data = vec4, options = c("pearson", "spearman"), length = 2)
     expect <- list(problem = TRUE, text =   "ERROR\n\nTHE LENGTH OF vec4 MUST BE 2 AND NOT 1", object_name = "vec4")
+    testthat::expect_equal(result, expect)
+    result <- arg_check(data = vec4, options = "spearman", length = 2) # options and length problems together
+    expect <- list(problem = TRUE, text =   "ERROR\n\nTHE vec4 ARGUMENT MUST BE SOME OF THESE OPTIONS:\nspearman\nTHE PROBLEMATIC ELEMENT OF vec4 IS:\npearson AND THE LENGTH OF vec4 MUST BE 2 AND NOT 1", object_name = "vec4")
     testthat::expect_equal(result, expect)
     # end if( ! base::is.null(x = length)){
 
