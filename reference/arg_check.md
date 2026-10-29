@@ -70,10 +70,11 @@ arg_check(
 
   Single logical value. Are the numeric values between 0 and 1
   (proportion)? If `TRUE`, the tested object must be of type `"double"`
-  with all its values between 0 and 1, and the `class`, `typeof` and
-  `mode` arguments must be `NULL` (otherwise an error message is
-  returned). To check the class of a proportion object (a matrix for
-  instance), use a second `arg_check()` call with `prop = FALSE`.
+  with all its values between -1 and 1 if `neg_values` is `TRUE`
+  (default), or between 0 and 1 if `neg_values` is `FALSE`, and the
+  `class`, `typeof` and `mode` arguments must be `NULL`. To check the
+  class of a proportion object (a matrix for instance), use a second
+  `arg_check()` call with `prop = FALSE`.
 
 - options:
 
@@ -123,9 +124,11 @@ arg_check(
   performed for the presence of negative values. The checking is
   activated only when set to `FALSE`. In addition, `FALSE` can only be
   used when the `typeof` argument is set to `"double"` or `"integer"`,
-  or the `mode` argument to `"numeric"`. Otherwise an error message is
-  returned. Finally, the presence of negative values is not checked with
-  `FALSE` if the tested object is a factor and a message is returned:
+  or the `mode` argument to `"numeric"`, or the `prop` argument to
+  `TRUE` (values between 0 and 1 instead of -1 and 1). Otherwise an
+  error message is returned. Finally, the presence of negative values is
+  not checked with `FALSE` if the tested object is a factor and a
+  message is returned:
   `"OBJECT MUST BE MADE OF NON NEGATIVE VALUES BUT IS A FACTOR"`.
 
 - inf_values:
@@ -220,9 +223,10 @@ If `options` is non-null, then `class`, `type` and `mode` must be
 `NULL`, and `length` can be `NULL` or specified.
 
 If `prop` is `TRUE`, then `class`, `type` and `mode` must be `NULL`, and
-`length` can be `NULL` or specified. Consequently, `neg_values` and
-`inf_values` must stay `TRUE` (pointless anyway, since proportions are
-neither negative nor infinite).
+`length` can be `NULL` or specified. The values must be between -1 and 1
+with `neg_values = TRUE` (default), and between 0 and 1 with
+`neg_values = FALSE`. Consequently, `inf_values` must stay `TRUE`
+(pointless anyway, since proportions are not infinite).
 
 The function tests what is written in its arguments, even if what is
 written is incoherent. For instance with

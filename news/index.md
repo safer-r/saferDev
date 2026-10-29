@@ -66,8 +66,13 @@
 - arg_check(): with prop = TRUE, the class, typeof and mode arguments
   must be NULL, otherwise an error is returned (breaking change). prop =
   TRUE already checks that the tested object is of type “double” with
-  values between 0 and 1. To also check the class of the object (a
-  matrix for instance), use a second arg_check() call with prop = FALSE.
+  values between -1 and 1 (neg_values = TRUE, default), or between 0 and
+  1 (neg_values = FALSE). neg_values = FALSE is now allowed with prop =
+  TRUE, without typeof or mode (breaking change: with prop = TRUE alone,
+  negative values down to -1 are now accepted; add neg_values = FALSE to
+  keep the former 0 to 1 range). To also check the class of the object
+  (a matrix for instance), use a second arg_check() call with prop =
+  FALSE.
 - colons_check() and all_args_here(): the “in” symbol is now skipped
   during code parsing, which prevents spurious parsing problems with
   for(j in (n - 1L):2L) writings.

@@ -278,10 +278,12 @@ arg_check(
 
 ``` r
 
-# Check for values between 0 and 1 only.
+# Check for values between 0 and 1 only (neg_values = FALSE).
+# With neg_values = TRUE (default), values between -1 and 1 are accepted.
 arg_check(
     data = vec2, 
-    prop = TRUE 
+    prop = TRUE, 
+    neg_values = FALSE 
 )
 ```
 
@@ -413,6 +415,7 @@ arg_check(
 arg_check(
     data = mat2,
     prop = TRUE,
+    neg_values = FALSE,
     na_contain = FALSE 
 )
 ```
@@ -467,7 +470,7 @@ arg_check(
     ## 
     ## ERROR IN saferDev::arg_check().
     ## 
-    ## THE neg_values ARGUMENT CANNOT BE SWITCHED FROM TRUE (DEFAULT VALUE) TO FALSE IF typeof AND mode ARGUMENTS ARE NULL.
+    ## THE neg_values ARGUMENT CANNOT BE SWITCHED FROM TRUE (DEFAULT VALUE) TO FALSE IF typeof AND mode ARGUMENTS ARE NULL AND prop IS FALSE.
     ## 
     ## ================
 

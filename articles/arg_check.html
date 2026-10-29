@@ -295,10 +295,12 @@ class <code>c(“matrix”, “array”)</code>, and ordered factors have class
 <h3 id="argument-prop">Argument <code>prop</code><a class="anchor" aria-label="anchor" href="#argument-prop"></a>
 </h3>
 <div class="sourceCode" id="cb35"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Check for values between 0 and 1 only.</span></span>
+<code class="sourceCode R"><span><span class="co"># Check for values between 0 and 1 only (neg_values = FALSE).</span></span>
+<span><span class="co"># With neg_values = TRUE (default), values between -1 and 1 are accepted.</span></span>
 <span><span class="fu"><a href="../reference/arg_check.html">arg_check</a></span><span class="op">(</span></span>
 <span>    data <span class="op">=</span> <span class="va">vec2</span>, </span>
-<span>    prop <span class="op">=</span> <span class="cn">TRUE</span> </span>
+<span>    prop <span class="op">=</span> <span class="cn">TRUE</span>, </span>
+<span>    neg_values <span class="op">=</span> <span class="cn">FALSE</span> </span>
 <span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## $problem</span></span>
 <span><span class="co">## [1] FALSE</span></span>
@@ -410,6 +412,7 @@ class <code>c(“matrix”, “array”)</code>, and ordered factors have class
 <span><span class="fu"><a href="../reference/arg_check.html">arg_check</a></span><span class="op">(</span></span>
 <span>    data <span class="op">=</span> <span class="va">mat2</span>,</span>
 <span>    prop <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>    neg_values <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>    na_contain <span class="op">=</span> <span class="cn">FALSE</span> </span>
 <span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## $problem</span></span>
@@ -455,7 +458,7 @@ class <code>c(“matrix”, “array”)</code>, and ordered factors have class
 <span><span class="co">## </span></span>
 <span><span class="co">## ERROR IN saferDev::arg_check().</span></span>
 <span><span class="co">## </span></span>
-<span><span class="co">## THE neg_values ARGUMENT CANNOT BE SWITCHED FROM TRUE (DEFAULT VALUE) TO FALSE IF typeof AND mode ARGUMENTS ARE NULL.</span></span>
+<span><span class="co">## THE neg_values ARGUMENT CANNOT BE SWITCHED FROM TRUE (DEFAULT VALUE) TO FALSE IF typeof AND mode ARGUMENTS ARE NULL AND prop IS FALSE.</span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## ================</span></span></code></pre>
 <p><br></p>
