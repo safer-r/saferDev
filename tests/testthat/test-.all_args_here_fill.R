@@ -416,7 +416,7 @@ testthat::test_that(".all_args_here_fill()", {
     # if(base::sum(tempo_log, na.rm = TRUE) > 1){
     testthat::expect_no_error(.all_args_here_fill(arg_full = list_fun2, arg_full_names = arg_full_names_3, tempo_split = tempo_split_3, three_dots_log = c(TRUE, FALSE, FALSE), i2 = 1, col1_i2 = 1, col2_i2 = col2_i2_2, arg_user_setting_x = arg_user_setting_x_1, warn = NULL, warn_count = 0, lib_path = NULL, error_text = ""))
     result <- .all_args_here_fill(arg_full = list_fun2, arg_full_names = arg_full_names_3, tempo_split = tempo_split_3, three_dots_log = c(TRUE, FALSE, FALSE), i2 = 1, col1_i2 = 1, col2_i2 = col2_i2_2, arg_user_setting_x = arg_user_setting_x_1, warn = NULL, warn_count = 0, lib_path = NULL, error_text = "")
-    expected <- list(col6 = "na.rm_test", col7 = "na.rm_test = NULL", col8 = "na.rm ARG NAME HAS TO BE FULLY WRITTEN na.rm_test & WARNING: SEVERAL ARGUMENT NAMES OF THE FUNCTION BEGINNING WITH na.rm")
+    expected <- list(col6 = "na.rm_test", col7 = "na.rm_test = NULL", col8 = "sum(1:2,na.rm = FALSE, na.rm_test = NULL)")
     testthat::expect_equal(result, expected)
     # end if(base::sum(tempo_log, na.rm = TRUE) > 1){
 
@@ -443,13 +443,13 @@ testthat::test_that(".all_args_here_fill()", {
     testthat::expect_no_error(.all_args_here_fill(arg_full = list_fun11, arg_full_names = arg_full_names_11, tempo_split = tempo_split_11, three_dots_log = c(FALSE, FALSE), i2 = 1, col1_i2 = 1, col2_i2 = col2_i2_11, arg_user_setting_x = arg_user_setting_x_1, warn = NULL, warn_count = 0, lib_path = NULL, error_text = ""))
     testthat::expect_no_error(.all_args_here_fill(arg_full = list_fun3, arg_full_names = arg_full_names_4, tempo_split = tempo_split_7, three_dots_log = c(FALSE, FALSE, FALSE, FALSE, FALSE, FALSE), i2 = 1, col1_i2 = 1, col2_i2 = col2_i2_2, arg_user_setting_x = arg_user_setting_x_1, warn = NULL, warn_count = 0, lib_path = NULL, error_text = ""))
     result <- .all_args_here_fill(arg_full = list_fun3, arg_full_names = arg_full_names_4, tempo_split = tempo_split_7, three_dots_log = c(FALSE, FALSE, FALSE, FALSE, FALSE, FALSE), i2 = 1, col1_i2 = 1, col2_i2 = col2_i2_2, arg_user_setting_x = arg_user_setting_x_1, warn = NULL, warn_count = 0, lib_path = NULL, error_text = "")
-    expected <- list(col6 = "pattern, x, useBytes", col7 = "pattern = pa = m, x =  december, useBytes = FALSE", col8 = "pa ARG NAME HAS TO BE FULLY WRITTEN pattern")
+    expected <- list(col6 = "x, useBytes, pattern", col7 = "x =  december, useBytes = FALSE, pattern = m", col8 = "sum(pattern = m, x =  december, ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE)") # pa is completed into pattern
     testthat::expect_equal(result, expected)
     # end without ... in args
     # with ... in args
     testthat::expect_no_error(.all_args_here_fill(arg_full = list_fun2, arg_full_names = arg_full_names_2, tempo_split = tempo_split_6, three_dots_log = c(TRUE, FALSE), i2 = 1, col1_i2 = 1, col2_i2 = col2_i2_2, arg_user_setting_x = arg_user_setting_x_1, warn = NULL, warn_count = 0, lib_path = NULL, error_text = ""))
     result <- .all_args_here_fill(arg_full = list_fun2, arg_full_names = arg_full_names_2, tempo_split = tempo_split_6, three_dots_log = c(TRUE, FALSE), i2 = 1, col1_i2 = 1, col2_i2 = col2_i2_2, arg_user_setting_x = arg_user_setting_x_1, warn = NULL, warn_count = 0, lib_path = NULL, error_text = "")
-    expected <- list(col6 = "na.rm", col7 = "na.rm = FALSE", col8 = "na ARG NAME HAS TO BE FULLY WRITTEN na.rm")
+    expected <- list(col6 = "na.rm", col7 = "na.rm = FALSE", col8 = "sum(na = FALSE,1:2, na.rm = FALSE)") # na is not completed into na.rm, because na.rm is after ..., thus not partially matched
     testthat::expect_equal(result, expected)
     # end with ... in args
     # end checking if arg name are not fully written
@@ -457,7 +457,7 @@ testthat::test_that(".all_args_here_fill()", {
     # when ... is present or not
     testthat::expect_no_error(.all_args_here_fill(arg_full = list_fun5, arg_full_names = arg_full_names_4, tempo_split = tempo_split_7, three_dots_log = c(FALSE, FALSE, FALSE, FALSE, FALSE, FALSE), i2 = 1, col1_i2 = 1, col2_i2 = col2_i2_2, arg_user_setting_x = arg_user_setting_x_1, warn = NULL, warn_count = 0, lib_path = NULL, error_text = ""))
     result <- .all_args_here_fill(arg_full = list_fun5, arg_full_names = arg_full_names_4, tempo_split = tempo_split_7, three_dots_log = c(FALSE, FALSE, FALSE, FALSE, FALSE, FALSE), i2 = 1, col1_i2 = 1, col2_i2 = col2_i2_2, arg_user_setting_x = arg_user_setting_x_1, warn = NULL, warn_count = 0, lib_path = NULL, error_text = "")
-    expected <- list(col6 = "pattern, x, useBytes", col7 = "pattern = pa = m, x =  december, useBytes = NULL", col8 = "pa ARG NAME HAS TO BE FULLY WRITTEN pattern")
+    expected <- list(col6 = "x, useBytes, pattern", col7 = "x =  december, useBytes = NULL, pattern = m", col8 = "sum(pattern = m, x =  december, ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = NULL)")
     testthat::expect_equal(result, expected)
     # end when ... is present or not
     testthat::expect_no_error(.all_args_here_fill(arg_full = list_fun4, arg_full_names = arg_full_names_4, tempo_split = tempo_split_12, three_dots_log = c(FALSE, FALSE, FALSE, FALSE, FALSE, FALSE), i2 = 1, col1_i2 = 1, col2_i2 = col2_i2_2, arg_user_setting_x = arg_user_setting_x_1, warn = NULL, warn_count = 0, lib_path = NULL, error_text = ""))

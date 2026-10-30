@@ -491,115 +491,114 @@
     }else{
         # scan for args names present in tempo_split
         good_count <- 0 # to define if all the args are written (not considering ...)
+        match_idx <- base::integer(length = base::length(x = arg_full_names)) # for each arg of the function, position in tempo_split of the arg written with its name (0 if not written)
+        tempo_split_mod <- tempo_split # tempo_split with the partially written arg names completed
+        partial_names <- NULL # args written with a partial name
+        partial_args <- NULL # same, with their written value (e.g., "digits = 1")
+        filled_names <- NULL # args written with an empty value (e.g., safer_check = ) while their default value can be copied: the default value is added
         if(base::length(x = tempo_split) == 0 & base::length(x = arg_full_names) > 0){
             missing_args_names <- arg_full_names
         }else{
             missing_full_arg_name_log <- base::rep(x = TRUE, times = base::length(x = tempo_split)) # will help for counting the tempo_split args without arg name before. All the remaining TRUE will be values that need an arg name
+            # exact arg names
             for(i3 in base::seq_along(along.with = arg_full_names)){ # seq_along() instead of 1:base::length() avoids iterating over c(1, 0) when arg_full_names is NULL or empty (1:0 gives c(1, 0), which would index NA and run a spurious 0-iteration)
                 pattern3 <- base::paste0("^[\\s\\r\\n]*", arg_full_names[i3], "[\\s]*=", collapse = NULL, recycle0 = FALSE) # looking for the arg name
                 tempo_log <- base::grepl(x = tempo_split, pattern = pattern3, perl = TRUE, ignore.case = FALSE, fixed = FALSE, useBytes = FALSE)
                 if(base::sum(tempo_log, na.rm = TRUE) == 1){ # arg i3 has its names written in the args between ()
-                    good_args <- base::c(good_args, tempo_split[tempo_log])
+                    match_idx[i3] <- base::which(x = tempo_log, arr.ind = FALSE, useNames = TRUE)
                     missing_full_arg_name_log <- missing_full_arg_name_log & ! tempo_log # remove the position of the taken arg in tempo_split
-                    good_count <- good_count + 1
-                }else if(base::sum(tempo_log, na.rm = TRUE) == 0){ # arg i3 has not its names written in the args between ()
-                    missing_args_names <- base::c(missing_args_names, arg_full_names[i3])
-                }else{
+                }else if(base::sum(tempo_log, na.rm = TRUE) > 1){
                     tempo_cat <- base::paste0(
                         error_text_start,
-                        "pattern3 DETECTED SEVERAL TIMES IN ARGUMENTS.\n\npattern3:\n", 
-                        base::paste0(pattern3, collapse = "\n", recycle0 = FALSE), 
-                        "\n\ntempo_split:\n", 
-                        base::paste0(tempo_split[tempo_log], collapse = "\n", recycle0 = FALSE), 
-                        "\n\nCHECK IF THE ARGUMENT IS PRESENT SEVERAL TIMES IN LINE ", 
-                        col1_i2, 
-                        ", INSIDE ", 
-                        col2_i2, 
-                        collapse = NULL, 
+                        "pattern3 DETECTED SEVERAL TIMES IN ARGUMENTS.\n\npattern3:\n",
+                        base::paste0(pattern3, collapse = "\n", recycle0 = FALSE),
+                        "\n\ntempo_split:\n",
+                        base::paste0(tempo_split[tempo_log], collapse = "\n", recycle0 = FALSE),
+                        "\n\nCHECK IF THE ARGUMENT IS PRESENT SEVERAL TIMES IN LINE ",
+                        col1_i2,
+                        ", INSIDE ",
+                        col2_i2,
+                        collapse = NULL,
                         recycle0 = FALSE
                     )
                     base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", base::ifelse(test = base::is.null(x = warn), yes = "", no = base::paste0("IN ADDITION\nWARNING", base::ifelse(test = warn_count > 1, yes = "S", no = ""), ":\n\n", warn, collapse = NULL, recycle0 = FALSE)), collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL)
                 }
             }
+            # end exact arg names
+            # partial arg names: like in R, only the args before ... can be partially matched, and only if not already matched by an exact arg name
+            for(i3 in base::seq_along(along.with = tempo_split)){ # seq_along() instead of 1:base::length() avoids iterating over c(1, 0) when tempo_split is NULL or empty
+                if(missing_full_arg_name_log[i3] == TRUE & base::grepl(x = tempo_split[i3], pattern = pattern1, perl = TRUE, ignore.case = FALSE, fixed = FALSE, useBytes = FALSE)){
+                    tempo_arg_name <- base::strsplit(x = tempo_split[i3], split = "[\\s\\r\\n]*=", perl = TRUE, fixed = FALSE, useBytes = FALSE)[[1]][1]
+                    tempo_arg_name <- base::gsub(pattern = "^[\\s]*", replacement = "", x = tempo_arg_name, ignore.case = FALSE, perl = TRUE, fixed = FALSE, useBytes = FALSE) # removing leading space
+                    tempo_log <- match_idx == 0 & before_dots_log & base::startsWith(x = arg_full_names, prefix = tempo_arg_name)
+                    if(base::sum(tempo_log, na.rm = TRUE) > 1){ # R refuses a partial name that matches several args
+                        tempo_cat <- base::paste0(
+                            error_text_start,
+                            "IN LINE ",
+                            i2,
+                            " AND IN THE ",
+                            col2_i2,
+                            " FUNCTION.\nDETECTION OF A NON FULLY WRITTEN ARGUMENT THAT CORRESPOND TO SEVERAL ARGUMENTS STARTING BY THE SAME CHARACTERS.\n\nWRITTEN ARGUMENT:\n",
+                            tempo_arg_name,
+                            "\n\nARGUMENTS STARTING BY THE SAME CHARACTERS:\n",
+                            base::paste0(arg_full_names[tempo_log], collapse = "\n", recycle0 = FALSE),
+                            collapse = NULL,
+                            recycle0 = FALSE
+                        )
+                        base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", base::ifelse(test = base::is.null(x = warn), yes = "", no = base::paste0("IN ADDITION\nWARNING", base::ifelse(test = warn_count > 1, yes = "S", no = ""), ":\n\n", warn, collapse = NULL, recycle0 = FALSE)), collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL)
+                    }
+                    if(base::sum(tempo_log, na.rm = TRUE) == 1){ # the written name is the beginning of the name of one arg: the full name is written
+                        tempo_pos <- base::which(x = tempo_log, arr.ind = FALSE, useNames = TRUE)
+                        match_idx[tempo_pos] <- i3
+                        missing_full_arg_name_log[i3] <- FALSE
+                        tempo_lead <- base::regexpr(pattern = "\\S", text = tempo_split[i3], perl = TRUE, fixed = FALSE, useBytes = FALSE)[1]
+                        tempo_split_mod[i3] <- base::paste0(base::substr(x = tempo_split[i3], start = 1, stop = tempo_lead - 1), arg_full_names[tempo_pos], base::substr(x = tempo_split[i3], start = tempo_lead + base::nchar(x = tempo_arg_name, type = "chars", allowNA = FALSE, keepNA = NA), stop = base::nchar(x = tempo_split[i3], type = "chars", allowNA = FALSE, keepNA = NA)), collapse = NULL, recycle0 = FALSE)
+                    }
+                }
+            }
+            # end partial arg names
+            # args in the order of the function
+            for(i3 in base::seq_along(along.with = arg_full_names)){
+                if(match_idx[i3] == 0){
+                    missing_args_names <- base::c(missing_args_names, arg_full_names[i3])
+                }else{
+                    tempo_el <- tempo_split_mod[match_idx[i3]]
+                    if(base::grepl(x = tempo_el, pattern = "=[\\s\\r\\n]*$", perl = TRUE, ignore.case = FALSE, fixed = FALSE, useBytes = FALSE) & ! base::identical(x = arg_full[[i3]], y = base::quote(expr = ), num.eq = TRUE, single.NA = TRUE, attrib.as.set = TRUE, ignore.bytecode = TRUE, ignore.environment = FALSE, ignore.srcref = TRUE, extptr.as.ref = FALSE)){ # empty value written while a default value that can be copied exists: the default value is added. An empty value with no default value, or with a default value that cannot be copied (emptied by all_args_here()), is accepted as it is
+                        missing_args_names <- base::c(missing_args_names, arg_full_names[i3])
+                        filled_names <- base::c(filled_names, arg_full_names[i3])
+                    }else{
+                        good_args <- base::c(good_args, tempo_el)
+                        if(tempo_el != tempo_split[match_idx[i3]]){ # partial name
+                            partial_names <- base::c(partial_names, arg_full_names[i3])
+                            tempo_value <- base::sub(pattern = "^[^=]*=[\\s\\r\\n]*", replacement = "", x = tempo_el, ignore.case = FALSE, perl = TRUE, fixed = FALSE, useBytes = FALSE)
+                            tempo_value <- base::sub(pattern = "[\\s\\r\\n]+$", replacement = "", x = tempo_value, ignore.case = FALSE, perl = TRUE, fixed = FALSE, useBytes = FALSE)
+                            partial_args <- base::c(partial_args, base::paste0(arg_full_names[i3], " = ", tempo_value, collapse = NULL, recycle0 = FALSE))
+                        }else{
+                            good_count <- good_count + 1
+                        }
+                    }
+                }
+            }
+            # end args in the order of the function
         }
         # end scan for args names present in tempo_split
         # removal of arguments without arg name before in missing_full_arg_name_log
         supp_args_in_three_dots <- NULL
+        supp_idx <- base::integer(length = 0L) # positions in tempo_split of the args written with a name that is not an arg of the function (taken by ...)
         if(base::any(three_dots_log, na.rm = TRUE)){
             if(base::length(x = missing_full_arg_name_log) != 0){ # no need to add & base::length(tempo_split) != 0 because both have the same length
                 for(i3 in base::seq_along(along.with = tempo_split)){ # seq_along() instead of 1:base::length() avoids iterating over c(1, 0) when tempo_split is NULL or empty
                     if(base::grepl(x = tempo_split[i3], pattern = pattern1, perl = TRUE, ignore.case = FALSE, fixed = FALSE, useBytes = FALSE) & missing_full_arg_name_log[i3] == TRUE){ # missing_full_arg_name_log[i3] == TRUE means values that need an arg name but detection of a = with only arg name rule before
                         missing_full_arg_name_log[i3] <- FALSE # remove this arg from the args that need an arg name
                         supp_args_in_three_dots <- base::c(supp_args_in_three_dots, tempo_split[i3])
+                        supp_idx <- base::c(supp_idx, i3)
                     }
                 }
             }
         }
         # end removal of arguments without arg name before in missing_full_arg_name_log
-        # detection of arguments that starts by the same string in the sub function (example: path_in and path_out)
-        tempo_col8_end <- NULL
-        same_begin <- base::unlist( # common string of all the arguments
-            x = base::lapply(
-                FUN = function(x){
-                    tempo_log <- base::grepl(x = arg_full_names, pattern = base::paste0("^", x, collapse = NULL, recycle0 = FALSE), perl = FALSE, ignore.case = FALSE, fixed = FALSE, useBytes = FALSE)
-                    if(base::sum(tempo_log, na.rm = TRUE) > 1){ 
-                        base::return(arg_full_names[tempo_log][base::which.min(x = base::nchar(x = arg_full_names[tempo_log], type = "chars", allowNA = FALSE, keepNA = NA))])
-                    }
-                }, 
-                X = arg_full_names
-            ),
-            recursive = TRUE, 
-            use.names = TRUE
-        )
-        if( ! base::is.null(x = same_begin)){
-            tempo_col8_end <- base::paste0("WARNING: SEVERAL ARGUMENT NAMES OF THE FUNCTION BEGINNING WITH ", base::paste0(same_begin[ ! base::is.null(x = same_begin)], collapse = " ", recycle0 = FALSE), collapse = NULL, recycle0 = FALSE)
-        }
-        # end detection of arguments that starts by the same string in the sub function (example: path_in and path_out)
-        # checking if arg name are not fully written
         arg_full_symbol_type <- base::sapply(X = arg_full, FUN = function(x){base::all(base::typeof(x = x) == "symbol", na.rm =TRUE)}, simplify = TRUE, USE.NAMES = TRUE) # to check if any arg without optional value are completed with obs arg values
         # no error if args without default value (or with a non copiable default value, emptied by all_args_here()) are not written: absence of value can mean something (e.g., base::.libPaths(new = , include.site = TRUE) returns the library paths) and the proposal writes them with an empty value (e.g., new = ), which does not change the behavior of the code
-        tempo_col8 <- NULL
-        if(( ! base::is.null(x = missing_args_names)) & base::length(x = tempo_split) != 0){
-            for(i3 in base::seq_along(along.with = tempo_split)){ # seq_along() instead of 1:base::length() avoids iterating over c(1, 0) when tempo_split is NULL or empty
-                if(base::grepl(x = tempo_split[i3], pattern = pattern1, perl = TRUE, ignore.case = FALSE, fixed = FALSE, useBytes = FALSE)){
-                    tempo_arg_name <- base::strsplit(x = tempo_split[i3], split = "[\\s\\r\\n]*=", perl = TRUE, fixed = FALSE, useBytes = FALSE)[[1]][1]
-                    tempo_arg_name <- base::gsub(pattern = "^[\\s]*", replacement = "", x = tempo_arg_name, ignore.case = FALSE, perl = TRUE, fixed = FALSE, useBytes = FALSE) # removing leading space
-                    tempo_log <- base::grepl(x = missing_args_names, pattern = base::paste0("^", tempo_arg_name, collapse = NULL, recycle0 = FALSE), perl = FALSE, ignore.case = FALSE, fixed = FALSE, useBytes = FALSE) # check if any missing_args_names starts by tempo_arg_name
-                    if(base::sum(tempo_log, na.rm = TRUE) > 1){ # this is a secu that should never happens, because should already been detected by base::grepl(x = tempo_arg_name, pattern = base::paste0("^", same_begin, collapse = "|")
-                        tempo_cat <- base::paste0(
-                            error_text_start, 
-                            "IN LINE ", 
-                            i2, 
-                            " AND IN THE ", 
-                            col2_i2, 
-                            " FUNCTION.\nDETECTION OF A NON FULLY WRITTEN ARGUMENT THAT CORRESPOND TO SEVERAL ARGUMENTS STARTING BY THE SAME CHARACTERS.\n\nWRITTEN ARGUMENT:\n", 
-                            tempo_arg_name, 
-                            "\n\nMISSING ARGUMENTS:\n", 
-                            base::paste0(missing_args_names, collapse = "\n", recycle0 = FALSE), 
-                            "\n\nMISSING ARGUMENTS STARTING BY THE SAME CHARACTERS:\n", 
-                            base::paste0(missing_args_names[tempo_log], collapse = "\n", recycle0 = FALSE), 
-                            collapse = NULL, 
-                            recycle0 = FALSE
-                        )
-                        base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", base::ifelse(test = base::is.null(x = warn), yes = "", no = base::paste0("IN ADDITION\nWARNING", base::ifelse(test = warn_count > 1, yes = "S", no = ""), ":\n\n", warn, collapse = NULL, recycle0 = FALSE)), collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL)
-                    }
-                    if(base::sum(tempo_log, na.rm = TRUE) == 1){ # this means that an argument is missing because not fully written
-                        tempo_col8 <- base::c(
-                            tempo_col8, 
-                            base::paste0(
-                                base::ifelse(test = base::is.null(x = tempo_col8), yes = "", no = " ; "), 
-                                base::paste0(tempo_arg_name, " ARG NAME HAS TO BE FULLY WRITTEN ", missing_args_names[tempo_log], collapse = NULL, recycle0 = FALSE), 
-                                collapse = NULL, 
-                                recycle0 = FALSE
-                            )
-                        )
-                    }
-                }
-            }
-            if(( ! base::is.null(x = tempo_col8)) & ! base::is.null(x = tempo_col8_end)){
-                tempo_col8 <- base::paste0(tempo_col8, " & ", tempo_col8_end, collapse = NULL, recycle0 = FALSE)
-            }
-        }
         # end checking if arg name are not fully written
         # when ... is present or not
             # Of note, when ... is present, argument values must be preceeded by their arg name. This means that values without arg names of the scanned function are ...
@@ -608,10 +607,12 @@
         if(base::any(three_dots_log, na.rm = TRUE) & base::all( ! arg_full_symbol_type, na.rm = TRUE)){ # ... present but no mandatory args with value to set
             if(base::sum(missing_arg_log, na.rm = TRUE) > 0){ # if = 0, then missing_args remains NULL
                 missing_args <- base::paste0(arg_full_names[missing_arg_log], " = ", arg_full[missing_arg_log], collapse = NULL, recycle0 = FALSE) # missing arg values with names
+            }
+            if(base::sum(missing_arg_log, na.rm = TRUE) > 0 | base::length(x = partial_names) > 0){
                 good_args <- base::c(
-                    tempo_split[ ! tempo_split %in% good_args], # arg values without names
+                    tempo_split[ ! base::seq_along(along.with = tempo_split) %in% base::c(match_idx, supp_idx)], # arg values without names (the args written with a name taken by ... are already in supp_args_in_three_dots)
                     good_args, # obs arg values with names
-                    base::paste0(" ", missing_args, collapse = NULL, recycle0 = FALSE) # missing arg values with names #a space added to finally have comma followed by a space
+                    if( ! base::is.null(x = missing_args)){base::paste0(" ", missing_args, collapse = NULL, recycle0 = FALSE)} # missing arg values with names #a space added to finally have comma followed by a space
                 )
             }
         }else{
@@ -620,7 +621,7 @@
             # missing_args <-  NULL # already above
             for(i3 in base::seq_along(arg_full_names)){ # here I cannot have more args than base::length(arg_full_names) ; seq_along() instead of 1:base::length() avoids iterating over c(1, 0) when arg_full_names is NULL or empty
                 if(missing_arg_log[i3] == TRUE){
-                    if(base::sum(missing_full_arg_name_log, na.rm = FALSE) > 0 & before_dots_log[i3]){ # this means that remains obs arg with no arg names written. Warning: an arg after ... cannot take a value written without arg name
+                    if(base::sum(missing_full_arg_name_log, na.rm = FALSE) > 0 & before_dots_log[i3] & ! arg_full_names[i3] %in% filled_names){ # an arg written with an empty value (filled_names) is matched by its name, thus does not take a value written without name # this means that remains obs arg with no arg names written. Warning: an arg after ... cannot take a value written without arg name
                         tempo <- base::paste0(arg_full_names[i3], " = ", tempo_split[base::which(x = missing_full_arg_name_log == TRUE, arr.ind = FALSE, useNames = TRUE)[1]], collapse = NULL, recycle0 = FALSE)
                         missing_full_arg_name_log[base::which(x = missing_full_arg_name_log == TRUE, arr.ind = FALSE, useNames = TRUE)[1]] <- FALSE
                     }else{
@@ -665,8 +666,8 @@
         }
         # end when ... is present or not
         # col5 done above
-        col6 <- base::paste0(missing_args_names, collapse = ", ", recycle0 = FALSE) # if NULL return ""
-        col7 <- base::paste0(missing_args, collapse = ", ", recycle0 = FALSE)  # if NULL return ""
+        col6 <- base::paste0(base::c(missing_args_names, partial_names), collapse = ", ", recycle0 = FALSE) # if NULL return "". The args written with a partial name are listed, for the insertion of the rest of their name
+        col7 <- base::paste0(base::c(missing_args, partial_args), collapse = ", ", recycle0 = FALSE)  # if NULL return ""
         tempo <- base::paste0(
             col2_i2, 
             "(", 
@@ -677,13 +678,10 @@
             collapse = NULL, 
             recycle0 = FALSE
         )
-        if(base::length(x = arg_full_names) == good_count){
+        if(base::length(x = arg_full_names) == good_count){ # args with a partial name or with an empty value that is filled are not counted
             col8 <- "GOOD"
         }else{
             col8 <- tempo
-        }
-        if( ! base::is.null(x = tempo_col8)){
-            col8 <- tempo_col8
         }
     }
     #### end main code

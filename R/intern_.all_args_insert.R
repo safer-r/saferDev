@@ -362,9 +362,8 @@
         tempo_cat <- base::paste0("INTERNAL ERROR 2 IN ", intern_error_text_start, "THE PRINTED CODE OF x AND out$code MUST HAVE THE SAME NUMBER OF LINES.\nHERE IT IS:\nPRINTED CODE OF x: ", base::length(x = orig_lines), "\nout$code: ", base::length(x = code_lines), intern_error_text_end, collapse = NULL, recycle0 = FALSE) ; base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL)
         # nocov end
     }
-    # rows to apply: only rows where the correction is a complete call proposal (the STATUS proposals that are not "GOOD", not "HAS TO BE FULLY WRITTEN" messages, and not empty)
-    keep <- base::nzchar(x = output$STATUS, keepNA = FALSE) & (output$STATUS != "GOOD") & ! base::grepl(x = output$STATUS, pattern = "HAS TO BE FULLY WRITTEN", fixed = TRUE) & ( ! base::is.na(x = output$MISSING_ARGS)) & base::nzchar(x = output$MISSING_ARGS, keepNA = FALSE)
-    # IMPORTANT: rows with MISSING_ARGS non empty but STATUS being a message (HAS TO BE FULLY WRITTEN) are excluded by the grepl above
+    # rows to apply: only rows where the correction is a complete call proposal (the STATUS proposals that are not "GOOD" and not empty)
+    keep <- base::nzchar(x = output$STATUS, keepNA = FALSE) & (output$STATUS != "GOOD") & ( ! base::is.na(x = output$MISSING_ARGS)) & base::nzchar(x = output$MISSING_ARGS, keepNA = FALSE)
     rows <- output[keep, , drop = FALSE]
     if(base::nrow(x = rows) == 0){
         output_list <- base::list(fun = NULL, fun_txt = NULL, inserted = base::character(length = 0L), left = base::character(length = 0L))
@@ -434,6 +433,10 @@
             args[[base::length(x = args) + 1]] <- base::list(
                 named = named,
                 name = base::ifelse(test = named, yes = seg$text[1], no = ""),
+                name_line = seg$line1[1], # line of the end of the name (the name is on one line)
+                name_col2 = seg$col2[1],
+                eq_line = base::ifelse(test = named, yes = seg$line2[2], no = NA), # position of the = sign of a named argument
+                eq_col2 = base::ifelse(test = named, yes = seg$col2[2], no = NA),
                 line1 = seg$line1[1],
                 col1 = seg$col1[1],
                 line2 = seg$line2[base::nrow(x = seg)],
@@ -563,10 +566,46 @@
         ins_text <- base::character(length = 0L)
         added <- base::character(length = 0L)
         unnamed_pos <- 1
+        filled_last_k <- NA # position in ins_text of the default value inserted into the last argument of the call, when it is written with an empty value: the arguments added after the last argument must follow this value
         for(i3 in base::seq_along(along.with = miss)){
             miss_value <- ""
             if( ! base::is.na(x = miss[[i3]]$value_col1)){
                 miss_value <- base::substr(x = miss_txt, start = col_to_char(line_txt = miss_txt, col = miss[[i3]]$value_col1, end = FALSE), stop = col_to_char(line_txt = miss_txt, col = miss[[i3]]$col2, end = TRUE))
+            }
+            # argument written with an empty value (e.g., "safer_check = ,"), while its default value can be copied: the default value is inserted after the = sign
+            tempo_written <- base::which(x = base::vapply(X = call_args$args, FUN = function(y){y$named & y$name == miss[[i3]]$name}, FUN.VALUE = base::logical(length = 1L), USE.NAMES = FALSE), arr.ind = FALSE, useNames = FALSE)
+            if(base::length(x = tempo_written) == 1){
+                if(base::is.na(x = call_args$args[[tempo_written]]$value_col1)){
+                    tempo_eq_char <- col_to_char(line_txt = orig_lines[call_args$args[[tempo_written]]$eq_line], col = call_args$args[[tempo_written]]$eq_col2, end = TRUE)
+                    if(base::is.na(x = tempo_eq_char)){
+                        # nocov start
+                        left <- base::c(left, base::paste0(left_i2, left_reason[["not_located"]], collapse = NULL, recycle0 = FALSE))
+                        next
+                        # nocov end
+                    }
+                    tempo_next <- base::substr(x = orig_lines[call_args$args[[tempo_written]]$eq_line], start = tempo_eq_char + 1, stop = tempo_eq_char + 1)
+                    ins_line <- base::c(ins_line, call_args$args[[tempo_written]]$eq_line)
+                    if(tempo_next == " "){
+                        ins_char <- base::c(ins_char, tempo_eq_char + 2) # after the space that follows the = sign
+                        ins_text <- base::c(ins_text, miss_value)
+                    }else{
+                        ins_char <- base::c(ins_char, tempo_eq_char + 1)
+                        ins_text <- base::c(ins_text, base::paste0(" ", miss_value, collapse = NULL, recycle0 = FALSE))
+                    }
+                    if(tempo_written == base::length(x = call_args$args)){
+                        filled_last_k <- base::length(x = ins_text)
+                    }
+                    next
+                }
+            }
+            # argument written with a partial name (e.g., "dig = 1" for digits): the end of the name is inserted
+            tempo_partial <- base::which(x = base::vapply(X = call_args$args, FUN = function(y){y$named & y$name != miss[[i3]]$name & base::startsWith(x = miss[[i3]]$name, prefix = y$name) & ! y$name %in% def_names}, FUN.VALUE = base::logical(length = 1L), USE.NAMES = FALSE), arr.ind = FALSE, useNames = FALSE)
+            if(base::length(x = tempo_partial) == 1 & miss[[i3]]$name %in% before_dots){
+                tempo_arg <- call_args$args[[tempo_partial]]
+                ins_line <- base::c(ins_line, tempo_arg$name_line)
+                ins_char <- base::c(ins_char, col_to_char(line_txt = orig_lines[tempo_arg$name_line], col = tempo_arg$name_col2, end = TRUE) + 1)
+                ins_text <- base::c(ins_text, base::substr(x = miss[[i3]]$name, start = base::nchar(x = tempo_arg$name, type = "chars", allowNA = FALSE, keepNA = NA) + 1, stop = base::nchar(x = miss[[i3]]$name, type = "chars", allowNA = FALSE, keepNA = NA)))
+                next
             }
             positional <- FALSE
             if(miss[[i3]]$name %in% before_dots & unnamed_pos <= base::length(x = unnamed)){
@@ -583,7 +622,9 @@
             }
         }
         if(base::length(x = added) > 0){
-            if(base::length(x = call_args$args) == 0){
+            if( ! base::is.na(x = filled_last_k)){
+                ins_text[filled_last_k] <- base::paste0(ins_text[filled_last_k], ", ", base::paste0(added, collapse = ", ", recycle0 = FALSE), collapse = NULL, recycle0 = FALSE)
+            }else if(base::length(x = call_args$args) == 0){
                 ins_line <- base::c(ins_line, call_args$close$line1)
                 ins_char <- base::c(ins_char, col_to_char(line_txt = orig_lines[call_args$close$line1], col = call_args$close$col1, end = FALSE))
                 ins_text <- base::c(ins_text, base::paste0(added, collapse = ", ", recycle0 = FALSE))

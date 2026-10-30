@@ -501,6 +501,26 @@ testthat::test_that("all_args_here()", {
     }
     tempo_msg5 <- testthat::capture_messages(code = {all_args_here(x = FUN_NO_EMPTY, table_export = FALSE, fun_export = FALSE, out_path = ".", df_name = "res.tsv", overwrite = FALSE, safer_check = FALSE, lib_path = NULL, error_text = "")})
     testthat::expect_false(object = base::any(base::grepl(x = tempo_msg5, pattern = "ARGUMENTS WITH EMPTY VALUE", fixed = TRUE, ignore.case = FALSE, perl = FALSE, useBytes = FALSE), na.rm = TRUE))
+    # arg written with an empty value while its default value can be copied: the default value is added. The args with no default value or with a default value that cannot be copied remain empty
+    FUN_FILL <- function(){
+        a <- base::paste0("a", collapse = )
+        b <- utils::getFromNamespace(x = "arg_check", ns = "saferDev", pos = , envir = )
+    }
+    testthat::capture_messages(code = {tempo_fun_fill <- all_args_here(x = FUN_FILL, table_export = FALSE, fun_export = FALSE, out_path = ".", df_name = "res.tsv", overwrite = FALSE, safer_check = FALSE, lib_path = NULL, error_text = "")})
+    tempo_txt <- base::paste0(utils::capture.output(tempo_fun_fill, file = NULL, append = FALSE, type = "output", split = FALSE), collapse = "\n", recycle0 = FALSE)
+    testthat::expect_true(object = base::grepl(x = tempo_txt, pattern = "base::paste0(\"a\", collapse = NULL, recycle0 = FALSE)", fixed = TRUE, ignore.case = FALSE, perl = FALSE, useBytes = FALSE))
+    testthat::expect_true(object = base::grepl(x = tempo_txt, pattern = "pos = -1", fixed = TRUE, ignore.case = FALSE, perl = FALSE, useBytes = FALSE))
+    testthat::expect_true(object = base::grepl(x = tempo_txt, pattern = "envir = )", fixed = TRUE, ignore.case = FALSE, perl = FALSE, useBytes = FALSE))
+    # arg written with a partial name: the full name is written (only for the args before ..., like in R), and the proposal is in the STATUS column
+    FUN_PARTIAL <- function(){
+        a <- base::round(1.5, dig = 1)
+        b <- base::paste0("a", coll = ",")
+    }
+    tempo_msg6 <- testthat::capture_messages(code = {tempo_fun_partial <- all_args_here(x = FUN_PARTIAL, table_export = FALSE, fun_export = FALSE, out_path = ".", df_name = "res.tsv", overwrite = FALSE, safer_check = FALSE, lib_path = NULL, error_text = "")})
+    tempo_txt <- base::paste0(utils::capture.output(tempo_fun_partial, file = NULL, append = FALSE, type = "output", split = FALSE), collapse = "\n", recycle0 = FALSE)
+    testthat::expect_true(object = base::grepl(x = tempo_txt, pattern = "base::round(x = 1.5, digits = 1)", fixed = TRUE, ignore.case = FALSE, perl = FALSE, useBytes = FALSE))
+    testthat::expect_true(object = base::grepl(x = tempo_txt, pattern = "base::paste0(\"a\", coll = \",\", collapse = NULL, recycle0 = FALSE)", fixed = TRUE, ignore.case = FALSE, perl = FALSE, useBytes = FALSE)) # coll goes into ..., not a partial collapse
+    testthat::expect_false(object = base::any(base::grepl(x = base::paste0(tempo_msg6, collapse = "", recycle0 = FALSE), pattern = "FULLY WRITTEN", fixed = TRUE, ignore.case = FALSE, perl = FALSE, useBytes = FALSE), na.rm = TRUE))
     # table returned as a message when table_export = FALSE, exported (no table message) when table_export = TRUE. The modified function is returned when fun_export = FALSE, whatever table_export
     FUN_TABLE <- function(v){
         res <- base::mean(1:2)

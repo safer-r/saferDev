@@ -74,9 +74,9 @@ testthat::test_that(".all_args_insert()", {
     testthat::expect_true(object = base::is.null(x = tempo_out1$fun_txt))
     testthat::expect_true(object = base::length(x = tempo_out1$inserted) == 0)
     testthat::expect_true(object = base::length(x = tempo_out1$left) == 0)
-    # STATUS being only messages or GOOD (no proposal): nothing applied
+    # STATUS being only empty or GOOD (no proposal): nothing applied
     tempo_output <- output_fun1
-    tempo_output$STATUS <- base::c("GOOD", "HAS TO BE FULLY WRITTEN")
+    tempo_output$STATUS <- base::c("GOOD", "")
     testthat::expect_no_error(tempo_out2 <- .all_args_insert(x = FUN1, out = out_fun1, output = tempo_output, lib_path = NULL, error_text = ""))
     testthat::expect_true(object = base::is.null(x = tempo_out2$fun))
     testthat::expect_true(object = base::length(x = tempo_out2$left) == 0)
