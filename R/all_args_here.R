@@ -29,7 +29,7 @@
 #' 
 #' An additional message \code{"EVERYTHING SEEMS CLEAN"} if the \code{$STATUS} column is only made of \code{""} and \code{"GOOD"}.
 #'
-#' An additional message \code{"ARGUMENTS WITH EMPTY VALUE"} listing, for each line and function, the arguments written (or proposed in the \code{$STATUS} column) with an empty value (like \code{envir = }), with their default value, i.e., the potential flaws of the code (see the details section). Use \code{"= ,"} or \code{"= )"} to seek each case in the code.
+#' An additional message \code{"ARGUMENTS WITH EMPTY VALUE"} listing, for each line and function, the arguments proposed in the \code{$STATUS} column with an empty value (like \code{envir = }), with their default value, i.e., the potential flaws of the code (see the details section). Arguments already written with an empty value in the code are accepted as is and not listed. Use \code{"= ,"} or \code{"= )"} to seek each case in the code.
 #'
 #' An additional message \code{"CORRECTIONS NOT APPLIED"} listing the proposals of the \code{$STATUS} column that have not been inserted into the modified function, each followed by a \code{REASON:} line explaining why. These calls are left unchanged in the modified function and must be corrected manually (see the details section).
 #' @details
@@ -1110,14 +1110,14 @@ all_args_here <- function(
                         col7 <- base::c(col7, tempo_out$col7)
                         col8 <- base::c(col8, tempo_out$col8)
                         # end working on each observed arg
-                        # args with empty value in the call, as written (GOOD) or as proposed
+                        # args with empty value proposed in the STATUS column (the ones already written empty in the code are accepted and not reported)
                         tempo_call <- base::ifelse(test = base::grepl(x = tempo_out$col8, pattern = base::paste0("^", col2[i2], "\\(", collapse = NULL, recycle0 = FALSE), ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE), yes = tempo_out$col8, no = col3[i2]) # col3[i2] if col8 is GOOD or a warning about non fully written arg names
                         tempo_call <- base::tryCatch(expr = base::str2lang(s = tempo_call), error = function(e){NULL}, finally = ) # NULL if the call cannot be parsed (e.g., multi-line call): not considered
                         if(base::is.call(x = tempo_call) & ! col2[i2] %in% "quote"){ # quote(expr = ) not considered, because it is the writing of an empty value, not a potential flaw
                             tempo_call_args <- base::as.list(x = tempo_call)[-1]
                             if(base::length(x = tempo_call_args) > 0 & ! base::is.null(x = base::names(x = tempo_call_args))){
                                 tempo_log <- base::vapply(X = base::seq_along(along.with = tempo_call_args), FUN = function(k){base::identical(x = tempo_call_args[[k]], y = base::quote(expr = ), num.eq = TRUE, single.NA = TRUE, attrib.as.set = TRUE, ignore.bytecode = TRUE, ignore.environment = FALSE, ignore.srcref = TRUE, extptr.as.ref = FALSE)}, FUN.VALUE = base::logical(length = 1L), USE.NAMES = TRUE) # index based because an empty value cannot be passed as an argument of a function
-                                tempo_log <- tempo_log & base::names(x = tempo_call_args) %in% base::names(x = arg_full)
+                                tempo_log <- tempo_log & base::names(x = tempo_call_args) %in% base::names(x = arg_full) & base::names(x = tempo_call_args) %in% base::strsplit(x = tempo_out$col6, split = ", ", fixed = TRUE)[[1]] # only the empty args added by the proposal (MISSING_ARG_NAMES): an empty value written in the code (e.g., new = , or envir = )) is accepted as is and not reported
                                 if(base::any(tempo_log, na.rm = TRUE)){
                                     tempo_empty <- base::sapply(
                                         X = base::names(x = tempo_call_args)[tempo_log],
@@ -1135,7 +1135,7 @@ all_args_here <- function(
                                 }
                             }
                         }
-                        # end args with empty value in the call, as written (GOOD) or as proposed
+                        # end args with empty value proposed in the STATUS column
                     }
                 }
             }else{

@@ -482,16 +482,19 @@ testthat::test_that("all_args_here()", {
     testthat::expect_true(object = base::grepl(x = tempo_msg3, pattern = "ARGUMENTS WITH EMPTY VALUE", fixed = TRUE, ignore.case = FALSE, perl = FALSE, useBytes = FALSE))
     testthat::expect_true(object = base::grepl(x = tempo_msg3, pattern = "line 2: utils::getFromNamespace(): envir (DEFAULT: as.environment(pos))", fixed = TRUE, ignore.case = FALSE, perl = FALSE, useBytes = FALSE))
     testthat::expect_true(object = base::grepl(x = tempo_msg3, pattern = "line 3: base::do.call(): envir (DEFAULT: parent.frame())", fixed = TRUE, ignore.case = FALSE, perl = FALSE, useBytes = FALSE))
-    # args with no default value and not written: no error, proposed with an empty value, and recapitulated (also when already written with an empty value)
+    # args with no default value and not written: no error, proposed with an empty value, and recapitulated only when proposed (an empty value already written in the code is accepted and not reported)
     FUN_NO_DEF <- function(){
         a <- base::.libPaths()
         b <- base::.libPaths(new = , include.site = TRUE)
+        d <- utils::getFromNamespace(x = "arg_check", ns = "saferDev", pos = , envir = )
     }
     testthat::expect_no_error(tempo_msg4 <- testthat::capture_messages(code = {tempo_fun_no_def <- all_args_here(x = FUN_NO_DEF, table_export = FALSE, fun_export = FALSE, out_path = ".", df_name = "res.tsv", overwrite = FALSE, safer_check = FALSE, lib_path = NULL, error_text = "")}))
     tempo_txt <- base::paste0(utils::capture.output(tempo_fun_no_def, file = NULL, append = FALSE, type = "output", split = FALSE), collapse = "\n", recycle0 = FALSE)
     testthat::expect_true(object = base::grepl(x = tempo_txt, pattern = "a <- base::.libPaths(new = , include.site = TRUE)", fixed = TRUE, ignore.case = FALSE, perl = FALSE, useBytes = FALSE))
     tempo_msg4 <- base::paste0(tempo_msg4, collapse = "", recycle0 = FALSE)
-    testthat::expect_true(object = base::grepl(x = tempo_msg4, pattern = "line 2: base::.libPaths(): new (NO DEFAULT VALUE)\nline 3: base::.libPaths(): new (NO DEFAULT VALUE)", fixed = TRUE, ignore.case = FALSE, perl = FALSE, useBytes = FALSE))
+    testthat::expect_true(object = base::grepl(x = tempo_msg4, pattern = "line 2: base::.libPaths(): new (NO DEFAULT VALUE)", fixed = TRUE, ignore.case = FALSE, perl = FALSE, useBytes = FALSE))
+    testthat::expect_false(object = base::grepl(x = tempo_msg4, pattern = "line 3:", fixed = TRUE, ignore.case = FALSE, perl = FALSE, useBytes = FALSE))
+    testthat::expect_false(object = base::grepl(x = tempo_msg4, pattern = "line 4:", fixed = TRUE, ignore.case = FALSE, perl = FALSE, useBytes = FALSE))
     # no empty value: no recap message
     FUN_NO_EMPTY <- function(){
         a <- base::sum(1, na.rm = FALSE)

@@ -54,7 +54,7 @@ Column descriptions:
 
 An additional message \code{"EVERYTHING SEEMS CLEAN"} if the \code{$STATUS} column is only made of \code{""} and \code{"GOOD"}.
 
-An additional message \code{"ARGUMENTS WITH EMPTY VALUE"} listing, for each line and function, the arguments written (or proposed in the \code{$STATUS} column) with an empty value (like \code{envir = }), with their default value, i.e., the potential flaws of the code (see the details section). Use \code{"= ,"} or \code{"= )"} to seek each case in the code.
+An additional message \code{"ARGUMENTS WITH EMPTY VALUE"} listing, for each line and function, the arguments proposed in the \code{$STATUS} column with an empty value (like \code{envir = }), with their default value, i.e., the potential flaws of the code (see the details section). Arguments already written with an empty value in the code are accepted as is and not listed. Use \code{"= ,"} or \code{"= )"} to seek each case in the code.
 
 An additional message \code{"CORRECTIONS NOT APPLIED"} listing the proposals of the \code{$STATUS} column that have not been inserted into the modified function, each followed by a \code{REASON:} line explaining why. These calls are left unchanged in the modified function and must be corrected manually (see the details section).
 }
