@@ -479,7 +479,7 @@
         tempo_args <- base::as.list(x = tempo_call)[-1]
         tempo_names <- base::names(x = tempo_args)
         if(base::is.null(x = tempo_names)){
-            tempo_names <- base::rep(x = "", times = base::length(x = tempo_args))
+            tempo_names <- base::rep(x = "", times = base::length(x = tempo_args)) # nocov : defensive net, the compared calls (corrected call and STATUS proposal) always contain at least one named argument, since a correction always inserts a named argument
         }
         tempo_ord <- base::c(base::which(x = tempo_names == "", arr.ind = FALSE, useNames = FALSE), base::which(x = tempo_names != "", arr.ind = FALSE, useNames = FALSE)[base::order(tempo_names[tempo_names != ""], na.last = TRUE, decreasing = FALSE, method = "radix")])
         tempo_call2 <- base::as.call(x = base::c(base::list(base::as.name(x = "f")), tempo_args[tempo_ord]))
@@ -677,7 +677,7 @@
         new_args <- base::as.list(x = new_call)[-1]
         new_arg_names <- base::names(x = new_args)
         if(base::is.null(x = new_arg_names)){
-            new_arg_names <- base::rep(x = "", times = base::length(x = new_args))
+            new_arg_names <- base::rep(x = "", times = base::length(x = new_args)) # nocov : defensive net, the corrected call always contains at least one named argument, since a correction always inserts a named argument
         }
         pos_sym_names <- base::character(length = 0L)
         for(k in base::seq_along(along.with = new_args)){

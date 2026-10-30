@@ -582,6 +582,11 @@ testthat::test_that("all_args_here()", {
     FUN_ENV_safer <- base::suppressMessages(expr = all_args_here(x = FUN_ENV, table_export = FALSE, fun_export = FALSE, out_path = ".", df_name = "res.tsv", overwrite = FALSE, safer_check = FALSE, lib_path = NULL, error_text = ""), classes = "message")
     testthat::expect_identical(object = base::environment(fun = FUN_ENV_safer), expected = env_aah)
     testthat::expect_identical(object = FUN_ENV_safer(), expected = "ENV_VALUE")
+    # argument written with an empty value and without space after the = sign (collapse=): its default value is inserted after a space
+    FUN_EQ <- base::eval(expr = base::parse(file = "", n = NULL, text = "function(){ base::paste0(\"a\", collapse=) }", prompt = "?", keep.source = TRUE, srcfile = base::srcfilecopy(filename = "<text>", lines = "function(){ base::paste0(\"a\", collapse=) }", timestamp = base::Sys.time(), isFile = FALSE), encoding = "unknown")[[1]], envir = base::globalenv(), enclos = base::baseenv())
+    FUN_EQ_safer <- base::suppressMessages(expr = all_args_here(x = FUN_EQ, table_export = FALSE, fun_export = FALSE, out_path = ".", df_name = "res.tsv", overwrite = FALSE, safer_check = FALSE, lib_path = NULL, error_text = ""), classes = "message")
+    testthat::expect_true(object = base::any(base::grepl(x = utils::capture.output(FUN_EQ_safer, file = NULL, append = FALSE, type = "output", split = FALSE), pattern = "collapse= NULL", ignore.case = FALSE, perl = FALSE, fixed = TRUE, useBytes = FALSE), na.rm = FALSE))
+    testthat::expect_identical(object = FUN_EQ_safer(), expected = "a")
     ## end other tests
 
 })
