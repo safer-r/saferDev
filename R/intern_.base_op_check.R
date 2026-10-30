@@ -16,7 +16,9 @@
     # assign("+", 2)
     # .base_op_check(error_text = " INSIDE fun1.") # this example returns an error
     # rm("!")
-    # rm("+") 
+    # rm("+")
+    # DEBUGGING
+    # error_text = " INSIDE P1::F1"
 
     #### package name
     package_name <- "saferDev" # write NULL if the function developed is not in a package
@@ -183,6 +185,10 @@
     # not required (only basic R function)
     ######## end check of the required functions from the required packages
 
+    ######## escaping CRAN submission NOTE for internal functions
+    # not used here: no internal function called
+    ######## end escaping CRAN submission NOTE for internal functions
+
     ######## critical operator checking
     # not required
     ######## end critical operator checking
@@ -288,7 +294,7 @@
         )
         base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL)
     }
-    # end main code
+    #### end main code
 
     #### warning output
     #### end warning output

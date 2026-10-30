@@ -5,7 +5,7 @@
 #' @param col2 Vector of strings of the function names scrutinized.
 #' @param col3 Vector of strings of the code before the function name.
 #' @param ini Vector of strings of the initial function code analyzed.
-#' @param lib_path Vector of characters specifying the absolute pathways of the directories containing the required packages for the function, if not in the default directories. Useful when R packages are not installed in the default directories because of lack of admin rights. More precisely, \code{lib_path} is passed through the \code{new} argument of \code{.libPaths()} so that the new library paths are \code{unique(c(new, .Library.site, .Library))}. Warning: \code{.libPaths()} is restored to the initial paths, after function execution. Ignored if \code{NULL} (default) or if the \code{safer_check} argument is \code{FALSE}: only the pathways specified by the current \code{.libPaths()} are used for package calling.
+#' @param lib_path Vector of characters specifying the absolute pathways of the directories containing the required packages for the function, if not in the default directories. Useful when R packages are not installed in the default directories because of lack of admin rights. More precisely, \code{lib_path} is passed through the \code{new} argument of \code{.libPaths()} so that the new library paths are \code{unique(c(new, .Library.site, .Library))}. Warning: \code{.libPaths()} is restored to the initial paths, after function execution. Ignored if \code{NULL} (default): only the pathways specified by the current \code{.libPaths()} are used for package calling.
 #' @param error_text Single character string used to add information in error messages returned by the function, notably if the function is inside other functions, which is practical for debugging. Example: \code{error_text = " INSIDE <PACKAGE_1>::<FUNCTION_1> INSIDE <PACKAGE_2>::<FUNCTION_2>."}. If \code{NULL}, converted into \code{""}.
 #' @returns A logical vector indicating if function names of \code{col2} are inside quotes or after \code{$} (\code{TRUE}) in \code{ini} or not (\code{FALSE}). Can be length 0.
 #' @details
@@ -283,7 +283,7 @@
 
     ######## escaping CRAN submission NOTE for internal functions
 
-    .has_odd_number_of_quotes <- utils::getFromNamespace(x = ".has_odd_number_of_quotes", ns = "saferDev", pos = , envir = )
+    .has_odd_number_of_quotes <- utils::getFromNamespace(x = ".has_odd_number_of_quotes", ns = "saferDev", pos = -1, envir = )
 
     ######## end escaping CRAN submission NOTE for internal functions
 
@@ -302,7 +302,7 @@
     arg_check_error_text <- base::paste0("ERROR ", embed_error_text, "\n\n", collapse = NULL, recycle0 = FALSE) # must be used instead of error_text = embed_error_text when several arg_check are performed on the same argument (tempo1, tempo2, see below)
     ee <- base::expression(argum_check <- base::c(argum_check, tempo$problem) , text_check <- base::c(text_check, tempo$text) , checked_arg_names <- base::c(checked_arg_names, tempo$object_name))
     # add as many lines as below, for each of your arguments of your function in development
-    tempo <- saferDev::arg_check(data = col1, class = "integer", typeof = "integer", mode = NULL, length = NULL, prop = FALSE, options = NULL, double_as_integer_allowed = TRUE, all_options_in_data = FALSE, na_contain = TRUE, neg_values = TRUE, inf_values = TRUE, print = FALSE, data_name = NULL, data_arg = TRUE, safer_check = FALSE, lib_path = lib_path, error_text = embed_error_text) ; base::eval(expr = ee, envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL)) # class = "integer" and not class = NULL to avoid factors # copy - paste this line as much as necessary
+    tempo <- saferDev::arg_check(data = col1, class = "integer", typeof = NULL, mode = NULL, length = NULL, prop = FALSE, options = NULL, double_as_integer_allowed = TRUE, all_options_in_data = FALSE, na_contain = TRUE, neg_values = TRUE, inf_values = TRUE, print = FALSE, data_name = NULL, data_arg = TRUE, safer_check = FALSE, lib_path = lib_path, error_text = embed_error_text) ; base::eval(expr = ee, envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL)) # class = "integer" and not class = NULL to avoid factors # copy - paste this line as much as necessary
     tempo <- saferDev::arg_check(data = col2, class = NULL, typeof = "character", mode = NULL, length = NULL, prop = FALSE, options = NULL, double_as_integer_allowed = FALSE, all_options_in_data = FALSE, na_contain = TRUE, neg_values = TRUE, inf_values = TRUE, print = FALSE, data_name = NULL, data_arg = TRUE, safer_check = FALSE, lib_path = lib_path, error_text = embed_error_text) ; base::eval(expr = ee, envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL)) # copy - paste this line as much as necessary
     tempo <- saferDev::arg_check(data = col3, class = NULL, typeof = "character", mode = NULL, length = NULL, prop = FALSE, options = NULL, double_as_integer_allowed = FALSE, all_options_in_data = FALSE, na_contain = TRUE, neg_values = TRUE, inf_values = TRUE, print = FALSE, data_name = NULL, data_arg = TRUE, safer_check = FALSE, lib_path = lib_path, error_text = embed_error_text) ; base::eval(expr = ee, envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL)) # copy - paste this line as much as necessary
     tempo <- saferDev::arg_check(data = ini, class = NULL, typeof = "character", mode = NULL, length = NULL, prop = FALSE, options = NULL, double_as_integer_allowed = FALSE, all_options_in_data = FALSE, na_contain = TRUE, neg_values = TRUE, inf_values = TRUE, print = FALSE, data_name = NULL, data_arg = TRUE, safer_check = FALSE, lib_path = lib_path, error_text = embed_error_text) ; base::eval(expr = ee, envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL)) # copy - paste this line as much as necessary
@@ -431,9 +431,18 @@
         tempo_col2 <- col2[tempo_order] # reorder to work only once with duplicated functions
         tempo_ini <- ini
         pos_rm <- NULL # positions to remove (functions between quotes)
-        for(i2 in 1:base::length(x = tempo_col1)){
+        for(i2 in base::seq_along(along.with = tempo_col1)){
             pattern1 <- base::paste0(tempo_col2[i2], " *\\(", collapse = NULL, recycle0 = FALSE)
             lines_split <- base::strsplit(x = tempo_ini[tempo_col1[i2]], split = pattern1, fixed = FALSE, perl = FALSE, useBytes = FALSE)[[1]][1]
+            # removal of the escaped backslashes, of the quotes written between other quotes and of the escaped quotes before counting the quotes, as in .in_quotes_replacement() (warning: the order is important). Otherwise, an escaped quote like \" inside a string is counted as a string delimiter, so that a word followed by ( inside the string, like "a \"b\" WORD (c)", is wrongly considered outside the quotes
+            lines_split <- base::gsub( x = lines_split, pattern = "\\\\\\\\", replacement = '  ', ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE)
+            lines_split <- base::gsub( x = lines_split, pattern = '"\\\\"\'"', replacement = '     ', ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE)
+            lines_split <- base::gsub( x = lines_split, pattern = "'\\\\'\"'", replacement = '     ', ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE)
+            lines_split <- base::gsub( x = lines_split, pattern = '"\'"', replacement = '   ', ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE)
+            lines_split <- base::gsub( x = lines_split, pattern = "'\"'", replacement = '   ', ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE)
+            lines_split <- base::gsub( x = lines_split, pattern = "\\\\'", replacement = '  ', ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE)
+            lines_split <- base::gsub( x = lines_split, pattern = '\\\\"', replacement = '  ', ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE)
+            # end removal of the escaped backslashes, of the quotes written between other quotes and of the escaped quotes
             # if odds number of quotes, it means that # has broken the string in the middle of a quoted part
             double_quote_test <- .has_odd_number_of_quotes(
                 input_string = lines_split, 

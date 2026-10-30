@@ -5,7 +5,7 @@
 #' @param export Single logical value. Write the corrected function into a file instead of returning it? If \code{TRUE}, the file \code{<function name>_safer.R} is written in \code{out_path} (e.g., \code{fun_safer.R} for \code{x = fun}). Nothing is returned or exported if nothing has to be corrected. An error is returned if exported and the file already exists.
 #' @param out_path Single character string indicating the path of the folder where to write the file when \code{export = TRUE}. \code{"."} (default) means the R working directory. Ignored if \code{export = FALSE}.
 #' @param safer_check Single logical value. Perform some "safer" checks? If \code{TRUE}, checkings are performed before main code running (see the \href{https://github.com/safer-r}{safer-r project}): 1) correct \code{lib_path} argument value 2) required functions and related packages effectively present in local R libraries and 3) R classical operators (like \code{"<-"}) not overwritten by another package because of the R scope. Must be set to \code{FALSE} if this function is used inside another "safer" function to avoid pointless multiple checkings.
-#' @param lib_path Vector of characters specifying the absolute pathways of the directories containing the required packages for the function, if not in the default directories. Useful when R packages are not installed in the default directories because of lack of admin rights. More precisely, \code{lib_path} is passed through the \code{new} argument of \code{.libPaths()} so that the new library paths are \code{unique(c(new, .Library.site, .Library))}. Warning: \code{.libPaths()} is restored to the initial paths, after function execution. Ignored if \code{NULL} (default) or if the \code{safer_check} argument is \code{FALSE}: only the pathways specified by the current \code{.libPaths()} are used for package calling.
+#' @param lib_path Vector of characters specifying the absolute pathways of the directories containing the required packages for the function, if not in the default directories. Useful when R packages are not installed in the default directories because of lack of admin rights. More precisely, \code{lib_path} is passed through the \code{new} argument of \code{.libPaths()} so that the new library paths are \code{unique(c(new, .Library.site, .Library))}. Warning: \code{.libPaths()} is restored to the initial paths, after function execution. Ignored if \code{NULL} (default): only the pathways specified by the current \code{.libPaths()} are used for package calling.
 #' @param error_text Single character string used to add information in error messages returned by the function, notably if the function is inside other functions, which is practical for debugging. Example: \code{error_text = " INSIDE <PACKAGE_1>::<FUNCTION_1> INSIDE <PACKAGE_2>::<FUNCTION_2>."}. If \code{NULL}, converted into \code{""}.
 #' @returns
 #' A table-like message is always printed, with one row per reported lambda (column 1: line number; column 2: symbol; column 3: code before the lambda), or a message saying that everything seems fine.
@@ -356,7 +356,7 @@ lambda_check <- function(
 
     ######## check of the required functions from the required packages
     if(safer_check == TRUE){
-        .pack_and_function_check <- utils::getFromNamespace(x = ".pack_and_function_check", ns = "saferDev", pos = , envir = )
+        .pack_and_function_check <- utils::getFromNamespace(x = ".pack_and_function_check", ns = "saferDev", pos = -1, envir = )
         .pack_and_function_check(
             fun = base::c(
                 # functions required in this code
@@ -374,13 +374,12 @@ lambda_check <- function(
 
     ######## escaping CRAN submission NOTE for internal functions
 
-    # none required by this function
+    .base_op_check <- utils::getFromNamespace(x = ".base_op_check", ns = "saferDev", pos = -1, envir = )
 
     ######## end escaping CRAN submission NOTE for internal functions
 
     ######## critical operator checking
     if(safer_check == TRUE){
-        .base_op_check <- utils::getFromNamespace(x = ".base_op_check", ns = "saferDev", pos = , envir = )
         .base_op_check(
             error_text = embed_error_text
         )
@@ -535,7 +534,8 @@ lambda_check <- function(
     # warning: R only stores the parse data when the option keep.parse.data is TRUE, independently of the keep.source argument of base::parse(). The option can be FALSE when this function is called from a file loaded by base::sys.source() (which sets it to getOption("keep.parse.data.pkgs"), FALSE by default, for the whole loading), so that utils::getParseData() returns NULL and this would crash the function (issue found while validating the pre-check of all_args_here()). The option is set here and restored on exit
     oop <- base::options(keep.parse.data = TRUE)
     base::on.exit(expr = base::options(oop), add = TRUE, after = TRUE)
-    pd <- utils::getParseData(x = base::parse(text = base::paste0(code, collapse = "\n", recycle0 = FALSE), keep.source = TRUE), includeText = NA) # warning: the short parse writing is required here: a fully-named writing with srcfile = NULL removes the srcref of the parsed code, so that utils::getParseData() returns 0 rows (the reference functions curly_bracket_check(), true_false_check() and for_loop_nb_check() use the same short writing)
+    code_text <- base::paste0(code, collapse = "\n", recycle0 = FALSE)
+    pd <- utils::getParseData(x = base::parse(file = "", n = NULL, text = code_text, prompt = "?", keep.source = TRUE, srcfile = base::srcfilecopy(filename = "<text>", lines = code_text, timestamp = base::Sys.time(), isFile = FALSE), encoding = "unknown"), includeText = NA) # warning: an explicit srcfile is required, because srcfile = NULL removes the source references of the parsed code, so that utils::getParseData() returns NULL (same writing as in curly_bracket_check(), true_false_check() and for_loop_nb_check())
     # terminal tokens (comments excluded), sorted by source position
     term_rows <- base::which(x = pd$terminal == TRUE & pd$token != "COMMENT", arr.ind = FALSE, useNames = TRUE)
     term_rows <- term_rows[base::order(pd$line1[term_rows], pd$col1[term_rows], method = "radix", na.last = TRUE, decreasing = FALSE)]
@@ -550,13 +550,15 @@ lambda_check <- function(
     findings_code <- base::character(length = 0)
     findings_col1 <- base::integer(length = 0)
     findings_col2 <- base::integer(length = 0)
-    for(i in kid_idx){
+    for(i1 in base::seq_along(along.with = kid_idx)){
+        i <- kid_idx[i1]
         k <- term_rows[i]
         # symbol: the lambda writing itself, including its formals, recovered from the code line between the \ token and the matching ) of the formals. Warning: a single line is enough in the vast majority of the writings; the formals of a lambda written on several lines are not included in the symbol (the whole writing is still replaced correctly in the code, because only the \ token is replaced)
         tempo_depth <- 0
         tempo_formals_end <- NULL
         if(i < base::length(x = term_rows)){
-            for(j in (i + 1):base::length(x = term_rows)){
+            for(j1 in base::seq_len(length.out = base::length(x = term_rows) - i)){ # j from i + 1 to the last terminal token
+                j <- i + j1
                 if(pd$token[term_rows[j]] == "'('"){
                     tempo_depth <- tempo_depth + 1
                 }else if(pd$token[term_rows[j]] == "')'"){
@@ -601,7 +603,8 @@ lambda_check <- function(
     # modification of the recovered code: exact replacement of the reported tokens (\ -> function), from the last token to the first one so that the columns of the preceding tokens remain valid. Warning: findings_* are ordered by source position, because term_rows is sorted and the loop appends in order. Warning: the multi-byte safety of the substr()-based replacement has been verified (the col1/col2 columns of utils::getParseData() count characters, not bytes, in R >= 4.0.0)
     if(base::length(x = findings_line) != 0){
         modified_code <- code
-        for(i in base::rev(x = base::seq_along(along.with = findings_line))){
+        for(i1 in base::seq_along(along.with = findings_line)){
+            i <- base::length(x = findings_line) - i1 + 1 # from the last finding to the first one
             # exact token replacement at the parse-data columns: \\ -> function. Warning: the substr() slices are rebuilt from the left part + replacement + right part, so that the columns of the other tokens of the same line remain valid. Warning: the ( of the formals is never part of the replaced token, so that the spaces between the \ and the ( are kept (the writing \( (x) becomes function (x), which is valid)
             tempo_line <- modified_code[findings_line[i]]
             modified_code[findings_line[i]] <- base::paste0(
@@ -615,7 +618,7 @@ lambda_check <- function(
         # the modified code must parse, otherwise an internal error is returned (a modified code that does not parse would indicate a replacement bug)
         # nocov start
         # codecov inactivated because it is an internal control of the replacement, impossible to cover with argument values.
-        if(base::inherits(x = base::try(expr = base::parse(text = base::paste0(modified_code, collapse = "\n", recycle0 = FALSE), file = "", n = NULL, prompt = "?", keep.source = base::getOption(x = "keep.source", default = NULL), srcfile = NULL, encoding = "unknown"), silent = TRUE), what = "try-error")){
+        if(base::inherits(x = base::try(expr = base::parse(text = base::paste0(modified_code, collapse = "\n", recycle0 = FALSE), file = "", n = NULL, prompt = "?", keep.source = base::getOption(x = "keep.source", default = NULL), srcfile = NULL, encoding = "unknown"), silent = TRUE, outFile = base::getOption(x = "try.outFile", default = base::stderr())), what = "try-error", which = FALSE)){
             tempo_cat <- base::paste0(
                 intern_error_text_start,
                 "THE CODE OF ",
@@ -704,5 +707,4 @@ lambda_check <- function(
     }
     #### end output
 
-    #### end of function
 }

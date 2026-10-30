@@ -5,7 +5,7 @@
 #' @param export Single logical value. Write the corrected function into a file instead of returning it? If \code{TRUE}, the file \code{<function name>_safer.R} is written in \code{out_path} (e.g., \code{fun_safer.R} for \code{x = fun} or \code{x = pkg::fun}). It contains \code{fun_safer <- function(...) ...}, so that \code{base::source()} recreates the corrected function. Nothing is written if nothing has to be corrected. An error is returned if the file already exists, or if \code{x} is not a function name (e.g., \code{function(x)\{x\}} or \code{FUN_LIST$fun}).
 #' @param out_path Single character string indicating the path of the folder where to write the file when \code{export = TRUE}. \code{"."} (default) means the R working directory. Ignored if \code{export = FALSE}.
 #' @param safer_check Single logical value. Perform some "safer" checks? If \code{TRUE}, checkings are performed before main code running (see the \href{https://github.com/safer-r}{safer-r project}): 1) correct \code{lib_path} argument value 2) required functions and related packages effectively present in local R libraries and 3) R classical operators (like \code{"<-"}) not overwritten by another package because of the R scope. Must be set to \code{FALSE} if this function is used inside another "safer" function to avoid pointless multiple checkings.
-#' @param lib_path Vector of characters specifying the absolute pathways of the directories containing the required packages for the function, if not in the default directories. Useful when R packages are not installed in the default directories because of lack of admin rights. More precisely, \code{lib_path} is passed through the \code{new} argument of \code{.libPaths()} so that the new library paths are \code{unique(c(new, .Library.site, .Library))}. Warning: \code{.libPaths()} is restored to the initial paths, after function execution. Ignored if \code{NULL} (default) or if the \code{safer_check} argument is \code{FALSE}: only the pathways specified by the current \code{.libPaths()} are used for package calling.
+#' @param lib_path Vector of characters specifying the absolute pathways of the directories containing the required packages for the function, if not in the default directories. Useful when R packages are not installed in the default directories because of lack of admin rights. More precisely, \code{lib_path} is passed through the \code{new} argument of \code{.libPaths()} so that the new library paths are \code{unique(c(new, .Library.site, .Library))}. Warning: \code{.libPaths()} is restored to the initial paths, after function execution. Ignored if \code{NULL} (default): only the pathways specified by the current \code{.libPaths()} are used for package calling.
 #' @param error_text Single character string used to add information in error messages returned by the function, notably if the function is inside other functions, which is practical for debugging. Example: \code{error_text = " INSIDE <PACKAGE_1>::<FUNCTION_1> INSIDE <PACKAGE_2>::<FUNCTION_2>."}. If \code{NULL}, converted into \code{""}.
 #' @returns
 #' A table-like message is always printed, with one row per reported loop (column 1: line number; column 2: construct; column 3: code before the body), or a message saying that everything seems fine.
@@ -355,7 +355,7 @@ for_loop_nb_check <- function(
 
     ######## check of the required functions from the required packages
     if(safer_check == TRUE){
-        .pack_and_function_check <- utils::getFromNamespace(x = ".pack_and_function_check", ns = "saferDev", pos = , envir = )
+        .pack_and_function_check <- utils::getFromNamespace(x = ".pack_and_function_check", ns = "saferDev", pos = -1, envir = )
         .pack_and_function_check(
             fun = base::c(
                 # functions required in this code
@@ -373,7 +373,7 @@ for_loop_nb_check <- function(
 
     ######## escaping CRAN submission NOTE for internal functions
 
-    .base_op_check <- utils::getFromNamespace(x = ".base_op_check", ns = "saferDev", pos = , envir = )
+    .base_op_check <- utils::getFromNamespace(x = ".base_op_check", ns = "saferDev", pos = -1, envir = )
 
     ######## end escaping CRAN submission NOTE for internal functions
 
@@ -532,10 +532,11 @@ for_loop_nb_check <- function(
     code <- utils::capture.output(x, file = NULL, append = FALSE, type = NULL, split = FALSE)
     # removal of the attribute lines printed for compiled functions (e.g., "<bytecode: 0x...>", "<environment: ...>", "<srcref: ...>"). Warning: the pattern cannot be simply a line starting by "<", because a valid R code line can start by "<" (binary operator continuation)
     code <- code[ ! base::grepl(x = code, pattern = "^<(bytecode|environment|srcref): ", ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE)]
-    pd <- utils::getParseData(x = base::parse(text = base::paste0(code, collapse = "\n", recycle0 = FALSE), keep.source = TRUE))
+    code_text <- base::paste0(code, collapse = "\n", recycle0 = FALSE)
+    pd <- utils::getParseData(x = base::parse(file = "", n = NULL, text = code_text, prompt = "?", keep.source = TRUE, srcfile = base::srcfilecopy(filename = "<text>", lines = code_text, timestamp = base::Sys.time(), isFile = FALSE), encoding = "unknown"), includeText = NA) # warning: an explicit srcfile is required, because srcfile = NULL removes the source references of the parsed code, so that utils::getParseData() returns NULL
     # terminal tokens (comments excluded), sorted by source position
     term_rows <- base::which(x = pd$terminal == TRUE & pd$token != "COMMENT", arr.ind = FALSE, useNames = TRUE)
-    term_rows <- term_rows[base::order(pd$line1[term_rows], pd$col1[term_rows])]
+    term_rows <- term_rows[base::order(pd$line1[term_rows], pd$col1[term_rows], na.last = TRUE, decreasing = FALSE, method = "auto")]
     # positions in term_rows of the FOR keyword tokens
     for_idx <- base::which(x = pd$token[term_rows] == "FOR", arr.ind = FALSE, useNames = TRUE)
     findings_line <- base::integer(length = 0)
@@ -611,7 +612,7 @@ for_loop_nb_check <- function(
             tempo_cat <- base::paste0("INTERNAL ERROR 7 IN ", intern_error_text_start, "UNEXPECTED NUMBER OF CHILDREN FOR A for() CONSTRUCT IN THE PARSE TREE", intern_error_text_end, collapse = NULL, recycle0 = FALSE) ; base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL)
             # nocov end
         }
-        siblings <- siblings[base::order(pd$line1[siblings], pd$col1[siblings])]
+        siblings <- siblings[base::order(pd$line1[siblings], pd$col1[siblings], na.last = TRUE, decreasing = FALSE, method = "auto")]
         body_row <- siblings[2]
         body_span <- base::c(pd$line1[body_row], pd$col1[body_row], pd$line2[body_row], pd$col2[body_row])
         # tokens of the sequence expression: between the IN token and the ) of the condition
@@ -696,7 +697,7 @@ for_loop_nb_check <- function(
                         val_txt <- pd$text[seq_tokens[j]]
                         val_txt <- base::gsub(x = val_txt, pattern = "_", replacement = "", ignore.case = FALSE, perl = FALSE, fixed = TRUE, useBytes = FALSE) # digits separator (1_000) introduced in R 3.6.0
                         val_txt <- base::sub(x = val_txt, pattern = "L$", replacement = "", ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE) # remove the integer suffix (1L), because base::as.numeric() does not parse it
-                        val <- base::suppressWarnings(expr = base::as.numeric(x = val_txt)) # parses integers, decimals, exponentials, hexadecimal literals (R >= 4.5.0 required by the package) and NA/NaN/Inf, the last ones rejected below
+                        val <- base::suppressWarnings(expr = base::as.numeric(x = val_txt), classes = "warning") # parses integers, decimals, exponentials, hexadecimal literals (R >= 4.5.0 required by the package) and NA/NaN/Inf, the last ones rejected below
                         if(base::length(x = val) != 1 || base::is.na(x = val) == TRUE || base::is.finite(x = val) == FALSE || val != base::floor(x = val)){
                             hard_log <- FALSE
                             break
@@ -753,7 +754,7 @@ for_loop_nb_check <- function(
         # tempo object names: specific names, refused if already present anywhere in the recovered code (including comments and strings), to avoid any masking
         tempo_names <- base::paste0("tempo_for_seq", base::seq_len(length.out = base::length(x = findings_line)), collapse = NULL, recycle0 = FALSE)
         all_txt <- base::paste0(modified_code, collapse = "\n", recycle0 = FALSE)
-        name_log <- base::vapply(X = tempo_names, FUN = function(x){base::grepl(x = all_txt, pattern = base::paste0("\\b", x, "\\b"), ignore.case = FALSE, perl = TRUE, fixed = FALSE, useBytes = FALSE)}, FUN.VALUE = base::logical(length = 1), USE.NAMES = FALSE) # word boundary so that tempo_for_seq1 does not match tempo_for_seq10
+        name_log <- base::vapply(X = tempo_names, FUN = function(x){base::grepl(x = all_txt, pattern = base::paste0("\\b", x, "\\b", collapse = NULL, recycle0 = FALSE), ignore.case = FALSE, perl = TRUE, fixed = FALSE, useBytes = FALSE)}, FUN.VALUE = base::logical(length = 1), USE.NAMES = FALSE) # word boundary so that tempo_for_seq1 does not match tempo_for_seq10
         if(base::any(name_log, na.rm = TRUE)){
             name_idx <- base::which(x = name_log, arr.ind = FALSE, useNames = TRUE)
             for(k in base::seq_along(along.with = name_idx)){
@@ -833,7 +834,7 @@ for_loop_nb_check <- function(
             }
         }
         # apply back-to-front: highest (line, column) first, so that the positions of the not-yet-applied constructs remain valid. Per construct, the sequence expression replacement (at the IN position) comes after the insertion (at the for keyword position) in source order
-        ord <- base::order(findings_for_line1, findings_for_col1, decreasing = TRUE)
+        ord <- base::order(findings_for_line1, findings_for_col1, na.last = TRUE, decreasing = TRUE, method = "auto")
         ord_len <- base::length(x = ord)
         for(k in base::seq_len(length.out = ord_len)){
             i <- ord[k]
@@ -872,8 +873,8 @@ for_loop_nb_check <- function(
             # one-line deparse of the sequence expression, for a single-line insertion
             ok_parse <- FALSE
             seq_expr <- NULL
-            res_parse <- base::try(expr = base::parse(text = seq_txt, file = "", n = NULL, prompt = "?", keep.source = base::getOption(x = "keep.source", default = NULL), srcfile = NULL, encoding = "unknown"), silent = TRUE)
-            if(base::inherits(x = res_parse, what = "try-error") == FALSE && base::length(x = res_parse) == 1){
+            res_parse <- base::try(expr = base::parse(text = seq_txt, file = "", n = NULL, prompt = "?", keep.source = base::getOption(x = "keep.source", default = NULL), srcfile = NULL, encoding = "unknown"), silent = TRUE, outFile = base::getOption(x = "try.outFile", default = base::stderr()))
+            if(base::inherits(x = res_parse, what = "try-error", which = FALSE) == FALSE && base::length(x = res_parse) == 1){
                 seq_expr <- res_parse[[1]]
                 ok_parse <- TRUE
             }
@@ -985,7 +986,7 @@ for_loop_nb_check <- function(
         # the modified code must parse, otherwise an internal error is returned (a modified code that does not parse would indicate a replacement bug)
         # nocov start
         # codecov inactivated because it is an internal control of the replacement, impossible to cover with argument values.
-        if(base::inherits(x = base::try(expr = base::parse(text = base::paste0(modified_code, collapse = "\n", recycle0 = FALSE), file = "", n = NULL, prompt = "?", keep.source = base::getOption(x = "keep.source", default = NULL), srcfile = NULL, encoding = "unknown"), silent = TRUE), what = "try-error")){
+        if(base::inherits(x = base::try(expr = base::parse(text = base::paste0(modified_code, collapse = "\n", recycle0 = FALSE), file = "", n = NULL, prompt = "?", keep.source = base::getOption(x = "keep.source", default = NULL), srcfile = NULL, encoding = "unknown"), silent = TRUE, outFile = base::getOption(x = "try.outFile", default = base::stderr())), what = "try-error", which = FALSE)){
             tempo_cat <- base::paste0(
                 intern_error_text_start, 
                 "THE CODE OF ", 
@@ -1054,7 +1055,7 @@ for_loop_nb_check <- function(
             base::as.character(x = arg_user_setting$x), 
             ", SOME for() SEQUENCES ARE NOT WRITTEN WITH HARD NUMBERS:\n\n", 
             "LINE\tCONSTRUCT\t\tCODE\n", 
-            base::paste0(base::paste0(findings_line, "\t", findings_kind, "\t\t", findings_code), collapse = "\n", recycle0 = FALSE), 
+            base::paste0(base::paste0(findings_line, "\t", findings_kind, "\t\t", findings_code, collapse = NULL, recycle0 = FALSE), collapse = "\n", recycle0 = FALSE), 
             collapse = NULL, 
             recycle0 = FALSE
         )
@@ -1093,7 +1094,7 @@ for_loop_nb_check <- function(
         output <- base::invisible(x = NULL) # the modified code has already been written in the exported file above
     }else{
         # warning: keep.source = TRUE and an explicit srcfile are required to keep the source references (attribute srcref) of the returned function, i.e., its comments and indentation when printed. With srcfile = NULL, or with keep.source = FALSE (default of Rscript), the returned function is printed deparsed: comments removed and code reindented
-        output <- base::eval(expr = base::parse(text = base::paste0(modified_code, collapse = "\n", recycle0 = FALSE), file = "", n = NULL, prompt = "?", keep.source = TRUE, srcfile = base::srcfilecopy(filename = "<text>", lines = modified_code, timestamp = base::Sys.time(), isFile = FALSE), encoding = "unknown")[[1]], envir = base::new.env(parent = base::environment(fun = x)), enclos = base::globalenv())
+        output <- base::eval(expr = base::parse(text = base::paste0(modified_code, collapse = "\n", recycle0 = FALSE), file = "", n = NULL, prompt = "?", keep.source = TRUE, srcfile = base::srcfilecopy(filename = "<text>", lines = modified_code, timestamp = base::Sys.time(), isFile = FALSE), encoding = "unknown")[[1]], envir = base::new.env(hash = TRUE, parent = base::environment(fun = x), size = 29L), enclos = base::globalenv())
     }
     if(export == TRUE){
         base::return(base::invisible(x = output)) # NULL returned invisibly when export is TRUE (the invisibility is lost when assigned to output, hence invisible() here)
@@ -1102,5 +1103,4 @@ for_loop_nb_check <- function(
     }
     #### end output
 
-    #### end of function
 }

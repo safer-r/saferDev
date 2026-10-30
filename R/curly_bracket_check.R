@@ -5,7 +5,7 @@
 #' @param export Single logical value. Write the corrected function into a file instead of returning it? If \code{TRUE}, the file \code{<function name>_safer.R} is written in \code{out_path} (e.g., \code{fun_safer.R} for \code{x = fun} or \code{x = pkg::fun}). It contains \code{fun_safer <- function(...) ...}, so that \code{base::source()} recreates the corrected function. Nothing is written if nothing has to be corrected. An error is returned if the file already exists, or if \code{x} is not a function name (e.g., \code{function(x)\{x\}} or \code{FUN_LIST$fun}).
 #' @param out_path Single character string indicating the path of the folder where to write the file when \code{export = TRUE}. \code{"."} (default) means the R working directory. Ignored if \code{export = FALSE}.
 #' @param safer_check Single logical value. Perform some "safer" checks? If \code{TRUE}, checkings are performed before main code running (see the \href{https://github.com/safer-r}{safer-r project}): 1) correct \code{lib_path} argument value 2) required functions and related packages effectively present in local R libraries and 3) R classical operators (like \code{"<-"}) not overwritten by another package because of the R scope. Must be set to \code{FALSE} if this function is used inside another "safer" function to avoid pointless multiple checkings.
-#' @param lib_path Vector of characters specifying the absolute pathways of the directories containing the required packages for the function, if not in the default directories. Useful when R packages are not installed in the default directories because of lack of admin rights. More precisely, \code{lib_path} is passed through the \code{new} argument of \code{.libPaths()} so that the new library paths are \code{unique(c(new, .Library.site, .Library))}. Warning: \code{.libPaths()} is restored to the initial paths, after function execution. Ignored if \code{NULL} (default) or if the \code{safer_check} argument is \code{FALSE}: only the pathways specified by the current \code{.libPaths()} are used for package calling.
+#' @param lib_path Vector of characters specifying the absolute pathways of the directories containing the required packages for the function, if not in the default directories. Useful when R packages are not installed in the default directories because of lack of admin rights. More precisely, \code{lib_path} is passed through the \code{new} argument of \code{.libPaths()} so that the new library paths are \code{unique(c(new, .Library.site, .Library))}. Warning: \code{.libPaths()} is restored to the initial paths, after function execution. Ignored if \code{NULL} (default): only the pathways specified by the current \code{.libPaths()} are used for package calling.
 #' @param error_text Single character string used to add information in error messages returned by the function, notably if the function is inside other functions, which is practical for debugging. Example: \code{error_text = " INSIDE <PACKAGE_1>::<FUNCTION_1> INSIDE <PACKAGE_2>::<FUNCTION_2>."}. If \code{NULL}, converted into \code{""}.
 #' @returns
 #' A table-like message is always printed, with one row per missing \code{\{ \}} (column 1: line number; column 2: construct; column 3: code before the body), or a message saying that everything seems fine.
@@ -347,7 +347,7 @@ curly_bracket_check <- function(
 
     ######## check of the required functions from the required packages
     if(safer_check == TRUE){
-        .pack_and_function_check <- utils::getFromNamespace(x = ".pack_and_function_check", ns = "saferDev", pos = , envir = )
+        .pack_and_function_check <- utils::getFromNamespace(x = ".pack_and_function_check", ns = "saferDev", pos = -1, envir = )
         .pack_and_function_check(
             fun = base::c(
                 # functions required in this code
@@ -366,8 +366,8 @@ curly_bracket_check <- function(
 
     ######## escaping CRAN submission NOTE for internal functions
 
-    .base_op_check <- utils::getFromNamespace(x = ".base_op_check", ns = "saferDev", pos = , envir = )
-    .find_construct_body <- utils::getFromNamespace(x = ".find_construct_body", ns = "saferDev", pos = , envir = )
+    .base_op_check <- utils::getFromNamespace(x = ".base_op_check", ns = "saferDev", pos = -1, envir = )
+    .find_construct_body <- utils::getFromNamespace(x = ".find_construct_body", ns = "saferDev", pos = -1, envir = )
 
     ######## end escaping CRAN submission NOTE for internal functions
 
@@ -524,10 +524,11 @@ curly_bracket_check <- function(
     code <- utils::capture.output(x, file = NULL, append = FALSE, type = NULL, split = FALSE)
     # removal of the attribute lines printed for compiled functions (e.g., "<bytecode: 0x...>", "<environment: ...>", "<srcref: ...>"). Warning: the pattern cannot be simply a line starting by "<", because a valid R code line can start by "<" (binary operator continuation)
     code <- code[ ! base::grepl(x = code, pattern = "^<(bytecode|environment|srcref): ", ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE)]
-    pd <- utils::getParseData(x = base::parse(text = base::paste0(code, collapse = "\n", recycle0 = FALSE), keep.source = TRUE))
+    code_text <- base::paste0(code, collapse = "\n", recycle0 = FALSE)
+    pd <- utils::getParseData(x = base::parse(file = "", n = NULL, text = code_text, prompt = "?", keep.source = TRUE, srcfile = base::srcfilecopy(filename = "<text>", lines = code_text, timestamp = base::Sys.time(), isFile = FALSE), encoding = "unknown"), includeText = NA) # warning: an explicit srcfile is required, because srcfile = NULL removes the source references of the parsed code, so that utils::getParseData() returns NULL
     # terminal tokens (comments excluded), sorted by source position
     term_rows <- base::which(x = pd$terminal == TRUE & pd$token != "COMMENT", arr.ind = FALSE, useNames = TRUE)
-    term_rows <- term_rows[base::order(pd$line1[term_rows], pd$col1[term_rows])]
+    term_rows <- term_rows[base::order(pd$line1[term_rows], pd$col1[term_rows], na.last = TRUE, decreasing = FALSE, method = "auto")]
     # positions in term_rows of the terminal tokens of the checked constructs (keyword tokens). Warning: the lambda function \(x) gives the token made of a backslash between single quotes (and not the LAMBDA token) in the R versions checked so far
     # warning: the name of this token is built by pieces, as in lambda_check(), because a single string mixing single quotes and backslashes is misread by the in-quotes replacement of all_args_here() (INTERNAL ERROR 3 of .fun_args_pos())
     token_quote1 <- "'"
@@ -541,15 +542,17 @@ curly_bracket_check <- function(
     mods_line <- base::integer(length = 0) # line of the construct body start (for the modified function: insertion of "{ " before) and of the body end (insertion of " }" after)
     mods_col <- base::integer(length = 0) # columns of the same positions (parse-data columns are character offsets, used directly by substr() on the code lines)
     mods_kind <- base::character(length = 0) # "before" (insert "{ ") or "after" (insert " }")
-    for(i in kid_idx){
+    for(i1 in base::seq_along(along.with = kid_idx)){
+        i <- kid_idx[i1]
         kid <- term_rows[i]
         if(pd$token[kid] != "REPEAT"){
             # search of the parentheses of the condition (if, for, while) or of the arguments (function), by scanning the terminal tokens located after the keyword in source order. Warning: the search cannot be done through the parse tree, because the forcond expr of for() owns the parentheses, and because the structure of lambda functions is different
             depth <- 0
             lp <- NULL
             rp <- NULL
-            if(i < base::length(x = term_rows)){ # guard to avoid a descending sequence in the for() below if the keyword token were the last terminal token (unreachable with parseable R code, but secured)
-                for(j in (i + 1):base::length(x = term_rows)){
+            if(i < base::length(x = term_rows)){ # guard: no scan if the keyword token were the last terminal token (unreachable with parseable R code, but secured)
+                for(j1 in base::seq_len(length.out = base::length(x = term_rows) - i)){ # j from i + 1 to the last terminal token
+                    j <- i + j1
                     if(pd$token[term_rows[j]] == "'('"){
                         depth <- depth + 1
                         if(depth == 1){
@@ -609,7 +612,7 @@ curly_bracket_check <- function(
                 # the whole body expr is the largest expr starting at the first body terminal token. If its end is the ) of the .Primitive() call, the body is exactly the .Primitive() call (e.g., function(x) .Primitive('+')). Otherwise, the body contains more code (e.g., function(x) .Primitive('+') + 1, which must be reported)
                 body_term_pos1 <- pd$line1[term_rows[body_start_pos + 1]] * 1000000 + pd$col1[term_rows[body_start_pos + 1]]
                 cand <- pd[base::which(x = pd$token == "expr" & pd$line1 * 1000000 + pd$col1 == body_term_pos1, arr.ind = FALSE, useNames = TRUE), ]
-                body_end_pos <- cand[base::order(cand$line2 * 1000000 + cand$col2, decreasing = TRUE), ][1, "line2"] * 1000000 + cand[base::order(cand$line2 * 1000000 + cand$col2, decreasing = TRUE), ][1, "col2"]
+                body_end_pos <- cand[base::order(cand$line2 * 1000000 + cand$col2, na.last = TRUE, decreasing = TRUE, method = "auto"), ][1, "line2"] * 1000000 + cand[base::order(cand$line2 * 1000000 + cand$col2, na.last = TRUE, decreasing = TRUE, method = "auto"), ][1, "col2"]
                 prim_log <- body_end_pos == pd$line1[term_rows[prim_call_close_pos]] * 1000000 + pd$col1[term_rows[prim_call_close_pos]]
             }
         }
@@ -618,7 +621,7 @@ curly_bracket_check <- function(
                 findings_line <- base::c(findings_line, pd$line1[kid], recursive = TRUE, use.names = TRUE)
                 findings_kind <- base::c(findings_kind, base::ifelse(test = pd$token[kid] %in% base::c("LAMBDA", lambda_token_name), yes = "function", no = pd$text[kid]), recursive = TRUE, use.names = TRUE)
                 findings_code <- base::c(findings_code, base::trimws(x = code[pd$line1[kid]], which = "left", whitespace = "[ \\t]"), recursive = TRUE, use.names = TRUE)
-                tempo_body <- .find_construct_body(pd = pd, kid = kid, body_start = body_start, body_start_pos = body_start_pos, term_rows = term_rows, else_branch = FALSE, else_tok = NULL, intern_error_text_start = intern_error_text_start, intern_error_text_end = intern_error_text_end, lib_path = lib_path, error_text = embed_error_text)
+                tempo_body <- .find_construct_body(pd = pd, kid = kid, body_start = body_start, body_start_pos = body_start_pos, term_rows = term_rows, else_branch = FALSE, else_tok = NULL, lib_path = lib_path, error_text = embed_error_text)
                 mods_line <- base::c(mods_line, tempo_body$line1, pd$line2[tempo_body$row], recursive = TRUE, use.names = TRUE)
                 mods_col <- base::c(mods_col, tempo_body$col1, pd$col2[tempo_body$row], recursive = TRUE, use.names = TRUE)
                 mods_kind <- base::c(mods_kind, "before", "after", recursive = TRUE, use.names = TRUE)
@@ -642,7 +645,7 @@ curly_bracket_check <- function(
                         findings_line <- base::c(findings_line, pd$line1[else_tok], recursive = TRUE, use.names = TRUE)
                         findings_kind <- base::c(findings_kind, "else", recursive = TRUE, use.names = TRUE)
                         findings_code <- base::c(findings_code, base::trimws(x = code[pd$line1[else_tok]], which = "left", whitespace = "[ \\t]"), recursive = TRUE, use.names = TRUE)
-                        tempo_body <- .find_construct_body(pd = pd, kid = kid, body_start = else_tok, body_start_pos = else_pos, term_rows = term_rows, else_branch = TRUE, else_tok = else_tok, intern_error_text_start = intern_error_text_start, intern_error_text_end = intern_error_text_end, lib_path = lib_path, error_text = embed_error_text)
+                        tempo_body <- .find_construct_body(pd = pd, kid = kid, body_start = else_tok, body_start_pos = else_pos, term_rows = term_rows, else_branch = TRUE, else_tok = else_tok, lib_path = lib_path, error_text = embed_error_text)
                         mods_line <- base::c(mods_line, tempo_body$line1, pd$line2[tempo_body$row], recursive = TRUE, use.names = TRUE)
                         mods_col <- base::c(mods_col, tempo_body$col1, pd$col2[tempo_body$row], recursive = TRUE, use.names = TRUE)
                         mods_kind <- base::c(mods_kind, "before", "after", recursive = TRUE, use.names = TRUE)
@@ -703,69 +706,76 @@ curly_bracket_check <- function(
             base::as.character(x = arg_user_setting$x), 
             ", SOME CURLY BRACKETS {} ARE MISSING AFTER:\n\n", 
             "LINE\tCONSTRUCT\t\tCODE\n", 
-            base::paste0(base::paste0(findings_line, "\t", findings_kind, "\t\t", findings_code), collapse = "\n", recycle0 = FALSE), 
+            base::paste0(base::paste0(findings_line, "\t", findings_kind, "\t\t", findings_code, collapse = NULL, recycle0 = FALSE), collapse = "\n", recycle0 = FALSE),
             collapse = NULL, 
             recycle0 = FALSE
         )
     }
     base::message(base::paste0("\n\n", tempo_cat, "\n\n", collapse = NULL, recycle0 = FALSE), domain = NULL, appendLF = TRUE)
-    ### end main code
+    # modified function
+    output <- NULL # NULL if nothing to modify (the submitted function is already compliant), or if the modified function is exported
+    if(base::length(x = findings_line) != 0){
+        # build the modified code: insert "{ " before each construct body and " }" after, from the end of the code to the beginning (so that the positions of the not-yet-modified parts stay valid). The "after" modifications are applied before the "before" ones at the same position (the type key of the sort: 1 for "after", 0 for "before")
+        mod_code <- code
+        if(base::length(x = mods_line) != 0){
+            mod_type_key <- base::ifelse(test = mods_kind == "after", yes = 1L, no = 0L)
+            mod_ord <- base::order(mods_line, mods_col, mod_type_key, decreasing = TRUE, method = "radix", na.last = NA) # multi-key sort: no arithmetic key, to avoid integer overflow on long functions (line * 1e8 overflows R integers for line > 21)
+            for(k1 in base::seq_along(along.with = mod_ord)){
+                k <- mod_ord[k1]
+                s <- mod_code[mods_line[k]]
+                if(mods_kind[k] == "after"){
+                    mod_code[mods_line[k]] <- base::paste0(base::substr(x = s, start = 1, stop = mods_col[k]), " }", base::substr(x = s, start = mods_col[k] + 1, stop = base::nchar(x = s, type = "chars", allowNA = FALSE, keepNA = NA)), collapse = NULL, recycle0 = FALSE)
+                }else{
+                    mod_code[mods_line[k]] <- base::paste0(base::substr(x = s, start = 1, stop = mods_col[k] - 1), "{ ", base::substr(x = s, start = mods_col[k], stop = base::nchar(x = s, type = "chars", allowNA = FALSE, keepNA = NA)), collapse = NULL, recycle0 = FALSE)
+                }
+            }
+        }
+        mod_text <- base::paste0(mod_code, collapse = "\n", recycle0 = FALSE)
+        # validation of the modified code: it must parse
+        # warning: keep.source = TRUE and an explicit srcfile are required to keep the source references (attribute srcref) of the returned function, i.e., its comments and indentation when printed. With srcfile = NULL, or with keep.source = FALSE (default of Rscript), the returned function is printed deparsed: comments removed and code reindented
+        parsed_mod <- base::try(expr = base::parse(text = mod_text, file = "", n = NULL, prompt = "?", keep.source = TRUE, srcfile = base::srcfilecopy(filename = "<text>", lines = mod_text, timestamp = base::Sys.time(), isFile = FALSE), encoding = "unknown"), silent = TRUE, outFile = base::getOption(x = "try.outFile", default = base::stderr()))
+        parse_ok <- base::inherits(x = parsed_mod, what = "try-error", which = FALSE) == FALSE
+        if(parse_ok == FALSE){
+            # nocov start
+            # codecov inactivated because the modifications above are driven by the parse tree of the submitted code, so the modified code always parses (this branch is unreachable unless the parser itself is inconsistent).
+            tempo_cat <- base::paste0("INTERNAL ERROR 6 IN ", intern_error_text_start, "THE MODIFIED CODE CANNOT BE PARSED\n", intern_error_text_end, collapse = NULL, recycle0 = FALSE)
+            base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL)
+            # nocov end
+        }
+        # name of the modified function: the file name (out_name, "<FUNCTION_NAME>_safer.R") and the assignment name (tempo_fun_name, <FUNCTION_NAME>) have already been determined in the other checkings section when export == TRUE. When export == FALSE, no file is written, so no name is needed
+        if(base::length(x = parsed_mod) == 1){
+            mod_fun <- base::eval(expr = parsed_mod[[1]], envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL)) # evaluates the assignment fun <- function(...)... : returns the assigned function
+        }else{
+            # nocov start
+            # codecov inactivated because it is an internal control of code writing: the recovered code of a function is normally exactly one expression (the function definition), so the multi-expression branch cannot be reached with argument values.
+            mod_fun <- base::eval(expr = parsed_mod[[base::length(x = parsed_mod)]], envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL)) # several expressions in the code (e.g. a header line): evaluate the last one, the assignment that defines the function
+            # nocov end
+        }
+        # restore the environment of the submitted function: without this, the modified function would keep the evaluation environment of curly_bracket_check() as closure environment, which would break closures of the submitted function and could resolve names wrongly
+        base::environment(fun = mod_fun) <- base::environment(fun = x)
+        if(export == TRUE){
+            # file content: assignment of the modified function, so that base::source()ing the file recreates it. The file name (out_name) and the assignment name (tempo_fun_name) have been determined in the other checkings section
+            # the modified code lines (mod_text) are written, and not the deparsed function, so that the comments and the indentation of the submitted function are kept
+            file_text <- base::paste0(tempo_fun_name, "_safer <- ", mod_text, "\n", collapse = NULL, recycle0 = FALSE)
+            file_path <- base::paste0(out_path, "/", out_name, collapse = NULL, recycle0 = FALSE)
+            base::cat(file_text, file = file_path, sep = "", fill = FALSE, labels = NULL, append = FALSE)
+            # the export message is printed with on.exit(), after the message of the main code: it only claims an export that actually happened, because the file writing is performed just above and no on.exit() is registered when no modification is inserted
+            base::on.exit(expr = base::message(base::paste0("MODIFIED CODE EXPORTED IN:\n", base::normalizePath(path = file_path, winslash = "/", mustWork = FALSE), "\n\n", collapse = NULL, recycle0 = FALSE), domain = NULL, appendLF = TRUE), add = TRUE, after = TRUE)
+        }else{
+            output <- mod_fun
+        }
+    }
+    # end modified function
+    #### end main code
 
     #### warning output
     #### end warning output
 
     #### output
-    if(base::length(x = findings_line) == 0){
-        base::return(value = base::invisible(x = NULL)) # nothing to modify: the submitted function is already compliant
-    }
-    # build the modified code: insert "{ " before each construct body and " }" after, from the end of the code to the beginning (so that the positions of the not-yet-modified parts stay valid). The "after" modifications are applied before the "before" ones at the same position (the type key of the sort: 1 for "after", 0 for "before")
-    mod_code <- code
-    if(base::length(x = mods_line) != 0){
-        mod_type_key <- base::ifelse(test = mods_kind == "after", yes = 1L, no = 0L)
-        mod_ord <- base::order(mods_line, mods_col, mod_type_key, decreasing = TRUE, method = "radix", na.last = NA) # multi-key sort: no arithmetic key, to avoid integer overflow on long functions (line * 1e8 overflows R integers for line > 21)
-        for(k in mod_ord){
-            s <- mod_code[mods_line[k]]
-            if(mods_kind[k] == "after"){
-                mod_code[mods_line[k]] <- base::paste0(base::substr(x = s, start = 1, stop = mods_col[k]), " }", base::substr(x = s, start = mods_col[k] + 1, stop = base::nchar(x = s, type = "chars")), collapse = NULL, recycle0 = FALSE)
-            }else{
-                mod_code[mods_line[k]] <- base::paste0(base::substr(x = s, start = 1, stop = mods_col[k] - 1), "{ ", base::substr(x = s, start = mods_col[k], stop = base::nchar(x = s, type = "chars")), collapse = NULL, recycle0 = FALSE)
-            }
-        }
-    }
-    mod_text <- base::paste0(mod_code, collapse = "\n", recycle0 = FALSE)
-    # validation of the modified code: it must parse
-    # warning: keep.source = TRUE and an explicit srcfile are required to keep the source references (attribute srcref) of the returned function, i.e., its comments and indentation when printed. With srcfile = NULL, or with keep.source = FALSE (default of Rscript), the returned function is printed deparsed: comments removed and code reindented
-    parsed_mod <- base::try(expr = base::parse(text = mod_text, file = "", n = NULL, prompt = "?", keep.source = TRUE, srcfile = base::srcfilecopy(filename = "<text>", lines = mod_text, timestamp = base::Sys.time(), isFile = FALSE), encoding = "unknown"), silent = TRUE)
-    parse_ok <- base::inherits(x = parsed_mod, what = "try-error") == FALSE
-    if(parse_ok == FALSE){
-        # nocov start
-        # codecov inactivated because the modifications above are driven by the parse tree of the submitted code, so the modified code always parses (this branch is unreachable unless the parser itself is inconsistent).
-        tempo_cat <- base::paste0("INTERNAL ERROR 6 IN ", intern_error_text_start, "THE MODIFIED CODE CANNOT BE PARSED\n", intern_error_text_end, collapse = NULL, recycle0 = FALSE)
-        base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL)
-        # nocov end
-    }
-    # name of the modified function: the file name (out_name, "<FUNCTION_NAME>_safer.R") and the assignment name (tempo_fun_name, <FUNCTION_NAME>) have already been determined in the other checkings section when export == TRUE. When export == FALSE, no file is written, so no name is needed
-    if(base::length(x = parsed_mod) == 1){
-        mod_fun <- base::eval(expr = parsed_mod[[1]], envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL)) # evaluates the assignment fun <- function(...)... : returns the assigned function
-    }else{
-        # nocov start
-        # codecov inactivated because it is an internal control of code writing: the recovered code of a function is normally exactly one expression (the function definition), so the multi-expression branch cannot be reached with argument values.
-        mod_fun <- base::eval(expr = parsed_mod[[base::length(x = parsed_mod)]], envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL)) # several expressions in the code (e.g. a header line): evaluate the last one, the assignment that defines the function
-        # nocov end
-    }
-    # restore the environment of the submitted function: without this, the modified function would keep the evaluation environment of curly_bracket_check() as closure environment, which would break closures of the submitted function and could resolve names wrongly
-    base::environment(fun = mod_fun) <- base::environment(fun = x)
-    if(export == TRUE){
-        # file content: assignment of the modified function, so that base::source()ing the file recreates it. The file name (out_name) and the assignment name (tempo_fun_name) have been determined in the other checkings section
-        # the modified code lines (mod_text) are written, and not the deparsed function, so that the comments and the indentation of the submitted function are kept
-        file_text <- base::paste0(tempo_fun_name, "_safer <- ", mod_text, "\n", collapse = NULL, recycle0 = FALSE)
-        file_path <- base::paste0(out_path, "/", out_name, collapse = NULL, recycle0 = FALSE)
-        base::cat(file_text, file = file_path, append = FALSE, sep = "")
-        # the export message is printed with on.exit(), after the message of the main code: it only claims an export that actually happened, because the file writing is performed just above and no on.exit() is registered when no modification is inserted
-        base::on.exit(expr = base::message(base::paste0("MODIFIED CODE EXPORTED IN:\n", base::normalizePath(path = file_path, winslash = "/", mustWork = FALSE), "\n\n", collapse = NULL, recycle0 = FALSE), domain = NULL, appendLF = TRUE), add = TRUE, after = TRUE)
+    if(base::is.null(x = output)){
         base::return(value = base::invisible(x = NULL)) # NULL returned invisibly (the invisibility would be lost if assigned to an object first)
     }else{
-        base::return(value = mod_fun)
+        base::return(value = output)
     }
     #### end output
 }

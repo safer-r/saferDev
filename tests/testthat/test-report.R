@@ -176,6 +176,8 @@ testthat::test_that("report()", {
     testthat::expect_error(report(data = data_1, output = output_1, path = path_1, append = TRUE, rownames_kept = FALSE, vector_cat = FALSE, noquote = FALSE, sep = 1, safer_check = TRUE, lib_path = fun1, error_text = ""))
     testthat::expect_error(report(data = data_1, output = output_1, path = path_1, append = TRUE, rownames_kept = FALSE, vector_cat = FALSE, noquote = FALSE, sep = 1, safer_check = TRUE, lib_path = "PATH_NOT_GOOD", error_text = ""))
     testthat::expect_no_error(report(data = data_1, output = output_1, path = path_1, append = TRUE, rownames_kept = FALSE, vector_cat = FALSE, noquote = FALSE, sep = 1, safer_check = TRUE, lib_path = base:::.libPaths(new = , include.site = TRUE), error_text = ""))
+    # lib_path is checked even when safer_check is FALSE (backbone v21.1: unguarded lib_path check)
+    testthat::expect_error(report(data = data_1, output = output_1, path = path_1, append = TRUE, rownames_kept = FALSE, vector_cat = FALSE, noquote = FALSE, sep = 1, safer_check = FALSE, lib_path = "PATH_NOT_GOOD", error_text = ""))
     ######## end check of lib_path
 
     ######## check of the required functions from the required packages

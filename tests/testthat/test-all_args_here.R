@@ -212,6 +212,8 @@ testthat::test_that("all_args_here()", {
     testthat::expect_error(all_args_here(x = test, table_export = FALSE, out_path = ".", df_name = "res.tsv", overwrite = FALSE, safer_check = TRUE, lib_path = fun1, error_text = ""))
     testthat::expect_error(all_args_here(x = test, table_export = FALSE, out_path = ".", df_name = "res.tsv", overwrite = FALSE, safer_check = TRUE, lib_path = "PATH_NOT_GOOD", error_text = ""))
     testthat::expect_no_error(all_args_here(x = test, table_export = FALSE, out_path = ".", df_name = "res.tsv", overwrite = FALSE, safer_check = TRUE, lib_path = base:::.libPaths(new = , include.site = TRUE), error_text = ""))
+    # lib_path is checked even when safer_check is FALSE (backbone v21.1: unguarded lib_path check)
+    testthat::expect_error(all_args_here(x = test, table_export = FALSE, out_path = ".", df_name = "res.tsv", overwrite = FALSE, safer_check = FALSE, lib_path = "PATH_NOT_GOOD", error_text = ""))
     ######## end check of lib_path
 
     ######## check of the required functions from the required packages
@@ -573,6 +575,13 @@ testthat::test_that("all_args_here()", {
     ## end tests (ordered by arg appearance and conditions in the code)
 
     ## other tests
+    # the returned modified function keeps the environment of the submitted function, and not the internal environment of saferDev:::.all_args_insert(), where an object named out exists
+    env_aah <- base::new.env(hash = TRUE, parent = base::globalenv(), size = 29L)
+    base::assign(x = "out", value = "ENV_VALUE", pos = -1, envir = env_aah, inherits = FALSE, immediate = TRUE)
+    FUN_ENV <- base::eval(expr = base::parse(file = "", n = NULL, text = "function(){ base::paste0(out) }", prompt = "?", keep.source = TRUE, srcfile = base::srcfilecopy(filename = "<text>", lines = "function(){ base::paste0(out) }", timestamp = base::Sys.time(), isFile = FALSE), encoding = "unknown")[[1]], envir = env_aah, enclos = base::baseenv())
+    FUN_ENV_safer <- base::suppressMessages(expr = all_args_here(x = FUN_ENV, table_export = FALSE, fun_export = FALSE, out_path = ".", df_name = "res.tsv", overwrite = FALSE, safer_check = FALSE, lib_path = NULL, error_text = ""), classes = "message")
+    testthat::expect_identical(object = base::environment(fun = FUN_ENV_safer), expected = env_aah)
+    testthat::expect_identical(object = FUN_ENV_safer(), expected = "ENV_VALUE")
     ## end other tests
 
 })

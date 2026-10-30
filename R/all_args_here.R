@@ -8,7 +8,7 @@
 #' @param df_name Single character string indicating the name of the exported data frame file. Ignored if \code{table_export} is \code{FALSE}.
 #' @param overwrite Single logical value. Overwrite potential files already existing in \code{out_path} (\code{df_name} for the table export, and the function name with \code{_safer} added at the end for the \code{fun_export})? Ignored if \code{table_export} and \code{fun_export} are \code{FALSE}.
 #' @param safer_check Single logical value. Perform the "safer" checks? If \code{TRUE}, checkings are performed before main code running (see the \href{https://github.com/safer-r}{safer-r project}): 1) correct \code{lib_path} argument value 2) required functions and related packages effectively present in local R libraries and 3) R classical operators (like \code{"<-"}) not overwritten by another package because of the R scope. Warning: must be set to \code{FALSE} if this function is used inside another "safer" function to avoid pointless multiple checkings.
-#' @param lib_path Vector of characters specifying the absolute pathways of the directories containing the required packages for the function, if not in the default directories. Useful when R packages are not installed in the default directories because of lack of admin rights. More precisely, \code{lib_path} is passed through the \code{new} argument of \code{.libPaths()} so that the new library paths are \code{c(lib_path, .libPaths())}. Warning: \code{.libPaths()} is restored to the initial paths, after function execution. Ignored if \code{NULL} (default) or if the \code{safer_check} argument is \code{FALSE}: only the pathways specified by the current \code{.libPaths()} are used for package calling.
+#' @param lib_path Vector of characters specifying the absolute pathways of the directories containing the required packages for the function, if not in the default directories. Useful when R packages are not installed in the default directories because of lack of admin rights. More precisely, \code{lib_path} is passed through the \code{new} argument of \code{.libPaths()} so that the new library paths are \code{c(lib_path, .libPaths())}. Warning: \code{.libPaths()} is restored to the initial paths, after function execution. Ignored if \code{NULL} (default): only the pathways specified by the current \code{.libPaths()} are used for package calling.
 #' @param error_text Single character string used to add information in error messages returned by the function, notably if the function is inside other functions, which is practical for debugging. Example: \code{error_text = " INSIDE <PACKAGE_1>::<FUNCTION_1> INSIDE <PACKAGE_2>::<FUNCTION_2>."}. If \code{NULL}, converted into \code{""}.
 #' @returns 
 #' A message saying whether arguments are missing or everything seems fine, and a data frame indicating the missing arguments (see the column descriptions below).
@@ -379,51 +379,50 @@ all_args_here <- function(
 
     ######## check of lib_path
     # must be before any :: or ::: non basic package calling
-    if(safer_check == TRUE){ # this line must be inactivated if you want to use lib_path in the main code (other than in safer functions present in the main code) 
-        if( ! base::is.null(x = lib_path)){ #  is.null(NA) returns FALSE so OK.
-            if( ! base::all(base::typeof(x = lib_path) == "character", na.rm = TRUE)){ # na.rm = TRUE but no NA returned with typeof (typeof(NA) == "character" returns FALSE)
-                if(base::all(base::mode(x = lib_path) == "function", na.rm = TRUE)){
-                    lib_path <- base::deparse1(expr = lib_path, collapse = "", width.cutoff = 500L)
-                }
-                tempo_cat <- base::paste0(
-                    error_text_start, 
-                    "THE DIRECTORY PATH INDICATED IN THE lib_path ARGUMENT MUST BE A VECTOR OF CHARACTERS.\nHERE IT IS:\n", 
-                    base::ifelse(test = base::length(x = lib_path) == 0 | base::all(base::suppressWarnings(expr = lib_path == base::quote(expr = ), classes = "warning"), na.rm = TRUE), yes = "<NULL, EMPTY OBJECT OR EMPTY NAME>", no = base::paste0(lib_path, collapse = "\n", recycle0 = FALSE)),
-                    collapse = NULL, 
-                    recycle0 = FALSE
-                )
-                base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL)
-            }else if( ! base::all(base::dir.exists(paths = lib_path), na.rm = TRUE)){ # separation to avoid the problem of tempo$problem == FALSE and lib_path == NA. dir.exists(paths = NA) returns an error, so ok. dir.exists(paths = "") returns FALSE so ok
-                tempo_log <- ! base::dir.exists(paths = lib_path)
-                tempo_cat_b <- lib_path[tempo_log] # here lib_path is character string
-                tempo_cat_b[tempo_cat_b == ""] <- "\"\""
-                tempo_cat <- base::paste0(
-                    error_text_start, 
-                    "THE DIRECTORY PATH",
-                    base::ifelse(test = base::sum(tempo_log, na.rm = TRUE) > 1, yes = "S", no = ""), 
-                    " INDICATED IN THE lib_path ARGUMENT DO", 
-                    base::ifelse(test = base::sum(tempo_log, na.rm = TRUE) > 1, yes = "", no = "ES"), 
-                    " NOT EXIST:\n", 
-                    base::paste0(tempo_cat_b, collapse = "\n", recycle0 = FALSE), 
-                    collapse = NULL, 
-                    recycle0 = FALSE
-                )
-                base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL)
-            }else{
-                ini_lib_path <- base::.libPaths(new = , include.site = TRUE) # normal to have empty new argument
-                base::on.exit(expr = base::.libPaths(new = ini_lib_path, include.site = TRUE), add = TRUE, after = TRUE) # return to the previous libPaths()
-                base::.libPaths(new = base::sub(x = base::c(ini_lib_path, lib_path), pattern = "/$|\\\\$", replacement = "", ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE), include.site = TRUE) # base::.libPaths(new = ) add path to default path. BEWARE: base::.libPaths() does not support / at the end of a submitted path. The reason of the check and replacement of the last / or \\ in path
-                lib_path <- base::.libPaths(new = , include.site = TRUE) # normal to have empty new argument
+    # always executed: lib_path is always checked, whatever the value of safer_check
+    if( ! base::is.null(x = lib_path)){ #  is.null(NA) returns FALSE so OK.
+        if( ! base::all(base::typeof(x = lib_path) == "character", na.rm = TRUE)){ # na.rm = TRUE but no NA returned with typeof (typeof(NA) == "character" returns FALSE)
+            if(base::all(base::mode(x = lib_path) == "function", na.rm = TRUE)){
+                lib_path <- base::deparse1(expr = lib_path, collapse = "", width.cutoff = 500L)
             }
+            tempo_cat <- base::paste0(
+                error_text_start,
+                "THE DIRECTORY PATH INDICATED IN THE lib_path ARGUMENT MUST BE A VECTOR OF CHARACTERS.\nHERE IT IS:\n",
+                base::ifelse(test = base::length(x = lib_path) == 0 | base::all(base::suppressWarnings(expr = lib_path == base::quote(expr = ), classes = "warning"), na.rm = TRUE), yes = "<NULL, EMPTY OBJECT OR EMPTY NAME>", no = base::paste0(lib_path, collapse = "\n", recycle0 = FALSE)),
+                collapse = NULL,
+                recycle0 = FALSE
+            )
+            base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL)
+        }else if( ! base::all(base::dir.exists(paths = lib_path), na.rm = TRUE)){ # separation to avoid the problem of tempo$problem == FALSE and lib_path == NA. dir.exists(paths = NA) returns an error, so ok. dir.exists(paths = "") returns FALSE so ok
+            tempo_log <- ! base::dir.exists(paths = lib_path)
+            tempo_cat_b <- lib_path[tempo_log] # here lib_path is character string
+            tempo_cat_b[tempo_cat_b == ""] <- "\"\""
+            tempo_cat <- base::paste0(
+                error_text_start,
+                "THE DIRECTORY PATH",
+                base::ifelse(test = base::sum(tempo_log, na.rm = TRUE) > 1, yes = "S", no = ""),
+                " INDICATED IN THE lib_path ARGUMENT DO",
+                base::ifelse(test = base::sum(tempo_log, na.rm = TRUE) > 1, yes = "", no = "ES"),
+                " NOT EXIST:\n",
+                base::paste0(tempo_cat_b, collapse = "\n", recycle0 = FALSE),
+                collapse = NULL,
+                recycle0 = FALSE
+            )
+            base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL)
         }else{
-            lib_path <- base::.libPaths(new = , include.site = TRUE) # normal to have empty new argument # base::.libPaths(new = lib_path) # or base::.libPaths(new = base::c(base:::.libPaths(), lib_path))
+            ini_lib_path <- base::.libPaths(new = , include.site = TRUE) # normal to have empty new argument
+            base::on.exit(expr = base::.libPaths(new = ini_lib_path, include.site = TRUE), add = TRUE, after = TRUE) # return to the previous libPaths()
+            base::.libPaths(new = base::sub(x = base::c(ini_lib_path, lib_path), pattern = "/$|\\\\$", replacement = "", ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE), include.site = TRUE) # base::.libPaths(new = ) add path to default path. BEWARE: base::.libPaths() does not support / at the end of a submitted path. The reason of the check and replacement of the last / or \\ in path
+            lib_path <- base::.libPaths(new = , include.site = TRUE) # normal to have empty new argument
         }
-    }  # this line must be inactivated if you want to use lib_path in the main code (other than in safer functions present in the main code) 
+    }else{
+        lib_path <- base::.libPaths(new = , include.site = TRUE) # normal to have empty new argument # base::.libPaths(new = lib_path) # or base::.libPaths(new = base::c(base:::.libPaths(), lib_path))
+    }
     ######## end check of lib_path
 
     ######## check of the required functions from the required packages
     if(safer_check == TRUE){
-        .pack_and_function_check <- utils::getFromNamespace(x = ".pack_and_function_check", ns = "saferDev", pos = , envir = )
+        .pack_and_function_check <- utils::getFromNamespace(x = ".pack_and_function_check", ns = "saferDev", pos = -1, envir = )
         .pack_and_function_check(
             fun = base::c(
                 # functions required in this code
@@ -439,11 +438,8 @@ all_args_here <- function(
                 "saferDev:::.extract_all_fun_names", # requires saferDev::arg_check
                 "saferDev:::.in_parenthesis_replacement", # requires saferDev::arg_check
                 "saferDev:::.all_args_here_fill", # requires saferDev::arg_check
-                "saferDev:::.all_args_insert", # requires saferDev::arg_check
+                "saferDev:::.all_args_insert" # requires saferDev::arg_check
                 # end internal functions required in this code
-                # functions required in internal functions above (i.e., :::.FUNCTION_NAME), because presence not checked in internal functions
-                "saferDev:::.has_odd_number_of_quotes" # from saferDev:::.functions_detect, saferDev:::.in_quotes_replacement
-                # end functions required in internal functions above (i.e., :::.FUNCTION_NAME), because presence not checked in internal functions
             ),
             lib_path = lib_path, # write NULL if your function does not have any lib_path argument
             error_text = embed_error_text
@@ -453,14 +449,14 @@ all_args_here <- function(
 
     ######## escaping CRAN submission NOTE for internal functions
 
-    .base_op_check <- utils::getFromNamespace(x = ".base_op_check", ns = "saferDev", pos = , envir = )
-    .functions_detect <- utils::getFromNamespace(x = ".functions_detect", ns = "saferDev", pos = , envir = )
-    .in_quotes_replacement <- utils::getFromNamespace(x = ".in_quotes_replacement", ns = "saferDev", pos = , envir = )
-    .fun_args_pos <- utils::getFromNamespace(x = ".fun_args_pos", ns = "saferDev", pos = , envir = )
-    .extract_all_fun_names <- utils::getFromNamespace(x = ".extract_all_fun_names", ns = "saferDev", pos = , envir = )
-    .in_parenthesis_replacement <- utils::getFromNamespace(x = ".in_parenthesis_replacement", ns = "saferDev", pos = , envir = )
-    .all_args_here_fill <- utils::getFromNamespace(x = ".all_args_here_fill", ns = "saferDev", pos = , envir = )
-    .has_odd_number_of_quotes <- utils::getFromNamespace(x = ".has_odd_number_of_quotes", ns = "saferDev", pos = , envir = )
+    .base_op_check <- utils::getFromNamespace(x = ".base_op_check", ns = "saferDev", pos = -1, envir = )
+    .functions_detect <- utils::getFromNamespace(x = ".functions_detect", ns = "saferDev", pos = -1, envir = )
+    .in_quotes_replacement <- utils::getFromNamespace(x = ".in_quotes_replacement", ns = "saferDev", pos = -1, envir = )
+    .fun_args_pos <- utils::getFromNamespace(x = ".fun_args_pos", ns = "saferDev", pos = -1, envir = )
+    .extract_all_fun_names <- utils::getFromNamespace(x = ".extract_all_fun_names", ns = "saferDev", pos = -1, envir = )
+    .in_parenthesis_replacement <- utils::getFromNamespace(x = ".in_parenthesis_replacement", ns = "saferDev", pos = -1, envir = )
+    .all_args_here_fill <- utils::getFromNamespace(x = ".all_args_here_fill", ns = "saferDev", pos = -1, envir = )
+    .all_args_insert <- utils::getFromNamespace(x = ".all_args_insert", ns = "saferDev", pos = -1, envir = )
     ######## end escaping CRAN submission NOTE for internal functions
 
     ######## critical operator checking
@@ -722,10 +718,10 @@ all_args_here <- function(
     arg_string_for_col3 <- fun_names # like fun_names but added with all what is between ()
     arg_string <- fun_names # like arg_string_for_col3 but with only the arguments
     mid_bracket_pos_in_fun_1_line <- base::lapply(X = fun_names, FUN = function(x){base::lapply(X = x, FUN = function(y){NULL})}) # list of lists, will be used to get inside ( and ) positions, from fun_1_line
-    for(i1 in 1:base::length(x = fun_names)){
+    for(i1 in base::seq_along(along.with = fun_names)){
         tempo_pos_in_code <- base::as.integer(x = base::sub(pattern = "^c", replacement = "", x = base::names(x = fun_names)[i1], ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE))
         tempo_which <- base::which(x = code_line_nb %in% tempo_pos_in_code, arr.ind = FALSE, useNames = TRUE)
-        for(i2 in 1:base::length(x = fun_names[[i1]])){
+        for(i2 in base::seq_along(along.with = fun_names[[i1]])){
             fun_pos_start <- fun_names_pos[[i1]][i2] + cum_nchar_code_line[tempo_which]
             fun_pos_stop <- fun_pos_start + base::nchar(x = fun_names[[i1]][i2], type = "chars", allowNA = FALSE, keepNA = NA) - 1
             tempo_fun <- base::substr(x = fun_1_line_replace, start = fun_pos_start, stop = fun_pos_stop)
@@ -767,8 +763,8 @@ all_args_here <- function(
     # end recovery of the functions, in the tested function, with written arguments inside ()
     # recovery of the positions of inside () in col3
     mid_bracket_pos_in_col3 <- base::lapply(X = fun_names, FUN = function(x){base::lapply(X = x, FUN = function(y){NULL})}) # list of lists, will be used to get inside ( and ) positions, from col3
-    for(i1 in 1:base::length(x = fun_names)){
-        for(i2 in 1:base::length(x = fun_names[[i1]])){
+    for(i1 in base::seq_along(along.with = fun_names)){
+        for(i2 in base::seq_along(along.with = fun_names[[i1]])){
             pattern2 <- base::paste0(fun_names[[i1]][i2], "[\\s\\r\\n]*\\(", collapse = NULL, recycle0 = FALSE) # function detection in 
             # pattern2 <- paste0("[a-zA-Z.][a-zA-Z0-9._]* *\\$ *", fun_names[[i1]][i2], "[\\s\\r\\n]*\\(") # function like a$fun()
             if(base::grepl(x = arg_string_for_col3[[i1]][i2], pattern = pattern2, ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE)){ # because of "NOT_CONSIDERED" in some cases
@@ -863,23 +859,9 @@ all_args_here <- function(
     # end removal of detected function preceeded by $, which are "" in col2
     # end preparation of columns
     # two new columns for arg proposal
+    output_fun <- NULL # modified function returned (NULL if no modification has been applied, or if the modified function is exported)
     if( (base::length(x = col1) == 0)){
         base::message(base::paste0("\n\nINSIDE ", base::as.character(x = out$arg_user_setting$x), "(), EVERYTHING SEEMS CLEAN, AS NO ANALYSABLE FUNCTION DETECTED.\n\n", collapse = NULL, recycle0 = FALSE), domain = NULL, appendLF = TRUE)
-        #### warning output
-        if( ! base::is.null(x = warn)){
-            base::on.exit(
-                expr = base::warning(
-                    base::paste0(
-                        base::sub(pattern = "^ERROR IN ", replacement = "FROM ", x = error_text_start, ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE), 
-                        warn, 
-                        collapse = NULL, 
-                        recycle0 = FALSE
-                    ), call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, domain = NULL
-                ), add = TRUE, after = TRUE
-            )
-        }
-        base::on.exit(expr = base::options(warning.length = ini_warning_length), add = TRUE, after = TRUE)
-        #### end warning output
     }else{
         col5 <- NULL # all arguments of the function with default value
         col6 <- NULL # missing arg names
@@ -887,7 +869,7 @@ all_args_here <- function(
         col8 <- NULL # reconstructed function with all arg
         empty_args <- NULL # args written (or proposed) with an empty value, like envir =
         frame_dep_funs <- base::c("parent.frame", "environment", "sys.call", "sys.calls", "sys.function", "sys.frame", "sys.frames", "sys.nframe", "sys.parent", "sys.parents", "sys.on.exit", "match.call", "missing", "nargs") # functions that make a default value depend on the frame where it is evaluated
-        for(i2 in 1:base::length(x = col1)){
+        for(i2 in base::seq_along(along.with = col1)){
             if(col3[i2] != reserved_words){
                 # check if internal function
                 tempo_log <- base::ifelse(test = base::length(x = out$internal_fun_names) > 0, yes = base::ifelse(test = base::any(out$internal_fun_names %in% col2[i2], na.rm = TRUE), yes = TRUE, no = FALSE), no = FALSE)
@@ -1021,7 +1003,7 @@ all_args_here <- function(
                                 tempo_cat <- base::paste0("INTERNAL ERROR 5 IN ", intern_error_text_start, "middle_bracket_open_in_col3 AND middle_bracket_close_in_col3 MUST HAVE THE SAME LENGTH IN LOOP ", i2, "\n\nmiddle_bracket_open_in_col3 (", base::length(x = middle_bracket_open_in_col3), "):\n", base::paste0(middle_bracket_open_in_col3, collapse = " ", recycle0 = FALSE), "\n\nmiddle_bracket_close_in_col3 (", base::length(x = middle_bracket_close_in_col3), "):\n", base::paste0(middle_bracket_close_in_col3, collapse = " ", recycle0 = FALSE), "\n\ni2:\n", i2, intern_error_text_end, collapse = NULL, recycle0 = FALSE) ; base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", base::ifelse(test = base::is.null(x = warn), yes = "", no = base::paste0("IN ADDITION\nWARNING", base::ifelse(test = warn_count > 1, yes = "S", no = ""), ":\n\n", warn, collapse = NULL, recycle0 = FALSE)), collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL)
                                 # nocov end
                             }
-                            for(i6 in 1:base::length(x = middle_bracket_open_in_col3[[i2]])){
+                            for(i6 in base::seq_along(along.with = middle_bracket_open_in_col3[[i2]])){
                                 tempo <- .in_parenthesis_replacement(
                                     string = tempo_col3, 
                                     pattern = ",", 
@@ -1058,7 +1040,7 @@ all_args_here <- function(
                                 # nocov end
                             }
                             # end resseting the pos of the removed commas to fit obs_args
-                            for(i6 in 1:base::length(x = tempo_split)){
+                            for(i6 in base::seq_along(along.with = tempo_split)){
                                 tempo_log <- pos_rep2 >= 1 & pos_rep2 <= base::nchar(x = tempo_split[i6], type = "chars", allowNA = FALSE, keepNA = NA)
                                 if(base::any(base::is.na(x = tempo_log), na.rm = TRUE)){
                                     # nocov start
@@ -1067,7 +1049,7 @@ all_args_here <- function(
                                     # nocov end
                                 }
                                 if(base::any(tempo_log, na.rm = TRUE)){
-                                    for(i7 in 1:base::length(x = tempo_log)){
+                                    for(i7 in base::seq_along(along.with = tempo_log)){
                                         if(tempo_log[i7]){
                                             base::substr(x = tempo_split[i6], start = pos_rep2[i7], stop = pos_rep2[i7]) <- ","
                                         }
@@ -1117,7 +1099,7 @@ all_args_here <- function(
                             tempo_call_args <- base::as.list(x = tempo_call)[-1]
                             if(base::length(x = tempo_call_args) > 0 & ! base::is.null(x = base::names(x = tempo_call_args))){
                                 tempo_log <- base::vapply(X = base::seq_along(along.with = tempo_call_args), FUN = function(k){base::identical(x = tempo_call_args[[k]], y = base::quote(expr = ), num.eq = TRUE, single.NA = TRUE, attrib.as.set = TRUE, ignore.bytecode = TRUE, ignore.environment = FALSE, ignore.srcref = TRUE, extptr.as.ref = FALSE)}, FUN.VALUE = base::logical(length = 1L), USE.NAMES = TRUE) # index based because an empty value cannot be passed as an argument of a function
-                                tempo_log <- tempo_log & base::names(x = tempo_call_args) %in% base::names(x = arg_full) & base::names(x = tempo_call_args) %in% base::strsplit(x = tempo_out$col6, split = ", ", fixed = TRUE)[[1]] # only the empty args added by the proposal (MISSING_ARG_NAMES): an empty value written in the code (e.g., new = , or envir = )) is accepted as is and not reported
+                                tempo_log <- tempo_log & base::names(x = tempo_call_args) %in% base::names(x = arg_full) & base::names(x = tempo_call_args) %in% base::strsplit(x = tempo_out$col6, split = ", ", fixed = TRUE, perl = FALSE, useBytes = FALSE)[[1]] # only the empty args added by the proposal (MISSING_ARG_NAMES): an empty value written in the code (e.g., new = , or envir = )) is accepted as is and not reported
                                 if(base::any(tempo_log, na.rm = TRUE)){
                                     tempo_empty <- base::sapply(
                                         X = base::names(x = tempo_call_args)[tempo_log],
@@ -1160,26 +1142,7 @@ all_args_here <- function(
             }
             base::on.exit(expr = base::message(base::paste0("\n", tempo_cat, "\n\n", collapse = NULL, recycle0 = FALSE), domain = NULL, appendLF = TRUE), add = TRUE, after = TRUE)
         }
-        #### end main code
-
-        #### warning output
-        # must be before return()
-        if( ! base::is.null(x = warn)){
-            base::on.exit(
-                expr = base::warning(
-                    base::paste0(
-                        base::sub(pattern = "^ERROR IN ", replacement = "FROM ", x = error_text_start, ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE),
-                        warn,
-                        collapse = NULL,
-                        recycle0 = FALSE
-                    ), call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, domain = NULL
-                ), add = TRUE, after = TRUE
-            )
-        }
-        base::on.exit(expr = base::options(warning.length = ini_warning_length), add = TRUE, after = TRUE)
-        #### end warning output
-
-        #### output
+        # table of the arguments
         output <- base::data.frame(LINE_NB = col1, FUN_NAME = col2, FUN_ARGS = col3, FUN_POS = col4, DEF_ARGS = col5, MISSING_ARG_NAMES = col6, MISSING_ARGS = col7, STATUS = col8, row.names = NULL, check.rows = FALSE, check.names = TRUE, fix.empty.names = TRUE, stringsAsFactors = FALSE)
         if(table_export == FALSE){
             # the table is returned as a message with on.exit(), after the EVERYTHING SEEMS CLEAN or ARGUMENTS ARE MISSING message registered above, and before the CORRECTIONS NOT APPLIED and MODIFIED CODE EXPORTED IN messages registered below
@@ -1197,7 +1160,6 @@ all_args_here <- function(
             base::on.exit(expr = base::message(tempo_cat_empty, domain = NULL, appendLF = TRUE), add = TRUE, after = TRUE)
         }
         # modification of the submitted function with the missing arguments
-        .all_args_insert <- utils::getFromNamespace(x = ".all_args_insert", ns = "saferDev", pos = , envir = )
         tempo_insert <- .all_args_insert(
             x = x,
             out = out,
@@ -1239,18 +1201,36 @@ all_args_here <- function(
         if(table_export == TRUE){
             utils::write.table(x = output, file = out_path, row.names = FALSE, col.names = TRUE, append = FALSE, quote = FALSE, sep = "\t", eol = "\n", na = "", dec = ".", qmethod = base::c("escape", "double"), fileEncoding = "")
         }
-        #### end output
-
-        #### return
-        # the table is never returned: message if table_export = FALSE, file if table_export = TRUE
-        if(fun_export == TRUE & base::length(x = tempo_insert$inserted) > 0){
-            base::return(base::invisible(x = NULL)) # the modified function is not returned when exported
-        }else if(base::length(x = tempo_insert$inserted) > 0){
-            base::return(tempo_insert$fun) # return the modified function
-        }else{
-            base::return(base::invisible(x = NULL)) # return NULL if no modification has been applied
+        if(fun_export == FALSE & base::length(x = tempo_insert$inserted) > 0){
+            output_fun <- tempo_insert$fun # the modified function is returned (not when exported)
         }
-        #### end return
     }
     # end two new columns for arg proposal
+    #### end main code
+
+    #### warning output
+    # must be before return()
+    if( ! base::is.null(x = warn)){
+        base::on.exit(
+            expr = base::warning(
+                base::paste0(
+                    base::sub(pattern = "^ERROR IN ", replacement = "FROM ", x = error_text_start, ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE),
+                    warn,
+                    collapse = NULL,
+                    recycle0 = FALSE
+                ), call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, domain = NULL
+            ), add = TRUE, after = TRUE
+        )
+    }
+    base::on.exit(expr = base::options(warning.length = ini_warning_length), add = TRUE, after = TRUE)
+    #### end warning output
+
+    #### output
+    # the table is never returned: message if table_export = FALSE, file if table_export = TRUE
+    if(base::is.null(x = output_fun)){
+        base::return(base::invisible(x = NULL)) # NULL if no modification has been applied, or if the modified function is exported
+    }else{
+        base::return(output_fun) # the modified function
+    }
+    #### end output
 }

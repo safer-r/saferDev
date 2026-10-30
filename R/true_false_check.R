@@ -5,7 +5,7 @@
 #' @param export Single logical value. Write the corrected function into a file instead of returning it? If \code{TRUE}, the file \code{<function name>_safer.R} is written in \code{out_path} (e.g., \code{fun_safer.R} for \code{x = fun} or \code{x = pkg::fun}). It contains \code{fun_safer <- function(...) ...}, so that \code{base::source()} recreates the corrected function. Nothing is written if nothing has to be corrected. An error is returned if the file already exists, or if \code{x} is not a function name (e.g., \code{function(x)\{x\}} or \code{FUN_LIST$fun}).
 #' @param out_path Single character string indicating the path of the folder where to write the file when \code{export = TRUE}. \code{"."} (default) means the R working directory. Ignored if \code{export = FALSE}.
 #' @param safer_check Single logical value. Perform some "safer" checks? If \code{TRUE}, checkings are performed before main code running (see the \href{https://github.com/safer-r}{safer-r project}): 1) correct \code{lib_path} argument value 2) required functions and related packages effectively present in local R libraries and 3) R classical operators (like \code{"<-"}) not overwritten by another package because of the R scope. Must be set to \code{FALSE} if this function is used inside another "safer" function to avoid pointless multiple checkings.
-#' @param lib_path Vector of characters specifying the absolute pathways of the directories containing the required packages for the function, if not in the default directories. Useful when R packages are not installed in the default directories because of lack of admin rights. More precisely, \code{lib_path} is passed through the \code{new} argument of \code{.libPaths()} so that the new library paths are \code{unique(c(new, .Library.site, .Library))}. Warning: \code{.libPaths()} is restored to the initial paths, after function execution. Ignored if \code{NULL} (default) or if the \code{safer_check} argument is \code{FALSE}: only the pathways specified by the current \code{.libPaths()} are used for package calling.
+#' @param lib_path Vector of characters specifying the absolute pathways of the directories containing the required packages for the function, if not in the default directories. Useful when R packages are not installed in the default directories because of lack of admin rights. More precisely, \code{lib_path} is passed through the \code{new} argument of \code{.libPaths()} so that the new library paths are \code{unique(c(new, .Library.site, .Library))}. Warning: \code{.libPaths()} is restored to the initial paths, after function execution. Ignored if \code{NULL} (default): only the pathways specified by the current \code{.libPaths()} are used for package calling.
 #' @param error_text Single character string used to add information in error messages returned by the function, notably if the function is inside other functions, which is practical for debugging. Example: \code{error_text = " INSIDE <PACKAGE_1>::<FUNCTION_1> INSIDE <PACKAGE_2>::<FUNCTION_2>."}. If \code{NULL}, converted into \code{""}.
 #' @returns
 #' A table-like message is always printed, with one row per reported symbol (column 1: line number; column 2: symbol; column 3: code before the symbol), or a message saying that everything seems fine.
@@ -345,7 +345,7 @@ true_false_check <- function(
 
     ######## check of the required functions from the required packages
     if(safer_check == TRUE){
-        .pack_and_function_check <- utils::getFromNamespace(x = ".pack_and_function_check", ns = "saferDev", pos = , envir = )
+        .pack_and_function_check <- utils::getFromNamespace(x = ".pack_and_function_check", ns = "saferDev", pos = -1, envir = )
         .pack_and_function_check(
             fun = base::c(
                 # functions required in this code
@@ -363,7 +363,7 @@ true_false_check <- function(
 
     ######## escaping CRAN submission NOTE for internal functions
 
-    .base_op_check <- utils::getFromNamespace(x = ".base_op_check", ns = "saferDev", pos = , envir = )
+    .base_op_check <- utils::getFromNamespace(x = ".base_op_check", ns = "saferDev", pos = -1, envir = )
 
     ######## end escaping CRAN submission NOTE for internal functions
 
@@ -523,10 +523,11 @@ true_false_check <- function(
     code <- utils::capture.output(x, file = NULL, append = FALSE, type = NULL, split = FALSE)
     # removal of the attribute lines printed for compiled functions (e.g., "<bytecode: 0x...>", "<environment: ...>", "<srcref: ...>"). Warning: the pattern cannot be simply a line starting by "<", because a valid R code line can start by "<" (binary operator continuation)
     code <- code[ ! base::grepl(x = code, pattern = "^<(bytecode|environment|srcref): ", ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE)]
-    pd <- utils::getParseData(x = base::parse(text = base::paste0(code, collapse = "\n", recycle0 = FALSE), keep.source = TRUE))
+    code_text <- base::paste0(code, collapse = "\n", recycle0 = FALSE)
+    pd <- utils::getParseData(x = base::parse(file = "", n = NULL, text = code_text, prompt = "?", keep.source = TRUE, srcfile = base::srcfilecopy(filename = "<text>", lines = code_text, timestamp = base::Sys.time(), isFile = FALSE), encoding = "unknown"), includeText = NA) # warning: an explicit srcfile is required, because srcfile = NULL removes the source references of the parsed code, so that utils::getParseData() returns NULL
     # terminal tokens (comments excluded), sorted by source position
     term_rows <- base::which(x = pd$terminal == TRUE & pd$token != "COMMENT", arr.ind = FALSE, useNames = TRUE)
-    term_rows <- term_rows[base::order(pd$line1[term_rows], pd$col1[term_rows])]
+    term_rows <- term_rows[base::order(pd$line1[term_rows], pd$col1[term_rows], na.last = TRUE, decreasing = FALSE, method = "auto")]
     # modification of arg_user_setting$x for clean messages
     if(base::as.character(x = arg_user_setting$x)[1] == "::" | base::as.character(x = arg_user_setting$x)[1] == ":::"){
         arg_user_setting$x <- base::paste0(
@@ -550,7 +551,7 @@ true_false_check <- function(
     # detection of the T and F symbols used as names in the checked function code (formal name, loop variable, definition target), because the value usages of these symbols refer to user-defined objects and are not reported. Warning: conservative rule: if a name T or F is defined anywhere in the checked function code, all the value usages of this symbol are not reported, whatever the position in the code
     tf_names <- base::character(length = 0)
     term_nb <- base::length(x = term_rows)
-    for(i in 1:term_nb){
+    for(i in base::seq_len(length.out = term_nb)){
         k <- term_rows[i]
         if(pd$text[k] %in% base::c("T", "F")){
             # formal name: the symbol is defined as a formal of a function
@@ -576,7 +577,8 @@ true_false_check <- function(
     parent_row <- id2row[base::as.character(x = pd$parent)] # row number of the parent of each parse tree node. Warning: NA for the top expressions (parent id 0) and for the root node
     name_context_rows <- base::integer(length = 0)
     special_rows <- base::which(x = pd$terminal == TRUE & pd$text %in% base::c("~", "?", "`?`", "??", "`??`"), arr.ind = FALSE, useNames = TRUE)
-    for(r in special_rows){
+    for(r1 in base::seq_along(along.with = special_rows)){
+        r <- special_rows[r1]
         start_row <- parent_row[r]
         if(pd$token[r] == "SYMBOL_FUNCTION_CALL" & ! base::is.na(x = start_row)){ # deparsed `?` call: the parent expression only contains the `?` symbol itself, the help topic is inside the call expression, i.e., the parent of the parent. Warning: start_row can only be NA (top expression) or a positive row number, because the parent id 0 is absent from the pd$id column
             start_row <- parent_row[start_row]
@@ -596,7 +598,8 @@ true_false_check <- function(
     }
     # end detection of the formula symbols and help topics
     tf_val_pos <- base::which(x = pd$token[term_rows] == "SYMBOL" & pd$text[term_rows] %in% base::c("T", "F"), arr.ind = FALSE, useNames = TRUE)
-    for(i in tf_val_pos){
+    for(i1 in base::seq_along(along.with = tf_val_pos)){
+        i <- tf_val_pos[i1]
         k <- term_rows[i]
         if(pd$text[k] %in% tf_names){ # symbol used as a name elsewhere in the code (formal name, loop variable, definition target): skipped, because the value usages refer to user-defined objects
             next
@@ -624,7 +627,8 @@ true_false_check <- function(
     # modification of the recovered code: exact replacement of the reported tokens (T -> TRUE, F -> FALSE), from the last token to the first one so that the columns of the preceding tokens remain valid. Warning: findings_* are ordered by source position, because term_rows is sorted and the loop appends in order. Warning: the multi-byte safety of the substr()/substr<-() based replacement has been verified (the col1/col2 columns of utils::getParseData() count characters, not bytes, in R >= 4.0.0)
     if(base::length(x = findings_line) != 0){
         modified_code <- code
-        for(i in base::rev(x = base::seq_along(along.with = findings_line))){
+        for(i1 in base::seq_along(along.with = findings_line)){
+            i <- base::length(x = findings_line) - i1 + 1 # from the last finding to the first one
             # exact token replacement at the parse-data columns: T -> TRUE and F -> FALSE. Warning: the substr() slices are rebuilt from the left part + replacement + right part, so that the columns of the other tokens of the same line remain valid
             tempo_line <- modified_code[findings_line[i]]
             # qualified constants (like base::T or pkg:::T): the :: or ::: operator cannot precede a reserved constant (base::TRUE is a syntax error), so the whole pkg:: or pkg::: prefix is removed as well, writing plain TRUE/FALSE (identical values, because TRUE and FALSE are reserved constants that cannot be masked). Warning: the SYMBOL token of a qualified constant is always immediately preceded, in term_rows order, by the NS_GET or NS_GET_INT token of the :: or ::: operator, itself immediately preceded by the SYMBOL_PACKAGE token of the package name (verified on the R parser output)
@@ -653,7 +657,7 @@ true_false_check <- function(
         # the modified code must parse, otherwise an internal error is returned (a modified code that does not parse would indicate a replacement bug)
         # nocov start
         # codecov inactivated because it is an internal control of the replacement, impossible to cover with argument values.
-        if(base::inherits(x = base::try(expr = base::parse(text = base::paste0(modified_code, collapse = "\n", recycle0 = FALSE), file = "", n = NULL, prompt = "?", keep.source = base::getOption(x = "keep.source", default = NULL), srcfile = NULL, encoding = "unknown"), silent = TRUE), what = "try-error")){
+        if(base::inherits(x = base::try(expr = base::parse(text = base::paste0(modified_code, collapse = "\n", recycle0 = FALSE), file = "", n = NULL, prompt = "?", keep.source = base::getOption(x = "keep.source", default = NULL), srcfile = NULL, encoding = "unknown"), silent = TRUE, outFile = base::getOption(x = "try.outFile", default = base::stderr())), what = "try-error", which = FALSE)){
             tempo_cat <- base::paste0(
                 intern_error_text_start,
                 "THE CODE OF ",
@@ -703,7 +707,7 @@ true_false_check <- function(
             base::as.character(x = arg_user_setting$x),
             ", SOME SYMBOLS T OR F MUST BE WRITTEN TRUE OR FALSE:\n\n",
             "LINE\tSYMBOL\t\tCODE\n",
-            base::paste0(base::paste0(findings_line, "\t", findings_symbol, "\t\t", findings_code), collapse = "\n", recycle0 = FALSE),
+            base::paste0(base::paste0(findings_line, "\t", findings_symbol, "\t\t", findings_code, collapse = NULL, recycle0 = FALSE), collapse = "\n", recycle0 = FALSE),
             collapse = NULL,
             recycle0 = FALSE
         )
@@ -729,7 +733,7 @@ true_false_check <- function(
         output <- base::invisible(x = NULL) # the modified code has already been written in the exported file above
     }else{
         # warning: keep.source = TRUE and an explicit srcfile are required to keep the source references (attribute srcref) of the returned function, i.e., its comments and indentation when printed. With srcfile = NULL, or with keep.source = FALSE (default of Rscript), the returned function is printed deparsed: comments removed and code reindented
-        output <- base::eval(expr = base::parse(text = base::paste0(modified_code, collapse = "\n", recycle0 = FALSE), file = "", n = NULL, prompt = "?", keep.source = TRUE, srcfile = base::srcfilecopy(filename = "<text>", lines = modified_code, timestamp = base::Sys.time(), isFile = FALSE), encoding = "unknown")[[1]], envir = base::new.env(parent = base::environment(fun = x)), enclos = base::globalenv())
+        output <- base::eval(expr = base::parse(text = base::paste0(modified_code, collapse = "\n", recycle0 = FALSE), file = "", n = NULL, prompt = "?", keep.source = TRUE, srcfile = base::srcfilecopy(filename = "<text>", lines = modified_code, timestamp = base::Sys.time(), isFile = FALSE), encoding = "unknown")[[1]], envir = base::new.env(hash = TRUE, parent = base::environment(fun = x), size = 29L), enclos = base::globalenv())
     }
     if(export == TRUE){
         base::return(base::invisible(x = output)) # NULL returned invisibly when export is TRUE (the invisibility is lost when assigned to output, hence invisible() here)
@@ -738,5 +742,4 @@ true_false_check <- function(
     }
     #### end output
 
-    #### end of function
 }

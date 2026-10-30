@@ -4,7 +4,7 @@
 #' @param x Function name to test, written without quotes and brackets.
 #' @param skipped_base Vector of strings specifying the R basic functions skipped from detection.
 #' @param arg_user_setting2 Argument user settings list.
-#' @param lib_path Vector of characters specifying the absolute pathways of the directories containing the required packages for the function, if not in the default directories. Useful when R packages are not installed in the default directories because of lack of admin rights. More precisely, \code{lib_path} is passed through the \code{new} argument of \code{.libPaths()} so that the new library paths are \code{unique(c(new, .Library.site, .Library))}. Warning: \code{.libPaths()} is restored to the initial paths, after function execution. Ignored if \code{NULL} (default) or if the \code{safer_check} argument is \code{FALSE}: only the pathways specified by the current \code{.libPaths()} are used for package calling.
+#' @param lib_path Vector of characters specifying the absolute pathways of the directories containing the required packages for the function, if not in the default directories. Useful when R packages are not installed in the default directories because of lack of admin rights. More precisely, \code{lib_path} is passed through the \code{new} argument of \code{.libPaths()} so that the new library paths are \code{unique(c(new, .Library.site, .Library))}. Warning: \code{.libPaths()} is restored to the initial paths, after function execution. Ignored if \code{NULL} (default): only the pathways specified by the current \code{.libPaths()} are used for package calling.
 #' @param error_text Single character string used to add information in error messages returned by the function, notably if the function is inside other functions, which is practical for debugging. Example: \code{error_text = " INSIDE <PACKAGE_1>::<FUNCTION_1> INSIDE <PACKAGE_2>::<FUNCTION_2>."}. If \code{NULL}, converted into \code{""}.
 #' @returns 
 #' A list:
@@ -301,8 +301,8 @@
 
     ######## escaping CRAN submission NOTE for internal functions
 
-    .extract_all_fun_names <- utils::getFromNamespace(x = ".extract_all_fun_names", ns = "saferDev", pos = , envir = )
-    .has_odd_number_of_quotes <- utils::getFromNamespace(x = ".has_odd_number_of_quotes", ns = "saferDev", pos = , envir = )
+    .extract_all_fun_names <- utils::getFromNamespace(x = ".extract_all_fun_names", ns = "saferDev", pos = -1, envir = )
+    .has_odd_number_of_quotes <- utils::getFromNamespace(x = ".has_odd_number_of_quotes", ns = "saferDev", pos = -1, envir = )
 
     ######## end escaping CRAN submission NOTE for internal functions
 
@@ -382,7 +382,7 @@
         )
         base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL)
     }
-    fun <- base::unlist(x = base::sapply(X = s, FUN = function(x){base::ls(name = x, pos = , envir = , all.names = TRUE, pattern = , sorted = TRUE)}, simplify = TRUE, USE.NAMES = TRUE), recursive = TRUE, use.names = TRUE) # all the basic functions of R in all the scope
+    fun <- base::unlist(x = base::sapply(X = s, FUN = function(x){base::ls(name = x, pos = -1L, envir = , all.names = TRUE, pattern = , sorted = TRUE)}, simplify = TRUE, USE.NAMES = TRUE), recursive = TRUE, use.names = TRUE) # all the basic functions of R in all the scope
     # end recovering the basic functions of R
     # recovering the input function string
     code <- utils::capture.output(x, file = NULL, append = FALSE, type = NULL, split = FALSE) # no lines must be removed because it is to catch the lines of the full code
@@ -404,7 +404,7 @@
     if(base::any(comment_log, na.rm = TRUE)){
         comment_line_to_rm <- base::which(x = comment_log, arr.ind = FALSE, useNames = TRUE) # elements among code that have #
         lines <- code[comment_log]
-        for(i2 in 1:base::length(x = lines)){
+        for(i2 in base::seq_along(along.with = lines)){
             lines_split <- base::strsplit(x = lines[i2], split = "#", fixed = FALSE, perl = FALSE, useBytes = FALSE)[[1]]
             # detection of the first left # that is not between quotes
             count <- 1
@@ -453,7 +453,8 @@
     # end catch the internal function name created inside the tested function
     # trick to deal with end of lines between the name of the function and "("
     if(base::length(x = code) > 1){
-        for (i2 in 2:base::length(x = code)) {
+        for(i3 in base::seq_len(length.out = base::length(x = code) - 1)){ # i2 from 2 to the last line of code
+            i2 <- i3 + 1
             # Check if the current string starts with spaces followed by a '('
             if (base::grepl(pattern = "^\\s*\\(", x = code[i2], ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE)) {
                 # Check if the previous string ends with the specified pattern
@@ -479,7 +480,7 @@
 
     fun_name <- base::list()
     fun_name_pos <- base::list()
-    for(i1 in 1:base::length(x = code)){
+    for(i1 in base::seq_along(along.with = code)){
         tempo <- .extract_all_fun_names(
             text = code[i1], 
             pattern = pattern1, 
@@ -540,6 +541,7 @@
     }
     # fun_name_wo_op_uni <- base::unlist(base::unique(fun_name_wo_op)) # in case
     # end all function names in x
+    #### end main code
 
     #### warning output
     #### end warning output

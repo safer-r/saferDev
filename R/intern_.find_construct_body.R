@@ -8,7 +8,7 @@
 #' @param term_rows Integer vector of the terminal rows (comments excluded) of \code{pd}, sorted by source position (as computed in \code{\link{curly_bracket_check}}).
 #' @param else_branch Single logical value. Is the requested body the \code{else} branch of the \code{if()} construct? If \code{TRUE}, the last \code{expr} child of the construct expression is returned; if \code{FALSE}, the \code{then} body of an \code{if} with an \code{else} (the second-to-last \code{expr} child) is returned.
 #' @param else_tok Single integer or \code{NULL}: row index in \code{pd} of the \code{ELSE} token (used only when \code{else_branch = TRUE}, for the internal error messages).
-#' @param lib_path Vector of characters specifying the absolute pathways of the directories containing the required packages for the function, if not in the default directories. Useful when R packages are not installed in the default directories because of lack of admin rights. More precisely, \code{lib_path} is passed through the \code{new} argument of \code{.libPaths()} so that the new library paths are \code{unique(c(new, .Library.site, .Library))}. Warning: \code{.libPaths()} is restored to the initial paths, after function execution. Ignored if \code{NULL} (default) or if the \code{safer_check} argument is \code{FALSE}: only the pathways specified by the current \code{.libPaths()} are used for package calling.
+#' @param lib_path Vector of characters specifying the absolute pathways of the directories containing the required packages for the function, if not in the default directories. Useful when R packages are not installed in the default directories because of lack of admin rights. More precisely, \code{lib_path} is passed through the \code{new} argument of \code{.libPaths()} so that the new library paths are \code{unique(c(new, .Library.site, .Library))}. Warning: \code{.libPaths()} is restored to the initial paths, after function execution. Ignored if \code{NULL} (default): only the pathways specified by the current \code{.libPaths()} are used for package calling.
 #' @param error_text Single character string used to add information in error messages returned by the function, notably if the function is inside other functions, which is practical for debugging. Example: \code{error_text = " INSIDE <PACKAGE_1>::<FUNCTION_1> INSIDE <PACKAGE_2>::<FUNCTION_2>."}. If \code{NULL}, converted into \code{""}.
 #' @returns A list with: \code{row}, row index in \code{pd} of the body \code{expr} (whose \code{col1}/\code{line1} give the position just before the body, and \code{col2}/\code{line2} the position of the last character of the body); \code{line1}, the line of the body start; \code{col1}, the column (character offset) of the body start.
 #' @details
@@ -28,9 +28,7 @@
     body_start_pos, 
     term_rows, 
     else_branch, 
-    else_tok, 
-    intern_error_text_start, 
-    intern_error_text_end, 
+    else_tok,
     lib_path, # required because of saferDev::arg_check()
     error_text # warning: in internal functions, error_text without default value returns a R classical non traced error message (specific of internal functions since classical functions are error_text = "")
 ){
@@ -95,9 +93,14 @@
     ######## end basic error text start
 
     ######## internal error text
-    # provided by the caller (curly_bracket_check), built from its own package_function_name and error_text
-    intern_error_text_start <- base::paste0(base::unlist(x = intern_error_text_start, recursive = TRUE, use.names = TRUE), collapse = "", recycle0 = FALSE) # convert everything to string
-    intern_error_text_end <- base::paste0(base::unlist(x = intern_error_text_end, recursive = TRUE, use.names = TRUE), collapse = "", recycle0 = FALSE) # convert everything to string
+    intern_error_text_start <- base::paste0(
+        package_function_name,
+        base::ifelse(test = error_text == "", yes = ".", no = error_text),
+        "\n\n",
+        collapse = NULL,
+        recycle0 = FALSE
+    )
+    intern_error_text_end <- base::ifelse(test = base::is.null(x = internal_error_report_link), yes = "", no = base::paste0("\n\nPLEASE, REPORT THIS ERROR HERE: ", internal_error_report_link, ".", collapse = NULL, recycle0 = FALSE))
     ######## end internal error text
 
     ######## error text when embedding
@@ -288,6 +291,10 @@
     # but check already done in the main safer function
     ######## end check of the required functions from the required packages
 
+    ######## escaping CRAN submission NOTE for internal functions
+    # not used here: no internal function called
+    ######## end escaping CRAN submission NOTE for internal functions
+
     ######## critical operator checking
     # check already done in the main safer function
     ######## end critical operator checking
@@ -304,12 +311,14 @@
     ee <- base::expression(argum_check <- base::c(argum_check, tempo$problem) , text_check <- base::c(text_check, tempo$text) , checked_arg_names <- base::c(checked_arg_names, tempo$object_name))
     # add as many lines as below, for each of your arguments of your function in development
     tempo <- saferDev::arg_check(data = pd, class = "data.frame", typeof = NULL, mode = NULL, length = NULL, prop = FALSE, options = NULL, double_as_integer_allowed = FALSE, all_options_in_data = FALSE, na_contain = TRUE, neg_values = TRUE, inf_values = TRUE, print = FALSE, data_name = NULL, data_arg = TRUE, safer_check = FALSE, lib_path = lib_path, error_text = embed_error_text) ; base::eval(expr = ee, envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL))
-    tempo <- saferDev::arg_check(data = kid, class = "integer", typeof = "integer", mode = NULL, length = 1, prop = FALSE, options = NULL, double_as_integer_allowed = TRUE, all_options_in_data = FALSE, na_contain = FALSE, neg_values = TRUE, inf_values = TRUE, print = FALSE, data_name = NULL, data_arg = TRUE, safer_check = FALSE, lib_path = lib_path, error_text = embed_error_text) ; base::eval(expr = ee, envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL)) # class = "integer" and not class = NULL to avoid factors
-    tempo <- saferDev::arg_check(data = body_start, class = "integer", typeof = "integer", mode = NULL, length = 1, prop = FALSE, options = NULL, double_as_integer_allowed = TRUE, all_options_in_data = FALSE, na_contain = FALSE, neg_values = TRUE, inf_values = TRUE, print = FALSE, data_name = NULL, data_arg = TRUE, safer_check = FALSE, lib_path = lib_path, error_text = embed_error_text) ; base::eval(expr = ee, envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL)) # class = "integer" and not class = NULL to avoid factors
-    tempo <- saferDev::arg_check(data = body_start_pos, class = "integer", typeof = "integer", mode = NULL, length = 1, prop = FALSE, options = NULL, double_as_integer_allowed = TRUE, all_options_in_data = FALSE, na_contain = FALSE, neg_values = TRUE, inf_values = TRUE, print = FALSE, data_name = NULL, data_arg = TRUE, safer_check = FALSE, lib_path = lib_path, error_text = embed_error_text) ; base::eval(expr = ee, envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL)) # class = "integer" and not class = NULL to avoid factors
-    tempo <- saferDev::arg_check(data = term_rows, class = "integer", typeof = "integer", mode = NULL, length = NULL, prop = FALSE, options = NULL, double_as_integer_allowed = TRUE, all_options_in_data = FALSE, na_contain = FALSE, neg_values = TRUE, inf_values = TRUE, print = FALSE, data_name = NULL, data_arg = TRUE, safer_check = FALSE, lib_path = lib_path, error_text = embed_error_text) ; base::eval(expr = ee, envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL)) # class = "integer" and not class = NULL to avoid factors
+    tempo <- saferDev::arg_check(data = kid, class = "integer", typeof = NULL, mode = NULL, length = 1, prop = FALSE, options = NULL, double_as_integer_allowed = TRUE, all_options_in_data = FALSE, na_contain = FALSE, neg_values = TRUE, inf_values = TRUE, print = FALSE, data_name = NULL, data_arg = TRUE, safer_check = FALSE, lib_path = lib_path, error_text = embed_error_text) ; base::eval(expr = ee, envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL)) # class = "integer" and not class = NULL to avoid factors
+    tempo <- saferDev::arg_check(data = body_start, class = "integer", typeof = NULL, mode = NULL, length = 1, prop = FALSE, options = NULL, double_as_integer_allowed = TRUE, all_options_in_data = FALSE, na_contain = FALSE, neg_values = TRUE, inf_values = TRUE, print = FALSE, data_name = NULL, data_arg = TRUE, safer_check = FALSE, lib_path = lib_path, error_text = embed_error_text) ; base::eval(expr = ee, envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL)) # class = "integer" and not class = NULL to avoid factors
+    tempo <- saferDev::arg_check(data = body_start_pos, class = "integer", typeof = NULL, mode = NULL, length = 1, prop = FALSE, options = NULL, double_as_integer_allowed = TRUE, all_options_in_data = FALSE, na_contain = FALSE, neg_values = TRUE, inf_values = TRUE, print = FALSE, data_name = NULL, data_arg = TRUE, safer_check = FALSE, lib_path = lib_path, error_text = embed_error_text) ; base::eval(expr = ee, envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL)) # class = "integer" and not class = NULL to avoid factors
+    tempo <- saferDev::arg_check(data = term_rows, class = "integer", typeof = NULL, mode = NULL, length = NULL, prop = FALSE, options = NULL, double_as_integer_allowed = TRUE, all_options_in_data = FALSE, na_contain = FALSE, neg_values = TRUE, inf_values = TRUE, print = FALSE, data_name = NULL, data_arg = TRUE, safer_check = FALSE, lib_path = lib_path, error_text = embed_error_text) ; base::eval(expr = ee, envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL)) # class = "integer" and not class = NULL to avoid factors
     tempo <- saferDev::arg_check(data = else_branch, class = NULL, typeof = "logical", mode = NULL, length = 1, prop = FALSE, options = NULL, double_as_integer_allowed = FALSE, all_options_in_data = FALSE, na_contain = FALSE, neg_values = TRUE, inf_values = TRUE, print = FALSE, data_name = NULL, data_arg = TRUE, safer_check = FALSE, lib_path = lib_path, error_text = embed_error_text) ; base::eval(expr = ee, envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL))
-    # else_tok checked by the NULL section above (used only for the internal error messages)
+    if( ! base::is.null(x = else_tok)){ # else_tok can be NULL (used only for the internal error messages of the else branch)
+        tempo <- saferDev::arg_check(data = else_tok, class = "integer", typeof = NULL, mode = NULL, length = 1, prop = FALSE, options = NULL, double_as_integer_allowed = TRUE, all_options_in_data = FALSE, na_contain = FALSE, neg_values = TRUE, inf_values = TRUE, print = FALSE, data_name = NULL, data_arg = TRUE, safer_check = FALSE, lib_path = lib_path, error_text = embed_error_text) ; base::eval(expr = ee, envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL)) # class = "integer" and not class = NULL to avoid factors
+    }
     # lib_path already checked above
     # error_text converted to single string above
     if( ! base::is.null(x = argum_check)){
@@ -358,7 +367,7 @@
         tempo_cat <- base::paste0("INTERNAL ERROR 7 IN ", intern_error_text_start, "NO EXPR CHILD FOUND FOR THE CONSTRUCT\ntoken: ", pd$token[kid], intern_error_text_end, collapse = NULL, recycle0 = FALSE) ; base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL)
         # nocov end
     }
-    child_expr_rows <- child_expr_rows[base::order(pd$line1[child_expr_rows], pd$col1[child_expr_rows], method = "radix")] # multi-key sort: no arithmetic key, to avoid integer overflow on long functions (line * 1e6 overflows R integers for line > 2147)
+    child_expr_rows <- child_expr_rows[base::order(pd$line1[child_expr_rows], pd$col1[child_expr_rows], na.last = TRUE, decreasing = FALSE, method = "radix")] # multi-key sort: no arithmetic key, to avoid integer overflow on long functions (line * 1e6 overflows R integers for line > 2147)
     # the else body is the last expr child of the if() construct expression
     # the then body of an if() with an else is the second-to-last expr child (the last one is the else body)
     # for all the other constructs (for, while, repeat, function, lambda), the body is the last expr child
@@ -367,15 +376,13 @@
     body_line1 <- pd$line1[body_row]
     body_col1 <- pd$col1[body_row]
     output <- base::list(row = body_row, line1 = body_line1, col1 = body_col1)
-    base::return(output)
-    # end output
-
     #### end main code
 
     #### warning output
     #### end warning output
 
     #### output
+    base::return(output)
     #### end output
 
 }

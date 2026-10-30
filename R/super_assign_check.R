@@ -3,7 +3,7 @@
 #' Verify that the superassignment operators \code{<<-} and \code{->>} are not used in a function. Return an error with a table of the lines with problems if any, since these operators are not allowed in safer-r functions.
 #' @param x A function name, written without quotes and brackets.
 #' @param safer_check Single logical value. Perform some "safer" checks? If \code{TRUE}, checkings are performed before main code running (see the \href{https://github.com/safer-r}{safer-r project}): 1) correct \code{lib_path} argument value 2) required functions and related packages effectively present in local R libraries and 3) R classical operators (like \code{"<-"}) not overwritten by another package because of the R scope. Must be set to \code{FALSE} if this function is used inside another "safer" function to avoid pointless multiple checkings.
-#' @param lib_path Vector of characters specifying the absolute pathways of the directories containing the required packages for the function, if not in the default directories. Useful when R packages are not installed in the default directories because of lack of admin rights. More precisely, \code{lib_path} is passed through the \code{new} argument of \code{.libPaths()} so that the new library paths are \code{unique(c(new, .Library.site, .Library))}. Warning: \code{.libPaths()} is restored to the initial paths, after function execution. Ignored if \code{NULL} (default) or if the \code{safer_check} argument is \code{FALSE}: only the pathways specified by the current \code{.libPaths()} are used for package calling.
+#' @param lib_path Vector of characters specifying the absolute pathways of the directories containing the required packages for the function, if not in the default directories. Useful when R packages are not installed in the default directories because of lack of admin rights. More precisely, \code{lib_path} is passed through the \code{new} argument of \code{.libPaths()} so that the new library paths are \code{unique(c(new, .Library.site, .Library))}. Warning: \code{.libPaths()} is restored to the initial paths, after function execution. Ignored if \code{NULL} (default): only the pathways specified by the current \code{.libPaths()} are used for package calling.
 #' @param error_text Single character string used to add information in error messages returned by the function, notably if the function is inside other functions, which is practical for debugging. Example: \code{error_text = " INSIDE <PACKAGE_1>::<FUNCTION_1> INSIDE <PACKAGE_2>::<FUNCTION_2>."}. If \code{NULL}, converted into \code{""}.
 #' @returns
 #' If no superassignment operator is detected: a message saying that everything seems fine, and \code{NULL} returned invisibly.
@@ -328,7 +328,7 @@ super_assign_check <- function(
 
     ######## check of the required functions from the required packages
     if(safer_check == TRUE){
-        .pack_and_function_check <- utils::getFromNamespace(x = ".pack_and_function_check", ns = "saferDev", pos = , envir = )
+        .pack_and_function_check <- utils::getFromNamespace(x = ".pack_and_function_check", ns = "saferDev", pos = -1, envir = )
         .pack_and_function_check(
             fun = base::c(
                 # functions required in this code
@@ -346,13 +346,12 @@ super_assign_check <- function(
 
     ######## escaping CRAN submission NOTE for internal functions
 
-    # none required by this function
+    .base_op_check <- utils::getFromNamespace(x = ".base_op_check", ns = "saferDev", pos = -1, envir = )
 
     ######## end escaping CRAN submission NOTE for internal functions
 
     ######## critical operator checking
     if(safer_check == TRUE){
-        .base_op_check <- utils::getFromNamespace(x = ".base_op_check", ns = "saferDev", pos = , envir = )
         .base_op_check(
             error_text = embed_error_text
         )
@@ -416,7 +415,8 @@ super_assign_check <- function(
     # warning: R only stores the parse data when the option keep.parse.data is TRUE (see lambda_check()). The option is set here and restored on exit
     oop <- base::options(keep.parse.data = TRUE)
     base::on.exit(expr = base::options(oop), add = TRUE, after = TRUE)
-    pd <- utils::getParseData(x = base::parse(text = base::paste0(code, collapse = "\n", recycle0 = FALSE), keep.source = TRUE), includeText = NA) # warning: the short parse writing is required here: a fully-named writing with srcfile = NULL removes the srcref of the parsed code, so that utils::getParseData() returns 0 rows (same writing as in lambda_check())
+    code_text <- base::paste0(code, collapse = "\n", recycle0 = FALSE)
+    pd <- utils::getParseData(x = base::parse(file = "", n = NULL, text = code_text, prompt = "?", keep.source = TRUE, srcfile = base::srcfilecopy(filename = "<text>", lines = code_text, timestamp = base::Sys.time(), isFile = FALSE), encoding = "unknown"), includeText = NA) # warning: an explicit srcfile is required, because srcfile = NULL removes the source references of the parsed code, so that utils::getParseData() returns NULL (same writing as in lambda_check())
     # tokens of the superassignment operators, sorted by source position. Strings, comments and backquoted names are other tokens (STR_CONST, COMMENT, SYMBOL), so that a <<- written inside them is never reported
     sa_rows <- base::which(x = (pd$token == "LEFT_ASSIGN" & pd$text == "<<-") | (pd$token == "RIGHT_ASSIGN" & pd$text == "->>"), arr.ind = FALSE, useNames = TRUE)
     sa_rows <- sa_rows[base::order(pd$line1[sa_rows], pd$col1[sa_rows], method = "radix", na.last = TRUE, decreasing = FALSE)]
@@ -475,5 +475,4 @@ super_assign_check <- function(
     base::return(base::invisible(x = NULL)) # NULL if everything is clean, but invisible meaning that not shown but can be assigned
     #### end output
 
-    #### end of function
 }

@@ -145,6 +145,8 @@ testthat::test_that("arg_check()", {
     testthat::expect_error(arg_check(data = vec1, mode = "numeric", safer_check = TRUE, lib_path = expr1))
     testthat::expect_error(arg_check(data = vec1, mode = "numeric", safer_check = TRUE, lib_path = fun1))
     testthat::expect_error(arg_check(data = vec1, mode = "numeric", safer_check = TRUE, lib_path = "PATH_NOT_GOOD"))
+    # lib_path is not checked when safer_check is FALSE (exception to the backbone v21.1 kept in arg_check() for execution time, see the check of lib_path section of arg_check())
+    testthat::expect_no_error(arg_check(data = vec1, mode = "numeric", safer_check = FALSE, lib_path = "PATH_NOT_GOOD"))
     result <- arg_check(data = vec1, mode = "numeric", safer_check = TRUE, lib_path = NULL)
     expect <- list(problem = FALSE, text = "NO PROBLEM DETECTED FOR THE vec1 ARGUMENT.", object_name = "vec1")
     testthat::expect_equal(result, expect)

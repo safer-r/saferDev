@@ -11,7 +11,7 @@
 #' @param arg_user_setting_x Single string indicating the name of the checked function.
 #' @param warn Single warning string. Can be \code{NULL}.
 #' @param warn_count Single positive integer value indicating the warning count.
-#' @param lib_path Vector of characters specifying the absolute pathways of the directories containing the required packages for the function, if not in the default directories. Useful when R packages are not installed in the default directories because of lack of admin rights. More precisely, \code{lib_path} is passed through the \code{new} argument of \code{.libPaths()} so that the new library paths are \code{unique(c(new, .Library.site, .Library))}. Warning: \code{.libPaths()} is restored to the initial paths, after function execution. Ignored if \code{NULL} (default) or if the \code{safer_check} argument is \code{FALSE}: only the pathways specified by the current \code{.libPaths()} are used for package calling.
+#' @param lib_path Vector of characters specifying the absolute pathways of the directories containing the required packages for the function, if not in the default directories. Useful when R packages are not installed in the default directories because of lack of admin rights. More precisely, \code{lib_path} is passed through the \code{new} argument of \code{.libPaths()} so that the new library paths are \code{unique(c(new, .Library.site, .Library))}. Warning: \code{.libPaths()} is restored to the initial paths, after function execution. Ignored if \code{NULL} (default): only the pathways specified by the current \code{.libPaths()} are used for package calling.
 #' @param error_text Single character string used to add information in error messages returned by the function, notably if the function is inside other functions, which is practical for debugging. Example: \code{error_text = " INSIDE <PACKAGE_1>::<FUNCTION_1> INSIDE <PACKAGE_2>::<FUNCTION_2>."}. If \code{NULL}, converted into \code{""}.
 #' @returns
 #' A list:
@@ -322,6 +322,10 @@
     # but check already done in the main safer function
     ######## end check of the required functions from the required packages
 
+    ######## escaping CRAN submission NOTE for internal functions
+    # not used here: no internal function called
+    ######## end escaping CRAN submission NOTE for internal functions
+
     ######## critical operator checking
     # check already done in the main safer function
     ######## end critical operator checking
@@ -345,14 +349,14 @@
         tempo <-  saferDev::arg_check(data = tempo_split, class = NULL, typeof = "character", mode = NULL, length = NULL, prop = FALSE, options = NULL, double_as_integer_allowed = FALSE, all_options_in_data = FALSE, na_contain = TRUE, neg_values = TRUE, inf_values = TRUE, print = FALSE, data_name = NULL, data_arg = TRUE, safer_check = FALSE, lib_path = lib_path, error_text = embed_error_text) ; base::eval(expr = ee, envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL))
     }
     tempo <-  saferDev::arg_check(data = three_dots_log, class = NULL, typeof = "logical", mode = NULL, length = NULL, prop = FALSE, options = NULL, double_as_integer_allowed = FALSE, all_options_in_data = FALSE, na_contain = TRUE, neg_values = TRUE, inf_values = TRUE, print = FALSE, data_name = NULL, data_arg = TRUE, safer_check = FALSE, lib_path = lib_path, error_text = embed_error_text) ; base::eval(expr = ee, envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL))
-    tempo <-  saferDev::arg_check(data = i2, class = "integer", typeof = "integer", mode = NULL, length = 1, prop = FALSE, options = NULL, double_as_integer_allowed = TRUE, all_options_in_data = FALSE, na_contain = TRUE, neg_values = FALSE, inf_values = TRUE, print = FALSE, data_name = NULL, data_arg = TRUE, safer_check = FALSE, lib_path = lib_path, error_text = embed_error_text) ; base::eval(expr = ee, envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL)) # class = "integer" and not class = NULL to avoid factors
-    tempo <-  saferDev::arg_check(data = col1_i2, class = "integer", typeof = "integer", mode = NULL, length = 1, prop = FALSE, options = NULL, double_as_integer_allowed = TRUE, all_options_in_data = FALSE, na_contain = TRUE, neg_values = FALSE, inf_values = TRUE, print = FALSE, data_name = NULL, data_arg = TRUE, safer_check = FALSE, lib_path = lib_path, error_text = embed_error_text) ; base::eval(expr = ee, envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL)) # class = "integer" and not class = NULL to avoid factors
+    tempo <-  saferDev::arg_check(data = i2, class = "integer", typeof = "integer", mode = NULL, length = 1, prop = FALSE, options = NULL, double_as_integer_allowed = TRUE, all_options_in_data = FALSE, na_contain = TRUE, neg_values = FALSE, inf_values = TRUE, print = FALSE, data_name = NULL, data_arg = TRUE, safer_check = FALSE, lib_path = lib_path, error_text = embed_error_text) ; base::eval(expr = ee, envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL)) # class = "integer" and not class = NULL to avoid factors, and typeof = "integer" because required by neg_values = FALSE
+    tempo <-  saferDev::arg_check(data = col1_i2, class = "integer", typeof = "integer", mode = NULL, length = 1, prop = FALSE, options = NULL, double_as_integer_allowed = TRUE, all_options_in_data = FALSE, na_contain = TRUE, neg_values = FALSE, inf_values = TRUE, print = FALSE, data_name = NULL, data_arg = TRUE, safer_check = FALSE, lib_path = lib_path, error_text = embed_error_text) ; base::eval(expr = ee, envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL)) # class = "integer" and not class = NULL to avoid factors, and typeof = "integer" because required by neg_values = FALSE
     tempo <-  saferDev::arg_check(data = col2_i2, class = NULL, typeof = "character", mode = NULL, length = 1, prop = FALSE, options = NULL, double_as_integer_allowed = FALSE, all_options_in_data = FALSE, na_contain = TRUE, neg_values = TRUE, inf_values = TRUE, print = FALSE, data_name = NULL, data_arg = TRUE, safer_check = FALSE, lib_path = lib_path, error_text = embed_error_text) ; base::eval(expr = ee, envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL))
     tempo <-  saferDev::arg_check(data = arg_user_setting_x, class = NULL, typeof = "character", mode = NULL, length = NULL, prop = FALSE, options = NULL, double_as_integer_allowed = FALSE, all_options_in_data = FALSE, na_contain = TRUE, neg_values = TRUE, inf_values = TRUE, print = FALSE, data_name = NULL, data_arg = TRUE, safer_check = FALSE, lib_path = lib_path, error_text = embed_error_text) ; base::eval(expr = ee, envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL))
     if( ! base::is.null(x = warn)){ # for all arguments that can be NULL, write like this:
         tempo <-  saferDev::arg_check(data = warn, class = NULL, typeof = "character", mode = NULL, length = 1, prop = FALSE, options = NULL, double_as_integer_allowed = FALSE, all_options_in_data = FALSE, na_contain = TRUE, neg_values = TRUE, inf_values = TRUE, print = FALSE, data_name = NULL, data_arg = TRUE, safer_check = FALSE, lib_path = lib_path, error_text = embed_error_text) ; base::eval(expr = ee, envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL))
     }
-    tempo <-  saferDev::arg_check(data = warn_count, class = "integer", typeof = "integer", mode = NULL, length = 1, prop = FALSE, options = NULL, double_as_integer_allowed = TRUE, all_options_in_data = FALSE, na_contain = TRUE, neg_values = FALSE, inf_values = TRUE, print = FALSE, data_name = NULL, data_arg = TRUE, safer_check = FALSE, lib_path = lib_path, error_text = embed_error_text) ; base::eval(expr = ee, envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL)) # class = "integer" and not class = NULL to avoid factors
+    tempo <-  saferDev::arg_check(data = warn_count, class = "integer", typeof = "integer", mode = NULL, length = 1, prop = FALSE, options = NULL, double_as_integer_allowed = TRUE, all_options_in_data = FALSE, na_contain = TRUE, neg_values = FALSE, inf_values = TRUE, print = FALSE, data_name = NULL, data_arg = TRUE, safer_check = FALSE, lib_path = lib_path, error_text = embed_error_text) ; base::eval(expr = ee, envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL)) # class = "integer" and not class = NULL to avoid factors, and typeof = "integer" because required by neg_values = FALSE
     # lib_path already checked above
     # error_text converted to single string above
     if( ! base::is.null(x = argum_check)){
@@ -458,7 +462,7 @@
             "arg_full (",
             base::length(x = arg_full),
             "):\n",
-            base::paste0(base::vapply(X = arg_full, FUN = function(elt){base::paste(base::deparse(expr = elt, width.cutoff = 60L, backtick = FALSE, control = base::c("keepNA", "keepInteger", "niceNames", "showAttributes"), nlines = -1L), sep = " ", collapse = " ", recycle0 = FALSE)}, FUN.VALUE = base::character(length = 1)), collapse = "\n", recycle0 = FALSE),
+            base::paste0(base::vapply(X = arg_full, FUN = function(elt){base::paste(base::deparse(expr = elt, width.cutoff = 60L, backtick = FALSE, control = base::c("keepNA", "keepInteger", "niceNames", "showAttributes"), nlines = -1L), sep = " ", collapse = " ", recycle0 = FALSE)}, FUN.VALUE = base::character(length = 1), USE.NAMES = TRUE), collapse = "\n", recycle0 = FALSE),
             intern_error_text_end,
             collapse = NULL,
             recycle0 = FALSE
@@ -551,7 +555,7 @@
                         tempo_pos <- base::which(x = tempo_log, arr.ind = FALSE, useNames = TRUE)
                         match_idx[tempo_pos] <- i3
                         missing_full_arg_name_log[i3] <- FALSE
-                        tempo_lead <- base::regexpr(pattern = "\\S", text = tempo_split[i3], perl = TRUE, fixed = FALSE, useBytes = FALSE)[1]
+                        tempo_lead <- base::regexpr(pattern = "\\S", text = tempo_split[i3], ignore.case = FALSE, perl = TRUE, fixed = FALSE, useBytes = FALSE)[1]
                         tempo_split_mod[i3] <- base::paste0(base::substr(x = tempo_split[i3], start = 1, stop = tempo_lead - 1), arg_full_names[tempo_pos], base::substr(x = tempo_split[i3], start = tempo_lead + base::nchar(x = tempo_arg_name, type = "chars", allowNA = FALSE, keepNA = NA), stop = base::nchar(x = tempo_split[i3], type = "chars", allowNA = FALSE, keepNA = NA)), collapse = NULL, recycle0 = FALSE)
                     }
                 }
@@ -619,7 +623,7 @@
             count_good_args <- 0
             final <- NULL
             # missing_args <-  NULL # already above
-            for(i3 in base::seq_along(arg_full_names)){ # here I cannot have more args than base::length(arg_full_names) ; seq_along() instead of 1:base::length() avoids iterating over c(1, 0) when arg_full_names is NULL or empty
+            for(i3 in base::seq_along(along.with = arg_full_names)){ # here I cannot have more args than base::length(arg_full_names) ; seq_along() instead of 1:base::length() avoids iterating over c(1, 0) when arg_full_names is NULL or empty
                 if(missing_arg_log[i3] == TRUE){
                     if(base::sum(missing_full_arg_name_log, na.rm = FALSE) > 0 & before_dots_log[i3] & ! arg_full_names[i3] %in% filled_names){ # an arg written with an empty value (filled_names) is matched by its name, thus does not take a value written without name # this means that remains obs arg with no arg names written. Warning: an arg after ... cannot take a value written without arg name
                         tempo <- base::paste0(arg_full_names[i3], " = ", tempo_split[base::which(x = missing_full_arg_name_log == TRUE, arr.ind = FALSE, useNames = TRUE)[1]], collapse = NULL, recycle0 = FALSE)

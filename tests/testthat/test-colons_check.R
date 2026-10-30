@@ -168,6 +168,8 @@ testthat::test_that("colons_check()", {
     testthat::expect_error(colons_check(x = test, safer_check = TRUE, lib_path = fun1, error_text = ""))
     testthat::expect_error(colons_check(x = test, safer_check = TRUE, lib_path = "PATH_NOT_GOOD", error_text = ""))
     testthat::expect_no_error(colons_check(x = test, safer_check = TRUE, lib_path = base:::.libPaths(new = , include.site = TRUE), error_text = ""))
+    # lib_path is checked even when safer_check is FALSE (backbone v21.1: unguarded lib_path check)
+    testthat::expect_error(colons_check(x = test, safer_check = FALSE, lib_path = "PATH_NOT_GOOD", error_text = ""))
     ######## end check of lib_path
 
     ######## check of the required functions from the required packages
@@ -353,6 +355,13 @@ testthat::test_that("colons_check()", {
     ## end tests (ordered by arg appearance and conditions in the code)
 
     ## other tests
+    # a word followed by ( inside a string containing escaped quotes is not reported (the escaped quotes are not string delimiters)
+    FUN_ESC <- function(x){
+        y <- base::paste0("a \"b\" WORD (c) ", x, collapse = NULL, recycle0 = FALSE)
+        y
+    }
+    testthat::expect_message(object = colons_check(x = FUN_ESC, export = FALSE, out_path = ".", safer_check = FALSE, lib_path = NULL, error_text = ""), regexp = "EVERYTHING SEEMS CLEAN", fixed = TRUE)
+    testthat::expect_no_warning(object = base::suppressMessages(expr = colons_check(x = FUN_ESC, export = FALSE, out_path = ".", safer_check = FALSE, lib_path = NULL, error_text = ""), classes = "message"))
     ## end other tests
 
 })

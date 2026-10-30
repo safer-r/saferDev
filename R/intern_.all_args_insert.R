@@ -4,7 +4,7 @@
 #' @param x Function to modify. Function object.
 #' @param out List returned by \code{.functions_detect()}: \code{$code}, \code{$fun_names}, \code{$fun_names_pos}, \code{$code_line_nb}, \code{$internal_fun_names} and \code{$arg_user_setting}. The \code{$code} compartment is the normalized code read by \code{all_args_here()} and must have the same line indexing as the \code{$LINE_NB} column of the \code{output} data frame.
 #' @param output Data frame returned by the main code of \code{all_args_here()}: the \code{$LINE_NB}, \code{$FUN_NAME}, \code{$FUN_POS}, \code{$DEF_ARGS}, \code{$MISSING_ARGS} and \code{$STATUS} columns are used to apply the corrections (\code{$FUN_ARGS} is not used).
-#' @param lib_path Vector of characters specifying the absolute pathways of the directories containing the required packages for the function, if not in the default directories. Useful when R packages are not installed in the default directories because of lack of admin rights. More precisely, \code{lib_path} is passed through the \code{new} argument of \code{.libPaths()} so that the new library paths are \code{unique(c(new, .Library.site, .Library))}. Warning: \code{.libPaths()} is restored to the initial paths, after function execution. Ignored if \code{NULL} (default) or if the \code{safer_check} argument is \code{FALSE}: only the pathways specified by the current \code{.libPaths()} are used for package calling.
+#' @param lib_path Vector of characters specifying the absolute pathways of the directories containing the required packages for the function, if not in the default directories. Useful when R packages are not installed in the default directories because of lack of admin rights. More precisely, \code{lib_path} is passed through the \code{new} argument of \code{.libPaths()} so that the new library paths are \code{unique(c(new, .Library.site, .Library))}. Warning: \code{.libPaths()} is restored to the initial paths, after function execution. Ignored if \code{NULL} (default): only the pathways specified by the current \code{.libPaths()} are used for package calling.
 #' @param error_text Single character string used to add information in error messages returned by the function, notably if the function is inside other functions, which is practical for debugging. Example: \code{error_text = " INSIDE <PACKAGE_1>::<FUNCTION_1> INSIDE <PACKAGE_2>::<FUNCTION_2>."}. If \code{NULL}, converted into \code{""}.
 #' @returns
 #' A list:
@@ -282,6 +282,10 @@
     # but check already done in the main safer function
     ######## end check of the required functions from the required packages
 
+    ######## escaping CRAN submission NOTE for internal functions
+    # not used here: no internal function called
+    ######## end escaping CRAN submission NOTE for internal functions
+
     ######## critical operator checking
     # check already done in the main safer function
     ######## end critical operator checking
@@ -338,7 +342,7 @@
         if(base::any(base::is.na(x = output$LINE_NB), na.rm = TRUE) | base::any(base::is.na(x = output$FUN_POS), na.rm = TRUE) | base::any( ! output$LINE_NB %in% base::seq_along(along.with = out$code), na.rm = TRUE) | base::any(output$FUN_POS < 1, na.rm = TRUE)){
             # nocov start
             # codecov inactivated because it is an internal control of code writing, impossible to cover with argument values.
-            tempo_cat <- base::paste0("INTERNAL ERROR 1 IN ", intern_error_text_start, "THE output ARGUMENT MUST ONLY CONTAIN ROWS WHOSE LINE_NB INDEXES out$code AND WHOSE FUN_POS IS A POSITIVE POSITION.\nHERE IT IS:\n", base::paste0(base::paste0("LINE_NB: ", output$LINE_NB, " ; FUN_POS: ", output$FUN_POS), collapse = "\n", recycle0 = FALSE), intern_error_text_end, collapse = NULL, recycle0 = FALSE) ; base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL)
+            tempo_cat <- base::paste0("INTERNAL ERROR 1 IN ", intern_error_text_start, "THE output ARGUMENT MUST ONLY CONTAIN ROWS WHOSE LINE_NB INDEXES out$code AND WHOSE FUN_POS IS A POSITIVE POSITION.\nHERE IT IS:\n", base::paste0(base::paste0("LINE_NB: ", output$LINE_NB, " ; FUN_POS: ", output$FUN_POS, collapse = NULL, recycle0 = FALSE), collapse = "\n", recycle0 = FALSE), intern_error_text_end, collapse = NULL, recycle0 = FALSE) ; base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL)
             # nocov end
         }
     }
@@ -385,7 +389,8 @@
         expr = {
             utils::getParseData(x = base::parse(file = "", n = NULL, text = orig_parse_lines, prompt = "?", keep.source = TRUE, srcfile = base::srcfilecopy(filename = "<text>", lines = orig_parse_lines, timestamp = base::Sys.time(), isFile = FALSE), encoding = "unknown"), includeText = NA) # keep.source = TRUE and a srcfile object required by utils::getParseData()
         },
-        error = function(e){NULL} # nocov : defensive net, the printed code of a function always parses
+        error = function(e){NULL}, # nocov : defensive net, the printed code of a function always parses
+        finally =
     )
     # conversion of a column of the parse data into a character position of the line: the parse data columns are display columns, where a tab moves to the next multiple of 8. end = TRUE for the last column of a token (col2), FALSE for the first one (col1). NA if not found
     col_to_char <- function(line_txt, col, end){
@@ -497,13 +502,15 @@
             expr = {
                 utils::getParseData(x = base::parse(file = "", n = NULL, text = miss_txt, prompt = "?", keep.source = TRUE, srcfile = base::srcfilecopy(filename = "<text>", lines = miss_txt, timestamp = base::Sys.time(), isFile = FALSE), encoding = "unknown"), includeText = NA)
             },
-            error = function(e){NULL}
+            error = function(e){NULL},
+            finally =
         )
         def_names <- base::tryCatch(
             expr = {
                 base::names(x = base::str2lang(s = base::paste0("function(", rows$DEF_ARGS[i2], ") NULL", collapse = NULL, recycle0 = FALSE))[[2]])
             },
-            error = function(e){NULL}
+            error = function(e){NULL},
+            finally =
         )
         miss <- NULL
         if( ! base::is.null(x = miss_pd)){
@@ -656,7 +663,8 @@
             expr = {
                 base::str2lang(s = base::paste0(tempo_lines, collapse = "\n", recycle0 = FALSE))
             },
-            error = function(e){NULL} # nocov : defensive net, the insertions of "name = " before a value and of ", name = value" after the last argument cannot break a parsable call
+            error = function(e){NULL}, # nocov : defensive net, the insertions of "name = " before a value and of ", name = value" after the last argument cannot break a parsable call
+            finally =
         )
         if(base::is.null(x = new_call)){
             # nocov start
@@ -686,7 +694,8 @@
             expr = {
                 base::str2lang(s = status_i2)
             },
-            error = function(e){NULL}
+            error = function(e){NULL},
+            finally =
         )
         if(base::is.call(x = status_call)){
             same_log <- call_canonical(tempo_call = new_call) == call_canonical(tempo_call = status_call)
@@ -715,7 +724,8 @@
                 base::parse(file = "", n = NULL, text = fun_txt, prompt = "?", keep.source = base::getOption(x = "keep.source", default = NULL), srcfile = NULL, encoding = "unknown")
                 TRUE
             },
-            error = function(e){FALSE} # nocov : defensive net, impossible to trigger with argument values, see the comment inside the if() block below
+            error = function(e){FALSE}, # nocov : defensive net, impossible to trigger with argument values, see the comment inside the if() block below
+            finally =
         )
         if( ! ok_full){
             # nocov start
@@ -729,14 +739,21 @@
         # return the modified function as an R function object
         # keep.source = TRUE (instead of the keep.source option, FALSE in Rscript sessions) and a srcfile object (srcfile = NULL prevents the creation of the source references by base::parse()), so that the returned function keeps its source references, i.e., prints with its comments and indentation
         fun <- base::eval(expr = base::parse(file = "", n = NULL, text = fun_txt, prompt = "?", keep.source = TRUE, srcfile = base::srcfilecopy(filename = "<text>", lines = fun_txt, timestamp = base::Sys.time(), isFile = FALSE), encoding = "unknown")[[1]], envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL))
+        # restore the environment of the submitted function: without this, the modified function would keep the evaluation environment of .all_args_insert() as closure environment, so that its free variables (e.g., a global object named out or x) would be resolved in this environment
+        base::environment(fun = fun) <- base::environment(fun = x)
         output_list <- base::list(fun = fun, fun_txt = fun_txt, inserted = inserted, left = left)
     }else{
         output_list <- base::list(fun = NULL, fun_txt = NULL, inserted = inserted, left = left)
     }
+    #### end main code
+
+    #### warning output
+    #### end warning output
+
+    #### output
     base::return(output_list)
     #### end output
 
-    #### end of function
 }
 
 

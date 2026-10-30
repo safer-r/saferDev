@@ -376,6 +376,10 @@ arg_check <- function(
 
     ######## check of lib_path
     # must be before any :: or ::: non basic package calling
+    # warning: exception to the backbone v21.1, where the lib_path check is always executed: in arg_check(), the lib_path check is only executed if safer_check is TRUE.
+    # arg_check() is called thousands of times with safer_check = FALSE inside the other safer-r functions, with a lib_path already checked by the calling function, and lib_path is not used in the main code of arg_check().
+    # Executing the lib_path check at each call multiplies the execution time of the calling functions by about five (measured on 2026-10-30: 351 s instead of 72 s for saferDev::all_args_here(x = saferDev::is_function_here)).
+    # Exception kept from the former version of arg_check(), to be validated by the user.
     if(safer_check == TRUE){ # this line must be inactivated if you want to use lib_path in the main code (other than in safer functions present in the main code) 
         if( ! base::is.null(x = lib_path)){ #  is.null(NA) returns FALSE so OK.
             if( ! base::all(base::typeof(x = lib_path) == "character", na.rm = TRUE)){ # na.rm = TRUE but no NA returned with typeof (typeof(NA) == "character" returns FALSE)
@@ -420,7 +424,7 @@ arg_check <- function(
 
     ######## check of the required functions from the required packages
     if(safer_check == TRUE){
-        .pack_and_function_check <- utils::getFromNamespace(x = ".pack_and_function_check", ns = "saferDev", pos = , envir = )
+        .pack_and_function_check <- utils::getFromNamespace(x = ".pack_and_function_check", ns = "saferDev", pos = -1, envir = )
         .pack_and_function_check(
             fun = base::c(
                 "saferDev:::.base_op_check"
@@ -433,7 +437,7 @@ arg_check <- function(
 
     ######## escaping CRAN submission NOTE for internal functions
 
-    .base_op_check <- utils::getFromNamespace(x = ".base_op_check", ns = "saferDev", pos = , envir = )
+    .base_op_check <- utils::getFromNamespace(x = ".base_op_check", ns = "saferDev", pos = -1, envir = )
 
     ######## end escaping CRAN submission NOTE for internal functions
 
@@ -898,8 +902,8 @@ arg_check <- function(
     }
     arg_names <- base::c("class", "typeof", "mode", "length")
     if(base::is.null(x = options)){
-        for(i2 in 1:base::length(x = arg_names)){
-            if( ! base::is.null(x = base::get(x = arg_names[i2], pos = -1L, envir = base::as.environment(-1), mode = "any", inherits = FALSE))){
+        for(i2 in base::seq_along(along.with = arg_names)){
+            if( ! base::is.null(x = base::get(x = arg_names[i2], pos = -1L, envir = base::as.environment(x = -1), mode = "any", inherits = FALSE))){
                 # script to execute
                 tempo_script <- '
                     problem <- TRUE ;
@@ -912,24 +916,24 @@ arg_check <- function(
                         text, 
                         base::toupper(arg_names[i2]), 
                         " ", 
-                        base::paste0(base::get(x = arg_names[i2], pos = -1L, envir = base::as.environment(-1), mode = "any", inherits = FALSE), collapse = ", ", recycle0 = FALSE),
+                        base::paste0(base::get(x = arg_names[i2], pos = -1L, envir = base::as.environment(x = -1), mode = "any", inherits = FALSE), collapse = ", ", recycle0 = FALSE),
                         collapse = NULL, 
                         recycle0 = FALSE
                     )
                 '
                 # no need of na.rm = TRUE for base::all() because %in% does not output NA
                 # end script to execute
-                if(base::typeof(x = data) == "double" & double_as_integer_allowed == TRUE & ((arg_names[i2] == "class" & base::all(base::get(x = arg_names[i2], pos = -1L, envir = base::as.environment(-1), mode = "any", inherits = FALSE) == "integer", na.rm = TRUE)) | (arg_names[i2] == "typeof" & base::all(base::get(x = arg_names[i2], pos = -1L, envir = base::as.environment(-1), mode = "any", inherits = FALSE) == "integer", na.rm = TRUE)))){ # data of type double & double_as_integer_allowed == TRUE and (class = "integer" | typeof = "integer") # no need of na.rm = TRUE for base::all() because == does not output NA if no NA in left of ==, which is the case for arg_names # base::typeof(data) == "double" means no factor allowed
+                if(base::typeof(x = data) == "double" & double_as_integer_allowed == TRUE & ((arg_names[i2] == "class" & base::all(base::get(x = arg_names[i2], pos = -1L, envir = base::as.environment(x = -1), mode = "any", inherits = FALSE) == "integer", na.rm = TRUE)) | (arg_names[i2] == "typeof" & base::all(base::get(x = arg_names[i2], pos = -1L, envir = base::as.environment(x = -1), mode = "any", inherits = FALSE) == "integer", na.rm = TRUE)))){ # data of type double & double_as_integer_allowed == TRUE and (class = "integer" | typeof = "integer") # no need of na.rm = TRUE for base::all() because == does not output NA if no NA in left of ==, which is the case for arg_names # base::typeof(data) == "double" means no factor allowed
                     if( ! base::all(data %% 1 == 0L, na.rm = TRUE)){ # to check integers (use %%, meaning the remaining of a division): see the precedent line. base::isTRUE(base::all.equal(data%%1, base::rep(0, base::length(data)))) not used because we strictly need zero as a result. Warning: na.rm = TRUE required here for base::all()
                         base::eval(expr = base::parse(text = tempo_script, file = "", n = NULL, prompt = "?", keep.source = base::getOption(x = "keep.source", default = NULL), srcfile = NULL, encoding = "unknown"), envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL)) # execute tempo.script
                     }
                 }else if(arg_names[i2] == "length"){
-                    if( ! (base::length(x = data) == base::get(x = arg_names[i2], pos = -1L, envir = base::as.environment(-1), mode = "any", inherits = FALSE))){ # numeric comparison for the length argument (single integer value, checked above)
+                    if( ! (base::length(x = data) == base::get(x = arg_names[i2], pos = -1L, envir = base::as.environment(x = -1), mode = "any", inherits = FALSE))){ # numeric comparison for the length argument (single integer value, checked above)
                         base::eval(expr = base::parse(text = tempo_script, file = "", n = NULL, prompt = "?", keep.source = base::getOption(x = "keep.source", default = NULL), srcfile = NULL, encoding = "unknown"), envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL)) # execute tempo.script
                     }
                 }else if( ! base::identical(
                     x = base::as.character(x = base::eval(expr = base::parse(text = base::paste0(arg_names[i2], "(data)", collapse = NULL, recycle0 = FALSE), file = "", n = NULL, prompt = "?", keep.source = base::getOption(x = "keep.source", default = NULL), srcfile = NULL, encoding = "unknown"), envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL))), 
-                    y = base::as.character(x = base::get(x = arg_names[i2], pos = -1L, envir = base::as.environment(-1), mode = "any", inherits = FALSE)), 
+                    y = base::as.character(x = base::get(x = arg_names[i2], pos = -1L, envir = base::as.environment(x = -1), mode = "any", inherits = FALSE)), 
                     num.eq = TRUE, 
                     single.NA = TRUE, 
                     attrib.as.set = TRUE, 
@@ -1029,6 +1033,6 @@ arg_check <- function(
     #### output
     output <- base::list(problem = problem, text = text, object_name = data_name)
     base::return(output)
-    # end output
+    #### end output
 
 }
