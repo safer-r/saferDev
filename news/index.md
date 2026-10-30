@@ -101,6 +101,20 @@
   empty value, with their default value. An argument placed after … in
   the function definition no longer takes a value written without
   argument name.
+- all_args_here(): the ARGUMENTS WITH EMPTY VALUE message no longer
+  lists the arguments already written with an empty value in the code
+  (like base::.libPaths(new = , include.site = TRUE) or
+  utils::getFromNamespace(x = “a”, ns = “b”, pos = , envir = )): they
+  are accepted as is. Only the empty values proposed by all_args_here()
+  are listed.
+- all_args_here(): an argument written with a partial name (e.g., dig
+  for digits) is now completed in the STATUS proposal and in the
+  modified function, instead of a warning message (only for the
+  arguments before …, as in R: a partial name after … is an argument of
+  …, no longer wrongly flagged). An argument written with an empty value
+  (e.g., safer_check = ) gets its default value if it can be copied, and
+  remains empty otherwise (no default value, or a default value
+  depending on another argument or on the frame of evaluation).
 - colons_check(): the modified function (returned, or exported with
   export = TRUE) now keeps the comments and the indentation of the
   submitted function: the package attributions are inserted in the

@@ -145,18 +145,19 @@ comments, or only made of `function`, `if`, `for`, `while`, `repeat`,
   `FUN_ARGS`.
 
 - `$STATUS`: either `"GOOD"`, meaning that all the arguments are already
-  written, or a new proposal of arguments writing, or indicates if some
-  arguments are not fully written (abbreviation is discouraged), or
-  nothing.
+  written, or a new proposal of arguments writing (arguments written
+  with a partial name, like `dig` for `digits`, are written with their
+  full name), or nothing.
 
 An additional message `"EVERYTHING SEEMS CLEAN"` if the `$STATUS` column
 is only made of `""` and `"GOOD"`.
 
 An additional message `"ARGUMENTS WITH EMPTY VALUE"` listing, for each
-line and function, the arguments written (or proposed in the `$STATUS`
-column) with an empty value (like `envir = `), with their default value,
-i.e., the potential flaws of the code (see the details section). Use
-`"= ,"` or `"= )"` to seek each case in the code.
+line and function, the arguments proposed in the `$STATUS` column with
+an empty value (like `envir = `), with their default value, i.e., the
+potential flaws of the code (see the details section). Arguments already
+written with an empty value in the code are accepted as is and not
+listed. Use `"= ,"` or `"= )"` to seek each case in the code.
 
 An additional message `"CORRECTIONS NOT APPLIED"` listing the proposals
 of the `$STATUS` column that have not been inserted into the modified
@@ -201,9 +202,14 @@ because absence of value can mean something (e.g.,
 `base::.libPaths(new = , include.site = TRUE)` returns the paths of the
 R libraries, whereas
 `base::.libPaths(new = base::.libPaths(), include.site = TRUE)` sets
-them). In both cases, the behavior of the code is not changed. It is
-recommended to test (using `testthat`) that these default values are
-unchanged, for instance
+them). In both cases, the behavior of the code is not changed. An
+argument already written with an empty value (like `envir = `) is
+accepted as is when it has no default value or a default value that
+cannot be copied, and is not listed in the message above. If its default
+value can be copied (e.g., `safer_check = `), the default value is added
+(`safer_check = TRUE`). Of note, only the arguments before `...` can be
+written with a partial name, as in R. It is recommended to test (using
+`testthat`) that these default values are unchanged, for instance
 `testthat::expect_identical(object = base::formals(fun = utils::getFromNamespace)$envir, expected = base::quote(expr = as.environment(pos)))`.
 
 Most of the time, `all_args_here()` does not check inside comments, but
@@ -338,7 +344,7 @@ fun1_safer # corrected function
 #> {
 #>     base::paste0(x, "a", collapse = NULL, recycle0 = FALSE)
 #> }
-#> <environment: 0x55e0942a1e20>
+#> <environment: 0x55d4033e3540>
 # Write the table (res.tsv) and the corrected function (fun1_safer.R) in a new temporary folder:
 tempo_dir <- base::tempfile(pattern = "dir", tmpdir = base::tempdir(), fileext = "")
 base::dir.create(path = tempo_dir, showWarnings = TRUE, recursive = FALSE, mode = "0777")
@@ -347,9 +353,9 @@ saferDev::all_args_here(x = fun1, table_export = TRUE, fun_export = TRUE, out_pa
 #> 
 #> INSIDE fun1(), ARGUMENTS ARE MISSING.
 #> RESULT EXPORTED IN:
-#> /tmp/Rtmp0T86Ru/dir153724947dc4/res.tsv
+#> /tmp/Rtmp27YRnd/dir1208351ccc06/res.tsv
 #> 
 #> MODIFIED CODE EXPORTED IN:
-#> /tmp/Rtmp0T86Ru/dir153724947dc4/fun1_safer.R
+#> /tmp/Rtmp27YRnd/dir1208351ccc06/fun1_safer.R
 #> 
 ```

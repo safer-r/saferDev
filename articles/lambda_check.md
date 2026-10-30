@@ -218,7 +218,7 @@ lambda_check(
     ## 1    \(z)        function(x){ base::sapply(X = 1:3, FUN = \(y){ y * 2 }) ; base::lapply(X = x, FUN = \(z) z + 1) }
 
     ## MODIFIED CODE EXPORTED IN:
-    ## /tmp/RtmpswSptO/dir1a6577799783/fun2_safer.R
+    ## /tmp/RtmpFYfr7k/dir170654eeaa10/fun2_safer.R
 
 ``` r
 

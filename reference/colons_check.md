@@ -265,7 +265,7 @@ fun1_safer # corrected function
 #>     y <- base::mean(x)
 #>     base::return(y)
 #> }
-#> <environment: 0x55e091b68048>
+#> <environment: 0x55d400ef69f8>
 # Write the corrected function in the fun1_safer.R file of a new temporary folder:
 tempo_dir <- base::tempfile(pattern = "dir", tmpdir = base::tempdir(), fileext = "")
 base::dir.create(path = tempo_dir, showWarnings = TRUE, recursive = FALSE, mode = "0777")
@@ -278,6 +278,6 @@ saferDev::colons_check(x = fun1, export = TRUE, out_path = tempo_dir)
 #> 3    mean        y <- 
 #> 
 #> MODIFIED CODE EXPORTED IN:
-#> /tmp/Rtmp0T86Ru/dir15373f5608ca/fun1_safer.R
+#> /tmp/Rtmp27YRnd/dir1208360b369c/fun1_safer.R
 #> 
 ```

@@ -166,7 +166,7 @@ fun2_safer # corrected function
 #>         base::return(x)
 #>     }
 #> }
-#> <environment: 0x55e09359e140>
+#> <environment: 0x55d402ebc420>
 # Write the corrected function in the fun2_safer.R file of a new temporary folder:
 tempo_dir <- base::tempfile(pattern = "dir", tmpdir = base::tempdir(), fileext = "")
 base::dir.create(path = tempo_dir, showWarnings = TRUE, recursive = FALSE, mode = "0777")
@@ -180,6 +180,6 @@ saferDev::true_false_check(x = fun2, export = TRUE, out_path = tempo_dir)
 #> 3    T       if (x == T) {
 #> 
 #> MODIFIED CODE EXPORTED IN:
-#> /tmp/Rtmp0T86Ru/dir15377e35b0bc/fun2_safer.R
+#> /tmp/Rtmp27YRnd/dir12087dcd0e72/fun2_safer.R
 #> 
 ```
