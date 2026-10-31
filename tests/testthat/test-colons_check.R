@@ -168,7 +168,7 @@ testthat::test_that("colons_check()", {
     testthat::expect_error(colons_check(x = test, safer_check = TRUE, lib_path = fun1, error_text = ""))
     testthat::expect_error(colons_check(x = test, safer_check = TRUE, lib_path = "PATH_NOT_GOOD", error_text = ""))
     testthat::expect_no_error(colons_check(x = test, safer_check = TRUE, lib_path = base:::.libPaths(new = , include.site = TRUE), error_text = ""))
-    # lib_path is checked even when safer_check is FALSE (backbone v21.1: unguarded lib_path check)
+    # lib_path is checked even when safer_check is FALSE (backbone v21.2: lib_path used outside if(safer_check == TRUE){}, in the saferDev::arg_check() calls, so the lib_path check is always executed)
     testthat::expect_error(colons_check(x = test, safer_check = FALSE, lib_path = "PATH_NOT_GOOD", error_text = ""))
     ######## end check of lib_path
 
