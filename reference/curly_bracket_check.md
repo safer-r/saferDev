@@ -44,14 +44,14 @@ curly_bracket_check(
 
 - safer_check:
 
-  Single logical value. Perform some "safer" checks? If `TRUE`,
-  checkings are performed before main code running (see the [safer-r
-  project](https://github.com/safer-r)): 1) correct `lib_path` argument
-  value 2) required functions and related packages effectively present
-  in local R libraries and 3) R classical operators (like `"<-"`) not
-  overwritten by another package because of the R scope. Must be set to
-  `FALSE` if this function is used inside another "safer" function to
-  avoid pointless multiple checkings.
+  Single logical value. Perform the "safer" checks? If `TRUE`, checkings
+  are performed before main code running (see the [safer-r
+  project](https://github.com/safer-r)): 1) required functions and
+  related packages effectively present in local R libraries and 2) R
+  classical operators (like `"<-"`) not overwritten by another package
+  because of the R scope. Warning: must be set to `FALSE` if this
+  function is used inside another "safer" function to avoid pointless
+  multiple checkings.
 
 - lib_path:
 
@@ -64,8 +64,7 @@ curly_bracket_check(
   library paths are `unique(c(new, .Library.site, .Library))`. Warning:
   [`.libPaths()`](https://rdrr.io/r/base/libPaths.html) is restored to
   the initial paths, after function execution. Ignored if `NULL`
-  (default) or if the `safer_check` argument is `FALSE`: only the
-  pathways specified by the current
+  (default): only the pathways specified by the current
   [`.libPaths()`](https://rdrr.io/r/base/libPaths.html) are used for
   package calling.
 
@@ -160,7 +159,7 @@ fun2_safer # corrected function
 #>     if (x > 1) 
 #>         { base::return(x) }
 #> }
-#> <environment: 0x55d402011220>
+#> <environment: 0x561e48b1da68>
 # Write the corrected function in the fun2_safer.R file of a new temporary folder:
 tempo_dir <- base::tempfile(pattern = "dir", tmpdir = base::tempdir(), fileext = "")
 base::dir.create(path = tempo_dir, showWarnings = TRUE, recursive = FALSE, mode = "0777")
@@ -174,6 +173,6 @@ saferDev::curly_bracket_check(x = fun2, export = TRUE, out_path = tempo_dir)
 #> 3    if      if (x > 1) 
 #> 
 #> MODIFIED CODE EXPORTED IN:
-#> /tmp/Rtmp27YRnd/dir120875bcd882/fun2_safer.R
+#> /tmp/Rtmpbw7R90/dir172f4a8abe9e/fun2_safer.R
 #> 
 ```

@@ -60,14 +60,14 @@ get_message(
 
 - safer_check:
 
-  Single logical value. Perform some "safer" checks? If `TRUE`,
-  checkings are performed before main code running (see the [safer-r
-  project](https://github.com/safer-r)): 1) correct `lib_path` argument
-  value 2) required functions and related packages effectively present
-  in local R libraries and 3) R classical operators (like `"<-"`) not
-  overwritten by another package because of the R scope. Must be set to
-  `FALSE` if this function is used inside another "safer" function to
-  avoid pointless multiple checkings.
+  Single logical value. Perform the "safer" checks? If `TRUE`, checkings
+  are performed before main code running (see the [safer-r
+  project](https://github.com/safer-r)): 1) required functions and
+  related packages effectively present in local R libraries and 2) R
+  classical operators (like `"<-"`) not overwritten by another package
+  because of the R scope. Warning: must be set to `FALSE` if this
+  function is used inside another "safer" function to avoid pointless
+  multiple checkings.
 
 - lib_path:
 
@@ -80,8 +80,7 @@ get_message(
   library paths are `unique(c(new, .Library.site, .Library))`. Warning:
   [`.libPaths()`](https://rdrr.io/r/base/libPaths.html) is restored to
   the initial paths, after function execution. Ignored if `NULL`
-  (default) or if the `safer_check` argument is `FALSE`: only the
-  pathways specified by the current
+  (default): only the pathways specified by the current
   [`.libPaths()`](https://rdrr.io/r/base/libPaths.html) are used for
   package calling.
 

@@ -73,12 +73,12 @@ all_args_here(
 
   Single logical value. Perform the "safer" checks? If `TRUE`, checkings
   are performed before main code running (see the [safer-r
-  project](https://github.com/safer-r)): 1) correct `lib_path` argument
-  value 2) required functions and related packages effectively present
-  in local R libraries and 3) R classical operators (like `"<-"`) not
-  overwritten by another package because of the R scope. Warning: must
-  be set to `FALSE` if this function is used inside another "safer"
-  function to avoid pointless multiple checkings.
+  project](https://github.com/safer-r)): 1) required functions and
+  related packages effectively present in local R libraries and 2) R
+  classical operators (like `"<-"`) not overwritten by another package
+  because of the R scope. Warning: must be set to `FALSE` if this
+  function is used inside another "safer" function to avoid pointless
+  multiple checkings.
 
 - lib_path:
 
@@ -91,8 +91,7 @@ all_args_here(
   library paths are `c(lib_path, .libPaths())`. Warning:
   [`.libPaths()`](https://rdrr.io/r/base/libPaths.html) is restored to
   the initial paths, after function execution. Ignored if `NULL`
-  (default) or if the `safer_check` argument is `FALSE`: only the
-  pathways specified by the current
+  (default): only the pathways specified by the current
   [`.libPaths()`](https://rdrr.io/r/base/libPaths.html) are used for
   package calling.
 
@@ -344,7 +343,7 @@ fun1_safer # corrected function
 #> {
 #>     base::paste0(x, "a", collapse = NULL, recycle0 = FALSE)
 #> }
-#> <environment: 0x55d4033e3540>
+#> <environment: 0x561e471ebea8>
 # Write the table (res.tsv) and the corrected function (fun1_safer.R) in a new temporary folder:
 tempo_dir <- base::tempfile(pattern = "dir", tmpdir = base::tempdir(), fileext = "")
 base::dir.create(path = tempo_dir, showWarnings = TRUE, recursive = FALSE, mode = "0777")
@@ -353,9 +352,9 @@ saferDev::all_args_here(x = fun1, table_export = TRUE, fun_export = TRUE, out_pa
 #> 
 #> INSIDE fun1(), ARGUMENTS ARE MISSING.
 #> RESULT EXPORTED IN:
-#> /tmp/Rtmp27YRnd/dir1208351ccc06/res.tsv
+#> /tmp/Rtmpbw7R90/dir172f54f8586d/res.tsv
 #> 
 #> MODIFIED CODE EXPORTED IN:
-#> /tmp/Rtmp27YRnd/dir1208351ccc06/fun1_safer.R
+#> /tmp/Rtmpbw7R90/dir172f54f8586d/fun1_safer.R
 #> 
 ```

@@ -21,8 +21,6 @@ parentheses) comes before the body `expr`; for `while`, `repeat`,
   term_rows,
   else_branch,
   else_tok,
-  intern_error_text_start,
-  intern_error_text_end,
   lib_path,
   error_text
 )
@@ -82,8 +80,7 @@ parentheses) comes before the body `expr`; for `while`, `repeat`,
   library paths are `unique(c(new, .Library.site, .Library))`. Warning:
   [`.libPaths()`](https://rdrr.io/r/base/libPaths.html) is restored to
   the initial paths, after function execution. Ignored if `NULL`
-  (default) or if the `safer_check` argument is `FALSE`: only the
-  pathways specified by the current
+  (default): only the pathways specified by the current
   [`.libPaths()`](https://rdrr.io/r/base/libPaths.html) are used for
   package calling.
 

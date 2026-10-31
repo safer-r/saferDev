@@ -53,14 +53,14 @@ colons_check(
 
 - safer_check:
 
-  Single logical value. Perform some "safer" checks? If `TRUE`,
-  checkings are performed before main code running (see the [safer-r
-  project](https://github.com/safer-r)): 1) correct `lib_path` argument
-  value 2) required functions and related packages effectively present
-  in local R libraries and 3) R classical operators (like `"<-"`) not
-  overwritten by another package because of the R scope. Must be set to
-  `FALSE` if this function is used inside another "safer" function to
-  avoid pointless multiple checkings.
+  Single logical value. Perform the "safer" checks? If `TRUE`, checkings
+  are performed before main code running (see the [safer-r
+  project](https://github.com/safer-r)): 1) required functions and
+  related packages effectively present in local R libraries and 2) R
+  classical operators (like `"<-"`) not overwritten by another package
+  because of the R scope. Warning: must be set to `FALSE` if this
+  function is used inside another "safer" function to avoid pointless
+  multiple checkings.
 
 - lib_path:
 
@@ -73,8 +73,7 @@ colons_check(
   library paths are `unique(c(new, .Library.site, .Library))`. Warning:
   [`.libPaths()`](https://rdrr.io/r/base/libPaths.html) is restored to
   the initial paths, after function execution. Ignored if `NULL`
-  (default) or if the `safer_check` argument is `FALSE`: only the
-  pathways specified by the current
+  (default): only the pathways specified by the current
   [`.libPaths()`](https://rdrr.io/r/base/libPaths.html) are used for
   package calling.
 
@@ -265,7 +264,7 @@ fun1_safer # corrected function
 #>     y <- base::mean(x)
 #>     base::return(y)
 #> }
-#> <environment: 0x55d400ef69f8>
+#> <environment: 0x561e498624b0>
 # Write the corrected function in the fun1_safer.R file of a new temporary folder:
 tempo_dir <- base::tempfile(pattern = "dir", tmpdir = base::tempdir(), fileext = "")
 base::dir.create(path = tempo_dir, showWarnings = TRUE, recursive = FALSE, mode = "0777")
@@ -278,6 +277,6 @@ saferDev::colons_check(x = fun1, export = TRUE, out_path = tempo_dir)
 #> 3    mean        y <- 
 #> 
 #> MODIFIED CODE EXPORTED IN:
-#> /tmp/Rtmp27YRnd/dir1208360b369c/fun1_safer.R
+#> /tmp/Rtmpbw7R90/dir172fc6de995/fun1_safer.R
 #> 
 ```

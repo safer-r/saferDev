@@ -46,14 +46,14 @@ for_loop_nb_check(
 
 - safer_check:
 
-  Single logical value. Perform some "safer" checks? If `TRUE`,
-  checkings are performed before main code running (see the [safer-r
-  project](https://github.com/safer-r)): 1) correct `lib_path` argument
-  value 2) required functions and related packages effectively present
-  in local R libraries and 3) R classical operators (like `"<-"`) not
-  overwritten by another package because of the R scope. Must be set to
-  `FALSE` if this function is used inside another "safer" function to
-  avoid pointless multiple checkings.
+  Single logical value. Perform the "safer" checks? If `TRUE`, checkings
+  are performed before main code running (see the [safer-r
+  project](https://github.com/safer-r)): 1) required functions and
+  related packages effectively present in local R libraries and 2) R
+  classical operators (like `"<-"`) not overwritten by another package
+  because of the R scope. Warning: must be set to `FALSE` if this
+  function is used inside another "safer" function to avoid pointless
+  multiple checkings.
 
 - lib_path:
 
@@ -66,8 +66,7 @@ for_loop_nb_check(
   library paths are `unique(c(new, .Library.site, .Library))`. Warning:
   [`.libPaths()`](https://rdrr.io/r/base/libPaths.html) is restored to
   the initial paths, after function execution. Ignored if `NULL`
-  (default) or if the `safer_check` argument is `FALSE`: only the
-  pathways specified by the current
+  (default): only the pathways specified by the current
   [`.libPaths()`](https://rdrr.io/r/base/libPaths.html) are used for
   package calling.
 
@@ -188,7 +187,7 @@ fun2_safer # corrected function
 #>         base::print(x = i)
 #>     }
 #> }
-#> <environment: 0x55d3fe3f68c0>
+#> <environment: 0x561e45b71068>
 fun2_safer(x = base::character()) # warning: 1:length(x) is c(1, 0), a decreasing sequence
 #> Warning: FOR SEQUENCE DECREASING
 #> [1] 1
@@ -206,6 +205,6 @@ saferDev::for_loop_nb_check(x = fun2, export = TRUE, out_path = tempo_dir)
 #> 3    for     for (i in 1:length(x)) {
 #> 
 #> MODIFIED CODE EXPORTED IN:
-#> /tmp/Rtmp27YRnd/dir12082db8b891/fun2_safer.R
+#> /tmp/Rtmpbw7R90/dir172f1276b7aa/fun2_safer.R
 #> 
 ```

@@ -64,8 +64,6 @@
 <span>  <span class="va">term_rows</span>,</span>
 <span>  <span class="va">else_branch</span>,</span>
 <span>  <span class="va">else_tok</span>,</span>
-<span>  <span class="va">intern_error_text_start</span>,</span>
-<span>  <span class="va">intern_error_text_end</span>,</span>
 <span>  <span class="va">lib_path</span>,</span>
 <span>  <span class="va">error_text</span></span>
 <span><span class="op">)</span></span></code></pre></div>
@@ -104,7 +102,7 @@
 
 
 <dt id="arg-lib-path">lib_path<a class="anchor" aria-label="anchor" href="#arg-lib-path"></a></dt>
-<dd><p>Vector of characters specifying the absolute pathways of the directories containing the required packages for the function, if not in the default directories. Useful when R packages are not installed in the default directories because of lack of admin rights. More precisely, <code>lib_path</code> is passed through the <code>new</code> argument of <code><a href="https://rdrr.io/r/base/libPaths.html" class="external-link">.libPaths()</a></code> so that the new library paths are <code>unique(c(new, .Library.site, .Library))</code>. Warning: <code><a href="https://rdrr.io/r/base/libPaths.html" class="external-link">.libPaths()</a></code> is restored to the initial paths, after function execution. Ignored if <code>NULL</code> (default) or if the <code>safer_check</code> argument is <code>FALSE</code>: only the pathways specified by the current <code><a href="https://rdrr.io/r/base/libPaths.html" class="external-link">.libPaths()</a></code> are used for package calling.</p></dd>
+<dd><p>Vector of characters specifying the absolute pathways of the directories containing the required packages for the function, if not in the default directories. Useful when R packages are not installed in the default directories because of lack of admin rights. More precisely, <code>lib_path</code> is passed through the <code>new</code> argument of <code><a href="https://rdrr.io/r/base/libPaths.html" class="external-link">.libPaths()</a></code> so that the new library paths are <code>unique(c(new, .Library.site, .Library))</code>. Warning: <code><a href="https://rdrr.io/r/base/libPaths.html" class="external-link">.libPaths()</a></code> is restored to the initial paths, after function execution. Ignored if <code>NULL</code> (default): only the pathways specified by the current <code><a href="https://rdrr.io/r/base/libPaths.html" class="external-link">.libPaths()</a></code> are used for package calling.</p></dd>
 
 
 <dt id="arg-error-text">error_text<a class="anchor" aria-label="anchor" href="#arg-error-text"></a></dt>
