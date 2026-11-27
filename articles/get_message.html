@@ -42,7 +42,7 @@
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
 <li><a class="dropdown-item" href="../articles/all_args_here.html">all_args_here(): more examples</a></li>
     <li><a class="dropdown-item" href="../articles/arg_check.html">arg_check(): more examples</a></li>
-    <li><a class="dropdown-item" href="../articles/colons_check.html">colons_check: more examples</a></li>
+    <li><a class="dropdown-item" href="../articles/colons_check.html">colons_check(): more examples</a></li>
     <li><a class="dropdown-item" href="../articles/curly_bracket_check.html">curly_bracket_check(): more examples</a></li>
     <li><a class="dropdown-item" href="../articles/env_check.html">env_check(): more examples</a></li>
     <li><a class="dropdown-item" href="../articles/for_loop_nb_check.html">for_loop_nb_check(): more examples</a></li>
@@ -88,16 +88,13 @@
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/safer-r/saferDev" class="external-link">saferDev</a></span><span class="op">)</span></span></code></pre></div>
 <p><br></p>
-<p>These examples may not work well here because of a particular
-environment. Please, copy-paste in a local environment. <br></p>
 <div class="section level3">
 <h3 id="dataset">Dataset<a class="anchor" aria-label="anchor" href="#dataset"></a>
 </h3>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">char1</span> <span class="op">&lt;-</span> <span class="st">"wilcox.test(c(1,1,3), c(1, 2, 4), paired = TRUE)"</span> <span class="co"># string of a command to evaluate -&gt; warning message</span></span>
+<code class="sourceCode R"><span><span class="va">char1</span> <span class="op">&lt;-</span> <span class="st">"log(-1)"</span> <span class="co"># string of a command to evaluate -&gt; warning message</span></span>
 <span><span class="va">char2</span> <span class="op">&lt;-</span> <span class="st">"message('ahah')"</span> <span class="co"># idem -&gt; standard message</span></span>
-<span><span class="va">char3</span> <span class="op">&lt;-</span> <span class="st">"NOTGOOD"</span> <span class="co"># idem -&gt; error message</span></span>
-<span><span class="va">char4</span> <span class="op">&lt;-</span> <span class="st">"mean(2)"</span> <span class="co"># idem -&gt; no message</span></span></code></pre></div>
+<span><span class="va">char3</span> <span class="op">&lt;-</span> <span class="st">"NOTGOOD"</span> <span class="co"># idem -&gt; error message</span></span></code></pre></div>
 <p><br></p>
 </div>
 <div class="section level3">
@@ -105,7 +102,7 @@ environment. Please, copy-paste in a local environment. <br></p>
 </h3>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">char1</span></span></code></pre></div>
-<pre><code><span><span class="co">## [1] "wilcox.test(c(1,1,3), c(1, 2, 4), paired = TRUE)"</span></span></code></pre>
+<pre><code><span><span class="co">## [1] "log(-1)"</span></span></code></pre>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">char2</span></span></code></pre></div>
 <pre><code><span><span class="co">## [1] "message('ahah')"</span></span></code></pre>
@@ -118,7 +115,7 @@ environment. Please, copy-paste in a local environment. <br></p>
 <h3 id="simple-example">Simple example<a class="anchor" aria-label="anchor" href="#simple-example"></a>
 </h3>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># By default, get_message() returns the first error message of the evaluated string.</span></span>
+<code class="sourceCode R"><span><span class="co"># By default, get_message() returns the error message of the evaluated string.</span></span>
 <span><span class="co"># Here no error message</span></span>
 <span><span class="fu"><a href="../reference/get_message.html">get_message</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">char1</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## NULL</span></span></code></pre>
@@ -138,77 +135,87 @@ environment. Please, copy-paste in a local environment. <br></p>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># To get the last potential warning message.</span></span>
 <span><span class="fu"><a href="../reference/get_message.html">get_message</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">char1</span>, kind <span class="op">=</span> <span class="st">"warning"</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## NULL</span></span></code></pre>
+<pre><code><span><span class="co">## [1] "WARNING MESSAGE REPORTED:\nIn log(-1): NaNs produced\n"</span></span></code></pre>
 <div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># See that 2 warning messages are returned when evaluating char1.</span></span>
-<span> <span class="fu"><a href="https://rdrr.io/r/base/eval.html" class="external-link">eval</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/parse.html" class="external-link">parse</a></span><span class="op">(</span>text <span class="op">=</span> <span class="va">char1</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## </span></span>
-<span><span class="co">##  Wilcoxon signed rank exact test</span></span>
-<span><span class="co">## </span></span>
-<span><span class="co">## data:  c(1, 1, 3) and c(1, 2, 4)</span></span>
-<span><span class="co">## V = 0, p-value = 0.5</span></span>
-<span><span class="co">## alternative hypothesis: true location shift is not equal to 0</span></span></code></pre>
-<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># To get the last potential standart message (neither error nor warning).</span></span>
+<code class="sourceCode R"><span><span class="co"># To get the potential standard messages (neither error nor warning).</span></span>
 <span><span class="fu"><a href="../reference/get_message.html">get_message</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">char2</span>, kind <span class="op">=</span> <span class="st">"message"</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## ahah</span></span></code></pre>
-<pre><code><span><span class="co">## NULL</span></span></code></pre>
+<pre><code><span><span class="co">## [1] "STANDARD MESSAGE REPORTED:\nahah"</span></span></code></pre>
 <p><br></p>
 </div>
 <div class="section level3">
 <h3 id="argument-header">Argument <code>header</code><a class="anchor" aria-label="anchor" href="#argument-header"></a>
 </h3>
-<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># To get the output message without header.</span></span>
+<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># To get the output message without header: errors and warnings are then returned as formatted by R (here "Error in ..." instead of "In ...").</span></span>
 <span><span class="fu"><a href="../reference/get_message.html">get_message</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">char3</span>, header <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## [1] "Error in base::eval(expr = base::parse(text = data, file = \"\", n = NULL,  : \n  object 'NOTGOOD' not found\n"</span></span></code></pre>
-<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># To get the output message with header (by default).</span></span>
-<span><span class="fu"><a href="../reference/get_message.html">get_message</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">char3</span>, header <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> </span></code></pre></div>
+<span><span class="fu"><a href="../reference/get_message.html">get_message</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">char3</span>, header <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## [1] "ERROR MESSAGE REPORTED:\nIn base::eval(expr = base::parse(text = data, file = \"\", n = NULL,  : \n  object 'NOTGOOD' not found\n"</span></span></code></pre>
 <p><br></p>
 </div>
 <div class="section level3">
 <h3 id="argument-print_no">Argument <code>print_no</code><a class="anchor" aria-label="anchor" href="#argument-print_no"></a>
 </h3>
-<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Print a message when no "kind" message returned.</span></span>
+<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Return a "NO ... REPORTED" string instead of NULL when nothing is caught.</span></span>
 <span><span class="fu"><a href="../reference/get_message.html">get_message</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">char1</span>, print_no <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## [1] "NO ERROR MESSAGE REPORTED"</span></span></code></pre>
-<div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Example with potential returned warning message.</span></span>
-<span><span class="fu"><a href="../reference/get_message.html">get_message</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">char2</span>, kind <span class="op">=</span> <span class="st">"warning"</span>, print_no <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> </span></code></pre></div>
-<pre><code><span><span class="co">## ahah</span></span></code></pre>
+<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Here no warning message.</span></span>
+<span><span class="fu"><a href="../reference/get_message.html">get_message</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">char2</span>, kind <span class="op">=</span> <span class="st">"warning"</span>, print_no <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## [1] "NO WARNING MESSAGE REPORTED"</span></span></code></pre>
 <p><br></p>
 </div>
 <div class="section level3">
 <h3 id="argument-text">Argument <code>text</code><a class="anchor" aria-label="anchor" href="#argument-text"></a>
 </h3>
-<div class="sourceCode" id="cb31"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># String added to the output message, even if nothing reported (when print_no = TRUE).</span></span>
+<div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># String inserted in the header of the output message (before the colon), and added to the "NO ... REPORTED" strings.</span></span>
 <span><span class="co"># Useful when used inside a function to name it.</span></span>
-<span><span class="fu"><a href="../reference/get_message.html">get_message</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">char3</span>, text <span class="op">=</span> <span class="st">"IN MY EXECUTION"</span><span class="op">)</span> </span></code></pre></div>
+<span><span class="fu"><a href="../reference/get_message.html">get_message</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">char3</span>, text <span class="op">=</span> <span class="st">"IN MY EXECUTION"</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## [1] "ERROR MESSAGE REPORTED IN MY EXECUTION:\nIn base::eval(expr = base::parse(text = data, file = \"\", n = NULL,  : \n  object 'NOTGOOD' not found\n"</span></span></code></pre>
 <p><br></p>
 </div>
 <div class="section level3">
 <h3 id="argument-env">Argument <code>env</code><a class="anchor" aria-label="anchor" href="#argument-env"></a>
 </h3>
-<div class="sourceCode" id="cb33"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Evaluation only in the indicated environment.</span></span>
-<span><span class="fu"><a href="../reference/get_message.html">get_message</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">char1</span>, env <span class="op">=</span> <span class="va">.GlobalEnv</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## NULL</span></span></code></pre>
-<div class="sourceCode" id="cb35"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/get_message.html">get_message</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">char1</span>, kind <span class="op">=</span> <span class="st">"warning"</span>, env <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/ns-internal.html" class="external-link">asNamespace</a></span><span class="op">(</span><span class="st">"stats"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## NULL</span></span></code></pre>
+<div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># The instruction is evaluated in env: Pillai() is an internal function of the stats package.</span></span>
+<span><span class="fu">saferDev</span><span class="fu">::</span><span class="fu"><a href="../reference/get_message.html">get_message</a></span><span class="op">(</span></span>
+<span>    data <span class="op">=</span> <span class="st">"Pillai(eig = 1, q = 1, df.res = 1)"</span>,</span>
+<span>    kind <span class="op">=</span> <span class="st">"error"</span>,</span>
+<span>    header <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>    print_no <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>    text <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>    env <span class="op">=</span> <span class="fu">base</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/base/ns-internal.html" class="external-link">asNamespace</a></span><span class="op">(</span>ns <span class="op">=</span> <span class="st">"stats"</span>, base.OK <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>,</span>
+<span>    safer_check <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>    lib_path <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>    error_text <span class="op">=</span> <span class="st">""</span></span>
+<span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">## [1] "NO ERROR MESSAGE REPORTED"</span></span></code></pre>
+<div class="sourceCode" id="cb31"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># In the global environment, Pillai() is not found.</span></span>
+<span><span class="fu">saferDev</span><span class="fu">::</span><span class="fu"><a href="../reference/get_message.html">get_message</a></span><span class="op">(</span></span>
+<span>    data <span class="op">=</span> <span class="st">"Pillai(eig = 1, q = 1, df.res = 1)"</span>,</span>
+<span>    kind <span class="op">=</span> <span class="st">"error"</span>,</span>
+<span>    header <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>    print_no <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>    text <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>    env <span class="op">=</span> <span class="fu">base</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/base/environment.html" class="external-link">globalenv</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>    safer_check <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>    lib_path <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>    error_text <span class="op">=</span> <span class="st">""</span></span>
+<span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">## [1] "ERROR MESSAGE REPORTED:\nIn Pillai(eig = 1, q = 1, df.res = 1) : \n  could not find function \"Pillai\"\n"</span></span></code></pre>
 <p><br></p>
 </div>
 <div class="section level3">
 <h3 id="argument-safer_check">Argument <code>safer_check</code><a class="anchor" aria-label="anchor" href="#argument-safer_check"></a>
 </h3>
-<div class="sourceCode" id="cb37"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Safer checkings are performed before main code running.</span></span>
+<div class="sourceCode" id="cb33"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Safer checks are performed before running the main code.</span></span>
 <span><span class="fu"><a href="../reference/get_message.html">get_message</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">char2</span>, safer_check <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## NULL</span></span></code></pre>
 <p><br></p>
@@ -216,8 +223,8 @@ environment. Please, copy-paste in a local environment. <br></p>
 <div class="section level3">
 <h3 id="argument-lib_path">Argument <code>lib_path</code><a class="anchor" aria-label="anchor" href="#argument-lib_path"></a>
 </h3>
-<div class="sourceCode" id="cb39"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># The "NOTGOOD" path does not exists.</span></span>
+<div class="sourceCode" id="cb35"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># The "NOTGOOD" path does not exist.</span></span>
 <span><span class="fu"><a href="../reference/get_message.html">get_message</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">char2</span>, lib_path <span class="op">=</span> <span class="st">"NOTGOOD"</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## <span style="color: #BBBB00; font-weight: bold;">Error</span><span style="font-weight: bold;">:</span></span></span>
 <span><span class="co">## <span style="color: #BBBB00;">!</span> </span></span>
@@ -235,11 +242,11 @@ environment. Please, copy-paste in a local environment. <br></p>
 <div class="section level3">
 <h3 id="argument-error_text">Argument <code>error_text</code><a class="anchor" aria-label="anchor" href="#argument-error_text"></a>
 </h3>
-<div class="sourceCode" id="cb41"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb37"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Add a text in error messages returned by get_message().</span></span>
 <span><span class="fu"><a href="../reference/get_message.html">get_message</a></span><span class="op">(</span></span>
-<span>    data <span class="op">=</span> <span class="va">char2</span>, </span>
-<span>    lib_path <span class="op">=</span> <span class="st">"NOTGOOD"</span>, </span>
+<span>    data <span class="op">=</span> <span class="va">char2</span>,</span>
+<span>    lib_path <span class="op">=</span> <span class="st">"NOTGOOD"</span>,</span>
 <span>    error_text <span class="op">=</span> <span class="st">" === TEXT ADDED ==="</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## <span style="color: #BBBB00; font-weight: bold;">Error</span><span style="font-weight: bold;">:</span></span></span>
@@ -258,19 +265,32 @@ environment. Please, copy-paste in a local environment. <br></p>
 <div class="section level3">
 <h3 id="all-the-arguments">All the arguments<a class="anchor" aria-label="anchor" href="#all-the-arguments"></a>
 </h3>
-<div class="sourceCode" id="cb43"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb39"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/get_message.html">get_message</a></span><span class="op">(</span></span>
 <span>    data <span class="op">=</span> <span class="va">char1</span>, <span class="co"># instruction to evaluate.</span></span>
 <span>    kind <span class="op">=</span> <span class="st">"warning"</span>, <span class="co"># kind of message to report.</span></span>
 <span>    header <span class="op">=</span> <span class="cn">FALSE</span>, <span class="co"># add a header in the returned message?</span></span>
-<span>    print_no <span class="op">=</span> <span class="cn">TRUE</span>, <span class="co"># print a message saying that nothing has to be reported?</span></span>
-<span>    text <span class="op">=</span> <span class="st">"IN A"</span>, <span class="co"># string added to the output message (even if nothing reported).</span></span>
+<span>    print_no <span class="op">=</span> <span class="cn">TRUE</span>, <span class="co"># return a "NO ... REPORTED" string instead of NULL when nothing is caught?</span></span>
+<span>    text <span class="op">=</span> <span class="st">"IN A"</span>, <span class="co"># string added to the header (not used here, because header = FALSE) and to the "NO ... REPORTED" strings.</span></span>
 <span>    env <span class="op">=</span> <span class="cn">NULL</span>, <span class="co"># existing environment where to evaluate the instruction.</span></span>
 <span>    safer_check <span class="op">=</span> <span class="cn">TRUE</span>, <span class="co"># perform some "safer" checks (see https://github.com/safer-r)?</span></span>
 <span>    lib_path <span class="op">=</span> <span class="cn">NULL</span>, <span class="co"># where the required packages are if not in the default directories.</span></span>
 <span>    error_text <span class="op">=</span> <span class="st">""</span> <span class="co"># add information in error messages returned by the function.</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## [1] "NO WARNING MESSAGE REPORTED IN A"</span></span></code></pre>
+<pre><code><span><span class="co">## [1] "simpleWarning in log(-1): NaNs produced\n"</span></span></code></pre>
+<p><br></p>
+</div>
+<div class="section level3">
+<h3 id="printed-outputs">Printed outputs<a class="anchor" aria-label="anchor" href="#printed-outputs"></a>
+</h3>
+<div class="sourceCode" id="cb41"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># The instruction is evaluated once. Its printed outputs are not caught: use utils::capture.output() to get them.</span></span>
+<span><span class="va">printed</span> <span class="op">&lt;-</span> <span class="fu">utils</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/utils/capture.output.html" class="external-link">capture.output</a></span><span class="op">(</span><span class="va">msg</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_message.html">get_message</a></span><span class="op">(</span>data <span class="op">=</span> <span class="st">"print(1) ; log(-1)"</span>, kind <span class="op">=</span> <span class="st">"warning"</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">printed</span></span></code></pre></div>
+<pre><code><span><span class="co">## [1] "[1] 1"</span></span></code></pre>
+<div class="sourceCode" id="cb43"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">msg</span></span></code></pre></div>
+<pre><code><span><span class="co">## [1] "WARNING MESSAGE REPORTED:\nIn log(-1): NaNs produced\n"</span></span></code></pre>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside>
@@ -279,7 +299,7 @@ environment. Please, copy-paste in a local environment. <br></p>
 
 
     <footer><div class="pkgdown-footer-left">
-  <p>Developed by Gael Millot.</p>
+  <p>Developed by <a href="https://github.com/Tintin2710" class="external-link">Haiding Wang</a>, <a href="https://github.com/yushiHn" class="external-link">Yushi Han</a>, Mia Legras, Gael Millot.</p>
 </div>
 
 <div class="pkgdown-footer-right">

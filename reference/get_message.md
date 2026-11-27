@@ -1,11 +1,8 @@
-# Get Message
+# Catch the Error, Warning or Message of an Instruction
 
-Evaluate an instruction written between `""` and return the first of the
-error message, or the last of the warning or standard (non error non
-warning) messages if ever exist.
-
-Using argument `print_no = FALSE`, return `NULL` if nothing reported,
-which is convenient in some cases.
+Evaluates an instruction written as a character string, and returns its
+error message, its last warning message or its standard messages
+(neither errors nor warnings), as a single character string.
 
 ## Usage
 
@@ -27,108 +24,95 @@ get_message(
 
 - data:
 
-  Single character string of an instruction to evaluate
+  Single character string: the instruction to evaluate.
 
 - kind:
 
-  Single character string. Either `"error"` to get a potential error
-  message, or `"warning"` to get a potential warning message, or
-  `"message"` to get a potential standard (non error and non warning)
-  message.
+  Single character string: the kind of message returned, either
+  `"error"` (default), `"warning"` or `"message"` (standard messages).
 
 - header:
 
-  Single logical value. Add a header in the returned message?
+  Single logical value. Start the returned message with a header
+  (`"ERROR MESSAGE REPORTED:"`, `"WARNING MESSAGE REPORTED:"` or
+  `"STANDARD MESSAGE REPORTED:"`)? If `FALSE`, errors and warnings are
+  returned as formatted by R (e.g.,
+  `"simpleWarning in log(-1): NaNs produced"` instead of
+  `"In log(-1): NaNs produced"`).
 
 - print_no:
 
-  Single logical value. Print a message saying that nothing (`NULL`
-  output) has to be reported?
+  Single logical value. If `TRUE`, a `"NO ... REPORTED"` string is
+  returned instead of `NULL` when nothing is caught (see the returned
+  value).
 
 - text:
 
-  Single character string added to the header of the output message,
-  even if nothing reported (`print_no` is `TRUE`). Ignored if the
-  `header` argument is `FALSE`. Write `NULL` if not required.
+  Single character string inserted at the end of the header, before the
+  colon (e.g., `"ERROR MESSAGE REPORTED IN A:"` with `text = "IN A"`),
+  and added to the `"NO ... REPORTED"` strings whatever `header`. `NULL`
+  (default) for no text.
 
 - env:
 
-  An object corresponding to an existing environment. Then the `data`
-  argument value is evaluated only in the indicated environment. Write
-  `NULL` if not required (R scope is used). Example `env = .GlobalEnv`.
-  Example `env = asNamespace("stats")`.
+  Environment in which the instruction is evaluated (e.g., `.GlobalEnv`
+  or `asNamespace("stats")`). If `NULL` (default), the environment from
+  which `get_message()` is called.
 
 - safer_check:
 
-  Single logical value. Perform the "safer" checks? If `TRUE`, checkings
-  are performed before main code running (see the [safer-r
-  project](https://github.com/safer-r)): 1) required functions and
-  related packages effectively present in local R libraries and 2) R
-  classical operators (like `"<-"`) not overwritten by another package
-  because of the R scope. Warning: must be set to `FALSE` if this
-  function is used inside another "safer" function to avoid pointless
-  multiple checkings.
+  Single logical value. If `TRUE` (default), checks before running that
+  the required packages and functions are installed and that the
+  classical R operators (like `<-`) are not masked by another package or
+  by a user-defined object of the global environment. These checks take
+  time at each call: set `FALSE` in loops and inside other safer-r
+  functions, to avoid repeating them.
 
 - lib_path:
 
-  Vector of characters specifying the absolute pathways of the
-  directories containing the required packages for the function, if not
-  in the default directories. Useful when R packages are not installed
-  in the default directories because of lack of admin rights. More
-  precisely, `lib_path` is passed through the `new` argument of
-  [`.libPaths()`](https://rdrr.io/r/base/libPaths.html) so that the new
-  library paths are `unique(c(new, .Library.site, .Library))`. Warning:
-  [`.libPaths()`](https://rdrr.io/r/base/libPaths.html) is restored to
-  the initial paths, after function execution. Ignored if `NULL`
-  (default): only the pathways specified by the current
-  [`.libPaths()`](https://rdrr.io/r/base/libPaths.html) are used for
-  package calling.
+  Vector of character strings: paths of existing extra library folders
+  containing the required packages (e.g., packages installed without
+  admin rights). They are searched after the current
+  [`.libPaths()`](https://rdrr.io/r/base/libPaths.html) during the call
+  (the current libraries keep priority), and
+  [`.libPaths()`](https://rdrr.io/r/base/libPaths.html) is restored on
+  exit. If `NULL` (default), only the current
+  [`.libPaths()`](https://rdrr.io/r/base/libPaths.html) are used.
 
 - error_text:
 
-  Single character string used to add information in error messages
-  returned by the function, notably if the function is inside other
-  functions, which is practical for debugging. Example:
-  `error_text = " INSIDE <PACKAGE_1>::<FUNCTION_1> INSIDE <PACKAGE_2>::<FUNCTION_2>."`.
-  If `NULL`, converted into `""`.
+  Single character string added to the error messages (e.g.,
+  `" INSIDE pkg1::fun1()"`) to name the calling functions. `NULL` is
+  converted into `""`.
 
 ## Value
 
-The function returns the error, warning, or standard message, as a
-single character string, depending on what has been selected using the
-`kind` argument and if such message exists.
+A single character string: the error message (`kind = "error"`), the
+last warning message (`kind = "warning"`), or all the standard messages,
+separated by line breaks (`kind = "message"`).
 
-`NULL` if no selected message returned and the `print_no` argument is
-`FALSE`.
-
-The following message if no selected message returned and the `print_no`
-argument is `TRUE`: `"NO (ERROR|WARNING|STANDARD) MESSAGE REPORTED"`.
-
-The following message if 1) the `kind` argument is `"warning"` or
-`"message"` while an error message is returned and 2) the `print_no`
-argument is `TRUE`:
+If no such message is caught: `NULL` or, with `print_no = TRUE`,
+`"NO (ERROR|WARNING|STANDARD) MESSAGE REPORTED"`. If the instruction
+stops with an error while `kind` is `"warning"` or `"message"`, the
+warnings and messages emitted before the error are not returned: `NULL`
+or, with `print_no = TRUE`,
 `"NO POTENTIAL (WARNING|STANDARD) MESSAGE BECAUSE OF ERROR MESSAGE REPORTED"`.
 
 ## Details
 
-Warnings:
+The instruction is evaluated once, whatever `kind`. Its warnings and
+standard messages are caught and not displayed. Its printed outputs
+(e.g., by [`print()`](https://rdrr.io/r/base/print.html) or `show()`)
+are not caught: use
+`printed <- utils::capture.output(msg <- get_message(data = "print(1) ; log(-1)", kind = "warning"))`
+to get them in `printed`. Text written directly to the standard error
+(e.g., by `cat(file = stderr())`) is not caught either: use
+`utils::capture.output(type = "message")` to get it.
 
-- Only the first error or last warning/standard message is returned.
-
-- Always use the `env` argument when `get_message()` is used inside
-  functions.
-
-- The function does not prevent printing, for instance if
-  [`print()`](https://rdrr.io/r/base/print.html) or `show()` is used
-  inside the instruction tested. To prevent that, use
-  `tempo <- utils::capture.output(error <- get_message(data = "arg_check(data = 'a', class = mean, neg_values = FALSE, print = TRUE)"))`.
-  The return of `get_message()` is assigned into `error` and the printed
-  messages are captured by
-  [`utils::capture.output()`](https://rdrr.io/r/utils/capture.output.html)
-  and assigned into `tempo`. See the examples.
-
-The `env` argument is used as value for the `envir` argument of the
-[`base::eval()`](https://rdrr.io/r/base/eval.html) function.
+Plots are drawn on a NULL pdf device (no file created), and the graphic
+devices left open by the instruction are closed. A ggplot2 object
+returned by the instruction is printed, to catch the errors, warnings
+and messages emitted when the plot is built.
 
 ## See also
 
@@ -145,48 +129,54 @@ Yushi Han
 ## Examples
 
 ``` r
-# Warning: these examples may not work well when using the "Run examples" link 
-# because of a particular environment. Please, copy-paste in a local environment.
 # See also https://safer-r.github.io/saferDev/articles/get_message.html
 
-# Report error message by default. Here no error to report:
-saferDev::get_message(data = "wilcox.test(c(1,1,3), c(1, 2, 4), paired = TRUE)")
+# Error message returned by default. Here no error to report:
+saferDev::get_message(data = "base::log(-1)", kind = "error", header = TRUE, print_no = FALSE,
+    text = NULL, env = NULL, safer_check = TRUE, lib_path = NULL, error_text = "")
 #> NULL
 
 # Warning message to report:
-saferDev::get_message(data = "wilcox.test(c(1,1,3), c(1, 2, 4), paired = TRUE)", kind = "warning")
-#> NULL
+saferDev::get_message(data = "base::log(-1)", kind = "warning", header = TRUE, print_no = FALSE,
+    text = NULL, env = NULL, safer_check = TRUE, lib_path = NULL, error_text = "")
+#> [1] "WARNING MESSAGE REPORTED:\nIn base::log(-1): NaNs produced\n"
 
 # No standard message to report:
-saferDev::get_message(data = "wilcox.test(c(1,1,3), c(1, 2, 4), paired = TRUE)", kind = "message", 
-print_no = TRUE, text = "IN A")
+saferDev::get_message(data = "base::log(-1)", kind = "message", header = TRUE, print_no = TRUE,
+    text = "IN A", env = NULL, safer_check = TRUE, lib_path = NULL, error_text = "")
 #> [1] "NO STANDARD MESSAGE REPORTED IN A"
 
-# Standard message cannot be caught because wilcox.test() returns an error message:
-saferDev::get_message(data = "wilcox.test()", kind = "message", print_no = TRUE, text = "IN A")
+# No standard message returned, because wilcox.test() stops with an error:
+saferDev::get_message(data = "wilcox.test()", kind = "message", header = TRUE, print_no = TRUE,
+    text = "IN A", env = NULL, safer_check = TRUE, lib_path = NULL, error_text = "")
 #> [1] "NO POTENTIAL STANDARD MESSAGE BECAUSE OF ERROR MESSAGE REPORTED IN A"
 
-# Text added in warning message to report:
-saferDev::get_message(data = "wilcox.test()", kind = "error", print_no = TRUE, text = "IN A")
+# Error message to report, with text added:
+saferDev::get_message(data = "wilcox.test()", kind = "error", header = TRUE, print_no = TRUE,
+    text = "IN A", env = NULL, safer_check = TRUE, lib_path = NULL, error_text = "")
 #> [1] "ERROR MESSAGE REPORTED IN A:\nIn wilcox.test.default() : argument \"x\" is missing, with no default\n"
 
-# No error message to report with text added:
-saferDev::get_message(data = "sum(1)", kind = "error", print_no = TRUE, text = "IN A")
+# No error message to report, with text added:
+saferDev::get_message(data = "sum(1)", kind = "error", header = TRUE, print_no = TRUE,
+    text = "IN A", env = NULL, safer_check = TRUE, lib_path = NULL, error_text = "")
 #> [1] "NO ERROR MESSAGE REPORTED IN A"
 
-# No error message to report with text added:
-saferDev::get_message(data = "message('ahah')", kind = "error", print_no = TRUE, text = "IN A")
+# A standard message is not reported with kind = "error":
+saferDev::get_message(data = "message('ahah')", kind = "error", header = TRUE, print_no = TRUE,
+    text = "IN A", env = NULL, safer_check = TRUE, lib_path = NULL, error_text = "")
 #> [1] "NO ERROR MESSAGE REPORTED IN A"
 
-# Standard message reported with text added:
-saferDev::get_message(data = "message('ahah')", kind = "message", print_no = TRUE, text = "IN A")
-#> ahah
-#> [1] "NO STANDARD MESSAGE REPORTED IN A"
+# Standard message to report, with text added:
+saferDev::get_message(data = "message('ahah')", kind = "message", header = TRUE, print_no = TRUE,
+    text = "IN A", env = NULL, safer_check = TRUE, lib_path = NULL, error_text = "")
+#> [1] "STANDARD MESSAGE REPORTED IN A:\nahah"
 
-# Messages from ggplot2 functions caugth:
-saferDev::get_message(data = "ggplot2::ggplot(data = data.frame(X = 1:10, stringsAsFactors = TRUE), 
-mapping = ggplot2::aes(x = X)) + ggplot2::geom_histogram()", kind = "message", 
-print_no = TRUE, text = "IN INSTRUCTION 1")
-#> `stat_bin()` using `bins = 30`. Pick better value `binwidth`.
-#> [1] "NO STANDARD MESSAGE REPORTED IN INSTRUCTION 1"
+# Messages of a ggplot2 plot caught:
+if(base::requireNamespace(package = "ggplot2", quietly = TRUE)){
+    saferDev::get_message(data = "ggplot2::ggplot(data = data.frame(X = 1:10,
+        stringsAsFactors = TRUE), mapping = ggplot2::aes(x = X)) + ggplot2::geom_histogram()",
+        kind = "message", header = TRUE, print_no = TRUE, text = "IN INSTRUCTION 1", env = NULL,
+        safer_check = TRUE, lib_path = NULL, error_text = "")
+}
+#> [1] "STANDARD MESSAGE REPORTED IN INSTRUCTION 1:\n\033[1m\033[22m`stat_bin()` using `bins = 30`. Pick better value `binwidth`."
 ```

@@ -2,11 +2,13 @@
 
 ## Authors
 
-- **[Haiding Wang](https://github.com/Tintin2710)**. Contributor.
+- **[Haiding Wang](https://github.com/Tintin2710)**. Author.
 
-- **[Yushi Han](https://github.com/yushiHn)**. Contributor.
+- **[Yushi Han](https://github.com/yushiHn)**. Author.
 
-- **Mia Legras**. Contributor.
+- **Mia Legras**. Author.
+
+- **Jacques Serizay**. Contributor.
 
 - **Gael Millot**. Author, maintainer.
   [](https://orcid.org/0000-0002-0591-3509)
@@ -16,13 +18,13 @@
 Source:
 [`DESCRIPTION`](https://github.com/safer-r/saferDev/blob/main/DESCRIPTION)
 
-Millot G (2026). *saferDev: Checking Tools for Safer R Function
-Development*. R package version 3.0.0,
+Wang H, Han Y, Legras M, Millot G (2026). *saferDev: Checking Tools for
+Safer R Function Development*. R package version 3.0.0,
 <https://github.com/safer-r/saferDev>.
 
     @Manual{,
       title = {saferDev: Checking Tools for Safer R Function Development},
-      author = {Gael Millot},
+      author = {Haiding Wang and Yushi Han and Mia Legras and Gael Millot},
       year = {2026},
       note = {R package version 3.0.0},
       url = {https://github.com/safer-r/saferDev},

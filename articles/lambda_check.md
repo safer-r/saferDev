@@ -16,7 +16,7 @@ library(saferDev)
 # Warning: the \(x) lambda writing is only kept in the code of a function carrying its source references (srcref). The functions are therefore built with base::parse(keep.source = TRUE) followed by base::eval(), whatever the value of base::getOption("keep.source").
 # Function with all the anonymous functions written with the standard function() writing.
 fun1 <- eval(parse(text = "function(x){ base::sapply(X = 1:3, FUN = function(y){ y * 2 }) }", keep.source = TRUE))
-# Function with some anonymous functions written with the lambda writing \\().
+# Function with some anonymous functions written with the lambda writing \(x).
 fun2 <- eval(parse(text = "function(x){ base::sapply(X = 1:3, FUN = \\(y){ y * 2 }) ; base::lapply(X = x, FUN = \\(z) z + 1) }", keep.source = TRUE))
 ```
 
@@ -77,7 +77,7 @@ lambda_check(x = fun2)
 
 ``` r
 
-# Safer checkings are performed before main code running.
+# Safer checks are performed before running the main code.
 lambda_check(
     x = fun1, 
     safer_check = TRUE
@@ -95,7 +95,7 @@ lambda_check(
 
 ``` r
 
-# The "NOTGOOD" path does not exists.
+# The "NOTGOOD" path does not exist.
 lambda_check(
     x = fun1,  
     lib_path = "NOTGOOD"
@@ -146,7 +146,7 @@ lambda_check(
 
 ``` r
 
-# The corrected function is returned (NULL if nothing has to be corrected).
+# The corrected function is returned (NULL, invisibly, if nothing has to be corrected).
 fun2_safer <- lambda_check(x = fun2)
 ```
 
@@ -161,7 +161,7 @@ fun2_safer <- lambda_check(x = fun2)
 
 ``` r
 
-fun2_safer # \\() replaced by function().
+fun2_safer # \(y) and \(z) replaced by function(y) and function(z).
 ```
 
     ## function(x){ base::sapply(X = 1:3, FUN = function(y){ y * 2 }) ; base::lapply(X = x, FUN = function(z) z + 1) }
@@ -197,7 +197,7 @@ lambda_check(x = fun2_safer)
 ``` r
 
 # Export the corrected function into the fun2_safer.R file, here in a new temporary folder.
-# out_path = "." (default) is the R working directory.
+# out_path (NULL by default) is required when export = TRUE.
 # An existing file is never overwritten (an error is returned instead).
 tempo_dir <- base::tempfile(pattern = "dir", tmpdir = base::tempdir(), fileext = "")
 base::dir.create(path = tempo_dir, showWarnings = TRUE, recursive = FALSE, mode = "0777")
@@ -218,7 +218,7 @@ lambda_check(
     ## 1    \(z)        function(x){ base::sapply(X = 1:3, FUN = \(y){ y * 2 }) ; base::lapply(X = x, FUN = \(z) z + 1) }
 
     ## MODIFIED CODE EXPORTED IN:
-    ## /tmp/RtmpqLUdnb/dir1c8d1e6c00c5/fun2_safer.R
+    ## /tmp/RtmpQyi05a/dir15ab541291a8/fun2_safer.R
 
 ``` r
 
@@ -237,7 +237,7 @@ base::readLines(con = base::file.path(tempo_dir, "fun2_safer.R", fsep = "/"))
 lambda_check(
     x = fun1, # function name to test.
     export = FALSE, # write the corrected function into a .R file instead of returning it?
-    out_path = ".", # folder where to write the file (used only if export = TRUE).
+    out_path = NULL, # folder where to write the file (required if export = TRUE).
     safer_check = TRUE, # perform some "safer" checks (see https://github.com/safer-r)?
     lib_path = NULL, # where the required packages are if not in the default directories.
     error_text = "" # add information in error messages returned by the function.
@@ -255,31 +255,25 @@ lambda_check(
 
 ``` r
 
-# A lambda written in a string or in a comment is ignored.
-fun3 <- eval(parse(text = "function(x){ if(x > 1){ y <- \"the \\(x) writing in a string\" } ; x }", keep.source = TRUE))
+# A \( written in a string, a comment or a backquoted name is not a lambda writing: ignored.
+fun3 <- eval(parse(text = "function(x){\n    y <- \"the \\\\(x) writing in a string\" # a \\(x) in a comment\n    `\\\\(z)` <- 1\n    x\n}", keep.source = TRUE))
+fun3
 ```
 
-    ## Error:
-    ## ! '\(' is an unrecognized escape in character string (<text>:1:36)
+    ## function(x){
+    ##     y <- "the \\(x) writing in a string" # a \(x) in a comment
+    ##     `\\(z)` <- 1
+    ##     x
+    ## }
 
 ``` r
 
 lambda_check(x = fun3)
 ```
 
-    ## Error:
-    ## ! object 'fun3' not found
-
-``` r
-
-# The backquoted `\\` call (the deprecated function() writing) is not a lambda writing: ignored.
-fun4 <- eval(parse(text = "function(x){ base::`\\\\`(x) }", keep.source = TRUE))
-lambda_check(x = fun4)
-```
-
     ## 
     ## 
     ## AFTER RUNNING saferDev::lambda_check().
-    ## INSIDE fun4(), EVERYTHING SEEMS CLEAN.
+    ## INSIDE fun3(), EVERYTHING SEEMS CLEAN.
 
 \

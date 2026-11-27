@@ -1,4 +1,4 @@
-# Function for All Arguments Here
+# Insert the Missing Arguments into a Function
 
 Insert the missing arguments detected by
 [`all_args_here()`](all_args_here.md) into the printed code of the
@@ -20,42 +20,33 @@ modified function.
 
 - out:
 
-  List returned by [`.functions_detect()`](dot-functions_detect.md):
-  `$code`, `$fun_names`, `$fun_names_pos`, `$code_line_nb`,
-  `$internal_fun_names` and `$arg_user_setting`. The `$code` compartment
-  is the normalized code read by [`all_args_here()`](all_args_here.md)
-  and must have the same line indexing as the `$LINE_NB` column of the
-  `output` data frame.
+  List returned by [`.functions_detect()`](dot-functions_detect.md).
+  Only its `$code` compartment is used: the normalized code read by
+  [`all_args_here()`](all_args_here.md), which must have the same line
+  indexing as the `$LINE_NB` column of the `output` data frame.
 
 - output:
 
-  Data frame returned by the main code of
+  Data frame built by the main code of
   [`all_args_here()`](all_args_here.md): the `$LINE_NB`, `$FUN_NAME`,
   `$FUN_POS`, `$DEF_ARGS`, `$MISSING_ARGS` and `$STATUS` columns are
-  used to apply the corrections (`$FUN_ARGS` is not used).
+  used to apply the corrections (`$FUN_ARGS` is not used). The optional
+  `$NO_INSERT` column gives, for each call, the reason why its proposal
+  must not be inserted (`"pipe"`, `"dots"`, `"empty_arg"`, `"nargs"`,
+  `"generic_dispatch"`, `"generic_first_arg"`, `"method_args"`,
+  `"method_partial"` or `"builtin_empty"`), or `""`.
 
 - lib_path:
 
-  Vector of characters specifying the absolute pathways of the
-  directories containing the required packages for the function, if not
-  in the default directories. Useful when R packages are not installed
-  in the default directories because of lack of admin rights. More
-  precisely, `lib_path` is passed through the `new` argument of
-  [`.libPaths()`](https://rdrr.io/r/base/libPaths.html) so that the new
-  library paths are `unique(c(new, .Library.site, .Library))`. Warning:
-  [`.libPaths()`](https://rdrr.io/r/base/libPaths.html) is restored to
-  the initial paths, after function execution. Ignored if `NULL`
-  (default): only the pathways specified by the current
-  [`.libPaths()`](https://rdrr.io/r/base/libPaths.html) are used for
-  package calling.
+  Vector of character strings or `NULL`: the `lib_path` value of the
+  calling exported function, only passed on to
+  [`arg_check()`](arg_check.md). No default value.
 
 - error_text:
 
-  Single character string used to add information in error messages
-  returned by the function, notably if the function is inside other
-  functions, which is practical for debugging. Example:
-  `error_text = " INSIDE <PACKAGE_1>::<FUNCTION_1> INSIDE <PACKAGE_2>::<FUNCTION_2>."`.
-  If `NULL`, converted into `""`.
+  Single character string added to the error messages to name the
+  calling functions (`embed_error_text` of the calling function). `NULL`
+  is converted into `""`. No default value.
 
 ## Value
 

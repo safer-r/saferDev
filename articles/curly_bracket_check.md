@@ -148,7 +148,7 @@ curly_bracket_check(x = fun2)
 
 ``` r
 
-# Safer checkings are performed before main code running.
+# Safer checks are performed before running the main code.
 curly_bracket_check(
     x = fun1, 
     safer_check = TRUE
@@ -166,7 +166,7 @@ curly_bracket_check(
 
 ``` r
 
-# The "NOTGOOD" path does not exists.
+# The "NOTGOOD" path does not exist.
 curly_bracket_check(
     x = fun1,  
     lib_path = "NOTGOOD"
@@ -217,7 +217,7 @@ curly_bracket_check(
 
 ``` r
 
-# The corrected function is returned (NULL if nothing has to be corrected).
+# The corrected function is returned (NULL, invisibly, if nothing has to be corrected).
 fun2_safer <- curly_bracket_check(x = fun2)
 ```
 
@@ -279,7 +279,7 @@ curly_bracket_check(x = fun2_safer)
 ``` r
 
 # Export the corrected function into the fun2_safer.R file, here in a new temporary folder.
-# out_path = "." (default) is the R working directory.
+# out_path (NULL by default) is required when export = TRUE.
 # An existing file is never overwritten (an error is returned instead).
 tempo_dir <- base::tempfile(pattern = "dir", tmpdir = base::tempdir(), fileext = "")
 base::dir.create(path = tempo_dir, showWarnings = TRUE, recursive = FALSE, mode = "0777")
@@ -304,7 +304,7 @@ curly_bracket_check(
     ## 9    function        base::sapply(X = 1:3, FUN = function(y) y * 2)
 
     ## MODIFIED CODE EXPORTED IN:
-    ## /tmp/Rtmp6jb4vU/dir1ad1439dee53/fun2_safer.R
+    ## /tmp/RtmpKV30CF/dir143d6c282059/fun2_safer.R
 
 ``` r
 
@@ -332,7 +332,7 @@ base::readLines(con = base::file.path(tempo_dir, "fun2_safer.R", fsep = "/"))
 curly_bracket_check(
     x = fun1, # function name to test.
     export = FALSE, # write the corrected function into a .R file instead of returning it?
-    out_path = ".", # folder where to write the file (used only if export = TRUE).
+    out_path = NULL, # folder where to write the file (required if export = TRUE).
     safer_check = TRUE, # perform some "safer" checks (see https://github.com/safer-r)?
     lib_path = NULL, # where the required packages are if not in the default directories.
     error_text = "" # add information in error messages returned by the function.

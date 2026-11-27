@@ -17,8 +17,8 @@
 <link href="deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
 <script src="deps/headroom-0.11.0/headroom.min.js"></script><script src="deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="deps/search-1.0.0/fuse.min.js"></script><script src="deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="pkgdown.js"></script><link href="extra.css" rel="stylesheet">
 <meta property="og:title" content="Checking Tools for Safer R Function Development">
-<meta name="description" content="Set of functions that check and correct the code of R functions according to the safer-r project recommendations (see &lt;https://github.com/safer-r&gt;): argument value checking, explicit package namespace qualification of the function calls, complete writing of the arguments of the called functions, curly brackets around the bodies of if, else, for, while, repeat and function, TRUE and FALSE written in full, controlled for() loop sequences and standard function() writing of lambda functions. The corrected function is returned or written into a file. Other functions check the R scope, catch messages, check the presence of packages and functions, and write log files.">
-<meta property="og:description" content="Set of functions that check and correct the code of R functions according to the safer-r project recommendations (see &lt;https://github.com/safer-r&gt;): argument value checking, explicit package namespace qualification of the function calls, complete writing of the arguments of the called functions, curly brackets around the bodies of if, else, for, while, repeat and function, TRUE and FALSE written in full, controlled for() loop sequences and standard function() writing of lambda functions. The corrected function is returned or written into a file. Other functions check the R scope, catch messages, check the presence of packages and functions, and write log files.">
+<meta name="description" content="Functions that check the code of R functions according to the recommendations of the safer-r project (see &lt;https://github.com/safer-r&gt;), and correct it when possible: no super-assignment, standard function() writing of lambda functions, package names before the called functions (like base::mean()), complete writing of the arguments of the calls, curly brackets around the bodies of if/else, for, while, repeat and function constructs, TRUE and FALSE written in full, and controlled for() loop sequences. The corrected function is returned or written into a file. Other functions check argument values, check that packages and functions are installed, detect object names also present in the calling environments and the search path, catch the errors, warnings and messages of instructions, and write log files.">
+<meta property="og:description" content="Functions that check the code of R functions according to the recommendations of the safer-r project (see &lt;https://github.com/safer-r&gt;), and correct it when possible: no super-assignment, standard function() writing of lambda functions, package names before the called functions (like base::mean()), complete writing of the arguments of the calls, curly brackets around the bodies of if/else, for, while, repeat and function constructs, TRUE and FALSE written in full, and controlled for() loop sequences. The corrected function is returned or written into a file. Other functions check argument values, check that packages and functions are installed, detect object names also present in the calling environments and the search path, catch the errors, warnings and messages of instructions, and write log files.">
 </head>
 <body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
@@ -44,7 +44,7 @@
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
 <li><a class="dropdown-item" href="articles/all_args_here.html">all_args_here(): more examples</a></li>
     <li><a class="dropdown-item" href="articles/arg_check.html">arg_check(): more examples</a></li>
-    <li><a class="dropdown-item" href="articles/colons_check.html">colons_check: more examples</a></li>
+    <li><a class="dropdown-item" href="articles/colons_check.html">colons_check(): more examples</a></li>
     <li><a class="dropdown-item" href="articles/curly_bracket_check.html">curly_bracket_check(): more examples</a></li>
     <li><a class="dropdown-item" href="articles/env_check.html">env_check(): more examples</a></li>
     <li><a class="dropdown-item" href="articles/for_loop_nb_check.html">for_loop_nb_check(): more examples</a></li>
@@ -72,7 +72,7 @@
 </nav><div class="container template-home">
 <div class="row">
   <main id="main" class="col-md-9"><div class="section level1">
-<div class="page-header"><h1 id="saferdev-">saferDev <a href="https://safer-r.github.io/saferDev" class="external-link"></a><a href="https://safer-r.github.io/saferDev/" class="external-link"><img src="reference/figures/saferDev.png" align="right" height="140"></a>
+<div class="page-header"><h1 id="saferdev-">saferDev <a href="https://safer-r.github.io/saferDev/" class="external-link"></a><a href="https://safer-r.github.io/saferDev/" class="external-link"><img src="reference/figures/saferDev.png" align="right" height="140"></a>
 <a class="anchor" aria-label="anchor" href="#saferdev-"></a>
 </h1></div>
 <p><br></p>
@@ -80,32 +80,32 @@
 
 <p><br></p>
 <div class="section level2">
-<h2 id="table-of-content">Table of content<a class="anchor" aria-label="anchor" href="#table-of-content"></a>
+<h2 id="table-of-contents">Table of contents<a class="anchor" aria-label="anchor" href="#table-of-contents"></a>
 </h2>
 <ul>
 <li><a href="#description">Description</a></li>
 <li><a href="#content">Content</a></li>
 <li><a href="#versions">Versions</a></li>
 <li><a href="#installation">Installation</a></li>
-<li><a href="#docker-image">Docker</a></li>
-<li><a href="#licence">Licence</a></li>
-<li><a href="#citations">Citations</a></li>
+<li><a href="#docker-images">Docker images</a></li>
+<li><a href="#license">License</a></li>
+<li><a href="#citation">Citation</a></li>
 <li><a href="#credits">Credits</a></li>
-<li><a href="#acknowledgments">acknowledgments</a></li>
+<li><a href="#acknowledgments">Acknowledgments</a></li>
 </ul>
 <p><br></p>
 </div>
 <div class="section level2">
 <h2 id="description">Description<a class="anchor" aria-label="anchor" href="#description"></a>
 </h2>
-<p>Set of functions for the development of R functions and pipelines, written according to the <a href="https://github.com/safer-r" class="external-link">safer-R project</a> specifications.</p>
+<p>Set of functions for the development of R functions and pipelines, written according to the <a href="https://github.com/safer-r" class="external-link">safer-r project</a> specifications.</p>
 <p><br></p>
 </div>
 <div class="section level2">
 <h2 id="content">Content<a class="anchor" aria-label="anchor" href="#content"></a>
 </h2>
 <p><br></p>
-<p>Read this <a href="https://safer-r.github.io/saferDev" class="external-link">webpage</a> for more details.</p>
+<p>Read this <a href="https://safer-r.github.io/saferDev/" class="external-link">webpage</a> for more details.</p>
 <p><br></p>
 <table class="table">
 <colgroup>
@@ -119,55 +119,55 @@
 <tbody>
 <tr>
 <td align="left"><strong>all_args_here()</strong></td>
-<td align="left">Check that all the functions used inside a function are written with all their arguments. For instance: <code>base::paste0(letters[1:2], collapse = NULL, recycle0 = FALSE)</code> and not <code>base::paste0(letters[1:2])</code>. Return table message of the line with problems and a corrected version of the submitted function.</td>
+<td align="left">Check that all the functions used inside a function are written with all their arguments. For instance: <code>base::paste0(letters[1:2], collapse = NULL, recycle0 = FALSE)</code> and not <code>base::paste0(letters[1:2])</code>. Print a table-like message of the detected function calls with their missing arguments, and return a corrected version of the submitted function, if any.</td>
 </tr>
 <tr>
 <td align="left"><strong>arg_check()</strong></td>
-<td align="left">Check expected values of arguments of functions: class, type, mode, length (each tested exactly, same values, in the same order), restricted values panel, kind of numeric values in addition to the distinction between ‘integer’ and ‘double’ (proportion only? Inf values authorized? negative values authorized? Integers of type ‘double’?).</td>
+<td align="left">Check the expected features of an argument: class (compared exactly, e.g., <code>c("matrix", "array")</code> for a matrix), type, mode, length, allowed values, and for numeric values: proportions, negative values, infinite values and integers stored as double. The problems are returned as a text, not raised as errors (except for an argument made of <code>NA</code> only).</td>
 </tr>
 <tr>
 <td align="left"><strong>colons_check()</strong></td>
-<td align="left">Check that all the functions used inside a function are all referenced by their package attribution. For instance: <code><a href="https://rdrr.io/r/base/mean.html" class="external-link">base::mean()</a></code> and not <code><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean()</a></code>, or <code>saferDev:::.base_op_check()</code> and not <code><a href="reference/dot-base_op_check.html">.base_op_check()</a></code>. Return table message of the line with problems and a corrected version of the submitted function.</td>
+<td align="left">Check that the functions called inside a function are preceded by their package (e.g., <code><a href="https://rdrr.io/r/base/mean.html" class="external-link">base::mean()</a></code> and not <code><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean()</a></code>). Print a table-like message of the calls without prefix, if any, and return a corrected version of the submitted function, where <code>&lt;package&gt;::</code> is added before the basic R functions (base, stats, graphics, grDevices, utils, datasets and methods packages); the other calls are only reported.</td>
 </tr>
 <tr>
 <td align="left"><strong>curly_bracket_check()</strong></td>
-<td align="left">Verify that all the bodies of the <code>if</code>, <code>else</code>, <code>for</code>, <code>while</code>, <code>repeat</code> and <code>function</code> are delimited by curly brackets <code><a href="https://rdrr.io/r/base/Paren.html" class="external-link">{ }</a></code>. Return table message of the line with problems and a corrected version of the submitted function.</td>
-</tr>
-<tr>
-<td align="left"><strong>for_loop_nb_check()</strong></td>
-<td align="left">Check the sequence expression of every <code>for</code> loop of a function. If the number of iterations is not fixed by the writing itself (e.g., <code>1:length(x)</code>), a checking line is added before the loop, issuing a warning at execution if the sequence is empty, contains <code>NA</code> or infinite values, has a single value, or is decreasing. Return a table-like message of the problematic lines and a corrected version of the submitted function.</td>
-</tr>
-<tr>
-<td align="left"><strong>lambda_check()</strong></td>
-<td align="left">Verify that the lambda functions written with the shorthand <code>\(x)</code> (like <code>\(x) x * 2</code>) are all written with the standard <code>function(x)</code> writing. Return table message of the line with problems and a corrected version of the submitted function. Warning: the <code>\(x)</code> writing is only kept in the code of a function carrying its source references (attribute <code>srcref</code>).</td>
+<td align="left">Check that the bodies of the <code>if</code>/<code>else</code>, <code>for</code>, <code>while</code>, <code>repeat</code> and <code>function</code> constructs are delimited by curly brackets <code><a href="https://rdrr.io/r/base/Paren.html" class="external-link">{ }</a></code>. Print a table-like message of the problematic lines, if any, and return a corrected version of the submitted function.</td>
 </tr>
 <tr>
 <td align="left"><strong>env_check()</strong></td>
-<td align="left">Verify that object names in the environment defined by the <code>pos</code> argument are identical or not to object names in the above environments (following R Scope). This can be used to verify that names used for objects inside a function or in the working environment do not override names of objects already present in the above R environments, following the R scope.</td>
+<td align="left">Check whether the object names of an environment (by default, the one calling <code><a href="reference/env_check.html">env_check()</a></code>) are also present in the frames of the calling functions and in the environments of the search path (global environment, attached packages), where objects of the same name could be confused.</td>
+</tr>
+<tr>
+<td align="left"><strong>for_loop_nb_check()</strong></td>
+<td align="left">Check the sequence expression of every <code>for</code> loop of a function. If the number of iterations is not fixed by the writing itself (e.g., <code>1:length(x)</code>), a checking line is added before the loop, which issues a warning at execution if the sequence is empty, contains <code>NA</code> or infinite values, has a single value, has only negative values, or starts decreasing (first value greater than the second). Print a table-like message of the problematic lines, if any, and return a corrected version of the submitted function.</td>
 </tr>
 <tr>
 <td align="left"><strong>get_message()</strong></td>
-<td align="left">Return the error, warning or simple (non error non warning) message if ever exist of an instruction written between quotes.</td>
+<td align="left">Catch the error, the last warning or the standard messages of an instruction written as a character string, which is evaluated once.</td>
 </tr>
 <tr>
 <td align="left"><strong>is_function_here()</strong></td>
-<td align="left">Check if required functions are present in installed packages. This controls for instance modifications of function names depending on package versions.</td>
+<td align="left">Check that the required functions are present in the installed packages (e.g., not removed or renamed in another version of the package).</td>
 </tr>
 <tr>
 <td align="left"><strong>is_package_here()</strong></td>
-<td align="left">Check if required packages are installed locally.</td>
+<td align="left">Check that the required packages are installed, without loading them.</td>
+</tr>
+<tr>
+<td align="left"><strong>lambda_check()</strong></td>
+<td align="left">Check that no lambda function is written with the <code>\(x)</code> shorthand (like <code>\(x) x * 2</code>), and replace it by the standard <code>function(x)</code> writing. Print a table-like message of the problematic lines, if any, and return a corrected version of the submitted function. Warning: the <code>\(x)</code> writing can only be seen in a function that carries its source references (attribute <code>srcref</code>).</td>
 </tr>
 <tr>
 <td align="left"><strong>report()</strong></td>
-<td align="left">Print a character string or a data object into a same log file.</td>
+<td align="left">Write a character string or a data object into a log file (added at the end of the file with <code>append = TRUE</code>).</td>
 </tr>
 <tr>
 <td align="left"><strong>super_assign_check()</strong></td>
-<td align="left">Verify that the superassignment operators <code>&lt;&lt;-</code> and <code>-&gt;&gt;</code> are not used in a function. Return an error with a table of the lines with problems if any, since these operators are not allowed in safer-r functions.</td>
+<td align="left">Check that the superassignment operators <code>&lt;&lt;-</code> and <code>-&gt;&gt;</code> are not used in a function. Return an error with a table of the problematic lines, if any, since these operators are not allowed in safer-r functions.</td>
 </tr>
 <tr>
 <td align="left"><strong>true_false_check()</strong></td>
-<td align="left">Verify that the <code>TRUE</code> and <code>FALSE</code> logical constants are always written in full when used as values (argument values, conditions, comparisons, indexing) and never abbreviated as <code>T</code> or <code>F</code>, which can be overwritten by the user. Return table message of the line with problems and a corrected version of the submitted function.</td>
+<td align="left">Check that the <code>TRUE</code> and <code>FALSE</code> logical constants are written in full, and not abbreviated as <code>T</code> or <code>F</code>, which can be overwritten by the user. Print a table-like message of the problematic lines, if any, and return a corrected version of the submitted function.</td>
 </tr>
 </tbody>
 </table>
@@ -184,22 +184,21 @@
 </h2>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"saferDev"</span><span class="op">)</span></span></code></pre></div>
-<p>Older versions can be installed like this:</p>
+<p>Older versions can be installed from their GitHub <a href="https://github.com/safer-r/saferDev/tags" class="external-link">tag</a>, like this:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">v</span> <span class="op">&lt;-</span> <span class="st">"v1.0.0"</span> <span class="co"># desired tag version</span></span>
-<span><span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"https://github.com/safer-r/saferDev@CRAN_/"</span>, <span class="va">v</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span>repo <span class="op">=</span> <span class="st">"safer-r/saferDev@CRAN_v2.0.0"</span><span class="op">)</span> <span class="co"># CRAN version 2.0.0</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="docker-images">Docker images<a class="anchor" aria-label="anchor" href="#docker-images"></a>
 </h2>
-<p>SaferDev v1.0.0 alone in R 4.6.0: <a href="https://hub.docker.com/repository/docker/gmillot/r_v4.6.0_safer_v1.0/general" class="external-link">gmillot/r_v4.6.0_safer_v1.0:gitlab_v11.7</a></p>
-<p>SaferDev v1.0.0 and <a href="https://gitlab.pasteur.fr/gmillot/dockerfiles/-/blob/master/R/v4.6.0/extended/v1.0/installed_r_packages.csv" class="external-link">295 other packages</a> in R 4.6.0: <a href="https://hub.docker.com/repository/docker/gmillot/r_v4.6.0_extended_v1.0/general" class="external-link">gmillot/r_v4.6.0_extended_v1.0:gitlab_v11.7</a></p>
+<p>saferDev v1.0.0 alone in R 4.6.0: <a href="https://hub.docker.com/repository/docker/gmillot/r_v4.6.0_safer_v1.0/general" class="external-link">gmillot/r_v4.6.0_safer_v1.0:gitlab_v11.7</a></p>
+<p>saferDev v1.0.0 and <a href="https://gitlab.pasteur.fr/gmillot/dockerfiles/-/blob/master/R/v4.6.0/extended/v1.0/installed_r_packages.csv" class="external-link">295 other packages</a> in R 4.6.0: <a href="https://hub.docker.com/repository/docker/gmillot/r_v4.6.0_extended_v1.0/general" class="external-link">gmillot/r_v4.6.0_extended_v1.0:gitlab_v11.7</a></p>
 <p><br></p>
 </div>
 <div class="section level2">
-<h2 id="licence">Licence<a class="anchor" aria-label="anchor" href="#licence"></a>
+<h2 id="license">License<a class="anchor" aria-label="anchor" href="#license"></a>
 </h2>
-<p>This package can be redistributed and/or modified under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version. Distributed in the hope that it will be useful, but without any warranty; without even the implied warranty of merchantability or fitness for a particular purpose. See the GNU General Public License for more details at <a href="https://www.gnu.org/licenses" class="external-link uri">https://www.gnu.org/licenses</a> or in the Licence.txt attached file.</p>
+<p>This package can be redistributed and/or modified under the terms of the GNU General Public License version 3, as published by the Free Software Foundation. Distributed in the hope that it will be useful, but without any warranty; without even the implied warranty of merchantability or fitness for a particular purpose. See the GNU General Public License for more details at <a href="https://www.gnu.org/licenses" class="external-link uri">https://www.gnu.org/licenses</a> or in the attached Licence.txt file.</p>
 <p><br></p>
 </div>
 <div class="section level2">
@@ -207,7 +206,7 @@
 </h2>
 <p>If you are using functions of <em>saferDev</em>, please cite:</p>
 <blockquote>
-<p>Wang H, Han Y, Legras M, Serizay J, Millot GA (2026). <em>The R saferDev package</em>. <a href="https://github.com/safer-r/saferDev/" class="external-link uri">https://github.com/safer-r/saferDev/</a>.</p>
+<p>Wang H, Han Y, Legras M, Millot GA (2026). <em>The R saferDev package</em>. <a href="https://github.com/safer-r/saferDev/" class="external-link uri">https://github.com/safer-r/saferDev/</a>.</p>
 </blockquote>
 <p><br></p>
 </div>
@@ -218,20 +217,20 @@
 <p><a href="https://github.com/yushiHn" class="external-link">Yushi Han</a>, Bioinformatics and Biostatistics Hub, Institut Pasteur, Paris, France</p>
 <p><a href="https://github.com/mialgrs" class="external-link">Mia Legras</a>, Bioinformatics and Biostatistics Hub, Institut Pasteur, Paris, France</p>
 <p><a href="https://github.com/js2264" class="external-link">Jacques Serizay</a>, Spatial Regulation of Genomes team, Institut Pasteur, Paris, France</p>
-<p><a href="https://docs.z.ai/guides/llm/glm-5.3" class="external-link">GLM-5.3</a>, hosted to Institut Pasteur, Paris, France</p>
+<p><a href="https://docs.z.ai/guides/llm/glm-5.3" class="external-link">GLM-5.3</a>, hosted at Institut Pasteur, Paris, France</p>
 <p><a href="https://github.com/gael-millot" class="external-link">Gael A. Millot</a>, Bioinformatics and Biostatistics Hub, Institut Pasteur, Paris, France</p>
 <p><br></p>
 </div>
 <div class="section level2">
 <h2 id="acknowledgments">Acknowledgments<a class="anchor" aria-label="anchor" href="#acknowledgments"></a>
 </h2>
-<p>The developers &amp; maintainers of the mentioned softwares and packages, including:</p>
+<p>The developers &amp; maintainers of the mentioned software and packages, including:</p>
 <ul>
 <li><a href="https://www.r-project.org/" class="external-link">R</a></li>
 <li><a href="https://git-scm.com/" class="external-link">Git</a></li>
 <li><a href="https://github.com/" class="external-link">GitHub</a></li>
 <li><a href="https://github.com/neurogenomics/rworkflows" class="external-link">rworkflows</a></li>
-<li><a href="https://ggplot2.tidyverse.org/" class="external-link">tidyverse</a></li>
+<li><a href="https://ggplot2.tidyverse.org/" class="external-link">ggplot2</a></li>
 <li><a href="https://opencode.ai/" class="external-link">opencode</a></li>
 <li><a href="https://docs.z.ai/guides/llm/glm-5.3" class="external-link">GLM-5.3</a></li>
 </ul>
@@ -265,6 +264,11 @@
 <div class="developers">
 <h2 data-toc-skip>Developers</h2>
 <ul class="list-unstyled">
+<li>
+<a href="https://github.com/Tintin2710" class="external-link">Haiding Wang</a> <br><small class="roles"> Author </small>   </li>
+<li>
+<a href="https://github.com/yushiHn" class="external-link">Yushi Han</a> <br><small class="roles"> Author </small>   </li>
+<li>Mia Legras <br><small class="roles"> Author </small>   </li>
 <li>Gael Millot <br><small class="roles"> Author, maintainer </small> <a href="https://orcid.org/0000-0002-0591-3509" target="orcid.widget" aria-label="ORCID" class="external-link"><span class="fab fa-orcid orcid" aria-hidden="true"></span></a>  </li>
 <li><a href="authors.html">More about authors...</a></li>
 </ul>
@@ -274,10 +278,10 @@
 <h2 data-toc-skip>Dev status</h2>
 <ul class="list-unstyled">
 <li><a href="https://cran.r-project.org/package=saferDev" class="external-link"><img src="https://img.shields.io/cran/v/saferDev.svg" alt="CRAN status"></a></li>
-<li><a href="https://cran.r-project.org/" class="external-link"><img src="https://img.shields.io/badge/R-%3E%3D%204.6.0-blue?logo=R" alt="R Version"></a></li>
+<li><a href="https://cran.r-project.org/" class="external-link"><img src="https://img.shields.io/badge/R-%3E%3D%204.5.0-blue?logo=R" alt="R Version"></a></li>
 <li><a href="https://r-pkg.org/pkg/saferDev" class="external-link"><img src="https://cranlogs.r-pkg.org/badges/saferDev" alt="Downloads"></a></li>
 <li><a href="https://github.com/safer-r/saferDev/actions/workflows/rworkflows.yml" class="external-link"><img src="https://github.com/safer-r/saferDev/actions/workflows/rworkflows.yml/badge.svg" alt="Rworkflows"></a></li>
-<li><a href="https://app.codecov.io/github/safer-r/saferDev?branch=master" class="external-link"><img src="https://codecov.io/github/safer-r/saferDev/coverage.svg?branch=master" alt="Codecov"></a></li>
+<li><a href="https://app.codecov.io/github/safer-r/saferDev?branch=main" class="external-link"><img src="https://codecov.io/github/safer-r/saferDev/coverage.svg?branch=main" alt="Codecov"></a></li>
 <li><a href="https://github.com/safer-r/saferMake/tree/main/inst" class="external-link"><img src="https://img.shields.io/badge/Safer--R%20status-backbone%20v21.2-brightgreen" alt="safer-R Status"></a></li>
 <li><a href="https://opensource.org/license/gpl-3.0" class="external-link"><img src="https://img.shields.io/badge/license-GPL3.0-lightgrey.svg"></a></li>
 </ul>
@@ -288,7 +292,7 @@
 
 
     <footer><div class="pkgdown-footer-left">
-  <p>Developed by Gael Millot.</p>
+  <p>Developed by <a href="https://github.com/Tintin2710" class="external-link">Haiding Wang</a>, <a href="https://github.com/yushiHn" class="external-link">Yushi Han</a>, Mia Legras, Gael Millot.</p>
 </div>
 
 <div class="pkgdown-footer-right">

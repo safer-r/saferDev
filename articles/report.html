@@ -42,7 +42,7 @@
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
 <li><a class="dropdown-item" href="../articles/all_args_here.html">all_args_here(): more examples</a></li>
     <li><a class="dropdown-item" href="../articles/arg_check.html">arg_check(): more examples</a></li>
-    <li><a class="dropdown-item" href="../articles/colons_check.html">colons_check: more examples</a></li>
+    <li><a class="dropdown-item" href="../articles/colons_check.html">colons_check(): more examples</a></li>
     <li><a class="dropdown-item" href="../articles/curly_bracket_check.html">curly_bracket_check(): more examples</a></li>
     <li><a class="dropdown-item" href="../articles/env_check.html">env_check(): more examples</a></li>
     <li><a class="dropdown-item" href="../articles/for_loop_nb_check.html">for_loop_nb_check(): more examples</a></li>
@@ -92,7 +92,9 @@
 <h3 id="dataset">Dataset<a class="anchor" aria-label="anchor" href="#dataset"></a>
 </h3>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">string1</span> <span class="op">&lt;-</span> <span class="st">"THIS IS A LOG"</span> <span class="co"># string.</span></span>
+<code class="sourceCode R"><span><span class="va">path_1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempfile</a></span><span class="op">(</span>pattern <span class="op">=</span> <span class="st">"report_"</span><span class="op">)</span> <span class="co"># all the files are written into a new folder of the temporary directory.</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/files2.html" class="external-link">dir.create</a></span><span class="op">(</span><span class="va">path_1</span><span class="op">)</span></span>
+<span><span class="va">string1</span> <span class="op">&lt;-</span> <span class="st">"THIS IS A LOG"</span> <span class="co"># string.</span></span>
 <span><span class="va">vec1</span> <span class="op">&lt;-</span> <span class="fl">1</span><span class="op">:</span><span class="fl">6</span> <span class="co"># vector of integers.</span></span>
 <span><span class="va">vec2</span> <span class="op">&lt;-</span> <span class="va">letters</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">9</span><span class="op">]</span> <span class="co"># vector of characters.</span></span>
 <span><span class="va">mat1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="va">vec1</span>, nrow <span class="op">=</span> <span class="fl">2</span>, ncol <span class="op">=</span> <span class="fl">3</span>, byrow <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="co"># 2x3 matrix of integers.</span></span>
@@ -100,7 +102,7 @@
 <span><span class="va">mat2</span> <span class="op">&lt;-</span> <span class="va">mat1</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/mode.html" class="external-link">mode</a></span><span class="op">(</span><span class="va">mat2</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="st">"character"</span> <span class="co"># as mat1 but made of characters.</span></span>
 <span><span class="va">t1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/table.html" class="external-link">table</a></span><span class="op">(</span><span class="va">mat1</span><span class="op">)</span> <span class="co"># 1D table.</span></span>
-<span><span class="va">vec3</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/vector.html" class="external-link">as.vector</a></span><span class="op">(</span><span class="va">t1</span><span class="op">)</span> <span class="co"># vector of intergers</span></span>
+<span><span class="va">vec3</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/vector.html" class="external-link">as.vector</a></span><span class="op">(</span><span class="va">t1</span><span class="op">)</span> <span class="co"># vector of integers</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">vec3</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">letters</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">6</span><span class="op">]</span> <span class="co"># vector with names.</span></span>
 <span><span class="va">t2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/table.html" class="external-link">table</a></span><span class="op">(</span><span class="va">vec2</span>, <span class="va">vec2</span><span class="op">)</span> <span class="co"># 2D table.</span></span>
 <span><span class="va">l1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">vec1</span>, <span class="va">vec2</span><span class="op">)</span> <span class="co"># list.</span></span></code></pre></div>
@@ -163,40 +165,40 @@
 <h3 id="simple-examples">Simple examples<a class="anchor" aria-label="anchor" href="#simple-examples"></a>
 </h3>
 <div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Print the value of "data" into the log.txt output file in the indicated path.</span></span>
-<span><span class="fu"><a href="../reference/report.html">report</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">string1</span>, append <span class="op">=</span> <span class="cn">TRUE</span>, path <span class="op">=</span> <span class="st">"."</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="co"># Write the value of "data" into the log.txt output file of the path_1 folder.</span></span>
+<span><span class="fu"><a href="../reference/report.html">report</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">string1</span>, append <span class="op">=</span> <span class="cn">TRUE</span>, path <span class="op">=</span> <span class="va">path_1</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Idem.</span></span>
-<span><span class="fu"><a href="../reference/report.html">report</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">vec1</span>, append <span class="op">=</span> <span class="cn">TRUE</span>, path <span class="op">=</span> <span class="st">"."</span><span class="op">)</span></span>
+<span><span class="fu"><a href="../reference/report.html">report</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">vec1</span>, append <span class="op">=</span> <span class="cn">TRUE</span>, path <span class="op">=</span> <span class="va">path_1</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Idem.</span></span>
-<span><span class="fu"><a href="../reference/report.html">report</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">vec2</span>, append <span class="op">=</span> <span class="cn">TRUE</span>, path <span class="op">=</span> <span class="st">"."</span><span class="op">)</span></span>
+<span><span class="fu"><a href="../reference/report.html">report</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">vec2</span>, append <span class="op">=</span> <span class="cn">TRUE</span>, path <span class="op">=</span> <span class="va">path_1</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Idem.</span></span>
-<span><span class="fu"><a href="../reference/report.html">report</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">vec3</span>, append <span class="op">=</span> <span class="cn">TRUE</span>, path <span class="op">=</span> <span class="st">"."</span><span class="op">)</span></span>
+<span><span class="fu"><a href="../reference/report.html">report</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">vec3</span>, append <span class="op">=</span> <span class="cn">TRUE</span>, path <span class="op">=</span> <span class="va">path_1</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Idem.</span></span>
-<span><span class="fu"><a href="../reference/report.html">report</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">mat1</span>, append <span class="op">=</span> <span class="cn">TRUE</span>, path <span class="op">=</span> <span class="st">"."</span><span class="op">)</span></span>
+<span><span class="fu"><a href="../reference/report.html">report</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">mat1</span>, append <span class="op">=</span> <span class="cn">TRUE</span>, path <span class="op">=</span> <span class="va">path_1</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Idem. Of note, we cannot see in the log.txt file that mat2 is mode character (see noquote below).</span></span>
-<span><span class="fu"><a href="../reference/report.html">report</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">mat2</span>, append <span class="op">=</span> <span class="cn">TRUE</span>, path <span class="op">=</span> <span class="st">"."</span><span class="op">)</span></span>
+<span><span class="fu"><a href="../reference/report.html">report</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">mat2</span>, append <span class="op">=</span> <span class="cn">TRUE</span>, path <span class="op">=</span> <span class="va">path_1</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Idem.</span></span>
-<span><span class="fu"><a href="../reference/report.html">report</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">t1</span>,, append <span class="op">=</span> <span class="cn">TRUE</span>, path <span class="op">=</span> <span class="st">"."</span><span class="op">)</span></span>
+<span><span class="fu"><a href="../reference/report.html">report</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">t1</span>, append <span class="op">=</span> <span class="cn">TRUE</span>, path <span class="op">=</span> <span class="va">path_1</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Idem.</span></span>
-<span><span class="fu"><a href="../reference/report.html">report</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">t2</span>, append <span class="op">=</span> <span class="cn">TRUE</span>, path <span class="op">=</span> <span class="st">"."</span><span class="op">)</span></span>
+<span><span class="fu"><a href="../reference/report.html">report</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">t2</span>, append <span class="op">=</span> <span class="cn">TRUE</span>, path <span class="op">=</span> <span class="va">path_1</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Idem.</span></span>
-<span><span class="fu"><a href="../reference/report.html">report</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">l1</span>, append <span class="op">=</span> <span class="cn">TRUE</span>, path <span class="op">=</span> <span class="st">"."</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu"><a href="../reference/report.html">report</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">l1</span>, append <span class="op">=</span> <span class="cn">TRUE</span>, path <span class="op">=</span> <span class="va">path_1</span><span class="op">)</span></span></code></pre></div>
 <p><br></p>
 </div>
 <div class="section level3">
 <h3 id="argument-output">Argument <code>output</code><a class="anchor" aria-label="anchor" href="#argument-output"></a>
 </h3>
 <div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Print the value of vec1 into the test.txt file in the indicated path.</span></span>
-<span><span class="fu"><a href="../reference/report.html">report</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">vec1</span>, output <span class="op">=</span> <span class="st">"test.txt"</span>, append <span class="op">=</span> <span class="cn">TRUE</span>, path <span class="op">=</span> <span class="st">"."</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="co"># Write the value of vec1 into the test.txt file of the path_1 folder.</span></span>
+<span><span class="fu"><a href="../reference/report.html">report</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">vec1</span>, output <span class="op">=</span> <span class="st">"test.txt"</span>, append <span class="op">=</span> <span class="cn">TRUE</span>, path <span class="op">=</span> <span class="va">path_1</span><span class="op">)</span></span></code></pre></div>
 <p><br></p>
 </div>
 <div class="section level3">
@@ -204,7 +206,7 @@
 </h3>
 <div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Error returned because the test.txt file already exists.</span></span>
-<span><span class="fu"><a href="../reference/report.html">report</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">vec2</span>, append <span class="op">=</span> <span class="cn">FALSE</span>, output <span class="op">=</span> <span class="st">"test.txt"</span>, path <span class="op">=</span> <span class="st">"."</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu"><a href="../reference/report.html">report</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">vec2</span>, append <span class="op">=</span> <span class="cn">FALSE</span>, output <span class="op">=</span> <span class="st">"test.txt"</span>, path <span class="op">=</span> <span class="va">path_1</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## <span style="color: #BBBB00; font-weight: bold;">Error</span><span style="font-weight: bold;">:</span></span></span>
 <span><span class="co">## <span style="color: #BBBB00;">!</span> </span></span>
 <span><span class="co">## </span></span>
@@ -213,7 +215,7 @@
 <span><span class="co">## ERROR IN saferDev::report().</span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## FILE DEFINED BY THE path AND output ARGUMENTS</span></span>
-<span><span class="co">## ./test.txt</span></span>
+<span><span class="co">## /tmp/RtmpBLjQge/report_15f63f6a39b0/test.txt</span></span>
 <span><span class="co">## ALREADY EXISTS AND CANNOT BE OVERWRITTEN.</span></span>
 <span><span class="co">## PLEASE:</span></span>
 <span><span class="co">## REMOVE THE FILE</span></span>
@@ -228,12 +230,12 @@
 <h3 id="argument-rownames_kept">Argument <code>rownames_kept</code><a class="anchor" aria-label="anchor" href="#argument-rownames_kept"></a>
 </h3>
 <div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span> <span class="co"># Keep the row names when print the matrix mat1 in log.txt.</span></span>
+<code class="sourceCode R"><span><span class="co"># Keep the row names when writing the matrix mat1 in log.txt.</span></span>
 <span><span class="fu"><a href="../reference/report.html">report</a></span><span class="op">(</span></span>
 <span>  data <span class="op">=</span> <span class="va">mat1</span>, </span>
 <span>  rownames_kept <span class="op">=</span> <span class="cn">TRUE</span>, </span>
 <span>  append <span class="op">=</span> <span class="cn">TRUE</span>, </span>
-<span>  path <span class="op">=</span> <span class="st">"."</span></span>
+<span>  path <span class="op">=</span> <span class="va">path_1</span></span>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Remove the row names.</span></span>
@@ -241,15 +243,15 @@
 <span>  data <span class="op">=</span> <span class="va">mat1</span>, </span>
 <span>  rownames_kept <span class="op">=</span> <span class="cn">FALSE</span>, </span>
 <span>  append <span class="op">=</span> <span class="cn">TRUE</span>, </span>
-<span>  path <span class="op">=</span> <span class="st">"."</span></span>
+<span>  path <span class="op">=</span> <span class="va">path_1</span></span>
 <span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># Keep the row names when printing the table t1 in log.txt.</span></span>
+<span><span class="co"># Keep the row names when writing the table t1 in log.txt.</span></span>
 <span><span class="fu"><a href="../reference/report.html">report</a></span><span class="op">(</span></span>
 <span>  data <span class="op">=</span> <span class="va">t1</span>, </span>
 <span>  rownames_kept <span class="op">=</span> <span class="cn">TRUE</span>, </span>
 <span>  append <span class="op">=</span> <span class="cn">TRUE</span>, </span>
-<span>  path <span class="op">=</span> <span class="st">"."</span></span>
+<span>  path <span class="op">=</span> <span class="va">path_1</span></span>
 <span><span class="op">)</span> </span>
 <span></span>
 <span><span class="co"># Remove the row names.</span></span>
@@ -257,15 +259,15 @@
 <span>  data <span class="op">=</span> <span class="va">t1</span>, </span>
 <span>  rownames_kept <span class="op">=</span> <span class="cn">FALSE</span>, </span>
 <span>  append <span class="op">=</span> <span class="cn">TRUE</span>, </span>
-<span>  path <span class="op">=</span> <span class="st">"."</span></span>
+<span>  path <span class="op">=</span> <span class="va">path_1</span></span>
 <span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># Keep the row names when print the table t2 in log.txt.</span></span>
+<span><span class="co"># Keep the row names when writing the table t2 in log.txt.</span></span>
 <span><span class="fu"><a href="../reference/report.html">report</a></span><span class="op">(</span></span>
 <span>  data <span class="op">=</span> <span class="va">t2</span>, </span>
 <span>  rownames_kept <span class="op">=</span> <span class="cn">TRUE</span>, </span>
 <span>  append <span class="op">=</span> <span class="cn">TRUE</span>, </span>
-<span>  path <span class="op">=</span> <span class="st">"."</span></span>
+<span>  path <span class="op">=</span> <span class="va">path_1</span></span>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Remove the row names.</span></span>
@@ -273,7 +275,7 @@
 <span>  data <span class="op">=</span> <span class="va">t2</span>, </span>
 <span>  rownames_kept <span class="op">=</span> <span class="cn">FALSE</span>, </span>
 <span>  append <span class="op">=</span> <span class="cn">TRUE</span>, </span>
-<span>  path <span class="op">=</span> <span class="st">"."</span></span>
+<span>  path <span class="op">=</span> <span class="va">path_1</span></span>
 <span><span class="op">)</span> </span></code></pre></div>
 <p><br></p>
 </div>
@@ -281,13 +283,13 @@
 <h3 id="argument-vector_cat">Argument <code>vector_cat</code><a class="anchor" aria-label="anchor" href="#argument-vector_cat"></a>
 </h3>
 <div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Print a vector of length &gt; 1 using cat() instead of capture.output().</span></span>
+<code class="sourceCode R"><span><span class="co"># Write a vector of length &gt; 1 using cat(), instead of as printed in the console.</span></span>
 <span><span class="co"># Names are lost.</span></span>
 <span><span class="fu"><a href="../reference/report.html">report</a></span><span class="op">(</span></span>
 <span>  data <span class="op">=</span> <span class="va">vec3</span>, </span>
 <span>  vector_cat <span class="op">=</span> <span class="cn">TRUE</span>, </span>
 <span>  append <span class="op">=</span> <span class="cn">TRUE</span>, </span>
-<span>  path <span class="op">=</span> <span class="st">"."</span></span>
+<span>  path <span class="op">=</span> <span class="va">path_1</span></span>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Names are not lost.</span></span>
@@ -295,7 +297,7 @@
 <span>  data <span class="op">=</span> <span class="va">vec3</span>, </span>
 <span>  vector_cat <span class="op">=</span> <span class="cn">FALSE</span>, </span>
 <span>  append <span class="op">=</span> <span class="cn">TRUE</span>, </span>
-<span>  path <span class="op">=</span> <span class="st">"."</span></span>
+<span>  path <span class="op">=</span> <span class="va">path_1</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 <p><br></p>
 </div>
@@ -308,7 +310,7 @@
 <span>  data <span class="op">=</span> <span class="va">mat2</span>, </span>
 <span>  noquote <span class="op">=</span> <span class="cn">FALSE</span>, </span>
 <span>  append <span class="op">=</span> <span class="cn">TRUE</span>, </span>
-<span>  path <span class="op">=</span> <span class="st">"."</span></span>
+<span>  path <span class="op">=</span> <span class="va">path_1</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 <p><br></p>
 </div>
@@ -321,15 +323,15 @@
 <span>  data <span class="op">=</span> <span class="va">vec1</span>, </span>
 <span>  sep <span class="op">=</span> <span class="fl">4</span>, </span>
 <span>  append <span class="op">=</span> <span class="cn">TRUE</span>, </span>
-<span>  path <span class="op">=</span> <span class="st">"."</span></span>
+<span>  path <span class="op">=</span> <span class="va">path_1</span></span>
 <span><span class="op">)</span></span>
 <span></span>
-<span><span class="co">#Error returned because at least 1 empty lines between printings.</span></span>
+<span><span class="co"># Error returned because sep must be at least 1.</span></span>
 <span><span class="fu"><a href="../reference/report.html">report</a></span><span class="op">(</span></span>
 <span>  data <span class="op">=</span> <span class="va">vec1</span>, </span>
 <span>  sep <span class="op">=</span> <span class="fl">0</span>, </span>
 <span>  append <span class="op">=</span> <span class="cn">TRUE</span>, </span>
-<span>  path <span class="op">=</span> <span class="st">"."</span></span>
+<span>  path <span class="op">=</span> <span class="va">path_1</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## <span style="color: #BBBB00; font-weight: bold;">Error</span><span style="font-weight: bold;">:</span></span></span>
 <span><span class="co">## <span style="color: #BBBB00;">!</span> </span></span>
@@ -347,12 +349,12 @@
 <h3 id="argument-safer_check">Argument <code>safer_check</code><a class="anchor" aria-label="anchor" href="#argument-safer_check"></a>
 </h3>
 <div class="sourceCode" id="cb30"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Safer checkings are performed before main code running </span></span>
+<code class="sourceCode R"><span><span class="co"># Safer checks are performed before running.</span></span>
 <span><span class="fu"><a href="../reference/report.html">report</a></span><span class="op">(</span></span>
 <span>    data <span class="op">=</span> <span class="va">vec1</span>, </span>
 <span>    safer_check <span class="op">=</span> <span class="cn">TRUE</span>, </span>
 <span>    append <span class="op">=</span> <span class="cn">TRUE</span>, </span>
-<span>    path <span class="op">=</span> <span class="st">"."</span></span>
+<span>    path <span class="op">=</span> <span class="va">path_1</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 <p><br></p>
 </div>
@@ -360,11 +362,11 @@
 <h3 id="argument-lib_path">Argument <code>lib_path</code><a class="anchor" aria-label="anchor" href="#argument-lib_path"></a>
 </h3>
 <div class="sourceCode" id="cb31"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># The "NOTGOOD" path does not exists.</span></span>
+<code class="sourceCode R"><span><span class="co"># The "NOTGOOD" path does not exist.</span></span>
 <span><span class="fu"><a href="../reference/report.html">report</a></span><span class="op">(</span></span>
 <span>    data <span class="op">=</span> <span class="va">vec1</span>, </span>
 <span>    append <span class="op">=</span> <span class="cn">TRUE</span>, </span>
-<span>    path <span class="op">=</span> <span class="st">"."</span>, </span>
+<span>    path <span class="op">=</span> <span class="va">path_1</span>, </span>
 <span>    lib_path <span class="op">=</span> <span class="st">"NOTGOOD"</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## <span style="color: #BBBB00; font-weight: bold;">Error</span><span style="font-weight: bold;">:</span></span></span>
@@ -388,7 +390,7 @@
 <span><span class="fu"><a href="../reference/report.html">report</a></span><span class="op">(</span></span>
 <span>    data <span class="op">=</span> <span class="va">vec1</span>, </span>
 <span>    append <span class="op">=</span> <span class="cn">TRUE</span>, </span>
-<span>    path <span class="op">=</span> <span class="st">"."</span>, </span>
+<span>    path <span class="op">=</span> <span class="va">path_1</span>, </span>
 <span>    lib_path <span class="op">=</span> <span class="st">"NOTGOOD"</span>, </span>
 <span>    error_text <span class="op">=</span> <span class="st">" === TEXT ADDED ==="</span></span>
 <span><span class="op">)</span></span></code></pre></div>
@@ -409,20 +411,150 @@
 <h3 id="all-the-arguments-with-their-descriptions">All the arguments with their descriptions<a class="anchor" aria-label="anchor" href="#all-the-arguments-with-their-descriptions"></a>
 </h3>
 <div class="sourceCode" id="cb35"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># matrix mat1 will be print in the file "text2.txt" in the path, with quote and row names being kept, and 4 lines after printing data</span></span>
+<code class="sourceCode R"><span><span class="co"># mat2 is written into the test2.txt file of the path_1 folder, with quotes and row names, followed by 4 empty lines.</span></span>
 <span><span class="fu"><a href="../reference/report.html">report</a></span><span class="op">(</span></span>
-<span>    data <span class="op">=</span> <span class="va">mat2</span>, <span class="co"># object to print.</span></span>
+<span>    data <span class="op">=</span> <span class="va">mat2</span>, <span class="co"># object to write.</span></span>
 <span>    output <span class="op">=</span> <span class="st">"test2.txt"</span>, <span class="co"># name of the output file.</span></span>
-<span>    path <span class="op">=</span> <span class="st">"."</span>, <span class="co"># path of the output file.</span></span>
-<span>    append <span class="op">=</span> <span class="cn">TRUE</span>, <span class="co"># append in the output file?</span></span>
+<span>    path <span class="op">=</span> <span class="va">path_1</span>, <span class="co"># existing folder of the output file.</span></span>
+<span>    append <span class="op">=</span> <span class="cn">TRUE</span>, <span class="co"># write after the content of the output file?</span></span>
 <span>    rownames_kept <span class="op">=</span> <span class="cn">TRUE</span>, <span class="co"># keep row names?</span></span>
-<span>    vector_cat <span class="op">=</span> <span class="cn">TRUE</span>, <span class="co"># use cat() instead of capture.output() to print vectors?</span></span>
-<span>    noquote <span class="op">=</span> <span class="cn">FALSE</span>, <span class="co"># print quotes for characters?</span></span>
-<span>    sep <span class="op">=</span> <span class="fl">4</span>, <span class="co"># empty lines after the printed data.</span></span>
+<span>    vector_cat <span class="op">=</span> <span class="cn">TRUE</span>, <span class="co"># write vectors of length &gt; 1 with cat(), instead of as printed in the console?</span></span>
+<span>    noquote <span class="op">=</span> <span class="cn">FALSE</span>, <span class="co"># write character strings without quotes?</span></span>
+<span>    sep <span class="op">=</span> <span class="fl">4</span>, <span class="co"># number of empty lines after the written data.</span></span>
 <span>    safer_check <span class="op">=</span> <span class="cn">TRUE</span>, <span class="co"># perform some "safer" checks (see https://github.com/safer-r)?</span></span>
 <span>    lib_path <span class="op">=</span> <span class="cn">NULL</span>, <span class="co"># where the required packages are if not in the default directories.</span></span>
 <span>    error_text <span class="op">=</span> <span class="st">""</span> <span class="co"># add information in error messages returned by the function.</span></span>
 <span><span class="op">)</span></span></code></pre></div>
+<p><br></p>
+</div>
+<div class="section level3">
+<h3 id="content-of-the-written-files">Content of the written files<a class="anchor" aria-label="anchor" href="#content-of-the-written-files"></a>
+</h3>
+<div class="sourceCode" id="cb36"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># log.txt file (the sep argument sets the number of empty lines after each written object).</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/readLines.html" class="external-link">readLines</a></span><span class="op">(</span>con <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="va">path_1</span>, <span class="st">"log.txt"</span><span class="op">)</span><span class="op">)</span>, sep <span class="op">=</span> <span class="st">"\n"</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">## THIS IS A LOG</span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## [1] 1 2 3 4 5 6</span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## [1] a b c d e f g h i</span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## a b c d e f </span></span>
+<span><span class="co">## 1 1 1 1 1 1 </span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">##  C1 C2 C3</span></span>
+<span><span class="co">##   1  2  3</span></span>
+<span><span class="co">##   4  5  6</span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">##  C1 C2 C3</span></span>
+<span><span class="co">##  1  2  3 </span></span>
+<span><span class="co">##  4  5  6 </span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## mat1</span></span>
+<span><span class="co">##             </span></span>
+<span><span class="co">## 1 1 1 1 1 1 </span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">##     vec2</span></span>
+<span><span class="co">## vec2 a b c d e f g h i</span></span>
+<span><span class="co">##      1 0 0 0 0 0 0 0 0</span></span>
+<span><span class="co">##      0 1 0 0 0 0 0 0 0</span></span>
+<span><span class="co">##      0 0 1 0 0 0 0 0 0</span></span>
+<span><span class="co">##      0 0 0 1 0 0 0 0 0</span></span>
+<span><span class="co">##      0 0 0 0 1 0 0 0 0</span></span>
+<span><span class="co">##      0 0 0 0 0 1 0 0 0</span></span>
+<span><span class="co">##      0 0 0 0 0 0 1 0 0</span></span>
+<span><span class="co">##      0 0 0 0 0 0 0 1 0</span></span>
+<span><span class="co">##      0 0 0 0 0 0 0 0 1</span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## [[1]]</span></span>
+<span><span class="co">## [1] 1 2 3 4 5 6</span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## [[2]]</span></span>
+<span><span class="co">## [1] "a" "b" "c" "d" "e" "f" "g" "h" "i"</span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">##       C1 C2 C3</span></span>
+<span><span class="co">## Row_1  1  2  3</span></span>
+<span><span class="co">## Row_2  4  5  6</span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">##  C1 C2 C3</span></span>
+<span><span class="co">##   1  2  3</span></span>
+<span><span class="co">##   4  5  6</span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## mat1</span></span>
+<span><span class="co">## 1 2 3 4 5 6 </span></span>
+<span><span class="co">## 1 1 1 1 1 1 </span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## mat1</span></span>
+<span><span class="co">##             </span></span>
+<span><span class="co">## 1 1 1 1 1 1 </span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">##     vec2</span></span>
+<span><span class="co">## vec2 a b c d e f g h i</span></span>
+<span><span class="co">##    a 1 0 0 0 0 0 0 0 0</span></span>
+<span><span class="co">##    b 0 1 0 0 0 0 0 0 0</span></span>
+<span><span class="co">##    c 0 0 1 0 0 0 0 0 0</span></span>
+<span><span class="co">##    d 0 0 0 1 0 0 0 0 0</span></span>
+<span><span class="co">##    e 0 0 0 0 1 0 0 0 0</span></span>
+<span><span class="co">##    f 0 0 0 0 0 1 0 0 0</span></span>
+<span><span class="co">##    g 0 0 0 0 0 0 1 0 0</span></span>
+<span><span class="co">##    h 0 0 0 0 0 0 0 1 0</span></span>
+<span><span class="co">##    i 0 0 0 0 0 0 0 0 1</span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">##     vec2</span></span>
+<span><span class="co">## vec2 a b c d e f g h i</span></span>
+<span><span class="co">##      1 0 0 0 0 0 0 0 0</span></span>
+<span><span class="co">##      0 1 0 0 0 0 0 0 0</span></span>
+<span><span class="co">##      0 0 1 0 0 0 0 0 0</span></span>
+<span><span class="co">##      0 0 0 1 0 0 0 0 0</span></span>
+<span><span class="co">##      0 0 0 0 1 0 0 0 0</span></span>
+<span><span class="co">##      0 0 0 0 0 1 0 0 0</span></span>
+<span><span class="co">##      0 0 0 0 0 0 1 0 0</span></span>
+<span><span class="co">##      0 0 0 0 0 0 0 1 0</span></span>
+<span><span class="co">##      0 0 0 0 0 0 0 0 1</span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## 1 1 1 1 1 1</span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## a b c d e f </span></span>
+<span><span class="co">## 1 1 1 1 1 1 </span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">##  C1  C2  C3 </span></span>
+<span><span class="co">##  "1" "2" "3"</span></span>
+<span><span class="co">##  "4" "5" "6"</span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## [1] 1 2 3 4 5 6</span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## [1] 1 2 3 4 5 6</span></span></code></pre>
+<div class="sourceCode" id="cb38"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># test.txt file.</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/readLines.html" class="external-link">readLines</a></span><span class="op">(</span>con <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="va">path_1</span>, <span class="st">"test.txt"</span><span class="op">)</span><span class="op">)</span>, sep <span class="op">=</span> <span class="st">"\n"</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">## [1] 1 2 3 4 5 6</span></span></code></pre>
+<div class="sourceCode" id="cb40"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># test2.txt file.</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/readLines.html" class="external-link">readLines</a></span><span class="op">(</span>con <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="va">path_1</span>, <span class="st">"test2.txt"</span><span class="op">)</span><span class="op">)</span>, sep <span class="op">=</span> <span class="st">"\n"</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">##       C1  C2  C3 </span></span>
+<span><span class="co">## Row_1 "1" "2" "3"</span></span>
+<span><span class="co">## Row_2 "4" "5" "6"</span></span></code></pre>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside>
@@ -431,7 +563,7 @@
 
 
     <footer><div class="pkgdown-footer-left">
-  <p>Developed by Gael Millot.</p>
+  <p>Developed by <a href="https://github.com/Tintin2710" class="external-link">Haiding Wang</a>, <a href="https://github.com/yushiHn" class="external-link">Yushi Han</a>, Mia Legras, Gael Millot.</p>
 </div>
 
 <div class="pkgdown-footer-right">

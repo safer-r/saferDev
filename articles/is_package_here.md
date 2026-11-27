@@ -13,7 +13,7 @@ library(saferDev)
 
 ``` r
 
-req.pkg <- "ggplot2"
+req_pkg <- "stats"
 ```
 
 \
@@ -22,10 +22,10 @@ req.pkg <- "ggplot2"
 
 ``` r
 
-req.pkg # package name between quotes.
+req_pkg # package name between quotes.
 ```
 
-    ## [1] "ggplot2"
+    ## [1] "stats"
 
 \
 
@@ -33,9 +33,47 @@ req.pkg # package name between quotes.
 
 ``` r
 
-# check if the ggplot2 package is in the default library folder.
-is_package_here(req_package = req.pkg) 
+# Check that the stats package is installed.
+saferDev::is_package_here(
+    req_package = req_pkg,
+    safer_check = TRUE,
+    lib_path = NULL,
+    error_text = ""
+)
+
+# Several packages can be checked at once.
+saferDev::is_package_here(
+    req_package = base::c("stats", "utils"),
+    safer_check = TRUE,
+    lib_path = NULL,
+    error_text = ""
+)
+
+# Error: missing package.
+saferDev::is_package_here(
+    req_package = "nopackage",
+    safer_check = TRUE,
+    lib_path = NULL,
+    error_text = ""
+)
 ```
+
+    ## Error:
+    ## ! 
+    ## 
+    ## ================
+    ## 
+    ## ERROR IN saferDev::is_package_here().
+    ## 
+    ## REQUIRED PACKAGE:
+    ## nopackage
+    ## 
+    ## MUST BE INSTALLED IN ONE OF THESE FOLDERS:
+    ## /__w/_temp/Library
+    ## /usr/local/lib/R/site-library
+    ## /usr/local/lib/R/library
+    ## 
+    ## ================
 
 \
 
@@ -43,8 +81,13 @@ is_package_here(req_package = req.pkg)
 
 ``` r
 
-# Safer checkings are performed before main code running.
-is_package_here(req_package = req.pkg, safer_check = TRUE)
+# Safer checks are performed before running.
+saferDev::is_package_here(
+    req_package = req_pkg,
+    safer_check = TRUE,
+    lib_path = NULL,
+    error_text = ""
+)
 ```
 
 \
@@ -53,14 +96,29 @@ is_package_here(req_package = req.pkg, safer_check = TRUE)
 
 ``` r
 
-# The ggplot2 package is in one of the paths c(".", .libPaths()).
-is_package_here(req_package = req.pkg, lib_path = ".")
+# The folders of lib_path are searched after the current .libPaths(): the stats package is found.
+saferDev::is_package_here(
+    req_package = req_pkg,
+    safer_check = TRUE,
+    lib_path = base::tempdir(check = FALSE),
+    error_text = ""
+)
 
-# The ggplot2 package is in the default path (.libPaths()).
-is_package_here(req_package = req.pkg, lib_path = NULL)
+# Only the current .libPaths() are used.
+saferDev::is_package_here(
+    req_package = req_pkg,
+    safer_check = TRUE,
+    lib_path = NULL,
+    error_text = ""
+)
 
-# The "NOTGOOD" path does not exists.
-is_package_here(req_package = req.pkg, lib_path = "NOTGOOD")
+# The "NOTGOOD" path does not exist.
+saferDev::is_package_here(
+    req_package = req_pkg,
+    safer_check = TRUE,
+    lib_path = "NOTGOOD",
+    error_text = ""
+)
 ```
 
     ## Error:
@@ -82,9 +140,10 @@ is_package_here(req_package = req.pkg, lib_path = "NOTGOOD")
 ``` r
 
 # Add a text in error messages returned by is_package_here().
-is_package_here(
-    req_package = req.pkg, 
-    lib_path = "NOTGOOD", 
+saferDev::is_package_here(
+    req_package = req_pkg,
+    safer_check = TRUE,
+    lib_path = "NOTGOOD",
     error_text = " === TEXT ADDED ==="
 )
 ```
@@ -107,12 +166,12 @@ is_package_here(
 
 ``` r
 
-is_package_here(
-    req_package = req.pkg, # package name string (between quotes).
+saferDev::is_package_here(
+    req_package = req_pkg, # package name string (between quotes).
     safer_check = TRUE, # perform some "safer" checks (see https://github.com/safer-r)?
     lib_path = NULL, # where the required packages are if not in the default directories.
     error_text = "" # add information in error messages returned by the function.
 ) 
 ```
 
-\`\`\`
+\

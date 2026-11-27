@@ -105,7 +105,7 @@ arg_check(data = vec1, typeof = "integer")
 
 ``` r
 
-# Check that vec1 is a vector of type double -> error because vec1 is not type "double", 
+# Check that vec1 is a vector of type double -> problem because vec1 is not type "double", 
 # but type "integer".
 arg_check(data = vec1, class = "integer", typeof = "double")
 ```
@@ -122,7 +122,7 @@ arg_check(data = vec1, class = "integer", typeof = "double")
 ``` r
 
 # Check that vec1 is an integer vector of length 3 without negative values and 
-# without NA -> error because of length 5 and negative values inside vec1.
+# without NA -> problem because of length 5 and negative values inside vec1.
 arg_check(
     data = vec1, 
     class = "integer", 
@@ -144,12 +144,12 @@ arg_check(
 
 ``` r
 
-# No result displayed because the output list is assigned into res
+# No result displayed because the output list is assigned to res
 # (see below the print argument).
 res <- arg_check(data = vec1, typeof = "integer")
 
 
-# With data = NULL, the function systematically report a checking problem.
+# With data = NULL, a problem is reported here because typeof(NULL) is "NULL", not "integer".
 arg_check(data = NULL, typeof = "integer")
 ```
 
@@ -166,12 +166,12 @@ arg_check(data = NULL, typeof = "integer")
 
 ### Arguments `class`, `typeof`, `mode` and `length`
 
-These arguments accept any character strings (single or vector of
-character strings), tested exactly (same values, in the same order)
-against `class(data)`, `typeof(data)` and `mode(data)`, respectively.
-Since R 4.0.0, matrices have class `c(“matrix”, “array”)`, and ordered
-factors have class `c(“ordered”, “factor”)`. See the help of
-`arg_check`.
+The `class` argument is compared exactly (same values, in the same
+order) to `class(data)`: matrices have class `c(“matrix”, “array”)`, and
+ordered factors have class `c(“ordered”, “factor”)`. The `typeof` and
+`mode` arguments are single strings compared to `typeof(data)` and
+`mode(data)`, and `length` is a single integer compared to
+`length(data)`. See the help of `arg_check`.
 
 ``` r
 
@@ -181,7 +181,7 @@ arg_check(
     class = "integer", 
     typeof = "integer", 
     mode = "numeric", 
-    length = 5, 
+    length = 5
 )
 ```
 
@@ -196,9 +196,8 @@ arg_check(
 
 ``` r
 
-# Warning: the function does not check for inconsistencies between arguments.
-# It just checks if everything is ok between arguments values and the tested object.
-# Here the inconsistancy between typeof and mode is not signaled.
+# Warning: class, typeof and mode are not checked against each other: each one is compared to the tested object.
+# Here, typeof = "integer" and mode = "character" are incoherent: the mode is reported as a problem.
 arg_check(
     data = vec1, 
     typeof = "integer", 
@@ -217,10 +216,10 @@ arg_check(
 
 ``` r
 
-# Bad mode argument value.
+# Bad mode argument value: mode() never returns "integer".
 arg_check(
     data = vec1, 
-    mode = "integer",
+    mode = "integer"
 )
 ```
 
@@ -255,7 +254,7 @@ arg_check(
 
 ``` r
 
-# Error here, because the written values must be identical, element per element, in the same order.
+# Problem here, because the written values must be identical, element per element, in the same order.
 arg_check(
     data = mat1, 
     class = c("array", "matrix"), 
@@ -303,7 +302,7 @@ arg_check(
 ``` r
 
 # Check for integers, even if numbers are stored as double.
-# With double_as_integer_allowed = TRUE # with TRUE, integers stored as double are accepted.
+# With double_as_integer_allowed = TRUE, integers stored as double are accepted.
 arg_check(
     data = vec3, 
     typeof = "integer",
@@ -326,7 +325,7 @@ arg_check(
 
 ``` r
 
-# Check for the content among values. Here no error detected because vec4 contains "pearson".
+# Check that the values of data are among the options. Here no problem, because vec4 is "pearson", one of the options.
 arg_check(
     data = vec4, 
     options = c("pearson", "spearman", "kendall")
@@ -348,8 +347,8 @@ arg_check(
 
 ``` r
 
-# Check for the content among values.
-# Here no error detected because vec5 indeed contains at least one copy of "a" and "b" and nothing else.
+# Check that data contains all the options, and nothing else.
+# Here no problem detected because vec5 contains at least one copy of "a" and "b", and nothing else.
 arg_check(
     data = vec5,
     options = c("a", "b"), 
@@ -368,7 +367,7 @@ arg_check(
 
 ``` r
 
-# Here no error detected because vec5 indeed contains at least one copy of "a" and "b", among other values.
+# Here no problem detected because vec5 is only made of some of the options ("a" and "b").
 arg_check(
     data = vec5,
     options = c("a", "b", "c"), 
@@ -387,7 +386,7 @@ arg_check(
 
 ``` r
 
-# Here an error is detected because vec5 must contain "a", "b" and "c", at least once each and nothing else.
+# Here a problem is detected because vec5 must contain "a", "b" and "c", at least once each, and nothing else.
 arg_check(
     data = vec5,
     options = c("a", "b", "c"), 
@@ -412,6 +411,7 @@ arg_check(
 
 # Check for the absence of NA.
 # Warning: na_contain = TRUE means "no check". Thus, NA can be present or not. 
+# Whatever na_contain, data made of NA only always gives an error, as for every argument of the safer-r functions.
 arg_check(
     data = mat2,
     prop = TRUE,
@@ -455,7 +455,7 @@ arg_check(
 
 ``` r
 
-# Warning: neg_values = FALSE cannot be used if typeof and mode are NULL. 
+# Error: neg_values = FALSE cannot be used if typeof and mode are NULL (and prop is FALSE). 
 arg_check(
     data = mat1, 
     class = c("matrix", "array"),
@@ -500,7 +500,7 @@ arg_check(
 
 ``` r
 
-# Warning: inf_values = FALSE cannot be used with typeof = "integer". 
+# Error: inf_values = FALSE cannot be used with typeof = "integer". 
 arg_check(
     data = mat1, 
     typeof = "integer",
@@ -515,14 +515,14 @@ arg_check(
     ## 
     ## ERROR IN saferDev::arg_check().
     ## 
-    ## THE typeof ARGUMENT MUST BE A SINGLE "double" VALUE IF ABSENCE OF INFINITE VALUES IS CONTROLED BY SWITCHING THE inf_values ARGUMENT FROM TRUE (DEFAULT VALUE) TO FALSE.
+    ## THE typeof ARGUMENT MUST BE A SINGLE "double" VALUE IF ABSENCE OF INFINITE VALUES IS CONTROLLED BY SWITCHING THE inf_values ARGUMENT FROM TRUE (DEFAULT VALUE) TO FALSE.
     ## "integer" IS NOT ALLOWED BECAUSE OBJECTS WITH INFINITE VALUES ARE NOT INTEGERS.
     ## 
     ## ================
 
 ``` r
 
-# Warning: inf_values = FALSE cannot be used if typeof and mode are NULL. 
+# Error: inf_values = FALSE cannot be used if typeof and mode are NULL. 
 arg_check(
     data = mat1, 
     class = c("matrix", "array"),
@@ -547,14 +547,14 @@ arg_check(
 
 ``` r
 
-# No error message printed because print is FALSE.
+# No message displayed because print is FALSE.
 res <- arg_check(
     data = mat1, 
     class = "data.frame",
     print = FALSE
 )
 
-# Error message printed. Warning: does not trigger "exit". It is just a message.
+# Message displayed. Warning: this is not an error, just a message.
 res <- arg_check(
     data = mat1, 
     class = "data.frame",
@@ -574,7 +574,7 @@ res <- arg_check(
 
 ``` r
 
-# Even if print is TRUE, no error message printed because no error.
+# Even if print is TRUE, no message displayed because no problem.
 res <- arg_check(
     data = mat1, 
     class = c("matrix", "array"),
@@ -607,7 +607,7 @@ arg_check(
 
 ``` r
 
-# This argument is interesting when data is not an object.
+# Useful when data is an expression, not an object name.
 x <- 1
 arg_check(
     data = get("x"), 
@@ -646,7 +646,7 @@ arg_check(
 
 \
 
-### Arguments `data_arg`
+### Argument `data_arg`
 
 ``` r
 
@@ -692,7 +692,7 @@ arg_check(
 
 ``` r
 
-# Safer checkings performed before main code running.
+# Safer checks performed before running.
 arg_check(
     data = mat1, 
     class = c("matrix", "array"), 
@@ -715,7 +715,7 @@ arg_check(
 
 ``` r
 
-# The "NOTGOOD" path does not exists.
+# The "NOTGOOD" path does not exist (lib_path is only checked and used when safer_check is TRUE).
 arg_check(
     data = mat1, 
     class = c("matrix", "array"), 
@@ -741,7 +741,7 @@ arg_check(
 
 ``` r
 
-# Add a text in error messages returned by all_args_here().
+# Add a text in error messages returned by arg_check().
 arg_check(
     data = mat1, 
     class = c("matrix", "array"), 
@@ -774,15 +774,15 @@ arg_check(
     typeof = "integer", # check the expected type.
     mode = NULL,  # check the expected mode.
     length = NULL,  # check the expected length.
-    prop = FALSE,  # check the expected proportion.
-    double_as_integer_allowed = FALSE,  # can integers be typeof = "double" or class = "numeric"?
-    options = NULL,  # check all the possible option values.
+    prop = FALSE,  # check that data is made of proportions?
+    options = NULL,  # allowed values of data.
+    double_as_integer_allowed = FALSE,  # can integers be stored as double for class = "integer" or typeof = "integer"?
     all_options_in_data = FALSE,  # all the options argument values must be present at least once in the data argument, and nothing else?
     na_contain = FALSE,  # can data contain NA? Only tested if FALSE.
     neg_values = TRUE,  # can data contain negative values? Only tested if FALSE.
     inf_values = TRUE,  # can data contain infinite values? Only tested if FALSE.
-    print = FALSE,  # print a message if the $problem output is TRUE? 
-    data_name = NULL,  # name of the object to test.
+    print = FALSE,  # display a message if the $problem output is TRUE?
+    data_name = NULL,  # name of the tested object in the returned text.
     data_arg = TRUE,  # If TRUE, "ARGUMENT" is written in output messages, otherwise "OBJECT".
     safer_check = TRUE, # perform some "safer" checks (see https://github.com/safer-r)?
     lib_path = NULL, # where the required packages are if not in the default directories.

@@ -13,7 +13,7 @@ library(saferDev)
 
 ``` r
 
-f <- "ggplot2::geom_point"
+f <- "stats::median"
 ```
 
 \
@@ -22,10 +22,10 @@ f <- "ggplot2::geom_point"
 
 ``` r
 
-f # function name between quotes.
+f # function name between quotes, preceded by its package.
 ```
 
-    ## [1] "ggplot2::geom_point"
+    ## [1] "stats::median"
 
 \
 
@@ -33,9 +33,79 @@ f # function name between quotes.
 
 ``` r
 
-# check if the ggplot2::geom_point function is in the default library folder.
+# Check that the stats::median function is in the installed stats package.
 is_function_here(fun = f) 
+
+# Several functions can be checked at once.
+is_function_here(fun = c("stats::median", "grid::gpar"))
+
+# "pkg::fun" requires a function exported by the package: error here, because Pillai() is internal.
+is_function_here(fun = "stats::Pillai")
 ```
+
+    ## Error:
+    ## ! 
+    ## 
+    ## ================
+    ## 
+    ## ERROR IN saferDev::is_function_here().
+    ## 
+    ## REQUIRED FUNCTION IS NOT EXPORTED BY THE INSTALLED PACKAGE:
+    ## stats::Pillai
+    ## 
+    ## WRITE ":::" INSTEAD OF "::" TO CHECK A NON EXPORTED FUNCTION.
+    ## 
+    ## ================
+
+``` r
+
+# "pkg:::fun" accepts the internal functions.
+is_function_here(fun = "stats:::Pillai")
+
+# "pkg::fun" also accepts the functions that the package exports from another package: plot() is defined in base and exported by graphics.
+is_function_here(fun = "graphics::plot")
+
+# Operators and other non-syntactic names are accepted, with or without backticks, except the names starting with ":" (like := or ::), which must be written with backticks (like "rlang::`:=`").
+is_function_here(fun = c("base::+", "base::[", "base::`[`", "base::names<-"))
+
+# Error: missing function.
+is_function_here(fun = "stats::notgood")
+```
+
+    ## Error:
+    ## ! 
+    ## 
+    ## ================
+    ## 
+    ## ERROR IN saferDev::is_function_here().
+    ## 
+    ## REQUIRED FUNCTION IS MISSING IN THE INSTALLED PACKAGE:
+    ## stats::notgood
+    ## 
+    ## IN ONE OF THESE FOLDERS:
+    ## /__w/_temp/Library
+    ## /usr/local/lib/R/site-library
+    ## /usr/local/lib/R/library
+    ## 
+    ## ================
+
+``` r
+
+# Error: the package is not written.
+is_function_here(fun = "median")
+```
+
+    ## Error:
+    ## ! 
+    ## 
+    ## ================
+    ## 
+    ## ERROR IN saferDev::is_function_here().
+    ## 
+    ## THE STRING IN fun ARGUMENT MUST BE WRITTEN "package::function" OR "package:::function":
+    ## median
+    ## 
+    ## ================
 
 \
 
@@ -43,7 +113,7 @@ is_function_here(fun = f)
 
 ``` r
 
-# Safer checkings are performed before main code running.
+# Safer checks are performed before running.
 is_function_here(fun = f, safer_check = TRUE)
 ```
 
@@ -53,7 +123,7 @@ is_function_here(fun = f, safer_check = TRUE)
 
 ``` r
 
-# The "NOTGOOD" path does not exists.
+# The "NOTGOOD" path does not exist.
 is_function_here(fun = f, lib_path = "NOTGOOD")
 ```
 
@@ -71,7 +141,7 @@ is_function_here(fun = f, lib_path = "NOTGOOD")
 
 ``` r
 
-# The ggplot2::geom_point function is in the default path (.libPaths()).
+# Only the current .libPaths() are used.
 is_function_here(fun = f, lib_path = NULL)
 ```
 

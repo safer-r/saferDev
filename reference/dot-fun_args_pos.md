@@ -1,8 +1,8 @@
 # Function Arguments Position
 
-Return the positions of 1st letter of the first function name in a
-string, as well as its own opening and closing parenthesis, as well as
-positions of all the internal parenthesis (inside the own parenthesis).
+Return the positions of the first function name found in a string, of
+its opening and closing brackets, and of each pair of brackets between
+them.
 
 ## Usage
 
@@ -14,61 +14,49 @@ positions of all the internal parenthesis (inside the own parenthesis).
 
 - text:
 
-  Single string.
+  Single string, whose brackets between quotes have been replaced (see
+  [`.in_quotes_replacement()`](dot-in_quotes_replacement.md)).
 
 - pattern:
 
-  Single string of a Perl regex to extract function name and `()`, using
-  generally `paste0(<FUNCTION_NAME>, "[\s\r\n]*\(")`.
+  Single string: Perl regex matching the function name and its opening
+  bracket, generally `paste0(<FUNCTION_NAME>, "[\\s\\r\\n]*\\(")`.
 
 - lib_path:
 
-  Vector of characters specifying the absolute pathways of the
-  directories containing the required packages for the function, if not
-  in the default directories. Useful when R packages are not installed
-  in the default directories because of lack of admin rights. More
-  precisely, `lib_path` is passed through the `new` argument of
-  [`.libPaths()`](https://rdrr.io/r/base/libPaths.html) so that the new
-  library paths are `unique(c(new, .Library.site, .Library))`. Warning:
-  [`.libPaths()`](https://rdrr.io/r/base/libPaths.html) is restored to
-  the initial paths, after function execution. Ignored if `NULL`
-  (default): only the pathways specified by the current
-  [`.libPaths()`](https://rdrr.io/r/base/libPaths.html) are used for
-  package calling.
+  Vector of character strings or `NULL`: the `lib_path` value of the
+  calling exported function, only passed on to
+  [`arg_check()`](arg_check.md). No default value.
 
 - error_text:
 
-  Single character string used to add information in error messages
-  returned by the function, notably if the function is inside other
-  functions, which is practical for debugging. Example:
-  `error_text = " INSIDE <PACKAGE_1>::<FUNCTION_1> INSIDE <PACKAGE_2>::<FUNCTION_2>."`.
-  If `NULL`, converted into `""`.
+  Single character string added to the error messages to name the
+  calling functions (`embed_error_text` of the calling function). `NULL`
+  is converted into `""`. No default value.
 
 ## Value
 
-A list containing positions:
+A list containing positions in `text`:
 
-- `begin_fun`: position of the 1st letter of the first function name in
-  the tested string.
+- `begin_fun`: position of the first character of the first match of
+  `pattern`.
 
-- `begin`: position of the opening `"("` of the first function.
+- `begin`: position of the opening bracket `(` of the function.
 
-- `end`: position of the closing `")"` of the first function.
+- `end`: position of the closing bracket `)` of the function.
 
-- `middle_bracket_pos`: list of the positions of each couple of brackets
-  in the middle of the `begin` and `end` positions. In each compartment,
-  the first number is the position of `(` and the second the position of
-  `)`. `NULL` if no inside brackets.
+- `middle_bracket_pos`: list of the positions of each pair of brackets
+  between `begin` and `end`: in each compartment, the position of `(`
+  and the position of the matching `)`. `NULL` if no bracket.
 
 ## Details
 
+An internal error is returned if `pattern` is not found in `text`, if no
+`(` follows it, or if its closing bracket is not found (e.g., bracket
+between quotes not replaced). Its message contains an excerpt of `text`.
+No file is written.
+
 Warnings:
-
-- The tested string must be cleaned form brackets between quotes. Use
-  [`.in_quotes_replacement()`](dot-in_quotes_replacement.md) for that.
-
-- Quotes in strings are escaped, so that position of `(` in `\"a(` is 3,
-  not 4.
 
 - requires [`saferDev::arg_check`](arg_check.md).
 

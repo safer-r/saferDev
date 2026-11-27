@@ -1,7 +1,8 @@
-# Function for All Arguments Here
+# Missing Arguments of a Function Call
 
-Get the `$MISSING_ARG_NAMES`, `$MISSING_ARGS` and `$NEW` of
-[`all_args_here()`](all_args_here.md).
+Compute the `$MISSING_ARG_NAMES`, `$MISSING_ARGS` and `$STATUS` columns
+of the table of [`all_args_here()`](all_args_here.md) for one function
+call.
 
 ## Usage
 
@@ -11,6 +12,7 @@ Get the `$MISSING_ARG_NAMES`, `$MISSING_ARGS` and `$NEW` of
   arg_full_names,
   tempo_split,
   three_dots_log,
+  pipe_log,
   i2,
   col1_i2,
   col2_i2,
@@ -26,68 +28,69 @@ Get the `$MISSING_ARG_NAMES`, `$MISSING_ARGS` and `$NEW` of
 
 - arg_full:
 
-  List of all arguments of the function with default value.
+  List of the arguments of the called function, with their default
+  values as copied into the call (empty value for the arguments without
+  default value, or whose default value cannot be copied).
 
 - arg_full_names:
 
-  Vector of strings of the names of the arguments of the function. Can
-  be `NULL`.
+  Vector of character strings: names of the arguments of the called
+  function. Can be `NULL`.
 
 - tempo_split:
 
-  Vector of strings of the observed argument writing of the function.
+  Vector of character strings: arguments written in the call.
 
 - three_dots_log:
 
-  Vector of logical. Is `...` present among `arg_full_names`.
+  Logical vector: is each element of `arg_full_names` the `...`
+  argument?
+
+- pipe_log:
+
+  Single logical value: is the call on the right side of a pipe (e.g.,
+  `x |> base::rep(3)`)? If `TRUE`, the value of the pipe takes the first
+  argument not written with its name and placed before `...` (except if
+  the placeholder `_` or `.` is written as an argument), and the values
+  written without name are kept without name in `$STATUS`.
 
 - i2:
 
-  Single positive and non null integer value indicating the loop number.
+  Single positive integer value: loop number in
+  [`all_args_here()`](all_args_here.md).
 
 - col1_i2:
 
-  Single positive and non null integer value indicating the code line
-  number of the checked function.
+  Single positive integer value: code line number of the call.
 
 - col2_i2:
 
-  Single string indicating the name of the checked sub function.
+  Single character string: name of the called function.
 
 - arg_user_setting_x:
 
-  Single string indicating the name of the checked function.
+  Single character string: name of the checked function.
 
 - warn:
 
-  Single warning string. Can be `NULL`.
+  Single character string of the warnings already raised, added to the
+  error messages. Can be `NULL`.
 
 - warn_count:
 
-  Single positive integer value indicating the warning count.
+  Single integer value (0 or more): number of warnings in `warn`.
 
 - lib_path:
 
-  Vector of characters specifying the absolute pathways of the
-  directories containing the required packages for the function, if not
-  in the default directories. Useful when R packages are not installed
-  in the default directories because of lack of admin rights. More
-  precisely, `lib_path` is passed through the `new` argument of
-  [`.libPaths()`](https://rdrr.io/r/base/libPaths.html) so that the new
-  library paths are `unique(c(new, .Library.site, .Library))`. Warning:
-  [`.libPaths()`](https://rdrr.io/r/base/libPaths.html) is restored to
-  the initial paths, after function execution. Ignored if `NULL`
-  (default): only the pathways specified by the current
-  [`.libPaths()`](https://rdrr.io/r/base/libPaths.html) are used for
-  package calling.
+  Vector of character strings or `NULL`: the `lib_path` value of the
+  calling exported function, only passed on to
+  [`arg_check()`](arg_check.md). No default value.
 
 - error_text:
 
-  Single character string used to add information in error messages
-  returned by the function, notably if the function is inside other
-  functions, which is practical for debugging. Example:
-  `error_text = " INSIDE <PACKAGE_1>::<FUNCTION_1> INSIDE <PACKAGE_2>::<FUNCTION_2>."`.
-  If `NULL`, converted into `""`.
+  Single character string added to the error messages to name the
+  calling functions (`embed_error_text` of the calling function). `NULL`
+  is converted into `""`. No default value.
 
 ## Value
 

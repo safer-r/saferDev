@@ -4,7 +4,7 @@
 
 - [all_args_here(): more examples](all_args_here.md):
 - [arg_check(): more examples](arg_check.md):
-- [colons_check: more examples](colons_check.md):
+- [colons_check(): more examples](colons_check.md):
 - [curly_bracket_check(): more examples](curly_bracket_check.md):
 - [env_check(): more examples](env_check.md):
 - [for_loop_nb_check(): more examples](for_loop_nb_check.md):

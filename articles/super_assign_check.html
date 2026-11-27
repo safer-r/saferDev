@@ -42,7 +42,7 @@
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
 <li><a class="dropdown-item" href="../articles/all_args_here.html">all_args_here(): more examples</a></li>
     <li><a class="dropdown-item" href="../articles/arg_check.html">arg_check(): more examples</a></li>
-    <li><a class="dropdown-item" href="../articles/colons_check.html">colons_check: more examples</a></li>
+    <li><a class="dropdown-item" href="../articles/colons_check.html">colons_check(): more examples</a></li>
     <li><a class="dropdown-item" href="../articles/curly_bracket_check.html">curly_bracket_check(): more examples</a></li>
     <li><a class="dropdown-item" href="../articles/env_check.html">env_check(): more examples</a></li>
     <li><a class="dropdown-item" href="../articles/for_loop_nb_check.html">for_loop_nb_check(): more examples</a></li>
@@ -155,7 +155,7 @@
 <h3 id="why-an-error-and-not-a-corrected-function">Why an error and not a corrected function?<a class="anchor" aria-label="anchor" href="#why-an-error-and-not-a-corrected-function"></a>
 </h3>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># What &lt;&lt;- modifies depends on the environments where the function is defined and called.</span></span>
+<code class="sourceCode R"><span><span class="co"># What &lt;&lt;- modifies depends on where the function is defined and on what exists there.</span></span>
 <span><span class="co"># Here, a y object is created in the global environment:</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/exists.html" class="external-link">exists</a></span><span class="op">(</span><span class="st">"y"</span>, envir <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/environment.html" class="external-link">globalenv</a></span><span class="op">(</span><span class="op">)</span>, inherits <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## [1] FALSE</span></span></code></pre>
@@ -176,7 +176,7 @@
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/exists.html" class="external-link">exists</a></span><span class="op">(</span><span class="st">"y"</span>, envir <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/environment.html" class="external-link">globalenv</a></span><span class="op">(</span><span class="op">)</span>, inherits <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## [1] FALSE</span></span></code></pre>
 <div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># The writer intention cannot be guessed: the code must be rewritten, for instance by</span></span>
+<code class="sourceCode R"><span><span class="co"># The intention of the writer cannot be guessed: the code must be rewritten, for instance by</span></span>
 <span><span class="co"># returning the value, or by using base::assign() with an explicit envir argument.</span></span></code></pre></div>
 <p><br></p>
 </div>
@@ -184,7 +184,7 @@
 <h3 id="argument-safer_check">Argument <code>safer_check</code><a class="anchor" aria-label="anchor" href="#argument-safer_check"></a>
 </h3>
 <div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Safer checkings are performed before main code running.</span></span>
+<code class="sourceCode R"><span><span class="co"># Safer checks are performed before running the main code.</span></span>
 <span><span class="fu"><a href="../reference/super_assign_check.html">super_assign_check</a></span><span class="op">(</span></span>
 <span>    x <span class="op">=</span> <span class="va">fun1</span>, </span>
 <span>    safer_check <span class="op">=</span> <span class="cn">TRUE</span></span>
@@ -199,7 +199,7 @@
 <h3 id="argument-lib_path">Argument <code>lib_path</code><a class="anchor" aria-label="anchor" href="#argument-lib_path"></a>
 </h3>
 <div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># The "NOTGOOD" path does not exists.</span></span>
+<code class="sourceCode R"><span><span class="co"># The "NOTGOOD" path does not exist.</span></span>
 <span><span class="fu"><a href="../reference/super_assign_check.html">super_assign_check</a></span><span class="op">(</span></span>
 <span>    x <span class="op">=</span> <span class="va">fun1</span>,  </span>
 <span>    lib_path <span class="op">=</span> <span class="st">"NOTGOOD"</span></span>
@@ -263,13 +263,46 @@
 <h3 id="sophisticated-example">Sophisticated example<a class="anchor" aria-label="anchor" href="#sophisticated-example"></a>
 </h3>
 <div class="sourceCode" id="cb30"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># A &lt;&lt;- written in a string, in a comment or as a backquoted name is not an operator: ignored.</span></span>
-<span><span class="va">fun5</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">{</span> <span class="va">y</span> <span class="op">&lt;-</span> <span class="st">"the &lt;&lt;- writing in a string"</span> ; <span class="fu">base</span><span class="fu">::</span><span class="va">`&lt;&lt;-`</span> ; <span class="va">x</span> <span class="op">}</span> <span class="co"># a &lt;&lt;- in a comment</span></span>
-<span><span class="fu"><a href="../reference/super_assign_check.html">super_assign_check</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">fun5</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="co"># A &lt;&lt;- written in a string, in a comment or as a backquoted name that is not called</span></span>
+<span><span class="co"># is not an operator: ignored.</span></span>
+<span><span class="co"># (keep.source = TRUE keeps the comment in the code of the function)</span></span>
+<span><span class="va">fun5</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/eval.html" class="external-link">eval</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/parse.html" class="external-link">parse</a></span><span class="op">(</span>text <span class="op">=</span> <span class="st">"function(x){\n    y &lt;- \"the &lt;&lt;- writing in a string\" # a &lt;&lt;- in a comment\n    base::`&lt;&lt;-`\n    x\n}"</span>, keep.source <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">fun5</span></span></code></pre></div>
+<pre><code><span><span class="co">## function(x){</span></span>
+<span><span class="co">##     y &lt;- "the &lt;&lt;- writing in a string" # a &lt;&lt;- in a comment</span></span>
+<span><span class="co">##     base::`&lt;&lt;-`</span></span>
+<span><span class="co">##     x</span></span>
+<span><span class="co">## }</span></span></code></pre>
+<div class="sourceCode" id="cb32"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/super_assign_check.html">super_assign_check</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">fun5</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## </span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## AFTER RUNNING saferDev::super_assign_check().</span></span>
 <span><span class="co">## INSIDE fun5(), EVERYTHING SEEMS CLEAN.</span></span></code></pre>
+<div class="sourceCode" id="cb34"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># But the operator called as a function is a superassignment: reported.</span></span>
+<span><span class="va">fun6</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/eval.html" class="external-link">eval</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/parse.html" class="external-link">parse</a></span><span class="op">(</span>text <span class="op">=</span> <span class="st">"function(x){\n    `&lt;&lt;-`(y, x)\n    x\n}"</span>, keep.source <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">fun6</span></span></code></pre></div>
+<pre><code><span><span class="co">## function(x){</span></span>
+<span><span class="co">##     `&lt;&lt;-`(y, x)</span></span>
+<span><span class="co">##     x</span></span>
+<span><span class="co">## }</span></span></code></pre>
+<div class="sourceCode" id="cb36"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/super_assign_check.html">super_assign_check</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">fun6</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">## <span style="color: #BBBB00; font-weight: bold;">Error</span><span style="font-weight: bold;">:</span></span></span>
+<span><span class="co">## <span style="color: #BBBB00;">!</span> </span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## ================</span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## ERROR IN saferDev::super_assign_check().</span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## INSIDE fun6(), THE SUPERASSIGNMENT OPERATORS &lt;&lt;- AND -&gt;&gt; ARE NOT ALLOWED IN SAFER-R FUNCTIONS:</span></span>
+<span><span class="co">## PLEASE, REWRITE THE CODE ACCORDINGLY.</span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## LINE SYMBOL      CODE</span></span>
+<span><span class="co">## 2    &lt;&lt;-     `&lt;&lt;-`(y, x)</span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## ================</span></span></code></pre>
 <p><br></p>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
@@ -279,7 +312,7 @@
 
 
     <footer><div class="pkgdown-footer-left">
-  <p>Developed by Gael Millot.</p>
+  <p>Developed by <a href="https://github.com/Tintin2710" class="external-link">Haiding Wang</a>, <a href="https://github.com/yushiHn" class="external-link">Yushi Han</a>, Mia Legras, Gael Millot.</p>
 </div>
 
 <div class="pkgdown-footer-right">

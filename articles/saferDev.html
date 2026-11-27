@@ -42,7 +42,7 @@
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
 <li><a class="dropdown-item" href="../articles/all_args_here.html">all_args_here(): more examples</a></li>
     <li><a class="dropdown-item" href="../articles/arg_check.html">arg_check(): more examples</a></li>
-    <li><a class="dropdown-item" href="../articles/colons_check.html">colons_check: more examples</a></li>
+    <li><a class="dropdown-item" href="../articles/colons_check.html">colons_check(): more examples</a></li>
     <li><a class="dropdown-item" href="../articles/curly_bracket_check.html">curly_bracket_check(): more examples</a></li>
     <li><a class="dropdown-item" href="../articles/env_check.html">env_check(): more examples</a></li>
     <li><a class="dropdown-item" href="../articles/for_loop_nb_check.html">for_loop_nb_check(): more examples</a></li>
@@ -88,7 +88,7 @@
 <h2 id="description">Description<a class="anchor" aria-label="anchor" href="#description"></a>
 </h2>
 <p>Set of functions for the development of R functions and pipelines,
-written according to the <a href="https://github.com/safer-r" class="external-link">safer-R
+written according to the <a href="https://github.com/safer-r" class="external-link">safer-r
 project</a> specifications.</p>
 <p><br></p>
 </div>
@@ -111,104 +111,105 @@ project</a> specifications.</p>
 <td align="left">Check that all the functions used inside a function are
 written with all their arguments. For instance:
 <code>base::paste0(letters[1:2], collapse = NULL, recycle0 = FALSE)</code>
-and not <code>base::paste0(letters[1:2])</code>. Return table message of
-the line with problems and a corrected version of the submitted
-function.</td>
+and not <code>base::paste0(letters[1:2])</code>. Print a table-like
+message of the detected function calls with their missing arguments, and
+return a corrected version of the submitted function, if any.</td>
 </tr>
 <tr class="even">
 <td align="left"><strong>arg_check()</strong></td>
-<td align="left">Check expected values of arguments of functions: class,
-type, mode, length (each tested exactly, same values, in the same
-order), restricted values panel, kind of numeric values in addition to
-the distinction between ‘integer’ and ‘double’ (proportion only? Inf
-values authorized? negative values authorized? Integers of type
-‘double’?).</td>
+<td align="left">Check the expected features of an argument: class
+(compared exactly, e.g., <code>c("matrix", "array")</code> for a
+matrix), type, mode, length, allowed values, and for numeric values:
+proportions, negative values, infinite values and integers stored as
+double. The problems are returned as a text, not raised as errors
+(except for an argument made of <code>NA</code> only).</td>
 </tr>
 <tr class="odd">
 <td align="left"><strong>colons_check()</strong></td>
-<td align="left">Check that all the functions used inside a function are
-all referenced by their package attribution. For instance:
-<code><a href="https://rdrr.io/r/base/mean.html" class="external-link">base::mean()</a></code> and not <code><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean()</a></code>, or
-<code>saferDev:::.base_op_check()</code> and not
-<code><a href="../reference/dot-base_op_check.html">.base_op_check()</a></code>. Return table message of the line with
-problems and a corrected version of the submitted function.</td>
+<td align="left">Check that the functions called inside a function are
+preceded by their package (e.g., <code><a href="https://rdrr.io/r/base/mean.html" class="external-link">base::mean()</a></code> and not
+<code><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean()</a></code>). Print a table-like message of the calls without
+prefix, if any, and return a corrected version of the submitted
+function, where <code>&lt;package&gt;::</code> is added before the basic
+R functions (base, stats, graphics, grDevices, utils, datasets and
+methods packages); the other calls are only reported.</td>
 </tr>
 <tr class="even">
 <td align="left"><strong>curly_bracket_check()</strong></td>
-<td align="left">Verify that all the bodies of the <code>if</code>,
-<code>else</code>, <code>for</code>, <code>while</code>,
-<code>repeat</code> and <code>function</code> are delimited by curly
-brackets <code><a href="https://rdrr.io/r/base/Paren.html" class="external-link">{ }</a></code>. Return table message of the line with
-problems and a corrected version of the submitted function.</td>
+<td align="left">Check that the bodies of the
+<code>if</code>/<code>else</code>, <code>for</code>, <code>while</code>,
+<code>repeat</code> and <code>function</code> constructs are delimited
+by curly brackets <code><a href="https://rdrr.io/r/base/Paren.html" class="external-link">{ }</a></code>. Print a table-like message of the
+problematic lines, if any, and return a corrected version of the
+submitted function.</td>
 </tr>
 <tr class="odd">
+<td align="left"><strong>env_check()</strong></td>
+<td align="left">Check whether the object names of an environment (by
+default, the one calling <code><a href="../reference/env_check.html">env_check()</a></code>) are also present in
+the frames of the calling functions and in the environments of the
+search path (global environment, attached packages), where objects of
+the same name could be confused.</td>
+</tr>
+<tr class="even">
 <td align="left"><strong>for_loop_nb_check()</strong></td>
 <td align="left">Check the sequence expression of every <code>for</code>
 loop of a function. If the number of iterations is not fixed by the
 writing itself (e.g., <code>1:length(x)</code>), a checking line is
-added before the loop, issuing a warning at execution if the sequence is
-empty, contains <code>NA</code> or infinite values, has a single value,
-or is decreasing. Return a table-like message of the problematic lines
-and a corrected version of the submitted function.</td>
+added before the loop, which issues a warning at execution if the
+sequence is empty, contains <code>NA</code> or infinite values, has a
+single value, has only negative values, or starts decreasing (first
+value greater than the second). Print a table-like message of the
+problematic lines, if any, and return a corrected version of the
+submitted function.</td>
+</tr>
+<tr class="odd">
+<td align="left"><strong>get_message()</strong></td>
+<td align="left">Catch the error, the last warning or the standard
+messages of an instruction written as a character string, which is
+evaluated once.</td>
+</tr>
+<tr class="even">
+<td align="left"><strong>is_function_here()</strong></td>
+<td align="left">Check that the required functions are present in the
+installed packages (e.g., not removed or renamed in another version of
+the package).</td>
+</tr>
+<tr class="odd">
+<td align="left"><strong>is_package_here()</strong></td>
+<td align="left">Check that the required packages are installed, without
+loading them.</td>
 </tr>
 <tr class="even">
 <td align="left"><strong>lambda_check()</strong></td>
-<td align="left">Verify that the lambda functions written with the
-shorthand <code>\(x)</code> (like <code>\(x) x * 2</code>) are all
-written with the standard <code>function(x)</code> writing. Return table
-message of the line with problems and a corrected version of the
-submitted function. Warning: the <code>\(x)</code> writing is only kept
-in the code of a function carrying its source references (attribute
+<td align="left">Check that no lambda function is written with the
+<code>\(x)</code> shorthand (like <code>\(x) x * 2</code>), and replace
+it by the standard <code>function(x)</code> writing. Print a table-like
+message of the problematic lines, if any, and return a corrected version
+of the submitted function. Warning: the <code>\(x)</code> writing can
+only be seen in a function that carries its source references (attribute
 <code>srcref</code>).</td>
 </tr>
 <tr class="odd">
-<td align="left"><strong>env_check()</strong></td>
-<td align="left">Verify that object names in the environment defined by
-the <code>pos</code> argument are identical or not to object names in
-the above environments (following R Scope). This can be used to verify
-that names used for objects inside a function or in the working
-environment do not override names of objects already present in the
-above R environments, following the R scope.</td>
-</tr>
-<tr class="even">
-<td align="left"><strong>get_message()</strong></td>
-<td align="left">Return the error, warning or simple (non error non
-warning) message if ever exist of an instruction written between
-quotes.</td>
-</tr>
-<tr class="odd">
-<td align="left"><strong>is_function_here()</strong></td>
-<td align="left">Check if required functions are present in installed
-packages. This controls for instance modifications of function names
-depending on package versions.</td>
-</tr>
-<tr class="even">
-<td align="left"><strong>is_package_here()</strong></td>
-<td align="left">Check if required packages are installed locally.</td>
-</tr>
-<tr class="odd">
 <td align="left"><strong>report()</strong></td>
-<td align="left">Print a character string or a data object into a same
-log file.</td>
+<td align="left">Write a character string or a data object into a log
+file (added at the end of the file with
+<code>append = TRUE</code>).</td>
 </tr>
 <tr class="even">
 <td align="left"><strong>super_assign_check()</strong></td>
-<td align="left">Verify that the superassignment operators
+<td align="left">Check that the superassignment operators
 <code>&lt;&lt;-</code> and <code>-&gt;&gt;</code> are not used in a
-function. Return an error with a table of the lines with problems if
-any: these operators are not allowed in safer-r functions, because what
-they modify depends on the environments where the function is defined
-and called, so that it is difficult to guess what the writer had in mind
-(nothing can be corrected automatically).</td>
+function. Return an error with a table of the problematic lines, if any,
+since these operators are not allowed in safer-r functions.</td>
 </tr>
 <tr class="odd">
 <td align="left"><strong>true_false_check()</strong></td>
-<td align="left">Verify that the <code>TRUE</code> and
-<code>FALSE</code> logical constants are always written in full when
-used as values (argument values, conditions, comparisons, indexing) and
-never abbreviated as <code>T</code> or <code>F</code>, which can be
-overwritten by the user. Return table message of the line with problems
-and a corrected version of the submitted function.</td>
+<td align="left">Check that the <code>TRUE</code> and <code>FALSE</code>
+logical constants are written in full, and not abbreviated as
+<code>T</code> or <code>F</code>, which can be overwritten by the user.
+Print a table-like message of the problematic lines, if any, and return
+a corrected version of the submitted function.</td>
 </tr>
 </tbody>
 </table>
@@ -218,22 +219,45 @@ and a corrected version of the submitted function.</td>
 <h2 id="getting-started-check-and-correct-a-function">Getting started: check and correct a function<a class="anchor" aria-label="anchor" href="#getting-started-check-and-correct-a-function"></a>
 </h2>
 <p>Each checking function prints a table-like message of the problematic
-lines and returns the corrected function (or <code>NULL</code> if
-nothing has to be corrected). With <code>export = TRUE</code>, the
-corrected function is written into a
-<code>&lt;function name&gt;_safer.R</code> file instead. Exception:
-<code><a href="../reference/super_assign_check.html">super_assign_check()</a></code> returns an error if any
+lines (all the detected calls for <code><a href="../reference/all_args_here.html">all_args_here()</a></code>), if any,
+and returns the corrected function, or <code>NULL</code>, invisibly, if
+nothing has to be corrected. With <code>export = TRUE</code>
+(<code>fun_export = TRUE</code> for <code><a href="../reference/all_args_here.html">all_args_here()</a></code>), the
+corrected function is instead written into a
+<code>&lt;function name&gt;_safer.R</code> file, in the existing folder
+given by the <code>out_path</code> argument. Exception:
+<code><a href="../reference/super_assign_check.html">super_assign_check()</a></code> only returns an error if any
 <code>&lt;&lt;-</code> or <code>-&gt;&gt;</code> is detected, because
 what these operators modify cannot be guessed from the code.</p>
-<p>Recommended order: <code><a href="../reference/super_assign_check.html">super_assign_check()</a></code> (error only,
-nothing corrected automatically), <code><a href="../reference/lambda_check.html">lambda_check()</a></code>,
-<code><a href="../reference/colons_check.html">colons_check()</a></code> and <code><a href="../reference/all_args_here.html">all_args_here()</a></code> (these two
-require the previous steps), then <code><a href="../reference/curly_bracket_check.html">curly_bracket_check()</a></code>,
-<code><a href="../reference/true_false_check.html">true_false_check()</a></code> and
-<code><a href="../reference/for_loop_nb_check.html">for_loop_nb_check()</a></code>.</p>
+<p>Recommended order:</p>
+<ol style="list-style-type: decimal">
+<li>
+<code><a href="../reference/super_assign_check.html">super_assign_check()</a></code>: the superassignments it reports
+must be removed by hand, before the automatic corrections.</li>
+<li>
+<code><a href="../reference/lambda_check.html">lambda_check()</a></code>: before <code><a href="../reference/colons_check.html">colons_check()</a></code> and
+<code><a href="../reference/all_args_here.html">all_args_here()</a></code>, which stop with an error on
+<code>\(x)</code> lambda functions.</li>
+<li>
+<code><a href="../reference/colons_check.html">colons_check()</a></code>: before <code><a href="../reference/all_args_here.html">all_args_here()</a></code>,
+which needs the package names (like <code>base::</code>) to find the
+arguments of the called functions.</li>
+<li>
+<code><a href="../reference/all_args_here.html">all_args_here()</a></code>.</li>
+<li>
+<code><a href="../reference/curly_bracket_check.html">curly_bracket_check()</a></code> and
+<code><a href="../reference/true_false_check.html">true_false_check()</a></code>.</li>
+<li>
+<code><a href="../reference/for_loop_nb_check.html">for_loop_nb_check()</a></code>: last, so that the long checking
+line that it inserts before each reported loop does not show up in the
+tables of the other checkers (<code><a href="../reference/all_args_here.html">all_args_here()</a></code> lists every
+detected call).</li>
+</ol>
+<p>In a vignette, as with Rscript, the functions have no source
+references: the checkers analyze their deparsed code, printed below, and
+the line numbers refer to it.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/safer-r/saferDev" class="external-link">saferDev</a></span><span class="op">)</span></span>
-<span><span class="co"># function with missing package attributions, missing arguments, missing curly brackets,</span></span>
+<code class="sourceCode R"><span><span class="co"># function with missing package names, missing arguments, missing curly brackets,</span></span>
 <span><span class="co"># an abbreviated logical value and a for() sequence not written with hard numbers</span></span>
 <span><span class="va">fun1</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span>, <span class="va">y</span> <span class="op">=</span> <span class="cn">T</span><span class="op">)</span><span class="op">{</span></span>
 <span>    <span class="kw">if</span><span class="op">(</span><span class="va">x</span> <span class="op">&gt;</span> <span class="fl">1</span><span class="op">)</span> <span class="va">z</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span></span>
@@ -242,7 +266,30 @@ require the previous steps), then <code><a href="../reference/curly_bracket_chec
 <span>    <span class="op">}</span></span>
 <span>    <span class="va">z</span></span>
 <span><span class="op">}</span></span>
-<span><span class="va">fun2</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/colons_check.html">colons_check</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">fun1</span><span class="op">)</span> <span class="co"># base:: added before mean() and length()</span></span></code></pre></div>
+<span><span class="va">fun1</span> <span class="co"># deparsed code analyzed by the checkers</span></span></code></pre></div>
+<pre><code><span><span class="co">## function (x, y = T) </span></span>
+<span><span class="co">## {</span></span>
+<span><span class="co">##     if (x &gt; 1) </span></span>
+<span><span class="co">##         z &lt;- mean(x)</span></span>
+<span><span class="co">##     for (i in 1:length(y)) {</span></span>
+<span><span class="co">##         z &lt;- base::paste0(z, i)</span></span>
+<span><span class="co">##     }</span></span>
+<span><span class="co">##     z</span></span>
+<span><span class="co">## }</span></span></code></pre>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu">saferDev</span><span class="fu">::</span><span class="fu"><a href="../reference/super_assign_check.html">super_assign_check</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">fun1</span><span class="op">)</span> <span class="co"># no &lt;&lt;- or -&gt;&gt;</span></span></code></pre></div>
+<pre><code><span><span class="co">## </span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## AFTER RUNNING saferDev::super_assign_check().</span></span>
+<span><span class="co">## INSIDE fun1(), EVERYTHING SEEMS CLEAN.</span></span></code></pre>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu">saferDev</span><span class="fu">::</span><span class="fu"><a href="../reference/lambda_check.html">lambda_check</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">fun1</span><span class="op">)</span> <span class="co"># no \(x) lambda function</span></span></code></pre></div>
+<pre><code><span><span class="co">## </span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## AFTER RUNNING saferDev::lambda_check().</span></span>
+<span><span class="co">## INSIDE fun1(), EVERYTHING SEEMS CLEAN.</span></span></code></pre>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">fun2</span> <span class="op">&lt;-</span> <span class="fu">saferDev</span><span class="fu">::</span><span class="fu"><a href="../reference/colons_check.html">colons_check</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">fun1</span><span class="op">)</span> <span class="co"># base:: added before mean() and length()</span></span></code></pre></div>
 <pre><code><span><span class="co">## </span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## INSIDE fun1(), SOME :: OR ::: ARE MISSING BEFORE BASIC FUNCTIONS:</span></span>
@@ -250,8 +297,8 @@ require the previous steps), then <code><a href="../reference/curly_bracket_chec
 <span><span class="co">## LINE FUN     STRING_BEFORE</span></span>
 <span><span class="co">## 4    mean        z &lt;- </span></span>
 <span><span class="co">## 5    length      for (i in 1:</span></span></code></pre>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">fun3</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/all_args_here.html">all_args_here</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">fun2</span><span class="op">)</span> <span class="co"># missing arguments added</span></span></code></pre></div>
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">fun3</span> <span class="op">&lt;-</span> <span class="fu">saferDev</span><span class="fu">::</span><span class="fu"><a href="../reference/all_args_here.html">all_args_here</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">fun2</span><span class="op">)</span> <span class="co"># missing arguments added</span></span></code></pre></div>
 <pre><code><span><span class="co">## </span></span>
 <span><span class="co">## INSIDE fun2(), ARGUMENTS ARE MISSING.</span></span></code></pre>
 <pre><code><span><span class="co">##   LINE_NB FUN_NAME     FUN_ARGS FUN_POS                               DEF_ARGS</span></span>
@@ -266,8 +313,8 @@ require the previous steps), then <code><a href="../reference/curly_bracket_chec
 <span><span class="co">## 1                                     mean(x = x)</span></span>
 <span><span class="co">## 2                                   length(x = y)</span></span>
 <span><span class="co">## 3 paste0(z, i, collapse = NULL, recycle0 = FALSE)</span></span></code></pre>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">fun4</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/curly_bracket_check.html">curly_bracket_check</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">fun3</span><span class="op">)</span> <span class="co"># { } added after if()</span></span></code></pre></div>
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">fun4</span> <span class="op">&lt;-</span> <span class="fu">saferDev</span><span class="fu">::</span><span class="fu"><a href="../reference/curly_bracket_check.html">curly_bracket_check</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">fun3</span><span class="op">)</span> <span class="co"># { } added after if()</span></span></code></pre></div>
 <pre><code><span><span class="co">## </span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## </span></span>
@@ -275,8 +322,8 @@ require the previous steps), then <code><a href="../reference/curly_bracket_chec
 <span><span class="co">## </span></span>
 <span><span class="co">## LINE CONSTRUCT       CODE</span></span>
 <span><span class="co">## 3    if      if (x &gt; 1)</span></span></code></pre>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">fun5</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/true_false_check.html">true_false_check</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">fun4</span><span class="op">)</span> <span class="co"># T replaced by TRUE</span></span></code></pre></div>
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">fun5</span> <span class="op">&lt;-</span> <span class="fu">saferDev</span><span class="fu">::</span><span class="fu"><a href="../reference/true_false_check.html">true_false_check</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">fun4</span><span class="op">)</span> <span class="co"># T replaced by TRUE</span></span></code></pre></div>
 <pre><code><span><span class="co">## </span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## </span></span>
@@ -284,7 +331,7 @@ require the previous steps), then <code><a href="../reference/curly_bracket_chec
 <span><span class="co">## </span></span>
 <span><span class="co">## LINE SYMBOL      CODE</span></span>
 <span><span class="co">## 1    T       function (x, y = T)</span></span></code></pre>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">fun5</span></span></code></pre></div>
 <pre><code><span><span class="co">## function (x, y = TRUE) </span></span>
 <span><span class="co">## {</span></span>
@@ -294,10 +341,9 @@ require the previous steps), then <code><a href="../reference/curly_bracket_chec
 <span><span class="co">##         z &lt;- base::paste0(z, i, collapse = NULL, recycle0 = FALSE)</span></span>
 <span><span class="co">##     }</span></span>
 <span><span class="co">##     z</span></span>
-<span><span class="co">## }</span></span>
-<span><span class="co">## &lt;environment: 0x562b873c79f8&gt;</span></span></code></pre>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">fun6</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/for_loop_nb_check.html">for_loop_nb_check</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">fun5</span><span class="op">)</span> <span class="co"># checking line added before the for() loop</span></span></code></pre></div>
+<span><span class="co">## }</span></span></code></pre>
+<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">fun6</span> <span class="op">&lt;-</span> <span class="fu">saferDev</span><span class="fu">::</span><span class="fu"><a href="../reference/for_loop_nb_check.html">for_loop_nb_check</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">fun5</span><span class="op">)</span> <span class="co"># checking line added before the for() loop</span></span></code></pre></div>
 <pre><code><span><span class="co">## </span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## </span></span>
@@ -305,9 +351,9 @@ require the previous steps), then <code><a href="../reference/curly_bracket_chec
 <span><span class="co">## </span></span>
 <span><span class="co">## LINE CONSTRUCT       CODE</span></span>
 <span><span class="co">## 5    for     for (i in 1:base::length(x = y)) {</span></span></code></pre>
-<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu">fun6</span><span class="op">(</span>x <span class="op">=</span> <span class="fl">2</span>, y <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span> <span class="co"># 1:length(NULL) is c(1, 0): a warning is now returned</span></span></code></pre></div>
-<pre><code><span><span class="co">## Warning: FOR SEQUENCE DECREASING</span></span></code></pre>
+<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu">fun6</span><span class="op">(</span>x <span class="op">=</span> <span class="fl">2</span>, y <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span> <span class="co"># 1:length(NULL) is c(1, 0): a warning is now issued</span></span></code></pre></div>
+<pre><code><span><span class="co">## Warning: FOR SEQUENCE STARTING DECREASING</span></span></code></pre>
 <pre><code><span><span class="co">## [1] "210"</span></span></code></pre>
 <p><br></p>
 <p>See the <a href="https://safer-r.github.io/saferDev/" class="external-link">website</a> for
@@ -321,7 +367,7 @@ one article with more examples per function.</p>
 
 
     <footer><div class="pkgdown-footer-left">
-  <p>Developed by Gael Millot.</p>
+  <p>Developed by <a href="https://github.com/Tintin2710" class="external-link">Haiding Wang</a>, <a href="https://github.com/yushiHn" class="external-link">Yushi Han</a>, Mia Legras, Gael Millot.</p>
 </div>
 
 <div class="pkgdown-footer-right">

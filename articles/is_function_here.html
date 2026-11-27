@@ -42,7 +42,7 @@
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
 <li><a class="dropdown-item" href="../articles/all_args_here.html">all_args_here(): more examples</a></li>
     <li><a class="dropdown-item" href="../articles/arg_check.html">arg_check(): more examples</a></li>
-    <li><a class="dropdown-item" href="../articles/colons_check.html">colons_check: more examples</a></li>
+    <li><a class="dropdown-item" href="../articles/colons_check.html">colons_check(): more examples</a></li>
     <li><a class="dropdown-item" href="../articles/curly_bracket_check.html">curly_bracket_check(): more examples</a></li>
     <li><a class="dropdown-item" href="../articles/env_check.html">env_check(): more examples</a></li>
     <li><a class="dropdown-item" href="../articles/for_loop_nb_check.html">for_loop_nb_check(): more examples</a></li>
@@ -92,38 +92,99 @@
 <h3 id="datasets">Datasets<a class="anchor" aria-label="anchor" href="#datasets"></a>
 </h3>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">f</span> <span class="op">&lt;-</span> <span class="st">"ggplot2::geom_point"</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">f</span> <span class="op">&lt;-</span> <span class="st">"stats::median"</span></span></code></pre></div>
 <p><br></p>
 </div>
 <div class="section level3">
 <h3 id="datasets-info">Datasets info<a class="anchor" aria-label="anchor" href="#datasets-info"></a>
 </h3>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">f</span> <span class="co"># function name between quotes.</span></span></code></pre></div>
-<pre><code><span><span class="co">## [1] "ggplot2::geom_point"</span></span></code></pre>
+<code class="sourceCode R"><span><span class="va">f</span> <span class="co"># function name between quotes, preceded by its package.</span></span></code></pre></div>
+<pre><code><span><span class="co">## [1] "stats::median"</span></span></code></pre>
 <p><br></p>
 </div>
 <div class="section level3">
 <h3 id="argument-fun">Argument <code>fun</code><a class="anchor" aria-label="anchor" href="#argument-fun"></a>
 </h3>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># check if the ggplot2::geom_point function is in the default library folder.</span></span>
-<span><span class="fu"><a href="../reference/is_function_here.html">is_function_here</a></span><span class="op">(</span>fun <span class="op">=</span> <span class="va">f</span><span class="op">)</span> </span></code></pre></div>
+<code class="sourceCode R"><span><span class="co"># Check that the stats::median function is in the installed stats package.</span></span>
+<span><span class="fu"><a href="../reference/is_function_here.html">is_function_here</a></span><span class="op">(</span>fun <span class="op">=</span> <span class="va">f</span><span class="op">)</span> </span>
+<span></span>
+<span><span class="co"># Several functions can be checked at once.</span></span>
+<span><span class="fu"><a href="../reference/is_function_here.html">is_function_here</a></span><span class="op">(</span>fun <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"stats::median"</span>, <span class="st">"grid::gpar"</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># "pkg::fun" requires a function exported by the package: error here, because Pillai() is internal.</span></span>
+<span><span class="fu"><a href="../reference/is_function_here.html">is_function_here</a></span><span class="op">(</span>fun <span class="op">=</span> <span class="st">"stats::Pillai"</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">## <span style="color: #BBBB00; font-weight: bold;">Error</span><span style="font-weight: bold;">:</span></span></span>
+<span><span class="co">## <span style="color: #BBBB00;">!</span> </span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## ================</span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## ERROR IN saferDev::is_function_here().</span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## REQUIRED FUNCTION IS NOT EXPORTED BY THE INSTALLED PACKAGE:</span></span>
+<span><span class="co">## stats::Pillai</span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## WRITE ":::" INSTEAD OF "::" TO CHECK A NON EXPORTED FUNCTION.</span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## ================</span></span></code></pre>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># "pkg:::fun" accepts the internal functions.</span></span>
+<span><span class="fu"><a href="../reference/is_function_here.html">is_function_here</a></span><span class="op">(</span>fun <span class="op">=</span> <span class="st">"stats:::Pillai"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># "pkg::fun" also accepts the functions that the package exports from another package: plot() is defined in base and exported by graphics.</span></span>
+<span><span class="fu"><a href="../reference/is_function_here.html">is_function_here</a></span><span class="op">(</span>fun <span class="op">=</span> <span class="st">"graphics::plot"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Operators and other non-syntactic names are accepted, with or without backticks, except the names starting with ":" (like := or ::), which must be written with backticks (like "rlang::`:=`").</span></span>
+<span><span class="fu"><a href="../reference/is_function_here.html">is_function_here</a></span><span class="op">(</span>fun <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"base::+"</span>, <span class="st">"base::["</span>, <span class="st">"base::`[`"</span>, <span class="st">"base::names&lt;-"</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Error: missing function.</span></span>
+<span><span class="fu"><a href="../reference/is_function_here.html">is_function_here</a></span><span class="op">(</span>fun <span class="op">=</span> <span class="st">"stats::notgood"</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">## <span style="color: #BBBB00; font-weight: bold;">Error</span><span style="font-weight: bold;">:</span></span></span>
+<span><span class="co">## <span style="color: #BBBB00;">!</span> </span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## ================</span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## ERROR IN saferDev::is_function_here().</span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## REQUIRED FUNCTION IS MISSING IN THE INSTALLED PACKAGE:</span></span>
+<span><span class="co">## stats::notgood</span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## IN ONE OF THESE FOLDERS:</span></span>
+<span><span class="co">## /__w/_temp/Library</span></span>
+<span><span class="co">## /usr/local/lib/R/site-library</span></span>
+<span><span class="co">## /usr/local/lib/R/library</span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## ================</span></span></code></pre>
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Error: the package is not written.</span></span>
+<span><span class="fu"><a href="../reference/is_function_here.html">is_function_here</a></span><span class="op">(</span>fun <span class="op">=</span> <span class="st">"median"</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">## <span style="color: #BBBB00; font-weight: bold;">Error</span><span style="font-weight: bold;">:</span></span></span>
+<span><span class="co">## <span style="color: #BBBB00;">!</span> </span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## ================</span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## ERROR IN saferDev::is_function_here().</span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## THE STRING IN fun ARGUMENT MUST BE WRITTEN "package::function" OR "package:::function":</span></span>
+<span><span class="co">## median</span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## ================</span></span></code></pre>
 <p><br></p>
 </div>
 <div class="section level3">
 <h3 id="argument-safer_check">Argument <code>safer_check</code><a class="anchor" aria-label="anchor" href="#argument-safer_check"></a>
 </h3>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Safer checkings are performed before main code running.</span></span>
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Safer checks are performed before running.</span></span>
 <span><span class="fu"><a href="../reference/is_function_here.html">is_function_here</a></span><span class="op">(</span>fun <span class="op">=</span> <span class="va">f</span>, safer_check <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
 <p><br></p>
 </div>
 <div class="section level3">
 <h3 id="argument-lib_path">Argument <code>lib_path</code><a class="anchor" aria-label="anchor" href="#argument-lib_path"></a>
 </h3>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># The "NOTGOOD" path does not exists.</span></span>
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># The "NOTGOOD" path does not exist.</span></span>
 <span><span class="fu"><a href="../reference/is_function_here.html">is_function_here</a></span><span class="op">(</span>fun <span class="op">=</span> <span class="va">f</span>, lib_path <span class="op">=</span> <span class="st">"NOTGOOD"</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## <span style="color: #BBBB00; font-weight: bold;">Error</span><span style="font-weight: bold;">:</span></span></span>
 <span><span class="co">## <span style="color: #BBBB00;">!</span> </span></span>
@@ -136,15 +197,15 @@
 <span><span class="co">## NOTGOOD</span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## ================</span></span></code></pre>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># The ggplot2::geom_point function is in the default path (.libPaths()).</span></span>
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Only the current .libPaths() are used.</span></span>
 <span><span class="fu"><a href="../reference/is_function_here.html">is_function_here</a></span><span class="op">(</span>fun <span class="op">=</span> <span class="va">f</span>, lib_path <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></code></pre></div>
 <p><br></p>
 </div>
 <div class="section level3">
 <h3 id="argument-error_text">Argument <code>error_text</code><a class="anchor" aria-label="anchor" href="#argument-error_text"></a>
 </h3>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Add a text in error messages returned by is_function_here().</span></span>
 <span><span class="fu"><a href="../reference/is_function_here.html">is_function_here</a></span><span class="op">(</span></span>
 <span>    fun <span class="op">=</span> <span class="va">f</span>, </span>
@@ -167,7 +228,7 @@
 <div class="section level3">
 <h3 id="all-the-arguments">All the arguments<a class="anchor" aria-label="anchor" href="#all-the-arguments"></a>
 </h3>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/is_function_here.html">is_function_here</a></span><span class="op">(</span></span>
 <span>    fun <span class="op">=</span> <span class="va">f</span>, <span class="co"># function name string (between quotes), with the associated package.</span></span>
 <span>    safer_check <span class="op">=</span> <span class="cn">TRUE</span>, <span class="co"># perform some "safer" checks (see https://github.com/safer-r)?</span></span>
@@ -183,7 +244,7 @@
 
 
     <footer><div class="pkgdown-footer-left">
-  <p>Developed by Gael Millot.</p>
+  <p>Developed by <a href="https://github.com/Tintin2710" class="external-link">Haiding Wang</a>, <a href="https://github.com/yushiHn" class="external-link">Yushi Han</a>, Mia Legras, Gael Millot.</p>
 </div>
 
 <div class="pkgdown-footer-right">

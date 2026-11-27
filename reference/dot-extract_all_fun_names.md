@@ -1,6 +1,6 @@
 # Extract All Function Names
 
-Extract all function names.
+Extract all the function names of a string, with their positions.
 
 ## Usage
 
@@ -16,41 +16,37 @@ Extract all function names.
 
 - pattern:
 
-  Single string of a Perl regex to extract function names.
+  Single string: Perl regex, typically matching a function name followed
+  by `(`, with a capture group starting at the first character of the
+  name, like `"([a-zA-Z]|\\.[a-zA-Z._])[a-zA-Z0-9._]*\\s*\\("`.
 
 - lib_path:
 
-  Vector of characters specifying the absolute pathways of the
-  directories containing the required packages for the function, if not
-  in the default directories. Useful when R packages are not installed
-  in the default directories because of lack of admin rights. More
-  precisely, `lib_path` is passed through the `new` argument of
-  [`.libPaths()`](https://rdrr.io/r/base/libPaths.html) so that the new
-  library paths are `unique(c(new, .Library.site, .Library))`. Warning:
-  [`.libPaths()`](https://rdrr.io/r/base/libPaths.html) is restored to
-  the initial paths, after function execution. Ignored if `NULL`
-  (default): only the pathways specified by the current
-  [`.libPaths()`](https://rdrr.io/r/base/libPaths.html) are used for
-  package calling.
+  Vector of character strings or `NULL`: the `lib_path` value of the
+  calling exported function, only passed on to
+  [`arg_check()`](arg_check.md). No default value.
 
 - error_text:
 
-  Single character string used to add information in error messages
-  returned by the function, notably if the function is inside other
-  functions, which is practical for debugging. Example:
-  `error_text = " INSIDE <PACKAGE_1>::<FUNCTION_1> INSIDE <PACKAGE_2>::<FUNCTION_2>."`.
-  If `NULL`, converted into `""`.
+  Single character string added to the error messages to name the
+  calling functions (`embed_error_text` of the calling function). `NULL`
+  is converted into `""`. No default value.
 
 ## Value
 
-List containing:
+A list containing:
 
-- `string`: the function names without parenthesis.
+- `string`: vector of strings, the matches of `pattern` in `text`,
+  without their final `(`, if any, and the spaces before it.
+  `character(0)` if no match.
 
-- `pos`: position of the first character of the function names in the
-  input string
+- `pos`: vector of integers, the position in `text` of the first
+  character of the first capture group of each match. `-1` if no match,
+  `NULL` if `pattern` has no capture group.
 
 ## Details
+
+The function names between quotes are also extracted.
 
 Warnings:
 

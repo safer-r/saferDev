@@ -1,7 +1,8 @@
 # Replacement Inside Quotes
 
-Parse a string and replace any pattern inside simple or double quotes by
-another replacement pattern and get the position of replacements.
+Replace each match of a pattern located between quotes (string literals
+and backquoted names of R code) by a replacement of the same length, and
+return the positions of the replacements.
 
 ## Usage
 
@@ -21,79 +22,76 @@ another replacement pattern and get the position of replacements.
 
 - string:
 
-  Single string.
+  Single string, for instance R code, with lines separated by `"\n"`.
 
 - pattern:
 
-  Single string indicating the pattern to detect. Warning: must be very
-  simple pattern, like `"\("`.
+  Single string: regex matching a single character, like `"\\("`.
 
 - no_regex_pattern:
 
-  Same as `pattern` without escape characters or list, etc. Used for
-  messages.
+  Single string: the character matched by `pattern`, without regex
+  escape, like `"("`. Used to check the replaced characters.
 
 - replacement:
 
-  Single string for `pattern` replacement. Must have the same number of
-  character than `no_regex_pattern`. Is not regex.
+  Single string replacing each match of `pattern` between quotes. Must
+  have the same number of characters as `no_regex_pattern`. Not a regex.
 
 - perl:
 
-  Single logical value. Use Perl regex in `pattern` ?
+  Single logical value. Use Perl regex in `pattern`?
 
 - lib_path:
 
-  Vector of characters specifying the absolute pathways of the
-  directories containing the required packages for the function, if not
-  in the default directories. Useful when R packages are not installed
-  in the default directories because of lack of admin rights. More
-  precisely, `lib_path` is passed through the `new` argument of
-  [`.libPaths()`](https://rdrr.io/r/base/libPaths.html) so that the new
-  library paths are `unique(c(new, .Library.site, .Library))`. Warning:
-  [`.libPaths()`](https://rdrr.io/r/base/libPaths.html) is restored to
-  the initial paths, after function execution. Ignored if `NULL`
-  (default): only the pathways specified by the current
-  [`.libPaths()`](https://rdrr.io/r/base/libPaths.html) are used for
-  package calling.
+  Vector of character strings or `NULL`: the `lib_path` value of the
+  calling exported function, only passed on to
+  [`arg_check()`](arg_check.md). No default value.
 
 - error_text:
 
-  Single character string used to add information in error messages
-  returned by the function, notably if the function is inside other
-  functions, which is practical for debugging. Example:
-  `error_text = " INSIDE <PACKAGE_1>::<FUNCTION_1> INSIDE <PACKAGE_2>::<FUNCTION_2>."`.
-  If `NULL`, converted into `""`.
+  Single character string added to the error messages to name the
+  calling functions (`embed_error_text` of the calling function). `NULL`
+  is converted into `""`. No default value.
 
 ## Value
 
 A list containing:
 
-- `string`: The input string with all pattern replaced by the
-  replacement pattern.
+- `string`: `string` with the matches of `pattern` between quotes
+  replaced by `replacement`.
 
-- `pos`: vector of the positions of the 1st character of the replaced
-  pattern. `NULL` if no replaced pattern. In that case, `string` is
-  identical to the input string.
+- `pos`: vector of the positions of the replaced matches. `NULL` if no
+  match is between quotes. In that case, `string` is identical to the
+  input string.
 
 ## Details
 
-The function works first by replacing in the code: 1) the three
-consecutive characters `'"'` or `'"'` by three spaces, 2) `"\"'"` and
-`'\'"'` by four spaces and 3) escape quotes like `\"` or `\'` by two
-spaces, before looking for the pattern inside quotes.
+`string` is read from left to right, as the R parser reads code: a quote
+(`"`, `'` or `` ` ``) opens a quoted part that only the same quote
+closes, a backslash inside quotes escapes the next character (e.g., `\"`
+or `\\`), a raw string (e.g., `r"(...)"` or `R"--[...]--"`) is only
+closed by its own closing delimiter, `#` outside quotes starts a
+comment, up to the end of the line, and the `%...%` operators are
+skipped. Thus, an apostrophe inside double quotes (`"it's"`), or a
+double quote inside simple quotes, opens nothing. A quoted part that is
+not closed goes up to the end of `string`. The matches inside comments
+are not replaced.
+
+Only the content of a quoted part is replaced, never its quotes or the
+delimiters of a raw string, so that the output string can be passed
+again to the function (e.g., to replace `(` after `)`).
 
 Warnings:
 
-- Must be very simple pattern, like `"\("`.
+- `pattern` must match a single character.
 
-- requires [`saferDev::arg_check`](arg_check.md),
-  `.has_odd_number_of_quotes`.
+- requires [`saferDev::arg_check`](arg_check.md).
 
 - In the safer Backbone section
   `"######## check of the required functions from the required packages"`,
-  add also these 2 functions when checking for the presence of
-  `.in_quotes_replacement`.
+  add also [`saferDev::arg_check`](arg_check.md) when checking for the
+  presence of `.in_quotes_replacement`.
 
 ## Author
 

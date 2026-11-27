@@ -42,7 +42,7 @@
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
 <li><a class="dropdown-item" href="../articles/all_args_here.html">all_args_here(): more examples</a></li>
     <li><a class="dropdown-item" href="../articles/arg_check.html">arg_check(): more examples</a></li>
-    <li><a class="dropdown-item" href="../articles/colons_check.html">colons_check: more examples</a></li>
+    <li><a class="dropdown-item" href="../articles/colons_check.html">colons_check(): more examples</a></li>
     <li><a class="dropdown-item" href="../articles/curly_bracket_check.html">curly_bracket_check(): more examples</a></li>
     <li><a class="dropdown-item" href="../articles/env_check.html">env_check(): more examples</a></li>
     <li><a class="dropdown-item" href="../articles/for_loop_nb_check.html">for_loop_nb_check(): more examples</a></li>
@@ -85,63 +85,76 @@
     
     
 <p><br></p>
-<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/safer-r/saferDev" class="external-link">saferDev</a></span><span class="op">)</span></span></code></pre></div>
 <p><br></p>
 <div class="section level3">
-<h3 id="dataset">Dataset<a class="anchor" aria-label="anchor" href="#dataset"></a>
+<h3 id="datasets">Datasets<a class="anchor" aria-label="anchor" href="#datasets"></a>
 </h3>
-<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/source.html" class="external-link">source</a></span><span class="op">(</span><span class="st">"https://raw.githubusercontent.com/safer-r/saferDev/main/dev/other/test2.R"</span><span class="op">)</span> <span class="co"># function.</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/source.html" class="external-link">source</a></span><span class="op">(</span><span class="st">"https://raw.githubusercontent.com/safer-r/.github/refs/heads/main/profile/backbone.R"</span><span class="op">)</span> <span class="co"># function.</span></span></code></pre></div>
-<pre><code><span><span class="co">## Warning in file(filename, "r", encoding = encoding): cannot open URL</span></span>
-<span><span class="co">## 'https://raw.githubusercontent.com/safer-r/.github/refs/heads/main/profile/backbone.R':</span></span>
-<span><span class="co">## HTTP status was '404 Not Found'</span></span></code></pre>
-<pre><code><span><span class="co">## <span style="color: #BBBB00; font-weight: bold;">Error</span><span style="font-weight: bold;"> in `file()`:</span></span></span>
-<span><span class="co">## <span style="color: #BBBB00;">!</span> cannot open the connection to 'https://raw.githubusercontent.com/safer-r/.github/refs/heads/main/profile/backbone.R'</span></span></code></pre>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">FUN1</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span>, <span class="va">y</span><span class="op">)</span><span class="op">{</span> <span class="co"># function.</span></span>
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">FUN0</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">{</span> <span class="co"># function with a call written without its package.</span></span>
+<span>    <span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span></span>
+<span><span class="op">}</span></span>
+<span><span class="va">FUN1</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span>, <span class="va">y</span><span class="op">)</span><span class="op">{</span> <span class="co"># function.</span></span>
 <span>    <span class="va">code_for_col</span> <span class="op">&lt;-</span> <span class="fu">base</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/base/vector.html" class="external-link">as.vector</a></span><span class="op">(</span></span>
 <span>        x <span class="op">=</span> <span class="fu">base</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/base/unlist.html" class="external-link">unlist</a></span><span class="op">(</span></span>
 <span>            x <span class="op">=</span> <span class="fu">base</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/base/mapply.html" class="external-link">mapply</a></span><span class="op">(</span></span>
 <span>                FUN <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span>, <span class="va">y</span><span class="op">)</span><span class="op">{</span></span>
 <span>                    <span class="fu">base</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span></span>
-<span>                        x <span class="op">=</span> <span class="va">y</span>, </span>
+<span>                        x <span class="op">=</span> <span class="va">y</span>,</span>
 <span>                        <span class="fu">base</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">x</span><span class="op">)</span></span>
 <span>                    <span class="op">)</span></span>
-<span>                <span class="op">}</span>, </span>
-<span>                x <span class="op">=</span> <span class="va">x</span>, </span>
-<span>                y <span class="op">=</span> <span class="va">y</span>, </span>
-<span>                MoreArgs <span class="op">=</span> <span class="cn">NULL</span>, </span>
-<span>                SIMPLIFY <span class="op">=</span> <span class="cn">TRUE</span>, </span>
+<span>                <span class="op">}</span>,</span>
+<span>                x <span class="op">=</span> <span class="va">x</span>,</span>
+<span>                y <span class="op">=</span> <span class="va">y</span>,</span>
+<span>                MoreArgs <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>                SIMPLIFY <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>                USE.NAMES <span class="op">=</span> <span class="cn">TRUE</span></span>
-<span>            <span class="op">)</span>, </span>
-<span>            recursive <span class="op">=</span> <span class="cn">TRUE</span>, </span>
+<span>            <span class="op">)</span>,</span>
+<span>            recursive <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>            use.names <span class="op">=</span> <span class="cn">TRUE</span></span>
-<span>        <span class="op">)</span>, </span>
+<span>        <span class="op">)</span>,</span>
 <span>        mode <span class="op">=</span> <span class="st">"any"</span></span>
 <span>    <span class="op">)</span></span>
 <span>    <span class="co"># The code below is written without carriage return on purpose.</span></span>
-<span>    <span class="va">code_for_col2</span> <span class="op">&lt;-</span> <span class="fu">base</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/base/vector.html" class="external-link">as.vector</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fu">base</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/base/unlist.html" class="external-link">unlist</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fu">base</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/base/mapply.html" class="external-link">mapply</a></span><span class="op">(</span>FUN <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span>, <span class="va">y</span><span class="op">)</span><span class="op">{</span><span class="fu">base</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">y</span>, <span class="fu">base</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">x</span><span class="op">)</span><span class="op">)</span><span class="op">}</span>, x <span class="op">=</span> <span class="va">x</span>, y <span class="op">=</span> <span class="va">y</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> </span>
+<span>    <span class="va">code_for_col2</span> <span class="op">&lt;-</span> <span class="fu">base</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/base/vector.html" class="external-link">as.vector</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fu">base</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/base/unlist.html" class="external-link">unlist</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fu">base</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/base/mapply.html" class="external-link">mapply</a></span><span class="op">(</span>FUN <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span>, <span class="va">y</span><span class="op">)</span><span class="op">{</span><span class="fu">base</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">y</span>, <span class="fu">base</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">x</span><span class="op">)</span><span class="op">)</span><span class="op">}</span>, x <span class="op">=</span> <span class="va">x</span>, y <span class="op">=</span> <span class="va">y</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
 <span>    <span class="va">middle_bracket</span> <span class="op">&lt;-</span> <span class="fu">base</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/base/do.call.html" class="external-link">do.call</a></span><span class="op">(</span>what <span class="op">=</span> <span class="fu">base</span><span class="fu">::</span><span class="va"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span>, args <span class="op">=</span> <span class="va">code_for_col</span><span class="op">)</span></span>
 <span>    <span class="va">middle_bracket2</span> <span class="op">&lt;-</span> <span class="fu">base</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/base/do.call.html" class="external-link">do.call</a></span><span class="op">(</span>what <span class="op">=</span> <span class="fu">base</span><span class="fu">::</span><span class="va"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span>, args <span class="op">=</span> <span class="va">code_for_col</span>, quote <span class="op">=</span> <span class="cn">FALSE</span>, envir <span class="op">=</span> <span class="fu">base</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/base/sys.parent.html" class="external-link">parent.frame</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="op">}</span></span>
 <span><span class="va">FUN2</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span>, <span class="va">y</span><span class="op">)</span><span class="op">{</span> <span class="co"># function.</span></span>
 <span>    <span class="va">middle_bracket2</span> <span class="op">&lt;-</span> <span class="fu">base</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/base/do.call.html" class="external-link">do.call</a></span><span class="op">(</span></span>
-<span>        what <span class="op">=</span> <span class="fu">base</span><span class="fu">::</span><span class="va"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span>, </span>
-<span>        args <span class="op">=</span> <span class="va">code_for_col</span>, </span>
-<span>        quote <span class="op">=</span> <span class="cn">FALSE</span>, </span>
+<span>        what <span class="op">=</span> <span class="fu">base</span><span class="fu">::</span><span class="va"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span>,</span>
+<span>        args <span class="op">=</span> <span class="va">code_for_col</span>,</span>
+<span>        quote <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>        envir <span class="op">=</span> <span class="fu">base</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/base/sys.parent.html" class="external-link">parent.frame</a></span><span class="op">(</span><span class="op">)</span></span>
 <span>    <span class="op">)</span></span>
-<span><span class="op">}</span></span></code></pre></div>
+<span><span class="op">}</span></span>
+<span><span class="va">FUN3</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span>, <span class="va">m</span>, <span class="va">d</span><span class="op">)</span><span class="op">{</span> <span class="co"># function with calls that cannot be fully corrected.</span></span>
+<span>    <span class="va">a</span> <span class="op">&lt;-</span> <span class="fu">base</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="va">x</span>, ncol <span class="op">=</span> <span class="fl">2</span><span class="op">)</span> <span class="co"># base::matrix() tests missing(nrow)</span></span>
+<span>    <span class="va">b</span> <span class="op">&lt;-</span> <span class="fu">base</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/base/diag.html" class="external-link">diag</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="co"># base::diag() counts its arguments with nargs()</span></span>
+<span>    <span class="va">e</span> <span class="op">&lt;-</span> <span class="fu">stats</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/stats/t.test.html" class="external-link">t.test</a></span><span class="op">(</span>formula <span class="op">=</span> <span class="va">y</span> <span class="op">~</span> <span class="va">g</span>, data <span class="op">=</span> <span class="va">d</span><span class="op">)</span> <span class="co"># the method is chosen from the formula, x not written</span></span>
+<span>    <span class="va">f</span> <span class="op">&lt;-</span> <span class="fu">base</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">round</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="co"># round.POSIXt(), method for date-times, has no digits argument</span></span>
+<span>    <span class="fu">base</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">m</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu">base</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"r"</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">2</span><span class="op">)</span> <span class="co"># target of an assignment</span></span>
+<span><span class="op">}</span></span>
+<span><span class="co"># Folder where the files are written.</span></span>
+<span><span class="va">tempo_dir</span> <span class="op">&lt;-</span> <span class="fu">base</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempfile</a></span><span class="op">(</span>pattern <span class="op">=</span> <span class="st">"dir"</span>, tmpdir <span class="op">=</span> <span class="fu">base</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir</a></span><span class="op">(</span><span class="op">)</span>, fileext <span class="op">=</span> <span class="st">""</span><span class="op">)</span></span>
+<span><span class="fu">base</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/base/files2.html" class="external-link">dir.create</a></span><span class="op">(</span>path <span class="op">=</span> <span class="va">tempo_dir</span>, showWarnings <span class="op">=</span> <span class="cn">TRUE</span>, recursive <span class="op">=</span> <span class="cn">FALSE</span>, mode <span class="op">=</span> <span class="st">"0777"</span><span class="op">)</span></span></code></pre></div>
 <p><br></p>
 </div>
 <div class="section level3">
 <h3 id="simple-examples">Simple examples<a class="anchor" aria-label="anchor" href="#simple-examples"></a>
 </h3>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Example that returns an error.</span></span>
-<span><span class="fu"><a href="../reference/all_args_here.html">all_args_here</a></span><span class="op">(</span><span class="va">mean</span><span class="op">)</span></span></code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Example that returns an error: the calls must be written with their package (see colons_check()).</span></span>
+<span><span class="fu">saferDev</span><span class="fu">::</span><span class="fu"><a href="../reference/all_args_here.html">all_args_here</a></span><span class="op">(</span></span>
+<span>    x <span class="op">=</span> <span class="va">FUN0</span>,</span>
+<span>    table_export <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>    fun_export <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>    out_path <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>    df_name <span class="op">=</span> <span class="st">"res.tsv"</span>,</span>
+<span>    overwrite <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>    safer_check <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>    lib_path <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>    error_text <span class="op">=</span> <span class="st">""</span></span>
+<span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## <span style="color: #BBBB00; font-weight: bold;">Error</span><span style="font-weight: bold;">:</span></span></span>
 <span><span class="co">## <span style="color: #BBBB00;">!</span> </span></span>
 <span><span class="co">## </span></span>
@@ -149,37 +162,26 @@
 <span><span class="co">## </span></span>
 <span><span class="co">## ERROR IN saferDev::all_args_here().</span></span>
 <span><span class="co">## </span></span>
-<span><span class="co">## CANNOT GET THE ARGUMENTS OF A FUNCTION THAT IS NOT ASSOCIATED TO ITS PACKAGE IN LINE 2:</span></span>
+<span><span class="co">## CANNOT GET THE ARGUMENTS OF A FUNCTION THAT IS NOT ASSOCIATED TO ITS PACKAGE IN LINE 3:</span></span>
 <span><span class="co">## </span></span>
-<span><span class="co">## UseMethod("mean")</span></span>
+<span><span class="co">## mean(x)</span></span>
 <span><span class="co">## </span></span>
-<span><span class="co">## PLEASE, RUN saferDev::colons_check(mean) FIRST,</span></span>
-<span><span class="co">## AND RERUN saferDev::all_args_here(mean).</span></span>
-<span><span class="co">## </span></span>
-<span><span class="co">## ================</span></span></code></pre>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Example that returns an error.</span></span>
-<span><span class="fu"><a href="../reference/all_args_here.html">all_args_here</a></span><span class="op">(</span><span class="va">test2</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## <span style="color: #BBBB00; font-weight: bold;">Error</span><span style="font-weight: bold;">:</span></span></span>
-<span><span class="co">## <span style="color: #BBBB00;">!</span> </span></span>
-<span><span class="co">## </span></span>
-<span><span class="co">## ================</span></span>
-<span><span class="co">## </span></span>
-<span><span class="co">## ERROR IN saferDev::is_function_here() INSIDE saferDev::all_args_here().</span></span>
-<span><span class="co">## </span></span>
-<span><span class="co">## REQUIRED FUNCTION IS MISSING IN THE INSTALLED PACKAGE:</span></span>
-<span><span class="co">## base::ks.test</span></span>
-<span><span class="co">## </span></span>
-<span><span class="co">## IN ONE OF THESE FOLDERS:</span></span>
-<span><span class="co">## /__w/_temp/Library</span></span>
-<span><span class="co">## /usr/local/lib/R/site-library</span></span>
-<span><span class="co">## /usr/local/lib/R/library</span></span>
+<span><span class="co">## PLEASE, RUN saferDev::colons_check(FUN0) FIRST,</span></span>
+<span><span class="co">## AND RERUN saferDev::all_args_here(FUN0).</span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## ================</span></span></code></pre>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Example indicating missing arguments.</span></span>
-<span><span class="fu"><a href="../reference/all_args_here.html">all_args_here</a></span><span class="op">(</span></span>
-<span>    x <span class="op">=</span> <span class="va">FUN2</span></span>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Example indicating missing arguments, and returning the modified function.</span></span>
+<span><span class="fu">saferDev</span><span class="fu">::</span><span class="fu"><a href="../reference/all_args_here.html">all_args_here</a></span><span class="op">(</span></span>
+<span>    x <span class="op">=</span> <span class="va">FUN2</span>,</span>
+<span>    table_export <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>    fun_export <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>    out_path <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>    df_name <span class="op">=</span> <span class="st">"res.tsv"</span>,</span>
+<span>    overwrite <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>    safer_check <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>    lib_path <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>    error_text <span class="op">=</span> <span class="st">""</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## </span></span>
 <span><span class="co">## INSIDE FUN2(), ARGUMENTS ARE MISSING.</span></span></code></pre>
@@ -203,24 +205,111 @@
 <p><br></p>
 </div>
 <div class="section level3">
-<h3 id="arguments-table_export-fun_export-out_path-df_name-and-overwrite">Arguments <code>table_export</code>, <code>fun_export</code>,
-<code>out_path</code>, <code>df_name</code> and
-<code>overwrite</code><a class="anchor" aria-label="anchor" href="#arguments-table_export-fun_export-out_path-df_name-and-overwrite"></a>
+<h3 id="empty-values-and-corrections-not-applied">Empty values and corrections not applied<a class="anchor" aria-label="anchor" href="#empty-values-and-corrections-not-applied"></a>
+</h3>
+<p>The default value of <code>nrow</code> is not written into the
+<code><a href="https://rdrr.io/r/base/matrix.html" class="external-link">base::matrix()</a></code> call, because <code><a href="https://rdrr.io/r/base/matrix.html" class="external-link">base::matrix()</a></code>
+tests <code>missing(nrow)</code>: <code>nrow</code> gets an empty value,
+which keeps the result. The other calls are left unchanged, and listed
+with their reason in the <code>CORRECTIONS NOT APPLIED</code> message:
+<code><a href="https://rdrr.io/r/base/diag.html" class="external-link">base::diag()</a></code> uses <code><a href="https://rdrr.io/r/base/nargs.html" class="external-link">nargs()</a></code>, <code>x =</code>
+added to <code><a href="https://rdrr.io/r/stats/t.test.html" class="external-link">stats::t.test()</a></code> would change the method used,
+<code>digits = 0</code> added to <code><a href="https://rdrr.io/r/base/Round.html" class="external-link">base::round()</a></code> would fail
+for date-times, and <code><a href="https://rdrr.io/r/base/colnames.html" class="external-link">base::rownames()</a></code> is the target of an
+assignment:</p>
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu">saferDev</span><span class="fu">::</span><span class="fu"><a href="../reference/all_args_here.html">all_args_here</a></span><span class="op">(</span></span>
+<span>    x <span class="op">=</span> <span class="va">FUN3</span>,</span>
+<span>    table_export <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>    fun_export <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>    out_path <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>    df_name <span class="op">=</span> <span class="st">"res.tsv"</span>,</span>
+<span>    overwrite <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>    safer_check <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>    lib_path <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>    error_text <span class="op">=</span> <span class="st">""</span></span>
+<span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">## </span></span>
+<span><span class="co">## INSIDE FUN3(), ARGUMENTS ARE MISSING.</span></span></code></pre>
+<pre><code><span><span class="co">##   LINE_NB FUN_NAME                          FUN_ARGS FUN_POS</span></span>
+<span><span class="co">## 1       3   matrix               matrix(x, ncol = 2)      12</span></span>
+<span><span class="co">## 2       4     diag                           diag(x)      12</span></span>
+<span><span class="co">## 3       5   t.test t.test(formula = y ~ g, data = d)      13</span></span>
+<span><span class="co">## 4       6    round                          round(x)      12</span></span>
+<span><span class="co">## 5       7 rownames                       rownames(m)       7</span></span>
+<span><span class="co">## 6       7   paste0                  paste0("r", 1:2)      28</span></span>
+<span><span class="co">##                                                        DEF_ARGS</span></span>
+<span><span class="co">## 1 data = NA, nrow = 1, ncol = 1, byrow = FALSE, dimnames = NULL</span></span>
+<span><span class="co">## 2                               x = 1, nrow, ncol, names = TRUE</span></span>
+<span><span class="co">## 3                                                        x, ...</span></span>
+<span><span class="co">## 4                                            x, digits = 0, ...</span></span>
+<span><span class="co">## 5                             x, do.NULL = TRUE, prefix = "row"</span></span>
+<span><span class="co">## 6                        ..., collapse = NULL, recycle0 = FALSE</span></span>
+<span><span class="co">##             MISSING_ARG_NAMES                                      MISSING_ARGS</span></span>
+<span><span class="co">## 1 data, nrow, byrow, dimnames data = x, nrow = , byrow = FALSE, dimnames = NULL</span></span>
+<span><span class="co">## 2        x, nrow, ncol, names             x = x, nrow = , ncol = , names = TRUE</span></span>
+<span><span class="co">## 3                           x                                              x = </span></span>
+<span><span class="co">## 4                   x, digits                                 x = x, digits = 0</span></span>
+<span><span class="co">## 5          x, do.NULL, prefix             x = m, do.NULL = TRUE, prefix = "row"</span></span>
+<span><span class="co">## 6          collapse, recycle0                 collapse = NULL, recycle0 = FALSE</span></span>
+<span><span class="co">##                                                                STATUS</span></span>
+<span><span class="co">## 1 matrix(data = x, nrow = , ncol = 2, byrow = FALSE, dimnames = NULL)</span></span>
+<span><span class="co">## 2                         diag(x = x, nrow = , ncol = , names = TRUE)</span></span>
+<span><span class="co">## 3                              t.test(formula = y ~ g, data = d,x = )</span></span>
+<span><span class="co">## 4                                            round(x = x, digits = 0)</span></span>
+<span><span class="co">## 5                     rownames(x = m, do.NULL = TRUE, prefix = "row")</span></span>
+<span><span class="co">## 6                 paste0("r", 1:2, collapse = NULL, recycle0 = FALSE)</span></span></code></pre>
+<pre><code><span><span class="co">## ARGUMENTS WITH EMPTY VALUE (DEFAULT VALUE THAT CANNOT BE COPIED, OR NO DEFAULT VALUE):</span></span>
+<span><span class="co">## line 3: base::matrix(): nrow (DEFAULT: 1, TESTED BY missing())</span></span>
+<span><span class="co">## USE "= ," OR "= )" TO SEEK EACH CASE IN THE CODE, AND, IF POSSIBLE, TEST THAT THE DEFAULT VALUES ARE UNCHANGED, FOR INSTANCE:</span></span>
+<span><span class="co">## testthat::expect_identical(object = base::formals(fun = utils::getFromNamespace)$envir, expected = base::quote(expr = as.environment(pos)))</span></span></code></pre>
+<pre><code><span><span class="co">## CORRECTIONS NOT APPLIED:</span></span>
+<span><span class="co">## line 4: diag(x = x, nrow = , ncol = , names = TRUE)</span></span>
+<span><span class="co">##     REASON: the called function counts its arguments with nargs(), so that any added argument can change its result, e.g., base::diag(3) differs from base::diag(x = 3, nrow = , ncol = , names = TRUE). Apply the proposal manually only if the result is unchanged.</span></span>
+<span><span class="co">## line 5: t.test(formula = y ~ g, data = d,x = )</span></span>
+<span><span class="co">##     REASON: the first argument of the called function (S3 generic) is not written in the call, and adding it can change the method used, e.g., x = in stats::t.test(formula = y ~ g, data = d, x = ), which fails at call time. Apply the other arguments manually, if needed.</span></span>
+<span><span class="co">## line 6: round(x = x, digits = 0)</span></span>
+<span><span class="co">##     REASON: a method of the called function (S3 generic) has neither ... nor an argument added by the proposal, so that the corrected call fails for the objects of its class, e.g., round.POSIXt() has no digits argument, and base::round(x = t, digits = 0) fails for date-times. Apply the proposal manually only if the call never receives such objects.</span></span>
+<span><span class="co">## line 7: rownames(x = m, do.NULL = TRUE, prefix = "row")</span></span>
+<span><span class="co">##     REASON: the call is the target of an assignment, like base::rownames(x) &lt;- value, which calls the replacement function (rownames&lt;-), whose arguments differ from the proposed ones. See them with utils::getAnywhere() and apply them manually, if needed.</span></span></code></pre>
+<pre><code><span><span class="co">## function (x, m, d) </span></span>
+<span><span class="co">## {</span></span>
+<span><span class="co">##     a &lt;- base::matrix(data = x, ncol = 2, nrow = , byrow = FALSE, dimnames = NULL)</span></span>
+<span><span class="co">##     b &lt;- base::diag(x)</span></span>
+<span><span class="co">##     e &lt;- stats::t.test(formula = y ~ g, data = d)</span></span>
+<span><span class="co">##     f &lt;- base::round(x)</span></span>
+<span><span class="co">##     base::rownames(m) &lt;- base::paste0("r", 1:2, collapse = NULL, recycle0 = FALSE)</span></span>
+<span><span class="co">## }</span></span></code></pre>
+<p>Likewise, <code>graphics::plot(x)</code> and
+<code>graphics::plot(x = x)</code> are listed under
+<code>CORRECTIONS NOT APPLIED</code>, because the methods of
+<code><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot()</a></code> name their arguments differently:
+<code>plot.formula()</code> names the first one <code>formula</code>,
+and an added <code>y =</code> would match <code>ylim</code> and
+<code>ylab</code> of <code>plot.table()</code>. <br></p>
+</div>
+<div class="section level3">
+<h3 id="arguments-table_export-out_path-df_name-and-overwrite">Arguments <code>table_export</code>, <code>out_path</code>,
+<code>df_name</code> and <code>overwrite</code><a class="anchor" aria-label="anchor" href="#arguments-table_export-out_path-df_name-and-overwrite"></a>
 </h3>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Print the results into the res.tsv file written in the "." path, </span></span>
-<span><span class="co"># and overwrite if res.tsv already exists in ".".</span></span>
-<span><span class="fu"><a href="../reference/all_args_here.html">all_args_here</a></span><span class="op">(</span></span>
-<span>    x <span class="op">=</span> <span class="va">FUN2</span>, </span>
-<span>    table_export <span class="op">=</span> <span class="cn">TRUE</span>, </span>
-<span>    out_path <span class="op">=</span> <span class="st">"."</span>, </span>
-<span>    df_name <span class="op">=</span> <span class="st">"res.tsv"</span>, </span>
-<span>    overwrite <span class="op">=</span> <span class="cn">TRUE</span></span>
+<code class="sourceCode R"><span><span class="co"># Write the table into the res.tsv file of the tempo_dir folder,</span></span>
+<span><span class="co"># and overwrite res.tsv if it already exists in this folder.</span></span>
+<span><span class="fu">saferDev</span><span class="fu">::</span><span class="fu"><a href="../reference/all_args_here.html">all_args_here</a></span><span class="op">(</span></span>
+<span>    x <span class="op">=</span> <span class="va">FUN2</span>,</span>
+<span>    table_export <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>    fun_export <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>    out_path <span class="op">=</span> <span class="va">tempo_dir</span>,</span>
+<span>    df_name <span class="op">=</span> <span class="st">"res.tsv"</span>,</span>
+<span>    overwrite <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>    safer_check <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>    lib_path <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>    error_text <span class="op">=</span> <span class="st">""</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## </span></span>
 <span><span class="co">## INSIDE FUN2(), ARGUMENTS ARE MISSING.</span></span>
 <span><span class="co">## RESULT EXPORTED IN:</span></span>
-<span><span class="co">## /__w/saferDev/saferDev/vignettes/articles/res.tsv</span></span></code></pre>
+<span><span class="co">## /tmp/RtmpTr5hQz/dir1386543fd925/res.tsv</span></span></code></pre>
 <pre><code><span><span class="co">## function (x, y) </span></span>
 <span><span class="co">## {</span></span>
 <span><span class="co">##     middle_bracket2 &lt;- base::do.call(what = base::c, args = code_for_col, </span></span>
@@ -229,19 +318,26 @@
 <p><br></p>
 </div>
 <div class="section level3">
-<h3 id="argument-fun_export-return-or-export-the-modified-function">Argument <code>fun_export</code>: return or export the modified
-function<a class="anchor" aria-label="anchor" href="#argument-fun_export-return-or-export-the-modified-function"></a>
+<h3 id="argument-fun_export-return-or-write-the-modified-function">Argument <code>fun_export</code>: return or write the modified
+function<a class="anchor" aria-label="anchor" href="#argument-fun_export-return-or-write-the-modified-function"></a>
 </h3>
-<p>When arguments are missing in the code of the submitted function,
-<code><a href="../reference/all_args_here.html">all_args_here()</a></code> can return the corrected function (with the
-missing arguments written as proposed in the <code>$STATUS</code> column
-of the output data frame), or export its code into a <code>.R</code>
-file named with the submitted function name and <code>_safer</code>
-added at the end:</p>
+<p>When arguments are missing, <code><a href="../reference/all_args_here.html">all_args_here()</a></code> returns the
+modified function (the missing arguments being inserted as proposed in
+the <code>$STATUS</code> column of the table), or writes it into a
+<code>.R</code> file named with the name of the submitted function and
+<code>_safer</code> added at the end:</p>
 <div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Returns the modified function, or NULL if nothing has to be modified.</span></span>
-<span><span class="va">FUN2_safer</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/all_args_here.html">all_args_here</a></span><span class="op">(</span></span>
-<span>    x <span class="op">=</span> <span class="va">FUN2</span></span>
+<span><span class="va">FUN2_safer</span> <span class="op">&lt;-</span> <span class="fu">saferDev</span><span class="fu">::</span><span class="fu"><a href="../reference/all_args_here.html">all_args_here</a></span><span class="op">(</span></span>
+<span>    x <span class="op">=</span> <span class="va">FUN2</span>,</span>
+<span>    table_export <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>    fun_export <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>    out_path <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>    df_name <span class="op">=</span> <span class="st">"res.tsv"</span>,</span>
+<span>    overwrite <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>    safer_check <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>    lib_path <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>    error_text <span class="op">=</span> <span class="st">""</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## </span></span>
 <span><span class="co">## INSIDE FUN2(), ARGUMENTS ARE MISSING.</span></span></code></pre>
@@ -258,19 +354,24 @@ added at the end:</p>
 <span><span class="co">## 1                             GOOD</span></span>
 <span><span class="co">## 2        n = 1 parent.frame(n = 1)</span></span></code></pre>
 <div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">FUN2_safer</span> <span class="co"># modified function (or NULL when the code was already clean).</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">FUN2_safer</span> <span class="co"># modified function.</span></span></code></pre></div>
 <pre><code><span><span class="co">## function (x, y) </span></span>
 <span><span class="co">## {</span></span>
 <span><span class="co">##     middle_bracket2 &lt;- base::do.call(what = base::c, args = code_for_col, </span></span>
 <span><span class="co">##         quote = FALSE, envir = base::parent.frame(n = 1))</span></span>
 <span><span class="co">## }</span></span></code></pre>
 <div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Export the modified function into the FUN2_safer.R file, in the "." path.</span></span>
-<span><span class="fu"><a href="../reference/all_args_here.html">all_args_here</a></span><span class="op">(</span></span>
+<code class="sourceCode R"><span><span class="co"># Write the modified function into the FUN2_safer.R file of the tempo_dir folder.</span></span>
+<span><span class="fu">saferDev</span><span class="fu">::</span><span class="fu"><a href="../reference/all_args_here.html">all_args_here</a></span><span class="op">(</span></span>
 <span>    x <span class="op">=</span> <span class="va">FUN2</span>,</span>
+<span>    table_export <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>    fun_export <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>    out_path <span class="op">=</span> <span class="st">"."</span>, </span>
-<span>    overwrite <span class="op">=</span> <span class="cn">TRUE</span></span>
+<span>    out_path <span class="op">=</span> <span class="va">tempo_dir</span>,</span>
+<span>    df_name <span class="op">=</span> <span class="st">"res.tsv"</span>,</span>
+<span>    overwrite <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>    safer_check <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>    lib_path <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>    error_text <span class="op">=</span> <span class="st">""</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## </span></span>
 <span><span class="co">## INSIDE FUN2(), ARGUMENTS ARE MISSING.</span></span>
@@ -289,19 +390,26 @@ added at the end:</p>
 <span><span class="co">## 1                             GOOD</span></span>
 <span><span class="co">## 2        n = 1 parent.frame(n = 1)</span></span></code></pre>
 <pre><code><span><span class="co">## MODIFIED CODE EXPORTED IN:</span></span>
-<span><span class="co">## /__w/saferDev/saferDev/vignettes/articles/FUN2_safer.R</span></span></code></pre>
+<span><span class="co">## /tmp/RtmpTr5hQz/dir1386543fd925/FUN2_safer.R</span></span></code></pre>
 <p>When <code>fun_export = TRUE</code>, the modified function is not
-returned by the function but only exported (the file is not created when
-no correction has been applied). <br></p>
+returned, but written into the file. No file is written if nothing is
+corrected. <br></p>
 </div>
 <div class="section level3">
 <h3 id="argument-safer_check">Argument <code>safer_check</code><a class="anchor" aria-label="anchor" href="#argument-safer_check"></a>
 </h3>
 <div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Safer checkings are performed before main code running.</span></span>
-<span><span class="fu"><a href="../reference/all_args_here.html">all_args_here</a></span><span class="op">(</span></span>
-<span>    x <span class="op">=</span> <span class="va">FUN2</span>, </span>
-<span>    safer_check <span class="op">=</span> <span class="cn">TRUE</span></span>
+<code class="sourceCode R"><span><span class="co"># Safer checks are performed before running the main code.</span></span>
+<span><span class="fu">saferDev</span><span class="fu">::</span><span class="fu"><a href="../reference/all_args_here.html">all_args_here</a></span><span class="op">(</span></span>
+<span>    x <span class="op">=</span> <span class="va">FUN2</span>,</span>
+<span>    table_export <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>    fun_export <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>    out_path <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>    df_name <span class="op">=</span> <span class="st">"res.tsv"</span>,</span>
+<span>    overwrite <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>    safer_check <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>    lib_path <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>    error_text <span class="op">=</span> <span class="st">""</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## </span></span>
 <span><span class="co">## INSIDE FUN2(), ARGUMENTS ARE MISSING.</span></span></code></pre>
@@ -328,10 +436,17 @@ no correction has been applied). <br></p>
 <h3 id="argument-lib_path">Argument <code>lib_path</code><a class="anchor" aria-label="anchor" href="#argument-lib_path"></a>
 </h3>
 <div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># The "NOTGOOD" path does not exists.</span></span>
-<span><span class="fu"><a href="../reference/all_args_here.html">all_args_here</a></span><span class="op">(</span></span>
-<span>    x <span class="op">=</span> <span class="va">FUN2</span>,  </span>
-<span>    lib_path <span class="op">=</span> <span class="st">"NOTGOOD"</span></span>
+<code class="sourceCode R"><span><span class="co"># The "NOTGOOD" path does not exist.</span></span>
+<span><span class="fu">saferDev</span><span class="fu">::</span><span class="fu"><a href="../reference/all_args_here.html">all_args_here</a></span><span class="op">(</span></span>
+<span>    x <span class="op">=</span> <span class="va">FUN2</span>,</span>
+<span>    table_export <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>    fun_export <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>    out_path <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>    df_name <span class="op">=</span> <span class="st">"res.tsv"</span>,</span>
+<span>    overwrite <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>    safer_check <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>    lib_path <span class="op">=</span> <span class="st">"NOTGOOD"</span>,</span>
+<span>    error_text <span class="op">=</span> <span class="st">""</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## <span style="color: #BBBB00; font-weight: bold;">Error</span><span style="font-weight: bold;">:</span></span></span>
 <span><span class="co">## <span style="color: #BBBB00;">!</span> </span></span>
@@ -351,9 +466,15 @@ no correction has been applied). <br></p>
 </h3>
 <div class="sourceCode" id="cb31"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Add a text in error messages returned by all_args_here().</span></span>
-<span><span class="fu"><a href="../reference/all_args_here.html">all_args_here</a></span><span class="op">(</span></span>
-<span>    x <span class="op">=</span> <span class="va">FUN2</span>, </span>
-<span>    lib_path <span class="op">=</span> <span class="st">"NOTGOOD"</span>, </span>
+<span><span class="fu">saferDev</span><span class="fu">::</span><span class="fu"><a href="../reference/all_args_here.html">all_args_here</a></span><span class="op">(</span></span>
+<span>    x <span class="op">=</span> <span class="va">FUN2</span>,</span>
+<span>    table_export <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>    fun_export <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>    out_path <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>    df_name <span class="op">=</span> <span class="st">"res.tsv"</span>,</span>
+<span>    overwrite <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>    safer_check <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>    lib_path <span class="op">=</span> <span class="st">"NOTGOOD"</span>,</span>
 <span>    error_text <span class="op">=</span> <span class="st">" === TEXT ADDED ==="</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## <span style="color: #BBBB00; font-weight: bold;">Error</span><span style="font-weight: bold;">:</span></span></span>
@@ -373,13 +494,13 @@ no correction has been applied). <br></p>
 <h3 id="all-the-arguments">All the arguments<a class="anchor" aria-label="anchor" href="#all-the-arguments"></a>
 </h3>
 <div class="sourceCode" id="cb33"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/all_args_here.html">all_args_here</a></span><span class="op">(</span></span>
+<code class="sourceCode R"><span><span class="fu">saferDev</span><span class="fu">::</span><span class="fu"><a href="../reference/all_args_here.html">all_args_here</a></span><span class="op">(</span></span>
 <span>    x <span class="op">=</span> <span class="va">FUN1</span>, <span class="co"># R function.</span></span>
-<span>    table_export <span class="op">=</span> <span class="cn">FALSE</span>, <span class="co"># export the data frame into a .tsv file?</span></span>
-<span>    fun_export <span class="op">=</span> <span class="cn">FALSE</span>, <span class="co"># export the modified function into a .R file?</span></span>
-<span>    out_path <span class="op">=</span> <span class="st">"."</span>, <span class="co"># pathway of the folder where to export the data frame or the modified function.</span></span>
-<span>    df_name <span class="op">=</span> <span class="st">"res.tsv"</span>, <span class="co"># name of the exported data frame file.</span></span>
-<span>    overwrite <span class="op">=</span> <span class="cn">FALSE</span>, <span class="co"># overwrite potential files already existing in out_path?</span></span>
+<span>    table_export <span class="op">=</span> <span class="cn">FALSE</span>, <span class="co"># write the table into a file?</span></span>
+<span>    fun_export <span class="op">=</span> <span class="cn">FALSE</span>, <span class="co"># write the modified function into a .R file?</span></span>
+<span>    out_path <span class="op">=</span> <span class="cn">NULL</span>, <span class="co"># folder where the files are written (required if table_export or fun_export is TRUE).</span></span>
+<span>    df_name <span class="op">=</span> <span class="st">"res.tsv"</span>, <span class="co"># name of the file of the table.</span></span>
+<span>    overwrite <span class="op">=</span> <span class="cn">FALSE</span>, <span class="co"># overwrite the files already existing in out_path?</span></span>
 <span>    safer_check <span class="op">=</span> <span class="cn">TRUE</span>, <span class="co"># perform some "safer" checks (see https://github.com/safer-r)?</span></span>
 <span>    lib_path <span class="op">=</span> <span class="cn">NULL</span>, <span class="co"># where the required packages are if not in the default directories.</span></span>
 <span>    error_text <span class="op">=</span> <span class="st">""</span> <span class="co"># add information in error messages returned by the function.</span></span>
@@ -470,7 +591,7 @@ no correction has been applied). <br></p>
 <span><span class="co">## 11                                                                       do.call(what = base::c, args = code_for_col, quote = FALSE, envir = )</span></span>
 <span><span class="co">## 12                                                                                                                                        GOOD</span></span>
 <span><span class="co">## 13                                                                                                                         parent.frame(n = 1)</span></span></code></pre>
-<pre><code><span><span class="co">## ARGUMENTS WITH EMPTY VALUE (DEFAULT VALUE USED BUT CANNOT BE FIXED, OR NO DEFAULT VALUE):</span></span>
+<pre><code><span><span class="co">## ARGUMENTS WITH EMPTY VALUE (DEFAULT VALUE THAT CANNOT BE COPIED, OR NO DEFAULT VALUE):</span></span>
 <span><span class="co">## line 12: base::do.call(): envir (DEFAULT: parent.frame())</span></span>
 <span><span class="co">## USE "= ," OR "= )" TO SEEK EACH CASE IN THE CODE, AND, IF POSSIBLE, TEST THAT THE DEFAULT VALUES ARE UNCHANGED, FOR INSTANCE:</span></span>
 <span><span class="co">## testthat::expect_identical(object = base::formals(fun = utils::getFromNamespace)$envir, expected = base::quote(expr = as.environment(pos)))</span></span></code></pre>
@@ -498,7 +619,7 @@ no correction has been applied). <br></p>
 
 
     <footer><div class="pkgdown-footer-left">
-  <p>Developed by Gael Millot.</p>
+  <p>Developed by <a href="https://github.com/Tintin2710" class="external-link">Haiding Wang</a>, <a href="https://github.com/yushiHn" class="external-link">Yushi Han</a>, Mia Legras, Gael Millot.</p>
 </div>
 
 <div class="pkgdown-footer-right">

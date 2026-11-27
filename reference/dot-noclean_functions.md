@@ -1,6 +1,6 @@
 # No-Clean Functions
 
-Indicate if function names are inside quotes or after `$`.
+Indicate if function names are between quotes or after `$`.
 
 ## Usage
 
@@ -12,54 +12,51 @@ Indicate if function names are inside quotes or after `$`.
 
 - col1:
 
-  Vector of integers of line numbers in a code.
+  Vector of integers: the line numbers of the function names in `ini`.
 
 - col2:
 
-  Vector of strings of the function names scrutinized.
+  Vector of strings: the function names.
 
 - col3:
 
-  Vector of strings of the code before the function name.
+  Vector of strings: the code of the line before each function name, so
+  that the name starts at the position `nchar(col3) + 1` of its line.
 
 - ini:
 
-  Vector of strings of the initial function code analyzed.
+  Vector of strings: the lines of the analyzed code (`$code` of
+  [`.functions_detect()`](dot-functions_detect.md)).
 
 - lib_path:
 
-  Vector of characters specifying the absolute pathways of the
-  directories containing the required packages for the function, if not
-  in the default directories. Useful when R packages are not installed
-  in the default directories because of lack of admin rights. More
-  precisely, `lib_path` is passed through the `new` argument of
-  [`.libPaths()`](https://rdrr.io/r/base/libPaths.html) so that the new
-  library paths are `unique(c(new, .Library.site, .Library))`. Warning:
-  [`.libPaths()`](https://rdrr.io/r/base/libPaths.html) is restored to
-  the initial paths, after function execution. Ignored if `NULL`
-  (default): only the pathways specified by the current
-  [`.libPaths()`](https://rdrr.io/r/base/libPaths.html) are used for
-  package calling.
+  Vector of character strings or `NULL`: the `lib_path` value of the
+  calling exported function, only passed on to
+  [`arg_check()`](arg_check.md) (directly or through the internal
+  functions called). No default value.
 
 - error_text:
 
-  Single character string used to add information in error messages
-  returned by the function, notably if the function is inside other
-  functions, which is practical for debugging. Example:
-  `error_text = " INSIDE <PACKAGE_1>::<FUNCTION_1> INSIDE <PACKAGE_2>::<FUNCTION_2>."`.
-  If `NULL`, converted into `""`.
+  Single character string added to the error messages to name the
+  calling functions (`embed_error_text` of the calling function). `NULL`
+  is converted into `""`. No default value.
 
 ## Value
 
-A logical vector indicating if function names of `col2` are inside
-quotes or after `$` (`TRUE`) in `ini` or not (`FALSE`). Can be length 0.
+A logical vector: `TRUE` if the function name of `col2` is between
+quotes (string literal or backquoted name) or after `$` in `ini`,
+`FALSE` otherwise. Can be length 0.
 
 ## Details
+
+A function name is between quotes if the `(` that follows it is, the
+quotes being read over all the lines of `ini` as the R parser does (see
+[`.in_quotes_replacement()`](dot-in_quotes_replacement.md)).
 
 Warnings:
 
 - requires [`saferDev::arg_check`](arg_check.md),
-  `.has_odd_number_of_quotes`.
+  `.in_quotes_replacement`.
 
 - In the safer Backbone section
   `"######## check of the required functions from the required packages"`,

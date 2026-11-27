@@ -71,8 +71,6 @@ true_false_check(x = fun1)
     ## AFTER RUNNING saferDev::true_false_check().
     ## INSIDE fun1(), EVERYTHING SEEMS CLEAN.
 
-    ## NULL
-
 ``` r
 
 # Here T and F are used.
@@ -94,7 +92,6 @@ true_false_check(x = fun2)
     ##         base::return(base::mean(x = 1:3, na.rm = FALSE))
     ##     }
     ## }
-    ## <environment: 0x56447b1bcd40>
 
 ``` r
 
@@ -118,7 +115,6 @@ true_false_check(x = fun3)
     ##         mean(x = 1:3)
     ##     }
     ## }
-    ## <environment: 0x5644781edca8>
 
 \
 
@@ -126,7 +122,7 @@ true_false_check(x = fun3)
 
 ``` r
 
-# Safer checkings are performed before main code running.
+# Safer checks are performed before running the main code.
 true_false_check(
     x = fun1, 
     safer_check = TRUE
@@ -138,15 +134,13 @@ true_false_check(
     ## AFTER RUNNING saferDev::true_false_check().
     ## INSIDE fun1(), EVERYTHING SEEMS CLEAN.
 
-    ## NULL
-
 \
 
 ### Argument `lib_path`
 
 ``` r
 
-# The "NOTGOOD" path does not exists.
+# The "NOTGOOD" path does not exist.
 true_false_check(
     x = fun1,  
     lib_path = "NOTGOOD"
@@ -197,7 +191,7 @@ true_false_check(
 
 ``` r
 
-# The corrected function is returned (NULL if nothing has to be corrected).
+# The corrected function is returned (NULL, invisibly, if nothing has to be corrected).
 fun2_safer <- true_false_check(x = fun2)
 ```
 
@@ -221,7 +215,6 @@ fun2_safer # T replaced by TRUE, F replaced by FALSE.
     ##         base::return(base::mean(x = 1:3, na.rm = FALSE))
     ##     }
     ## }
-    ## <environment: 0x564476287020>
 
 ``` r
 
@@ -234,12 +227,10 @@ true_false_check(x = fun2_safer)
     ## AFTER RUNNING saferDev::true_false_check().
     ## INSIDE fun2_safer(), EVERYTHING SEEMS CLEAN.
 
-    ## NULL
-
 ``` r
 
 # Export the corrected function into the fun2_safer.R file, here in a new temporary folder.
-# out_path = "." (default) is the R working directory.
+# out_path is required when export = TRUE (NULL by default).
 # An existing file is never overwritten (an error is returned instead).
 tempo_dir <- base::tempfile(pattern = "dir", tmpdir = base::tempdir(), fileext = "")
 base::dir.create(path = tempo_dir, showWarnings = TRUE, recursive = FALSE, mode = "0777")
@@ -260,7 +251,7 @@ true_false_check(
     ## 4    F       base::return(base::mean(x = 1:3, na.rm = F))
 
     ## MODIFIED CODE EXPORTED IN:
-    ## /tmp/Rtmpq8UEMV/dir1dad87949e8/fun2_safer.R
+    ## /tmp/RtmpLrmYu9/dir16ad77d73940/fun2_safer.R
 
 ``` r
 
@@ -284,7 +275,7 @@ base::readLines(con = base::file.path(tempo_dir, "fun2_safer.R", fsep = "/"))
 true_false_check(
     x = fun1, # function name to test.
     export = FALSE, # write the corrected function into a .R file instead of returning it?
-    out_path = ".", # folder where to write the file (used only if export = TRUE).
+    out_path = NULL, # folder where to write the file (required if export = TRUE).
     safer_check = TRUE, # perform some "safer" checks (see https://github.com/safer-r)?
     lib_path = NULL, # where the required packages are if not in the default directories.
     error_text = "" # add information in error messages returned by the function.
@@ -296,15 +287,13 @@ true_false_check(
     ## AFTER RUNNING saferDev::true_false_check().
     ## INSIDE fun1(), EVERYTHING SEEMS CLEAN.
 
-    ## NULL
-
 \
 
 ### Sophisticated example
 
 ``` r
 
-# T and F used as names are not reported: they are user-defined objects.
+# T and F used as names (here a column name and an argument name) are not reported.
 fun4 <- function(x){
     df <- base::data.frame(T = 1:2, stringsAsFactors = FALSE)
     y <- df$T # column named T
@@ -318,8 +307,6 @@ true_false_check(x = fun4)
     ## 
     ## AFTER RUNNING saferDev::true_false_check().
     ## INSIDE fun4(), EVERYTHING SEEMS CLEAN.
-
-    ## NULL
 
 ``` r
 
@@ -336,8 +323,6 @@ true_false_check(x = fun5)
     ## AFTER RUNNING saferDev::true_false_check().
     ## INSIDE fun5(), EVERYTHING SEEMS CLEAN.
 
-    ## NULL
-
 ``` r
 
 # Strings and comments are ignored.
@@ -352,6 +337,30 @@ true_false_check(x = fun6)
     ## AFTER RUNNING saferDev::true_false_check().
     ## INSIDE fun6(), EVERYTHING SEEMS CLEAN.
 
-    ## NULL
+``` r
+
+# A T used as the whole assigned value is not reported, but a T used as an operand is.
+fun7 <- function(x, y){
+    z <- T # not reported
+    w <- T & y # reported
+    base::return(w)
+}
+true_false_check(x = fun7)
+```
+
+    ## 
+    ## 
+    ## 
+    ## INSIDE fun7(), SOME SYMBOLS T OR F MUST BE WRITTEN TRUE OR FALSE:
+    ## 
+    ## LINE SYMBOL      CODE
+    ## 4    T       w <- T & y
+
+    ## function (x, y) 
+    ## {
+    ##     z <- T
+    ##     w <- TRUE & y
+    ##     base::return(w)
+    ## }
 
 \

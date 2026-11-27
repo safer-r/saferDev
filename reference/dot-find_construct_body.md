@@ -1,14 +1,14 @@
 # Find Construct Body
 
-Locate the body expression of a construct (`if`, `else`, `for`, `while`,
-`repeat`, `function` or lambda `\(x)`) in the parse data of the checked
-code, for the construction of the modified function by
-[`curly_bracket_check`](curly_bracket_check.md). The body is the last
-`expr` child of the construct expression: for `if`, the condition `expr`
-comes first, the `then` body follows, and the `else` body (if any) is
-the last `expr` child; for `for`, the `forcond` (which owns the
-parentheses) comes before the body `expr`; for `while`, `repeat`,
-`function` and lambdas, the body is also the last `expr` child.
+Locates the body expression of a construct (`if`, `else`, `for`,
+`while`, `repeat`, `function` or lambda `\(x)`) in the parse data of the
+checked code, for the construction of the modified function by
+[`curly_bracket_check`](curly_bracket_check.md). The candidate children
+of the construct expression are those whose token is `expr`, or
+`expr_or_assign_or_help` for a body written with `=` (e.g.,
+`if(x) y = 1`). The `forcond` of a `for`, which owns the parentheses, is
+not a candidate. The body is the last candidate, except the `then` body
+of an `if` with an `else`, which is the second-to-last.
 
 ## Usage
 
@@ -60,45 +60,37 @@ parentheses) comes before the body `expr`; for `while`, `repeat`,
 - else_branch:
 
   Single logical value. Is the requested body the `else` branch of the
-  `if()` construct? If `TRUE`, the last `expr` child of the construct
-  expression is returned; if `FALSE`, the `then` body of an `if` with an
-  `else` (the second-to-last `expr` child) is returned.
+  `if()` construct? If `TRUE`, the last candidate child of the construct
+  expression (see Description) is returned. If `FALSE`, the body of the
+  construct is returned: the second-to-last candidate for the `then`
+  body of an `if` with an `else`, the last one otherwise.
 
 - else_tok:
 
-  Single integer or `NULL`: row index in `pd` of the `ELSE` token (used
-  only when `else_branch = TRUE`, for the internal error messages).
+  Single integer or `NULL`: row index in `pd` of the `ELSE` token
+  (required when `else_branch = TRUE`).
 
 - lib_path:
 
-  Vector of characters specifying the absolute pathways of the
-  directories containing the required packages for the function, if not
-  in the default directories. Useful when R packages are not installed
-  in the default directories because of lack of admin rights. More
-  precisely, `lib_path` is passed through the `new` argument of
-  [`.libPaths()`](https://rdrr.io/r/base/libPaths.html) so that the new
-  library paths are `unique(c(new, .Library.site, .Library))`. Warning:
-  [`.libPaths()`](https://rdrr.io/r/base/libPaths.html) is restored to
-  the initial paths, after function execution. Ignored if `NULL`
-  (default): only the pathways specified by the current
-  [`.libPaths()`](https://rdrr.io/r/base/libPaths.html) are used for
-  package calling.
+  Vector of character strings or `NULL`: the `lib_path` value of the
+  calling exported function, only passed on to
+  [`arg_check()`](arg_check.md). No default value.
 
 - error_text:
 
-  Single character string used to add information in error messages
-  returned by the function, notably if the function is inside other
-  functions, which is practical for debugging. Example:
-  `error_text = " INSIDE <PACKAGE_1>::<FUNCTION_1> INSIDE <PACKAGE_2>::<FUNCTION_2>."`.
-  If `NULL`, converted into `""`.
+  Single character string added to the error messages to name the
+  calling functions (`embed_error_text` of the calling function). `NULL`
+  is converted into `""`. No default value.
 
 ## Value
 
-A list with: `row`, row index in `pd` of the body `expr` (whose
-`col1`/`line1` give the position just before the body, and
-`col2`/`line2` the position of the last character of the body); `line1`,
-the line of the body start; `col1`, the column (character offset) of the
-body start.
+A list with: `row`, the row index in `pd` of the body expression
+(`line1` and `col1`: first character of the body; `line2` and `col2`:
+last character of the body); `line1` and `col1`, the line and the column
+of the body start. The columns are those of
+[`utils::getParseData()`](https://rdrr.io/r/utils/getParseData.html),
+where a TAB counts as a jump to the next multiple of 8: the caller
+converts them into character positions of the code line.
 
 ## Details
 

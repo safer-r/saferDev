@@ -3,7 +3,7 @@
 ## Description
 
 Set of functions for the development of R functions and pipelines,
-written according to the [safer-R project](https://github.com/safer-r)
+written according to the [safer-r project](https://github.com/safer-r)
 specifications.
 
 \
@@ -14,47 +14,65 @@ specifications.
 
 | Function | Description |
 |:---|:---|
-| **all_args_here()** | Check that all the functions used inside a function are written with all their arguments. For instance: `base::paste0(letters[1:2], collapse = NULL, recycle0 = FALSE)` and not `base::paste0(letters[1:2])`. Return table message of the line with problems and a corrected version of the submitted function. |
-| **arg_check()** | Check expected values of arguments of functions: class, type, mode, length (each tested exactly, same values, in the same order), restricted values panel, kind of numeric values in addition to the distinction between ‘integer’ and ‘double’ (proportion only? Inf values authorized? negative values authorized? Integers of type ‘double’?). |
-| **colons_check()** | Check that all the functions used inside a function are all referenced by their package attribution. For instance: [`base::mean()`](https://rdrr.io/r/base/mean.html) and not [`mean()`](https://rdrr.io/r/base/mean.html), or `saferDev:::.base_op_check()` and not [`.base_op_check()`](../reference/dot-base_op_check.md). Return table message of the line with problems and a corrected version of the submitted function. |
-| **curly_bracket_check()** | Verify that all the bodies of the `if`, `else`, `for`, `while`, `repeat` and `function` are delimited by curly brackets [`{ }`](https://rdrr.io/r/base/Paren.html). Return table message of the line with problems and a corrected version of the submitted function. |
-| **for_loop_nb_check()** | Check the sequence expression of every `for` loop of a function. If the number of iterations is not fixed by the writing itself (e.g., `1:length(x)`), a checking line is added before the loop, issuing a warning at execution if the sequence is empty, contains `NA` or infinite values, has a single value, or is decreasing. Return a table-like message of the problematic lines and a corrected version of the submitted function. |
-| **lambda_check()** | Verify that the lambda functions written with the shorthand `\(x)` (like `\(x) x * 2`) are all written with the standard `function(x)` writing. Return table message of the line with problems and a corrected version of the submitted function. Warning: the `\(x)` writing is only kept in the code of a function carrying its source references (attribute `srcref`). |
-| **env_check()** | Verify that object names in the environment defined by the `pos` argument are identical or not to object names in the above environments (following R Scope). This can be used to verify that names used for objects inside a function or in the working environment do not override names of objects already present in the above R environments, following the R scope. |
-| **get_message()** | Return the error, warning or simple (non error non warning) message if ever exist of an instruction written between quotes. |
-| **is_function_here()** | Check if required functions are present in installed packages. This controls for instance modifications of function names depending on package versions. |
-| **is_package_here()** | Check if required packages are installed locally. |
-| **report()** | Print a character string or a data object into a same log file. |
-| **super_assign_check()** | Verify that the superassignment operators `<<-` and `->>` are not used in a function. Return an error with a table of the lines with problems if any: these operators are not allowed in safer-r functions, because what they modify depends on the environments where the function is defined and called, so that it is difficult to guess what the writer had in mind (nothing can be corrected automatically). |
-| **true_false_check()** | Verify that the `TRUE` and `FALSE` logical constants are always written in full when used as values (argument values, conditions, comparisons, indexing) and never abbreviated as `T` or `F`, which can be overwritten by the user. Return table message of the line with problems and a corrected version of the submitted function. |
+| **all_args_here()** | Check that all the functions used inside a function are written with all their arguments. For instance: `base::paste0(letters[1:2], collapse = NULL, recycle0 = FALSE)` and not `base::paste0(letters[1:2])`. Print a table-like message of the detected function calls with their missing arguments, and return a corrected version of the submitted function, if any. |
+| **arg_check()** | Check the expected features of an argument: class (compared exactly, e.g., `c("matrix", "array")` for a matrix), type, mode, length, allowed values, and for numeric values: proportions, negative values, infinite values and integers stored as double. The problems are returned as a text, not raised as errors (except for an argument made of `NA` only). |
+| **colons_check()** | Check that the functions called inside a function are preceded by their package (e.g., [`base::mean()`](https://rdrr.io/r/base/mean.html) and not [`mean()`](https://rdrr.io/r/base/mean.html)). Print a table-like message of the calls without prefix, if any, and return a corrected version of the submitted function, where `<package>::` is added before the basic R functions (base, stats, graphics, grDevices, utils, datasets and methods packages); the other calls are only reported. |
+| **curly_bracket_check()** | Check that the bodies of the `if`/`else`, `for`, `while`, `repeat` and `function` constructs are delimited by curly brackets [`{ }`](https://rdrr.io/r/base/Paren.html). Print a table-like message of the problematic lines, if any, and return a corrected version of the submitted function. |
+| **env_check()** | Check whether the object names of an environment (by default, the one calling [`env_check()`](../reference/env_check.md)) are also present in the frames of the calling functions and in the environments of the search path (global environment, attached packages), where objects of the same name could be confused. |
+| **for_loop_nb_check()** | Check the sequence expression of every `for` loop of a function. If the number of iterations is not fixed by the writing itself (e.g., `1:length(x)`), a checking line is added before the loop, which issues a warning at execution if the sequence is empty, contains `NA` or infinite values, has a single value, has only negative values, or starts decreasing (first value greater than the second). Print a table-like message of the problematic lines, if any, and return a corrected version of the submitted function. |
+| **get_message()** | Catch the error, the last warning or the standard messages of an instruction written as a character string, which is evaluated once. |
+| **is_function_here()** | Check that the required functions are present in the installed packages (e.g., not removed or renamed in another version of the package). |
+| **is_package_here()** | Check that the required packages are installed, without loading them. |
+| **lambda_check()** | Check that no lambda function is written with the `\(x)` shorthand (like `\(x) x * 2`), and replace it by the standard `function(x)` writing. Print a table-like message of the problematic lines, if any, and return a corrected version of the submitted function. Warning: the `\(x)` writing can only be seen in a function that carries its source references (attribute `srcref`). |
+| **report()** | Write a character string or a data object into a log file (added at the end of the file with `append = TRUE`). |
+| **super_assign_check()** | Check that the superassignment operators `<<-` and `->>` are not used in a function. Return an error with a table of the problematic lines, if any, since these operators are not allowed in safer-r functions. |
+| **true_false_check()** | Check that the `TRUE` and `FALSE` logical constants are written in full, and not abbreviated as `T` or `F`, which can be overwritten by the user. Print a table-like message of the problematic lines, if any, and return a corrected version of the submitted function. |
 
 \
 
 ## Getting started: check and correct a function
 
 Each checking function prints a table-like message of the problematic
-lines and returns the corrected function (or `NULL` if nothing has to be
-corrected). With `export = TRUE`, the corrected function is written into
-a `<function name>_safer.R` file instead. Exception:
-[`super_assign_check()`](../reference/super_assign_check.md) returns an
-error if any `<<-` or `->>` is detected, because what these operators
-modify cannot be guessed from the code.
+lines (all the detected calls for
+[`all_args_here()`](../reference/all_args_here.md)), if any, and returns
+the corrected function, or `NULL`, invisibly, if nothing has to be
+corrected. With `export = TRUE` (`fun_export = TRUE` for
+[`all_args_here()`](../reference/all_args_here.md)), the corrected
+function is instead written into a `<function name>_safer.R` file, in
+the existing folder given by the `out_path` argument. Exception:
+[`super_assign_check()`](../reference/super_assign_check.md) only
+returns an error if any `<<-` or `->>` is detected, because what these
+operators modify cannot be guessed from the code.
 
 Recommended order:
-[`super_assign_check()`](../reference/super_assign_check.md) (error
-only, nothing corrected automatically),
-[`lambda_check()`](../reference/lambda_check.md),
-[`colons_check()`](../reference/colons_check.md) and
-[`all_args_here()`](../reference/all_args_here.md) (these two require
-the previous steps), then
-[`curly_bracket_check()`](../reference/curly_bracket_check.md),
-[`true_false_check()`](../reference/true_false_check.md) and
-[`for_loop_nb_check()`](../reference/for_loop_nb_check.md).
+
+1.  [`super_assign_check()`](../reference/super_assign_check.md): the
+    superassignments it reports must be removed by hand, before the
+    automatic corrections.
+2.  [`lambda_check()`](../reference/lambda_check.md): before
+    [`colons_check()`](../reference/colons_check.md) and
+    [`all_args_here()`](../reference/all_args_here.md), which stop with
+    an error on `\(x)` lambda functions.
+3.  [`colons_check()`](../reference/colons_check.md): before
+    [`all_args_here()`](../reference/all_args_here.md), which needs the
+    package names (like `base::`) to find the arguments of the called
+    functions.
+4.  [`all_args_here()`](../reference/all_args_here.md).
+5.  [`curly_bracket_check()`](../reference/curly_bracket_check.md) and
+    [`true_false_check()`](../reference/true_false_check.md).
+6.  [`for_loop_nb_check()`](../reference/for_loop_nb_check.md): last, so
+    that the long checking line that it inserts before each reported
+    loop does not show up in the tables of the other checkers
+    ([`all_args_here()`](../reference/all_args_here.md) lists every
+    detected call).
+
+In a vignette, as with Rscript, the functions have no source references:
+the checkers analyze their deparsed code, printed below, and the line
+numbers refer to it.
 
 ``` r
 
-library(saferDev)
-# function with missing package attributions, missing arguments, missing curly brackets,
+# function with missing package names, missing arguments, missing curly brackets,
 # an abbreviated logical value and a for() sequence not written with hard numbers
 fun1 <- function(x, y = T){
     if(x > 1) z <- mean(x)
@@ -63,7 +81,42 @@ fun1 <- function(x, y = T){
     }
     z
 }
-fun2 <- colons_check(x = fun1) # base:: added before mean() and length()
+fun1 # deparsed code analyzed by the checkers
+```
+
+    ## function (x, y = T) 
+    ## {
+    ##     if (x > 1) 
+    ##         z <- mean(x)
+    ##     for (i in 1:length(y)) {
+    ##         z <- base::paste0(z, i)
+    ##     }
+    ##     z
+    ## }
+
+``` r
+
+saferDev::super_assign_check(x = fun1) # no <<- or ->>
+```
+
+    ## 
+    ## 
+    ## AFTER RUNNING saferDev::super_assign_check().
+    ## INSIDE fun1(), EVERYTHING SEEMS CLEAN.
+
+``` r
+
+saferDev::lambda_check(x = fun1) # no \(x) lambda function
+```
+
+    ## 
+    ## 
+    ## AFTER RUNNING saferDev::lambda_check().
+    ## INSIDE fun1(), EVERYTHING SEEMS CLEAN.
+
+``` r
+
+fun2 <- saferDev::colons_check(x = fun1) # base:: added before mean() and length()
 ```
 
     ## 
@@ -76,7 +129,7 @@ fun2 <- colons_check(x = fun1) # base:: added before mean() and length()
 
 ``` r
 
-fun3 <- all_args_here(x = fun2) # missing arguments added
+fun3 <- saferDev::all_args_here(x = fun2) # missing arguments added
 ```
 
     ## 
@@ -97,7 +150,7 @@ fun3 <- all_args_here(x = fun2) # missing arguments added
 
 ``` r
 
-fun4 <- curly_bracket_check(x = fun3) # { } added after if()
+fun4 <- saferDev::curly_bracket_check(x = fun3) # { } added after if()
 ```
 
     ## 
@@ -110,7 +163,7 @@ fun4 <- curly_bracket_check(x = fun3) # { } added after if()
 
 ``` r
 
-fun5 <- true_false_check(x = fun4) # T replaced by TRUE
+fun5 <- saferDev::true_false_check(x = fun4) # T replaced by TRUE
 ```
 
     ## 
@@ -135,11 +188,10 @@ fun5
     ##     }
     ##     z
     ## }
-    ## <environment: 0x562b873c79f8>
 
 ``` r
 
-fun6 <- for_loop_nb_check(x = fun5) # checking line added before the for() loop
+fun6 <- saferDev::for_loop_nb_check(x = fun5) # checking line added before the for() loop
 ```
 
     ## 
@@ -152,10 +204,10 @@ fun6 <- for_loop_nb_check(x = fun5) # checking line added before the for() loop
 
 ``` r
 
-fun6(x = 2, y = NULL) # 1:length(NULL) is c(1, 0): a warning is now returned
+fun6(x = 2, y = NULL) # 1:length(NULL) is c(1, 0): a warning is now issued
 ```
 
-    ## Warning: FOR SEQUENCE DECREASING
+    ## Warning: FOR SEQUENCE STARTING DECREASING
 
     ## [1] "210"
 

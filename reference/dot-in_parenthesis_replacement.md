@@ -1,7 +1,8 @@
 # Replacement Inside Parenthesis
 
-Parse a string and replace any pattern present between brackets `()` by
-another pattern.
+Replace each match of a pattern located between two given brackets of a
+string by a replacement character, and return the positions of the
+replacements.
 
 ## Usage
 
@@ -27,71 +28,57 @@ another pattern.
 
 - pattern:
 
-  Single string indicating the pattern to detect. Warning: must be very
-  simple pattern, like `","`.
+  Single string: regex matching a single character, like `","`.
 
 - no_regex_pattern:
 
-  Same as `pattern` without escape characters or list, etc. Used for
-  messages.
+  Single string: the character matched by `pattern`, without regex
+  escape. Used to check the replaced characters.
 
 - replacement:
 
-  Single string for `pattern` replacement. Is not regex.
+  Single character replacing each match of `pattern`. Not a regex.
 
 - perl:
 
-  Single logical value. Use Perl regex in `pattern` ?
+  Single logical value. Use Perl regex in `pattern`?
 
 - open_pos:
 
-  Single positive and non zero integer indicating the position of the
-  opening parenthesis.
+  Single integer: position of an opening bracket `(` in `string`.
 
 - close_pos:
 
-  Single positive and non zero integer indicating the position of the
-  closing parenthesis.
+  Single integer: position of a closing bracket `)` in `string`.
 
 - lib_path:
 
-  Vector of characters specifying the absolute pathways of the
-  directories containing the required packages for the function, if not
-  in the default directories. Useful when R packages are not installed
-  in the default directories because of lack of admin rights. More
-  precisely, `lib_path` is passed through the `new` argument of
-  [`.libPaths()`](https://rdrr.io/r/base/libPaths.html) so that the new
-  library paths are `unique(c(new, .Library.site, .Library))`. Warning:
-  [`.libPaths()`](https://rdrr.io/r/base/libPaths.html) is restored to
-  the initial paths, after function execution. Ignored if `NULL`
-  (default): only the pathways specified by the current
-  [`.libPaths()`](https://rdrr.io/r/base/libPaths.html) are used for
-  package calling.
+  Vector of character strings or `NULL`: the `lib_path` value of the
+  calling exported function, only passed on to
+  [`arg_check()`](arg_check.md). No default value.
 
 - error_text:
 
-  Single character string used to add information in error messages
-  returned by the function, notably if the function is inside other
-  functions, which is practical for debugging. Example:
-  `error_text = " INSIDE <PACKAGE_1>::<FUNCTION_1> INSIDE <PACKAGE_2>::<FUNCTION_2>."`.
-  If `NULL`, converted into `""`.
+  Single character string added to the error messages to name the
+  calling functions (`embed_error_text` of the calling function). `NULL`
+  is converted into `""`. No default value.
 
 ## Value
 
 A list containing:
 
-- `string`: the input string with all pattern replaced by the
-  replacement pattern.
+- `string`: `string` with the matches of `pattern` between the positions
+  `open_pos` and `close_pos` replaced by `replacement`.
 
-- `pos`: the positions of the 1st character of the replaced pattern.
-  `NULL` if no replaced pattern. In that case, `string` is identical to
-  the input string
+- `pos`: vector of the positions of the replaced matches in `string`.
+  `NULL` if no match. In that case, `string` is identical to the input
+  string.
 
 ## Details
 
 Warnings:
 
-- Must be very simple pattern, like `"\("`.
+- `pattern` must match a single character.
 
 - requires [`saferDev::arg_check`](arg_check.md).
 

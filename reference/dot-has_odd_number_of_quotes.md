@@ -1,6 +1,6 @@
 # Has Odd Number of Quotes
 
-Determine if a string has a odd number of quotes.
+Determine if a string has an odd number of a quote character.
 
 ## Usage
 
@@ -20,26 +20,15 @@ Determine if a string has a odd number of quotes.
 
 - lib_path:
 
-  Vector of characters specifying the absolute pathways of the
-  directories containing the required packages for the function, if not
-  in the default directories. Useful when R packages are not installed
-  in the default directories because of lack of admin rights. More
-  precisely, `lib_path` is passed through the `new` argument of
-  [`.libPaths()`](https://rdrr.io/r/base/libPaths.html) so that the new
-  library paths are `unique(c(new, .Library.site, .Library))`. Warning:
-  [`.libPaths()`](https://rdrr.io/r/base/libPaths.html) is restored to
-  the initial paths, after function execution. Ignored if `NULL`
-  (default): only the pathways specified by the current
-  [`.libPaths()`](https://rdrr.io/r/base/libPaths.html) are used for
-  package calling.
+  Vector of character strings or `NULL`: the `lib_path` value of the
+  calling exported function, only passed on to
+  [`arg_check()`](arg_check.md). No default value.
 
 - error_text:
 
-  Single character string used to add information in error messages
-  returned by the function, notably if the function is inside other
-  functions, which is practical for debugging. Example:
-  `error_text = " INSIDE <PACKAGE_1>::<FUNCTION_1> INSIDE <PACKAGE_2>::<FUNCTION_2>."`.
-  If `NULL`, converted into `""`.
+  Single character string added to the error messages to name the
+  calling functions (`embed_error_text` of the calling function). `NULL`
+  is converted into `""`. No default value.
 
 ## Value
 
@@ -47,11 +36,11 @@ Determine if a string has a odd number of quotes.
 
 ## Details
 
-The function considers any present `'` (`pattern = "'\''"`) or `"`
-(`pattern = '"'`). Meaning that it does not treat special situation,
-like escape quotes `\"`, or situation like this `"'"`. All these must be
-removed from the `input_string` if necessary, using for instance:
-`input_string <- gsub( x = input_string, pattern = '"\'"', replacement = ' ')`
+Every occurrence of `pattern` is counted, including escaped quotes
+(`\"`) and quotes inside strings delimited by the other quote
+(`"it's"`). Thus, the result does not tell if the end of `input_string`
+is between quotes: use
+[`.in_quotes_replacement()`](dot-in_quotes_replacement.md) for that.
 
 Warnings:
 

@@ -1,7 +1,7 @@
-# Report
+# Write an Object or a Text Into a Log File
 
-Print a character string or a data object into a same output file.
-Convenient for log file generation.
+Writes a character string or a data object into a text file, after its
+previous content if required. Convenient to build log files.
 
 ## Usage
 
@@ -25,92 +25,86 @@ report(
 
 - data:
 
-  Object to print in the output file. If `NULL`, nothing is done, with
-  no warning.
+  Object to write (single value, vector, factor, matrix, table, data
+  frame, list, ...). If `NULL`, nothing is done, with no warning.
 
 - output:
 
-  Single character string. Name of the output file.
+  Single character string: name of the output file.
 
 - path:
 
-  Single character string indicating the path where to write the output
-  file.
+  Single character string: path of the existing folder of the output
+  file. No default value.
 
 - append:
 
-  Single logical value. If the output file already exists and `append`
-  is `FALSE`, an error message is returned (no overwrite of existing
-  file). Otherwise, the printing is appended (and the output file is
-  created if it does not exist yet).
+  Single logical value. If `TRUE`, `data` is written after the content
+  of the output file (created if it does not exist). If `FALSE`
+  (default), the output file must not exist: an existing file is never
+  overwritten (error).
 
 - rownames_kept:
 
-  Single logical value. Defines whether row names have to be removed or
-  not in 2D objects. Warning: in 1D tables, names over the values are
-  taken as row names, and are thus removed if `rownames_kept` is
-  `FALSE`.
+  Single logical value. Keep the row names of matrices, tables and data
+  frames? Warning: the names above the values of 1D tables are row
+  names, removed if `FALSE`.
 
 - vector_cat:
 
-  Single logical value. If `TRUE`, print a vector of length \> 1 using
-  [`cat()`](https://rdrr.io/r/base/cat.html) instead of
-  [`capture.output()`](https://rdrr.io/r/utils/capture.output.html).
-  Otherwise (default `FALSE`) print a vector of length \> 1 using
-  [`capture.output()`](https://rdrr.io/r/utils/capture.output.html).
-  Names of values are not printed when `TRUE`.
+  Single logical value. If `TRUE`, vectors of length \> 1 are written
+  with [`cat()`](https://rdrr.io/r/base/cat.html) (values separated by a
+  space, names not written), otherwise as printed in the console.
+  Vectors of length 1 are always written with
+  [`cat()`](https://rdrr.io/r/base/cat.html). Here, vectors are atomic
+  vectors with no attribute other than names: factors, dates and lists
+  are always written as printed in the console.
 
 - noquote:
 
-  Single logical value. If `TRUE` no quote are added to the returned
-  character strings.
+  Single logical value. If `TRUE`, character vectors (of length \> 1,
+  with `vector_cat = FALSE`), character matrices and character arrays
+  are written without quotes. No effect on the other objects.
 
 - sep:
 
-  Single non null and positive integer representing the number of empty
-  lines added in the output file after the printed data.
+  Single positive integer: number of empty lines written after `data`.
 
 - safer_check:
 
-  Single logical value. Perform the "safer" checks? If `TRUE`, checkings
-  are performed before main code running (see the [safer-r
-  project](https://github.com/safer-r)): 1) required functions and
-  related packages effectively present in local R libraries and 2) R
-  classical operators (like `"<-"`) not overwritten by another package
-  because of the R scope. Warning: must be set to `FALSE` if this
-  function is used inside another "safer" function to avoid pointless
-  multiple checkings.
+  Single logical value. If `TRUE` (default), checks before running that
+  the required packages and functions are installed and that the
+  classical R operators (like `<-`) are not masked by another package or
+  by a user-defined object of the global environment. These checks take
+  time at each call: set `FALSE` in loops and inside other safer-r
+  functions, to avoid repeating them.
 
 - lib_path:
 
-  Vector of characters specifying the absolute pathways of the
-  directories containing the required packages for the function, if not
-  in the default directories. Useful when R packages are not installed
-  in the default directories because of lack of admin rights. More
-  precisely, `lib_path` is passed through the `new` argument of
-  [`.libPaths()`](https://rdrr.io/r/base/libPaths.html) so that the new
-  library paths are `unique(c(new, .Library.site, .Library))`. Warning:
-  [`.libPaths()`](https://rdrr.io/r/base/libPaths.html) is restored to
-  the initial paths, after function execution. Ignored if `NULL`
-  (default): only the pathways specified by the current
-  [`.libPaths()`](https://rdrr.io/r/base/libPaths.html) are used for
-  package calling.
+  Vector of character strings: paths of existing extra library folders
+  containing the required packages (e.g., packages installed without
+  admin rights). They are searched after the current
+  [`.libPaths()`](https://rdrr.io/r/base/libPaths.html) during the call
+  (the current libraries keep priority), and
+  [`.libPaths()`](https://rdrr.io/r/base/libPaths.html) is restored on
+  exit. If `NULL` (default), only the current
+  [`.libPaths()`](https://rdrr.io/r/base/libPaths.html) are used.
 
 - error_text:
 
-  Single character string used to add information in error messages
-  returned by the function, notably if the function is inside other
-  functions, which is practical for debugging. Example:
-  `error_text = " INSIDE <PACKAGE_1>::<FUNCTION_1> INSIDE <PACKAGE_2>::<FUNCTION_2>."`.
-  If `NULL`, converted into `""`.
+  Single character string added to the error messages (e.g.,
+  `" INSIDE pkg1::fun1()"`) to name the calling functions. `NULL` is
+  converted into `""`.
 
 ## Value
 
-Nothing (implementation of an existing file) or a text file.
+No return value (invisible `NULL`), called for its side effect: `data`
+is written into the `output` file of the `path` folder.
 
 ## See also
 
-[`capture.output`](https://rdrr.io/r/utils/capture.output.html).
+[`capture.output`](https://rdrr.io/r/utils/capture.output.html),
+[`cat`](https://rdrr.io/r/base/cat.html).
 
 ## Author
 
@@ -123,36 +117,38 @@ Yushi Han
 ## Examples
 
 ``` r
-# Warning: these examples may not work well when using the "Run examples" link 
-# because of a particular environment. Please, copy-paste in a local environment.
 # See also https://safer-r.github.io/saferDev/articles/report.html
 # Write in the results.txt file of a new temporary folder:
-tempo_dir <- base::tempfile(pattern = "dir", tmpdir = base::tempdir(), fileext = "")
+tempo_dir <- base::tempfile(pattern = "dir", tmpdir = base::tempdir(check = FALSE), fileext = "")
 base::dir.create(path = tempo_dir, showWarnings = TRUE, recursive = FALSE, mode = "0777")
-saferDev::report(data = "THE FOLLOWING VECTOR IS:\n", output = "results.txt", path = tempo_dir,
-    append = TRUE, sep = 1)
+saferDev::report(data = "THE FOLLOWING VECTOR IS:", output = "results.txt", path = tempo_dir,
+    append = TRUE, rownames_kept = FALSE, vector_cat = FALSE, noquote = TRUE, sep = 1,
+    safer_check = TRUE, lib_path = NULL, error_text = "")
 saferDev::report(data = 1:3, output = "results.txt", path = tempo_dir, append = TRUE,
-    rownames_kept = FALSE, vector_cat = FALSE, noquote = FALSE, sep = 2)
-saferDev::report(data = "THE FOLLOWING DATA FRAME IS:\n", output = "results.txt",
-    path = tempo_dir, append = TRUE, sep = 1)
-saferDev::report(data = base::data.frame(A = 1:3, B = letters[1:3]), output = "results.txt",
-    path = tempo_dir, append = TRUE, rownames_kept = FALSE, vector_cat = FALSE,
-    noquote = FALSE, sep = 1)
-base::cat(base::readLines(con = base::file.path(tempo_dir, "results.txt")), sep = "\n")
+    rownames_kept = FALSE, vector_cat = FALSE, noquote = FALSE, sep = 2, safer_check = TRUE,
+    lib_path = NULL, error_text = "")
+saferDev::report(data = "THE FOLLOWING DATA FRAME IS:", output = "results.txt",
+    path = tempo_dir, append = TRUE, rownames_kept = FALSE, vector_cat = FALSE, noquote = TRUE,
+    sep = 1, safer_check = TRUE, lib_path = NULL, error_text = "")
+saferDev::report(data = base::data.frame(A = 1:3, B = base::letters[1:3], row.names = NULL,
+    check.rows = FALSE, check.names = TRUE, fix.empty.names = TRUE, stringsAsFactors = FALSE),
+    output = "results.txt", path = tempo_dir, append = TRUE, rownames_kept = FALSE,
+    vector_cat = FALSE, noquote = FALSE, sep = 1, safer_check = TRUE, lib_path = NULL,
+    error_text = "")
+base::cat(base::readLines(con = base::file.path(tempo_dir, "results.txt", fsep = "/"), n = -1L,
+    ok = TRUE, warn = TRUE, encoding = "unknown", skipNul = FALSE), file = "", sep = "\n",
+    fill = FALSE, labels = NULL, append = FALSE)
 #> THE FOLLOWING VECTOR IS:
-#> 
-#> 
 #> 
 #> [1] 1 2 3
 #> 
 #> 
 #> THE FOLLOWING DATA FRAME IS:
 #> 
+#>  A B
+#>  1 a
+#>  2 b
+#>  3 c
 #> 
-#> 
-#>    A B
-#>    1 a
-#>    2 b
-#>    3 c
-#> 
+base::unlink(x = tempo_dir, recursive = TRUE, force = FALSE, expand = TRUE) # folder removed
 ```

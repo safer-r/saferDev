@@ -92,7 +92,7 @@ super_assign_check(x = fun2)
 
 ``` r
 
-# What <<- modifies depends on the environments where the function is defined and called.
+# What <<- modifies depends on where the function is defined and on what exists there.
 # Here, a y object is created in the global environment:
 exists("y", envir = globalenv(), inherits = FALSE)
 ```
@@ -133,7 +133,7 @@ exists("y", envir = globalenv(), inherits = FALSE)
 
 ``` r
 
-# The writer intention cannot be guessed: the code must be rewritten, for instance by
+# The intention of the writer cannot be guessed: the code must be rewritten, for instance by
 # returning the value, or by using base::assign() with an explicit envir argument.
 ```
 
@@ -143,7 +143,7 @@ exists("y", envir = globalenv(), inherits = FALSE)
 
 ``` r
 
-# Safer checkings are performed before main code running.
+# Safer checks are performed before running the main code.
 super_assign_check(
     x = fun1, 
     safer_check = TRUE
@@ -161,7 +161,7 @@ super_assign_check(
 
 ``` r
 
-# The "NOTGOOD" path does not exists.
+# The "NOTGOOD" path does not exist.
 super_assign_check(
     x = fun1,  
     lib_path = "NOTGOOD"
@@ -234,8 +234,21 @@ super_assign_check(
 
 ``` r
 
-# A <<- written in a string, in a comment or as a backquoted name is not an operator: ignored.
-fun5 <- function(x){ y <- "the <<- writing in a string" ; base::`<<-` ; x } # a <<- in a comment
+# A <<- written in a string, in a comment or as a backquoted name that is not called
+# is not an operator: ignored.
+# (keep.source = TRUE keeps the comment in the code of the function)
+fun5 <- eval(parse(text = "function(x){\n    y <- \"the <<- writing in a string\" # a <<- in a comment\n    base::`<<-`\n    x\n}", keep.source = TRUE))
+fun5
+```
+
+    ## function(x){
+    ##     y <- "the <<- writing in a string" # a <<- in a comment
+    ##     base::`<<-`
+    ##     x
+    ## }
+
+``` r
+
 super_assign_check(x = fun5)
 ```
 
@@ -243,5 +256,37 @@ super_assign_check(x = fun5)
     ## 
     ## AFTER RUNNING saferDev::super_assign_check().
     ## INSIDE fun5(), EVERYTHING SEEMS CLEAN.
+
+``` r
+
+# But the operator called as a function is a superassignment: reported.
+fun6 <- eval(parse(text = "function(x){\n    `<<-`(y, x)\n    x\n}", keep.source = TRUE))
+fun6
+```
+
+    ## function(x){
+    ##     `<<-`(y, x)
+    ##     x
+    ## }
+
+``` r
+
+super_assign_check(x = fun6)
+```
+
+    ## Error:
+    ## ! 
+    ## 
+    ## ================
+    ## 
+    ## ERROR IN saferDev::super_assign_check().
+    ## 
+    ## INSIDE fun6(), THE SUPERASSIGNMENT OPERATORS <<- AND ->> ARE NOT ALLOWED IN SAFER-R FUNCTIONS:
+    ## PLEASE, REWRITE THE CODE ACCORDINGLY.
+    ## 
+    ## LINE SYMBOL      CODE
+    ## 2    <<-     `<<-`(y, x)
+    ## 
+    ## ================
 
 \
