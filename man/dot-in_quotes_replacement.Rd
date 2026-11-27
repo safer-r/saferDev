@@ -15,38 +15,40 @@
 )
 }
 \arguments{
-\item{string}{Single string.}
+\item{string}{Single string, for instance R code, with lines separated by \code{"\\n"}.}
 
-\item{pattern}{Single string indicating the pattern to detect. Warning: must be very simple pattern, like \code{"\\("}.}
+\item{pattern}{Single string: regex matching a single character, like \code{"\\\\("}.}
 
-\item{no_regex_pattern}{Same as \code{pattern} without escape characters or list, etc. Used for messages.}
+\item{no_regex_pattern}{Single string: the character matched by \code{pattern}, without regex escape, like \code{"("}. Used to check the replaced characters.}
 
-\item{replacement}{Single string for \code{pattern} replacement. Must have the same number of character than \code{no_regex_pattern}. Is not regex.}
+\item{replacement}{Single string replacing each match of \code{pattern} between quotes. Must have the same number of characters as \code{no_regex_pattern}. Not a regex.}
 
-\item{perl}{Single logical value. Use Perl regex in \code{pattern} ?}
+\item{perl}{Single logical value. Use Perl regex in \code{pattern}?}
 
-\item{lib_path}{Vector of characters specifying the absolute pathways of the directories containing the required packages for the function, if not in the default directories. Useful when R packages are not installed in the default directories because of lack of admin rights. More precisely, \code{lib_path} is passed through the \code{new} argument of \code{.libPaths()} so that the new library paths are \code{unique(c(new, .Library.site, .Library))}. Warning: \code{.libPaths()} is restored to the initial paths, after function execution. Ignored if \code{NULL} (default): only the pathways specified by the current \code{.libPaths()} are used for package calling.}
+\item{lib_path}{Vector of character strings or \code{NULL}: the \code{lib_path} value of the calling exported function, only passed on to \code{arg_check()}. No default value.}
 
-\item{error_text}{Single character string used to add information in error messages returned by the function, notably if the function is inside other functions, which is practical for debugging. Example: \code{error_text = " INSIDE <PACKAGE_1>::<FUNCTION_1> INSIDE <PACKAGE_2>::<FUNCTION_2>."}. If \code{NULL}, converted into \code{""}.}
+\item{error_text}{Single character string added to the error messages to name the calling functions (\code{embed_error_text} of the calling function). \code{NULL} is converted into \code{""}. No default value.}
 }
 \value{
 A list containing:
 \itemize{
-  \item \code{string}: The input string with all pattern replaced by the replacement pattern.
-  \item \code{pos}: vector of the positions of the 1st character of the replaced pattern. \code{NULL} if no replaced pattern. In that case, \code{string} is identical to the input string.
+  \item \code{string}: \code{string} with the matches of \code{pattern} between quotes replaced by \code{replacement}.
+  \item \code{pos}: vector of the positions of the replaced matches. \code{NULL} if no match is between quotes. In that case, \code{string} is identical to the input string.
 }
 }
 \description{
-Parse a string and replace any pattern inside simple or double quotes by another replacement pattern and get the position of replacements.
+Replace each match of a pattern located between quotes (string literals and backquoted names of R code) by a replacement of the same length, and return the positions of the replacements.
 }
 \details{
-The function works first by replacing in the code: 1) the three consecutive characters \code{'"'} or \code{'"'} by three spaces, 2) \code{"\"'"} and \code{'\'"'} by four spaces and 3) escape quotes like \code{\"} or \code{\'} by two spaces, before looking for the pattern inside quotes.
+\code{string} is read from left to right, as the R parser reads code: a quote (\verb{"}, \verb{'} or \verb{`}) opens a quoted part that only the same quote closes, a backslash inside quotes escapes the next character (e.g., \verb{\"} or \verb{\\\\}), a raw string (e.g., \code{r"(...)"} or \code{R"--[...]--"}) is only closed by its own closing delimiter, \code{#} outside quotes starts a comment, up to the end of the line, and the \code{\%...\%} operators are skipped. Thus, an apostrophe inside double quotes (\code{"it's"}), or a double quote inside simple quotes, opens nothing. A quoted part that is not closed goes up to the end of \code{string}. The matches inside comments are not replaced.
+
+Only the content of a quoted part is replaced, never its quotes or the delimiters of a raw string, so that the output string can be passed again to the function (e.g., to replace \code{(} after \code{)}).
 
 Warnings:
 \itemize{
-  \item Must be very simple pattern, like \code{"\\("}.
-  \item requires \code{saferDev::arg_check}, \code{.has_odd_number_of_quotes}.
-  \item In the safer Backbone section \code{"######## check of the required functions from the required packages"}, add also these 2 functions when checking for the presence of \code{.in_quotes_replacement}.
+  \item \code{pattern} must match a single character.
+  \item requires \code{saferDev::arg_check}.
+  \item In the safer Backbone section \code{"######## check of the required functions from the required packages"}, add also \code{saferDev::arg_check} when checking for the presence of \code{.in_quotes_replacement}.
 }
 }
 \author{

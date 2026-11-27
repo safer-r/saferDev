@@ -2,13 +2,13 @@
 % Please edit documentation in R/all_args_here.R
 \name{all_args_here}
 \alias{all_args_here}
-\title{All Arguments Here}
+\title{Check and Complete the Arguments of Function Calls}
 \usage{
 all_args_here(
   x,
   table_export = FALSE,
   fun_export = FALSE,
-  out_path = ".",
+  out_path = NULL,
   df_name = "res.tsv",
   overwrite = FALSE,
   safer_check = TRUE,
@@ -17,102 +17,80 @@ all_args_here(
 )
 }
 \arguments{
-\item{x}{Function name, written without quotes and brackets.}
+\item{x}{Function to check, written without quotes and brackets (e.g., \code{fun1} or \code{pkg::fun1}).}
 
-\item{table_export}{Single logical value. Export the result data frame into a \code{.tsv} file? If \code{TRUE}, the data frame is not returned by the function but only exported.}
+\item{table_export}{Single logical value. Write the table (see the Value section) into the \code{df_name} file of \code{out_path}, instead of printing it?}
 
-\item{fun_export}{Single logical value. Export the modified function into a \code{.R} file? If \code{TRUE}, the corrected code (missing arguments added into the detected function calls, as proposed in the \code{$STATUS} column) is not returned by the function but only exported into a file made of the name of the submitted function with \code{_safer} added at the end (e.g., \code{test_safer.R}). The file contains an assignment of the modified function: \code{test_safer <- function(...) ...}, so that \code{base::source()}ing it recreates the modified function. An error is returned if the file already exists in \code{out_path} and \code{overwrite} is \code{FALSE}, and if the tested function is not designated by a function name (like \code{test} or \code{package::test}), i.e., written by an inline definition (like \code{function(x)\{x\}}) or by a component writing (like \code{FUN_LIST$fun}). Ignored if no correction has been applied.}
+\item{fun_export}{Single logical value. If \code{TRUE}, the corrected function is written into the \code{<name>_safer.R} file of \code{out_path} instead of being returned (e.g., \code{fun1_safer.R} for \code{x = fun1} or \code{x = pkg::fun1}), as \code{fun1_safer <- function(...)}, which \code{base::source()} recreates. Nothing is written if nothing has to be corrected, but an error is returned if the file already exists and \code{overwrite} is \code{FALSE}, or if \code{x} is not a function name (e.g., \code{function(x)\{x\}} or \code{FUN_LIST$fun}).}
 
-\item{out_path}{Single character string indicating the absolute pathway of the folder where to export the data frame or the modified function. \code{out_path = "."} (default) means the R working directory set by the user. Ignored if \code{table_export} and \code{fun_export} are \code{FALSE}.}
+\item{out_path}{Single character string: path of an existing folder where the files are written. Required when \code{table_export} or \code{fun_export} is \code{TRUE}; otherwise not used, but a non-\code{NULL} value must still be a single non-empty character string. \code{NULL} by default.}
 
-\item{df_name}{Single character string indicating the name of the exported data frame file. Ignored if \code{table_export} is \code{FALSE}.}
+\item{df_name}{Single character string (not \code{""}): name of the file of the table, written in \code{out_path} when \code{table_export} is \code{TRUE}.}
 
-\item{overwrite}{Single logical value. Overwrite potential files already existing in \code{out_path} (\code{df_name} for the table export, and the function name with \code{_safer} added at the end for the \code{fun_export})? Ignored if \code{table_export} and \code{fun_export} are \code{FALSE}.}
+\item{overwrite}{Single logical value. Overwrite the files already existing in \code{out_path} (\code{df_name} and \code{<name>_safer.R}) when \code{table_export} or \code{fun_export} is \code{TRUE}?}
 
-\item{safer_check}{Single logical value. Perform the "safer" checks? If \code{TRUE}, checkings are performed before main code running (see the \href{https://github.com/safer-r}{safer-r project}): 1) required functions and related packages effectively present in local R libraries and 2) R classical operators (like \code{"<-"}) not overwritten by another package because of the R scope. Warning: must be set to \code{FALSE} if this function is used inside another "safer" function to avoid pointless multiple checkings.}
+\item{safer_check}{Single logical value. If \code{TRUE} (default), checks before running that the required packages and functions are installed and that the classical R operators (like \code{<-}) are not masked by another package or by a user-defined object of the global environment. These checks take time at each call: set \code{FALSE} in loops and inside other safer-r functions, to avoid repeating them.}
 
-\item{lib_path}{Vector of characters specifying the absolute pathways of the directories containing the required packages for the function, if not in the default directories. Useful when R packages are not installed in the default directories because of lack of admin rights. More precisely, \code{lib_path} is passed through the \code{new} argument of \code{.libPaths()} so that the new library paths are \code{c(lib_path, .libPaths())}. Warning: \code{.libPaths()} is restored to the initial paths, after function execution. Ignored if \code{NULL} (default): only the pathways specified by the current \code{.libPaths()} are used for package calling.}
+\item{lib_path}{Vector of character strings: paths of existing extra library folders containing the required packages (e.g., packages installed without admin rights). They are searched after the current \code{.libPaths()} during the call (the current libraries keep priority), and \code{.libPaths()} is restored on exit. If \code{NULL} (default), only the current \code{.libPaths()} are used.}
 
-\item{error_text}{Single character string used to add information in error messages returned by the function, notably if the function is inside other functions, which is practical for debugging. Example: \code{error_text = " INSIDE <PACKAGE_1>::<FUNCTION_1> INSIDE <PACKAGE_2>::<FUNCTION_2>."}. If \code{NULL}, converted into \code{""}.}
+\item{error_text}{Single character string added to the error messages (e.g., \code{" INSIDE pkg1::fun1()"}) to name the calling functions. \code{NULL} is converted into \code{""}.}
 }
 \value{
-A message saying whether arguments are missing or everything seems fine, and a data frame indicating the missing arguments (see the column descriptions below).
-If \code{table_export} argument is \code{FALSE}, the data frame is returned as a message. If \code{TRUE}, it is exported as \code{df_name} in \code{out_path}.
-If \code{fun_export} argument is \code{FALSE}, the modified function (an R function object rebuilt from the corrected code, with its comments and indentation preserved if the submitted function carries its source references, see the details section) is returned, or \code{NULL} (invisible) if no modification has been applied. If \code{TRUE}, the modified function is exported as \code{<FUNCTION_NAME>_safer.R} in \code{out_path} and \code{NULL} is returned (invisible), or nothing is exported if no modification has been applied.
-A warning and \code{NULL} (invisible) are returned if the submitted function is empty of function, or only made of comments, or only made of \code{function}, \code{if}, \code{for}, \code{while}, \code{repeat}, \code{else}.
-Column descriptions:
+The corrected function, which keeps the environment of \code{x}, or \code{NULL}, invisibly, if nothing has to be corrected, if \code{fun_export} is \code{TRUE}, or if \code{x} contains no function call, as a primitive function like \code{base::sum} (with a warning).
+
+The table of the detected calls is printed as a message, or written into a file if \code{table_export} is \code{TRUE}, but never returned. Its columns are:
 \itemize{
-  \item \code{$LINE_NB}: the line number in the function code (starting at the \code{"<- function"} line, i.e., without counting the \code{#'} header lines).
-  \item \code{$FUN_NAME}: the function name.
-  \item \code{$FUN_ARGS}: the written arguments of \code{FUN_NAME}. \code{"NOT_CONSIDERED"} means that the function is between quotes or after \code{$}.
-  \item \code{$FUN_POS}: the position of the first character of the function name in the \code{$LINE_NB} line.
-  \item \code{$DEF_ARGS}: the defaults arguments of \code{FUN_NAME}. \code{"NO_ARGS"} means that the function has no arguments. \code{"INTERNAL_FUNCTION"} means that the function has been created inside the checked function. \code{"SKIPPED"} means that the function is not analyzed for the reason indicated in the "details" section.
-  \item \code{$MISSING_ARG_NAMES}: the missing argument names in \code{FUN_ARGS}.
-  \item \code{$MISSING_ARGS}: the missing arguments with their values in \code{FUN_ARGS}.
-  \item \code{$STATUS}: either \code{"GOOD"}, meaning that all the arguments are already written, or a new proposal of arguments writing (arguments written with a partial name, like \code{dig} for \code{digits}, are written with their full name), or nothing.
+  \item \code{$LINE_NB}: line number in the code of \code{x} (see the Details section).
+  \item \code{$FUN_NAME}: function name.
+  \item \code{$FUN_ARGS}: the call as written, without its package (e.g., \code{sort(v)}). \code{"NOT_CONSIDERED"} for a name followed by \code{(} inside a string (e.g., \code{"a("} in \code{base::paste0("a(", x)}), which is not a call (the calls with a function name written between quotes or after \code{$} or \code{@} are not listed).
+  \item \code{$FUN_POS}: position of the first character of the function name in the line, after removal of the leading and repeated spaces.
+  \item \code{$DEF_ARGS}: arguments of the function with their default values (\code{""} for a function without arguments, e.g., \code{base::Sys.time()}, and for \code{"NOT_CONSIDERED"} in \code{$FUN_ARGS}). \code{"NO_ARGS"}: primitive function whose arguments are not available (e.g., \code{base::return()}); \code{"INTERNAL_FUNCTION"}: call, written without package, of an internal function inside the function that defines it (see the Description section); \code{"SKIPPED"}: call not analyzed (see the Details section).
+  \item \code{$MISSING_ARG_NAMES}: names of the missing arguments, and of the arguments written with a partial name.
+  \item \code{$MISSING_ARGS}: these arguments with their proposed values.
+  \item \code{$STATUS}: \code{"GOOD"} if all the arguments are written, otherwise the proposed call. \code{""} if the call is not analyzed (see \code{$FUN_ARGS}, \code{$DEF_ARGS} and the warnings), or if the function has no argument other than \code{...} (e.g., \code{base::Sys.time()} or \code{base::c()}).
 }
 
-An additional message \code{"EVERYTHING SEEMS CLEAN"} if the \code{$STATUS} column is only made of \code{""} and \code{"GOOD"}.
-
-An additional message \code{"ARGUMENTS WITH EMPTY VALUE"} listing, for each line and function, the arguments proposed in the \code{$STATUS} column with an empty value (like \code{envir = }), with their default value, i.e., the potential flaws of the code (see the details section). Arguments already written with an empty value in the code are accepted as is and not listed. Use \code{"= ,"} or \code{"= )"} to seek each case in the code.
-
-An additional message \code{"CORRECTIONS NOT APPLIED"} listing the proposals of the \code{$STATUS} column that have not been inserted into the modified function, each followed by a \code{REASON:} line explaining why. These calls are left unchanged in the modified function and must be corrected manually (see the details section).
+Other messages: \code{"EVERYTHING SEEMS CLEAN"} if no argument is missing, \code{"ARGUMENTS WITH EMPTY VALUE"} (empty values inserted into the corrected function, see the Details section) and \code{"CORRECTIONS NOT APPLIED"} (proposals not inserted into the corrected function, each with its reason).
 }
 \description{
-Verify that all the functions used inside a function are written with all their arguments. For instance: \code{base::paste0(letters[1:2], collapse = NULL, recycle0 = FALSE)} and not \code{paste0(letters[1:2])}.
+Checks that the function calls inside a function are written with all their arguments, and returns the function with the missing arguments added. For instance, \code{base::paste0(letters[1:2])} becomes \code{base::paste0(letters[1:2], collapse = NULL, recycle0 = FALSE)}.
+
+The calls must already be written with their package (e.g., \code{base::paste0()}; run \code{\link{colons_check}} first), otherwise an error is returned, except the calls not analyzed (see the Details section) and the calls, without package, of the internal functions of \code{x}, as defined in \code{\link{colons_check}} (\code{"INTERNAL_FUNCTION"}).
 }
 \details{
-More precisely, \code{all_args_here()} verifies that all the strings before an opening bracket \code{(} are written with all their arguments. Thus, it cannot check function names written without brackets, like in the \code{FUN} argument of some functions, e.g., \code{sapply(1:3, FUN = as.character)}.
+Analyzed calls: the names followed by \code{(}, except \code{function}, \code{if}, \code{for}, \code{while}, \code{repeat}, \code{else} and the names preceded by \code{$} or \code{@} (e.g., \code{x$fun()}). A function passed without brackets (e.g., \code{FUN = base::as.character}) or whose name is written between quotes (e.g., \code{base::"rownames<-"(x, "a")}) is not checked. The calls inside formulas, one-sided ones included (e.g., \code{offset()} in \code{y ~ x + offset(z)}, or \code{base::mean()} in \code{~ base::mean(.x)}), the calls inside \code{quote()}, \code{bquote()}, \code{expression()}, \code{alist()} and \code{substitute()}, whose arguments are code used as data (e.g., \code{base::paste()} in the plotmath label \code{base::expression(base::paste("Temp (", degree, "C)"))}), except the code that R evaluates (\code{.()} and spliced \code{..()} of \code{bquote()}, its \code{where} argument, and the \code{env} argument of \code{substitute()}), the function called by \code{.Internal()} (e.g., \code{toupper} in \code{base::.Internal(toupper(x))}) and \code{as.environment()} are not analyzed (\code{"SKIPPED"}). The other functions that use the code of their arguments get the completed code (e.g., the default axis label of \code{ggplot2::aes(x = base::log(y))} becomes \code{base::log(x = y, base = base::exp(x = 1))}). A call written with more arguments than its function has is not analyzed, with a warning (also for a valid replacement call like \code{base::body(f, envir = e) <- v}). The package of each \code{pkg::fun()} call must be installed (not only loaded with \code{pkgload::load_all()}), and the stats, graphics, grDevices, utils, datasets and methods packages must be attached, as in a default R session, otherwise an error is returned.
 
-The Perl regex used to detect a function name is: \code{"([a-zA-Z]|\\.[a-zA-Z._])[a-zA-Z0-9._]*\\s*\\("}.
+Missing arguments: a value written without argument name gets its name (e.g., \code{base::sort(v)} becomes \code{base::sort(x = v, decreasing = FALSE)}), a partial name is completed (only for the arguments before \code{...}, as in R), and the other missing arguments are added with their default value, written with packages and argument names (e.g., \code{base::log(x = 2)} becomes \code{base::log(x = 2, base = base::exp(x = 1))}). An empty value (e.g., \code{envir = }), which a function written in R treats as a missing argument (except the first argument of an S3 generic function, which selects the method), is written instead when the default value cannot be copied safely: no default value (e.g., \code{new} in \code{base::.libPaths()}); a default value that depends on another argument, on a variable internal to the called function, on the frame where it is evaluated (e.g., \code{parent.frame()}, a formula or a function definition), or on an object that \code{x} does not find, or finds differently (e.g., an internal function of a package, or a variable masked by an argument of \code{x}); a default value whose function calls are written \code{pkg::fun()}, lack some arguments (e.g., \code{getOption("digits")}) or use the code of their arguments (e.g., \code{quote(exp(1))}); an argument tested with \code{missing()} (e.g., \code{nrow} in \code{base::matrix(x, ncol = 2)}). An argument already written with an empty value is accepted, except if its default value can be copied, which is then added.
 
-Currently, \code{all_args_here()} cannot detect functions written between quotes, like \code{"+"()} or \code{"rownames<-"(x, "a")}.
+Corrected function: the missing arguments are inserted into the code of \code{x}, whose line breaks are kept. A proposal is not inserted, and is listed with its reason in the \code{"CORRECTIONS NOT APPLIED"} message, when the call receives a value from a pipe (\code{|>}, \code{\%>\%}, \code{\%<>\%}, \code{\%T>\%} or \code{\%!>\%}), forwards \code{...}, has an empty argument (e.g., \code{base::sum(1, )}), is the target of an assignment (e.g., \code{base::rownames(x) <- "a"}), or has a value written without name that is also proposed with its name; when the called function counts its arguments with \code{nargs()} (e.g., \code{base::diag()}), or is a builtin primitive that would receive an empty value (e.g., \code{PACKAGE = } in \code{base::.Call()}); when the called function is an S3 generic whose first argument is not written, or is written without name while a method names it differently (e.g., \code{formula} in \code{t.test.formula()}), or when a method has neither \code{...} nor an added argument (e.g., \code{digits} for \code{round.POSIXt()}), or has arguments that an added argument matches partially (e.g., \code{y} matching \code{ylim} and \code{ylab} of \code{plot.table()}); and when the call cannot be read, located, parsed or matched to its \code{$STATUS} proposal.
 
-Function names preceded by \code{$} are not considered.
- 
-The following R functions are skipped: \code{function}, \code{if}, \code{for}, \code{while}, \code{repeat} and \code{else}.
+An error is returned if \code{x} contains \code{\\(x)} lambda functions (only detected with source references): run \code{\link{lambda_check}} first.
 
-Empty argument values (see the \href{https://github.com/safer-r}{safer-r rules}): 1) a default value that cannot be copied into the call is proposed with an empty value, meaning that the default value is used but cannot be fixed. This is the case when the default value depends on another argument (e.g., \code{envir = as.environment(pos)} in \code{utils::getFromNamespace()}, proposed as \code{utils::getFromNamespace(x, ns, pos = -1, envir = )}), on a variable of the internal environment of the function, or on the frame where it is evaluated (e.g., \code{parent.frame()}), because such a default value would be evaluated in the environment of the tested function and not in the one of the called function. 2) An argument with no default value and not written is also proposed with an empty value, because absence of value can mean something (e.g., \code{base::.libPaths(new = , include.site = TRUE)} returns the paths of the R libraries, whereas \code{base::.libPaths(new = base::.libPaths(), include.site = TRUE)} sets them). In both cases, the behavior of the code is not changed. An argument already written with an empty value (like \code{envir = }) is accepted as is when it has no default value or a default value that cannot be copied, and is not listed in the message above. If its default value can be copied (e.g., \code{safer_check = }), the default value is added (\code{safer_check = TRUE}). Of note, only the arguments before \code{...} can be written with a partial name, as in R. It is recommended to test (using \code{testthat}) that these default values are unchanged, for instance \code{testthat::expect_identical(object = base::formals(fun = utils::getFromNamespace)$envir, expected = base::quote(expr = as.environment(pos)))}.
+Source references: line 1 is the line of the \code{function} keyword. Comments and indentation are kept only if \code{x} carries its source references (attribute \code{srcref}). Functions created with \code{options(keep.source = FALSE)} (default of Rscript) and functions of installed packages (e.g., \code{saferDev::colons_check}) have none: their deparsed code is analyzed, without comments and with line numbers that differ from the source file.
 
-Most of the time, \code{all_args_here()} does not check inside comments, but some unexpected writing could dupe \code{all_args_here()}. Please, report \href{https://github.com/safer-r/saferDev/issues}{here} if it is the case.
-
-The returned line numbers are indicative, depending on which source is checked. For instance, \code{saferDev::report} (compiled) has not the same line numbers as its \href{https://github.com/safer-r/saferDev/blob/main/R/report.R}{source file}. Notably, compiled functions do not have comments anymore, compared to the same source function sourced into the working environment. In addition, the counting starts at the \code{"<- function"} line, i.e., without counting the \code{#'} header lines potentially present in source files.
-
-The function works first by replacing in the code: 1) the three consecutive characters \code{'"'} or \code{'"'} by three spaces, 2) \code{"\"'"} and \code{'\'"'} by four spaces and 3) escape quotes like \code{\"} or \code{\'} by two spaces.
-
-Pre-check: the submitted function is first checked by \code{lambda_check()}: if some lambda functions are written with the \code{\\(x)} shorthand, an error is returned asking to run \code{saferDev::lambda_check()} first, because the \code{\\} writings are not managed by the text-based detection of \code{all_args_here()}. As in \code{lambda_check()}, the \code{\\(x)} writing is only detectable in a function carrying its source references (attribute \code{srcref}): a compiled or loaded package function prints \code{function(x)}, so that the pre-check silently passes in that case.
-
-Known limitation: a string literal containing an escaped backslash-quote, like \code{"'\\'"}, desynchronizes the in-quotes detection of \code{all_args_here()}, which can return an internal error (see the \code{dev/repro_all_args_here_internal_error_3.R} script of the package repository). Please, report \href{https://github.com/safer-r/saferDev/issues}{here} if it is the case.
-
-Line breaks, comments and indentation of the modified function (\code{fun_export} argument and returned function): the \code{$STATUS} proposals are not pasted in place of the calls. Instead, the missing arguments are inserted into the printed code of the submitted function, at the positions given by the R parser: a missing argument whose value is written without its name (e.g., \code{round(v)}) gets its name inserted before this value (\code{round(x = v, digits = 0)}), and the other missing arguments are inserted after the last argument of the call. Thus, the line breaks, the indentation, the comments and the strings of the submitted function are kept, including inside calls written on several lines, and nested calls (e.g., \code{paste0(mean(1:2))}) are all corrected. The comments and the original indentation require that the submitted function carries its source references (attribute \code{srcref}, i.e., \code{options(keep.source = TRUE)} when the function was created, the default in interactive sessions). Otherwise (e.g., a function of an installed package, or a function created in an \code{Rscript} session), the printed code is the deparsed code, without comments and with a standard indentation, but its line breaks are kept.
-
-Corrections not applied: the call is left unchanged in the modified function and its proposal is listed in the \code{"CORRECTIONS NOT APPLIED"} message, with one of the following reasons: 1) the \code{$MISSING_ARGS} or \code{$DEF_ARGS} column of the call cannot be read; 2) the call cannot be located in the code of the function (e.g., call with an empty argument, like \code{c(1, )}); 3) the corrected call does not parse as R code; 4) an argument is written positionally and is also proposed with its name (e.g., \code{sum(x, na.rm)} proposed as \code{sum(x, na.rm, na.rm = FALSE)}), which would fail at call time; 5) the corrected call does not match the \code{$STATUS} proposal (compared whatever the order of the named arguments, the spaces, the line breaks and the comments). Of note, an empty argument value in a proposal (like \code{envir = }, see above) is never a reason: such a proposal is applied.
-
-See more examples \href{https://safer-r.github.io/saferDev/articles/all_args_here.html}{here}.
-
-Warnings:
-\enumerate{
-  \item The following R functions are also skipped (as indicated by \code{"SKIPPED"} in the \code{DEF_ARGS} column of the returned data frame): \code{as.environment()} (see the R bug report 18849 in the R bug tracker).
-  \item Some functions, like \code{rownames()}, have different arguments depending on whether something is assigned to it (e.g., \code{rownames(x) <- "a"}) or not. The \code{all_args_here()} function always proposes the arguments defined in the help page without assignment, meaning that it cannot detect the assignment. A way to bypass this is to use the "exact" writing of the function. For instance, \code{base::"rownames<-"(x, "a")} instead of using \code{base::rownames(x) <- "a"}, and use \code{getAnywhere("rownames<-")} to see the arguments of the function.
-  \item The function could not properly work if any comma is present in default argument values. Please, report \href{https://github.com/safer-r/saferDev/issues}{here} if it is the case.
-  \item Proposals in the \code{STATUS} column are only suggestions, as it is difficult to anticipate all the exceptions with arguments writing.
-}
+Limitations: the detection is text-based, and some unusual writings (e.g., in comments) can dupe it. The \code{$STATUS} proposals remain suggestions to check. Please report unexpected results \href{https://github.com/safer-r/saferDev/issues}{here}.
 }
 \examples{
-# Warning: these examples may not work well when using the "Run examples" link 
-# because of a particular environment. Please, copy-paste in a local environment.
+# Without source references ("Run examples" link, Rscript), line numbers and comments differ.
 # See also https://safer-r.github.io/saferDev/articles/all_args_here.html
 fun1 <- function(x){
     base::paste0(x, "a") # collapse and recycle0 arguments not written
 }
-fun1_safer <- saferDev::all_args_here(x = fun1, safer_check = FALSE) # arguments added
+fun1_safer <- saferDev::all_args_here(x = fun1, table_export = FALSE, fun_export = FALSE,
+    out_path = NULL, df_name = "res.tsv", overwrite = FALSE, safer_check = FALSE,
+    lib_path = NULL, error_text = "") # arguments added
 fun1_safer # corrected function
 # Write the table (res.tsv) and the corrected function (fun1_safer.R) in a new temporary folder:
-tempo_dir <- base::tempfile(pattern = "dir", tmpdir = base::tempdir(), fileext = "")
+tempo_dir <- base::tempfile(pattern = "dir", tmpdir = base::tempdir(check = FALSE), fileext = "")
 base::dir.create(path = tempo_dir, showWarnings = TRUE, recursive = FALSE, mode = "0777")
 saferDev::all_args_here(x = fun1, table_export = TRUE, fun_export = TRUE, out_path = tempo_dir,
-    safer_check = FALSE)
+    df_name = "res.tsv", overwrite = FALSE, safer_check = FALSE, lib_path = NULL,
+    error_text = "")
+base::unlink(x = tempo_dir, recursive = TRUE, force = FALSE, expand = TRUE) # folder removed
 
+}
+\seealso{
+The code checkers of saferDev, in the recommended order of use: \code{\link{super_assign_check}}, \code{\link{lambda_check}}, \code{\link{colons_check}}, \code{\link{all_args_here}}, \code{\link{curly_bracket_check}}, \code{\link{true_false_check}}, \code{\link{for_loop_nb_check}} (see \code{vignette("saferDev")}).
 }
 \author{
 \href{mailto:gael.millot@pasteur.fr}{Gael Millot}

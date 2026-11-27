@@ -5,7 +5,7 @@ title: "get_message(): more examples"
 
 ```{r, include = FALSE}
 knitr::opts_chunk$set(
-    error = TRUE, 
+    error = TRUE,
     collapse = FALSE,
     comment = "##"
 )
@@ -16,16 +16,12 @@ library(saferDev)
 ```
 <br>
 
-These examples may not work well here because of a particular environment. Please, copy-paste in a local environment.
-<br>
-
 ### Dataset
 
 ```{r}
-char1 <- "wilcox.test(c(1,1,3), c(1, 2, 4), paired = TRUE)" # string of a command to evaluate -> warning message
+char1 <- "log(-1)" # string of a command to evaluate -> warning message
 char2 <- "message('ahah')" # idem -> standard message
 char3 <- "NOTGOOD" # idem -> error message
-char4 <- "mean(2)" # idem -> no message
 ```
 <br>
 
@@ -39,7 +35,7 @@ char3
 
 ### Simple example
 ```{r}
-# By default, get_message() returns the first error message of the evaluated string.
+# By default, get_message() returns the error message of the evaluated string.
 # Here no error message
 get_message(data = char1)
 
@@ -56,63 +52,80 @@ get_message(data = char3)
 # To get the last potential warning message.
 get_message(data = char1, kind = "warning")
 
-# See that 2 warning messages are returned when evaluating char1.
- eval(parse(text = char1))
-
-# To get the last potential standart message (neither error nor warning).
+# To get the potential standard messages (neither error nor warning).
 get_message(data = char2, kind = "message")
 ```
 <br>
 
 ### Argument <code>header</code>
 ```{r}
-# To get the output message without header.
+# To get the output message without header: errors and warnings are then returned as formatted by R (here "Error in ..." instead of "In ...").
 get_message(data = char3, header = FALSE)
 
 # To get the output message with header (by default).
-get_message(data = char3, header = TRUE) 
+get_message(data = char3, header = TRUE)
 ```
 <br>
 
 ### Argument <code>print_no</code>
 ```{r}
-# Print a message when no "kind" message returned.
+# Return a "NO ... REPORTED" string instead of NULL when nothing is caught.
 get_message(data = char1, print_no = TRUE)
 
-# Example with potential returned warning message.
-get_message(data = char2, kind = "warning", print_no = TRUE) 
+# Here no warning message.
+get_message(data = char2, kind = "warning", print_no = TRUE)
 ```
 <br>
 
 ### Argument <code>text</code>
 ```{r}
-# String added to the output message, even if nothing reported (when print_no = TRUE).
+# String inserted in the header of the output message (before the colon), and added to the "NO ... REPORTED" strings.
 # Useful when used inside a function to name it.
-get_message(data = char3, text = "IN MY EXECUTION") 
+get_message(data = char3, text = "IN MY EXECUTION")
 ```
 <br>
 
 
 ### Argument <code>env</code>
 ```{r}
-# Evaluation only in the indicated environment.
-get_message(data = char1, env = .GlobalEnv)
-get_message(data = char1, kind = "warning", env = asNamespace("stats"))
-
+# The instruction is evaluated in env: Pillai() is an internal function of the stats package.
+saferDev::get_message(
+    data = "Pillai(eig = 1, q = 1, df.res = 1)",
+    kind = "error",
+    header = TRUE,
+    print_no = TRUE,
+    text = NULL,
+    env = base::asNamespace(ns = "stats", base.OK = TRUE),
+    safer_check = TRUE,
+    lib_path = NULL,
+    error_text = ""
+)
+# In the global environment, Pillai() is not found.
+saferDev::get_message(
+    data = "Pillai(eig = 1, q = 1, df.res = 1)",
+    kind = "error",
+    header = TRUE,
+    print_no = TRUE,
+    text = NULL,
+    env = base::globalenv(),
+    safer_check = TRUE,
+    lib_path = NULL,
+    error_text = ""
+)
 ```
 <br>
 
 
-### Argument <code>safer_check</code> 
+### Argument <code>safer_check</code>
 ```{r, echo = TRUE, error = TRUE}
-# Safer checkings are performed before main code running.
+# Safer checks are performed before running the main code.
 get_message(data = char2, safer_check = TRUE)
 ```
 <br>
 
 ### Argument <code>lib_path</code>
 ```{r}
-# The "NOTGOOD" path does not exists.
+# The "NOTGOOD" path does not exist.
 get_message(data = char2, lib_path = "NOTGOOD")
 ```
 <br>
@@ -121,8 +134,8 @@ get_message(data = char2, lib_path = "NOTGOOD")
 ```{r}
 # Add a text in error messages returned by get_message().
 get_message(
-    data = char2, 
-    lib_path = "NOTGOOD", 
+    data = char2,
+    lib_path = "NOTGOOD",
     error_text = " === TEXT ADDED ==="
 )
 ```
@@ -135,13 +148,21 @@ get_message(
     data = char1, # instruction to evaluate.
     kind = "warning", # kind of message to report.
     header = FALSE, # add a header in the returned message?
-    print_no = TRUE, # print a message saying that nothing has to be reported?
-    text = "IN A", # string added to the output message (even if nothing reported).
+    print_no = TRUE, # return a "NO ... REPORTED" string instead of NULL when nothing is caught?
+    text = "IN A", # string added to the header (not used here, because header = FALSE) and to the "NO ... REPORTED" strings.
     env = NULL, # existing environment where to evaluate the instruction.
     safer_check = TRUE, # perform some "safer" checks (see https://github.com/safer-r)?
     lib_path = NULL, # where the required packages are if not in the default directories.
     error_text = "" # add information in error messages returned by the function.
 )
 ```
+<br>
 
 
+### Printed outputs
+```{r}
+# The instruction is evaluated once. Its printed outputs are not caught: use utils::capture.output() to get them.
+printed <- utils::capture.output(msg <- get_message(data = "print(1) ; log(-1)", kind = "warning"))
+printed
+msg
+```

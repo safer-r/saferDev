@@ -138,15 +138,24 @@ testthat::test_that(".pack_and_function_check()", {
     ## end tests (ordered by arg appearance and conditions in the code)
 
     ## other tests
-    result <- saferDev::get_message('.pack_and_function_check(fun = char2_fun, lib_path = NULL, error_text = "")', kind = "error", print_no = TRUE, text = NULL, safer_check = FALSE) 
-    expected <- "ERROR MESSAGE REPORTED:\nError : \n\n================\n\nERROR IN saferDev:::.pack_and_function_check().\n\nTHE STRING IN fun ARGUMENT MUST CONTAIN \"::\" OR \":::.\":\narg_check\n\n================\n\n\n"
-    testthat::expect_equal(result, expected)
-    result <- saferDev::get_message('.pack_and_function_check(fun = char3_fun, lib_path = NULL, error_text = "")', kind = "error", print_no = TRUE, text = NULL, safer_check = FALSE) 
-    expected <- base::paste0("ERROR MESSAGE REPORTED:\nError : \n\n================\n\nERROR IN saferDev:::.pack_and_function_check().\n\nREQUIRED PACKAGE:\nNOTGOOD\nMUST BE INSTALLED IN ONE OF THESE FOLDERS:\n", paste0( .libPaths(), collapse = "\n", recycle0 = FALSE), "\n\n================\n\n\n", collapse = NULL, recycle0 = FALSE)
-    testthat::expect_equal(result, expected)
-    result <- saferDev::get_message('.pack_and_function_check(fun = char4_fun, lib_path = NULL, error_text = "")', kind = "error", print_no = TRUE, text = NULL, safer_check = FALSE) 
-    expected <- base::paste0("ERROR MESSAGE REPORTED:\nError : \n\n================\n\nERROR IN saferDev:::.pack_and_function_check().\n\nREQUIRED FUNCTION IS MISSING IN THE INSTALLED PACKAGE:\nsaferDev::NOTGOOD\n\nIN ONE OF THESE FOLDERS:\n", paste0( .libPaths(), collapse = "\n", recycle0 = FALSE), "\n\n================\n\n\n", collapse = NULL, recycle0 = FALSE)
-    testthat::expect_equal(result, expected)
+    lib_txt <- base::paste0(base::ifelse(test = base::length(x = base::.libPaths(new = , include.site = TRUE)) == 1L, yes = "", no = " ONE OF THESE FOLDERS"), ":\n", base::paste0(base::.libPaths(new = , include.site = TRUE), collapse = "\n", recycle0 = FALSE), collapse = NULL, recycle0 = FALSE)
+    result <- base::tryCatch(expr = .pack_and_function_check(fun = char2_fun, lib_path = NULL, error_text = ""), error = function(e){base::conditionMessage(c = e)}, finally = NULL)
+    expected <- "\n\n================\n\nERROR IN saferDev:::.pack_and_function_check().\n\nTHE STRING IN fun ARGUMENT MUST CONTAIN \"::\" OR \":::.\":\narg_check\n\n================\n\n"
+    testthat::expect_identical(object = result, expected = expected)
+    result <- base::tryCatch(expr = .pack_and_function_check(fun = char3_fun, lib_path = NULL, error_text = ""), error = function(e){base::conditionMessage(c = e)}, finally = NULL)
+    expected <- base::paste0("\n\n================\n\nERROR IN saferDev:::.pack_and_function_check().\n\nREQUIRED PACKAGE:\nNOTGOOD\nMUST BE INSTALLED IN", lib_txt, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE)
+    testthat::expect_identical(object = result, expected = expected)
+    result <- base::tryCatch(expr = .pack_and_function_check(fun = char4_fun, lib_path = NULL, error_text = ""), error = function(e){base::conditionMessage(c = e)}, finally = NULL)
+    expected <- base::paste0("\n\n================\n\nERROR IN saferDev:::.pack_and_function_check().\n\nREQUIRED FUNCTION IS MISSING IN THE INSTALLED PACKAGE:\nsaferDev::NOTGOOD\n\nIN", lib_txt, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE)
+    testthat::expect_identical(object = result, expected = expected)
+    # package names repeated in fun (each package is searched once): same results as with a single occurrence
+    testthat::expect_null(object = .pack_and_function_check(fun = base::c("saferDev::arg_check", "saferDev:::.base_op_check", "base::sum", "saferDev::report", "base::mean"), lib_path = NULL, error_text = ""))
+    result <- base::tryCatch(expr = .pack_and_function_check(fun = base::c("NOTGOOD::a", "saferDev::arg_check", "NOTGOOD::b", "NOTGOOD2::a"), lib_path = NULL, error_text = ""), error = function(e){base::conditionMessage(c = e)}, finally = NULL)
+    expected <- base::paste0("\n\n================\n\nERROR IN saferDev:::.pack_and_function_check().\n\nREQUIRED PACKAGES:\nNOTGOOD\nNOTGOOD2\nMUST BE INSTALLED IN", lib_txt, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE)
+    testthat::expect_identical(object = result, expected = expected)
+    result <- base::tryCatch(expr = .pack_and_function_check(fun = base::c("saferDev::arg_check", "saferDev::NOTGOOD", "base::sum", "saferDev:::.NOTGOOD2"), lib_path = NULL, error_text = ""), error = function(e){base::conditionMessage(c = e)}, finally = NULL)
+    expected <- base::paste0("\n\n================\n\nERROR IN saferDev:::.pack_and_function_check().\n\nREQUIRED FUNCTIONS ARE MISSING IN THE INSTALLED PACKAGES:\nsaferDev::NOTGOOD\nsaferDev:::.NOTGOOD2\n\nIN", lib_txt, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE)
+    testthat::expect_identical(object = result, expected = expected)
     ## end other tests
     rm(list = ls()) # to avoid a warning that block CRAN tests 
 })

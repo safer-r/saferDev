@@ -1,10 +1,10 @@
 #' @title Base Operator Check
 #' @description
-#' Check if critical operators of R are not present in other packages or in the global env.
-#' @param error_text Single character string used to add information in error messages returned by the function, notably if the function is inside other functions, which is practical for debugging. Example: \code{error_text = " INSIDE <PACKAGE_1>::<FUNCTION_1> INSIDE <PACKAGE_2>::<FUNCTION_2>."}. If \code{NULL}, converted into \code{""}.
-#' @returns An error message if at least one of the checked operator is present in the R scope, nothing otherwise.
+#' Check that the critical operators and reserved words of R listed in the error message (like \code{<-}, \code{[}, \code{+} or \code{if}) are not present in another environment of the search path (\code{search()}: global environment, attached packages and objects) than \code{package:base}.
+#' @param error_text Single character string added to the error messages to name the calling functions (\code{embed_error_text} of the calling function). \code{NULL} is converted into \code{""}. No default value.
+#' @returns \code{NULL}, invisibly. An error if at least one of the checked objects is present in another environment of the search path.
 #' @author \href{mailto:gael.millot@pasteur.fr}{Gael Millot}
-#' @author Haiding Wang  
+#' @author Haiding Wang
 #' @author Yushi Han
 #' @keywords internal
 .base_op_check <- function(
@@ -29,8 +29,12 @@
     #### end internal error report link
 
     #### function name
-    tempo_settings <- base::as.list(x = base::match.call(definition = base::sys.function(which = base::sys.parent(n = 0)), call = base::sys.call(which = base::sys.parent(n = 0)), expand.dots = FALSE, envir = base::parent.frame(n = 2L))) # warning: I have written n = 0 to avoid error when a safer function is inside another functions. In addition, arguments values retrieved are not evaluated base::match.call, but this is solved with get() below
-    function_name <- base::paste0(tempo_settings[[1]], "()", collapse = NULL, recycle0 = FALSE) 
+    tempo_settings <- base::as.list(x = base::match.call(definition = base::sys.function(which = base::sys.parent(n = 0)), call = base::sys.call(which = base::sys.parent(n = 0)), expand.dots = FALSE, envir = )) # warning: I have written n = 0 to avoid error when a safer function is inside another functions. In addition, arguments values retrieved are not evaluated base::match.call, but this is solved with get() below. Warning: envir is left empty on purpose: its default parent.frame(2L), evaluated inside base::match.call(), is the frame that called this function, where the ... of the call are expanded (base::parent.frame(n = 2L) written here would be evaluated one frame too far, which breaks the calls through base::lapply(), base::vapply(), base::apply(), base::Filter() or a function forwarding ..., base::sapply() only working by coincidence)
+    if(base::is.name(x = tempo_settings[[1]]) | base::is.call(x = tempo_settings[[1]])){
+        function_name <- base::paste0(tempo_settings[[1]], "()", collapse = NULL, recycle0 = FALSE)
+    }else{
+        function_name <- "<anonymous function>()" # the function was called through its object (e.g., base::do.call(what = <function object>, args = ...)), so that its name is not in the call
+    }
     # function name with "()" paste, which split into a vector of three: c("::()", "package ()", "function ()") if "package::function()" is used.
     if(function_name[1] == "::()" | function_name[1] == ":::()"){
         function_name <- function_name[3]
@@ -269,16 +273,23 @@
         "while",
         "repeat"
     )
-    tempo_log <- base::sapply(X = reserved_objects, FUN = function(x){ 
-        if( ! base::all(utils::find(what = x, mode = "any", numeric = FALSE, simple.words = TRUE) == "package:base", na.rm = TRUE)){
-            base::return(TRUE)
-        }else{
-            base::return(FALSE)
-        }
-    }, simplify = TRUE, USE.NAMES = TRUE)
+    search_names <- base::search() # environments of the search path: global environment, attached packages and objects, package:base
+    # presence of each reserved object in each environment of the search path, as utils::find(what = x, mode = "any", numeric = FALSE, simple.words = TRUE), but without the base::ls() call of utils::find(), which lists and sorts all the object names of each environment for each reserved object (about 0.1 s per call): base::exists() only looks for the name, whatever the number of objects in the environment
+    tempo_present <- base::vapply(
+        X = base::seq_along(along.with = search_names),
+        FUN = function(x){
+            tempo_env <- base::as.environment(x = x)
+            base::vapply(X = reserved_objects, FUN = function(y){base::exists(x = y, where = -1, envir = tempo_env, frame = NULL, mode = "any", inherits = FALSE)}, FUN.VALUE = base::logical(length = 1L), USE.NAMES = FALSE)
+        },
+        FUN.VALUE = base::logical(length = base::length(x = reserved_objects)),
+        USE.NAMES = FALSE
+    ) # logical matrix: reserved objects in rows, environments of the search path in columns
+    tempo_present_not_base <- tempo_present[ , search_names != "package:base", drop = FALSE]
+    tempo_log <- base::rowSums(x = tempo_present_not_base, na.rm = TRUE, dims = 1L) > 0 # TRUE if the reserved object is present in another environment than package:base
     if(base::any(tempo_log, na.rm = TRUE)){
         tempo_name <-  reserved_objects[tempo_log]
-        tempo_pos <- base::sapply(X = tempo_name, FUN = function(x){base::paste(utils::find(what = x, mode = "any", numeric = FALSE, simple.words = TRUE), collapse = " ",  sep =  " ", recycle0 = FALSE)}, simplify = TRUE, USE.NAMES = TRUE)
+        tempo_present_problem <- tempo_present[tempo_log, , drop = FALSE]
+        tempo_pos <- base::apply(X = tempo_present_problem, MARGIN = 1, FUN = function(x){base::paste(search_names[x], collapse = " ",  sep =  " ", recycle0 = FALSE)}, simplify = TRUE) # environments containing each problematic object, in the search path order (as utils::find())
         tempo_cat <- base::paste0(
             error_text_start,
             "CRITICAL R OBJECT",

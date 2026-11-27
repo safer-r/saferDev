@@ -1,13 +1,13 @@
 #' @title Package and Function Check
 #' @description
-#' Check if 1) required functions are present in required packages and 2) required packages are installed locally.
-#' Simplified version of \code{saferDev::is_function_here()}, used as internal function for the other functions of the saferDev package.
-#' @param fun Character vector of the names of the required functions, preceded by the name of the package they belong to, separated by a double or triple colon. Example: \code{c("ggplot2::geom_point", "grid::gpar")}.
-#' @param lib_path Vector of characters specifying the absolute pathways of the directories containing the required packages for the function, if not in the default directories. Useful when R packages are not installed in the default directories because of lack of admin rights. More precisely, \code{lib_path} is passed through the \code{new} argument of \code{.libPaths()} so that the new library paths are \code{unique(c(new, .Library.site, .Library))}. Warning: \code{.libPaths()} is restored to the initial paths, after function execution. Ignored if \code{NULL} (default): only the pathways specified by the current \code{.libPaths()} are used for package calling.
-#' @param error_text Single character string used to add information in error messages returned by the function, notably if the function is inside other functions, which is practical for debugging. Example: \code{error_text = " INSIDE <PACKAGE_1>::<FUNCTION_1> INSIDE <PACKAGE_2>::<FUNCTION_2>."}. If \code{NULL}, converted into \code{""}.
-#' @returns An error message if at least one of the checked packages is missing in \code{lib_path}, or if at least one of the checked functions is missing in the required package, nothing otherwise.
+#' Check that the packages of \code{fun} are installed in \code{lib_path}, and that the functions of \code{fun} exist in the namespace of their package (exported or not).
+#' Simplified version of \code{saferDev::is_function_here()}, used by the other functions of the saferDev package.
+#' @param fun Character vector of the names of the required functions, preceded by the name of their package and \code{::} (or \code{:::} for function names starting with a dot). Example: \code{c("saferDev::arg_check", "saferDev:::.base_op_check")}.
+#' @param lib_path Vector of character strings or \code{NULL}: the library folders where the packages are searched (the calling exported functions pass the current \code{.libPaths()}, which already contain their \code{lib_path}). If \code{NULL}, the current \code{.libPaths()} are used. No default value.
+#' @param error_text Single character string added to the error messages to name the calling functions (\code{embed_error_text} of the calling function). \code{NULL} is converted into \code{""}. No default value.
+#' @returns \code{NULL}, invisibly. An error if at least one of the packages is not installed in \code{lib_path}, or if at least one of the functions is missing in its package.
 #' @author \href{mailto:gael.millot@pasteur.fr}{Gael Millot}
-#' @author Haiding Wang  
+#' @author Haiding Wang
 #' @author Yushi Han
 #' @keywords internal
 .pack_and_function_check <- function(
@@ -33,8 +33,12 @@
     #### end internal error report link
 
     #### function name
-    tempo_settings <- base::as.list(x = base::match.call(definition = base::sys.function(which = base::sys.parent(n = 0)), call = base::sys.call(which = base::sys.parent(n = 0)), expand.dots = FALSE, envir = base::parent.frame(n = 2L))) # warning: I have written n = 0 to avoid error when a safer function is inside another functions. In addition, arguments values retrieved are not evaluated base::match.call, but this is solved with get() below
-    function_name <- base::paste0(tempo_settings[[1]], "()", collapse = NULL, recycle0 = FALSE) 
+    tempo_settings <- base::as.list(x = base::match.call(definition = base::sys.function(which = base::sys.parent(n = 0)), call = base::sys.call(which = base::sys.parent(n = 0)), expand.dots = FALSE, envir = )) # warning: I have written n = 0 to avoid error when a safer function is inside another functions. In addition, arguments values retrieved are not evaluated base::match.call, but this is solved with get() below. Warning: envir is left empty on purpose: its default parent.frame(2L), evaluated inside base::match.call(), is the frame that called this function, where the ... of the call are expanded (base::parent.frame(n = 2L) written here would be evaluated one frame too far, which breaks the calls through base::lapply(), base::vapply(), base::apply(), base::Filter() or a function forwarding ..., base::sapply() only working by coincidence)
+    if(base::is.name(x = tempo_settings[[1]]) | base::is.call(x = tempo_settings[[1]])){
+        function_name <- base::paste0(tempo_settings[[1]], "()", collapse = NULL, recycle0 = FALSE)
+    }else{
+        function_name <- "<anonymous function>()" # the function was called through its object (e.g., base::do.call(what = <function object>, args = ...)), so that its name is not in the call
+    }
     # function name with "()" paste, which split into a vector of three: c("::()", "package ()", "function ()") if "package::function()" is used.
     if(function_name[1] == "::()" | function_name[1] == ":::()"){
         function_name <- function_name[3]
@@ -346,7 +350,7 @@
     }
     pkg_fun_name_list <- base::strsplit(x = fun, split = ":{2,3}", fixed = FALSE, perl = FALSE, useBytes = FALSE) # package in 1 and function in 2
     pkg_name <- base::sapply(X = pkg_fun_name_list, FUN = function(x){x[1]}, simplify = TRUE, USE.NAMES = TRUE)
-    pkg_log <- pkg_name %in% base::gsub(x = base::find.package(package = pkg_name, lib.loc = lib_path, quiet = TRUE, verbose = FALSE), pattern = "^.*/", replacement = "", ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE)
+    pkg_log <- pkg_name %in% base::gsub(x = base::find.package(package = base::unique(x = pkg_name, incomparables = FALSE), lib.loc = lib_path, quiet = TRUE, verbose = FALSE), pattern = "^.*/", replacement = "", ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE) # unique() because base::find.package() reads the installation files of each package in each folder of lib_path, once per occurrence of the package name
     if( ! base::all(pkg_log, na.rm = TRUE)){
         tempo <- base::unique(x = pkg_name[ ! pkg_log], incomparables = FALSE)
         tempo_cat <- base::paste0(

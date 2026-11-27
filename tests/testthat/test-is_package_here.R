@@ -1,7 +1,7 @@
 testthat::test_that("is_package_here()", {
 
     ## data argument values
-    str1 <- "ggplot2"
+    str1 <- "stats" # base R package: no dependency on a suggested package
     str2 <- "NOTGOOD"
     mat1 <- base::matrix(-1:3)
     factor1 <- base::as.factor(str1)
@@ -160,33 +160,22 @@ testthat::test_that("is_package_here()", {
 
     #### main code
     testthat::expect_error(is_package_here(req_package = str2, safer_check = TRUE, lib_path = NULL, error_text = ""))
-    testthat::expect_error(is_package_here(req_package = str2, safer_check = FALSE, lib_path ="C:\\Users\\gmillot\\Desktop", error_text = ""))
-
-empty_dir <- base::tempdir()
-# The empty dir is ADDED to .libPaths() (not replacing it), so the required package is still found
-# in the default libraries: the call must succeed even though the dir contains no packages.
-# Also assert the documented .libPaths() restoration.
-ini_lib_path <- base::.libPaths(new = , include.site = TRUE)
-testthat::expect_no_error(is_package_here(
-    req_package = "ggplot2",  # Any valid package name
-    lib_path = empty_dir,           # exists but contains no R packages: added to .libPaths() but package found in default libs
-    safer_check = FALSE,            # Avoid dependency on saferDev checks
-    error_text = ""
-))
-testthat::expect_equal(base::.libPaths(new = , include.site = TRUE), ini_lib_path) # .libPaths() must be restored after function execution
-# error path: a package that exists nowhere in lib_path (a dir containing no packages cannot provide it)
-# is caught by the main-code stop: use an isolated empty dir as the ONLY search path is not possible
-# (is_package_here always adds lib_path to the default .libPaths()), so instead check the error when
-# the package name does not exist in any library:
-testthat::expect_error(is_package_here(
-    req_package = "NOTGOOD",
-    lib_path = empty_dir,
-    safer_check = FALSE,
-    error_text = ""
-))
-
-
-
+    # missing package, with an existing lib_path folder (added after the current .libPaths(), which keep priority)
+    testthat::expect_error(object = saferDev::is_package_here(req_package = str2, safer_check = FALSE, lib_path = base::tempdir(check = FALSE), error_text = ""), regexp = "REQUIRED PACKAGE:\nNOTGOOD\n\nMUST BE INSTALLED IN", class = NULL, fixed = TRUE, inherit = TRUE, info = NULL, label = NULL)
+    testthat::expect_error(object = saferDev::is_package_here(req_package = base::c(str2, "NOTGOOD2"), safer_check = FALSE, lib_path = base::tempdir(check = FALSE), error_text = ""), regexp = "REQUIRED PACKAGES:\nNOTGOOD\nNOTGOOD2\n\nMUST BE INSTALLED IN", class = NULL, fixed = TRUE, inherit = TRUE, info = NULL, label = NULL)
+    # lib_path folder that does not exist (path built from tempdir(), not machine dependent)
+    testthat::expect_error(object = saferDev::is_package_here(req_package = str2, safer_check = FALSE, lib_path = base::file.path(base::tempdir(check = FALSE), "NOTGOOD_FOLDER", fsep = "/"), error_text = ""), regexp = "THE DIRECTORY PATH INDICATED IN THE lib_path ARGUMENT DOES NOT EXIST", class = NULL, fixed = TRUE, inherit = TRUE, info = NULL, label = NULL)
+    # an existing lib_path folder without packages is added to .libPaths(): the packages of the current .libPaths() are still found, and .libPaths() is restored on exit
+    ini_lib_path <- base::.libPaths(new = , include.site = TRUE)
+    testthat::expect_no_error(object = saferDev::is_package_here(req_package = str1, safer_check = FALSE, lib_path = base::tempdir(check = FALSE), error_text = ""), message = NULL, class = NULL)
+    testthat::expect_identical(object = base::.libPaths(new = , include.site = TRUE), expected = ini_lib_path, info = NULL, label = NULL, expected.label = NULL)
+    # returned value: invisible NULL
+    result <- base::withVisible(x = saferDev::is_package_here(req_package = base::c("stats", "utils"), safer_check = FALSE, lib_path = NULL, error_text = ""))
+    testthat::expect_null(object = result$value, info = NULL, label = NULL)
+    testthat::expect_false(object = result$visible, info = NULL, label = NULL)
+    # examples of the help page
+    testthat::expect_error(object = saferDev::is_package_here(req_package = "nopackage", safer_check = TRUE, lib_path = NULL, error_text = " INSIDE P1::F1"), regexp = "ERROR IN saferDev::is_package_here() INSIDE P1::F1", class = NULL, fixed = TRUE, inherit = TRUE, info = NULL, label = NULL)
+    testthat::expect_error(object = saferDev::is_package_here(req_package = "stats", safer_check = TRUE, lib_path = "NOTGOOD", error_text = ""), regexp = "THE DIRECTORY PATH INDICATED IN THE lib_path ARGUMENT DOES NOT EXIST:\nNOTGOOD", class = NULL, fixed = TRUE, inherit = TRUE, info = NULL, label = NULL)
     # below cannot be used because difficult to determine .libPath() in CI
     # result <- saferDev::get_message('is_package_here(req_package = str2, safer_check = TRUE, lib_path = NULL, error_text = "")', kind = "error", print_no = TRUE, text = NULL, safer_check = FALSE) 
     # expected <- "ERROR MESSAGE REPORTED:\nError : \n\n================\n\nERROR IN saferDev::is_package_here().\n\nREQUIRED PACKAGE:\nNOTGOOD\n\nMUST BE INSTALLED IN:\nC:/Program Files/R/R-4.4.2/library\n\n================\n\n\n"

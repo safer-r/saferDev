@@ -161,6 +161,9 @@ testthat::test_that(".extract_all_fun_names()", {
     result <- .extract_all_fun_names(text = str1, pattern = pattern1, lib_path = NULL, error_text = "")
     expect <- list(string = "sum", pos = 28)
     testthat::expect_equal(result, expect)
+    testthat::expect_equal(object = saferDev:::.extract_all_fun_names(text = 'a <- paste0("f(1)") ; sum (2)', pattern = pattern1, lib_path = NULL, error_text = ""), expected = base::list(string = base::c("paste0", "f", "sum"), pos = base::c(6L, 14L, 23L))) # spaces before ( removed, and names between quotes extracted
+    testthat::expect_equal(object = saferDev:::.extract_all_fun_names(text = "no function", pattern = pattern1, lib_path = NULL, error_text = ""), expected = base::list(string = base::character(length = 0), pos = -1L)) # no match
+    testthat::expect_equal(object = saferDev:::.extract_all_fun_names(text = "base::paste0", pattern = "[a-zA-Z][a-zA-Z0-9.]*:{2,3}", lib_path = NULL, error_text = ""), expected = base::list(string = "base::", pos = NULL)) # no capture group in pattern
 
     #### end main code
 

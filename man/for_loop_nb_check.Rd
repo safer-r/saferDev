@@ -2,76 +2,73 @@
 % Please edit documentation in R/for_loop_nb_check.R
 \name{for_loop_nb_check}
 \alias{for_loop_nb_check}
-\title{\code{for} Loop Number Check}
+\title{Check and Guard the Sequences of \code{for} Loops}
 \usage{
 for_loop_nb_check(
   x,
   export = FALSE,
-  out_path = ".",
+  out_path = NULL,
   safer_check = TRUE,
   lib_path = NULL,
   error_text = ""
 )
 }
 \arguments{
-\item{x}{A function name, written without quotes and brackets.}
+\item{x}{Function to check, written without quotes and brackets (e.g., \code{fun1} or \code{pkg::fun1}).}
 
-\item{export}{Single logical value. Write the corrected function into a file instead of returning it? If \code{TRUE}, the file \code{<function name>_safer.R} is written in \code{out_path} (e.g., \code{fun_safer.R} for \code{x = fun} or \code{x = pkg::fun}). It contains \code{fun_safer <- function(...) ...}, so that \code{base::source()} recreates the corrected function. Nothing is written if nothing has to be corrected. An error is returned if the file already exists, or if \code{x} is not a function name (e.g., \code{function(x)\{x\}} or \code{FUN_LIST$fun}).}
+\item{export}{Single logical value. If \code{TRUE}, the corrected function is written into the \code{<name>_safer.R} file of \code{out_path} instead of being returned (e.g., \code{fun1_safer.R} for \code{x = fun1} or \code{x = pkg::fun1}), as \code{fun1_safer <- function(...)}, which \code{base::source()} recreates. Nothing is written if nothing has to be corrected, but an error is returned if the file already exists, or if \code{x} is not a function name (e.g., \code{function(x)\{x\}} or \code{FUN_LIST$fun}).}
 
-\item{out_path}{Single character string indicating the path of the folder where to write the file when \code{export = TRUE}. \code{"."} (default) means the R working directory. Ignored if \code{export = FALSE}.}
+\item{out_path}{Single character string: path of an existing folder where the file is written. Required when \code{export} is \code{TRUE}; otherwise not used, but a non-\code{NULL} value must still be a single non-empty character string. \code{NULL} by default.}
 
-\item{safer_check}{Single logical value. Perform the "safer" checks? If \code{TRUE}, checkings are performed before main code running (see the \href{https://github.com/safer-r}{safer-r project}): 1) required functions and related packages effectively present in local R libraries and 2) R classical operators (like \code{"<-"}) not overwritten by another package because of the R scope. Warning: must be set to \code{FALSE} if this function is used inside another "safer" function to avoid pointless multiple checkings.}
+\item{safer_check}{Single logical value. If \code{TRUE} (default), checks before running that the required packages and functions are installed and that the classical R operators (like \code{<-}) are not masked by another package or by a user-defined object of the global environment. These checks take time at each call: set \code{FALSE} in loops and inside other safer-r functions, to avoid repeating them.}
 
-\item{lib_path}{Vector of characters specifying the absolute pathways of the directories containing the required packages for the function, if not in the default directories. Useful when R packages are not installed in the default directories because of lack of admin rights. More precisely, \code{lib_path} is passed through the \code{new} argument of \code{.libPaths()} so that the new library paths are \code{unique(c(new, .Library.site, .Library))}. Warning: \code{.libPaths()} is restored to the initial paths, after function execution. Ignored if \code{NULL} (default): only the pathways specified by the current \code{.libPaths()} are used for package calling.}
+\item{lib_path}{Vector of character strings: paths of existing extra library folders containing the required packages (e.g., packages installed without admin rights). They are searched after the current \code{.libPaths()} during the call (the current libraries keep priority), and \code{.libPaths()} is restored on exit. If \code{NULL} (default), only the current \code{.libPaths()} are used.}
 
-\item{error_text}{Single character string used to add information in error messages returned by the function, notably if the function is inside other functions, which is practical for debugging. Example: \code{error_text = " INSIDE <PACKAGE_1>::<FUNCTION_1> INSIDE <PACKAGE_2>::<FUNCTION_2>."}. If \code{NULL}, converted into \code{""}.}
+\item{error_text}{Single character string added to the error messages (e.g., \code{" INSIDE pkg1::fun1()"}) to name the calling functions. \code{NULL} is converted into \code{""}.}
 }
 \value{
-A table-like message is always printed, with one row per reported loop (column 1: line number; column 2: construct; column 3: code before the body), or a message saying that everything seems fine.
+The corrected function, which keeps the environment of \code{x}, or \code{NULL}, invisibly, if nothing has to be corrected or if \code{export} is \code{TRUE}.
 
-If \code{export = FALSE}: the corrected function, or \code{NULL} if nothing has been corrected.
-
-If \code{export = TRUE}: \code{NULL}, returned invisibly. The corrected function is written in a file (see the \code{export} argument).
+A message is also printed: a table with one row per reported loop (column 1: line number; column 2: construct; column 3: code of the line) followed by the loops left unchanged, or a sentence saying that everything seems clean.
 }
 \description{
-Check the sequence expression of every \code{for} loop of a function. If the number of iterations is not fixed by the writing itself (e.g., \code{1:length(x)}), a checking line is added before the loop, issuing a warning at execution if the sequence is empty, contains \code{NA} or infinite values, has a single value, or is decreasing. Return a table-like message of the problematic lines and a corrected version of the submitted function.
+Checks the sequence of every \code{for} loop of a function. If the number of iterations is not fixed by the writing itself (e.g., \code{1:length(x)}), a checking line is added before the loop, which warns at execution if the sequence is empty, contains \code{NA} or infinite values, has a single value, has only negative values, or starts decreasing (first value greater than the second). Prints the reported loops and returns a corrected version of the function.
 }
 \details{
-Not reported: hard numbers, i.e., an integer-valued number, possibly negative, or two such numbers joined by \code{:} (e.g., \code{3}, \code{1:3}, \code{1e3}, \code{1L:3L}, \code{0:0}, \code{-3:-1}, \code{1:0}), and a single \code{seq_len(...)} or \code{seq_along(...)} call. These writings fully fix the iterations, and their control is left to the writer.
+Not reported: hard numbers, i.e., an integer-valued number, possibly negative, or two such numbers joined by \code{:} (e.g., \code{3}, \code{1:3}, \code{1e3}, \code{1L:3L}, \code{0:0}, \code{-3:-1}, \code{1:0}), whose iterations are fixed by the writing and left to the control of the writer, and a single \code{seq_len(...)} or \code{seq_along(...)} call, which gives no iteration for a zero length or an empty object.
 
-Reported: everything else, e.g., \code{for(i in x)}, \code{1:n}, \code{1:length(x)}, \code{1:nrow(df)}, \code{1:(n - 1)}, \code{seq_along(x) - 1}, \code{1:2.5}, \code{1:NA} or \code{1:Inf}. Comments and strings are ignored.
+Reported: everything else, e.g., \code{for(i in x)}, \code{1:n}, \code{1:length(x)}, \code{1:nrow(df)}, \code{1:(n - 1)}, \code{seq_along(x) - 1}, \code{1:2.5}, \code{1:NA} or \code{1:Inf}. Comments, strings and the loops inside formulas, \code{quote()}, \code{bquote()}, \code{expression()}, \code{alist()} and \code{substitute()}, whose code R does not evaluate as written (e.g., \code{quote(for(i in 1:n) x)}), are ignored, except in the parts that R evaluates: \code{.()} in \code{bquote()} (\code{..()} too if \code{splice = TRUE} is written), and the \code{where} and \code{splice} arguments of \code{bquote()} and \code{env} of \code{substitute()}.
 
 Why: with \code{x <- character()}, \code{for(i in 1:length(x))} runs twice, because \code{1:length(x)} is \code{c(1, 0)}. Use \code{base::seq_along(along.with = x)} instead.
 
-Correction: each reported loop becomes \code{tempo_for_seqN <- <SEQUENCE> ; <CHECKS> ; for(i in tempo_for_seqN)<BODY>}, N being the rank of the report. The checks warn if the sequence is empty, contains \code{NA} or infinite values, has a single value, has only negative values, or is decreasing (these last two checks only for numeric sequences, i.e., not for factors, dates, characters or complex numbers). The loop thus runs on the checked sequence. Errors of the sequence itself (like \code{1:NA}) are not caught. If the loop is not a standalone statement (e.g., unbraced body of an \code{if}, or argument value), the whole is enclosed in curly brackets. The rest of the code is unchanged. The comments and the indentation of the submitted function are kept, in the returned function and in the exported file. Warning: comments are only available when the submitted function carries its source references (attribute srcref). Otherwise (e.g., compiled package functions, or functions created with \code{options(keep.source = FALSE)}, default of Rscript), the code is the deparsed one: no comments and standard indentation. The returned function is evaluated in a new environment whose parent is the environment of the submitted function: check it before replacing the original function.
+Correction: each reported loop becomes \code{tempo_for_seqN <- <SEQUENCE> ; <CHECKS> ; for(i in tempo_for_seqN)<BODY>}, N being the rank of the report and \code{<SEQUENCE>} the sequence as written in the code, on a single line. The checks of negative and decreasing values only concern numeric sequences (not factors, dates, characters or complex numbers). Errors of the sequence itself (like \code{1:NA}) are not caught. If the loop is not a standalone statement (e.g., unbraced body of an \code{if}, or argument value), it is enclosed in curly brackets. The rest of the code, comments and indentation included, is unchanged.
 
-Warning: a reported loop is left unchanged, and listed in the message, when:
-\itemize{
-\item the name \code{tempo_for_seqN} is already used in the function code (including comments and strings);
-\item the loop is inside the sequence expression of another reported loop;
-\item the loop must be enclosed in curly brackets and contains comments;
-\item the loop must be enclosed in curly brackets and ends with another loop that must also be (e.g., \code{for(a in 1:n) for(b in 1:length(x)){...}}).
-}
+Warning: a reported loop is left unchanged, and listed in the message, when the name \code{tempo_for_seqN} is already used in the code (comments and strings included), when its sequence contains another reported loop, or when its sequence cannot be written on a single line with the same meaning (e.g., a sequence written on several lines that contains a comment, a string written on several lines, or statements on separate lines).
 
-Warning: only the writing is analyzed. In \code{n <- length(x) ; for(i in 1:n)}, \code{1:n} is reported as a variable, whatever \code{n}.
+Warning: only the writing is analyzed. In \code{n <- length(x) ; for(i in 1:n)}, \code{1:n} is reported, whatever the value of \code{n}.
 
-Line numbers are indicative. They start at the \code{<- function} line (\code{#'} header lines not counted). Compiled functions, like \code{saferDev::colons_check}, have no comments: their line numbers differ from their source file.
+Source references: line 1 is the line of the \code{function} keyword. Comments and indentation are kept only if \code{x} carries its source references (attribute \code{srcref}). Functions created with \code{options(keep.source = FALSE)} (default of Rscript) and functions of installed packages (e.g., \code{saferDev::colons_check}) have none: their deparsed code is analyzed, without comments and with line numbers that differ from the source file.
 }
 \examples{
-# Warning: these examples may not work well when using the "Run examples" link
-# because of a particular environment. Please, copy-paste in a local environment.
+# Without source references ("Run examples" link, Rscript), line numbers and comments differ.
 # See also https://safer-r.github.io/saferDev/articles/for_loop_nb_check.html
 fun1 <- function(x){ for(i in base::seq_along(along.with = x)){ base::print(x = i) } }
-saferDev::for_loop_nb_check(fun1) # everything fine: NULL returned
+saferDev::for_loop_nb_check(x = fun1, export = FALSE, out_path = NULL, safer_check = TRUE,
+    lib_path = NULL, error_text = "") # nothing to correct: NULL returned, invisibly
 fun2 <- function(x){ for(i in 1:length(x)){ base::print(x = i) } }
-fun2_safer <- saferDev::for_loop_nb_check(fun2) # 1:length(x) reported
-fun2_safer # corrected function
-fun2_safer(x = base::character()) # warning: 1:length(x) is c(1, 0), a decreasing sequence
+fun2_safer <- saferDev::for_loop_nb_check(x = fun2, export = FALSE, out_path = NULL,
+    safer_check = TRUE, lib_path = NULL, error_text = "") # 1:length(x) reported
+fun2_safer(x = base::character(length = 0)) # 1:length(x) is c(1, 0): the added checking line warns
 # Write the corrected function in the fun2_safer.R file of a new temporary folder:
-tempo_dir <- base::tempfile(pattern = "dir", tmpdir = base::tempdir(), fileext = "")
+tempo_dir <- base::tempfile(pattern = "dir", tmpdir = base::tempdir(check = FALSE), fileext = "")
 base::dir.create(path = tempo_dir, showWarnings = TRUE, recursive = FALSE, mode = "0777")
-saferDev::for_loop_nb_check(x = fun2, export = TRUE, out_path = tempo_dir)
+saferDev::for_loop_nb_check(x = fun2, export = TRUE, out_path = tempo_dir, safer_check = TRUE,
+    lib_path = NULL, error_text = "")
+base::unlink(x = tempo_dir, recursive = TRUE, force = FALSE, expand = TRUE) # folder removed
 
+}
+\seealso{
+The code checkers of saferDev, in the recommended order of use: \code{\link{super_assign_check}}, \code{\link{lambda_check}}, \code{\link{colons_check}}, \code{\link{all_args_here}}, \code{\link{curly_bracket_check}}, \code{\link{true_false_check}}, \code{\link{for_loop_nb_check}} (see \code{vignette("saferDev")}).
 }
 \author{
 \href{mailto:gael.millot@pasteur.fr}{Gael Millot}

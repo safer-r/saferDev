@@ -7,28 +7,30 @@
 .noclean_functions(col1, col2, col3, ini, lib_path, error_text)
 }
 \arguments{
-\item{col1}{Vector of integers of line numbers in a code.}
+\item{col1}{Vector of integers: the line numbers of the function names in \code{ini}.}
 
-\item{col2}{Vector of strings of the function names scrutinized.}
+\item{col2}{Vector of strings: the function names.}
 
-\item{col3}{Vector of strings of the code before the function name.}
+\item{col3}{Vector of strings: the code of the line before each function name, so that the name starts at the position \code{nchar(col3) + 1} of its line.}
 
-\item{ini}{Vector of strings of the initial function code analyzed.}
+\item{ini}{Vector of strings: the lines of the analyzed code (\code{$code} of \code{.functions_detect()}).}
 
-\item{lib_path}{Vector of characters specifying the absolute pathways of the directories containing the required packages for the function, if not in the default directories. Useful when R packages are not installed in the default directories because of lack of admin rights. More precisely, \code{lib_path} is passed through the \code{new} argument of \code{.libPaths()} so that the new library paths are \code{unique(c(new, .Library.site, .Library))}. Warning: \code{.libPaths()} is restored to the initial paths, after function execution. Ignored if \code{NULL} (default): only the pathways specified by the current \code{.libPaths()} are used for package calling.}
+\item{lib_path}{Vector of character strings or \code{NULL}: the \code{lib_path} value of the calling exported function, only passed on to \code{arg_check()} (directly or through the internal functions called). No default value.}
 
-\item{error_text}{Single character string used to add information in error messages returned by the function, notably if the function is inside other functions, which is practical for debugging. Example: \code{error_text = " INSIDE <PACKAGE_1>::<FUNCTION_1> INSIDE <PACKAGE_2>::<FUNCTION_2>."}. If \code{NULL}, converted into \code{""}.}
+\item{error_text}{Single character string added to the error messages to name the calling functions (\code{embed_error_text} of the calling function). \code{NULL} is converted into \code{""}. No default value.}
 }
 \value{
-A logical vector indicating if function names of \code{col2} are inside quotes or after \code{$} (\code{TRUE}) in \code{ini} or not (\code{FALSE}). Can be length 0.
+A logical vector: \code{TRUE} if the function name of \code{col2} is between quotes (string literal or backquoted name) or after \code{$} in \code{ini}, \code{FALSE} otherwise. Can be length 0.
 }
 \description{
-Indicate if function names are inside quotes or after \code{$}.
+Indicate if function names are between quotes or after \code{$}.
 }
 \details{
+A function name is between quotes if the \code{(} that follows it is, the quotes being read over all the lines of \code{ini} as the R parser does (see \code{.in_quotes_replacement()}).
+
 Warnings:
 \itemize{
-  \item requires \code{saferDev::arg_check}, \code{.has_odd_number_of_quotes}.
+  \item requires \code{saferDev::arg_check}, \code{.in_quotes_replacement}.
   \item In the safer Backbone section \code{"######## check of the required functions from the required packages"}, add also these 2 functions when checking for the presence of \code{.noclean_functions}.
 }
 }

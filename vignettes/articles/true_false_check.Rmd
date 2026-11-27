@@ -60,7 +60,7 @@ true_false_check(x = fun3)
 
 ### Argument <code>safer_check</code> 
 ```{r, echo = TRUE, error = TRUE}
-# Safer checkings are performed before main code running.
+# Safer checks are performed before running the main code.
 true_false_check(
     x = fun1, 
     safer_check = TRUE
@@ -70,7 +70,7 @@ true_false_check(
 
 ### Argument <code>lib_path</code>
 ```{r}
-# The "NOTGOOD" path does not exists.
+# The "NOTGOOD" path does not exist.
 true_false_check(
     x = fun1,  
     lib_path = "NOTGOOD"
@@ -91,7 +91,7 @@ true_false_check(
 
 ### Arguments <code>export</code> and <code>out_path</code>: return or export the corrected function
 ```{r}
-# The corrected function is returned (NULL if nothing has to be corrected).
+# The corrected function is returned (NULL, invisibly, if nothing has to be corrected).
 fun2_safer <- true_false_check(x = fun2)
 fun2_safer # T replaced by TRUE, F replaced by FALSE.
 
@@ -99,7 +99,7 @@ fun2_safer # T replaced by TRUE, F replaced by FALSE.
 true_false_check(x = fun2_safer)
 
 # Export the corrected function into the fun2_safer.R file, here in a new temporary folder.
-# out_path = "." (default) is the R working directory.
+# out_path is required when export = TRUE (NULL by default).
 # An existing file is never overwritten (an error is returned instead).
 tempo_dir <- base::tempfile(pattern = "dir", tmpdir = base::tempdir(), fileext = "")
 base::dir.create(path = tempo_dir, showWarnings = TRUE, recursive = FALSE, mode = "0777")
@@ -118,7 +118,7 @@ base::readLines(con = base::file.path(tempo_dir, "fun2_safer.R", fsep = "/"))
 true_false_check(
     x = fun1, # function name to test.
     export = FALSE, # write the corrected function into a .R file instead of returning it?
-    out_path = ".", # folder where to write the file (used only if export = TRUE).
+    out_path = NULL, # folder where to write the file (required if export = TRUE).
     safer_check = TRUE, # perform some "safer" checks (see https://github.com/safer-r)?
     lib_path = NULL, # where the required packages are if not in the default directories.
     error_text = "" # add information in error messages returned by the function.
@@ -128,7 +128,7 @@ true_false_check(
 
 ### Sophisticated example
 ```{r, echo = TRUE, error = TRUE}
-# T and F used as names are not reported: they are user-defined objects.
+# T and F used as names (here a column name and an argument name) are not reported.
 fun4 <- function(x){
     df <- base::data.frame(T = 1:2, stringsAsFactors = FALSE)
     y <- df$T # column named T
@@ -149,5 +149,13 @@ fun6 <- function(x){
     base::return("T") # F
 }
 true_false_check(x = fun6)
+
+# A T used as the whole assigned value is not reported, but a T used as an operand is.
+fun7 <- function(x, y){
+    z <- T # not reported
+    w <- T & y # reported
+    base::return(w)
+}
+true_false_check(x = fun7)
 ```
 <br>

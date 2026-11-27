@@ -1,27 +1,26 @@
-#' @title Is Package Here
+#' @title Check That Packages Are Installed
 #' @description
-#' Check if required packages are installed locally.
-#' @param req_package Character vector of package names to check.
-#' @param safer_check Single logical value. Perform the "safer" checks? If \code{TRUE}, checkings are performed before main code running (see the \href{https://github.com/safer-r}{safer-r project}): 1) required functions and related packages effectively present in local R libraries and 2) R classical operators (like \code{"<-"}) not overwritten by another package because of the R scope. Warning: must be set to \code{FALSE} if this function is used inside another "safer" function to avoid pointless multiple checkings.
-#' @param lib_path Vector of characters specifying the absolute pathways of the directories containing the required packages for the function, if not in the default directories. Useful when R packages are not installed in the default directories because of lack of admin rights. More precisely, \code{lib_path} is passed through the \code{new} argument of \code{.libPaths()} so that the new library paths are \code{unique(c(lib_path, .libPaths()))}. Warning: \code{.libPaths()} is restored to the initial paths, after function execution. Ignored if \code{NULL} (default): only the pathways specified by the current \code{.libPaths()} are used for package calling.
-#' @param error_text Single character string used to add information in error messages returned by the function, notably if the function is inside other functions, which is practical for debugging. Example: \code{error_text = " INSIDE <PACKAGE_1>::<FUNCTION_1> INSIDE <PACKAGE_2>::<FUNCTION_2>."}. If \code{NULL}, converted into \code{""}.
-#' @returns An error message if at least one of the checked packages is missing in \code{lib_path}, nothing otherwise.
-#' @seealso \code{\link{require}}. 
+#' Checks that the required packages are installed, without loading them.
+#' @param req_package Vector of character strings: names of the packages to check (e.g., \code{c("stats", "utils")}).
+#' @inheritParams is_function_here
+#' @returns Invisible \code{NULL} if all the packages are installed, otherwise an error.
+#' @seealso \code{\link{is_function_here}}, \code{\link{find.package}}.
 #' @author \href{mailto:gael.millot@pasteur.fr}{Gael Millot}
-#' @author Haiding Wang  
+#' @author Haiding Wang
 #' @author Yushi Han
 #' @examples
-#' # Warning: these examples may not work well when using the "Run examples" link 
-#' # because of a particular environment. Please, copy-paste in a local environment.
 #' # See also https://safer-r.github.io/saferDev/articles/is_package_here.html
-#' \dontrun{
-#' # Example that returns an error
-#' saferDev::is_package_here(req_package = "nopackage", error_text = " INSIDE P1::F1")
-#' # Example that returns an error
-#' saferDev::is_package_here(req_package = "ggplot2", lib_path = "NOTGOOD")
-#' }
-#' saferDev::is_package_here(req_package = "ggplot2")
-#' 
+#' saferDev::is_package_here(req_package = base::c("stats", "utils"), safer_check = TRUE,
+#'     lib_path = NULL, error_text = "")
+#' # Missing package: error
+#' base::try(expr = saferDev::is_package_here(req_package = "nopackage", safer_check = TRUE,
+#'     lib_path = NULL, error_text = " INSIDE P1::F1"), silent = FALSE,
+#'     outFile = base::getOption(x = "try.outFile", default = base::stderr()))
+#' # Folder of lib_path that does not exist: error
+#' base::try(expr = saferDev::is_package_here(req_package = "stats", safer_check = TRUE,
+#'     lib_path = "NOTGOOD", error_text = ""), silent = FALSE,
+#'     outFile = base::getOption(x = "try.outFile", default = base::stderr()))
+#'
 #' @export
 is_package_here <- function(
     req_package, 
@@ -41,8 +40,12 @@ is_package_here <- function(
     #### end internal error report link
 
     #### function name
-    tempo_settings <- base::as.list(x = base::match.call(definition = base::sys.function(which = base::sys.parent(n = 0)), call = base::sys.call(which = base::sys.parent(n = 0)), expand.dots = FALSE, envir = base::parent.frame(n = 2L))) # warning: I have written n = 0 to avoid error when a safer function is inside another functions. In addition, arguments values retrieved are not evaluated base::match.call, but this is solved with get() below
-    function_name <- base::paste0(tempo_settings[[1]], "()", collapse = NULL, recycle0 = FALSE) 
+    tempo_settings <- base::as.list(x = base::match.call(definition = base::sys.function(which = base::sys.parent(n = 0)), call = base::sys.call(which = base::sys.parent(n = 0)), expand.dots = FALSE, envir = )) # warning: I have written n = 0 to avoid error when a safer function is inside another functions. In addition, arguments values retrieved are not evaluated base::match.call, but this is solved with get() below. Warning: envir is left empty on purpose: its default parent.frame(2L), evaluated inside base::match.call(), is the frame that called this function, where the ... of the call are expanded (base::parent.frame(n = 2L) written here would be evaluated one frame too far, which breaks the calls through base::lapply(), base::vapply(), base::apply(), base::Filter() or a function forwarding ..., base::sapply() only working by coincidence)
+    if(base::is.name(x = tempo_settings[[1]]) | base::is.call(x = tempo_settings[[1]])){
+        function_name <- base::paste0(tempo_settings[[1]], "()", collapse = NULL, recycle0 = FALSE)
+    }else{
+        function_name <- "<anonymous function>()" # the function was called through its object (e.g., base::do.call(what = <function object>, args = ...)), so that its name is not in the call
+    }
     # function name with "()" paste, which split into a vector of three: c("::()", "package ()", "function ()") if "package::function()" is used.
     if(function_name[1] == "::()" | function_name[1] == ":::()"){
         function_name <- function_name[3]
@@ -307,8 +310,8 @@ is_package_here <- function(
             base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL)
         }else{
             ini_lib_path <- base::.libPaths(new = , include.site = TRUE) # normal to have empty new argument
-            base::on.exit(expr = base::.libPaths(new = ini_lib_path, include.site = TRUE), add = TRUE, after = TRUE) # return to the previous libPaths()
-            base::.libPaths(new = base::sub(x = base::c(ini_lib_path, lib_path), pattern = "/$|\\\\$", replacement = "", ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE), include.site = TRUE) # base::.libPaths(new = ) add path to default path. BEWARE: base::.libPaths() does not support / at the end of a submitted path. The reason of the check and replacement of the last / or \\ in path
+            base::on.exit(expr = base::.libPaths(new = ini_lib_path, include.site = FALSE), add = TRUE, after = TRUE) # return to the previous libPaths(). include.site = FALSE: exact restore, since ini_lib_path already contains the site library if it was in use
+            base::.libPaths(new = base::sub(x = base::c(ini_lib_path, lib_path), pattern = "/$|\\\\$", replacement = "", ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE), include.site = FALSE) # base::.libPaths(new = ) add path to default path. BEWARE: base::.libPaths() does not support / at the end of a submitted path. The reason of the check and replacement of the last / or \\ in path
             lib_path <- base::.libPaths(new = , include.site = TRUE) # normal to have empty new argument
         }
     }else{

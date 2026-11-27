@@ -7,43 +7,44 @@
 .functions_detect(x, skipped_base, arg_user_setting2, lib_path, error_text)
 }
 \arguments{
-\item{x}{Function name to test, written without quotes and brackets.}
+\item{x}{Function to analyze.}
 
-\item{skipped_base}{Vector of strings specifying the R basic functions skipped from detection.}
+\item{skipped_base}{Vector of strings: names not reported (e.g., \code{"function"} or \code{"if"}).}
 
-\item{arg_user_setting2}{Argument user settings list.}
+\item{arg_user_setting2}{List of the arguments written in the call of the calling function (\code{arg_user_setting} of the calling function). Its \code{x} compartment, the name of the analyzed function, is used in the messages and for the recursive calls (see \code{fun_names_internal} below).}
 
-\item{lib_path}{Vector of characters specifying the absolute pathways of the directories containing the required packages for the function, if not in the default directories. Useful when R packages are not installed in the default directories because of lack of admin rights. More precisely, \code{lib_path} is passed through the \code{new} argument of \code{.libPaths()} so that the new library paths are \code{unique(c(new, .Library.site, .Library))}. Warning: \code{.libPaths()} is restored to the initial paths, after function execution. Ignored if \code{NULL} (default): only the pathways specified by the current \code{.libPaths()} are used for package calling.}
+\item{lib_path}{Vector of character strings or \code{NULL}: the \code{lib_path} value of the calling exported function, only passed on to \code{arg_check()} (directly or through the internal functions called). No default value.}
 
-\item{error_text}{Single character string used to add information in error messages returned by the function, notably if the function is inside other functions, which is practical for debugging. Example: \code{error_text = " INSIDE <PACKAGE_1>::<FUNCTION_1> INSIDE <PACKAGE_2>::<FUNCTION_2>."}. If \code{NULL}, converted into \code{""}.}
+\item{error_text}{Single character string added to the error messages to name the calling functions (\code{embed_error_text} of the calling function). \code{NULL} is converted into \code{""}. No default value.}
 }
 \value{
 A list:
 \itemize{
-  \item \code{code}: vector of strings of the code of the tested function.
-  \item \code{all_basic_funs}: vector or strings of names of all the basic R functions.
-  \item \code{fun_names}: list of names of all the functions, not considering \code{base::c("function", "if", "for", "while", "repeat")}. Compartment names indicate the code line number of the functions in \code{code}.
-  \item \code{fun_names_pos}: list of position of the first character of each \code{fun_names}. Compartment names indicate the code line number of the functions in \code{code}.
-  \item \code{code_line_nb}: vector of integers of the code line numbers of code for each non empty compartment of \code{fun_names} and \code{fun_names_pos}.
-  \item \code{internal_fun_names}: vector of string of names of internal functions in the code of the tested function.
-  \item \code{arg_user_setting}: list of argument user settings of the tested function.
+  \item \code{code}: vector of strings, the lines of the printed code of \code{x}, with the runs of spaces collapsed into one space, and the leading space and the comments removed.
+  \item \code{all_basic_funs}: vector of strings, names of all the objects of the basic R environments of the search path (packages stats, graphics, grDevices, utils, datasets, methods and base, and Autoloads), which must all be attached, otherwise an error is returned.
+  \item \code{fun_names}: list of vectors of strings, the names followed by \code{(} in each line of \code{code}, and the names of called functions ending a line, their \code{(} being on a next line (names given as calls by the parse data or, if the printed code does not parse, any name ending a line followed by a line starting with \code{(}), except the names of \code{skipped_base}. Only lines with names are present, the compartment names indicating the line numbers (e.g., \code{"c3"} for line 3).
+  \item \code{fun_names_pos}: list as \code{fun_names}, with the position of the first character of each name in its line.
+  \item \code{code_line_nb}: vector of integers, the line numbers of the compartments of \code{fun_names}.
+  \item \code{arg_user_setting}: \code{arg_user_setting2}, with \code{x} written \code{"pkg::fun()"} if \code{x} is written \code{pkg::fun} in the call.
+  \item \code{fun_names_skip}: list as \code{fun_names}, with \code{TRUE} for the names not to check: names inside a formula or inside the arguments of a call of \code{quote()}, \code{bquote()}, \code{expression()}, \code{alist()} or \code{substitute()} (written without package or after \code{base::} or \code{base:::}, possibly between quotes, also with the value piped into it), except the code that R evaluates (arguments of the \code{.()} and, if \code{splice} is \code{TRUE} or \code{T}, \code{..()} calls of \code{bquote()}, \code{where} of \code{bquote()} and \code{env} of \code{substitute()}, none if R cannot match their arguments), and name of the function called by \code{.Internal()} (e.g., \code{toupper} in \code{.Internal(toupper(x))}).
+  \item \code{fun_names_internal}: list as \code{fun_names}, with \code{TRUE} for the calls of internal functions inside their scope: formal arguments of \code{x} and name of \code{x} (\code{x} compartment of \code{arg_user_setting2}, possibly written \code{pkg::name} or followed by \code{()}, if the function of this name found from the environment of \code{x} is \code{x}: recursive calls) in the whole code of \code{x}, formal arguments of a function defined in \code{x} inside this definition (not for a definition in quoted code, see \code{fun_names_skip}), and names assigned a function definition or a \code{utils::getFromNamespace()} result (\code{<-}, \code{=}, \code{->}) inside the innermost function definition containing the assignment (the innermost one outside the quoted code if the assignment is not quoted, none if this definition is in quoted code, and the whole code of \code{x} for \code{<<-}, \code{->>}).
 }
 
-\code{NULL}, with a warning, if the tested function is empty of function, or only made of comments, or only made of the \code{skipped_base} functions.
+\code{NULL}, with a warning, if \code{x} is a primitive function (no R code), or if the code of \code{x} has no name followed by \code{(} other than the names of \code{skipped_base}.
 }
 \description{
-Detect all the functions names inside a function.
+Detect the names of the functions called in the code of a function.
 }
 \details{
-Does not check if the functions inside the code exist.
+The names between quotes (e.g., \code{"paste(x)"}) are reported. The comments are removed beforehand, the quotes being read as the R parser does (see \code{.in_quotes_replacement()}).
 
-Use the regex pattern \code{"([a-zA-Z]|\\.[a-zA-Z._])[a-zA-Z0-9._]*\\s*\\("} to detect a function in the code.
+The existence of the reported functions is not checked.
 
-The result in \code{all_basic_funs} are all the functions in \code{base::c("package:stats", "package:graphics",  "package:grDevices", "package:utils", "package:datasets", "package:methods", "Autoloads", "package:base")}.
+The internal functions, the formulas, the calls of \code{quote()}, \code{bquote()}, \code{expression()}, \code{alist()} and \code{substitute()}, and the \code{.Internal()} calls are found in the parse data of the printed code of \code{x}. If this code does not parse (e.g., an environment object inserted in the body of \code{x}), the formulas, these quoting calls and the \code{.Internal()} calls are not detected, and the internal functions are only the name of \code{x} and the names written \code{name <- function(} or \code{name <- utils::getFromNamespace(} at the beginning of a line, in the whole code of \code{x}.
 
 Warnings:
 \itemize{
-  \item Requires \code{saferDev::arg_check}, \code{.extract_all_fun_names}, \code{.has_odd_number_of_quotes}. 
+  \item Requires \code{saferDev::arg_check}, \code{.extract_all_fun_names}, \code{.in_quotes_replacement}.
   \item In the safer Backbone section \code{"######## check of the required functions from the required packages"}, add also these 3 functions when checking for the presence of \code{.functions_detect}.
 }
 }

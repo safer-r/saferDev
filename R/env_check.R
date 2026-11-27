@@ -1,39 +1,49 @@
-#' @title Environment Check
+#' @title Check Object Names Against the Calling Frames and the Search Path
 #' @description
-#' Verify that object names in the environment defined by the \code{pos} parameter are identical or not to object names in the above environments (following R Scope). This can be used to verify that names used for objects inside a function or in the working environment do not override names of objects already present in the above R environments, following the R scope.
-#' @param pos Single non null positive integer indicating the position of the environment checked (argument \code{n} of the \code{parent.frame()} function). Value \code{1} means one step above the \code{env_check()} local environment (by default). This means that when \code{env_check(pos = 1)} is used inside a function A, it checks if the name of any object in the local environment of this function A is also present in above environments, following R Scope, starting by the just above environment. When \code{env_check(pos = 1)} is used in the working (Global) environment (named \code{.GlobalEnv}), it checks the object names of this \code{.GlobalEnv} environment, in the above environments. See the examples below.
-#' @param name Single character string of the name of the checked environment (used in the output string only, where the name of the ckecked env is replaced by the name value). Can be used when \code{env_check()} is used inside a function "A" to specify that the environment of "A" is checked.
-#' @param safer_check Single logical value. Perform the "safer" checks? If \code{TRUE}, checkings are performed before main code running (see the \href{https://github.com/safer-r}{safer-r project}): 1) required functions and related packages effectively present in local R libraries and 2) R classical operators (like \code{"<-"}) not overwritten by another package because of the R scope. Warning: must be set to \code{FALSE} if this function is used inside another "safer" function to avoid pointless multiple checkings.
-#' @param lib_path Vector of characters specifying the absolute pathways of the directories containing the required packages for the function, if not in the default directories. Useful when R packages are not installed in the default directories because of lack of admin rights. More precisely, \code{lib_path} is passed through the \code{new} argument of \code{.libPaths()} so that the new library paths are \code{unique(c(new, .Library.site, .Library))}. Warning: \code{.libPaths()} is restored to the initial paths, after function execution. Ignored if \code{NULL} (default): only the pathways specified by the current \code{.libPaths()} are used for package calling.
-#' @param error_text Single character string used to add information in error messages returned by the function, notably if the function is inside other functions, which is practical for debugging. Example: \code{error_text = " INSIDE <PACKAGE_1>::<FUNCTION_1> INSIDE <PACKAGE_2>::<FUNCTION_2>."}. If \code{NULL}, converted into \code{""}.
-#' @returns
-#' A character string indicating the object names of the tested environment that match object names in the above environments, following the R scope, or \code{NULL} if no match.
-#' @seealso \code{\link{exists}}.
+#' Checks whether the object names of an environment are also used in the environments above it: the frames of the call stack (\code{sys.frames()}: the calling functions, not the environments where the functions are defined), then the search path (\code{search()}). Useful to detect object names of a function, or of the global environment, that mask or are masked by other objects.
+#' @param pos Single positive integer: position of the checked environment in the call stack, counted from \code{env_check()}, then in the search path. \code{1} (default) checks the environment that calls \code{env_check()}: the frame of a function, or the global environment at top level. \code{2} checks the environment one step further up, etc., up to \code{package:base}, the last environment of the search path.
+#' @param name Single character string: name of the checked environment in the returned message (e.g., the name of the function calling \code{env_check()}). If \code{NULL} (default), \code{"UNNAMED"} for the frame of a function, or the name of an environment of the search path (e.g., \code{".GlobalEnv"}).
+#' @inheritParams is_function_here
+#' @returns A character string listing, for each environment above the checked one, the object names it shares with the checked environment, followed by the environments checked (frames written \code{<environment>}). \code{NULL} if no name is shared.
+#' @details
+#' Call \code{env_check()} directly (e.g., \code{res <- env_check()}), not inside another call like \code{print(env_check())} or \code{cat(env_check())}, which would check the frame of \code{print()} or \code{cat()} instead. At the top level of code run by \code{source()} or knitr, the frames of the functions running the code are also checked.
+#' @seealso \code{\link{sys.frames}}, \code{\link{search}}.
 #' @author \href{mailto:gael.millot@pasteur.fr}{Gael Millot}
-#' @author Haiding Wang  
+#' @author Haiding Wang
 #' @author Yushi Han
 #' @examples
-#' # Warning: these examples may not work well when using the "Run examples" link 
-#' # because of a particular environment. Please, copy-paste in a local environment.
+#' # Warning: the "Run examples" link also checks the frames of the code running the examples.
 #' # See also https://safer-r.github.io/saferDev/articles/env_check.html
 #' # Inside a function: the names t.test and mean, created inside fun1(),
 #' # also exist in the stats and base environments located above:
 #' fun1 <- function(){
 #'     t.test <- 0
 #'     mean <- 5
-#'     saferDev::env_check(pos = 1, name = "fun1")
+#'     saferDev::env_check(pos = 1, name = "fun1", safer_check = TRUE, lib_path = NULL,
+#'         error_text = "")
 #' }
 #' a <- fun1()
-#' base::cat(a)
+#' base::cat(a, file = "", sep = " ", fill = FALSE, labels = NULL, append = FALSE)
 #' # NULL returned when no name is also present in the environments above:
 #' fun2 <- function(){
 #'     tempo_name_used_nowhere_else <- 0
-#'     saferDev::env_check(pos = 1, name = "fun2")
+#'     saferDev::env_check(pos = 1, name = "fun2", safer_check = TRUE, lib_path = NULL,
+#'         error_text = "")
 #' }
 #' fun2()
-#' # pos = 2 checks the environment one step above the function (here, the calling environment).
-#' # See the env_check() article of the website for more examples.
-#' 
+#' # The frames of the calling functions are checked (call stack), here the frame of fun3():
+#' fun3 <- function(){
+#'     min <- 1
+#'     fun4()
+#' }
+#' fun4 <- function(){
+#'     min <- 2
+#'     saferDev::env_check(pos = 1, name = "fun4", safer_check = TRUE, lib_path = NULL,
+#'         error_text = "")
+#' }
+#' a <- fun3()
+#' base::cat(a, file = "", sep = " ", fill = FALSE, labels = NULL, append = FALSE)
+#'
 #' @export
 env_check <- function(
     pos = 1, 
@@ -54,8 +64,12 @@ env_check <- function(
     #### end internal error report link
 
     #### function name
-    tempo_settings <- base::as.list(x = base::match.call(definition = base::sys.function(which = base::sys.parent(n = 0)), call = base::sys.call(which = base::sys.parent(n = 0)), expand.dots = FALSE, envir = base::parent.frame(n = 2L))) # warning: I have written n = 0 to avoid error when a safer function is inside another functions. In addition, arguments values retrieved are not evaluated base::match.call, but this is solved with get() below
-    function_name <- base::paste0(tempo_settings[[1]], "()", collapse = NULL, recycle0 = FALSE) 
+    tempo_settings <- base::as.list(x = base::match.call(definition = base::sys.function(which = base::sys.parent(n = 0)), call = base::sys.call(which = base::sys.parent(n = 0)), expand.dots = FALSE, envir = )) # warning: I have written n = 0 to avoid error when a safer function is inside another functions. In addition, arguments values retrieved are not evaluated base::match.call, but this is solved with get() below. Warning: envir is left empty on purpose: its default parent.frame(2L), evaluated inside base::match.call(), is the frame that called this function, where the ... of the call are expanded (base::parent.frame(n = 2L) written here would be evaluated one frame too far, which breaks the calls through base::lapply(), base::vapply(), base::apply(), base::Filter() or a function forwarding ..., base::sapply() only working by coincidence)
+    if(base::is.name(x = tempo_settings[[1]]) | base::is.call(x = tempo_settings[[1]])){
+        function_name <- base::paste0(tempo_settings[[1]], "()", collapse = NULL, recycle0 = FALSE)
+    }else{
+        function_name <- "<anonymous function>()" # the function was called through its object (e.g., base::do.call(what = <function object>, args = ...)), so that its name is not in the call
+    }
     # function name with "()" paste, which split into a vector of three: c("::()", "package ()", "function ()") if "package::function()" is used.
     if(function_name[1] == "::()" | function_name[1] == ":::()"){
         function_name <- function_name[3]
@@ -306,8 +320,8 @@ env_check <- function(
             base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL)
         }else{
             ini_lib_path <- base::.libPaths(new = , include.site = TRUE) # normal to have empty new argument
-            base::on.exit(expr = base::.libPaths(new = ini_lib_path, include.site = TRUE), add = TRUE, after = TRUE) # return to the previous libPaths()
-            base::.libPaths(new = base::sub(x = base::c(ini_lib_path, lib_path), pattern = "/$|\\\\$", replacement = "", ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE), include.site = TRUE) # base::.libPaths(new = ) add path to default path. BEWARE: base::.libPaths() does not support / at the end of a submitted path. The reason of the check and replacement of the last / or \\ in path
+            base::on.exit(expr = base::.libPaths(new = ini_lib_path, include.site = FALSE), add = TRUE, after = TRUE) # return to the previous libPaths(). include.site = FALSE: exact restore, since ini_lib_path already contains the site library if it was in use
+            base::.libPaths(new = base::sub(x = base::c(ini_lib_path, lib_path), pattern = "/$|\\\\$", replacement = "", ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE), include.site = FALSE) # base::.libPaths(new = ) add path to default path. BEWARE: base::.libPaths() does not support / at the end of a submitted path. The reason of the check and replacement of the last / or \\ in path
             lib_path <- base::.libPaths(new = , include.site = TRUE) # normal to have empty new argument
         }
     }else{
@@ -431,6 +445,19 @@ env_check <- function(
     ######## end graphic device checking
 
     ######## other checkings
+    tempo_nb_env <- base::length(x = base::sys.frames()) + base::length(x = base::search()) - 1 # number of environments above env_check(): frames of the call stack (base::sys.frames() also contains the frame of env_check(), hence - 1), then search path
+    if(pos == 0 | pos > tempo_nb_env){ # pos = 0 would check the frame of env_check() itself, and pos beyond the last environment of the search path designates no environment
+        tempo_cat <- base::paste0(
+            error_text_start, 
+            "THE pos ARGUMENT MUST BE BETWEEN 1 AND ", 
+            tempo_nb_env, 
+            " HERE (NUMBER OF ENVIRONMENTS ABOVE env_check(): FRAMES OF THE CALL STACK, THEN SEARCH PATH).\nHERE IT IS: ", 
+            pos, 
+            collapse = NULL, 
+            recycle0 = FALSE
+        )
+        base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL)
+    }
     ######## end other checkings
 
     #### end second round of checking and data preparation
@@ -458,6 +485,14 @@ env_check <- function(
     match_list <- match_list[-base::c(1:(pos + 1))] # because we check only above pos
     ls_tested <- ls_input[[pos + 1]]
     ls_input <- ls_input[-base::c(1:(pos + 1))]
+    tempo_env_tested <- base::as.environment(x = ls_tested) # checked environment (ls_tested is a name for the environments of the search path)
+    tempo_log <- ! base::vapply(X = ls_input, FUN = function(x){base::identical(x = base::as.environment(x = x), y = tempo_env_tested, num.eq = TRUE, single.NA = TRUE, attrib.as.set = TRUE, ignore.bytecode = TRUE, ignore.environment = FALSE, ignore.srcref = TRUE, extptr.as.ref = FALSE)}, FUN.VALUE = base::logical(length = 1L), USE.NAMES = FALSE) # FALSE for the environments above that are the checked environment itself (e.g., the global environment at the top level of code run by base::source() or knitr, reached through the frame of base::eval(), then present in the search path)
+    tempo_log_search <- ! tempo_log & base::vapply(X = ls_input, FUN = base::is.character, FUN.VALUE = base::logical(length = 1L), USE.NAMES = FALSE) # TRUE for the checked environment present in the search path (names of the search path)
+    if(base::any(tempo_log_search, na.rm = TRUE)){
+        ls_tested <- ls_input[tempo_log_search][[1]] # name of the checked environment in the search path (e.g., ".GlobalEnv"), written in the returned message when name is NULL
+    }
+    match_list <- match_list[tempo_log]
+    ls_input <- ls_input[tempo_log]
     for(i1 in base::seq_along(along.with = match_list)){
         if(base::any(base::ls(name = ls_input[[i1]], pos = -1L, envir = , all.names = TRUE, pattern = , sorted = TRUE) %in% base::ls(name = ls_tested, pos = -1L, envir = , all.names = TRUE, pattern = , sorted = TRUE), na.rm = TRUE)){
             match_list[i1] <- base::list(base::ls(name = ls_input[[i1]], pos = -1L, envir = , all.names = TRUE, pattern = , sorted = TRUE)[base::ls(name = ls_input[[i1]], pos = -1L, envir = , all.names = TRUE, pattern = , sorted = TRUE) %in% base::ls(name = ls_tested, pos = -1L, envir = , all.names = TRUE, pattern = , sorted = TRUE)])

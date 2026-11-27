@@ -2,67 +2,69 @@
 % Please edit documentation in R/curly_bracket_check.R
 \name{curly_bracket_check}
 \alias{curly_bracket_check}
-\title{Curly Brackets Check}
+\title{Check and Add Curly Brackets Around Block Bodies}
 \usage{
 curly_bracket_check(
   x,
   export = FALSE,
-  out_path = ".",
+  out_path = NULL,
   safer_check = TRUE,
   lib_path = NULL,
   error_text = ""
 )
 }
 \arguments{
-\item{x}{A function name, written without quotes and brackets.}
+\item{x}{Function to check, written without quotes and brackets (e.g., \code{fun1} or \code{pkg::fun1}).}
 
-\item{export}{Single logical value. Write the corrected function into a file instead of returning it? If \code{TRUE}, the file \code{<function name>_safer.R} is written in \code{out_path} (e.g., \code{fun_safer.R} for \code{x = fun} or \code{x = pkg::fun}). It contains \code{fun_safer <- function(...) ...}, so that \code{base::source()} recreates the corrected function. Nothing is written if nothing has to be corrected. An error is returned if the file already exists, or if \code{x} is not a function name (e.g., \code{function(x)\{x\}} or \code{FUN_LIST$fun}).}
+\item{export}{Single logical value. If \code{TRUE}, the corrected function is written into the \code{<name>_safer.R} file of \code{out_path} instead of being returned (e.g., \code{fun1_safer.R} for \code{x = fun1} or \code{x = pkg::fun1}), as \code{fun1_safer <- function(...)}, which \code{base::source()} recreates. Nothing is written if nothing has to be corrected, but an error is returned if the file already exists, or if \code{x} is not a function name (e.g., \code{function(x)\{x\}} or \code{FUN_LIST$fun}).}
 
-\item{out_path}{Single character string indicating the path of the folder where to write the file when \code{export = TRUE}. \code{"."} (default) means the R working directory. Ignored if \code{export = FALSE}.}
+\item{out_path}{Single character string: path of an existing folder where the file is written. Required when \code{export} is \code{TRUE}; otherwise not used, but a non-\code{NULL} value must still be a single non-empty character string. \code{NULL} by default.}
 
-\item{safer_check}{Single logical value. Perform the "safer" checks? If \code{TRUE}, checkings are performed before main code running (see the \href{https://github.com/safer-r}{safer-r project}): 1) required functions and related packages effectively present in local R libraries and 2) R classical operators (like \code{"<-"}) not overwritten by another package because of the R scope. Warning: must be set to \code{FALSE} if this function is used inside another "safer" function to avoid pointless multiple checkings.}
+\item{safer_check}{Single logical value. If \code{TRUE} (default), checks before running that the required packages and functions are installed and that the classical R operators (like \code{<-}) are not masked by another package or by a user-defined object of the global environment. These checks take time at each call: set \code{FALSE} in loops and inside other safer-r functions, to avoid repeating them.}
 
-\item{lib_path}{Vector of characters specifying the absolute pathways of the directories containing the required packages for the function, if not in the default directories. Useful when R packages are not installed in the default directories because of lack of admin rights. More precisely, \code{lib_path} is passed through the \code{new} argument of \code{.libPaths()} so that the new library paths are \code{unique(c(new, .Library.site, .Library))}. Warning: \code{.libPaths()} is restored to the initial paths, after function execution. Ignored if \code{NULL} (default): only the pathways specified by the current \code{.libPaths()} are used for package calling.}
+\item{lib_path}{Vector of character strings: paths of existing extra library folders containing the required packages (e.g., packages installed without admin rights). They are searched after the current \code{.libPaths()} during the call (the current libraries keep priority), and \code{.libPaths()} is restored on exit. If \code{NULL} (default), only the current \code{.libPaths()} are used.}
 
-\item{error_text}{Single character string used to add information in error messages returned by the function, notably if the function is inside other functions, which is practical for debugging. Example: \code{error_text = " INSIDE <PACKAGE_1>::<FUNCTION_1> INSIDE <PACKAGE_2>::<FUNCTION_2>."}. If \code{NULL}, converted into \code{""}.}
+\item{error_text}{Single character string added to the error messages (e.g., \code{" INSIDE pkg1::fun1()"}) to name the calling functions. \code{NULL} is converted into \code{""}.}
 }
 \value{
-A table-like message is always printed, with one row per missing \code{\{ \}} (column 1: line number; column 2: construct; column 3: code before the body), or a message saying that everything seems fine.
+The corrected function, which keeps the environment of \code{x}, or \code{NULL}, invisibly, if nothing has to be corrected or if \code{export} is \code{TRUE}.
 
-If \code{export = FALSE}: the corrected function, or \code{NULL} if nothing has to be corrected.
-
-If \code{export = TRUE}: \code{NULL}, returned invisibly. The corrected function is written in a file (see the \code{export} argument).
+A message is also printed: a table with one row per missing \code{\{ \}} (column 1: line number; column 2: construct; column 3: code of the line), or a sentence saying that everything seems clean.
 }
 \description{
-Verify that all the bodies of the \code{if}, \code{else}, \code{for}, \code{while}, \code{repeat} and \code{function} are delimited by curly brackets \code{\{ \}}. For instance: \code{if(x > 1)\{ x \}} and not \code{if(x > 1) x}. Return table message of the line with problems and a corrected version of the submitted function.
+Checks that the bodies of \code{if}, \code{else}, \code{for}, \code{while}, \code{repeat} and \code{function} (lambdas \code{\\(x)} included) are delimited by curly brackets (e.g., \code{if(x > 1)\{ x \}} and not \code{if(x > 1) x}). Prints a table of the missing curly brackets and returns a corrected version of the function.
 }
 \details{
 Comments are ignored. In \code{else if} chains, the \code{else} is not reported: the chained \code{if} is checked on its own.
 
-Bodies reduced to \code{.Primitive(...)}, like in \code{base::`+`}, are skipped, because they cannot be enclosed in curly brackets. Bodies made of \code{UseMethod(...)}, like in \code{base::mean}, are reported.
+Bodies reduced to \code{.Primitive(...)}, as in \code{base::`+`}, are skipped, because they cannot be enclosed in curly brackets. Bodies made of \code{UseMethod(...)}, as in \code{base::mean}, are reported.
 
-Correction: a \code{\{} is added before each reported body and a \code{\}} after it, separated from the body by a space. The rest of the code is unchanged. The corrected code is checked by parsing it. Lines can become longer than 80 characters. The returned function keeps the environment of the submitted function.
+Constructs written with backquotes, like \code{`if`(x > 1, x, 0)}, are not checked: use the standard writing. The constructs inside formulas, \code{quote()}, \code{bquote()}, \code{expression()}, \code{alist()} and \code{substitute()}, whose code R does not evaluate as written (e.g., \code{quote(if(a) b)}), are not checked either, except in the parts that R evaluates: \code{.()} in \code{bquote()} (\code{..()} too if \code{splice = TRUE} is written), and the \code{where} and \code{splice} arguments of \code{bquote()} and \code{env} of \code{substitute()}.
 
-The comments and the indentation of the submitted function are kept, in the returned function and in the exported file. Warning: comments are only available when the submitted function carries its source references (attribute srcref). Otherwise (e.g., compiled package functions, or functions created with \code{options(keep.source = FALSE)}, default of Rscript), the code is the deparsed one: no comments and standard indentation.
+Correction: a \code{\{} is added before each reported body and a \code{\}} after it, separated from the body by a space. The rest of the code is unchanged.
 
-Constructs written with backquotes, like \code{`if`(x > 1, x, 0)}, may not be checked: use the standard writing.
-
-Line numbers are indicative. They start at the \code{<- function} line (\code{#'} header lines not counted). Compiled functions, like \code{saferDev::colons_check}, have no comments: their line numbers differ from their source file.
+Source references: line 1 is the line of the \code{function} keyword. Comments and indentation are kept only if \code{x} carries its source references (attribute \code{srcref}). Functions created with \code{options(keep.source = FALSE)} (default of Rscript) and functions of installed packages (e.g., \code{saferDev::colons_check}) have none: their deparsed code is analyzed, without comments and with line numbers that differ from the source file.
 }
 \examples{
-# Warning: these examples may not work well when using the "Run examples" link
-# because of a particular environment. Please, copy-paste in a local environment.
+# Without source references ("Run examples" link, Rscript), line numbers and comments differ.
 # See also https://safer-r.github.io/saferDev/articles/curly_bracket_check.html
 fun1 <- function(x){ if(x > 1){ base::return(x) } }
-saferDev::curly_bracket_check(fun1) # everything fine: NULL returned
+saferDev::curly_bracket_check(x = fun1, export = FALSE, out_path = NULL, safer_check = TRUE,
+    lib_path = NULL, error_text = "") # nothing to correct: NULL returned, invisibly
 fun2 <- function(x){ if(x > 1) base::return(x) }
-fun2_safer <- saferDev::curly_bracket_check(fun2) # missing { } reported
+fun2_safer <- saferDev::curly_bracket_check(x = fun2, export = FALSE, out_path = NULL,
+    safer_check = TRUE, lib_path = NULL, error_text = "") # missing { } reported
 fun2_safer # corrected function
 # Write the corrected function in the fun2_safer.R file of a new temporary folder:
-tempo_dir <- base::tempfile(pattern = "dir", tmpdir = base::tempdir(), fileext = "")
+tempo_dir <- base::tempfile(pattern = "dir", tmpdir = base::tempdir(check = FALSE), fileext = "")
 base::dir.create(path = tempo_dir, showWarnings = TRUE, recursive = FALSE, mode = "0777")
-saferDev::curly_bracket_check(x = fun2, export = TRUE, out_path = tempo_dir)
+saferDev::curly_bracket_check(x = fun2, export = TRUE, out_path = tempo_dir, safer_check = TRUE,
+    lib_path = NULL, error_text = "")
+base::unlink(x = tempo_dir, recursive = TRUE, force = FALSE, expand = TRUE) # folder removed
 
+}
+\seealso{
+The code checkers of saferDev, in the recommended order of use: \code{\link{super_assign_check}}, \code{\link{lambda_check}}, \code{\link{colons_check}}, \code{\link{all_args_here}}, \code{\link{curly_bracket_check}}, \code{\link{true_false_check}}, \code{\link{for_loop_nb_check}} (see \code{vignette("saferDev")}).
 }
 \author{
 \href{mailto:gael.millot@pasteur.fr}{Gael Millot}

@@ -77,7 +77,7 @@ curly_bracket_check(x = fun2)
 
 ### Argument <code>safer_check</code> 
 ```{r, echo = TRUE, error = TRUE}
-# Safer checkings are performed before main code running.
+# Safer checks are performed before running the main code.
 curly_bracket_check(
     x = fun1, 
     safer_check = TRUE
@@ -87,7 +87,7 @@ curly_bracket_check(
 
 ### Argument <code>lib_path</code>
 ```{r}
-# The "NOTGOOD" path does not exists.
+# The "NOTGOOD" path does not exist.
 curly_bracket_check(
     x = fun1,  
     lib_path = "NOTGOOD"
@@ -108,7 +108,7 @@ curly_bracket_check(
 
 ### Arguments <code>export</code> and <code>out_path</code>: return or export the corrected function
 ```{r}
-# The corrected function is returned (NULL if nothing has to be corrected).
+# The corrected function is returned (NULL, invisibly, if nothing has to be corrected).
 fun2_safer <- curly_bracket_check(x = fun2)
 fun2_safer # { } added around each reported body.
 
@@ -120,7 +120,7 @@ fun2_safer(1)
 curly_bracket_check(x = fun2_safer)
 
 # Export the corrected function into the fun2_safer.R file, here in a new temporary folder.
-# out_path = "." (default) is the R working directory.
+# out_path (NULL by default) is required when export = TRUE.
 # An existing file is never overwritten (an error is returned instead).
 tempo_dir <- base::tempfile(pattern = "dir", tmpdir = base::tempdir(), fileext = "")
 base::dir.create(path = tempo_dir, showWarnings = TRUE, recursive = FALSE, mode = "0777")
@@ -139,7 +139,7 @@ base::readLines(con = base::file.path(tempo_dir, "fun2_safer.R", fsep = "/"))
 curly_bracket_check(
     x = fun1, # function name to test.
     export = FALSE, # write the corrected function into a .R file instead of returning it?
-    out_path = ".", # folder where to write the file (used only if export = TRUE).
+    out_path = NULL, # folder where to write the file (required if export = TRUE).
     safer_check = TRUE, # perform some "safer" checks (see https://github.com/safer-r)?
     lib_path = NULL, # where the required packages are if not in the default directories.
     error_text = "" # add information in error messages returned by the function.

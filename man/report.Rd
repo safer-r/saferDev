@@ -2,7 +2,7 @@
 % Please edit documentation in R/report.R
 \name{report}
 \alias{report}
-\title{Report}
+\title{Write an Object or a Text Into a Log File}
 \usage{
 report(
   data,
@@ -19,54 +19,60 @@ report(
 )
 }
 \arguments{
-\item{data}{Object to print in the output file. If \code{NULL}, nothing is done, with no warning.}
+\item{data}{Object to write (single value, vector, factor, matrix, table, data frame, list, ...). If \code{NULL}, nothing is done, with no warning.}
 
-\item{output}{Single character string. Name of the output file.}
+\item{output}{Single character string: name of the output file.}
 
-\item{path}{Single character string indicating the path where to write the output file.}
+\item{path}{Single character string: path of the existing folder of the output file. No default value.}
 
-\item{append}{Single logical value. If the output file already exists and \code{append} is \code{FALSE}, an error message is returned (no overwrite of existing file). Otherwise, the printing is appended (and the output file is created if it does not exist yet).}
+\item{append}{Single logical value. If \code{TRUE}, \code{data} is written after the content of the output file (created if it does not exist). If \code{FALSE} (default), the output file must not exist: an existing file is never overwritten (error).}
 
-\item{rownames_kept}{Single logical value. Defines whether row names have to be removed or not in 2D objects. Warning: in 1D tables, names over the values are taken as row names, and are thus removed if \code{rownames_kept} is \code{FALSE}.}
+\item{rownames_kept}{Single logical value. Keep the row names of matrices, tables and data frames? Warning: the names above the values of 1D tables are row names, removed if \code{FALSE}.}
 
-\item{vector_cat}{Single logical value. If \code{TRUE}, print a vector of length > 1 using \code{cat()} instead of \code{capture.output()}. Otherwise (default \code{FALSE}) print a vector of length > 1 using \code{capture.output()}. Names of values are not printed when \code{TRUE}.}
+\item{vector_cat}{Single logical value. If \code{TRUE}, vectors of length > 1 are written with \code{cat()} (values separated by a space, names not written), otherwise as printed in the console. Vectors of length 1 are always written with \code{cat()}. Here, vectors are atomic vectors with no attribute other than names: factors, dates and lists are always written as printed in the console.}
 
-\item{noquote}{Single logical value. If \code{TRUE} no quote are added to the returned character strings.}
+\item{noquote}{Single logical value. If \code{TRUE}, character vectors (of length > 1, with \code{vector_cat = FALSE}), character matrices and character arrays are written without quotes. No effect on the other objects.}
 
-\item{sep}{Single non null and positive integer representing the number of empty lines added in the output file after the printed data.}
+\item{sep}{Single positive integer: number of empty lines written after \code{data}.}
 
-\item{safer_check}{Single logical value. Perform the "safer" checks? If \code{TRUE}, checkings are performed before main code running (see the \href{https://github.com/safer-r}{safer-r project}): 1) required functions and related packages effectively present in local R libraries and 2) R classical operators (like \code{"<-"}) not overwritten by another package because of the R scope. Warning: must be set to \code{FALSE} if this function is used inside another "safer" function to avoid pointless multiple checkings.}
+\item{safer_check}{Single logical value. If \code{TRUE} (default), checks before running that the required packages and functions are installed and that the classical R operators (like \code{<-}) are not masked by another package or by a user-defined object of the global environment. These checks take time at each call: set \code{FALSE} in loops and inside other safer-r functions, to avoid repeating them.}
 
-\item{lib_path}{Vector of characters specifying the absolute pathways of the directories containing the required packages for the function, if not in the default directories. Useful when R packages are not installed in the default directories because of lack of admin rights. More precisely, \code{lib_path} is passed through the \code{new} argument of \code{.libPaths()} so that the new library paths are \code{unique(c(new, .Library.site, .Library))}. Warning: \code{.libPaths()} is restored to the initial paths, after function execution. Ignored if \code{NULL} (default): only the pathways specified by the current \code{.libPaths()} are used for package calling.}
+\item{lib_path}{Vector of character strings: paths of existing extra library folders containing the required packages (e.g., packages installed without admin rights). They are searched after the current \code{.libPaths()} during the call (the current libraries keep priority), and \code{.libPaths()} is restored on exit. If \code{NULL} (default), only the current \code{.libPaths()} are used.}
 
-\item{error_text}{Single character string used to add information in error messages returned by the function, notably if the function is inside other functions, which is practical for debugging. Example: \code{error_text = " INSIDE <PACKAGE_1>::<FUNCTION_1> INSIDE <PACKAGE_2>::<FUNCTION_2>."}. If \code{NULL}, converted into \code{""}.}
+\item{error_text}{Single character string added to the error messages (e.g., \code{" INSIDE pkg1::fun1()"}) to name the calling functions. \code{NULL} is converted into \code{""}.}
 }
 \value{
-Nothing (implementation of an existing file) or a text file.
+No return value (invisible \code{NULL}), called for its side effect: \code{data} is written into the \code{output} file of the \code{path} folder.
 }
 \description{
-Print a character string or a data object into a same output file. Convenient for log file generation.
+Writes a character string or a data object into a text file, after its previous content if required. Convenient to build log files.
 }
 \examples{
-# Warning: these examples may not work well when using the "Run examples" link 
-# because of a particular environment. Please, copy-paste in a local environment.
 # See also https://safer-r.github.io/saferDev/articles/report.html
 # Write in the results.txt file of a new temporary folder:
-tempo_dir <- base::tempfile(pattern = "dir", tmpdir = base::tempdir(), fileext = "")
+tempo_dir <- base::tempfile(pattern = "dir", tmpdir = base::tempdir(check = FALSE), fileext = "")
 base::dir.create(path = tempo_dir, showWarnings = TRUE, recursive = FALSE, mode = "0777")
-saferDev::report(data = "THE FOLLOWING VECTOR IS:\n", output = "results.txt", path = tempo_dir,
-    append = TRUE, sep = 1)
+saferDev::report(data = "THE FOLLOWING VECTOR IS:", output = "results.txt", path = tempo_dir,
+    append = TRUE, rownames_kept = FALSE, vector_cat = FALSE, noquote = TRUE, sep = 1,
+    safer_check = TRUE, lib_path = NULL, error_text = "")
 saferDev::report(data = 1:3, output = "results.txt", path = tempo_dir, append = TRUE,
-    rownames_kept = FALSE, vector_cat = FALSE, noquote = FALSE, sep = 2)
-saferDev::report(data = "THE FOLLOWING DATA FRAME IS:\n", output = "results.txt",
-    path = tempo_dir, append = TRUE, sep = 1)
-saferDev::report(data = base::data.frame(A = 1:3, B = letters[1:3]), output = "results.txt",
-    path = tempo_dir, append = TRUE, rownames_kept = FALSE, vector_cat = FALSE,
-    noquote = FALSE, sep = 1)
-base::cat(base::readLines(con = base::file.path(tempo_dir, "results.txt")), sep = "\n")
+    rownames_kept = FALSE, vector_cat = FALSE, noquote = FALSE, sep = 2, safer_check = TRUE,
+    lib_path = NULL, error_text = "")
+saferDev::report(data = "THE FOLLOWING DATA FRAME IS:", output = "results.txt",
+    path = tempo_dir, append = TRUE, rownames_kept = FALSE, vector_cat = FALSE, noquote = TRUE,
+    sep = 1, safer_check = TRUE, lib_path = NULL, error_text = "")
+saferDev::report(data = base::data.frame(A = 1:3, B = base::letters[1:3], row.names = NULL,
+    check.rows = FALSE, check.names = TRUE, fix.empty.names = TRUE, stringsAsFactors = FALSE),
+    output = "results.txt", path = tempo_dir, append = TRUE, rownames_kept = FALSE,
+    vector_cat = FALSE, noquote = FALSE, sep = 1, safer_check = TRUE, lib_path = NULL,
+    error_text = "")
+base::cat(base::readLines(con = base::file.path(tempo_dir, "results.txt", fsep = "/"), n = -1L,
+    ok = TRUE, warn = TRUE, encoding = "unknown", skipNul = FALSE), file = "", sep = "\n",
+    fill = FALSE, labels = NULL, append = FALSE)
+base::unlink(x = tempo_dir, recursive = TRUE, force = FALSE, expand = TRUE) # folder removed
 }
 \seealso{
-\code{\link{capture.output}}.
+\code{\link{capture.output}}, \code{\link{cat}}.
 }
 \author{
 \href{mailto:gael.millot@pasteur.fr}{Gael Millot}

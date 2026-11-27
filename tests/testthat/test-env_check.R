@@ -171,6 +171,16 @@ testthat::test_that("env_check()", {
     ######## end graphic device checking
 
     ######## other checkings
+    # pos between 1 and the number of environments above env_check(): frames of the call stack, then search path (formerly, pos = 0 checked the frame of env_check() itself, and a pos beyond the last environment of the search path gave the R error "subscript out of bounds")
+    testthat::expect_error(object = saferDev::env_check(pos = 0, name = NULL, safer_check = FALSE, lib_path = NULL, error_text = ""), regexp = "THE pos ARGUMENT MUST BE BETWEEN 1 AND ", class = NULL, fixed = TRUE, inherit = TRUE, info = NULL, label = NULL)
+    fun_pos_last <- function(){
+        saferDev::env_check(pos = base::sys.nframe() + base::length(x = base::search()), name = NULL, safer_check = FALSE, lib_path = NULL, error_text = "") # package:base, the last environment of the search path
+    }
+    testthat::expect_null(object = fun_pos_last(), info = NULL, label = NULL)
+    fun_pos_beyond <- function(){
+        saferDev::env_check(pos = base::sys.nframe() + base::length(x = base::search()) + 1, name = NULL, safer_check = FALSE, lib_path = NULL, error_text = "")
+    }
+    testthat::expect_error(object = fun_pos_beyond(), regexp = "THE pos ARGUMENT MUST BE BETWEEN 1 AND ", class = NULL, fixed = TRUE, inherit = TRUE, info = NULL, label = NULL)
     ######## end other checkings
     #### end second round of checking and data preparation
 
@@ -198,11 +208,46 @@ testthat::test_that("env_check()", {
     result <- env_check(pos = 1, name = NULL, safer_check = TRUE, lib_path = NULL, error_text = "")
     expected <- NULL
     testthat::expect_equal(result, expected)
+    # the environments above are those of the call stack (calling functions), not those of the lexical scope
+    fun_caller <- function(){
+        zz_name_test_env_check <- 1
+        fun_called()
+    }
+    fun_called <- function(){
+        zz_name_test_env_check <- 2
+        saferDev::env_check(pos = 1, name = "fun_called", safer_check = FALSE, lib_path = NULL, error_text = "")
+    }
+    result <- fun_caller()
+    testthat::expect_true(object = base::grepl(x = result, pattern = "SOME VARIABLES OF THE CHECKED ENVIRONMENT fun_called ARE ALSO PRESENT IN :\nfun_caller(): zz_name_test_env_check\n", ignore.case = FALSE, perl = FALSE, fixed = TRUE, useBytes = FALSE), info = NULL, label = NULL)
+    testthat::expect_false(object = base::exists(x = "zz_name_test_env_check", where = -1, envir = base::environment(fun = fun_called), frame = NULL, mode = "any", inherits = TRUE), info = NULL, label = NULL) # not in the lexical scope of fun_called()
+    # pos = 2: the frame one step further up (here, the frame of fun_caller_2())
+    fun_caller_2 <- function(){
+        mean <- 1
+        fun_called_2()
+    }
+    fun_called_2 <- function(){
+        saferDev::env_check(pos = 2, name = NULL, safer_check = FALSE, lib_path = NULL, error_text = "")
+    }
+    result <- fun_caller_2()
+    testthat::expect_true(object = base::grepl(x = result, pattern = "SOME VARIABLES OF THE CHECKED ENVIRONMENT UNNAMED ARE ALSO PRESENT IN :\npackage:base: mean\n", ignore.case = FALSE, perl = FALSE, fixed = TRUE, useBytes = FALSE), info = NULL, label = NULL)
+    # checked environment reached through base::eval() and also present above (e.g., the global environment at the top level of code run by base::source() or knitr): not compared with itself, and named as in the search path (formerly UNNAMED, with all its objects reported as also present in itself)
+    fun_eval <- function(){
+        zz_name_test_env_check_eval <- 1
+        base::eval(expr = base::quote(expr = saferDev::env_check(pos = 1, name = NULL, safer_check = FALSE, lib_path = NULL, error_text = "")), envir = base::environment(fun = NULL), enclos = base::baseenv())
+    }
+    testthat::expect_null(object = fun_eval(), info = NULL, label = NULL)
+    zz_name_test_env_check_global <- 1 # also in the frame of these tests, located above the checked global environment
+    base::assign(x = "zz_name_test_env_check_global", value = 2, pos = -1, envir = base::globalenv(), inherits = FALSE, immediate = TRUE)
+    base::on.exit(expr = if(base::exists(x = "zz_name_test_env_check_global", where = -1, envir = base::globalenv(), frame = NULL, mode = "any", inherits = FALSE)){base::rm(list = "zz_name_test_env_check_global", pos = -1, envir = base::globalenv(), inherits = FALSE)}, add = TRUE, after = FALSE) # guarantee the removal of the object of the global environment, even if the call below fails
+    result <- base::eval(expr = base::quote(expr = saferDev::env_check(pos = 1, name = NULL, safer_check = FALSE, lib_path = NULL, error_text = "")), envir = base::globalenv(), enclos = base::baseenv())
+    base::rm(list = "zz_name_test_env_check_global", pos = -1, envir = base::globalenv(), inherits = FALSE)
+    testthat::expect_true(object = base::grepl(x = result, pattern = "SOME VARIABLES OF THE CHECKED ENVIRONMENT .GlobalEnv ARE ALSO PRESENT IN :\n", ignore.case = FALSE, perl = FALSE, fixed = TRUE, useBytes = FALSE), info = NULL, label = NULL)
+    testthat::expect_false(object = base::grepl(x = result, pattern = "\n.GlobalEnv: ", ignore.case = FALSE, perl = FALSE, fixed = TRUE, useBytes = FALSE), info = NULL, label = NULL) # not compared with itself
     #### end main code
 
     ## end tests (ordered by arg appearance and conditions in the code)
 
     ## other tests
     ## end other tests
-
+    base::rm(list = base::ls()) # to avoid a warning that block CRAN tests
 })

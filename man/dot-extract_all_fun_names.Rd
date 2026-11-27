@@ -9,23 +9,25 @@
 \arguments{
 \item{text}{Single string.}
 
-\item{pattern}{Single string of a Perl regex to extract function names.}
+\item{pattern}{Single string: Perl regex, typically matching a function name followed by \code{(}, with a capture group starting at the first character of the name, like \code{"([a-zA-Z]|\\\\.[a-zA-Z._])[a-zA-Z0-9._]*\\\\s*\\\\("}.}
 
-\item{lib_path}{Vector of characters specifying the absolute pathways of the directories containing the required packages for the function, if not in the default directories. Useful when R packages are not installed in the default directories because of lack of admin rights. More precisely, \code{lib_path} is passed through the \code{new} argument of \code{.libPaths()} so that the new library paths are \code{unique(c(new, .Library.site, .Library))}. Warning: \code{.libPaths()} is restored to the initial paths, after function execution. Ignored if \code{NULL} (default): only the pathways specified by the current \code{.libPaths()} are used for package calling.}
+\item{lib_path}{Vector of character strings or \code{NULL}: the \code{lib_path} value of the calling exported function, only passed on to \code{arg_check()}. No default value.}
 
-\item{error_text}{Single character string used to add information in error messages returned by the function, notably if the function is inside other functions, which is practical for debugging. Example: \code{error_text = " INSIDE <PACKAGE_1>::<FUNCTION_1> INSIDE <PACKAGE_2>::<FUNCTION_2>."}. If \code{NULL}, converted into \code{""}.}
+\item{error_text}{Single character string added to the error messages to name the calling functions (\code{embed_error_text} of the calling function). \code{NULL} is converted into \code{""}. No default value.}
 }
 \value{
-List containing:
+A list containing:
 \itemize{
-  \item \code{string}: the function names without parenthesis.
-  \item \code{pos}: position of the first character of the function names in the input string
+  \item \code{string}: vector of strings, the matches of \code{pattern} in \code{text}, without their final \code{(}, if any, and the spaces before it. \code{character(0)} if no match.
+  \item \code{pos}: vector of integers, the position in \code{text} of the first character of the first capture group of each match. \code{-1} if no match, \code{NULL} if \code{pattern} has no capture group.
 }
 }
 \description{
-Extract all function names.
+Extract all the function names of a string, with their positions.
 }
 \details{
+The function names between quotes are also extracted.
+
 Warnings:
 \itemize{
   \item requires \code{saferDev::arg_check}.

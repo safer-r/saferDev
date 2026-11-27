@@ -303,6 +303,9 @@ testthat::test_that(".in_parenthesis_replacement()", {
     result <- .in_parenthesis_replacement(string = str2, pattern = pattern1, no_regex_pattern = pattern1, replacement = " ", perl = TRUE, open_pos = open_pos1, close_pos = close_pos1, lib_path = NULL, error_text = "")
     expect <- list(string = "pattern = base::paste0(pattern  \"\\\\(#\"), text = text", pos = NULL)
     testthat::expect_equal(result, expect)
+    # perl argument used: Perl lookbehind in pattern (comma preceded by a), which is not a valid regex if perl = FALSE
+    testthat::expect_equal(object = saferDev:::.in_parenthesis_replacement(string = "f(a, b, a, c)", pattern = "(?<=a),", no_regex_pattern = ",", replacement = " ", perl = TRUE, open_pos = 2, close_pos = 13, lib_path = NULL, error_text = ""), expected = base::list(string = "f(a  b, a  c)", pos = base::c(4, 10)))
+    testthat::expect_error(object = base::suppressWarnings(expr = saferDev:::.in_parenthesis_replacement(string = "f(a, b, a, c)", pattern = "(?<=a),", no_regex_pattern = ",", replacement = " ", perl = FALSE, open_pos = 2, close_pos = 13, lib_path = NULL, error_text = ""), classes = "warning")) # invalid regex error (and warning)
 
     #### end main code
 

@@ -2,26 +2,26 @@ Package: saferDev
 Type: Package
 Title: Checking Tools for Safer R Function Development
 Version: 3.0.0
-Date: 2026-10-23
+Date: 2026-11-26
 Authors@R: c(
-    person(given = "Haiding", family = "Wang", role = "ctb"),
-    person(given = "Yushi", family = "Han", role = "ctb"),
-    person(given = "Mia", family = "Legras", role = "ctb"),
+    person(given = "Haiding", family = "Wang", role = "aut"),
+    person(given = "Yushi", family = "Han", role = "aut"),
+    person(given = "Mia", family = "Legras", role = "aut"),
+    person(given = "Jacques", family = "Serizay", role = "ctb"),
     person(given = "Gael", family = "Millot",  email = "gael.millot@pasteur.fr", role = c("aut", "cre"), comment = c(ORCID = "0000-0002-0591-3509"))
   )
 Encoding: UTF-8
 Maintainer: Gael Millot <gael.millot@pasteur.fr>
-Description: Set of functions that check and correct the code of R functions according to the safer-r project recommendations (see <https://github.com/safer-r>): argument value checking, explicit package namespace qualification of the function calls, complete writing of the arguments of the called functions, curly brackets around the bodies of if, else, for, while, repeat and function, TRUE and FALSE written in full, controlled for() loop sequences and standard function() writing of lambda functions. The corrected function is returned or written into a file. Other functions check the R scope, catch messages, check the presence of packages and functions, and write log files.
+Description: Functions that check the code of R functions according to the recommendations of the 'safer-r' project (see <https://github.com/safer-r>), and correct it when possible: no super-assignment, standard function() writing of lambda functions, package names before the called functions (like base::mean()), complete writing of the arguments of the calls, curly brackets around the bodies of if/else, for, while, repeat and function constructs, TRUE and FALSE written in full, and controlled for() loop sequences. The corrected function is returned or written into a file. Other functions check argument values, check that packages and functions are installed, detect object names also present in the calling environments and the search path, catch the errors, warnings and messages of instructions, and write log files.
 URL: https://github.com/safer-r/saferDev, https://safer-r.github.io/saferDev/
 BugReports: https://github.com/safer-r/saferDev/issues
 License: GPL-3
 Depends: 
-    R (>= 4.6.0)
+    R (>= 4.5.0)
 Config/roxygen2/version: 8.0.0
-Imports: 
-    ggplot2
 Suggests: 
+    ggplot2,
     knitr,
     rmarkdown,
-    testthat (>= 3.0.0)
+    testthat (>= 3.1.7)
 VignetteBuilder: knitr

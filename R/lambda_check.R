@@ -1,70 +1,70 @@
-#' @title Lambda Check
+#' @title Check and Rewrite the \code{\\(x)} Lambda Functions
 #' @description
-#' Verify if lambda functions are written with the shorthand \code{\\(x)} (like \code{\\(x) x * 2}). Return table message of the line with problems and a corrected version of the submitted function.
-#' @param x A function name, written without quotes and brackets.
-#' @param export Single logical value. Write the corrected function into a file instead of returning it? If \code{TRUE}, the file \code{<function name>_safer.R} is written in \code{out_path} (e.g., \code{fun_safer.R} for \code{x = fun}). Nothing is returned or exported if nothing has to be corrected. An error is returned if exported and the file already exists.
-#' @param out_path Single character string indicating the path of the folder where to write the file when \code{export = TRUE}. \code{"."} (default) means the R working directory. Ignored if \code{export = FALSE}.
-#' @param safer_check Single logical value. Perform the "safer" checks? If \code{TRUE}, checkings are performed before main code running (see the \href{https://github.com/safer-r}{safer-r project}): 1) required functions and related packages effectively present in local R libraries and 2) R classical operators (like \code{"<-"}) not overwritten by another package because of the R scope. Warning: must be set to \code{FALSE} if this function is used inside another "safer" function to avoid pointless multiple checkings.
-#' @param lib_path Vector of characters specifying the absolute pathways of the directories containing the required packages for the function, if not in the default directories. Useful when R packages are not installed in the default directories because of lack of admin rights. More precisely, \code{lib_path} is passed through the \code{new} argument of \code{.libPaths()} so that the new library paths are \code{unique(c(new, .Library.site, .Library))}. Warning: \code{.libPaths()} is restored to the initial paths, after function execution. Ignored if \code{NULL} (default): only the pathways specified by the current \code{.libPaths()} are used for package calling.
-#' @param error_text Single character string used to add information in error messages returned by the function, notably if the function is inside other functions, which is practical for debugging. Example: \code{error_text = " INSIDE <PACKAGE_1>::<FUNCTION_1> INSIDE <PACKAGE_2>::<FUNCTION_2>."}. If \code{NULL}, converted into \code{""}.
+#' Checks that the anonymous functions are written \code{function(x)} and not with the \code{\\(x)} shorthand (e.g., \code{function(x) x * 2} and not \code{\\(x) x * 2}). Prints a table of the reported lambdas and returns a corrected version of the function.
+#' @param x Function to check, written without quotes and brackets (e.g., \code{fun1} or \code{pkg::fun1}).
+#' @param export Single logical value. If \code{TRUE}, the corrected function is written into the \code{<name>_safer.R} file of \code{out_path} instead of being returned (e.g., \code{fun1_safer.R} for \code{x = fun1} or \code{x = pkg::fun1}), as \code{fun1_safer <- function(...)}, which \code{base::source()} recreates. Nothing is written if nothing has to be corrected, but an error is returned if the file already exists, or if \code{x} is not a function name (e.g., \code{function(x)\{x\}} or \code{FUN_LIST$fun}).
+#' @param out_path Single character string: path of an existing folder where the file is written. Required when \code{export} is \code{TRUE}; otherwise not used, but a non-\code{NULL} value must still be a single non-empty character string. \code{NULL} by default.
+#' @inheritParams is_function_here
 #' @returns
-#' A table-like message is always printed, with one row per reported lambda (column 1: line number; column 2: symbol; column 3: code before the lambda), or a message saying that everything seems fine.
+#' The corrected function, which keeps the environment of \code{x}, or \code{NULL}, invisibly, if nothing has to be corrected or if \code{export} is \code{TRUE}.
 #'
-#' If \code{export = FALSE}: the corrected function, or \code{NULL} if nothing has to be corrected.
-#'
-#' If \code{export = TRUE}: \code{NULL}, returned invisibly. The corrected function is written in a file (see the \code{export} argument).
+#' A message is also printed: a table with one row per reported lambda (column 1: line number; column 2: symbol; column 3: code of the line), or a sentence saying that everything seems clean.
 #' @details
-#' Warning: the \code{\\(x)} writing of a lambda function is only kept in the code of the submitted function when the function carries its source references (attribute \code{srcref}, e.g., after a \code{base::parse(keep.source = TRUE)} or a function defined in a file loaded with \code{keep.source = TRUE}). Otherwise, \code{R} prints the lambda as \code{function(x)}, so that nothing can be reported: run \code{lambda_check()} on the source code itself, not on a compiled or on a loaded package function. The \code{base::getOption("keep.source")} default is \code{TRUE} in interactive sessions and \code{FALSE} in \code{Rscript}.
+#' Source references: line 1 is the line of the \code{function} keyword. The \code{\\(x)} writing is only kept in a function that carries its source references (attribute \code{srcref}), e.g., parsed with \code{keep.source = TRUE} (\code{base::parse()}, \code{base::source()}). Functions created with \code{options(keep.source = FALSE)} (default of Rscript) and functions of installed packages (e.g., \code{saferDev::colons_check}) have none: their deparsed code shows \code{function(x)}, so that nothing can be reported.
 #'
-#' Reported: lambdas written \code{\\(x)}, like \code{\\(x) x * 2}, \code{\\(x)\{ x \}} or \code{\\() base::mean(1:3)}, wherever they are written in the submitted function (right side of an assignment, argument value of a function call, etc.). In the message table, the SYMBOL column shows the lambda writing with its formals only when they are written on a single line: for a lambda whose formals span several lines, the fallback writing \code{\\()} is shown (the whole writing is still replaced correctly in the code, because only the \code{\\} token is replaced).
+#' Reported: the lambdas written \code{\\(x)}, like \code{\\(x) x * 2}, \code{\\(x)\{ x \}} or \code{\\() base::mean(1:3)}, wherever they are written in the function. In the printed table, the symbol is \code{\\()} when the formals of the lambda span several lines.
 #'
-#' Not reported: the \code{function(x)} standard writing, and lambda writings of the past (e.g., \code{function(x) x}) reported by other functions. Strings, comments and backquoted names (like a backquoted backslash, the deprecated \code{function()} writing of R versions before 4.1.0) are ignored: a backslash followed by \code{(} inside a string, a raw string, a comment or a backquoted name is never reported nor modified, whatever the rest of the written text (the detection is token-based, not text-based). A lambda body itself is not modified: run \code{curly_bracket_check()} and \code{true_false_check()} afterwards to check the corrected function further.
+#' Not reported: the standard \code{function(x)} writing (an unbraced body like \code{function(x) x} is reported by \code{curly_bracket_check()}). A \code{\\(} inside a string, a comment or a backquoted name is ignored.
 #'
-#' Correction: each reported \code{\\} lambda writing is replaced by \code{function} (e.g., \code{\\(x) x * 2} becomes \code{function(x) x * 2}). The rest of the code is unchanged. The corrected code is checked by parsing it. Lines can become longer than 80 characters. The returned function keeps the environment of the submitted function.
-#'
-#' The comments and the indentation of the submitted function are kept, in the returned function and in the exported file, which contain the recovered code verbatim, only modified by the \code{\\} -> \code{function} replacements. Warning: comments are only available when the submitted function carries its source references (attribute srcref). Otherwise (e.g., compiled package functions, or functions created with \code{options(keep.source = FALSE)}, default of Rscript), the code is the deparsed one: no comments and standard indentation.
-#'
-#' Line numbers are indicative. They start at the \code{<- function} line (\code{#'} header lines not counted). Compiled functions, like \code{saferDev::colons_check}, have no comments: their line numbers differ from their source file.
+#' Correction: the \code{\\} of each reported lambda is replaced by \code{function} (e.g., \code{\\(x) x * 2} becomes \code{function(x) x * 2}). The rest of the code, comments, indentation and lambda bodies included, is unchanged.
+#' @seealso The code checkers of saferDev, in the recommended order of use: \code{\link{super_assign_check}}, \code{\link{lambda_check}}, \code{\link{colons_check}}, \code{\link{all_args_here}}, \code{\link{curly_bracket_check}}, \code{\link{true_false_check}}, \code{\link{for_loop_nb_check}} (see \code{vignette("saferDev")}).
 #' @author \href{mailto:gael.millot@pasteur.fr}{Gael Millot}
 #' @examples
-#' # Warning: these examples may not work well when using the "Run examples" link
-#' # because of a particular environment. Please, copy-paste in a local environment.
 #' # See also https://safer-r.github.io/saferDev/articles/lambda_check.html
-#' # The \\(x) writing is only kept in a function carrying its source references,
-#' # hence the parse(keep.source = TRUE) writing used here:
+#' # The \\(x) writing is only kept in a function carrying its source references: hence
+#' # keep.source = TRUE, and srcfile left empty (srcfile = NULL would remove them).
 #' code1 <- "function(x){ base::sapply(X = 1:3, FUN = function(y){ y * 2 }) }"
-#' fun1 <- eval(parse(text = code1, keep.source = TRUE))
-#' saferDev::lambda_check(fun1) # everything fine: NULL returned
+#' fun1 <- base::eval(expr = base::parse(file = "", n = NULL, text = code1, prompt = "?",
+#'     keep.source = TRUE, srcfile = , encoding = "unknown"), envir = , enclos = )
+#' saferDev::lambda_check(x = fun1, export = FALSE, out_path = NULL, safer_check = TRUE,
+#'     lib_path = NULL, error_text = "") # nothing to correct: NULL returned, invisibly
 #' code2 <- "function(x){ base::sapply(X = 1:3, FUN = \\(y){ y * 2 }) }"
-#' fun2 <- eval(parse(text = code2, keep.source = TRUE))
-#' fun2_safer <- saferDev::lambda_check(fun2) # lambda writing reported
+#' fun2 <- base::eval(expr = base::parse(file = "", n = NULL, text = code2, prompt = "?",
+#'     keep.source = TRUE, srcfile = , encoding = "unknown"), envir = , enclos = )
+#' fun2_safer <- saferDev::lambda_check(x = fun2, export = FALSE, out_path = NULL,
+#'     safer_check = TRUE, lib_path = NULL, error_text = "") # lambda writing reported
 #' fun2_safer # corrected function
 #' # A backslash followed by ( in a string, a raw string, a comment or a backquoted name
-#' # is not a lambda writing (token-based detection): not reported, not modified.
-#' code3 <- paste0(
+#' # is not a lambda writing: not reported, not modified.
+#' code3 <- base::paste0(
 #'     "function(x){ y <- \"the text \\\\(x) is inside a string\" ; ",
-#'     "z <- r\"(raw \\(x))\" ; # a \\(x) in a comment\n    base::`\\\\`(x) ; x }"
+#'     "z <- r\"(raw \\(x))\" ; # a \\(x) in a comment\n    `\\\\(w)` <- 1 ; x }",
+#'     collapse = NULL, recycle0 = FALSE
 #' )
-#' fun3 <- eval(parse(text = code3, keep.source = TRUE))
-#' saferDev::lambda_check(fun3) # everything fine: NULL returned
+#' fun3 <- base::eval(expr = base::parse(file = "", n = NULL, text = code3, prompt = "?",
+#'     keep.source = TRUE, srcfile = , encoding = "unknown"), envir = , enclos = )
+#' saferDev::lambda_check(x = fun3, export = FALSE, out_path = NULL, safer_check = TRUE,
+#'     lib_path = NULL, error_text = "") # nothing to correct: NULL returned, invisibly
 #' # Write the corrected function in the fun2_safer.R file of a new temporary folder:
-#' tempo_dir <- base::tempfile(pattern = "dir", tmpdir = base::tempdir(), fileext = "")
+#' tempo_dir <- base::tempfile(pattern = "dir", tmpdir = base::tempdir(check = FALSE), fileext = "")
 #' base::dir.create(path = tempo_dir, showWarnings = TRUE, recursive = FALSE, mode = "0777")
-#' saferDev::lambda_check(x = fun2, export = TRUE, out_path = tempo_dir)
+#' saferDev::lambda_check(x = fun2, export = TRUE, out_path = tempo_dir, safer_check = TRUE,
+#'     lib_path = NULL, error_text = "")
+#' base::unlink(x = tempo_dir, recursive = TRUE, force = FALSE, expand = TRUE) # folder removed
 #'
 #' @export
 lambda_check <- function(
     x,
     export = FALSE,
-    out_path = ".",
+    out_path = NULL,
     safer_check = TRUE,
     lib_path = NULL,
     error_text = ""
 ){
     # DEBUGGING
-    # x = fun1 ; export = FALSE ; out_path = "." ; lib_path = NULL ; safer_check = TRUE ; error_text = " INSIDE A"
-    # function_name <- "lambda_check" ; arg_user_setting = base::list(x = as.name(x = "fun1"), export = FALSE, out_path = ".", lib_path = NULL, safer_check = TRUE, error_text = " INSIDE A")
-    # source("C:\\Users\\gmillot\\Documents\\Git_projects\\safer-r\\saferDev\\R\\lambda_check.R") ; x = lambda_check ; export = FALSE ; out_path = "." ; lib_path = NULL ; safer_check = TRUE ; error_text = " INSIDE A" # Warning: x = saferDev::lambda_check does not return the same number of code lines
+    # x = fun1 ; export = FALSE ; out_path = NULL ; lib_path = NULL ; safer_check = TRUE ; error_text = " INSIDE A"
+    # function_name <- "lambda_check" ; arg_user_setting = base::list(x = as.name(x = "fun1"), export = FALSE, out_path = NULL, lib_path = NULL, safer_check = TRUE, error_text = " INSIDE A")
+    # source("C:\\Users\\gmillot\\Documents\\Git_projects\\safer-r\\saferDev\\R\\lambda_check.R") ; x = lambda_check ; export = FALSE ; out_path = NULL ; lib_path = NULL ; safer_check = TRUE ; error_text = " INSIDE A" # Warning: x = saferDev::lambda_check does not return the same number of code lines
 
     #### package name
     package_name <- "saferDev" # write NULL if the function developed is not in a package
@@ -75,8 +75,12 @@ lambda_check <- function(
     #### end internal error report link
 
     #### function name
-    tempo_settings <- base::as.list(x = base::match.call(definition = base::sys.function(which = base::sys.parent(n = 0)), call = base::sys.call(which = base::sys.parent(n = 0)), expand.dots = FALSE, envir = base::parent.frame(n = 2L))) # warning: I have written n = 0 to avoid error when a safer function is inside another functions. In addition, arguments values retrieved are not evaluated base::match.call, but this is solved with get() below
-    function_name <- base::paste0(tempo_settings[[1]], "()", collapse = NULL, recycle0 = FALSE)
+    tempo_settings <- base::as.list(x = base::match.call(definition = base::sys.function(which = base::sys.parent(n = 0)), call = base::sys.call(which = base::sys.parent(n = 0)), expand.dots = FALSE, envir = )) # warning: I have written n = 0 to avoid error when a safer function is inside another functions. In addition, arguments values retrieved are not evaluated base::match.call, but this is solved with get() below. Warning: envir is left empty on purpose: its default parent.frame(2L), evaluated inside base::match.call(), is the frame that called this function, where the ... of the call are expanded (base::parent.frame(n = 2L) written here would be evaluated one frame too far, which breaks the calls through base::lapply(), base::vapply(), base::apply(), base::Filter() or a function forwarding ..., base::sapply() only working by coincidence)
+    if(base::is.name(x = tempo_settings[[1]]) | base::is.call(x = tempo_settings[[1]])){
+        function_name <- base::paste0(tempo_settings[[1]], "()", collapse = NULL, recycle0 = FALSE)
+    }else{
+        function_name <- "<anonymous function>()" # the function was called through its object (e.g., base::do.call(what = <function object>, args = ...)), so that its name is not in the call
+    }
     # function name with "()" paste, which split into a vector of three: c("::()", "package ()", "function ()") if "package::function()" is used.
     if(function_name[1] == "::()" | function_name[1] == ":::()"){
         function_name <- function_name[3]
@@ -202,8 +206,8 @@ lambda_check <- function(
     tempo_arg <- base::c(
         "x",
         "export",
-        "out_path",
         "safer_check"
+        # "out_path", # inactivated because can be NULL
         # "lib_path", # inactivated because can be NULL
         # "error_text" # inactivated because NULL converted to "" above
     )
@@ -345,8 +349,8 @@ lambda_check <- function(
             base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL)
         }else{
             ini_lib_path <- base::.libPaths(new = , include.site = TRUE) # normal to have empty new argument
-            base::on.exit(expr = base::.libPaths(new = ini_lib_path, include.site = TRUE), add = TRUE, after = TRUE) # return to the previous libPaths()
-            base::.libPaths(new = base::sub(x = base::c(ini_lib_path, lib_path), pattern = "/$|\\\\$", replacement = "", ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE), include.site = TRUE) # base::.libPaths(new = ) add path to default path. BEWARE: base::.libPaths() does not support / at the end of a submitted path. The reason of the check and replacement of the last / or \\ in path
+            base::on.exit(expr = base::.libPaths(new = ini_lib_path, include.site = FALSE), add = TRUE, after = TRUE) # return to the previous libPaths(). include.site = FALSE: exact restore, since ini_lib_path already contains the site library if it was in use
+            base::.libPaths(new = base::sub(x = base::c(ini_lib_path, lib_path), pattern = "/$|\\\\$", replacement = "", ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE), include.site = FALSE) # base::.libPaths(new = ) add path to default path. BEWARE: base::.libPaths() does not support / at the end of a submitted path. The reason of the check and replacement of the last / or \\ in path
             lib_path <- base::.libPaths(new = , include.site = TRUE) # normal to have empty new argument
         }
     }else{
@@ -400,7 +404,9 @@ lambda_check <- function(
     # add as many lines as below, for each of your arguments of your function in development
     tempo <- saferDev::arg_check(data = x, class = "function", typeof = NULL, mode = NULL, length = NULL, prop = FALSE, options = NULL, double_as_integer_allowed = FALSE, all_options_in_data = FALSE, na_contain = FALSE, neg_values = TRUE, inf_values = TRUE, print = FALSE, data_name = NULL, data_arg = TRUE, safer_check = FALSE, lib_path = lib_path, error_text = embed_error_text) ; base::eval(expr = ee, envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL))
     tempo <- saferDev::arg_check(data = export, class = NULL, typeof = "logical", mode = NULL, length = 1, prop = FALSE, options = NULL, double_as_integer_allowed = FALSE, all_options_in_data = FALSE, na_contain = FALSE, neg_values = TRUE, inf_values = TRUE, print = FALSE, data_name = NULL, data_arg = TRUE, safer_check = FALSE, lib_path = lib_path, error_text = embed_error_text) ; base::eval(expr = ee, envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL))
-    tempo <- saferDev::arg_check(data = out_path, class = NULL, typeof = "character", mode = NULL, length = 1, prop = FALSE, options = NULL, double_as_integer_allowed = FALSE, all_options_in_data = FALSE, na_contain = FALSE, neg_values = TRUE, inf_values = TRUE, print = FALSE, data_name = NULL, data_arg = TRUE, safer_check = FALSE, lib_path = lib_path, error_text = embed_error_text) ; base::eval(expr = ee, envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL))
+    if( ! base::is.null(x = out_path)){ # out_path can be NULL
+        tempo <- saferDev::arg_check(data = out_path, class = NULL, typeof = "character", mode = NULL, length = 1, prop = FALSE, options = NULL, double_as_integer_allowed = FALSE, all_options_in_data = FALSE, na_contain = FALSE, neg_values = TRUE, inf_values = TRUE, print = FALSE, data_name = NULL, data_arg = TRUE, safer_check = FALSE, lib_path = lib_path, error_text = embed_error_text) ; base::eval(expr = ee, envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL))
+    }
     # lib_path already checked above
     # safer_check already checked above
     # error_text converted to single string above
@@ -473,7 +479,20 @@ lambda_check <- function(
     ######## end graphic device checking
 
     ######## other checkings
+    # x forwarded through the ... argument of another function (e.g., fun2 <- function(...){saferDev::lambda_check(...)} called with x = fun1): base::match.call() writes x ..1 (or ..2, etc.) in arg_user_setting, instead of its writing in the call. This writing is recovered from the promise of x by base::substitute() (x is not reassigned before this line)
+    if(base::is.symbol(x = arg_user_setting$x) && base::grepl(x = base::as.character(x = arg_user_setting$x), pattern = "^\\.\\.[0-9]+$", ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE)){
+        arg_user_setting$x <- base::substitute(expr = x, env = base::environment(fun = NULL))
+    }
     if(export == TRUE){
+        if(base::is.null(x = out_path)){
+            tempo_cat <- base::paste0(
+                error_text_start,
+                "THE out_path ARGUMENT MUST BE THE PATHWAY OF AN EXISTING FOLDER WHEN export IS TRUE.",
+                collapse = NULL,
+                recycle0 = FALSE
+            )
+            base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL)
+        }
         # removal of trailing / or \\ in the path
         if(base::grepl(x = out_path, pattern = "/$", ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE)){
             out_path <- base::sub(pattern = "/$", replacement = "", x = out_path, ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE)
@@ -484,7 +503,7 @@ lambda_check <- function(
         if( ! base::dir.exists(paths = out_path)){
             tempo_cat <- base::paste0(
                 error_text_start,
-                "DIRECTORY PATH INDICATED IN THE out_path ARGUMENT DOES NOT EXISTS:\n",
+                "DIRECTORY PATH INDICATED IN THE out_path ARGUMENT DOES NOT EXIST:\n",
                 out_path,
                 collapse = NULL,
                 recycle0 = FALSE
@@ -492,17 +511,22 @@ lambda_check <- function(
             base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL)
         }
         # determination of the file name: name of the submitted function, as written by the user, with _safer added at the end
-        # arg_user_setting$x is a language object: as.name(x = "test") or the parsed call "saferDev::test". deparse() recovers the written form
-        if(base::as.character(x = arg_user_setting$x)[1] == "::" | base::as.character(x = arg_user_setting$x)[1] == ":::"){
+        # arg_user_setting$x is x as written in the call: a name (as.name(x = "test")), a call (like the parsed call "saferDev::test"), or a function object when the call holds the function itself (e.g., x = fun1 in the args argument of base::do.call()). The function object is tested first, because base::as.character() cannot convert it
+        if(( ! base::is.function(x = arg_user_setting$x)) && (base::as.character(x = arg_user_setting$x)[1] == "::" | base::as.character(x = arg_user_setting$x)[1] == ":::")){
             tempo_fun_name <- base::as.character(x = arg_user_setting$x)[3] # form "package::function" or "package:::function"
         }else if(base::is.symbol(x = arg_user_setting$x)){
             tempo_fun_name <- base::as.character(x = arg_user_setting$x)[1]
         }else{
-            # multi-component written name (like FUN_LIST$fun), or inline definition (like function(x){x}), or other unexpected writing: cannot determine a file name reliably. FUN_LIST$fun would give fun_safer.R, but a same name can designate different functions depending on the object browsed by $: the written form is not reliable for the file name
+            # multi-component written name (like FUN_LIST$fun), inline definition (like function(x){x}), function object, or other unexpected writing: cannot determine a file name reliably. FUN_LIST$fun would give fun_safer.R, but a same name can designate different functions depending on the object browsed by $: the written form is not reliable for the file name
+            if(base::is.function(x = arg_user_setting$x)){
+                tempo_x <- "A FUNCTION OBJECT, WITHOUT ITS NAME (E.G., x = fun1 IN THE args ARGUMENT OF base::do.call(): USE x = base::quote(expr = fun1) INSTEAD)"
+            }else{
+                tempo_x <- base::paste0(base::deparse(expr = arg_user_setting$x, width.cutoff = 60L, backtick = FALSE, control = base::c("keepNA", "keepInteger", "niceNames", "showAttributes"), nlines = -1L), collapse = "\n", recycle0 = FALSE)
+            }
             tempo_cat <- base::paste0(
                 error_text_start,
                 "THE x ARGUMENT MUST BE DESIGNATED BY A FUNCTION NAME (NOT BY AN INLINE FUNCTION DEFINITION, NOR BY A COMPONENT WRITING LIKE obj$fun) WHEN THE export ARGUMENT IS TRUE.\nHERE IT IS:\n",
-                base::paste0(base::deparse(expr = arg_user_setting$x, width.cutoff = 60L, backtick = FALSE, control = base::c("keepNA", "keepInteger", "niceNames", "showAttributes"), nlines = -1L), collapse = "\n", recycle0 = FALSE),
+                tempo_x,
                 collapse = NULL,
                 recycle0 = FALSE
             )
@@ -528,6 +552,18 @@ lambda_check <- function(
     #### end second round of checking and data preparation
 
     #### main code
+    # attributes of x printed by R after its code (all the attributes except srcref, srcfile, wholeSrcref and comment, which print() does not show): the code of x is recovered below as printed, so that the printed attribute values would be analyzed as code of x, silently when they parse (e.g., a formula, a function or a call, which could even be run), or with the parse error below. Same message in super_assign_check(), lambda_check(), curly_bracket_check(), true_false_check() and for_loop_nb_check()
+    tempo_attr <- base::setdiff(x = base::names(x = base::attributes(x = x)), y = base::c("srcref", "srcfile", "wholeSrcref", "comment"))
+    if(base::length(x = tempo_attr) > 0){
+        tempo_cat <- base::paste0(
+            error_text_start,
+            "THE FUNCTION OF THE x ARGUMENT CANNOT BE CHECKED: ITS ATTRIBUTES, PRINTED BY R AFTER ITS CODE, WOULD BE ANALYZED AS CODE.\nATTRIBUTES TO REMOVE BEFORE THE CHECK (E.G., base::attr(x = fun, which = \"note\") <- NULL):\n",
+            base::paste0(tempo_attr, collapse = "\n", recycle0 = FALSE),
+            collapse = NULL,
+            recycle0 = FALSE
+        )
+        base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL)
+    }
     # recover the code of the checked function
     code <- utils::capture.output(x, file = NULL, append = FALSE, type = NULL, split = FALSE)
     # removal of the attribute lines printed for compiled functions (e.g., "<bytecode: 0x...>", "<environment: ...>", "<srcref: ...>"). Warning: the pattern cannot be simply a line starting by "<", because a valid R code line can start by "<" (binary operator continuation)
@@ -536,11 +572,26 @@ lambda_check <- function(
     oop <- base::options(keep.parse.data = TRUE)
     base::on.exit(expr = base::options(oop), add = TRUE, after = TRUE)
     code_text <- base::paste0(code, collapse = "\n", recycle0 = FALSE)
-    pd <- utils::getParseData(x = base::parse(file = "", n = NULL, text = code_text, prompt = "?", keep.source = TRUE, srcfile = base::srcfilecopy(filename = "<text>", lines = code_text, timestamp = base::Sys.time(), isFile = FALSE), encoding = "unknown"), includeText = NA) # warning: an explicit srcfile is required, because srcfile = NULL removes the source references of the parsed code, so that utils::getParseData() returns NULL (same writing as in curly_bracket_check(), true_false_check() and for_loop_nb_check())
+    pd <- base::tryCatch(
+        expr = utils::getParseData(x = base::parse(file = "", n = NULL, text = code_text, prompt = "?", keep.source = TRUE, srcfile = base::srcfilecopy(filename = "<text>", lines = code_text, timestamp = base::Sys.time(), isFile = FALSE), encoding = "unknown"), includeText = NA), # warning: an explicit srcfile is required, because srcfile = NULL removes the source references of the parsed code, so that utils::getParseData() returns NULL (same writing as in curly_bracket_check(), true_false_check() and for_loop_nb_check())
+        error = function(e){e}, # code of x, as printed by R, that does not parse: error below
+        finally =
+    )
+    if(base::inherits(x = pd, what = "error", which = FALSE)){
+        # the printed code of x, without attributes (checked above), does not parse when an object that is not printed as R code is inserted in its body (e.g., an environment, printed <environment>). Same message in super_assign_check(), lambda_check(), curly_bracket_check(), true_false_check() and for_loop_nb_check()
+        tempo_cat <- base::paste0(
+            error_text_start,
+            "THE FUNCTION OF THE x ARGUMENT CANNOT BE CHECKED: ITS CODE, AS PRINTED BY R, DOES NOT PARSE (E.G., AN OBJECT INSERTED IN ITS BODY THAT IS NOT PRINTED AS R CODE, LIKE AN ENVIRONMENT, PRINTED <environment>).\n\nERROR MESSAGE OF THE R PARSER:\n",
+            base::conditionMessage(c = pd),
+            collapse = NULL,
+            recycle0 = FALSE
+        )
+        base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL)
+    }
     # terminal tokens (comments excluded), sorted by source position
     term_rows <- base::which(x = pd$terminal == TRUE & pd$token != "COMMENT", arr.ind = FALSE, useNames = TRUE)
     term_rows <- term_rows[base::order(pd$line1[term_rows], pd$col1[term_rows], method = "radix", na.last = TRUE, decreasing = FALSE)]
-    # positions in term_rows of the terminal tokens of the reported lambda writings. Warning: the R versions checked so far always give the "'\\'" token (and not the LAMBDA token), but both are scanned: the LAMBDA token is reported in the R documentation of utils::getParseData(). The '\\' text of a backquoted `\\` call (the deprecated function(x) function writing, e.g., `\\`(x)) is given by the QUOTED_NAME token, not by the '\\' token, so that it is not scanned below. Warning: the "'\\'" token name (4 characters: quote, backslash, backslash, quote) is assembled below by base::paste0() from its 3 parts, so that no full "'\\'" string literal appears in the source code: the capture.output() form of such a literal triggers a known parsing bug of saferDev::all_args_here() (see dev/repro_all_args_here_internal_error_3.R and dev/lambda_token_diag.R)
+    # positions in term_rows of the terminal tokens of the reported lambda writings. Warning: the R versions checked so far always give the "'\\'" token (and not the LAMBDA token), but both are scanned: the LAMBDA token is reported in the R documentation of utils::getParseData(). A backslash written in a backquoted name (e.g., `\\`(x) or `\\(y)` <- 1) belongs to a SYMBOL or SYMBOL_FUNCTION_CALL token, and in a string to a STR_CONST token, not to the '\\' token, so that it is not scanned below. Warning: the "'\\'" token name (4 characters: quote, backslash, backslash, quote) is assembled below by base::paste0() from its 3 parts, so that no full "'\\'" string literal appears in the source code: the capture.output() form of such a literal triggers a known parsing bug of saferDev::all_args_here() (see dev/repro_all_args_here_internal_error_3.R and dev/lambda_token_diag.R)
     token_quote1 <- "'"
     token_bs <- "\\\\"
     token_quote2 <- "'"
@@ -571,19 +622,44 @@ lambda_check <- function(
                 }
             }
         }
+        tempo_symbol_end <- NULL # parse-data column of the ) closing the formals, if written on the line of the \ token
         if( ! base::is.null(x = tempo_formals_end) && pd$line2[tempo_formals_end] == pd$line1[k]){
-            findings_symbol <- base::c(findings_symbol, base::substr(x = code[pd$line1[k]], start = pd$col1[k], stop = pd$col2[tempo_formals_end]), recursive = TRUE, use.names = TRUE)
-        }else{
+            tempo_symbol_end <- pd$col2[tempo_formals_end]
+        }
+        # conversion of the parse-data columns into the character positions used by substr(): utils::getParseData() counts a TAB as a jump to the next multiple of 8, and any other character as 1. The TABs of the submitted code are kept
+        tempo_chars <- base::strsplit(x = code[pd$line1[k]], split = "", fixed = TRUE, perl = FALSE, useBytes = FALSE)[[1]]
+        tempo_cols <- base::integer(length = base::length(x = tempo_chars)) # parse-data column of each character of the line
+        tempo_col <- 0L
+        for(i2 in base::seq_along(along.with = tempo_chars)){
+            if(tempo_chars[i2] == "\t"){
+                tempo_col <- (tempo_col %/% 8L + 1L) * 8L # jump to the next multiple of 8
+            }else{
+                tempo_col <- tempo_col + 1L
+            }
+            tempo_cols[i2] <- tempo_col
+        }
+        tempo_pos <- base::match(x = base::c(pd$col1[k], pd$col2[k], tempo_symbol_end), table = tempo_cols, nomatch = NA_integer_, incomparables = NULL) # character positions of the start and of the end of the \ token, and of the ) closing the formals
+        if(base::any(base::is.na(x = tempo_pos), na.rm = FALSE)){
+            # nocov start
+            # codecov inactivated because it is an internal control of code writing: the parse-data columns come from the parsing of these code lines, so that each of them is the column of a character of the line.
+            tempo_cat <- base::paste0("INTERNAL ERROR IN ", intern_error_text_start, "PARSE-DATA COLUMN NOT FOUND IN THE CODE LINE\nline: ", pd$line1[k], intern_error_text_end, collapse = NULL, recycle0 = FALSE) ; base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL)
+            # nocov end
+        }
+        if(base::is.null(x = tempo_symbol_end)){
             findings_symbol <- base::c(findings_symbol, base::paste0(pd$text[k], "()", collapse = NULL, recycle0 = FALSE), recursive = TRUE, use.names = TRUE)
+        }else{
+            findings_symbol <- base::c(findings_symbol, base::substr(x = code[pd$line1[k]], start = tempo_pos[1], stop = tempo_pos[3]), recursive = TRUE, use.names = TRUE)
         }
         findings_line <- base::c(findings_line, pd$line1[k], recursive = TRUE, use.names = TRUE)
         findings_code <- base::c(findings_code, base::trimws(x = code[pd$line1[k]], which = "left", whitespace = "[ \\t]"), recursive = TRUE, use.names = TRUE)
-        findings_col1 <- base::c(findings_col1, pd$col1[k], recursive = TRUE, use.names = TRUE)
-        findings_col2 <- base::c(findings_col2, pd$col2[k], recursive = TRUE, use.names = TRUE)
+        findings_col1 <- base::c(findings_col1, tempo_pos[1], recursive = TRUE, use.names = TRUE) # character position (not parse-data column)
+        findings_col2 <- base::c(findings_col2, tempo_pos[2], recursive = TRUE, use.names = TRUE) # character position (not parse-data column)
     }
     # end loop over the reported lambda writings
-    # modification of arg_user_setting$x for clean messages
-    if(base::as.character(x = arg_user_setting$x)[1] == "::" | base::as.character(x = arg_user_setting$x)[1] == ":::"){
+    # modification of arg_user_setting$x for clean messages: a single string "<name>()", with <name> the writing of x in the call (name, pkg::name, pkg:::name, or other expression deparsed on one line, like dots[[1L]][[1L]] through base::Map()), or "x" for a function object, which has no name (e.g., x = fun1 in the args argument of base::do.call())
+    if(base::is.function(x = arg_user_setting$x)){
+        arg_user_setting$x <- "x()"
+    }else if(base::as.character(x = arg_user_setting$x)[1] == "::" | base::as.character(x = arg_user_setting$x)[1] == ":::"){
         arg_user_setting$x <- base::paste0(
             base::as.character(x = arg_user_setting$x)[2],
             base::as.character(x = arg_user_setting$x)[1],
@@ -592,21 +668,28 @@ lambda_check <- function(
             collapse = NULL,
             recycle0 = FALSE
         )
-    }else{
+    }else if(base::is.symbol(x = arg_user_setting$x)){
         arg_user_setting$x <- base::paste0(
             arg_user_setting$x,
             "()",
             collapse = NULL,
             recycle0 = FALSE
         )
+    }else{
+        arg_user_setting$x <- base::paste0(
+            base::paste0(base::trimws(x = base::deparse(expr = arg_user_setting$x, width.cutoff = 500L, backtick = FALSE, control = base::c("keepNA", "keepInteger", "niceNames", "showAttributes"), nlines = -1L), which = "left", whitespace = "[ \\t]"), collapse = " ", recycle0 = FALSE),
+            "()",
+            collapse = NULL,
+            recycle0 = FALSE
+        )
     }
     # end modification of arg_user_setting$x for clean messages
-    # modification of the recovered code: exact replacement of the reported tokens (\ -> function), from the last token to the first one so that the columns of the preceding tokens remain valid. Warning: findings_* are ordered by source position, because term_rows is sorted and the loop appends in order. Warning: the multi-byte safety of the substr()-based replacement has been verified (the col1/col2 columns of utils::getParseData() count characters, not bytes, in R >= 4.0.0)
+    # modification of the recovered code: exact replacement of the reported tokens (\ -> function), from the last token to the first one so that the positions of the preceding tokens remain valid. Warning: findings_* are ordered by source position, because term_rows is sorted and the loop appends in order. Warning: findings_col1 and findings_col2 are character positions, converted above from the parse-data columns (TAB jumps). A multi-byte character counts 1 in both
     if(base::length(x = findings_line) != 0){
         modified_code <- code
         for(i1 in base::seq_along(along.with = findings_line)){
             i <- base::length(x = findings_line) - i1 + 1 # from the last finding to the first one
-            # exact token replacement at the parse-data columns: \\ -> function. Warning: the substr() slices are rebuilt from the left part + replacement + right part, so that the columns of the other tokens of the same line remain valid. Warning: the ( of the formals is never part of the replaced token, so that the spaces between the \ and the ( are kept (the writing \( (x) becomes function (x), which is valid)
+            # exact token replacement at the character positions of the token: \\ -> function. Warning: the substr() slices are rebuilt from the left part + replacement + right part, so that the positions of the other tokens of the same line remain valid. Warning: the ( of the formals is never part of the replaced token, so that the spaces between the \ and the ( are kept (the writing \( (x) becomes function (x), which is valid)
             tempo_line <- modified_code[findings_line[i]]
             modified_code[findings_line[i]] <- base::paste0(
                 base::substr(x = tempo_line, start = 1, stop = findings_col1[i] - 1),

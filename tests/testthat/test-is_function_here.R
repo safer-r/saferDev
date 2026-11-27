@@ -1,11 +1,11 @@
 testthat::test_that("is_function_here()", {
 
     ## data argument values
-    str1 <- "ggplot2::geom_point"
+    str1 <- "stats::median" # base R package: no dependency on a suggested package
     str2 <- "NOTGOOD"
-    str3 <- "ggplot2::geom_point()"
+    str3 <- "stats::median()"
     str4 <- "BAD::NOTGOOD"
-    str5 <- "ggplot2::NOTGOOD"
+    str5 <- "stats::NOTGOOD"
     mat1 <- base::matrix(-1:3)
     factor1 <- base::as.factor(str1)
     expr1 <- expression(1)
@@ -163,6 +163,34 @@ testthat::test_that("is_function_here()", {
     testthat::expect_error(is_function_here(fun = str3, safer_check = TRUE, lib_path = NULL, error_text = ""))
     testthat::expect_error(is_function_here(fun = str4, safer_check = TRUE, lib_path = NULL, error_text = ""))
     testthat::expect_error(is_function_here(fun = str5, safer_check = TRUE, lib_path = NULL, error_text = ""))
+    # strings of fun written "package::function" or "package:::function", non syntactic names included
+    testthat::expect_error(object = saferDev::is_function_here(fun = str2, safer_check = FALSE, lib_path = NULL, error_text = ""), regexp = "THE STRING IN fun ARGUMENT MUST BE WRITTEN \"package::function\" OR \"package:::function\":\nNOTGOOD", class = NULL, fixed = TRUE, inherit = TRUE, info = NULL, label = NULL)
+    testthat::expect_error(object = saferDev::is_function_here(fun = "base::", safer_check = FALSE, lib_path = NULL, error_text = ""), regexp = "MUST BE WRITTEN \"package::function\" OR \"package:::function\":\nbase::", class = NULL, fixed = TRUE, inherit = TRUE, info = NULL, label = NULL)
+    testthat::expect_no_error(object = saferDev::is_function_here(fun = base::c("base::+", "base::%in%", "base::[", "base::`[`", "base::names<-"), safer_check = FALSE, lib_path = NULL, error_text = ""), message = NULL, class = NULL) # operators and replacement functions accepted, with or without backticks (before: misleading error MUST CONTAIN :: OR :::)
+    testthat::expect_no_error(object = saferDev::is_function_here(fun = "base::pi", safer_check = FALSE, lib_path = NULL, error_text = ""), message = NULL, class = NULL) # any object of the namespace, not only functions
+    testthat::expect_no_error(object = saferDev::is_function_here(fun = base::c("base::`::`", "base::`:::`", "base::`:`"), safer_check = FALSE, lib_path = NULL, error_text = ""), message = NULL, class = NULL) # names starting with ":" written with backticks, as required by the help page
+    # missing function
+    testthat::expect_error(object = saferDev::is_function_here(fun = str5, safer_check = FALSE, lib_path = NULL, error_text = ""), regexp = "REQUIRED FUNCTION IS MISSING IN THE INSTALLED PACKAGE:\nstats::NOTGOOD", class = NULL, fixed = TRUE, inherit = TRUE, info = NULL, label = NULL)
+    testthat::expect_error(object = saferDev::is_function_here(fun = base::c(str5, "base::NOTGOOD"), safer_check = FALSE, lib_path = NULL, error_text = ""), regexp = "REQUIRED FUNCTIONS ARE MISSING IN THE INSTALLED PACKAGES:\nstats::NOTGOOD\nbase::NOTGOOD", class = NULL, fixed = TRUE, inherit = TRUE, info = NULL, label = NULL)
+    # "pkg::fun" requires an exported object, "pkg:::fun" accepts any object of the namespace (before, non exported objects passed with ::)
+    testthat::expect_error(object = saferDev::is_function_here(fun = "stats::Pillai", safer_check = FALSE, lib_path = NULL, error_text = ""), regexp = "REQUIRED FUNCTION IS NOT EXPORTED BY THE INSTALLED PACKAGE:\nstats::Pillai\n\nWRITE \":::\" INSTEAD OF \"::\" TO CHECK A NON EXPORTED FUNCTION.", class = NULL, fixed = TRUE, inherit = TRUE, info = NULL, label = NULL)
+    testthat::expect_error(object = saferDev::is_function_here(fun = base::c("stats::Pillai", "stats::median", "stats::print.htest"), safer_check = FALSE, lib_path = NULL, error_text = ""), regexp = "REQUIRED FUNCTIONS ARE NOT EXPORTED BY THE INSTALLED PACKAGES:\nstats::Pillai\nstats::print.htest\n\n", class = NULL, fixed = TRUE, inherit = TRUE, info = NULL, label = NULL)
+    testthat::expect_no_error(object = saferDev::is_function_here(fun = base::c("stats:::Pillai", "stats:::median", "base:::pi"), safer_check = FALSE, lib_path = NULL, error_text = ""), message = NULL, class = NULL)
+    # objects that a package exports from another package (plot() of graphics is defined in base): accepted with "::", not with ":::", as in R code (before, false MISSING error with "::")
+    testthat::expect_no_error(object = saferDev::is_function_here(fun = base::c("graphics::plot", "stats4::show"), safer_check = FALSE, lib_path = NULL, error_text = ""), message = NULL, class = NULL)
+    testthat::expect_error(object = saferDev::is_function_here(fun = "graphics:::plot", safer_check = FALSE, lib_path = NULL, error_text = ""), regexp = "REQUIRED FUNCTION IS MISSING IN THE INSTALLED PACKAGE:\ngraphics:::plot\n", class = NULL, fixed = TRUE, inherit = TRUE, info = NULL, label = NULL)
+    # lazy-loaded datasets are not found (documented limitation)
+    testthat::expect_error(object = saferDev::is_function_here(fun = "datasets::iris", safer_check = FALSE, lib_path = NULL, error_text = ""), regexp = "REQUIRED FUNCTION IS MISSING IN THE INSTALLED PACKAGE:\ndatasets::iris\n", class = NULL, fixed = TRUE, inherit = TRUE, info = NULL, label = NULL)
+    # returned value: invisible NULL; the namespaces of the checked packages are loaded, not attached
+    attached_before <- "package:splines" %in% base::search()
+    result <- base::withVisible(x = saferDev::is_function_here(fun = "splines::bs", safer_check = FALSE, lib_path = NULL, error_text = ""))
+    testthat::expect_null(object = result$value, info = NULL, label = NULL)
+    testthat::expect_false(object = result$visible, info = NULL, label = NULL)
+    testthat::expect_true(object = "splines" %in% base::loadedNamespaces(), info = NULL, label = NULL)
+    testthat::expect_identical(object = "package:splines" %in% base::search(), expected = attached_before, info = NULL, label = NULL, expected.label = NULL)
+    # examples of the help page
+    testthat::expect_no_error(object = saferDev::is_function_here(fun = base::c("stats::median", "grid::gpar"), safer_check = TRUE, lib_path = NULL, error_text = ""), message = NULL, class = NULL)
+    testthat::expect_error(object = saferDev::is_function_here(fun = "stats::notgood", safer_check = TRUE, lib_path = NULL, error_text = " INSIDE P1::F1"), regexp = "ERROR IN saferDev::is_function_here() INSIDE P1::F1", class = NULL, fixed = TRUE, inherit = TRUE, info = NULL, label = NULL)
     # below cannot be used because difficult to determine .libPath() in CI
     # result <- saferDev::get_message('is_function_here(fun = str2, safer_check = TRUE, lib_path = NULL, error_text = "")', kind = "error", print_no = TRUE, text = NULL, safer_check = FALSE) 
     # expected <- "ERROR MESSAGE REPORTED:\nError : \n\n================\n\nERROR IN saferDev::is_function_here().\n\nREQUIRED PACKAGE:\nNOTGOOD\n\nMUST BE INSTALLED IN:\nC:/Program Files/R/R-4.4.2/library\n\n================\n\n\n"

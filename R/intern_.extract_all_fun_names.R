@@ -1,23 +1,25 @@
 #' @title Extract All Function Names
 #' @description
-#' Extract all function names.
+#' Extract all the function names of a string, with their positions.
 #' @param text Single string.
-#' @param pattern Single string of a Perl regex to extract function names.
-#' @param lib_path Vector of characters specifying the absolute pathways of the directories containing the required packages for the function, if not in the default directories. Useful when R packages are not installed in the default directories because of lack of admin rights. More precisely, \code{lib_path} is passed through the \code{new} argument of \code{.libPaths()} so that the new library paths are \code{unique(c(new, .Library.site, .Library))}. Warning: \code{.libPaths()} is restored to the initial paths, after function execution. Ignored if \code{NULL} (default): only the pathways specified by the current \code{.libPaths()} are used for package calling.
-#' @param error_text Single character string used to add information in error messages returned by the function, notably if the function is inside other functions, which is practical for debugging. Example: \code{error_text = " INSIDE <PACKAGE_1>::<FUNCTION_1> INSIDE <PACKAGE_2>::<FUNCTION_2>."}. If \code{NULL}, converted into \code{""}.
-#' @returns List containing:
+#' @param pattern Single string: Perl regex, typically matching a function name followed by \code{(}, with a capture group starting at the first character of the name, like \code{"([a-zA-Z]|\\\\.[a-zA-Z._])[a-zA-Z0-9._]*\\\\s*\\\\("}.
+#' @param lib_path Vector of character strings or \code{NULL}: the \code{lib_path} value of the calling exported function, only passed on to \code{arg_check()}. No default value.
+#' @param error_text Single character string added to the error messages to name the calling functions (\code{embed_error_text} of the calling function). \code{NULL} is converted into \code{""}. No default value.
+#' @returns A list containing:
 #' \itemize{
-#'   \item \code{string}: the function names without parenthesis.
-#'   \item \code{pos}: position of the first character of the function names in the input string
+#'   \item \code{string}: vector of strings, the matches of \code{pattern} in \code{text}, without their final \code{(}, if any, and the spaces before it. \code{character(0)} if no match.
+#'   \item \code{pos}: vector of integers, the position in \code{text} of the first character of the first capture group of each match. \code{-1} if no match, \code{NULL} if \code{pattern} has no capture group.
 #' }
 #' @details
+#' The function names between quotes are also extracted.
+#'
 #' Warnings:
 #' \itemize{
 #'   \item requires \code{saferDev::arg_check}.
 #'   \item In the safer Backbone section \code{"######## check of the required functions from the required packages"}, add also \code{saferDev::arg_check} when checking for the presence of \code{.extract_all_fun_names}.
 #' }
 #' @author \href{mailto:gael.millot@pasteur.fr}{Gael Millot}
-#' @author Haiding Wang  
+#' @author Haiding Wang
 #' @author Yushi Han
 #' @keywords internal
 .extract_all_fun_names <- function(
@@ -41,8 +43,12 @@
     #### end internal error report link
 
     #### function name
-    tempo_settings <- base::as.list(x = base::match.call(definition = base::sys.function(which = base::sys.parent(n = 0)), call = base::sys.call(which = base::sys.parent(n = 0)), expand.dots = FALSE, envir = base::parent.frame(n = 2L))) # warning: I have written n = 0 to avoid error when a safer function is inside another functions. In addition, arguments values retrieved are not evaluated base::match.call, but this is solved with get() below
-    function_name <- base::paste0(tempo_settings[[1]], "()", collapse = NULL, recycle0 = FALSE) 
+    tempo_settings <- base::as.list(x = base::match.call(definition = base::sys.function(which = base::sys.parent(n = 0)), call = base::sys.call(which = base::sys.parent(n = 0)), expand.dots = FALSE, envir = )) # warning: I have written n = 0 to avoid error when a safer function is inside another functions. In addition, arguments values retrieved are not evaluated base::match.call, but this is solved with get() below. Warning: envir is left empty on purpose: its default parent.frame(2L), evaluated inside base::match.call(), is the frame that called this function, where the ... of the call are expanded (base::parent.frame(n = 2L) written here would be evaluated one frame too far, which breaks the calls through base::lapply(), base::vapply(), base::apply(), base::Filter() or a function forwarding ..., base::sapply() only working by coincidence)
+    if(base::is.name(x = tempo_settings[[1]]) | base::is.call(x = tempo_settings[[1]])){
+        function_name <- base::paste0(tempo_settings[[1]], "()", collapse = NULL, recycle0 = FALSE)
+    }else{
+        function_name <- "<anonymous function>()" # the function was called through its object (e.g., base::do.call(what = <function object>, args = ...)), so that its name is not in the call
+    }
     # function name with "()" paste, which split into a vector of three: c("::()", "package ()", "function ()") if "package::function()" is used.
     if(function_name[1] == "::()" | function_name[1] == ":::()"){
         function_name <- function_name[3]

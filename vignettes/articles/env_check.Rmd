@@ -16,52 +16,79 @@ library(saferDev)
 ```
 <br>
 
-These examples may not work well here because of a particular environment. Please, copy-paste in a local environment.
+env_check() checks the frames of the call stack (the calling functions), then the search path. On this page, the code is run by knitr: the frames of the knitr functions running the code are also checked (the <code>&lt;environment&gt;</code> lines of the outputs). This is why env_check() is called inside functions below. Copy-paste the code in an R console for shorter outputs.
+Call env_check() directly (e.g., <code>res <- env_check()</code>), not inside another call like <code>print(env_check())</code> or <code>cat(env_check())</code>, which would check the frame of print() or cat() instead.
 <br>
 
 ### Argument <code>pos</code>
 ```{r}
-# Checking of the environment one step above \code{env_check()} local environment.
-env_check(pos = 1)
+# pos = 1 (default): checks the environment calling env_check(), here the frame of fun1().
+fun1 <- function(){
+    mean <- 1
+    res <- env_check(pos = 1)
+    cat(res)
+}
+fun1()
 
-# With the message correctly displayed.
-output <- env_check(pos = 1)
-cat(output)
+# NULL means that no object name of the checked environment is used in the environments above.
+fun2 <- function(){
+    tempo_name_used_nowhere_else <- 1
+    env_check(pos = 1)
+}
+fun2()
 
-# Checking of the environment two steps above \code{env_check()} local environment.
-# NULL means that no object in the tested environment exists above.
-env_check(pos = 2)
+# pos = 2: checks the environment one step further up, here the frame of fun3(), which calls fun4().
+fun3 <- function(){
+    min <- 1
+    fun4()
+}
+fun4 <- function(){
+    res <- env_check(pos = 2)
+    cat(res)
+}
+fun3()
+
+# The environments above are those of the call stack: the frame of fun5() is checked,
+# although fun6() is not defined inside fun5().
+fun5 <- function(){
+    max <- 1
+    fun6()
+}
+fun6 <- function(){
+    max <- 2
+    res <- env_check(pos = 1, name = "fun6")
+    cat(res)
+}
+fun5()
 ```
 <br>
 
 ### Argument <code>name</code>
 ```{r}
- # The name of the tested environment is replaced by "MY_ENV" in the message.
-env_check(pos = 1, name = "MY_ENV")
-
-# Inside a function
-fun1 <- function(){
+# The name of the checked environment is replaced by "MY_ENV" in the message.
+fun8 <- function(){
     mean <- 1
-    mes <- env_check(pos = 1, name = "fun1")
-    if( ! is.null(mes)){
-        cat(mes)
-    }
+    res <- env_check(pos = 1, name = "MY_ENV")
+    cat(res)
 }
-fun1()
-
+fun8()
 ```
 <br>
 
 ### Argument <code>safer_check</code> 
 ```{r, echo = TRUE, error = TRUE}
-# Safer checkings are performed before main code running.
-env_check(safer_check = TRUE)
+# Safer checks are performed before running.
+fun9 <- function(){
+    tempo_name_used_nowhere_else <- 1
+    env_check(safer_check = TRUE)
+}
+fun9()
 ```
 <br>
 
 ### Argument <code>lib_path</code>
 ```{r}
-# The "NOTGOOD" path does not exists.
+# The "NOTGOOD" path does not exist.
 env_check(lib_path = "NOTGOOD")
 ```
 <br>
@@ -78,33 +105,38 @@ env_check(
 
 ### All the arguments
 ```{r}
-env_check(
-    pos = 1, # environment tested "pos" steps above the env_check() local environment.
-    name = "MY_ENV", # name of the tested environment (used in the potential output message).
-    safer_check = TRUE, # perform some "safer" checks (see https://github.com/safer-r)?
-    lib_path = NULL, # where the required packages are if not in the default directories.
-    error_text = "" # add information in error messages returned by the function.
-) 
+fun10 <- function(){
+    mean <- 1
+    res <- env_check(
+        pos = 1, # environment checked: "pos" steps above env_check() in the call stack.
+        name = "MY_ENV", # name of the checked environment (used in the potential output message).
+        safer_check = TRUE, # perform some "safer" checks (see https://github.com/safer-r)?
+        lib_path = NULL, # where the required packages are if not in the default directories.
+        error_text = "" # add information in error messages returned by the function.
+    )
+    cat(res)
+}
+fun10()
 ```
 <br>
 
 ### Sophisticated examples
 ```{r}
-# The name of the function one step above can be retrieved with base::sys.calls():
-fun4 <- function(){
+# The name of the function calling env_check() can be retrieved with base::sys.calls():
+fun11 <- function(){
     t.test <- 0
     mean <- 5
     name <- base::as.character(x = base::sys.calls()[[base::length(x = base::sys.calls())]])
     saferDev::env_check(pos = 1, name = name)
 }
-a <- fun4()
+a <- fun11()
 base::cat(a)
 
-# Name of the tested environment according to the test_pos value, in nested functions:
-fun7 <- function(){
+# Name of the checked environment according to the test_pos value, in nested functions:
+fun12 <- function(){
     min <- "VALUE"
-    fun8 <- function(){
-        test_pos <- 1 # value 1 tests the fun8 environment, 2 tests the fun7 environment
+    fun13 <- function(){
+        test_pos <- 1 # value 1 checks the fun13 environment, 2 checks the fun12 environment
         range <- "VALUE"
         if(base::length(x = base::sys.calls()) >= test_pos){
             name <- base::as.character(x = base::sys.calls()[[base::length(x = base::sys.calls()) + 1 - test_pos]])
@@ -113,8 +145,8 @@ fun7 <- function(){
         }
         saferDev::env_check(pos = test_pos, name = name)
     }
-    fun8()
+    fun13()
 }
-a <- fun7()
+a <- fun12()
 base::cat(a)
 ```

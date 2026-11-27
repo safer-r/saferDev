@@ -237,7 +237,7 @@ testthat::test_that(".in_quotes_replacement()", {
     ######## end graphic device checking
 
     ######## other checkings
-
+    testthat::expect_error(saferDev:::.in_quotes_replacement(string = "\\(", pattern = "\\(", no_regex_pattern = "(", replacement = " ", perl = TRUE, lib_path = NULL, error_text = ""), regexp = "ARGUMENTS string AND pattern CANNOT BE IDENTICAL", fixed = TRUE)
     ######## end other checkings
 
     #### end second round of checking and data preparation
@@ -246,21 +246,59 @@ testthat::test_that(".in_quotes_replacement()", {
     # if(base::nchar(x = no_regex_pattern, type = "chars", allowNA = FALSE, keepNA = NA) != base::nchar(x = replacement, type = "chars", allowNA = FALSE, keepNA = NA)){
     testthat::expect_error(.in_quotes_replacement(string = str1, pattern = "dddd", no_regex_pattern = "dddd", replacement = "d", perl = TRUE, lib_path = NULL, error_text = ""))
     # end if(base::nchar(x = no_regex_pattern, type = "chars", allowNA = FALSE, keepNA = NA) != base::nchar(x = replacement, type = "chars", allowNA = FALSE, keepNA = NA)){
-    # if(base::length(x = string_split) > 1){
-    testthat::expect_no_error(.in_quotes_replacement(string = str1, pattern = pattern1, no_regex_pattern = no_regex_pattern1, replacement = replacement1, perl = TRUE, lib_path = NULL, error_text = ""))
-    # end if(base::length(x = string_split) > 1){
-    # if(base::nchar(x = string, type = "chars", allowNA = FALSE, keepNA = NA) == base::nchar(x = string_out, type = "chars", allowNA = FALSE, keepNA = NA) + 1){
-    testthat::expect_no_error(.in_quotes_replacement(string = str2, pattern = pattern1, no_regex_pattern = no_regex_pattern1, replacement = replacement1, perl = TRUE, lib_path = NULL, error_text = "")) # deal with pattern being the last character, which is the case with str1 # if(odds.quotes.log == TRUE){
-    testthat::expect_no_error(.in_quotes_replacement(string = str1, pattern = pattern1, no_regex_pattern = no_regex_pattern1, replacement = replacement1, perl = TRUE, lib_path = NULL, error_text = "")) # deal with pattern being the last character, which is the case with str1 # }else{
-    # end if(base::nchar(x = string, type = "chars", allowNA = FALSE, keepNA = NA) == base::nchar(x = string_out, type = "chars", allowNA = FALSE, keepNA = NA) + 1){
-    # if(base::all(base::is.na(x = pos), na.rm = TRUE)){
-    testthat::expect_no_error(.in_quotes_replacement(string = " ", pattern = pattern1, no_regex_pattern = no_regex_pattern1, replacement = replacement1, perl = TRUE, lib_path = NULL, error_text = "")) # pos is NULL
-    testthat::expect_no_error(.in_quotes_replacement(string = ")", pattern = pattern1, no_regex_pattern = no_regex_pattern1, replacement = replacement1, perl = TRUE, lib_path = NULL, error_text = "")) # pos is NA
-
-    # end if(base::all(base::is.na(x = pos), na.rm = TRUE)){
+    # detection of the characters of string that are between quotes
+    # inside quotes: escaped characters (escaped quote and escaped backslash), closing quote, and the other quote or # not read
+    result <- saferDev:::.in_quotes_replacement(string = 'a("it\'s (1)", \'say "hi" (2)\', "\\" (3)", "\\\\", f(4))', pattern = "\\(", no_regex_pattern = "(", replacement = " ", perl = TRUE, lib_path = NULL, error_text = "")
+    testthat::expect_equal(object = result, expected = base::list(string = 'a("it\'s  1)", \'say "hi"  2)\', "\\"  3)", "\\\\", f(4))', pos = base::c(9, 25, 35)))
+    # comment, up to the end of the line (quotes inside comments not read)
+    result <- saferDev:::.in_quotes_replacement(string = "x <- 1 # it's (a)\ny <- '(' # \"(\"\nz <- f(1)", pattern = "\\(", no_regex_pattern = "(", replacement = " ", perl = TRUE, lib_path = NULL, error_text = "")
+    testthat::expect_equal(object = result, expected = base::list(string = "x <- 1 # it's (a)\ny <- ' ' # \"(\"\nz <- f(1)", pos = 25))
+    # special operators (closed by the next % of the line) and comment at the end of string
+    result <- saferDev:::.in_quotes_replacement(string = 'x %in% "(" ; y %\'% z ; "%(" ; 5 %% 2 ; a %b\nc("(", "%") ; 1 %% 2 # end (', pattern = "\\(", no_regex_pattern = "(", replacement = " ", perl = TRUE, lib_path = NULL, error_text = "")
+    testthat::expect_equal(object = result, expected = base::list(string = 'x %in% " " ; y %\'% z ; "% " ; 5 %% 2 ; a %b\nc(" ", "%") ; 1 %% 2 # end (', pos = base::c(9, 26, 48)))
+    result <- saferDev:::.in_quotes_replacement(string = 'a %b ; "("', pattern = "\\(", no_regex_pattern = "(", replacement = " ", perl = TRUE, lib_path = NULL, error_text = "") # % not closed
+    testthat::expect_equal(object = result, expected = base::list(string = 'a %b ; " "', pos = 9))
+    # raw strings (only their content is replaced, not their delimiters)
+    result <- saferDev:::.in_quotes_replacement(string = 'r"(it\'s (a))" ; R"--[a)"b(]--" ; r\'{x(}\' ; f(1)', pattern = "\\(", no_regex_pattern = "(", replacement = " ", perl = TRUE, lib_path = NULL, error_text = "")
+    testthat::expect_equal(object = result, expected = base::list(string = 'r"(it\'s  a))" ; R"--[a)"b ]--" ; r\'{x }\' ; f(1)', pos = base::c(9, 26, 38)))
+    result <- saferDev:::.in_quotes_replacement(string = 'r"(a"b)" ; f(1)', pattern = "\\(", no_regex_pattern = "(", replacement = " ", perl = TRUE, lib_path = NULL, error_text = "") # quote inside a raw string
+    testthat::expect_equal(object = result, expected = base::list(string = 'r"(a"b)" ; f(1)', pos = NULL))
+    result <- saferDev:::.in_quotes_replacement(string = 'ar"(a"b)" ; f(1)', pattern = "\\(", no_regex_pattern = "(", replacement = " ", perl = TRUE, lib_path = NULL, error_text = "") # r at the end of a name: not a raw string
+    testthat::expect_equal(object = result, expected = base::list(string = 'ar" a"b)" ; f 1)', pos = base::c(4, 14)))
+    result <- saferDev:::.in_quotes_replacement(string = 'r"abc(" ; f(1)', pattern = "\\(", no_regex_pattern = "(", replacement = " ", perl = TRUE, lib_path = NULL, error_text = "") # no opening delimiter: not a raw string
+    testthat::expect_equal(object = result, expected = base::list(string = 'r"abc " ; f(1)', pos = 6))
+    result <- saferDev:::.in_quotes_replacement(string = 'r"(abc ; f(1)', pattern = "\\(", no_regex_pattern = "(", replacement = " ", perl = TRUE, lib_path = NULL, error_text = "") # raw string not closed
+    testthat::expect_equal(object = result, expected = base::list(string = 'r"(abc ; f 1)', pos = 11))
+    # successive replacements, as in all_args_here(): the delimiters of the raw string, kept by the first replacement, still close it in the second one, so that the ( of f( is not replaced
+    result <- saferDev:::.in_quotes_replacement(string = 'y <- r"(a)b(c)" ; f("(", 1)', pattern = "\\)", no_regex_pattern = ")", replacement = " ", perl = TRUE, lib_path = NULL, error_text = "")
+    testthat::expect_equal(object = result, expected = base::list(string = 'y <- r"(a b(c)" ; f("(", 1)', pos = 10))
+    result <- saferDev:::.in_quotes_replacement(string = result$string, pattern = "\\(", no_regex_pattern = "(", replacement = " ", perl = TRUE, lib_path = NULL, error_text = "")
+    testthat::expect_equal(object = result, expected = base::list(string = 'y <- r"(a b c)" ; f(" ", 1)', pos = base::c(12, 22)))
+    result <- saferDev:::.in_quotes_replacement(string = 'y <- r"(a)b(c)" ; f("(", 1)', pattern = "\\(", no_regex_pattern = "(", replacement = " ", perl = TRUE, lib_path = NULL, error_text = "")
+    testthat::expect_equal(object = result, expected = base::list(string = 'y <- r"(a)b c)" ; f(" ", 1)', pos = base::c(12, 22)))
+    result <- saferDev:::.in_quotes_replacement(string = result$string, pattern = "\\)", no_regex_pattern = ")", replacement = " ", perl = TRUE, lib_path = NULL, error_text = "")
+    testthat::expect_equal(object = result, expected = base::list(string = 'y <- r"(a b c)" ; f(" ", 1)', pos = 10))
+    # quote at the first position, backquoted names (with escaped backquote) and quote not closed
+    result <- saferDev:::.in_quotes_replacement(string = '"(" ; f(1)', pattern = "\\(", no_regex_pattern = "(", replacement = " ", perl = TRUE, lib_path = NULL, error_text = "")
+    testthat::expect_equal(object = result, expected = base::list(string = '" " ; f(1)', pos = 2))
+    result <- saferDev:::.in_quotes_replacement(string = '`a(b` <- f(1) ; `x\\`(y`', pattern = "\\(", no_regex_pattern = "(", replacement = " ", perl = TRUE, lib_path = NULL, error_text = "")
+    testthat::expect_equal(object = result, expected = base::list(string = '`a b` <- f(1) ; `x\\` y`', pos = base::c(3, 21)))
+    result <- saferDev:::.in_quotes_replacement(string = 'f("(abc', pattern = "\\(", no_regex_pattern = "(", replacement = " ", perl = TRUE, lib_path = NULL, error_text = "")
+    testthat::expect_equal(object = result, expected = base::list(string = 'f(" abc', pos = 4))
+    # empty quoted parts, and quote not closed at the end of string
+    result <- saferDev:::.in_quotes_replacement(string = 'f("", r"()", \'(\') ; g(1, "', pattern = "\\(", no_regex_pattern = "(", replacement = " ", perl = TRUE, lib_path = NULL, error_text = "")
+    testthat::expect_equal(object = result, expected = base::list(string = 'f("", r"()", \' \') ; g(1, "', pos = 15))
+    # the quotes themselves are never replaced
+    result <- saferDev:::.in_quotes_replacement(string = '\'say "hi"\' ; "a"', pattern = "\"", no_regex_pattern = "\"", replacement = " ", perl = TRUE, lib_path = NULL, error_text = "")
+    testthat::expect_equal(object = result, expected = base::list(string = '\'say  hi \' ; "a"', pos = base::c(6, 9)))
+    # end detection of the characters of string that are between quotes
+    # replacement of the matches of pattern between quotes
+    testthat::expect_equal(object = saferDev:::.in_quotes_replacement(string = "f(1)", pattern = "\\(", no_regex_pattern = "(", replacement = " ", perl = TRUE, lib_path = NULL, error_text = ""), expected = base::list(string = "f(1)", pos = NULL)) # no match between quotes
+    testthat::expect_equal(object = saferDev:::.in_quotes_replacement(string = " ", pattern = pattern1, no_regex_pattern = no_regex_pattern1, replacement = replacement1, perl = TRUE, lib_path = NULL, error_text = ""), expected = base::list(string = " ", pos = NULL)) # no match
+    # end replacement of the matches of pattern between quotes
     # if( ! base::is.null(x = pos)){
     testthat::expect_no_error(.in_quotes_replacement(string = str1, pattern = pattern1, no_regex_pattern = no_regex_pattern1, replacement = replacement1, perl = TRUE, lib_path = NULL, error_text = ""))
-    testthat::expect_error(.in_quotes_replacement(string = str1, pattern = "\\)", no_regex_pattern = "(", replacement = ")", perl = TRUE, lib_path = NULL, error_text = ""))
+    testthat::expect_error(.in_quotes_replacement(string = str1, pattern = "\\)", no_regex_pattern = "(", replacement = ")", perl = TRUE, lib_path = NULL, error_text = ""), regexp = "INTERNAL ERROR 1", fixed = TRUE)
     # end if( ! base::is.null(x = pos)){
     #### end main code
     ## end tests (ordered by arg appearance and conditions in the code)
@@ -284,6 +322,31 @@ testthat::test_that(".in_quotes_replacement()", {
     expect <-  list(string = "paste0(\"IAGE((\", paste0(1:3, collapse = \"_\"), \"A)B()_\\)\")", pos = c(42, 53))
     testthat::expect_equal(result, expect)
 
+    # regression tests (quotes and brackets, U58): all_args_here() relies on .in_quotes_replacement() to ignore the brackets and commas between quotes
+    # functions with apostrophes inside double quotes, double quotes inside simple quotes, escaped backslashes, brackets between quotes, a backquoted name with a bracket, raw strings followed by calls (on the same line and on the next line) and a comment with an apostrophe and a bracket: the corrected function must give the same result as the initial one
+    `my(var` <- "v"
+    text_quote <- 'function(x){\n    y <- base::paste0("it\'s (", x, ")") # it\'s a (comment\n    z <- base::paste0(\'say "hi" (\', y, ")", collapse = NULL, recycle0 = FALSE)\n    w <- r"(it\'s)"\n    base::paste0(z, w, "\'\\\\\'", "\'\\\'", "\\"(", `my(var`, r"(a"b)", base::sum(1, 2), "#", collapse = NULL)\n}'
+    fun_quote1 <- base::eval(expr = base::parse(file = "", n = NULL, text = text_quote, prompt = "?", keep.source = TRUE, srcfile = base::srcfilecopy(filename = "<text>", lines = text_quote, timestamp = base::Sys.time(), isFile = FALSE), encoding = "unknown")[[1]], envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL)) # with source references (code printed as written)
+    fun_quote2 <- base::eval(expr = base::parse(file = "", n = NULL, text = base::deparse(expr = fun_quote1, width.cutoff = 60L, backtick = TRUE, control = base::c("keepNA", "keepInteger", "niceNames", "showAttributes"), nlines = -1L), prompt = "?", keep.source = FALSE, srcfile = NULL, encoding = "unknown")[[1]], envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL)) # without source references (code printed deparsed)
+    fun_expected <- base::eval(expr = base::parse(file = "", n = NULL, text = 'function(x){\n    y <- base::paste0("it\'s (", x, ")", collapse = NULL, recycle0 = FALSE)\n    z <- base::paste0(\'say "hi" (\', y, ")", collapse = NULL, recycle0 = FALSE)\n    w <- r"(it\'s)"\n    base::paste0(z, w, "\'\\\\\'", "\'\\\'", "\\"(", `my(var`, r"(a"b)", base::sum(1, 2, na.rm = FALSE), "#", collapse = NULL, recycle0 = FALSE)\n}', prompt = "?", keep.source = FALSE, srcfile = NULL, encoding = "unknown")[[1]], envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL))
+    for(i1 in base::seq_len(length.out = 2)){
+        fun_quote <- base::list(fun_quote1, fun_quote2)[[i1]]
+        result <- base::suppressMessages(expr = saferDev::all_args_here(x = fun_quote, table_export = FALSE, fun_export = FALSE, out_path = base::tempdir(check = FALSE), df_name = "res.tsv", overwrite = FALSE, safer_check = FALSE, lib_path = NULL, error_text = ""), classes = "message")
+        testthat::expect_true(object = base::is.function(x = result))
+        base::environment(fun = result) <- base::environment(fun = fun_quote)
+        testthat::expect_identical(object = result(1), expected = fun_quote(1))
+        testthat::expect_identical(object = base::deparse(expr = base::body(fun = result), width.cutoff = 60L, backtick = TRUE, control = base::c("keepNA", "keepInteger", "niceNames", "showAttributes"), nlines = -1L), expected = base::deparse(expr = base::body(fun = fun_expected), width.cutoff = 60L, backtick = TRUE, control = base::c("keepNA", "keepInteger", "niceNames", "showAttributes"), nlines = -1L)) # all the calls completed, without modification of the strings
+    }
+    # functions of R packages that stopped all_args_here() with INTERNAL ERROR 3 of .fun_args_pos()
+    result <- base::tryCatch(expr = {base::suppressWarnings(expr = base::suppressMessages(expr = saferDev::all_args_here(x = stats:::quantile.default, table_export = FALSE, fun_export = FALSE, out_path = base::tempdir(check = FALSE), df_name = "res.tsv", overwrite = FALSE, safer_check = FALSE, lib_path = NULL, error_text = ""), classes = "message"), classes = "warning") ; "NO ERROR"}, error = function(e){base::conditionMessage(c = e)}) # error expected, because the calls of quantile.default are not preceded by their package
+    testthat::expect_false(object = base::grepl(x = result, pattern = "INTERNAL ERROR", ignore.case = FALSE, perl = FALSE, fixed = TRUE, useBytes = FALSE))
+    fun_title_case <- base::suppressWarnings(expr = base::suppressMessages(expr = saferDev::colons_check(x = tools::toTitleCase, export = FALSE, out_path = base::tempdir(check = FALSE), safer_check = FALSE, lib_path = NULL, error_text = ""), classes = "message"), classes = "warning") # package prefixes added first, as required by all_args_here()
+    testthat::expect_true(object = base::is.function(x = fun_title_case))
+    testthat::expect_no_error(object = result <- base::suppressWarnings(expr = base::suppressMessages(expr = saferDev::all_args_here(x = fun_title_case, table_export = FALSE, fun_export = FALSE, out_path = base::tempdir(check = FALSE), df_name = "res.tsv", overwrite = FALSE, safer_check = FALSE, lib_path = NULL, error_text = ""), classes = "message"), classes = "warning"), message = NULL, class = NULL)
+    testthat::expect_true(object = base::is.function(x = result))
+    tempo_s <- base::c("the quick brown fox", "an R package (for data) in 2026", "it's a 'quoted' title: and more")
+    testthat::expect_identical(object = result(text = tempo_s), expected = tools::toTitleCase(text = tempo_s)) # the corrected function gives the same result as the initial one
+    # end regression tests (quotes and brackets, U58)
     ## end other tests
     rm(list = ls()) # to avoid a warning that block CRAN tests 
 })

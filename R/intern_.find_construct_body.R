@@ -1,16 +1,16 @@
 #' @title Find Construct Body
 #' @description
-#' Locate the body expression of a construct (\code{if}, \code{else}, \code{for}, \code{while}, \code{repeat}, \code{function} or lambda \code{\\(x)}) in the parse data of the checked code, for the construction of the modified function by \code{\link{curly_bracket_check}}. The body is the last \code{expr} child of the construct expression: for \code{if}, the condition \code{expr} comes first, the \code{then} body follows, and the \code{else} body (if any) is the last \code{expr} child; for \code{for}, the \code{forcond} (which owns the parentheses) comes before the body \code{expr}; for \code{while}, \code{repeat}, \code{function} and lambdas, the body is also the last \code{expr} child.
+#' Locates the body expression of a construct (\code{if}, \code{else}, \code{for}, \code{while}, \code{repeat}, \code{function} or lambda \code{\\(x)}) in the parse data of the checked code, for the construction of the modified function by \code{\link{curly_bracket_check}}. The candidate children of the construct expression are those whose token is \code{expr}, or \code{expr_or_assign_or_help} for a body written with \code{=} (e.g., \code{if(x) y = 1}). The \code{forcond} of a \code{for}, which owns the parentheses, is not a candidate. The body is the last candidate, except the \code{then} body of an \code{if} with an \code{else}, which is the second-to-last.
 #' @param pd Data frame returned by \code{utils::getParseData()} on the code of the checked function.
 #' @param kid Single integer: row index in \code{pd} of the terminal token of the construct keyword (\code{IF}, \code{FOR}, \code{WHILE}, \code{REPEAT}, \code{FUNCTION}, \code{LAMBDA} or \code{'\\\\'}).
 #' @param body_start Single integer: row index in \code{pd} of the terminal token just before the body (the closing \code{)} of the condition or of the arguments, or the keyword itself for \code{repeat}).
 #' @param body_start_pos Single integer: position in \code{term_rows} of the terminal token \code{body_start}.
 #' @param term_rows Integer vector of the terminal rows (comments excluded) of \code{pd}, sorted by source position (as computed in \code{\link{curly_bracket_check}}).
-#' @param else_branch Single logical value. Is the requested body the \code{else} branch of the \code{if()} construct? If \code{TRUE}, the last \code{expr} child of the construct expression is returned; if \code{FALSE}, the \code{then} body of an \code{if} with an \code{else} (the second-to-last \code{expr} child) is returned.
-#' @param else_tok Single integer or \code{NULL}: row index in \code{pd} of the \code{ELSE} token (used only when \code{else_branch = TRUE}, for the internal error messages).
-#' @param lib_path Vector of characters specifying the absolute pathways of the directories containing the required packages for the function, if not in the default directories. Useful when R packages are not installed in the default directories because of lack of admin rights. More precisely, \code{lib_path} is passed through the \code{new} argument of \code{.libPaths()} so that the new library paths are \code{unique(c(new, .Library.site, .Library))}. Warning: \code{.libPaths()} is restored to the initial paths, after function execution. Ignored if \code{NULL} (default): only the pathways specified by the current \code{.libPaths()} are used for package calling.
-#' @param error_text Single character string used to add information in error messages returned by the function, notably if the function is inside other functions, which is practical for debugging. Example: \code{error_text = " INSIDE <PACKAGE_1>::<FUNCTION_1> INSIDE <PACKAGE_2>::<FUNCTION_2>."}. If \code{NULL}, converted into \code{""}.
-#' @returns A list with: \code{row}, row index in \code{pd} of the body \code{expr} (whose \code{col1}/\code{line1} give the position just before the body, and \code{col2}/\code{line2} the position of the last character of the body); \code{line1}, the line of the body start; \code{col1}, the column (character offset) of the body start.
+#' @param else_branch Single logical value. Is the requested body the \code{else} branch of the \code{if()} construct? If \code{TRUE}, the last candidate child of the construct expression (see Description) is returned. If \code{FALSE}, the body of the construct is returned: the second-to-last candidate for the \code{then} body of an \code{if} with an \code{else}, the last one otherwise.
+#' @param else_tok Single integer or \code{NULL}: row index in \code{pd} of the \code{ELSE} token (required when \code{else_branch = TRUE}).
+#' @param lib_path Vector of character strings or \code{NULL}: the \code{lib_path} value of the calling exported function, only passed on to \code{arg_check()}. No default value.
+#' @param error_text Single character string added to the error messages to name the calling functions (\code{embed_error_text} of the calling function). \code{NULL} is converted into \code{""}. No default value.
+#' @returns A list with: \code{row}, the row index in \code{pd} of the body expression (\code{line1} and \code{col1}: first character of the body; \code{line2} and \code{col2}: last character of the body); \code{line1} and \code{col1}, the line and the column of the body start. The columns are those of \code{utils::getParseData()}, where a TAB counts as a jump to the next multiple of 8: the caller converts them into character positions of the code line.
 #' @details
 #' Warnings:
 #' \itemize{
@@ -18,7 +18,7 @@
 #'   \item In the safer Backbone section \code{"######## check of the required functions from the required packages"}, add also \code{saferDev::arg_check} when checking for the presence of \code{.find_construct_body}.
 #' }
 #' @author \href{mailto:gael.millot@pasteur.fr}{Gael Millot}
-#' @author Haiding Wang  
+#' @author Haiding Wang
 #' @author Yushi Han
 #' @keywords internal
 .find_construct_body <- function(
@@ -45,8 +45,12 @@
     #### end internal error report link
 
     #### function name
-    tempo_settings <- base::as.list(x = base::match.call(definition = base::sys.function(which = base::sys.parent(n = 0)), call = base::sys.call(which = base::sys.parent(n = 0)), expand.dots = FALSE, envir = base::parent.frame(n = 2L))) # warning: I have written n = 0 to avoid error when a safer function is inside another functions. In addition, arguments values retrieved are not evaluated base::match.call, but this is solved with get() below
-    function_name <- base::paste0(tempo_settings[[1]], "()", collapse = NULL, recycle0 = FALSE) 
+    tempo_settings <- base::as.list(x = base::match.call(definition = base::sys.function(which = base::sys.parent(n = 0)), call = base::sys.call(which = base::sys.parent(n = 0)), expand.dots = FALSE, envir = )) # warning: I have written n = 0 to avoid error when a safer function is inside another functions. In addition, arguments values retrieved are not evaluated base::match.call, but this is solved with get() below. Warning: envir is left empty on purpose: its default parent.frame(2L), evaluated inside base::match.call(), is the frame that called this function, where the ... of the call are expanded (base::parent.frame(n = 2L) written here would be evaluated one frame too far, which breaks the calls through base::lapply(), base::vapply(), base::apply(), base::Filter() or a function forwarding ..., base::sapply() only working by coincidence)
+    if(base::is.name(x = tempo_settings[[1]]) | base::is.call(x = tempo_settings[[1]])){
+        function_name <- base::paste0(tempo_settings[[1]], "()", collapse = NULL, recycle0 = FALSE)
+    }else{
+        function_name <- "<anonymous function>()" # the function was called through its object (e.g., base::do.call(what = <function object>, args = ...)), so that its name is not in the call
+    }
     # function name with "()" paste, which split into a vector of three: c("::()", "package ()", "function ()") if "package::function()" is used.
     if(function_name[1] == "::()" | function_name[1] == ":::()"){
         function_name <- function_name[3]
@@ -185,7 +189,7 @@
         "body_start_pos", 
         "term_rows", 
         "else_branch"
-        # "else_tok", # inactivated because can be NULL (used only for the internal error messages of the else branch)
+        # "else_tok", # inactivated because can be NULL (required only when else_branch is TRUE, see the INTERNAL ERROR 7 below)
         # "lib_path", # inactivated because can be NULL
         # "error_text" # inactivated because NULL converted to "" above
     )
@@ -316,7 +320,7 @@
     tempo <- saferDev::arg_check(data = body_start_pos, class = "integer", typeof = NULL, mode = NULL, length = 1, prop = FALSE, options = NULL, double_as_integer_allowed = TRUE, all_options_in_data = FALSE, na_contain = FALSE, neg_values = TRUE, inf_values = TRUE, print = FALSE, data_name = NULL, data_arg = TRUE, safer_check = FALSE, lib_path = lib_path, error_text = embed_error_text) ; base::eval(expr = ee, envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL)) # class = "integer" and not class = NULL to avoid factors
     tempo <- saferDev::arg_check(data = term_rows, class = "integer", typeof = NULL, mode = NULL, length = NULL, prop = FALSE, options = NULL, double_as_integer_allowed = TRUE, all_options_in_data = FALSE, na_contain = FALSE, neg_values = TRUE, inf_values = TRUE, print = FALSE, data_name = NULL, data_arg = TRUE, safer_check = FALSE, lib_path = lib_path, error_text = embed_error_text) ; base::eval(expr = ee, envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL)) # class = "integer" and not class = NULL to avoid factors
     tempo <- saferDev::arg_check(data = else_branch, class = NULL, typeof = "logical", mode = NULL, length = 1, prop = FALSE, options = NULL, double_as_integer_allowed = FALSE, all_options_in_data = FALSE, na_contain = FALSE, neg_values = TRUE, inf_values = TRUE, print = FALSE, data_name = NULL, data_arg = TRUE, safer_check = FALSE, lib_path = lib_path, error_text = embed_error_text) ; base::eval(expr = ee, envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL))
-    if( ! base::is.null(x = else_tok)){ # else_tok can be NULL (used only for the internal error messages of the else branch)
+    if( ! base::is.null(x = else_tok)){ # else_tok can be NULL (required only when else_branch is TRUE, see the INTERNAL ERROR 7 below)
         tempo <- saferDev::arg_check(data = else_tok, class = "integer", typeof = NULL, mode = NULL, length = 1, prop = FALSE, options = NULL, double_as_integer_allowed = TRUE, all_options_in_data = FALSE, na_contain = FALSE, neg_values = TRUE, inf_values = TRUE, print = FALSE, data_name = NULL, data_arg = TRUE, safer_check = FALSE, lib_path = lib_path, error_text = embed_error_text) ; base::eval(expr = ee, envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL)) # class = "integer" and not class = NULL to avoid factors
     }
     # lib_path already checked above
@@ -359,18 +363,18 @@
     #### main code
     # the construct expression: parent of the construct keyword token
     kid_expr_id <- pd$parent[kid]
-    # expr children of the construct expression, sorted by source position
-    child_expr_rows <- base::which(x = pd$parent == kid_expr_id & pd$token == "expr", arr.ind = FALSE, useNames = TRUE)
+    # candidate children of the construct expression: the expr tokens, and the expr_or_assign_or_help token of a body written with = (e.g., if(x) y = 1), which is not an expr token. Only a body can be written with = (a condition, a for sequence or a default argument value written with = cannot be parsed)
+    child_expr_rows <- base::which(x = pd$parent == kid_expr_id & pd$token %in% base::c("expr", "expr_or_assign_or_help"), arr.ind = FALSE, useNames = TRUE)
     if(base::length(x = child_expr_rows) == 0 || (else_branch == TRUE && base::is.null(x = else_tok))){
         # nocov start
-        # codecov inactivated because it is an internal control of code writing, impossible to cover with argument values (the caller always passes consistent parse data of parseable R code).
+        # codecov inactivated because it is an internal control of code writing, unreachable from the code checkers (curly_bracket_check() always passes consistent parse data of parseable R code); reachable only through inconsistent arguments of this internal function.
         tempo_cat <- base::paste0("INTERNAL ERROR 7 IN ", intern_error_text_start, "NO EXPR CHILD FOUND FOR THE CONSTRUCT\ntoken: ", pd$token[kid], intern_error_text_end, collapse = NULL, recycle0 = FALSE) ; base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL)
         # nocov end
     }
     child_expr_rows <- child_expr_rows[base::order(pd$line1[child_expr_rows], pd$col1[child_expr_rows], na.last = TRUE, decreasing = FALSE, method = "radix")] # multi-key sort: no arithmetic key, to avoid integer overflow on long functions (line * 1e6 overflows R integers for line > 2147)
-    # the else body is the last expr child of the if() construct expression
-    # the then body of an if() with an else is the second-to-last expr child (the last one is the else body)
-    # for all the other constructs (for, while, repeat, function, lambda), the body is the last expr child
+    # candidate children sorted by source position: the else body is the last candidate of the if() construct expression
+    # the then body of an if() with an else is the second-to-last candidate (the last one is the else body)
+    # for all the other constructs (for, while, repeat, function, lambda), the body is the last candidate
     body_row <- child_expr_rows[base::ifelse(test = else_branch == TRUE, yes = base::length(x = child_expr_rows), no = base::ifelse(test = base::any(pd$token[base::which(x = pd$parent == kid_expr_id, arr.ind = FALSE, useNames = TRUE)] == "ELSE", na.rm = FALSE), yes = base::length(x = child_expr_rows) - 1, no = base::length(x = child_expr_rows)))]
     # sanity comment (not enforced because the caller computes body_start itself from the same parse data, so a discrepancy here would mean a parse-tree misunderstanding solved upstream): the body expr must start after the body_start token (the ) of the condition or of the arguments, or the repeat keyword itself) and its first terminal token must be the first terminal token after body_start
     body_line1 <- pd$line1[body_row]

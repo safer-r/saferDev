@@ -53,7 +53,7 @@ testthat::test_that("lambda_check()", {
     # all the arguments must be present
     testthat::expect_error(lambda_check(x = NULL, export = FALSE, out_path = ".", safer_check = TRUE, lib_path = NULL, error_text = ""))
     testthat::expect_error(lambda_check(x = fun14, export = NULL, out_path = ".", safer_check = TRUE, lib_path = NULL, error_text = ""))
-    testthat::expect_error(lambda_check(x = fun14, export = FALSE, out_path = NULL, safer_check = TRUE, lib_path = NULL, error_text = ""))
+    testthat::expect_no_error(lambda_check(x = fun14, export = FALSE, out_path = NULL, safer_check = TRUE, lib_path = NULL, error_text = "")) # out_path can be NULL
     testthat::expect_error(lambda_check(x = fun14, export = FALSE, out_path = ".", safer_check = NULL, lib_path = NULL, error_text = ""))
     testthat::expect_no_error(lambda_check(x = fun14, export = FALSE, out_path = ".", safer_check = TRUE, lib_path = NULL, error_text = ""))
     testthat::expect_no_error(lambda_check(x = fun14, export = FALSE, out_path = ".", safer_check = TRUE, lib_path = NULL, error_text = NULL))
@@ -269,15 +269,19 @@ testthat::test_that("lambda_check()", {
     testthat::expect_message(lambda_check(x = fun7, safer_check = FALSE, lib_path = NULL, error_text = "", export = TRUE, out_path = base::paste0(tempo_dir2, "\\")), regexp = "MODIFIED CODE EXPORTED IN:", fixed = TRUE) # trailing backslash tolerated
     base::unlink(x = base::file.path(tempo_dir2, "fun7_safer.R"))
     # non-existing out_path
-    testthat::expect_error(lambda_check(x = fun7, safer_check = FALSE, lib_path = NULL, error_text = "", export = TRUE, out_path = "PATH_NOT_GOOD"), regexp = "DIRECTORY PATH INDICATED IN THE out_path ARGUMENT DOES NOT EXISTS", fixed = TRUE)
+    testthat::expect_error(lambda_check(x = fun7, safer_check = FALSE, lib_path = NULL, error_text = "", export = TRUE, out_path = "PATH_NOT_GOOD"), regexp = "DIRECTORY PATH INDICATED IN THE out_path ARGUMENT DOES NOT EXIST:\n", fixed = TRUE)
     # out_path ignored when export = FALSE (even a non-existing path)
     testthat::expect_no_error(lambda_check(x = fun7, safer_check = FALSE, lib_path = NULL, error_text = "", export = FALSE, out_path = "PATH_NOT_GOOD"))
-    # out_path = NULL is invalid, whatever the value of export
-    testthat::expect_error(lambda_check(x = fun7, safer_check = FALSE, lib_path = NULL, error_text = "", export = TRUE, out_path = NULL), regexp = "CANNOT BE NULL", fixed = TRUE)
-    testthat::expect_error(lambda_check(x = fun7, safer_check = FALSE, lib_path = NULL, error_text = "", export = FALSE, out_path = NULL), regexp = "CANNOT BE NULL", fixed = TRUE)
+    # out_path = NULL (default): accepted when export = FALSE, error when export = TRUE
+    testthat::expect_null(object = base::formals(fun = saferDev::lambda_check, envir = base::parent.frame(n = 1))$out_path, label = "out_path default is NULL")
+    testthat::expect_true(object = base::is.function(x = base::suppressMessages(expr = saferDev::lambda_check(x = fun7, export = FALSE, out_path = NULL, safer_check = FALSE, lib_path = NULL, error_text = ""), classes = "message")), label = "export = FALSE with out_path = NULL returns the corrected function")
+    testthat::expect_error(object = saferDev::lambda_check(x = fun7, export = TRUE, out_path = NULL, safer_check = FALSE, lib_path = NULL, error_text = ""), regexp = "THE out_path ARGUMENT MUST BE THE PATHWAY OF AN EXISTING FOLDER WHEN export IS TRUE", fixed = TRUE)
+    testthat::expect_error(object = saferDev::lambda_check(x = fun14, export = TRUE, out_path = NULL, safer_check = FALSE, lib_path = NULL, error_text = ""), regexp = "THE out_path ARGUMENT MUST BE THE PATHWAY OF AN EXISTING FOLDER WHEN export IS TRUE", fixed = TRUE) # even if nothing has to be corrected
     # export = TRUE with out_path = ".": exports in the current working directory (restored after the test, whatever the test result)
     tempo_wd <- base::getwd()
-    base::eval(expr = base::bquote(expr = on.exit(expr = base::setwd(dir = .(tempo_wd)), add = TRUE, after = FALSE), where = base::environment(fun = NULL)))
+    # warning: base::do.call() registers the on.exit() on the evaluation of the test code, whereas an on.exit() written inside base::eval() is registered on this eval() call, and thus runs at once. The path is written into the registered expression, which therefore does not need the tempo_wd object, removed by the final base::rm()
+    base::do.call(what = base::on.exit, args = base::list(expr = base::bquote(expr = base::setwd(dir = .(tempo_wd)), where = base::environment(fun = NULL), splice = FALSE), add = TRUE, after = FALSE), quote = FALSE, envir = base::environment(fun = NULL))
+    testthat::expect_true(object = base::grepl(x = base::paste0(base::deparse(expr = base::sys.on.exit(), width.cutoff = 500L, backtick = FALSE, control = base::c("keepNA", "keepInteger", "niceNames", "showAttributes"), nlines = -1L), collapse = " ", recycle0 = FALSE), pattern = "base::setwd(dir = ", ignore.case = FALSE, perl = FALSE, fixed = TRUE, useBytes = FALSE), label = "restoration of the working directory registered on exit of the test code")
     base::setwd(dir = tempo_dir)
     testthat::expect_message(lambda_check(x = fun7, safer_check = FALSE, lib_path = NULL, error_text = "", export = TRUE, out_path = "."), regexp = "MODIFIED CODE EXPORTED IN:", fixed = TRUE)
     testthat::expect_true(object = base::file.exists(base::file.path(tempo_dir, "fun7_safer.R")))
@@ -340,8 +344,58 @@ testthat::test_that("lambda_check()", {
     fun_com <- eval(parse(text = "function(x){\n    # comment 1\n    h <- \\(z) z  # comment 2\n    h(x)\n}", keep.source = TRUE))
     fun_com_safer <- base::suppressMessages(expr = lambda_check(x = fun_com, safer_check = FALSE, lib_path = NULL, error_text = "", export = FALSE, out_path = "."), classes = "message")
     testthat::expect_identical(object = utils::capture.output(fun_com_safer, file = NULL, append = FALSE, type = NULL, split = FALSE)[1:5], expected = base::c("function(x){", "    # comment 1", "    h <- function(z) z  # comment 2", "    h(x)", "}"))
+    # TAB-indented functions: utils::getParseData() counts a TAB as a jump to the next multiple of 8, converted into character positions before the replacements (the TABs are kept)
+    txt_tab1 <- "function(x){\n\tbase::sapply(X = x, FUN = \\(y){ y * 2 })\n}" # TAB indentation
+    txt_tab2 <- "function(x){\n\tz <- \"a\tb\" ; base::sapply(X = x, FUN = \\(y){ y * 2 })\n}" # TAB inside a string before the lambda
+    txt_tab3 <- "function(x){\n    z <- 1 ;\tbase::sapply(X = x, FUN =\t\\(y){ y * 2 })\n}" # TABs in the middle of a line
+    fun_tab1 <- base::eval(expr = base::parse(file = "", n = NULL, text = txt_tab1, prompt = "?", keep.source = TRUE, srcfile = base::srcfilecopy(filename = "<text>", lines = txt_tab1, timestamp = base::Sys.time(), isFile = FALSE), encoding = "unknown")[[1]], envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL))
+    fun_tab2 <- base::eval(expr = base::parse(file = "", n = NULL, text = txt_tab2, prompt = "?", keep.source = TRUE, srcfile = base::srcfilecopy(filename = "<text>", lines = txt_tab2, timestamp = base::Sys.time(), isFile = FALSE), encoding = "unknown")[[1]], envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL))
+    fun_tab3 <- base::eval(expr = base::parse(file = "", n = NULL, text = txt_tab3, prompt = "?", keep.source = TRUE, srcfile = base::srcfilecopy(filename = "<text>", lines = txt_tab3, timestamp = base::Sys.time(), isFile = FALSE), encoding = "unknown")[[1]], envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL))
+    fun_tab1_safer <- base::suppressMessages(expr = saferDev::lambda_check(x = fun_tab1, export = FALSE, out_path = NULL, safer_check = FALSE, lib_path = NULL, error_text = ""), classes = "message")
+    fun_tab2_safer <- base::suppressMessages(expr = saferDev::lambda_check(x = fun_tab2, export = FALSE, out_path = NULL, safer_check = FALSE, lib_path = NULL, error_text = ""), classes = "message")
+    fun_tab3_safer <- base::suppressMessages(expr = saferDev::lambda_check(x = fun_tab3, export = FALSE, out_path = NULL, safer_check = FALSE, lib_path = NULL, error_text = ""), classes = "message")
+    testthat::expect_identical(object = utils::capture.output(fun_tab1_safer, file = NULL, append = FALSE, type = NULL, split = FALSE)[1:3], expected = base::c("function(x){", "\tbase::sapply(X = x, FUN = function(y){ y * 2 })", "}"), label = "TAB indentation: lambda replaced at the right position, TABs kept")
+    testthat::expect_identical(object = utils::capture.output(fun_tab2_safer, file = NULL, append = FALSE, type = NULL, split = FALSE)[2], expected = "\tz <- \"a\tb\" ; base::sapply(X = x, FUN = function(y){ y * 2 })", label = "TAB inside a string before the lambda")
+    testthat::expect_identical(object = utils::capture.output(fun_tab3_safer, file = NULL, append = FALSE, type = NULL, split = FALSE)[2], expected = "    z <- 1 ;\tbase::sapply(X = x, FUN =\tfunction(y){ y * 2 })", label = "TABs in the middle of a line")
+    testthat::expect_identical(object = fun_tab1_safer(1:2), expected = fun_tab1(1:2))
+    testthat::expect_identical(object = fun_tab2_safer(1:2), expected = fun_tab2(1:2))
+    testthat::expect_identical(object = fun_tab3_safer(1:2), expected = fun_tab3(1:2))
+    msgs_tab <- testthat::capture_messages(code = saferDev::lambda_check(x = fun_tab2, export = FALSE, out_path = NULL, safer_check = FALSE, lib_path = NULL, error_text = ""))
+    res_tab <- base::unlist(x = base::strsplit(x = msgs_tab, split = "\n", fixed = TRUE, perl = FALSE, useBytes = FALSE), recursive = TRUE, use.names = FALSE)
+    res_tab <- res_tab[base::grepl(x = res_tab, pattern = "^[0-9]+\\t", ignore.case = FALSE, perl = TRUE, fixed = FALSE, useBytes = FALSE)]
+    testthat::expect_identical(object = res_tab, expected = "2\t\\(y)\t\tz <- \"a\tb\" ; base::sapply(X = x, FUN = \\(y){ y * 2 })", label = "TAB inside a string: table of the findings (symbol column)")
+    tempo_dir_tab <- base::tempfile(pattern = "lambda_tab_", tmpdir = base::tempdir(check = FALSE), fileext = "")
+    base::dir.create(path = tempo_dir_tab, showWarnings = FALSE, recursive = FALSE, mode = "0777")
+    base::suppressMessages(expr = saferDev::lambda_check(x = fun_tab1, export = TRUE, out_path = tempo_dir_tab, safer_check = FALSE, lib_path = NULL, error_text = ""), classes = "message")
+    testthat::expect_identical(object = base::readLines(con = base::file.path(tempo_dir_tab, "fun_tab1_safer.R", fsep = "/"), n = -1L, ok = TRUE, warn = FALSE, encoding = "unknown", skipNul = FALSE), expected = base::c("fun_tab1_safer <- function(x){", "\tbase::sapply(X = x, FUN = function(y){ y * 2 })", "}"), label = "TAB indentation: exported file")
+    base::unlink(x = tempo_dir_tab, recursive = TRUE, force = TRUE, expand = TRUE)
+    # attributes of x, printed by R after its code: saferDev error that names them, raised before the code of x is recovered as printed (formerly, the printed attribute values were analyzed as code of x: raw error of the parser when they do not parse, e.g., a character string printed with its [1] prefix, and silent analysis when they parse, e.g., a formula or a function, with wrong results)
+    fun_attr <- function(x){x}
+    base::attr(x = fun_attr, which = "note") <- "hello"
+    txt_attr_parse <- "function(x){ base::sapply(X = 1:3, FUN = \\(y){ y * 2 }) }"
+    fun_attr_parse <- base::eval(expr = base::parse(file = "", n = NULL, text = txt_attr_parse, prompt = "?", keep.source = TRUE, srcfile = base::srcfilecopy(filename = "<text>", lines = txt_attr_parse, timestamp = base::Sys.time(), isFile = FALSE), encoding = "unknown")[[1]], envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL)) # lambda kept in the printed code (srcref)
+    base::attr(x = fun_attr_parse, which = "fo") <- y ~ x
+    base::attr(x = fun_attr_parse, which = "fn") <- function(z){z}
+    testthat::expect_error(object = saferDev::lambda_check(x = fun_attr, export = FALSE, out_path = NULL, safer_check = FALSE, lib_path = NULL, error_text = ""), regexp = "ERROR IN saferDev::lambda_check().\n\nTHE FUNCTION OF THE x ARGUMENT CANNOT BE CHECKED: ITS ATTRIBUTES, PRINTED BY R AFTER ITS CODE, WOULD BE ANALYZED AS CODE.\nATTRIBUTES TO REMOVE BEFORE THE CHECK (E.G., base::attr(x = fun, which = \"note\") <- NULL):\nnote\n\n", class = NULL, fixed = TRUE, inherit = TRUE, info = NULL, label = NULL)
+    testthat::expect_error(object = saferDev::lambda_check(x = fun_attr_parse, export = FALSE, out_path = NULL, safer_check = FALSE, lib_path = NULL, error_text = ""), regexp = "ERROR IN saferDev::lambda_check().\n\nTHE FUNCTION OF THE x ARGUMENT CANNOT BE CHECKED: ITS ATTRIBUTES, PRINTED BY R AFTER ITS CODE, WOULD BE ANALYZED AS CODE.\nATTRIBUTES TO REMOVE BEFORE THE CHECK (E.G., base::attr(x = fun, which = \"note\") <- NULL):\nfo\nfn\n\n", class = NULL, fixed = TRUE, inherit = TRUE, info = NULL, label = NULL)
+    # export = TRUE: error, and no file written (formerly, the printed attribute lines were written in the exported file, which could then not be sourced)
+    tempo_dir_attr <- base::tempfile(pattern = "lambda_attr_", tmpdir = base::tempdir(check = FALSE), fileext = "")
+    base::dir.create(path = tempo_dir_attr, showWarnings = FALSE, recursive = FALSE, mode = "0777")
+    testthat::expect_error(object = saferDev::lambda_check(x = fun_attr_parse, export = TRUE, out_path = tempo_dir_attr, safer_check = FALSE, lib_path = NULL, error_text = ""), regexp = "ERROR IN saferDev::lambda_check().\n\nTHE FUNCTION OF THE x ARGUMENT CANNOT BE CHECKED: ITS ATTRIBUTES, PRINTED BY R AFTER ITS CODE, WOULD BE ANALYZED AS CODE.\nATTRIBUTES TO REMOVE BEFORE THE CHECK (E.G., base::attr(x = fun, which = \"note\") <- NULL):\nfo\nfn\n\n", class = NULL, fixed = TRUE, inherit = TRUE, info = NULL, label = NULL)
+    testthat::expect_false(object = base::file.exists(base::file.path(tempo_dir_attr, "fun_attr_parse_safer.R", fsep = "/")), info = NULL, label = NULL)
+    base::unlink(x = tempo_dir_attr, recursive = TRUE, force = TRUE, expand = TRUE)
+    # remedy given by the error message: once the attribute is removed, the function is checked. The attributes that print() does not show (source references and comment) are accepted
+    base::attr(x = fun_attr, which = "note") <- NULL
+    testthat::expect_null(object = base::suppressMessages(expr = saferDev::lambda_check(x = fun_attr, export = FALSE, out_path = NULL, safer_check = FALSE, lib_path = NULL, error_text = ""), classes = "message"), info = NULL, label = NULL)
+    base::comment(x = fun_attr) <- "comment not printed by print()"
+    testthat::expect_null(object = base::suppressMessages(expr = saferDev::lambda_check(x = fun_attr, export = FALSE, out_path = NULL, safer_check = FALSE, lib_path = NULL, error_text = ""), classes = "message"), info = NULL, label = NULL)
+    # object inserted in the body of x that is not printed as R code: saferDev error with the message of the R parser (only its position is compared, because the parser messages are translated), instead of the raw error of the parser
+    fun_body_env <- function(x){x}
+    base::body(fun = fun_body_env, envir = base::environment(fun = fun_body_env)) <- base::call(name = "identity", base::new.env(hash = TRUE, parent = base::emptyenv(), size = 29L))
+    testthat::expect_error(object = saferDev::lambda_check(x = fun_body_env, export = FALSE, out_path = NULL, safer_check = FALSE, lib_path = NULL, error_text = ""), regexp = "ERROR IN saferDev::lambda_check().\n\nTHE FUNCTION OF THE x ARGUMENT CANNOT BE CHECKED: ITS CODE, AS PRINTED BY R, DOES NOT PARSE (E.G., AN OBJECT INSERTED IN ITS BODY THAT IS NOT PRINTED AS R CODE, LIKE AN ENVIRONMENT, PRINTED <environment>).\n\nERROR MESSAGE OF THE R PARSER:\n", class = NULL, fixed = TRUE, inherit = TRUE, info = NULL, label = NULL)
+    testthat::expect_error(object = saferDev::lambda_check(x = fun_body_env, export = FALSE, out_path = NULL, safer_check = FALSE, lib_path = NULL, error_text = ""), regexp = "\n\nERROR MESSAGE OF THE R PARSER:\n<text>:[0-9]+:[0-9]+: ", class = NULL, fixed = FALSE, inherit = TRUE, info = NULL, label = NULL)
     ## end other tests
-    # restore the working directory (on.exit() of the test block is evaluated after the rm() above)
+    # restore the working directory now (the on.exit() registered above also restores it, at the end of the test block, after the rm() below)
     base::setwd(dir = tempo_wd)
     base::rm(list = base::ls()) # to avoid a warning that block CRAN tests
 

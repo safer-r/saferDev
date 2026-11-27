@@ -145,6 +145,23 @@ testthat::test_that("super_assign_check()", {
     testthat::expect_identical(object = base::vapply(X = res_fields, FUN = function(x){x[1]}, FUN.VALUE = base::character(length = 1)), expected = base::c("3", "5"), label = "fun12 exact line numbers (string and comment of line 4 not reported)")
     testthat::expect_identical(object = base::vapply(X = res_fields, FUN = function(x){x[2]}, FUN.VALUE = base::character(length = 1)), expected = base::c("<<-", "->>"), label = "fun12 exact symbols")
     testthat::expect_true(object = base::grepl(x = res[1], pattern = "base::lapply(X = 1:2, FUN = function(i){ y <<- i })", fixed = TRUE), label = "fun12 code column")
+    # TAB-indented function: same report as with space indentation (only the line numbers of the parse data are used)
+    txt_tab <- "function(x){\n\ty <- \"a\tb\" ;\tz <<- 1\n\tx ->> w\n}"
+    fun_tab <- base::eval(expr = base::parse(file = "", n = NULL, text = txt_tab, prompt = "?", keep.source = TRUE, srcfile = base::srcfilecopy(filename = "<text>", lines = txt_tab, timestamp = base::Sys.time(), isFile = FALSE), encoding = "unknown")[[1]], envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL))
+    msg_tab <- base::tryCatch(expr = saferDev::super_assign_check(x = fun_tab, safer_check = FALSE, lib_path = NULL, error_text = ""), error = function(e){base::conditionMessage(c = e)}, finally = NULL)
+    res_tab <- base::unlist(x = base::strsplit(x = msg_tab, split = "\n", fixed = TRUE, perl = FALSE, useBytes = FALSE), recursive = TRUE, use.names = FALSE)
+    res_tab <- res_tab[base::grepl(x = res_tab, pattern = "^[0-9]+\\t", ignore.case = FALSE, perl = TRUE, fixed = FALSE, useBytes = FALSE)]
+    testthat::expect_identical(object = res_tab, expected = base::c("2\t<<-\t\ty <- \"a\tb\" ;\tz <<- 1", "3\t->>\t\tx ->> w"), label = "TAB-indented function: lines, symbols and code")
+    # superassignment written as a call of the operator, backquoted or between quotes, with or without base::, reported with the symbol <<-, whether x has source references or not (formerly, not reported with source references, nor after base:: without them). Not the string "<<-" elsewhere, nor the call of a list component named <<-
+    txt_call <- "function(x){\n    base::`<<-`(y, 1)\n    `<<-`(z, 2) ; \"<<-\"(w, 3)\n    base::\x27<<-\x27(v, 4)\n    u <- base::c(\"<<-\", x$`<<-`(1))\n}"
+    fun_call_src <- base::eval(expr = base::parse(file = "", n = NULL, text = txt_call, prompt = "?", keep.source = TRUE, srcfile = base::srcfilecopy(filename = "<text>", lines = txt_call, timestamp = base::Sys.time(), isFile = FALSE), encoding = "unknown")[[1]], envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL))
+    fun_call_nosrc <- base::eval(expr = base::parse(file = "", n = NULL, text = txt_call, prompt = "?", keep.source = FALSE, srcfile = NULL, encoding = "unknown")[[1]], envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL)) # printed deparsed: z <<- 2 and w <<- 3, but base::`<<-`(y, 1) and base::"<<-"(v, 4) unchanged
+    msg_call_src <- base::tryCatch(expr = saferDev::super_assign_check(x = fun_call_src, safer_check = FALSE, lib_path = NULL, error_text = ""), error = function(e){base::conditionMessage(c = e)}, finally = NULL)
+    msg_call_nosrc <- base::tryCatch(expr = saferDev::super_assign_check(x = fun_call_nosrc, safer_check = FALSE, lib_path = NULL, error_text = ""), error = function(e){base::conditionMessage(c = e)}, finally = NULL)
+    res_call_src <- base::unlist(x = base::strsplit(x = msg_call_src, split = "\n", fixed = TRUE, perl = FALSE, useBytes = FALSE), recursive = TRUE, use.names = FALSE)
+    res_call_nosrc <- base::unlist(x = base::strsplit(x = msg_call_nosrc, split = "\n", fixed = TRUE, perl = FALSE, useBytes = FALSE), recursive = TRUE, use.names = FALSE)
+    testthat::expect_identical(object = res_call_src[base::grepl(x = res_call_src, pattern = "^[0-9]+\\t", ignore.case = FALSE, perl = TRUE, fixed = FALSE, useBytes = FALSE)], expected = base::c("2\t<<-\t\tbase::`<<-`(y, 1)", "3\t<<-\t\t`<<-`(z, 2) ; \"<<-\"(w, 3)", "3\t<<-\t\t`<<-`(z, 2) ; \"<<-\"(w, 3)", "4\t<<-\t\tbase::\x27<<-\x27(v, 4)"), info = NULL, label = "operator called as a function, with source references", expected.label = NULL)
+    testthat::expect_identical(object = res_call_nosrc[base::grepl(x = res_call_nosrc, pattern = "^[0-9]+\\t", ignore.case = FALSE, perl = TRUE, fixed = FALSE, useBytes = FALSE)], expected = base::c("3\t<<-\t\tbase::`<<-`(y, 1)", "4\t<<-\t\tz <<- 2", "5\t<<-\t\tw <<- 3", "6\t<<-\t\tbase::\"<<-\"(v, 4)"), info = NULL, label = "operator called as a function, without source references", expected.label = NULL)
     #### end main code
 
     ## end tests (ordered by arg appearance and conditions in the code)
@@ -152,6 +169,24 @@ testthat::test_that("super_assign_check()", {
     ## other tests
     # the error is the same through the package call
     testthat::expect_error(saferDev::super_assign_check(x = fun10, safer_check = FALSE, lib_path = NULL, error_text = ""), regexp = "INSIDE fun10(), THE SUPERASSIGNMENT", fixed = TRUE)
+    # attributes of x, printed by R after its code: saferDev error that names them, raised before the code of x is recovered as printed (formerly, the printed attribute values were analyzed as code of x: raw error of the parser when they do not parse, e.g., a character string printed with its [1] prefix, and silent analysis when they parse, e.g., a formula or a function, with wrong results)
+    fun_attr <- function(x){x}
+    base::attr(x = fun_attr, which = "note") <- "hello"
+    fun_attr_parse <- function(x){x}
+    base::attr(x = fun_attr_parse, which = "fo") <- y ~ x
+    base::attr(x = fun_attr_parse, which = "fn") <- function(z){z}
+    testthat::expect_error(object = saferDev::super_assign_check(x = fun_attr, safer_check = FALSE, lib_path = NULL, error_text = ""), regexp = "ERROR IN saferDev::super_assign_check().\n\nTHE FUNCTION OF THE x ARGUMENT CANNOT BE CHECKED: ITS ATTRIBUTES, PRINTED BY R AFTER ITS CODE, WOULD BE ANALYZED AS CODE.\nATTRIBUTES TO REMOVE BEFORE THE CHECK (E.G., base::attr(x = fun, which = \"note\") <- NULL):\nnote\n\n", class = NULL, fixed = TRUE, inherit = TRUE, info = NULL, label = NULL)
+    testthat::expect_error(object = saferDev::super_assign_check(x = fun_attr_parse, safer_check = FALSE, lib_path = NULL, error_text = ""), regexp = "ERROR IN saferDev::super_assign_check().\n\nTHE FUNCTION OF THE x ARGUMENT CANNOT BE CHECKED: ITS ATTRIBUTES, PRINTED BY R AFTER ITS CODE, WOULD BE ANALYZED AS CODE.\nATTRIBUTES TO REMOVE BEFORE THE CHECK (E.G., base::attr(x = fun, which = \"note\") <- NULL):\nfo\nfn\n\n", class = NULL, fixed = TRUE, inherit = TRUE, info = NULL, label = NULL)
+    # remedy given by the error message: once the attribute is removed, the function is checked. The attributes that print() does not show (source references and comment) are accepted
+    base::attr(x = fun_attr, which = "note") <- NULL
+    testthat::expect_null(object = base::suppressMessages(expr = saferDev::super_assign_check(x = fun_attr, safer_check = FALSE, lib_path = NULL, error_text = ""), classes = "message"), info = NULL, label = NULL)
+    base::comment(x = fun_attr) <- "comment not printed by print()"
+    testthat::expect_null(object = base::suppressMessages(expr = saferDev::super_assign_check(x = fun_attr, safer_check = FALSE, lib_path = NULL, error_text = ""), classes = "message"), info = NULL, label = NULL)
+    # object inserted in the body of x that is not printed as R code: saferDev error with the message of the R parser (only its position is compared, because the parser messages are translated), instead of the raw error of the parser
+    fun_body_env <- function(x){x}
+    base::body(fun = fun_body_env, envir = base::environment(fun = fun_body_env)) <- base::call(name = "identity", base::new.env(hash = TRUE, parent = base::emptyenv(), size = 29L))
+    testthat::expect_error(object = saferDev::super_assign_check(x = fun_body_env, safer_check = FALSE, lib_path = NULL, error_text = ""), regexp = "ERROR IN saferDev::super_assign_check().\n\nTHE FUNCTION OF THE x ARGUMENT CANNOT BE CHECKED: ITS CODE, AS PRINTED BY R, DOES NOT PARSE (E.G., AN OBJECT INSERTED IN ITS BODY THAT IS NOT PRINTED AS R CODE, LIKE AN ENVIRONMENT, PRINTED <environment>).\n\nERROR MESSAGE OF THE R PARSER:\n", class = NULL, fixed = TRUE, inherit = TRUE, info = NULL, label = NULL)
+    testthat::expect_error(object = saferDev::super_assign_check(x = fun_body_env, safer_check = FALSE, lib_path = NULL, error_text = ""), regexp = "\n\nERROR MESSAGE OF THE R PARSER:\n<text>:[0-9]+:[0-9]+: ", class = NULL, fixed = FALSE, inherit = TRUE, info = NULL, label = NULL)
     ## end other tests
 
     base::rm(list = base::ls()) # to avoid a warning that block CRAN tests

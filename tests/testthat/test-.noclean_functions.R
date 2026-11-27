@@ -35,10 +35,10 @@ testthat::test_that(".noclean_functions()", {
     int2 <- c(15, 25)
     int3 <- c(15, 25000)
     str1 <- c("gregexpr", "regmatches")
-    str2 <- c("matches <- ",  "matched_strings <- " )
-    str3 <- c("matches <- ",  "matched_strings$" )
+    str2 <- c("        matches <- ",  "        matched_strings <- " ) # code of the lines before the function names
+    str3 <- c("        matches <- ",  "matched_strings$" )
     str4 <- c("gregexpr", "roc00")
-    str5 <- c("matches <- ",  "tempo.cat <- base::paste0('IAGE\nLENGTHS OF ")
+    str5 <- c("        matches <- ",  "        tempo.cat <- base::paste0(\"IAGE\nLENGTHS OF ")
     mat1 <- base::matrix(-1:3)
     factor1 <- base::as.factor(str1)
     expr1 <- expression(1)
@@ -255,12 +255,46 @@ testthat::test_that(".noclean_functions()", {
     result <- .noclean_functions(col1 =  int2, col2 = str4, col3 = str5, ini = ini1, lib_path = NULL, error_text = "")
     expected <- c(FALSE, TRUE)
     testthat::expect_equal(result, expected)
+    # quotes read as the R parser does: apostrophe inside double quotes, double quotes inside simple quotes, comment, quotes over several lines, backquoted name, call after $ and space before (
+    ini2 <- base::c(
+        'y <- "it\'s" ; z <- \'say "hi" to paste(x)\' ; sum(1)', 
+        'message("can\'t (do)") ; s <- sum(x) # it\'s', 
+        't <- "multi', 
+        'line paste(x)" ; `my(var` <- mean(x)', 
+        'u <- a$fun(1) ; v <- paste (2)'
+    )
+    result <- saferDev:::.noclean_functions(
+        col1 = base::c(1, 1, 2, 2, 4, 4, 4, 5, 5), 
+        col2 = base::c("paste", "sum", "message", "sum", "paste", "my", "mean", "fun", "paste"), 
+        col3 = base::c('y <- "it\'s" ; z <- \'say "hi" to ', 'y <- "it\'s" ; z <- \'say "hi" to paste(x)\' ; ', "", 'message("can\'t (do)") ; s <- ', "line ", 'line paste(x)" ; `', 'line paste(x)" ; `my(var` <- ', "u <- a$", "u <- a$fun(1) ; v <- "), 
+        ini = ini2, 
+        lib_path = NULL, 
+        error_text = ""
+    )
+    testthat::expect_equal(object = result, expected = base::c(TRUE, FALSE, FALSE, FALSE, TRUE, TRUE, FALSE, TRUE, FALSE))
+    testthat::expect_equal(object = saferDev:::.noclean_functions(col1 = 3, col2 = "t", col3 = "", ini = ini2, lib_path = NULL, error_text = ""), expected = FALSE) # no ( after the name in its line
     # end detection of functions between quotes
     #### end main code
 
     ## end tests (ordered by arg appearance and conditions in the code)
 
     ## other tests
+    # regression tests (quotes, U58): colons_check() relies on .noclean_functions() to ignore the function names between quotes
+    text_greet <- 'function(x){ y <- "it\'s" ; z <- \'say "hi" to paste(x)\' ; z }' # paste(x) between quotes, after an apostrophe inside double quotes
+    fun_greet <- base::eval(expr = base::parse(file = "", n = NULL, text = text_greet, prompt = "?", keep.source = TRUE, srcfile = base::srcfilecopy(filename = "<text>", lines = text_greet, timestamp = base::Sys.time(), isFile = FALSE), encoding = "unknown")[[1]], envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL))
+    testthat::expect_null(object = base::suppressMessages(expr = saferDev::colons_check(x = fun_greet, export = FALSE, out_path = base::tempdir(check = FALSE), safer_check = FALSE, lib_path = NULL, error_text = ""), classes = "message"))
+    text_quote <- 'function(x){\n    base::message("can\'t use negative values") ; s <- sum(x) # it\'s sum(x)\n    t <- "multi\nline paste(x)" ; `my(var` <- mean(x)\n    base::return(s)\n}' # calls after an apostrophe inside double quotes, after a backquoted name with a bracket and in a string over several lines
+    fun_quote1 <- base::eval(expr = base::parse(file = "", n = NULL, text = text_quote, prompt = "?", keep.source = TRUE, srcfile = base::srcfilecopy(filename = "<text>", lines = text_quote, timestamp = base::Sys.time(), isFile = FALSE), encoding = "unknown")[[1]], envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL)) # with source references (code printed as written)
+    result <- base::suppressMessages(expr = saferDev::colons_check(x = fun_quote1, export = FALSE, out_path = base::tempdir(check = FALSE), safer_check = FALSE, lib_path = NULL, error_text = ""), classes = "message")
+    testthat::expect_equal(object = utils::capture.output(result, file = NULL, append = FALSE, type = "output", split = FALSE)[1:5], expected = base::c("function(x){", '    base::message("can\'t use negative values") ; s <- base::sum(x) # it\'s sum(x)', '    t <- "multi', 'line paste(x)" ; `my(var` <- base::mean(x)', "    base::return(s)"))
+    fun_quote2 <- base::eval(expr = base::parse(file = "", n = NULL, text = text_quote, prompt = "?", keep.source = FALSE, srcfile = NULL, encoding = "unknown")[[1]], envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL)) # without source references (code printed deparsed)
+    result <- base::suppressMessages(expr = saferDev::colons_check(x = fun_quote2, export = FALSE, out_path = base::tempdir(check = FALSE), safer_check = FALSE, lib_path = NULL, error_text = ""), classes = "message")
+    testthat::expect_true(object = base::any(base::grepl(x = utils::capture.output(result, file = NULL, append = FALSE, type = "output", split = FALSE), pattern = "s <- base::sum(x)", ignore.case = FALSE, perl = FALSE, fixed = TRUE, useBytes = FALSE), na.rm = TRUE))
+    testthat::expect_false(object = base::any(base::grepl(x = utils::capture.output(result, file = NULL, append = FALSE, type = "output", split = FALSE), pattern = "base::paste", ignore.case = FALSE, perl = FALSE, fixed = TRUE, useBytes = FALSE), na.rm = TRUE))
+    # functions of R packages with apostrophes inside double quotes
+    testthat::expect_true(object = base::is.function(x = base::suppressWarnings(expr = base::suppressMessages(expr = saferDev::colons_check(x = tools::toTitleCase, export = FALSE, out_path = base::tempdir(check = FALSE), safer_check = FALSE, lib_path = NULL, error_text = ""), classes = "message"), classes = "warning")))
+    testthat::expect_true(object = base::is.function(x = base::suppressWarnings(expr = base::suppressMessages(expr = saferDev::colons_check(x = stats:::quantile.default, export = FALSE, out_path = base::tempdir(check = FALSE), safer_check = FALSE, lib_path = NULL, error_text = ""), classes = "message"), classes = "warning")))
+    # end regression tests (quotes, U58)
     ## end other tests
     rm(list = ls()) # to avoid a warning that block CRAN tests 
 })

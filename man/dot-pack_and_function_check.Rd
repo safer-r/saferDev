@@ -7,18 +7,18 @@
 .pack_and_function_check(fun, lib_path, error_text)
 }
 \arguments{
-\item{fun}{Character vector of the names of the required functions, preceded by the name of the package they belong to, separated by a double or triple colon. Example: \code{c("ggplot2::geom_point", "grid::gpar")}.}
+\item{fun}{Character vector of the names of the required functions, preceded by the name of their package and \code{::} (or \code{:::} for function names starting with a dot). Example: \code{c("saferDev::arg_check", "saferDev:::.base_op_check")}.}
 
-\item{lib_path}{Vector of characters specifying the absolute pathways of the directories containing the required packages for the function, if not in the default directories. Useful when R packages are not installed in the default directories because of lack of admin rights. More precisely, \code{lib_path} is passed through the \code{new} argument of \code{.libPaths()} so that the new library paths are \code{unique(c(new, .Library.site, .Library))}. Warning: \code{.libPaths()} is restored to the initial paths, after function execution. Ignored if \code{NULL} (default): only the pathways specified by the current \code{.libPaths()} are used for package calling.}
+\item{lib_path}{Vector of character strings or \code{NULL}: the library folders where the packages are searched (the calling exported functions pass the current \code{.libPaths()}, which already contain their \code{lib_path}). If \code{NULL}, the current \code{.libPaths()} are used. No default value.}
 
-\item{error_text}{Single character string used to add information in error messages returned by the function, notably if the function is inside other functions, which is practical for debugging. Example: \code{error_text = " INSIDE <PACKAGE_1>::<FUNCTION_1> INSIDE <PACKAGE_2>::<FUNCTION_2>."}. If \code{NULL}, converted into \code{""}.}
+\item{error_text}{Single character string added to the error messages to name the calling functions (\code{embed_error_text} of the calling function). \code{NULL} is converted into \code{""}. No default value.}
 }
 \value{
-An error message if at least one of the checked packages is missing in \code{lib_path}, or if at least one of the checked functions is missing in the required package, nothing otherwise.
+\code{NULL}, invisibly. An error if at least one of the packages is not installed in \code{lib_path}, or if at least one of the functions is missing in its package.
 }
 \description{
-Check if 1) required functions are present in required packages and 2) required packages are installed locally.
-Simplified version of \code{saferDev::is_function_here()}, used as internal function for the other functions of the saferDev package.
+Check that the packages of \code{fun} are installed in \code{lib_path}, and that the functions of \code{fun} exist in the namespace of their package (exported or not).
+Simplified version of \code{saferDev::is_function_here()}, used by the other functions of the saferDev package.
 }
 \author{
 \href{mailto:gael.millot@pasteur.fr}{Gael Millot}

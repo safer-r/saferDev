@@ -5,126 +5,195 @@ title: "all_args_here(): more examples"
 
 ```{r, include = FALSE}
 knitr::opts_chunk$set(
-    error = TRUE, 
+    error = TRUE,
     collapse = FALSE,
     comment = "##"
 )
 ```
-
-```{r setup}
-library(saferDev)
-```
 <br>
 
-### Dataset
+### Datasets
 ```{r}
-source("https://raw.githubusercontent.com/safer-r/saferDev/main/dev/other/test2.R") # function.
-source("https://raw.githubusercontent.com/safer-r/.github/refs/heads/main/profile/backbone.R") # function.
+FUN0 <- function(x){ # function with a call written without its package.
+    mean(x)
+}
 FUN1 <- function(x, y){ # function.
     code_for_col <- base::as.vector(
         x = base::unlist(
             x = base::mapply(
                 FUN = function(x, y){
                     base::rep(
-                        x = y, 
+                        x = y,
                         base::length(x = x)
                     )
-                }, 
-                x = x, 
-                y = y, 
-                MoreArgs = NULL, 
-                SIMPLIFY = TRUE, 
+                },
+                x = x,
+                y = y,
+                MoreArgs = NULL,
+                SIMPLIFY = TRUE,
                 USE.NAMES = TRUE
-            ), 
-            recursive = TRUE, 
+            ),
+            recursive = TRUE,
             use.names = TRUE
-        ), 
+        ),
         mode = "any"
     )
     # The code below is written without carriage return on purpose.
-    code_for_col2 <- base::as.vector(x = base::unlist(x = base::mapply(FUN = function(x, y){base::rep(x = y, base::length(x = x))}, x = x, y = y))) 
+    code_for_col2 <- base::as.vector(x = base::unlist(x = base::mapply(FUN = function(x, y){base::rep(x = y, base::length(x = x))}, x = x, y = y)))
     middle_bracket <- base::do.call(what = base::c, args = code_for_col)
     middle_bracket2 <- base::do.call(what = base::c, args = code_for_col, quote = FALSE, envir = base::parent.frame())
 }
 FUN2 <- function(x, y){ # function.
     middle_bracket2 <- base::do.call(
-        what = base::c, 
-        args = code_for_col, 
-        quote = FALSE, 
+        what = base::c,
+        args = code_for_col,
+        quote = FALSE,
         envir = base::parent.frame()
     )
 }
+FUN3 <- function(x, m, d){ # function with calls that cannot be fully corrected.
+    a <- base::matrix(x, ncol = 2) # base::matrix() tests missing(nrow)
+    b <- base::diag(x) # base::diag() counts its arguments with nargs()
+    e <- stats::t.test(formula = y ~ g, data = d) # the method is chosen from the formula, x not written
+    f <- base::round(x) # round.POSIXt(), method for date-times, has no digits argument
+    base::rownames(m) <- base::paste0("r", 1:2) # target of an assignment
+}
+# Folder where the files are written.
+tempo_dir <- base::tempfile(pattern = "dir", tmpdir = base::tempdir(), fileext = "")
+base::dir.create(path = tempo_dir, showWarnings = TRUE, recursive = FALSE, mode = "0777")
 ```
 <br>
-
-
 
 ### Simple examples
 ```{r}
-# Example that returns an error.
-all_args_here(mean)
+# Example that returns an error: the calls must be written with their package (see colons_check()).
+saferDev::all_args_here(
+    x = FUN0,
+    table_export = FALSE,
+    fun_export = FALSE,
+    out_path = NULL,
+    df_name = "res.tsv",
+    overwrite = FALSE,
+    safer_check = TRUE,
+    lib_path = NULL,
+    error_text = ""
+)
 
-# Example that returns an error.
-all_args_here(test2)
-
-# Example indicating missing arguments.
-all_args_here(
-    x = FUN2
+# Example indicating missing arguments, and returning the modified function.
+saferDev::all_args_here(
+    x = FUN2,
+    table_export = FALSE,
+    fun_export = FALSE,
+    out_path = NULL,
+    df_name = "res.tsv",
+    overwrite = FALSE,
+    safer_check = TRUE,
+    lib_path = NULL,
+    error_text = ""
 )
 ```
 <br>
 
-### Arguments <code>table_export</code>, <code>fun_export</code>, <code>out_path</code>, <code>df_name</code> and <code>overwrite</code>
+### Empty values and corrections not applied
+The default value of `nrow` is not written into the `base::matrix()` call, because `base::matrix()` tests `missing(nrow)`: `nrow` gets an empty value, which keeps the result. The other calls are left unchanged, and listed with their reason in the `CORRECTIONS NOT APPLIED` message: `base::diag()` uses `nargs()`, `x = ` added to `stats::t.test()` would change the method used, `digits = 0` added to `base::round()` would fail for date-times, and `base::rownames()` is the target of an assignment:
 ```{r}
-# Print the results into the res.tsv file written in the "." path, 
-# and overwrite if res.tsv already exists in ".".
-all_args_here(
-    x = FUN2, 
-    table_export = TRUE, 
-    out_path = ".", 
-    df_name = "res.tsv", 
-    overwrite = TRUE
+saferDev::all_args_here(
+    x = FUN3,
+    table_export = FALSE,
+    fun_export = FALSE,
+    out_path = NULL,
+    df_name = "res.tsv",
+    overwrite = FALSE,
+    safer_check = TRUE,
+    lib_path = NULL,
+    error_text = ""
+)
+```
+Likewise, `graphics::plot(x)` and `graphics::plot(x = x)` are listed under `CORRECTIONS NOT APPLIED`, because the methods of `plot()` name their arguments differently: `plot.formula()` names the first one `formula`, and an added `y = ` would match `ylim` and `ylab` of `plot.table()`.
+<br>
+
+### Arguments <code>table_export</code>, <code>out_path</code>, <code>df_name</code> and <code>overwrite</code>
+```{r}
+# Write the table into the res.tsv file of the tempo_dir folder,
+# and overwrite res.tsv if it already exists in this folder.
+saferDev::all_args_here(
+    x = FUN2,
+    table_export = TRUE,
+    fun_export = FALSE,
+    out_path = tempo_dir,
+    df_name = "res.tsv",
+    overwrite = TRUE,
+    safer_check = TRUE,
+    lib_path = NULL,
+    error_text = ""
 )
 ```
 <br>
 
-### Argument <code>fun_export</code>: return or export the modified function
-When arguments are missing in the code of the submitted function, `all_args_here()` can return the corrected function (with the missing arguments written as proposed in the `$STATUS` column of the output data frame), or export its code into a `.R` file named with the submitted function name and `_safer` added at the end:
+### Argument <code>fun_export</code>: return or write the modified function
+When arguments are missing, `all_args_here()` returns the modified function (the missing arguments being inserted as proposed in the `$STATUS` column of the table), or writes it into a `.R` file named with the name of the submitted function and `_safer` added at the end:
 
 ```{r}
 # Returns the modified function, or NULL if nothing has to be modified.
-FUN2_safer <- all_args_here(
-    x = FUN2
-)
-FUN2_safer # modified function (or NULL when the code was already clean).
-
-# Export the modified function into the FUN2_safer.R file, in the "." path.
-all_args_here(
+FUN2_safer <- saferDev::all_args_here(
     x = FUN2,
+    table_export = FALSE,
+    fun_export = FALSE,
+    out_path = NULL,
+    df_name = "res.tsv",
+    overwrite = FALSE,
+    safer_check = TRUE,
+    lib_path = NULL,
+    error_text = ""
+)
+FUN2_safer # modified function.
+
+# Write the modified function into the FUN2_safer.R file of the tempo_dir folder.
+saferDev::all_args_here(
+    x = FUN2,
+    table_export = FALSE,
     fun_export = TRUE,
-    out_path = ".", 
-    overwrite = TRUE
+    out_path = tempo_dir,
+    df_name = "res.tsv",
+    overwrite = TRUE,
+    safer_check = TRUE,
+    lib_path = NULL,
+    error_text = ""
 )
 ```
-When `fun_export = TRUE`, the modified function is not returned by the function but only exported (the file is not created when no correction has been applied).
+When `fun_export = TRUE`, the modified function is not returned, but written into the file. No file is written if nothing is corrected.
 <br>
 
 ### Argument <code>safer_check</code>
 ```{r, echo = TRUE, error = TRUE}
-# Safer checkings are performed before main code running.
-all_args_here(
-    x = FUN2, 
-    safer_check = TRUE
+# Safer checks are performed before running the main code.
+saferDev::all_args_here(
+    x = FUN2,
+    table_export = FALSE,
+    fun_export = FALSE,
+    out_path = NULL,
+    df_name = "res.tsv",
+    overwrite = FALSE,
+    safer_check = TRUE,
+    lib_path = NULL,
+    error_text = ""
 )
 ```
 <br>
 
 ### Argument <code>lib_path</code>
 ```{r}
-# The "NOTGOOD" path does not exists.
-all_args_here(
-    x = FUN2,  
-    lib_path = "NOTGOOD"
+# The "NOTGOOD" path does not exist.
+saferDev::all_args_here(
+    x = FUN2,
+    table_export = FALSE,
+    fun_export = FALSE,
+    out_path = NULL,
+    df_name = "res.tsv",
+    overwrite = FALSE,
+    safer_check = TRUE,
+    lib_path = "NOTGOOD",
+    error_text = ""
 )
 ```
 <br>
@@ -132,9 +201,15 @@ all_args_here(
 ### Argument <code>error_text</code>
 ```{r}
 # Add a text in error messages returned by all_args_here().
-all_args_here(
-    x = FUN2, 
-    lib_path = "NOTGOOD", 
+saferDev::all_args_here(
+    x = FUN2,
+    table_export = FALSE,
+    fun_export = FALSE,
+    out_path = NULL,
+    df_name = "res.tsv",
+    overwrite = FALSE,
+    safer_check = TRUE,
+    lib_path = "NOTGOOD",
     error_text = " === TEXT ADDED ==="
 )
 ```
@@ -142,17 +217,16 @@ all_args_here(
 
 ### All the arguments
 ```{r}
-all_args_here(
+saferDev::all_args_here(
     x = FUN1, # R function.
-    table_export = FALSE, # export the data frame into a .tsv file?
-    fun_export = FALSE, # export the modified function into a .R file?
-    out_path = ".", # pathway of the folder where to export the data frame or the modified function.
-    df_name = "res.tsv", # name of the exported data frame file.
-    overwrite = FALSE, # overwrite potential files already existing in out_path?
+    table_export = FALSE, # write the table into a file?
+    fun_export = FALSE, # write the modified function into a .R file?
+    out_path = NULL, # folder where the files are written (required if table_export or fun_export is TRUE).
+    df_name = "res.tsv", # name of the file of the table.
+    overwrite = FALSE, # overwrite the files already existing in out_path?
     safer_check = TRUE, # perform some "safer" checks (see https://github.com/safer-r)?
     lib_path = NULL, # where the required packages are if not in the default directories.
     error_text = "" # add information in error messages returned by the function.
 )
-
 ```
 <br>

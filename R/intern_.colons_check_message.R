@@ -1,23 +1,24 @@
 #' @title Colons Check Message
 #' @description
-#' Create the message for the \code{colons_check()} function.
-#' @param list_fun List of names of all the functions.
-#' @param list_fun_pos List of positions of first character of names of all the functions in \code{ini}.
-#' @param line_nb Vector of integers of corresponding line numbers.
-#' @param ini Vector of strings of the initial function code analyzed.
-#' @param arg_user_setting2 List of argument user settings.
-#' @param text Either \code{"BASIC"} or \code{"OTHER"}.
-#' @param internal_fun_names Vector of strings of names of internal functions in the function code analyzed. Can be \code{NULL}.
-#' @param lib_path Vector of characters specifying the absolute pathways of the directories containing the required packages for the function, if not in the default directories. Useful when R packages are not installed in the default directories because of lack of admin rights. More precisely, \code{lib_path} is passed through the \code{new} argument of \code{.libPaths()} so that the new library paths are \code{unique(c(new, .Library.site, .Library))}. Warning: \code{.libPaths()} is restored to the initial paths, after function execution. Ignored if \code{NULL} (default): only the pathways specified by the current \code{.libPaths()} are used for package calling.
-#' @param error_text Single character string used to add information in error messages returned by the function, notably if the function is inside other functions, which is practical for debugging. Example: \code{error_text = " INSIDE <PACKAGE_1>::<FUNCTION_1> INSIDE <PACKAGE_2>::<FUNCTION_2>."}. If \code{NULL}, converted into \code{""}.
+#' Create the message of \code{colons_check()} for one kind of functions (basic R functions or other functions).
+#' @param list_fun List of vectors of function names, one compartment per code line (see \code{line_nb}).
+#' @param list_fun_pos List of the positions, in the lines of \code{ini}, of the first character of the names of \code{list_fun} (same structure as \code{list_fun}).
+#' @param list_fun_internal List of logical vectors, with the structure of \code{list_fun}: \code{TRUE} for the calls of internal functions (see \code{text}).
+#' @param line_nb Vector of integers: line numbers (in \code{ini}) of the compartments of \code{list_fun}.
+#' @param ini Vector of strings of the analyzed code of the checked function, one string per line.
+#' @param arg_user_setting2 List of the argument settings of the calling function: its \code{x} element (name of the checked function) is written in the message.
+#' @param text Single character string, \code{"BASIC"} or \code{"OTHER"}: kind of functions, written in the message. With \code{"OTHER"}, the calls of internal functions (see \code{list_fun_internal}) are removed from \code{list_fun}, and \code{internal_fun_names} is listed in the message.
+#' @param internal_fun_names Vector of strings: names of the internal functions called in the analyzed code. Can be \code{NULL}.
+#' @param lib_path Vector of character strings or \code{NULL}: the \code{lib_path} value of the calling exported function, only passed on to \code{arg_check()} (directly or through the internal functions called). No default value.
+#' @param error_text Single character string added to the error messages to name the calling functions (\code{embed_error_text} of the calling function). \code{NULL} is converted into \code{""}. No default value.
 #' @returns
 #' A list:
 #' \itemize{
-#'   \item \code{output.cat}: the message (string).
-#'   \item \code{colon_not_here}: logical vector. Does \code{list_fun} contain function names without \code{::} or \code{:::} ?
-#'   \item \code{col1}: integer vector of the line numbers (in \code{ini}) of the function names without \code{::} or \code{:::}, after removal of the functions between quotes or preceded by \code{$}, and of the internal functions when \code{text = "OTHER"}. Length 0 if no problem detected.
-#'   \item \code{col2}: character vector of the corresponding function names. Length 0 if no problem detected.
-#'   \item \code{col3}: character vector of the corresponding strings before the function names. Length 0 if no problem detected.
+#'   \item \code{output.cat}: the message (string), \code{NULL} if nothing is reported.
+#'   \item \code{colon_not_here}: logical vector, one value per function name of \code{list_fun} (after the removal of the internal functions when \code{text = "OTHER"}): is the name written without \code{::} or \code{:::} before it? \code{FALSE} if \code{list_fun} is empty.
+#'   \item \code{col1}: integer vector of the line numbers (in \code{ini}) of the function names without \code{::} or \code{:::}, after the removal of the names between quotes or preceded by \code{$} or \code{@}, and of the internal functions when \code{text = "OTHER"}. Length 0 if nothing is reported.
+#'   \item \code{col2}: character vector of the corresponding function names. Length 0 if nothing is reported.
+#'   \item \code{col3}: character vector of the corresponding strings before the function names. Length 0 if nothing is reported.
 #' }
 #' @details
 #' Warnings:
@@ -26,13 +27,14 @@
 #'   \item In main safer functions, in the section \code{"######## check of the required functions from the required packages"}, add also these 2 functions when checking for the presence of \code{.colons_check_message}.
 #' }
 #' @author \href{mailto:gael.millot@pasteur.fr}{Gael Millot}
-#' @author Haiding Wang  
+#' @author Haiding Wang
 #' @author Yushi Han
 #' @keywords internal
 .colons_check_message <- function(
     # in internal functions, all arguments are without value on purpose
     list_fun, 
     list_fun_pos, 
+    list_fun_internal, 
     line_nb, 
     ini, 
     arg_user_setting2, 
@@ -42,10 +44,10 @@
     error_text # warning: in internal functions, error_text without default value returns a R classical non traced error message (specific of internal functions since classical functions are error_text = "")
 ){
     # EXAMPLE (because the CRAN does not accept examples for unexported functions)
-    # .colons_check_message(list_fun = list(c2 = "UseMethod"), list_fun_pos = list(c2 = 1), line_nb = 2, ini = c("function (x, ...) ", "UseMethod(\"mean\")"), arg_user_setting2 = list(x = "mean"), text = "BASIC", internal_fun_names = NULL, lib_path = NULL, error_text = " INSIDE P1::F1")
+    # .colons_check_message(list_fun = list(c2 = "UseMethod"), list_fun_pos = list(c2 = 1), list_fun_internal = list(c2 = FALSE), line_nb = 2, ini = c("function (x, ...) ", "UseMethod(\"mean\")"), arg_user_setting2 = list(x = "mean"), text = "BASIC", internal_fun_names = NULL, lib_path = NULL, error_text = " INSIDE P1::F1")
     # DEBUGGING
-    # list_fun = in_basic_fun ; list_fun_pos = in_basic_fun_names_pos ; line_nb = in_basic_code_line_nb ; ini = out$code ; arg_user_setting2 = out$arg_user_setting ; text = "BASIC" ; internal_fun_names = out$internal_fun_names ; lib_path = lib_path ; error_text = " INSIDE P1::F1" 
-    # list_fun = in_other_fun ; list_fun_pos = in_other_fun_names_pos ; line_nb = in_other_code_line_nb ; ini = out$code ; arg_user_setting2 = out$arg_user_setting ;  text = "OTHER" ; internal_fun_names = out$internal_fun_names ; lib_path = lib_path ; error_text = " INSIDE P1::F1" 
+    # list_fun = in_basic_fun ; list_fun_pos = in_basic_fun_names_pos ; list_fun_internal = in_basic_fun_internal ; line_nb = in_basic_code_line_nb ; ini = out$code ; arg_user_setting2 = out$arg_user_setting ; text = "BASIC" ; internal_fun_names = internal_called ; lib_path = lib_path ; error_text = " INSIDE P1::F1" 
+    # list_fun = in_other_fun ; list_fun_pos = in_other_fun_names_pos ; list_fun_internal = in_other_fun_internal ; line_nb = in_other_code_line_nb ; ini = out$code ; arg_user_setting2 = out$arg_user_setting ;  text = "OTHER" ; internal_fun_names = internal_called ; lib_path = lib_path ; error_text = " INSIDE P1::F1" 
 
    #### package name
     package_name <- "saferDev" # write NULL if the function developed is not in a package
@@ -56,8 +58,12 @@
     #### end internal error report link
 
     #### function name
-    tempo_settings <- base::as.list(x = base::match.call(definition = base::sys.function(which = base::sys.parent(n = 0)), call = base::sys.call(which = base::sys.parent(n = 0)), expand.dots = FALSE, envir = base::parent.frame(n = 2L))) # warning: I have written n = 0 to avoid error when a safer function is inside another functions. In addition, arguments values retrieved are not evaluated base::match.call, but this is solved with get() below
-    function_name <- base::paste0(tempo_settings[[1]], "()", collapse = NULL, recycle0 = FALSE) 
+    tempo_settings <- base::as.list(x = base::match.call(definition = base::sys.function(which = base::sys.parent(n = 0)), call = base::sys.call(which = base::sys.parent(n = 0)), expand.dots = FALSE, envir = )) # warning: I have written n = 0 to avoid error when a safer function is inside another functions. In addition, arguments values retrieved are not evaluated base::match.call, but this is solved with get() below. Warning: envir is left empty on purpose: its default parent.frame(2L), evaluated inside base::match.call(), is the frame that called this function, where the ... of the call are expanded (base::parent.frame(n = 2L) written here would be evaluated one frame too far, which breaks the calls through base::lapply(), base::vapply(), base::apply(), base::Filter() or a function forwarding ..., base::sapply() only working by coincidence)
+    if(base::is.name(x = tempo_settings[[1]]) | base::is.call(x = tempo_settings[[1]])){
+        function_name <- base::paste0(tempo_settings[[1]], "()", collapse = NULL, recycle0 = FALSE)
+    }else{
+        function_name <- "<anonymous function>()" # the function was called through its object (e.g., base::do.call(what = <function object>, args = ...)), so that its name is not in the call
+    }
     # function name with "()" paste, which split into a vector of three: c("::()", "package ()", "function ()") if "package::function()" is used.
     if(function_name[1] == "::()" | function_name[1] == ":::()"){
         function_name <- function_name[3]
@@ -164,6 +170,7 @@
     no_def_args <- base::c(
         "list_fun", 
         "list_fun_pos", 
+        "list_fun_internal", 
         "line_nb", 
         "ini", 
         "arg_user_setting2", 
@@ -192,6 +199,7 @@
     tempo_arg <-base::c(
         "list_fun", 
         "list_fun_pos", 
+        "list_fun_internal", 
         "line_nb", 
         "ini", 
         "arg_user_setting2", 
@@ -219,6 +227,7 @@
     tempo_arg <-base::c(
         "list_fun", 
         "list_fun_pos", 
+        "list_fun_internal", 
         "line_nb", 
         "ini", 
         "arg_user_setting2", 
@@ -327,6 +336,7 @@
     # add as many lines as below, for each of your arguments of your function in development
     tempo <- saferDev::arg_check(data = list_fun, class = "list", typeof = NULL, mode = NULL, length = NULL, prop = FALSE, options = NULL, double_as_integer_allowed = FALSE, all_options_in_data = FALSE, na_contain = TRUE, neg_values = TRUE, inf_values = TRUE, print = FALSE, data_name = NULL, data_arg = TRUE, safer_check = FALSE, lib_path = lib_path, error_text = embed_error_text) ; base::eval(expr = ee, envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL)) # copy - paste this line as much as necessary
     tempo <- saferDev::arg_check(data = list_fun_pos, class = "list", typeof = NULL, mode = NULL, length = NULL, prop = FALSE, options = NULL, double_as_integer_allowed = FALSE, all_options_in_data = FALSE, na_contain = TRUE, neg_values = TRUE, inf_values = TRUE, print = FALSE, data_name = NULL, data_arg = TRUE, safer_check = FALSE, lib_path = lib_path,  error_text = embed_error_text) ; base::eval(expr = ee, envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL)) # copy - paste this line as much as necessary
+    tempo <- saferDev::arg_check(data = list_fun_internal, class = "list", typeof = NULL, mode = NULL, length = NULL, prop = FALSE, options = NULL, double_as_integer_allowed = FALSE, all_options_in_data = FALSE, na_contain = TRUE, neg_values = TRUE, inf_values = TRUE, print = FALSE, data_name = NULL, data_arg = TRUE, safer_check = FALSE, lib_path = lib_path,  error_text = embed_error_text) ; base::eval(expr = ee, envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL)) # copy - paste this line as much as necessary
     tempo <- saferDev::arg_check(data = line_nb, class = "integer", typeof = NULL, mode = NULL, length = NULL, prop = FALSE, options = NULL, double_as_integer_allowed = TRUE, all_options_in_data = FALSE, na_contain = TRUE, neg_values = TRUE, inf_values = TRUE, print = FALSE, data_name = NULL, data_arg = TRUE, safer_check = FALSE, lib_path = lib_path, error_text = embed_error_text) ; base::eval(expr = ee, envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL)) # class = "integer" and not class = NULL to avoid factors # copy - paste this line as much as necessary
     tempo <- saferDev::arg_check(data = ini, class = NULL, typeof = "character", mode = NULL, length = NULL, prop = FALSE, options = NULL, double_as_integer_allowed = FALSE, all_options_in_data = FALSE, na_contain = TRUE, neg_values = TRUE, inf_values = TRUE, print = FALSE, data_name = NULL, data_arg = TRUE, safer_check = FALSE, lib_path = lib_path,  error_text = embed_error_text) ; base::eval(expr = ee, envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL)) # copy - paste this line as much as necessary
     tempo <- saferDev::arg_check(data = arg_user_setting2, class = "list", typeof = NULL, mode = NULL, length = NULL, prop = FALSE, options = NULL, double_as_integer_allowed = FALSE, all_options_in_data = FALSE, na_contain = TRUE, neg_values = TRUE, inf_values = TRUE, print = FALSE, data_name = NULL, data_arg = TRUE, safer_check = FALSE, lib_path = lib_path,  error_text = embed_error_text) ; base::eval(expr = ee, envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL)) # copy - paste this line as much as necessary
@@ -422,6 +432,15 @@
         )
         base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL)
     }
+    if( ! (base::length(x = list_fun_internal) == base::length(x = list_fun) && base::all(base::lengths(x = list_fun_internal, use.names = FALSE) == base::lengths(x = list_fun, use.names = FALSE), na.rm = FALSE) && base::all(base::vapply(X = list_fun_internal, FUN = base::is.logical, FUN.VALUE = base::logical(length = 1), USE.NAMES = FALSE), na.rm = FALSE))){
+        tempo_cat <- base::paste0(
+            error_text_start, 
+            "THE list_fun_internal ARGUMENT MUST BE A LIST OF LOGICAL VECTORS, WITH THE STRUCTURE OF THE list_fun ARGUMENT.", 
+            collapse = NULL, 
+            recycle0 = FALSE
+        )
+        base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL)
+    }
     ######## end other checkings
 
     #### end second round of checking and data preparation
@@ -437,10 +456,8 @@
     # check the identical structure of list_fun and list_fun_pos
     ident_str <- function(list_fun, list_fun_pos, error_nb, intern_error_text_start, intern_error_text_end){
         if( ! (base::length(x = list_fun) == base::length(x = list_fun_pos) & base::all(base::sapply(X = list_fun, FUN = function(x){base::length(x = x)}, simplify = TRUE, USE.NAMES = TRUE) == base::sapply(X = list_fun_pos, FUN = function(x){base::length(x = x)}, simplify = TRUE, USE.NAMES = TRUE), na.rm = TRUE))){
-            # nocov start
-            # codecov inactivated because it is an internal control of code writing, impossible to cover with argument values.
+            # internal control, reached only by a direct call of this internal function with inconsistent arguments (see the tests)
             tempo_cat <- base::paste0("INTERNAL ERROR ", error_nb, " IN ", intern_error_text_start, "LISTS list_fun AND list_fun_pos SHOULD HAVE IDENTICAL STRUCTURES\nBUT LENGTHS ARE RESPECTIVELY:\n", base::length(x = list_fun), "\n", base::length(x = list_fun_pos), "\nAND NUMBER OF ELEMENT IN EACH COMPARTMENT ARE RESPECTIVELY:\n", base::paste0(base::sapply(X = list_fun, FUN = function(x){base::length(x = x)}, simplify = TRUE, USE.NAMES = TRUE), collapse = " ", recycle0 = FALSE), "\n", base::paste0(base::sapply(X = list_fun_pos, FUN = function(x){base::length(x = x)}, simplify = TRUE, USE.NAMES = TRUE), collapse = " ", recycle0 = FALSE), intern_error_text_end, collapse = NULL, recycle0 = FALSE) ; base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL)
-            # nocov end
         }
     }
     ident_str(
@@ -453,20 +470,9 @@
     # end check the identical structure of list_fun and list_fun_pos
     # remove internal functions in other functions (list_fun and list_fun_pos)
     if(text == "OTHER" & base::length(x = internal_fun_names) > 0){
-        empty_compart_log <- ! base::logical(length = base::length(x = list_fun)) # all TRUE at the beginning
-        for(i2 in base::seq_along(along.with = internal_fun_names)){
-            tempo_log <- base::lapply(X = list_fun, FUN = function(x){
-                x == internal_fun_names[i2]
-            })
-            if(i2 == 1){
-                intern_fun_log <- tempo_log
-            }else{
-                intern_fun_log <- base::mapply(FUN = function(x, y){x | y}, x = tempo_log, y = intern_fun_log, SIMPLIFY = FALSE, MoreArgs = NULL, USE.NAMES = TRUE)
-            }
-        }
-        # remove internal functions elements
-        list_fun <- base::mapply(FUN = function(x, y){y[ ! x]}, x = intern_fun_log, y = list_fun, SIMPLIFY = FALSE, MoreArgs = NULL, USE.NAMES = TRUE)
-        list_fun_pos <- base::mapply(FUN = function(x, y){y[ ! x]}, x = intern_fun_log, y = list_fun_pos, SIMPLIFY = FALSE, MoreArgs = NULL, USE.NAMES = TRUE)
+        # remove internal functions elements: the calls of list_fun_internal, and not all the calls of the names of internal_fun_names, which are internal functions only inside their scope (e.g., an argument t of a function defined inside the checked function does not prevent the check of the t() calls outside this function)
+        list_fun <- base::mapply(FUN = function(x, y){y[ ! x]}, x = list_fun_internal, y = list_fun, SIMPLIFY = FALSE, MoreArgs = NULL, USE.NAMES = TRUE)
+        list_fun_pos <- base::mapply(FUN = function(x, y){y[ ! x]}, x = list_fun_internal, y = list_fun_pos, SIMPLIFY = FALSE, MoreArgs = NULL, USE.NAMES = TRUE)
         # end remove internal functions elements
         ident_str(
             list_fun = list_fun, 
@@ -482,7 +488,7 @@
         line_nb <- line_nb[ ! tempo_log2]
         # end remove empty compartment
         output_cat <- base::paste0(
-            "INSIDE ", arg_user_setting2$x, ", ", base::ifelse(test = base::length(x = list_fun) == 0, yes = "ONLY", no = ""), "INTERNAL FUNCTION", base::ifelse(test = base::length(x = internal_fun_names) == 1, yes = "", no = "S"), " DETECTED:\n", 
+            "INSIDE ", arg_user_setting2$x, ", ", base::ifelse(test = base::length(x = list_fun) == 0, yes = "ONLY ", no = ""), "INTERNAL FUNCTION", base::ifelse(test = base::length(x = internal_fun_names) == 1, yes = "", no = "S"), " DETECTED:\n", 
             base::paste0(internal_fun_names, collapse = "\n", recycle0 = FALSE),
             collapse = "\n", recycle0 = FALSE
         )
@@ -497,10 +503,8 @@
         # pattern3 <- base::paste(base::paste0("(?<![A-Za-z0-9._])", fun.uni, "\\s*\\($"), collapse = "|") # same as pattern2 but used to know if the seeked function is at the end of the string
         basic_ini <- ini[line_nb]
         if( ! (base::length(x = list_fun) == base::length(x = list_fun_pos) & base::length(x = list_fun) == base::length(x = line_nb) & base::length(x = list_fun) == base::length(x = basic_ini))){
-            # nocov start
-            # codecov inactivated because it is an internal control of code writing, impossible to cover with argument values.
+            # internal control, reached only by a direct call of this internal function with inconsistent arguments (see the tests)
             tempo_cat <- base::paste0("INTERNAL ERROR 3 IN ", intern_error_text_start, "LENGTHS SHOULD BE IDENTICAL\nlist_fun: ", base::length(x = list_fun), "\nlist_fun_pos: ", base::length(x = list_fun_pos), "\nline_nb: ", base::length(x = line_nb), "\nbasic_ini: ", base::length(x = basic_ini), intern_error_text_end, collapse = NULL, recycle0 = FALSE) ; base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL)
-            # nocov end
         }
         res <- list_fun_pos
         for(i1 in base::seq_along(along.with = basic_ini)){
@@ -518,7 +522,7 @@
         if( ! base::all(base::sapply(X = res2, FUN = function(x){base::length(x = x)}, simplify = TRUE, USE.NAMES = TRUE) == base::sapply(X = res, FUN = function(x){base::length(x = x)}, simplify = TRUE, USE.NAMES = TRUE), na.rm = TRUE)){
             # nocov start
             # codecov inactivated because it is an internal control of code writing, impossible to cover with argument values.
-            tempo_cat <- base::paste0("INTERNAL ERROR 4 IN ", intern_error_text_start, "LENGTHS SHOULD BE IDENTICAL\nres2: ", base::paste0(base::sapply(X = res2, FUN = function(x){base::length(x = x)}, simplify = TRUE, USE.NAMES = TRUE), collapse = " ", recycle0 = FALSE), "\nres: ", base::paste0(base::sapply(X = res, FUN = function(x){base::length(x = x)}, simplify = TRUE, USE.NAMES = TRUE), collapse = " ", recycle0 = FALSE), intern_error_text_end, collapse = NULL, recycle0 = FALSE) : base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL)
+            tempo_cat <- base::paste0("INTERNAL ERROR 4 IN ", intern_error_text_start, "LENGTHS SHOULD BE IDENTICAL\nres2: ", base::paste0(base::sapply(X = res2, FUN = function(x){base::length(x = x)}, simplify = TRUE, USE.NAMES = TRUE), collapse = " ", recycle0 = FALSE), "\nres: ", base::paste0(base::sapply(X = res, FUN = function(x){base::length(x = x)}, simplify = TRUE, USE.NAMES = TRUE), collapse = " ", recycle0 = FALSE), intern_error_text_end, collapse = NULL, recycle0 = FALSE) ; base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL)
             # nocov end
         }
         colon_not_here <- base::lapply(X = res2, FUN = function(x){ ! x %in% "::"}) # no need to check for ":::" because base::nchar(x)-1 takes only :: if the strings ends by :::
@@ -538,7 +542,7 @@
                 tempo_cat <- base::paste0("INTERNAL ERROR 6 IN ", intern_error_text_start, "LENGTHS OF col1 (", base::length(x = col1), "), col2 (", base::length(x = col2), "), AND col3 (", base::length(x = col3), "), SHOULD BE EQUAL.", intern_error_text_end, collapse = NULL, recycle0 = FALSE) ; base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL)
                 # nocov end
             }
-            # removal of functions between quotes and after $
+            # removal of functions between quotes and after $ or @
             tempo_log <- .noclean_functions(
                 col1 = col1, 
                 col2 = col2, 
@@ -547,12 +551,13 @@
                 lib_path = lib_path, 
                 error_text = embed_error_text
             ) # function names are inside quotes or after $ ?
+            tempo_log <- tempo_log | base::grepl(x = col3, pattern = "[$@][[:space:]]*$", ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE) # function names after $ or @ (whatever is written before), like x$fun() or x@fun(): components or slots, not functions of a package (x@base::mean(1) does not parse). [[:space:]] because R also accepts tabs, form feeds and Unicode spaces between $ or @ and the name
             if(base::sum(tempo_log, na.rm = TRUE) > 0){
                 col1 <- col1[ ! tempo_log] # keep clean functions
                 col2 <- col2[ ! tempo_log] # keep clean functions
                 col3 <- col3[ ! tempo_log] # keep clean functions 
             }
-            # end removal of functions between quotes and after $
+            # end removal of functions between quotes and after $ or @
             if(base::length(x = col1) > 0){
                 tempo_pos <- base::paste0(col1, "\t", col2, "\t\t", col3, collapse = NULL, recycle0 = FALSE)
                 output_cat <- base::paste0(

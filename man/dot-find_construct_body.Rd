@@ -27,19 +27,19 @@
 
 \item{term_rows}{Integer vector of the terminal rows (comments excluded) of \code{pd}, sorted by source position (as computed in \code{\link{curly_bracket_check}}).}
 
-\item{else_branch}{Single logical value. Is the requested body the \code{else} branch of the \code{if()} construct? If \code{TRUE}, the last \code{expr} child of the construct expression is returned; if \code{FALSE}, the \code{then} body of an \code{if} with an \code{else} (the second-to-last \code{expr} child) is returned.}
+\item{else_branch}{Single logical value. Is the requested body the \code{else} branch of the \code{if()} construct? If \code{TRUE}, the last candidate child of the construct expression (see Description) is returned. If \code{FALSE}, the body of the construct is returned: the second-to-last candidate for the \code{then} body of an \code{if} with an \code{else}, the last one otherwise.}
 
-\item{else_tok}{Single integer or \code{NULL}: row index in \code{pd} of the \code{ELSE} token (used only when \code{else_branch = TRUE}, for the internal error messages).}
+\item{else_tok}{Single integer or \code{NULL}: row index in \code{pd} of the \code{ELSE} token (required when \code{else_branch = TRUE}).}
 
-\item{lib_path}{Vector of characters specifying the absolute pathways of the directories containing the required packages for the function, if not in the default directories. Useful when R packages are not installed in the default directories because of lack of admin rights. More precisely, \code{lib_path} is passed through the \code{new} argument of \code{.libPaths()} so that the new library paths are \code{unique(c(new, .Library.site, .Library))}. Warning: \code{.libPaths()} is restored to the initial paths, after function execution. Ignored if \code{NULL} (default): only the pathways specified by the current \code{.libPaths()} are used for package calling.}
+\item{lib_path}{Vector of character strings or \code{NULL}: the \code{lib_path} value of the calling exported function, only passed on to \code{arg_check()}. No default value.}
 
-\item{error_text}{Single character string used to add information in error messages returned by the function, notably if the function is inside other functions, which is practical for debugging. Example: \code{error_text = " INSIDE <PACKAGE_1>::<FUNCTION_1> INSIDE <PACKAGE_2>::<FUNCTION_2>."}. If \code{NULL}, converted into \code{""}.}
+\item{error_text}{Single character string added to the error messages to name the calling functions (\code{embed_error_text} of the calling function). \code{NULL} is converted into \code{""}. No default value.}
 }
 \value{
-A list with: \code{row}, row index in \code{pd} of the body \code{expr} (whose \code{col1}/\code{line1} give the position just before the body, and \code{col2}/\code{line2} the position of the last character of the body); \code{line1}, the line of the body start; \code{col1}, the column (character offset) of the body start.
+A list with: \code{row}, the row index in \code{pd} of the body expression (\code{line1} and \code{col1}: first character of the body; \code{line2} and \code{col2}: last character of the body); \code{line1} and \code{col1}, the line and the column of the body start. The columns are those of \code{utils::getParseData()}, where a TAB counts as a jump to the next multiple of 8: the caller converts them into character positions of the code line.
 }
 \description{
-Locate the body expression of a construct (\code{if}, \code{else}, \code{for}, \code{while}, \code{repeat}, \code{function} or lambda \code{\\(x)}) in the parse data of the checked code, for the construction of the modified function by \code{\link{curly_bracket_check}}. The body is the last \code{expr} child of the construct expression: for \code{if}, the condition \code{expr} comes first, the \code{then} body follows, and the \code{else} body (if any) is the last \code{expr} child; for \code{for}, the \code{forcond} (which owns the parentheses) comes before the body \code{expr}; for \code{while}, \code{repeat}, \code{function} and lambdas, the body is also the last \code{expr} child.
+Locates the body expression of a construct (\code{if}, \code{else}, \code{for}, \code{while}, \code{repeat}, \code{function} or lambda \code{\\(x)}) in the parse data of the checked code, for the construction of the modified function by \code{\link{curly_bracket_check}}. The candidate children of the construct expression are those whose token is \code{expr}, or \code{expr_or_assign_or_help} for a body written with \code{=} (e.g., \code{if(x) y = 1}). The \code{forcond} of a \code{for}, which owns the parentheses, is not a candidate. The body is the last candidate, except the \code{then} body of an \code{if} with an \code{else}, which is the second-to-last.
 }
 \details{
 Warnings:

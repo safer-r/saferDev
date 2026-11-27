@@ -7,6 +7,7 @@
 .colons_check_message(
   list_fun,
   list_fun_pos,
+  list_fun_internal,
   line_nb,
   ini,
   arg_user_setting2,
@@ -17,36 +18,38 @@
 )
 }
 \arguments{
-\item{list_fun}{List of names of all the functions.}
+\item{list_fun}{List of vectors of function names, one compartment per code line (see \code{line_nb}).}
 
-\item{list_fun_pos}{List of positions of first character of names of all the functions in \code{ini}.}
+\item{list_fun_pos}{List of the positions, in the lines of \code{ini}, of the first character of the names of \code{list_fun} (same structure as \code{list_fun}).}
 
-\item{line_nb}{Vector of integers of corresponding line numbers.}
+\item{list_fun_internal}{List of logical vectors, with the structure of \code{list_fun}: \code{TRUE} for the calls of internal functions (see \code{text}).}
 
-\item{ini}{Vector of strings of the initial function code analyzed.}
+\item{line_nb}{Vector of integers: line numbers (in \code{ini}) of the compartments of \code{list_fun}.}
 
-\item{arg_user_setting2}{List of argument user settings.}
+\item{ini}{Vector of strings of the analyzed code of the checked function, one string per line.}
 
-\item{text}{Either \code{"BASIC"} or \code{"OTHER"}.}
+\item{arg_user_setting2}{List of the argument settings of the calling function: its \code{x} element (name of the checked function) is written in the message.}
 
-\item{internal_fun_names}{Vector of strings of names of internal functions in the function code analyzed. Can be \code{NULL}.}
+\item{text}{Single character string, \code{"BASIC"} or \code{"OTHER"}: kind of functions, written in the message. With \code{"OTHER"}, the calls of internal functions (see \code{list_fun_internal}) are removed from \code{list_fun}, and \code{internal_fun_names} is listed in the message.}
 
-\item{lib_path}{Vector of characters specifying the absolute pathways of the directories containing the required packages for the function, if not in the default directories. Useful when R packages are not installed in the default directories because of lack of admin rights. More precisely, \code{lib_path} is passed through the \code{new} argument of \code{.libPaths()} so that the new library paths are \code{unique(c(new, .Library.site, .Library))}. Warning: \code{.libPaths()} is restored to the initial paths, after function execution. Ignored if \code{NULL} (default): only the pathways specified by the current \code{.libPaths()} are used for package calling.}
+\item{internal_fun_names}{Vector of strings: names of the internal functions called in the analyzed code. Can be \code{NULL}.}
 
-\item{error_text}{Single character string used to add information in error messages returned by the function, notably if the function is inside other functions, which is practical for debugging. Example: \code{error_text = " INSIDE <PACKAGE_1>::<FUNCTION_1> INSIDE <PACKAGE_2>::<FUNCTION_2>."}. If \code{NULL}, converted into \code{""}.}
+\item{lib_path}{Vector of character strings or \code{NULL}: the \code{lib_path} value of the calling exported function, only passed on to \code{arg_check()} (directly or through the internal functions called). No default value.}
+
+\item{error_text}{Single character string added to the error messages to name the calling functions (\code{embed_error_text} of the calling function). \code{NULL} is converted into \code{""}. No default value.}
 }
 \value{
 A list:
 \itemize{
-  \item \code{output.cat}: the message (string).
-  \item \code{colon_not_here}: logical vector. Does \code{list_fun} contain function names without \code{::} or \code{:::} ?
-  \item \code{col1}: integer vector of the line numbers (in \code{ini}) of the function names without \code{::} or \code{:::}, after removal of the functions between quotes or preceded by \code{$}, and of the internal functions when \code{text = "OTHER"}. Length 0 if no problem detected.
-  \item \code{col2}: character vector of the corresponding function names. Length 0 if no problem detected.
-  \item \code{col3}: character vector of the corresponding strings before the function names. Length 0 if no problem detected.
+  \item \code{output.cat}: the message (string), \code{NULL} if nothing is reported.
+  \item \code{colon_not_here}: logical vector, one value per function name of \code{list_fun} (after the removal of the internal functions when \code{text = "OTHER"}): is the name written without \code{::} or \code{:::} before it? \code{FALSE} if \code{list_fun} is empty.
+  \item \code{col1}: integer vector of the line numbers (in \code{ini}) of the function names without \code{::} or \code{:::}, after the removal of the names between quotes or preceded by \code{$} or \code{@}, and of the internal functions when \code{text = "OTHER"}. Length 0 if nothing is reported.
+  \item \code{col2}: character vector of the corresponding function names. Length 0 if nothing is reported.
+  \item \code{col3}: character vector of the corresponding strings before the function names. Length 0 if nothing is reported.
 }
 }
 \description{
-Create the message for the \code{colons_check()} function.
+Create the message of \code{colons_check()} for one kind of functions (basic R functions or other functions).
 }
 \details{
 Warnings:

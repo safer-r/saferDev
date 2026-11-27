@@ -11,18 +11,18 @@
 
 \item{pattern}{Either \code{'"'} or \code{"'"}.}
 
-\item{lib_path}{Vector of characters specifying the absolute pathways of the directories containing the required packages for the function, if not in the default directories. Useful when R packages are not installed in the default directories because of lack of admin rights. More precisely, \code{lib_path} is passed through the \code{new} argument of \code{.libPaths()} so that the new library paths are \code{unique(c(new, .Library.site, .Library))}. Warning: \code{.libPaths()} is restored to the initial paths, after function execution. Ignored if \code{NULL} (default): only the pathways specified by the current \code{.libPaths()} are used for package calling.}
+\item{lib_path}{Vector of character strings or \code{NULL}: the \code{lib_path} value of the calling exported function, only passed on to \code{arg_check()}. No default value.}
 
-\item{error_text}{Single character string used to add information in error messages returned by the function, notably if the function is inside other functions, which is practical for debugging. Example: \code{error_text = " INSIDE <PACKAGE_1>::<FUNCTION_1> INSIDE <PACKAGE_2>::<FUNCTION_2>."}. If \code{NULL}, converted into \code{""}.}
+\item{error_text}{Single character string added to the error messages to name the calling functions (\code{embed_error_text} of the calling function). \code{NULL} is converted into \code{""}. No default value.}
 }
 \value{
 \code{TRUE} or \code{FALSE}.
 }
 \description{
-Determine if a string has a odd number of quotes.
+Determine if a string has an odd number of a quote character.
 }
 \details{
-The function considers any present \verb{'} (\code{pattern = "'\''"}) or \verb{"} (\code{pattern = '"'}). Meaning that it does not treat special situation, like escape quotes \code{\"}, or situation like this \code{"'"}. All these must be removed from the \code{input_string} if necessary, using for instance: \code{input_string <- gsub( x = input_string, pattern = '"\'"', replacement = '   ')}
+Every occurrence of \code{pattern} is counted, including escaped quotes (\verb{\"}) and quotes inside strings delimited by the other quote (\code{"it's"}). Thus, the result does not tell if the end of \code{input_string} is between quotes: use \code{.in_quotes_replacement()} for that.
 
 Warnings:
 \itemize{

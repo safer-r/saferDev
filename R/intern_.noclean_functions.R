@@ -1,21 +1,23 @@
 #' @title No-Clean Functions
 #' @description
-#' Indicate if function names are inside quotes or after \code{$}.
-#' @param col1 Vector of integers of line numbers in a code.
-#' @param col2 Vector of strings of the function names scrutinized.
-#' @param col3 Vector of strings of the code before the function name.
-#' @param ini Vector of strings of the initial function code analyzed.
-#' @param lib_path Vector of characters specifying the absolute pathways of the directories containing the required packages for the function, if not in the default directories. Useful when R packages are not installed in the default directories because of lack of admin rights. More precisely, \code{lib_path} is passed through the \code{new} argument of \code{.libPaths()} so that the new library paths are \code{unique(c(new, .Library.site, .Library))}. Warning: \code{.libPaths()} is restored to the initial paths, after function execution. Ignored if \code{NULL} (default): only the pathways specified by the current \code{.libPaths()} are used for package calling.
-#' @param error_text Single character string used to add information in error messages returned by the function, notably if the function is inside other functions, which is practical for debugging. Example: \code{error_text = " INSIDE <PACKAGE_1>::<FUNCTION_1> INSIDE <PACKAGE_2>::<FUNCTION_2>."}. If \code{NULL}, converted into \code{""}.
-#' @returns A logical vector indicating if function names of \code{col2} are inside quotes or after \code{$} (\code{TRUE}) in \code{ini} or not (\code{FALSE}). Can be length 0.
+#' Indicate if function names are between quotes or after \code{$}.
+#' @param col1 Vector of integers: the line numbers of the function names in \code{ini}.
+#' @param col2 Vector of strings: the function names.
+#' @param col3 Vector of strings: the code of the line before each function name, so that the name starts at the position \code{nchar(col3) + 1} of its line.
+#' @param ini Vector of strings: the lines of the analyzed code (\code{$code} of \code{.functions_detect()}).
+#' @param lib_path Vector of character strings or \code{NULL}: the \code{lib_path} value of the calling exported function, only passed on to \code{arg_check()} (directly or through the internal functions called). No default value.
+#' @param error_text Single character string added to the error messages to name the calling functions (\code{embed_error_text} of the calling function). \code{NULL} is converted into \code{""}. No default value.
+#' @returns A logical vector: \code{TRUE} if the function name of \code{col2} is between quotes (string literal or backquoted name) or after \code{$} in \code{ini}, \code{FALSE} otherwise. Can be length 0.
 #' @details
+#' A function name is between quotes if the \code{(} that follows it is, the quotes being read over all the lines of \code{ini} as the R parser does (see \code{.in_quotes_replacement()}).
+#'
 #' Warnings:
 #' \itemize{
-#'   \item requires \code{saferDev::arg_check}, \code{.has_odd_number_of_quotes}.
+#'   \item requires \code{saferDev::arg_check}, \code{.in_quotes_replacement}.
 #'   \item In the safer Backbone section \code{"######## check of the required functions from the required packages"}, add also these 2 functions when checking for the presence of \code{.noclean_functions}.
 #' }
 #' @author \href{mailto:gael.millot@pasteur.fr}{Gael Millot}
-#' @author Haiding Wang  
+#' @author Haiding Wang
 #' @author Yushi Han
 #' @keywords internal
 .noclean_functions <- function(
@@ -42,8 +44,12 @@
     #### end internal error report link
 
     #### function name
-    tempo_settings <- base::as.list(x = base::match.call(definition = base::sys.function(which = base::sys.parent(n = 0)), call = base::sys.call(which = base::sys.parent(n = 0)), expand.dots = FALSE, envir = base::parent.frame(n = 2L))) # warning: I have written n = 0 to avoid error when a safer function is inside another functions. In addition, arguments values retrieved are not evaluated base::match.call, but this is solved with get() below
-    function_name <- base::paste0(tempo_settings[[1]], "()", collapse = NULL, recycle0 = FALSE) 
+    tempo_settings <- base::as.list(x = base::match.call(definition = base::sys.function(which = base::sys.parent(n = 0)), call = base::sys.call(which = base::sys.parent(n = 0)), expand.dots = FALSE, envir = )) # warning: I have written n = 0 to avoid error when a safer function is inside another functions. In addition, arguments values retrieved are not evaluated base::match.call, but this is solved with get() below. Warning: envir is left empty on purpose: its default parent.frame(2L), evaluated inside base::match.call(), is the frame that called this function, where the ... of the call are expanded (base::parent.frame(n = 2L) written here would be evaluated one frame too far, which breaks the calls through base::lapply(), base::vapply(), base::apply(), base::Filter() or a function forwarding ..., base::sapply() only working by coincidence)
+    if(base::is.name(x = tempo_settings[[1]]) | base::is.call(x = tempo_settings[[1]])){
+        function_name <- base::paste0(tempo_settings[[1]], "()", collapse = NULL, recycle0 = FALSE)
+    }else{
+        function_name <- "<anonymous function>()" # the function was called through its object (e.g., base::do.call(what = <function object>, args = ...)), so that its name is not in the call
+    }
     # function name with "()" paste, which split into a vector of three: c("::()", "package ()", "function ()") if "package::function()" is used.
     if(function_name[1] == "::()" | function_name[1] == ":::()"){
         function_name <- function_name[3]
@@ -277,13 +283,13 @@
 
     ######## check of the required functions from the required packages
     # saferDev::arg_check is required here
-    # .has_odd_number_of_quotes is required here
+    # .in_quotes_replacement is required here
     # but check already done in the main safer function
     ######## end check of the required functions from the required packages
 
     ######## escaping CRAN submission NOTE for internal functions
 
-    .has_odd_number_of_quotes <- utils::getFromNamespace(x = ".has_odd_number_of_quotes", ns = "saferDev", pos = -1, envir = )
+    .in_quotes_replacement <- utils::getFromNamespace(x = ".in_quotes_replacement", ns = "saferDev", pos = -1, envir = )
 
     ######## end escaping CRAN submission NOTE for internal functions
 
@@ -424,52 +430,21 @@
         }
         # end detection of a$fun() pattern
         # detection of functions between quotes
-        tempo_ini_order <- 1:base::length(x = col1) # to recover the initial order at the end
-        tempo_order <- base::order(col2, na.last = TRUE, decreasing = FALSE, method = "auto") # order according to function name
-        tempo_ini_order <- tempo_ini_order[tempo_order]
-        tempo_col1 <- col1[tempo_order] # reorder to work only once with duplicated functions
-        tempo_col2 <- col2[tempo_order] # reorder to work only once with duplicated functions
-        tempo_ini <- ini
-        pos_rm <- NULL # positions to remove (functions between quotes)
-        for(i2 in base::seq_along(along.with = tempo_col1)){
-            pattern1 <- base::paste0(tempo_col2[i2], " *\\(", collapse = NULL, recycle0 = FALSE)
-            lines_split <- base::strsplit(x = tempo_ini[tempo_col1[i2]], split = pattern1, fixed = FALSE, perl = FALSE, useBytes = FALSE)[[1]][1]
-            # removal of the escaped backslashes, of the quotes written between other quotes and of the escaped quotes before counting the quotes, as in .in_quotes_replacement() (warning: the order is important). Otherwise, an escaped quote like \" inside a string is counted as a string delimiter, so that a word followed by ( inside the string, like "a \"b\" WORD (c)", is wrongly considered outside the quotes
-            lines_split <- base::gsub( x = lines_split, pattern = "\\\\\\\\", replacement = '  ', ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE)
-            lines_split <- base::gsub( x = lines_split, pattern = '"\\\\"\'"', replacement = '     ', ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE)
-            lines_split <- base::gsub( x = lines_split, pattern = "'\\\\'\"'", replacement = '     ', ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE)
-            lines_split <- base::gsub( x = lines_split, pattern = '"\'"', replacement = '   ', ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE)
-            lines_split <- base::gsub( x = lines_split, pattern = "'\"'", replacement = '   ', ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE)
-            lines_split <- base::gsub( x = lines_split, pattern = "\\\\'", replacement = '  ', ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE)
-            lines_split <- base::gsub( x = lines_split, pattern = '\\\\"', replacement = '  ', ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE)
-            # end removal of the escaped backslashes, of the quotes written between other quotes and of the escaped quotes
-            # if odds number of quotes, it means that # has broken the string in the middle of a quoted part
-            double_quote_test <- .has_odd_number_of_quotes(
-                input_string = lines_split, 
-                pattern = '"', 
-                lib_path = lib_path, 
-                error_text = embed_error_text
-            ) # here FALSE means even number of quotes, thus that the function is not between quotes, thus has to be kept. TRUE means that the function is between quotes, thus has to be removed
-            simple_quote_test <- .has_odd_number_of_quotes(
-                input_string = lines_split, 
-                pattern = "'", 
-                lib_path = lib_path, 
-                error_text = embed_error_text
-            ) # idem
-            odds_quotes_log <- double_quote_test |  simple_quote_test
-            if(odds_quotes_log == FALSE){
-                pos_rm <- base::c(pos_rm, i2)
-            }else{
-                pos_rm <- base::c(pos_rm, NA) # NA means betwwen quotes. pos.rm will becomes double if integer added, otherwise remains logical. Thus, do not use any()
-            }
-            tempo_ini[tempo_col1[i2]] <- base::sub(pattern = pattern1, replacement = "", x = tempo_ini[tempo_col1[i2]], ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE) # remove the first fonction in the line, in case of identical function names in a code line. Like, that, the next round for the next same function can be easily tested for "between quotes" 
-        }
-        # initial order
-        pos_rm_fin <- pos_rm[base::order(tempo_ini_order, na.last = TRUE, decreasing = FALSE, method = "auto")]
-        # end initial order
-        if(base::any(base::is.na(x = pos_rm_fin), na.rm = TRUE)){
-            output <- output | base::is.na(x = pos_rm_fin)
-        }
+        # a function name is between quotes (string literal or backquoted name) if the ( that follows it is between quotes. The ( between quotes are replaced by a space in a copy of ini, made of all the lines separated by \n, so that .in_quotes_replacement() reads the code as the R parser does (an apostrophe inside double quotes, or quotes spanning several lines, are correctly taken into account)
+        tempo <- .in_quotes_replacement(
+            string = base::paste0(ini, collapse = "\n", recycle0 = FALSE), 
+            pattern = "\\(", 
+            no_regex_pattern = "(", 
+            replacement = " ", 
+            perl = FALSE, 
+            lib_path = lib_path, 
+            error_text = embed_error_text
+        )
+        line_shift <- base::cumsum(x = base::c(0, base::nchar(x = ini, type = "chars", allowNA = FALSE, keepNA = NA) + 1))[col1] # number of characters before the line of each function name in the copy (+ 1 for each \n)
+        name_end <- base::nchar(x = col3, type = "chars", allowNA = FALSE, keepNA = NA) + base::nchar(x = col2, type = "chars", allowNA = FALSE, keepNA = NA) # position of the last character of each function name in its line, col3 being the code of the line before the function name
+        paren_pos <- base::as.vector(x = base::regexpr(pattern = "(", text = base::substring(text = ini[col1], first = name_end + 1, last = 1000000L), ignore.case = FALSE, perl = FALSE, fixed = TRUE, useBytes = FALSE), mode = "any") # position of the first ( after each function name, counted from the character after the function name. -1 for a name ending its line, whose ( is on a next line (name of a called function in the parse data of .functions_detect(), thus not between quotes)
+        between_quotes_log <- paren_pos > 0 & (line_shift + name_end + paren_pos) %in% tempo$pos
+        output <- output | between_quotes_log
         # end detection of functions between quotes
     }
     #### end main code

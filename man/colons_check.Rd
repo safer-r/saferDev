@@ -2,100 +2,78 @@
 % Please edit documentation in R/colons_check.R
 \name{colons_check}
 \alias{colons_check}
-\title{Colons Check}
+\title{Check and Add Package Prefixes to Function Calls}
 \usage{
 colons_check(
   x,
   export = FALSE,
-  out_path = ".",
+  out_path = NULL,
   safer_check = TRUE,
   lib_path = NULL,
   error_text = ""
 )
 }
 \arguments{
-\item{x}{a function name, written without quotes and brackets.}
+\item{x}{Function to check, written without quotes and brackets (e.g., \code{fun1} or \code{pkg::fun1}).}
 
-\item{export}{Single logical value. Export the modified code into a \code{.R} file? If \code{TRUE}, the modified function is not returned but only exported. The name of the file is the name of the tested function, with \code{_safer} added at the end (e.g., \code{test_safer.R}). The written code is the code of the submitted function, with its comments and indentation, only modified by the added package attributions (see the \code{Details} section). An error is returned if the file already exists in \code{out_path}, and if the tested function is not designated by a function name (like \code{test} or \code{package::test}), i.e., written by an inline definition (like \code{function(x)\{x\}}) or by a component writing (like \code{FUN_LIST$fun}). If \code{FALSE} (default), the modified function is not written but returned.}
+\item{export}{Single logical value. If \code{TRUE}, the corrected function is written into the \code{<name>_safer.R} file of \code{out_path} instead of being returned (e.g., \code{fun1_safer.R} for \code{x = fun1} or \code{x = pkg::fun1}), as \code{fun1_safer <- function(...)}, which \code{base::source()} recreates. Nothing is written if nothing has to be corrected, but an error is returned if the file already exists, or if \code{x} is not a function name (e.g., \code{function(x)\{x\}} or \code{FUN_LIST$fun}).}
 
-\item{out_path}{Single character string indicating the pathway of the folder where to export the modified code. \code{out_path = "."} (default) means the R working directory set by the user. A non-existing directory, \code{NULL} or an empty string (\code{""}) returns an error. Ignored if \code{export} is \code{FALSE}.}
+\item{out_path}{Single character string: path of an existing folder where the file is written. Required when \code{export} is \code{TRUE}; otherwise not used, but a non-\code{NULL} value must still be a single non-empty character string. \code{NULL} by default.}
 
-\item{safer_check}{Single logical value. Perform the "safer" checks? If \code{TRUE}, checkings are performed before main code running (see the \href{https://github.com/safer-r}{safer-r project}): 1) required functions and related packages effectively present in local R libraries and 2) R classical operators (like \code{"<-"}) not overwritten by another package because of the R scope. Warning: must be set to \code{FALSE} if this function is used inside another "safer" function to avoid pointless multiple checkings.}
+\item{safer_check}{Single logical value. If \code{TRUE} (default), checks before running that the required packages and functions are installed and that the classical R operators (like \code{<-}) are not masked by another package or by a user-defined object of the global environment. These checks take time at each call: set \code{FALSE} in loops and inside other safer-r functions, to avoid repeating them.}
 
-\item{lib_path}{Vector of characters specifying the absolute pathways of the directories containing the required packages for the function, if not in the default directories. Useful when R packages are not installed in the default directories because of lack of admin rights. More precisely, \code{lib_path} is passed through the \code{new} argument of \code{.libPaths()} so that the new library paths are \code{unique(c(new, .Library.site, .Library))}. Warning: \code{.libPaths()} is restored to the initial paths, after function execution. Ignored if \code{NULL} (default): only the pathways specified by the current \code{.libPaths()} are used for package calling.}
+\item{lib_path}{Vector of character strings: paths of existing extra library folders containing the required packages (e.g., packages installed without admin rights). They are searched after the current \code{.libPaths()} during the call (the current libraries keep priority), and \code{.libPaths()} is restored on exit. If \code{NULL} (default), only the current \code{.libPaths()} are used.}
 
-\item{error_text}{Single character string used to add information in error messages returned by the function, notably if the function is inside other functions, which is practical for debugging. Example: \code{error_text = " INSIDE <PACKAGE_1>::<FUNCTION_1> INSIDE <PACKAGE_2>::<FUNCTION_2>."}. If \code{NULL}, converted into \code{""}.}
+\item{error_text}{Single character string added to the error messages (e.g., \code{" INSIDE pkg1::fun1()"}) to name the calling functions. \code{NULL} is converted into \code{""}.}
 }
 \value{
-A table-like text message indicating the missing \code{::} or \code{:::} or a message saying that everything seems fine.
+The corrected function, which keeps the environment of \code{x}: \code{x} with the \code{<package>::} prefixes added before its calls of basic R functions.
 
-The message is always printed (see the \code{Details} section).
+\code{NULL}, invisibly, if nothing has to be corrected, if \code{x} contains no function call, as a primitive function like \code{base::sum} (with a warning), or if \code{export} is \code{TRUE}.
 
-A warning and \code{NULL} are returned if the submitted function is empty of function, or only made of comments, or only made of \code{function}, \code{if}, \code{for}, \code{while}, \code{repeat}, \code{else}.
-
-In addition, if the \code{export} argument is \code{FALSE} (default), the function returns \code{NULL} if no basic function required a package attribution, or the modified function if basic functions were modified (see the \code{Details} section).
-
-If the \code{export} argument is \code{TRUE}, the modified code is exported in the \code{.R} file specified by the \code{out_path} argument, instead of being returned, and a message indicating where the modified code has been exported is printed.
-
-Table-like: column 1, the line number in the function code (starting at the \code{"<- function"} line, i.e., without counting the \code{#'} header lines); column 2, the function name; column 3, the code preceding the function name.
-
-With missing \code{::} or \code{:::}, the message also indicates if internal functions are created inside the checked function code, since these functions cannot have \code{::} or \code{:::}.
+In addition, except when \code{x} contains no function call, a report is printed with \code{message()}: either a message saying that everything seems clean, or tables of the calls without prefix, one for the basic R functions and one for the other functions (column 1: line number; column 2: function name; column 3: code before the function name). The internal functions called (see the Details section) are then also listed.
 }
 \description{
-Verify that all the functions used inside a function are preceded by a package attribution. For instance: \code{base::mean()} and not \code{mean()}, or \code{saferDev:::.base_op_check()} and not \code{.base_op_check()}. Warning: does not check that the package is the good one. Use \code{all_args_here()} for that.
+Checks that the functions called inside a function are preceded by their package (e.g., \code{base::mean()} and not \code{mean()}), and adds the missing \code{<package>::} prefixes before the basic R functions (functions of the base, stats, graphics, grDevices, utils, datasets and methods packages).
 }
 \details{
-The result is used to modify the code inside the tested function like this: \code{<PACKAGE>::<FUNCTION>} (or \code{<PACKAGE>:::<FUNCTION>} for function names starting by a dot).
+A call of a basic R function gets the prefix of its package (e.g., \code{mean()} becomes \code{base::mean()}) only if the function found by R when running \code{x}, from the environment of \code{x} (functions defined by the user, imported functions and attached packages), is this basic function. Otherwise, the name is masked (e.g., \code{filter()} with the dplyr package attached, or a \code{filter()} function defined in the global environment): the call is not modified and is reported with the other functions. Under \code{pkgload::load_all()} (\code{devtools::load_all()}), \code{system.file()}, \code{help()}, \code{library.dynam()} and \code{library.dynam.unload()} can thus be reported as masked by the pkgload shims. In code evaluated in another environment (e.g., \code{expr} of \code{with()}, or \code{.()} of \code{bquote()} with \code{where}), a function of that environment named like a basic function is not detected: its calls get the basic prefix. The stats, graphics, grDevices, utils, datasets and methods packages must be attached, as in a default R session, otherwise an error is returned.
 
-Since \code{saferDev} v3.0.0, the modified function is returned: the package attributions of the basic R functions, as indicated in the \code{"INSIDE test(), SOME :: OR ::: ARE MISSING BEFORE BASIC FUNCTIONS"} section of the returned message, are added to the submitted function code, and the modified function is returned using \code{return()}. The package attributions of the other functions, as indicated in the \code{"INSIDE test(), SOME :: OR ::: ARE MISSING BEFORE OTHER FUNCTIONS"} section of the returned message, are NOT added automatically, because the correct package cannot be determined reliably: a \code{base::warning()} is issued instead (in addition to the printed message). \code{NULL} is returned if no basic function required a package attribution.
+The calls of internal functions, written without \code{::} or \code{:::}, are not modified, nor reported as missing a prefix. The internal functions are the functions created inside \code{x} (names assigned a function definition or a \code{utils::getFromNamespace()} result), the arguments of \code{x} and of all the functions defined in \code{x}, anonymous ones included (e.g., \code{FUN} in \code{FUN(y)}), but not the arguments and local functions of those written in quoted code (e.g., \code{c} in \code{bquote(function(c) .(c(y)))}), and \code{x} itself when written as a name, like \code{fun1} or \code{pkg::fun1} (recursive calls). These names are recognized in the function that defines them (the whole code of \code{x} for its arguments, \code{x} itself and \code{<<-}): an argument \code{t} of a function defined in \code{x} does not prevent the check of \code{t()} outside this function. A name assigned another value is not an internal function: after \code{c <- 3}, \code{c(y)} calls \code{base::c()} and gets its prefix. A local name that holds a function obtained otherwise is not detected: after \code{rev <- base::get(x = "sort")}, \code{rev(y)} becomes \code{base::rev(y)}.
 
-The modification is only performed on the code lines indicated in the \code{"INSIDE test(), SOME :: OR ::: ARE MISSING BEFORE BASIC FUNCTIONS"} section of the message, which is the same analysis as the one performed by \code{colons_check()} itself: functions written between quotes or preceded by \code{$} are not modified, and internal functions (created inside the tested function) are not modified either. The analysis is performed on the code with comments removed and multiple spaces collapsed, but the package attributions are added to the code of the submitted function as printed: the returned (and exported) function therefore keeps the comments and the indentation of the submitted function. Warning: comments are only present when the submitted function carries its source references (attribute \code{srcref}, e.g., a function defined in the console or in a file loaded with \code{keep.source = TRUE}). Otherwise, as for compiled package functions, the code printed by \code{R} (without comments and reindented) is used. The modified function is returned with the environment of the submitted function, so that the functions used inside it still resolve the same way. If the modified code does not parse (a rare situation, e.g., a function name split across lines in a way the analyzer could not handle correctly), this is an internal bug: an internal error is returned when \code{export = TRUE}, and the submitted function is returned unchanged, with no error, when \code{export = FALSE}.
+The calls of the other functions are reported in the message and in a warning, but not modified, because their package cannot be determined reliably: add their prefixes manually.
 
-The name of the exported file (when \code{export = TRUE}) is the name of the submitted function, as written by the user, with \code{_safer} added at the end, e.g., \code{test_safer.R} for \code{colons_check(x = test)}. If the submitted function was written as \code{package::function}, like \code{colons_check(x = saferDev::test)}, the name is \code{test_safer.R} (the package name is not part of the file name). The exported file contains an assignment of the modified function: \code{test_safer <- function(...) ...}, so that \code{base::source()}ing it recreates the modified function. Warning: the tested function must be designated by a function name (like \code{test} or \code{package::test}) when \code{export = TRUE}: an inline definition (like \code{function(x)\{x\}}) or a component writing (like \code{FUN_LIST$fun}) returns an error, because the name of the exported file could not be determined reliably.
+Not checked: function names written between quotes (like \code{"+"()}), preceded by \code{$} or \code{@}, or written without brackets (like \code{as.character} in \code{sapply(1:3, FUN = as.character)}), and \code{function}, \code{if}, \code{for}, \code{while}, \code{repeat} and \code{else}. Neither are the calls inside formulas, including the one-sided formulas used as lambdas (e.g., \code{log()} and \code{offset()} in \code{y ~ log(x) + offset(z)}, or \code{mean()} in \code{~ mean(.x)}), because modeling functions use their text, the calls inside \code{quote()}, \code{bquote()}, \code{expression()}, \code{alist()} and \code{substitute()}, whose arguments are code used as data (e.g., \code{paste()} in the plotmath label \code{expression(paste("Temp (", degree, "C)"))}), except the code that R evaluates (\code{.()} and spliced \code{..()} of \code{bquote()}, its \code{where} argument, and the \code{env} argument of \code{substitute()}), nor the function called by \code{.Internal()} (e.g., \code{toupper} in \code{.Internal(toupper(x))}). The other functions that use the code of their arguments get the corrected code (e.g., the default axis label of \code{ggplot2::aes(x = log(y))} becomes \code{base::log(y)}). Comments are not checked, but some unexpected writing could dupe \code{colons_check()}: please report it \href{https://github.com/safer-r/saferDev/issues}{here}.
 
-Pre-check: the submitted function is first checked by \code{lambda_check()}: if some lambda functions are written with the \code{\\(x)} shorthand, an error is returned asking to run \code{saferDev::lambda_check()} first, because the \code{\\} writings are not managed by the text-based detection of \code{colons_check()}. As in \code{lambda_check()}, the \code{\\(x)} writing is only detectable in a function carrying its source references (attribute \code{srcref}): a compiled or loaded package function prints \code{function(x)}, so that the pre-check silently passes in that case.
+Names already preceded by \code{::} or \code{:::} are not checked (R CMD check reports the wrong ones, e.g., \code{base:::sum()} or \code{base::dev.off()}). The added prefixes are always \code{::}.
 
-More precisely, \code{colons_check()} verifies that all the strings before an opening bracket \code{(} are preceded by \code{::}.
+Source references: line 1 is the line of the \code{function} keyword. Comments and indentation are kept only if \code{x} carries its source references (attribute \code{srcref}). Functions created with \code{options(keep.source = FALSE)} (default of Rscript) and functions of installed packages (e.g., \code{saferDev::colons_check}) have none: their deparsed code is analyzed, without comments and with line numbers that differ from the source file.
 
-\code{:::} are not checked per se, because incorrect writing, like \code{saferDev::.colons_check_message()} returns an error when executing the tested function, and because \code{base:::sum()} is as ok as \code{base::sum()}. In the same manner, more than three colons are not checked because it returns an error when executing the tested function.
+If the corrected code does not parse (a writing that the analysis does not handle, e.g., a function name at the beginning of a line, after a \code{$} or \code{@} ending the previous line), \code{x} is returned unchanged with a warning, or an error is returned if \code{export} is \code{TRUE}.
 
-Warning: \code{colons_check()} cannot check function names written without brackets, like in the \code{FUN} argument of some functions, e.g., \code{sapply(1:3, FUN = as.character)}.
-
-The Perl regex used to detect a function name is: \code{"([a-zA-Z]|\\.[a-zA-Z._])[a-zA-Z0-9._]*\\s*\\("}.
-
-Currently, \code{colons_check()} cannot detect functions written between quotes, like \code{"+"()} or \code{"rownames<-"(x, "a")}.
-
-Function names preceded by \code{$} are not considered.
- 
-The following R functions are skipped: \code{"function"}, \code{"if"}, \code{"for"}, \code{"while"}, \code{"repeat"} and \code{"else"}.
-
-Most of the time, \code{colons_check()} does not check inside comments, but some unexpected writing could dupe \code{colons_check()}. Please, report \href{https://github.com/safer-r/saferDev/issues}{here} if it is the case.
-
-The returned line numbers are indicative, depending on which source is checked. For instance, \code{saferDev::report} (compiled) has not the same line numbers as its source file (\href{https://github.com/safer-r/saferDev/blob/main/R/report.R}{source file}). Notably, compiled functions do not have comments anymore, compared to the same source function sourced into the working environment. In addition, the counting starts at the \code{"<- function"} line, i.e., without counting the \code{#'} header lines potentially present in source files.
-
-Of note, during package creation, the \code{devtools::check()} command tells which functions where wrongly attributed to package. Example: 
-\preformatted{
-checking dependencies in R code ... WARNING
-  '::' or ':::' import not declared from: 'sbase'
-  Missing or unexported objects:
-    'base::dev.off' 'base::graphics.off' 'base::hcl' 'base::par' 'base::read.table' 'saferGG::report'
-}
+An error is returned if \code{x} contains \code{\\(x)} lambda functions (only detected with source references): run \code{lambda_check()} first.
 }
 \examples{
-# Warning: these examples may not work well when using the "Run examples" link 
-# because of a particular environment. Please, copy-paste in a local environment.
+# Without source references ("Run examples" link, Rscript), line numbers and comments differ.
 # See also https://safer-r.github.io/saferDev/articles/colons_check.html
 fun1 <- function(x){
     y <- mean(x) # mean() written without base::
     base::return(y)
 }
-fun1_safer <- saferDev::colons_check(fun1) # base:: added before mean()
+fun1_safer <- saferDev::colons_check(x = fun1, export = FALSE, out_path = NULL,
+    safer_check = TRUE, lib_path = NULL, error_text = "") # base:: added before mean()
 fun1_safer # corrected function
 # Write the corrected function in the fun1_safer.R file of a new temporary folder:
-tempo_dir <- base::tempfile(pattern = "dir", tmpdir = base::tempdir(), fileext = "")
+tempo_dir <- base::tempfile(pattern = "dir", tmpdir = base::tempdir(check = FALSE),
+    fileext = "")
 base::dir.create(path = tempo_dir, showWarnings = TRUE, recursive = FALSE, mode = "0777")
-saferDev::colons_check(x = fun1, export = TRUE, out_path = tempo_dir)
+saferDev::colons_check(x = fun1, export = TRUE, out_path = tempo_dir, safer_check = TRUE,
+    lib_path = NULL, error_text = "")
+base::unlink(x = tempo_dir, recursive = TRUE, force = FALSE, expand = TRUE) # folder removed
 
+}
+\seealso{
+The code checkers of saferDev, in the recommended order of use: \code{\link{super_assign_check}}, \code{\link{lambda_check}}, \code{\link{colons_check}}, \code{\link{all_args_here}}, \code{\link{curly_bracket_check}}, \code{\link{true_false_check}}, \code{\link{for_loop_nb_check}} (see \code{vignette("saferDev")}).
 }
 \author{
 \href{mailto:gael.millot@pasteur.fr}{Gael Millot}

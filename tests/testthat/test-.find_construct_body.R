@@ -184,6 +184,23 @@ testthat::test_that(".find_construct_body()", {
     res <- saferDev:::.find_construct_body(pd = args_fun$pd, kid = args_fun$kid, body_start = args_fun$body_start, body_start_pos = args_fun$body_start_pos, term_rows = args_fun$term_rows, else_branch = FALSE, else_tok = NULL, lib_path = NULL, error_text = "")
     testthat::expect_true(object = base::is.finite(x = res$col1), label = "function(): finite col1")
     testthat::expect_identical(object = res$line1, expected = 1L)
+    # TAB-indented code: col1 is the column of utils::getParseData(), where a TAB is a jump to the next multiple of 8 (converted into a character position by the caller)
+    args_tab <- get_args(txt = "f <- function(x){\n\tif(x > 1) base::return(x)\n}", token_kind = "IF", kind = "then")
+    res <- saferDev:::.find_construct_body(pd = args_tab$pd, kid = args_tab$kid, body_start = args_tab$body_start, body_start_pos = args_tab$body_start_pos, term_rows = args_tab$term_rows, else_branch = FALSE, else_tok = NULL, lib_path = NULL, error_text = "")
+    testthat::expect_identical(object = res$line1, expected = 2L)
+    testthat::expect_identical(object = res$col1, expected = 19L) # base::return(x) is the 11th character of the line, after a TAB counted as 8 columns
+    # bodies written with = (token expr_or_assign_or_help, and not expr): the body is found, and not the condition or a default argument value
+    txt_eq <- "f <- function(x){ if(x > 1) y = 1 else y = 2 }"
+    args_eq_then <- get_args(txt = txt_eq, token_kind = "IF", kind = "then")
+    res <- saferDev:::.find_construct_body(pd = args_eq_then$pd, kid = args_eq_then$kid, body_start = args_eq_then$body_start, body_start_pos = args_eq_then$body_start_pos, term_rows = args_eq_then$term_rows, else_branch = FALSE, else_tok = NULL, lib_path = NULL, error_text = "")
+    testthat::expect_identical(object = args_eq_then$pd$token[res$row], expected = "expr_or_assign_or_help")
+    testthat::expect_identical(object = base::c(res$line1, res$col1, args_eq_then$pd$col2[res$row]), expected = base::c(1L, 29L, 33L)) # y = 1 after if(x > 1), and not the condition
+    args_eq_else <- get_args(txt = txt_eq, token_kind = "IF", kind = "else")
+    res <- saferDev:::.find_construct_body(pd = args_eq_else$pd, kid = args_eq_else$kid, body_start = args_eq_else$body_start, body_start_pos = args_eq_else$body_start_pos, term_rows = args_eq_else$term_rows, else_branch = TRUE, else_tok = args_eq_else$else_tok, lib_path = NULL, error_text = "")
+    testthat::expect_identical(object = base::c(res$line1, res$col1, args_eq_else$pd$col2[res$row]), expected = base::c(1L, 40L, 44L)) # y = 2 after else
+    args_eq_fun <- get_args(txt = "f <- function(x = 1) y = x", token_kind = "FUNCTION", kind = "then")
+    res <- saferDev:::.find_construct_body(pd = args_eq_fun$pd, kid = args_eq_fun$kid, body_start = args_eq_fun$body_start, body_start_pos = args_eq_fun$body_start_pos, term_rows = args_eq_fun$term_rows, else_branch = FALSE, else_tok = NULL, lib_path = NULL, error_text = "")
+    testthat::expect_identical(object = base::c(res$line1, res$col1, args_eq_fun$pd$col2[res$row]), expected = base::c(1L, 22L, 26L)) # y = x, and not the default value 1 of x
     #### end main code
 
     ## end tests (ordered by arg appearance and conditions in the code)

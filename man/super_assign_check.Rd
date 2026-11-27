@@ -2,48 +2,57 @@
 % Please edit documentation in R/super_assign_check.R
 \name{super_assign_check}
 \alias{super_assign_check}
-\title{Superassignment Check}
+\title{Check That No Superassignment Is Used}
 \usage{
 super_assign_check(x, safer_check = TRUE, lib_path = NULL, error_text = "")
 }
 \arguments{
-\item{x}{A function name, written without quotes and brackets.}
+\item{x}{Function to check, written without quotes and brackets (e.g., \code{fun1} or \code{pkg::fun1}).}
 
-\item{safer_check}{Single logical value. Perform the "safer" checks? If \code{TRUE}, checkings are performed before main code running (see the \href{https://github.com/safer-r}{safer-r project}): 1) required functions and related packages effectively present in local R libraries and 2) R classical operators (like \code{"<-"}) not overwritten by another package because of the R scope. Warning: must be set to \code{FALSE} if this function is used inside another "safer" function to avoid pointless multiple checkings.}
+\item{safer_check}{Single logical value. If \code{TRUE} (default), checks before running that the required packages and functions are installed and that the classical R operators (like \code{<-}) are not masked by another package or by a user-defined object of the global environment. These checks take time at each call: set \code{FALSE} in loops and inside other safer-r functions, to avoid repeating them.}
 
-\item{lib_path}{Vector of characters specifying the absolute pathways of the directories containing the required packages for the function, if not in the default directories. Useful when R packages are not installed in the default directories because of lack of admin rights. More precisely, \code{lib_path} is passed through the \code{new} argument of \code{.libPaths()} so that the new library paths are \code{unique(c(new, .Library.site, .Library))}. Warning: \code{.libPaths()} is restored to the initial paths, after function execution. Ignored if \code{NULL} (default): only the pathways specified by the current \code{.libPaths()} are used for package calling.}
+\item{lib_path}{Vector of character strings: paths of existing extra library folders containing the required packages (e.g., packages installed without admin rights). They are searched after the current \code{.libPaths()} during the call (the current libraries keep priority), and \code{.libPaths()} is restored on exit. If \code{NULL} (default), only the current \code{.libPaths()} are used.}
 
-\item{error_text}{Single character string used to add information in error messages returned by the function, notably if the function is inside other functions, which is practical for debugging. Example: \code{error_text = " INSIDE <PACKAGE_1>::<FUNCTION_1> INSIDE <PACKAGE_2>::<FUNCTION_2>."}. If \code{NULL}, converted into \code{""}.}
+\item{error_text}{Single character string added to the error messages (e.g., \code{" INSIDE pkg1::fun1()"}) to name the calling functions. \code{NULL} is converted into \code{""}.}
 }
 \value{
-If no superassignment operator is detected: a message saying that everything seems fine, and \code{NULL} returned invisibly.
+If no superassignment operator is detected: a message saying that everything seems clean, and \code{NULL}, invisibly.
 
 Otherwise: an error, with a table-like message made of one row per reported operator (column 1: line number; column 2: symbol; column 3: code of the line).
 }
 \description{
-Verify that the superassignment operators \code{<<-} and \code{->>} are not used in a function. Return an error with a table of the lines with problems if any, since these operators are not allowed in safer-r functions.
+Checks that the superassignment operators \code{<<-} and \code{->>} are not used in a function. Returns an error with a table of the lines to rewrite if any, since these operators are not allowed in safer-r functions.
 }
 \details{
-Why an error: the superassignment operators \code{<<-} and \code{->>} assign in the first environment, among the parent environments of the evaluation environment, where the name already exists, and in the global environment if the name exists nowhere. What is modified thus depends on the environments where the function is defined and called, not on the code of the function itself: it is difficult to guess what the writer had in mind, and nothing can be corrected automatically. The code must be rewritten, for instance by returning the value, or by using \code{base::assign()} with an explicit \code{envir} argument.
+Why an error: \code{<<-} and \code{->>} assign into the first enclosing environment of the function where the name exists, or into the global environment. What they modify thus depends on where the function is defined, not on its code, and cannot be corrected automatically: rewrite the code, for instance by returning the value, or by using \code{base::assign()} with an explicit \code{envir} argument.
 
-Reported: every \code{<<-} and \code{->>} operator written in the submitted function, including inside the functions defined in the submitted function (e.g., a \code{FUN} argument of \code{base::lapply()} or the handlers of \code{base::tryCatch()}).
+Reported: every \code{<<-} and \code{->>} operator written in the submitted function, also when called as a function (e.g., \code{`<<-`(y, 1)} or \code{base::`<<-`(y, 1)}), including inside the functions defined in the submitted function (e.g., a \code{FUN} argument of \code{base::lapply()} or the handlers of \code{base::tryCatch()}).
 
-Not reported: the \code{<-}, \code{->} and \code{=} assignment operators, and the \code{<<-} or \code{->>} writings inside strings, comments or backquoted names (the detection is token-based, not text-based).
+Not reported: the \code{<-}, \code{->} and \code{=} assignment operators, and the \code{<<-} or \code{->>} writings inside strings, comments or backquoted names (e.g., \code{c("<<-")} or \code{`a<<-b`}), apart from the calls above.
 
-Line numbers are indicative. They start at the \code{<- function} line (\code{#'} header lines not counted). Compiled functions, like \code{saferDev::colons_check}, have no comments: their line numbers differ from their source file. A \code{->>} operator is printed \code{<<-} in the code of a function without source references (attribute \code{srcref}).
+Source references: line 1 is the line of the \code{function} keyword. Functions created with \code{options(keep.source = FALSE)} (default of Rscript) and functions of installed packages (e.g., \code{saferDev::colons_check}) have no source references (attribute \code{srcref}): their deparsed code is analyzed, without comments, with line numbers that differ from the source file, and with \code{->>} reported as \code{<<-}.
 }
 \examples{
-# Warning: these examples may not work well when using the "Run examples" link
-# because of a particular environment. Please, copy-paste in a local environment.
+# Without source references ("Run examples" link, Rscript), line numbers and comments differ.
 # See also https://safer-r.github.io/saferDev/articles/super_assign_check.html
 fun1 <- function(x){ y <- x ; base::return(y) }
-saferDev::super_assign_check(fun1) # everything fine: NULL returned
+saferDev::super_assign_check(x = fun1, safer_check = TRUE, lib_path = NULL,
+    error_text = "") # no superassignment: NULL returned, invisibly
 fun2 <- function(x){ y <<- x ; base::return(y) }
-try(saferDev::super_assign_check(fun2)) # error: <<- reported
+base::try(expr = saferDev::super_assign_check(x = fun2, safer_check = TRUE, lib_path = NULL,
+    error_text = ""), silent = FALSE,
+    outFile = base::getOption(x = "try.outFile", default = base::stderr())) # error: <<- reported
 # A <<- written in a string or in a comment is not an operator: not reported.
-fun3 <- function(x){ y <- "the <<- writing is just a string" ; x } # a <<- in a comment
-saferDev::super_assign_check(fun3) # everything fine: NULL returned
+fun3 <- function(x){
+    y <- "the <<- writing is just a string" # a <<- in a comment
+    x
+}
+saferDev::super_assign_check(x = fun3, safer_check = TRUE, lib_path = NULL,
+    error_text = "") # no superassignment: NULL returned, invisibly
 
+}
+\seealso{
+The code checkers of saferDev, in the recommended order of use: \code{\link{super_assign_check}}, \code{\link{lambda_check}}, \code{\link{colons_check}}, \code{\link{all_args_here}}, \code{\link{curly_bracket_check}}, \code{\link{true_false_check}}, \code{\link{for_loop_nb_check}} (see \code{vignette("saferDev")}).
 }
 \author{
 \href{mailto:gael.millot@pasteur.fr}{Gael Millot}

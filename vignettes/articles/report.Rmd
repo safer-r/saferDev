@@ -18,6 +18,8 @@ library(saferDev)
 
 ### Dataset
 ```{r}
+path_1 <- tempfile(pattern = "report_") # all the files are written into a new folder of the temporary directory.
+dir.create(path_1)
 string1 <- "THIS IS A LOG" # string.
 vec1 <- 1:6 # vector of integers.
 vec2 <- letters[1:9] # vector of characters.
@@ -26,7 +28,7 @@ dimnames(mat1) <- list(c("Row_1","Row_2"), c("C1", "C2", "C3")) # mat1 matrix wi
 mat2 <- mat1
 mode(mat2) <- "character" # as mat1 but made of characters.
 t1 <- table(mat1) # 1D table.
-vec3 <- as.vector(t1) # vector of intergers
+vec3 <- as.vector(t1) # vector of integers
 names(vec3) <- letters[1:6] # vector with names.
 t2 <- table(vec2, vec2) # 2D table.
 l1 <- list(vec1, vec2) # list.
@@ -49,57 +51,57 @@ l1 # list.
 
 ### Simple examples
 ```{r}
-# Print the value of "data" into the log.txt output file in the indicated path.
-report(data = string1, append = TRUE, path = ".")
+# Write the value of "data" into the log.txt output file of the path_1 folder.
+report(data = string1, append = TRUE, path = path_1)
 
 # Idem.
-report(data = vec1, append = TRUE, path = ".")
+report(data = vec1, append = TRUE, path = path_1)
 
 # Idem.
-report(data = vec2, append = TRUE, path = ".")
+report(data = vec2, append = TRUE, path = path_1)
 
 # Idem.
-report(data = vec3, append = TRUE, path = ".")
+report(data = vec3, append = TRUE, path = path_1)
 
 # Idem.
-report(data = mat1, append = TRUE, path = ".")
+report(data = mat1, append = TRUE, path = path_1)
 
 # Idem. Of note, we cannot see in the log.txt file that mat2 is mode character (see noquote below).
-report(data = mat2, append = TRUE, path = ".")
+report(data = mat2, append = TRUE, path = path_1)
 
 # Idem.
-report(data = t1,, append = TRUE, path = ".")
+report(data = t1, append = TRUE, path = path_1)
 
 # Idem.
-report(data = t2, append = TRUE, path = ".")
+report(data = t2, append = TRUE, path = path_1)
 
 # Idem.
-report(data = l1, append = TRUE, path = ".")
+report(data = l1, append = TRUE, path = path_1)
 ```
 <br>
 
 ### Argument <code>output</code>
 ```{r, echo = TRUE, error = TRUE}
-# Print the value of vec1 into the test.txt file in the indicated path.
-report(data = vec1, output = "test.txt", append = TRUE, path = ".")
+# Write the value of vec1 into the test.txt file of the path_1 folder.
+report(data = vec1, output = "test.txt", append = TRUE, path = path_1)
 ```
 <br>
 
 ### Argument <code>append</code>
 ```{r, echo = TRUE, error = TRUE}
 # Error returned because the test.txt file already exists.
-report(data = vec2, append = FALSE, output = "test.txt", path = ".")
+report(data = vec2, append = FALSE, output = "test.txt", path = path_1)
 ```
 <br>
 
 ### Argument <code>rownames_kept</code>
 ```{r, echo = TRUE, error = TRUE}
- # Keep the row names when print the matrix mat1 in log.txt.
+# Keep the row names when writing the matrix mat1 in log.txt.
 report(
   data = mat1, 
   rownames_kept = TRUE, 
   append = TRUE, 
-  path = "."
+  path = path_1
 )
 
 # Remove the row names.
@@ -107,15 +109,15 @@ report(
   data = mat1, 
   rownames_kept = FALSE, 
   append = TRUE, 
-  path = "."
+  path = path_1
 )
 
-# Keep the row names when printing the table t1 in log.txt.
+# Keep the row names when writing the table t1 in log.txt.
 report(
   data = t1, 
   rownames_kept = TRUE, 
   append = TRUE, 
-  path = "."
+  path = path_1
 ) 
 
 # Remove the row names.
@@ -123,15 +125,15 @@ report(
   data = t1, 
   rownames_kept = FALSE, 
   append = TRUE, 
-  path = "."
+  path = path_1
 )
 
-# Keep the row names when print the table t2 in log.txt.
+# Keep the row names when writing the table t2 in log.txt.
 report(
   data = t2, 
   rownames_kept = TRUE, 
   append = TRUE, 
-  path = "."
+  path = path_1
 )
 
 # Remove the row names.
@@ -139,7 +141,7 @@ report(
   data = t2, 
   rownames_kept = FALSE, 
   append = TRUE, 
-  path = "."
+  path = path_1
 ) 
 
 ```
@@ -147,13 +149,13 @@ report(
 
 ### Argument <code>vector_cat</code>
 ```{r, echo = TRUE, error = TRUE}
-# Print a vector of length > 1 using cat() instead of capture.output().
+# Write a vector of length > 1 using cat(), instead of as printed in the console.
 # Names are lost.
 report(
   data = vec3, 
   vector_cat = TRUE, 
   append = TRUE, 
-  path = "."
+  path = path_1
 )
 
 # Names are not lost.
@@ -161,7 +163,7 @@ report(
   data = vec3, 
   vector_cat = FALSE, 
   append = TRUE, 
-  path = "."
+  path = path_1
 )
 ```
 <br>
@@ -173,7 +175,7 @@ report(
   data = mat2, 
   noquote = FALSE, 
   append = TRUE, 
-  path = "."
+  path = path_1
 )
 ```
 <br>
@@ -185,38 +187,38 @@ report(
   data = vec1, 
   sep = 4, 
   append = TRUE, 
-  path = "."
+  path = path_1
 )
 
-#Error returned because at least 1 empty lines between printings.
+# Error returned because sep must be at least 1.
 report(
   data = vec1, 
   sep = 0, 
   append = TRUE, 
-  path = "."
+  path = path_1
 )
 ```
 <br>
 
 ### Argument <code>safer_check</code>
 ```{r, echo = TRUE, error = TRUE}
-# Safer checkings are performed before main code running 
+# Safer checks are performed before running.
 report(
     data = vec1, 
     safer_check = TRUE, 
     append = TRUE, 
-    path = "."
+    path = path_1
 )
 ```
 <br>
 
 ### Argument <code>lib_path</code>
 ```{r}
-# The "NOTGOOD" path does not exists.
+# The "NOTGOOD" path does not exist.
 report(
     data = vec1, 
     append = TRUE, 
-    path = ".", 
+    path = path_1, 
     lib_path = "NOTGOOD"
 )
 ```
@@ -228,7 +230,7 @@ report(
 report(
     data = vec1, 
     append = TRUE, 
-    path = ".", 
+    path = path_1, 
     lib_path = "NOTGOOD", 
     error_text = " === TEXT ADDED ==="
 )
@@ -237,20 +239,32 @@ report(
 
 ### All the arguments with their descriptions
 ```{r, echo = TRUE, error = TRUE}
-# matrix mat1 will be print in the file "text2.txt" in the path, with quote and row names being kept, and 4 lines after printing data
+# mat2 is written into the test2.txt file of the path_1 folder, with quotes and row names, followed by 4 empty lines.
 report(
-    data = mat2, # object to print.
+    data = mat2, # object to write.
     output = "test2.txt", # name of the output file.
-    path = ".", # path of the output file.
-    append = TRUE, # append in the output file?
+    path = path_1, # existing folder of the output file.
+    append = TRUE, # write after the content of the output file?
     rownames_kept = TRUE, # keep row names?
-    vector_cat = TRUE, # use cat() instead of capture.output() to print vectors?
-    noquote = FALSE, # print quotes for characters?
-    sep = 4, # empty lines after the printed data.
+    vector_cat = TRUE, # write vectors of length > 1 with cat(), instead of as printed in the console?
+    noquote = FALSE, # write character strings without quotes?
+    sep = 4, # number of empty lines after the written data.
     safer_check = TRUE, # perform some "safer" checks (see https://github.com/safer-r)?
     lib_path = NULL, # where the required packages are if not in the default directories.
     error_text = "" # add information in error messages returned by the function.
 )
 
 ```
+<br>
 
+### Content of the written files
+```{r, echo = TRUE, error = TRUE}
+# log.txt file (the sep argument sets the number of empty lines after each written object).
+cat(readLines(con = file.path(path_1, "log.txt")), sep = "\n")
+
+# test.txt file.
+cat(readLines(con = file.path(path_1, "test.txt")), sep = "\n")
+
+# test2.txt file.
+cat(readLines(con = file.path(path_1, "test2.txt")), sep = "\n")
+```

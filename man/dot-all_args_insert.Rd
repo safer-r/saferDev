@@ -2,20 +2,20 @@
 % Please edit documentation in R/intern_.all_args_insert.R
 \name{.all_args_insert}
 \alias{.all_args_insert}
-\title{Function for All Arguments Here}
+\title{Insert the Missing Arguments into a Function}
 \usage{
 .all_args_insert(x, out, output, lib_path, error_text)
 }
 \arguments{
 \item{x}{Function to modify. Function object.}
 
-\item{out}{List returned by \code{.functions_detect()}: \code{$code}, \code{$fun_names}, \code{$fun_names_pos}, \code{$code_line_nb}, \code{$internal_fun_names} and \code{$arg_user_setting}. The \code{$code} compartment is the normalized code read by \code{all_args_here()} and must have the same line indexing as the \code{$LINE_NB} column of the \code{output} data frame.}
+\item{out}{List returned by \code{.functions_detect()}. Only its \code{$code} compartment is used: the normalized code read by \code{all_args_here()}, which must have the same line indexing as the \code{$LINE_NB} column of the \code{output} data frame.}
 
-\item{output}{Data frame returned by the main code of \code{all_args_here()}: the \code{$LINE_NB}, \code{$FUN_NAME}, \code{$FUN_POS}, \code{$DEF_ARGS}, \code{$MISSING_ARGS} and \code{$STATUS} columns are used to apply the corrections (\code{$FUN_ARGS} is not used).}
+\item{output}{Data frame built by the main code of \code{all_args_here()}: the \code{$LINE_NB}, \code{$FUN_NAME}, \code{$FUN_POS}, \code{$DEF_ARGS}, \code{$MISSING_ARGS} and \code{$STATUS} columns are used to apply the corrections (\code{$FUN_ARGS} is not used). The optional \code{$NO_INSERT} column gives, for each call, the reason why its proposal must not be inserted (\code{"pipe"}, \code{"dots"}, \code{"empty_arg"}, \code{"nargs"}, \code{"generic_dispatch"}, \code{"generic_first_arg"}, \code{"method_args"}, \code{"method_partial"} or \code{"builtin_empty"}), or \code{""}.}
 
-\item{lib_path}{Vector of characters specifying the absolute pathways of the directories containing the required packages for the function, if not in the default directories. Useful when R packages are not installed in the default directories because of lack of admin rights. More precisely, \code{lib_path} is passed through the \code{new} argument of \code{.libPaths()} so that the new library paths are \code{unique(c(new, .Library.site, .Library))}. Warning: \code{.libPaths()} is restored to the initial paths, after function execution. Ignored if \code{NULL} (default): only the pathways specified by the current \code{.libPaths()} are used for package calling.}
+\item{lib_path}{Vector of character strings or \code{NULL}: the \code{lib_path} value of the calling exported function, only passed on to \code{arg_check()}. No default value.}
 
-\item{error_text}{Single character string used to add information in error messages returned by the function, notably if the function is inside other functions, which is practical for debugging. Example: \code{error_text = " INSIDE <PACKAGE_1>::<FUNCTION_1> INSIDE <PACKAGE_2>::<FUNCTION_2>."}. If \code{NULL}, converted into \code{""}.}
+\item{error_text}{Single character string added to the error messages to name the calling functions (\code{embed_error_text} of the calling function). \code{NULL} is converted into \code{""}. No default value.}
 }
 \value{
 A list:

@@ -2,79 +2,83 @@
 % Please edit documentation in R/lambda_check.R
 \name{lambda_check}
 \alias{lambda_check}
-\title{Lambda Check}
+\title{Check and Rewrite the \code{\\(x)} Lambda Functions}
 \usage{
 lambda_check(
   x,
   export = FALSE,
-  out_path = ".",
+  out_path = NULL,
   safer_check = TRUE,
   lib_path = NULL,
   error_text = ""
 )
 }
 \arguments{
-\item{x}{A function name, written without quotes and brackets.}
+\item{x}{Function to check, written without quotes and brackets (e.g., \code{fun1} or \code{pkg::fun1}).}
 
-\item{export}{Single logical value. Write the corrected function into a file instead of returning it? If \code{TRUE}, the file \code{<function name>_safer.R} is written in \code{out_path} (e.g., \code{fun_safer.R} for \code{x = fun}). Nothing is returned or exported if nothing has to be corrected. An error is returned if exported and the file already exists.}
+\item{export}{Single logical value. If \code{TRUE}, the corrected function is written into the \code{<name>_safer.R} file of \code{out_path} instead of being returned (e.g., \code{fun1_safer.R} for \code{x = fun1} or \code{x = pkg::fun1}), as \code{fun1_safer <- function(...)}, which \code{base::source()} recreates. Nothing is written if nothing has to be corrected, but an error is returned if the file already exists, or if \code{x} is not a function name (e.g., \code{function(x)\{x\}} or \code{FUN_LIST$fun}).}
 
-\item{out_path}{Single character string indicating the path of the folder where to write the file when \code{export = TRUE}. \code{"."} (default) means the R working directory. Ignored if \code{export = FALSE}.}
+\item{out_path}{Single character string: path of an existing folder where the file is written. Required when \code{export} is \code{TRUE}; otherwise not used, but a non-\code{NULL} value must still be a single non-empty character string. \code{NULL} by default.}
 
-\item{safer_check}{Single logical value. Perform the "safer" checks? If \code{TRUE}, checkings are performed before main code running (see the \href{https://github.com/safer-r}{safer-r project}): 1) required functions and related packages effectively present in local R libraries and 2) R classical operators (like \code{"<-"}) not overwritten by another package because of the R scope. Warning: must be set to \code{FALSE} if this function is used inside another "safer" function to avoid pointless multiple checkings.}
+\item{safer_check}{Single logical value. If \code{TRUE} (default), checks before running that the required packages and functions are installed and that the classical R operators (like \code{<-}) are not masked by another package or by a user-defined object of the global environment. These checks take time at each call: set \code{FALSE} in loops and inside other safer-r functions, to avoid repeating them.}
 
-\item{lib_path}{Vector of characters specifying the absolute pathways of the directories containing the required packages for the function, if not in the default directories. Useful when R packages are not installed in the default directories because of lack of admin rights. More precisely, \code{lib_path} is passed through the \code{new} argument of \code{.libPaths()} so that the new library paths are \code{unique(c(new, .Library.site, .Library))}. Warning: \code{.libPaths()} is restored to the initial paths, after function execution. Ignored if \code{NULL} (default): only the pathways specified by the current \code{.libPaths()} are used for package calling.}
+\item{lib_path}{Vector of character strings: paths of existing extra library folders containing the required packages (e.g., packages installed without admin rights). They are searched after the current \code{.libPaths()} during the call (the current libraries keep priority), and \code{.libPaths()} is restored on exit. If \code{NULL} (default), only the current \code{.libPaths()} are used.}
 
-\item{error_text}{Single character string used to add information in error messages returned by the function, notably if the function is inside other functions, which is practical for debugging. Example: \code{error_text = " INSIDE <PACKAGE_1>::<FUNCTION_1> INSIDE <PACKAGE_2>::<FUNCTION_2>."}. If \code{NULL}, converted into \code{""}.}
+\item{error_text}{Single character string added to the error messages (e.g., \code{" INSIDE pkg1::fun1()"}) to name the calling functions. \code{NULL} is converted into \code{""}.}
 }
 \value{
-A table-like message is always printed, with one row per reported lambda (column 1: line number; column 2: symbol; column 3: code before the lambda), or a message saying that everything seems fine.
+The corrected function, which keeps the environment of \code{x}, or \code{NULL}, invisibly, if nothing has to be corrected or if \code{export} is \code{TRUE}.
 
-If \code{export = FALSE}: the corrected function, or \code{NULL} if nothing has to be corrected.
-
-If \code{export = TRUE}: \code{NULL}, returned invisibly. The corrected function is written in a file (see the \code{export} argument).
+A message is also printed: a table with one row per reported lambda (column 1: line number; column 2: symbol; column 3: code of the line), or a sentence saying that everything seems clean.
 }
 \description{
-Verify if lambda functions are written with the shorthand \code{\\(x)} (like \code{\\(x) x * 2}). Return table message of the line with problems and a corrected version of the submitted function.
+Checks that the anonymous functions are written \code{function(x)} and not with the \code{\\(x)} shorthand (e.g., \code{function(x) x * 2} and not \code{\\(x) x * 2}). Prints a table of the reported lambdas and returns a corrected version of the function.
 }
 \details{
-Warning: the \code{\\(x)} writing of a lambda function is only kept in the code of the submitted function when the function carries its source references (attribute \code{srcref}, e.g., after a \code{base::parse(keep.source = TRUE)} or a function defined in a file loaded with \code{keep.source = TRUE}). Otherwise, \code{R} prints the lambda as \code{function(x)}, so that nothing can be reported: run \code{lambda_check()} on the source code itself, not on a compiled or on a loaded package function. The \code{base::getOption("keep.source")} default is \code{TRUE} in interactive sessions and \code{FALSE} in \code{Rscript}.
+Source references: line 1 is the line of the \code{function} keyword. The \code{\\(x)} writing is only kept in a function that carries its source references (attribute \code{srcref}), e.g., parsed with \code{keep.source = TRUE} (\code{base::parse()}, \code{base::source()}). Functions created with \code{options(keep.source = FALSE)} (default of Rscript) and functions of installed packages (e.g., \code{saferDev::colons_check}) have none: their deparsed code shows \code{function(x)}, so that nothing can be reported.
 
-Reported: lambdas written \code{\\(x)}, like \code{\\(x) x * 2}, \code{\\(x)\{ x \}} or \code{\\() base::mean(1:3)}, wherever they are written in the submitted function (right side of an assignment, argument value of a function call, etc.). In the message table, the SYMBOL column shows the lambda writing with its formals only when they are written on a single line: for a lambda whose formals span several lines, the fallback writing \code{\\()} is shown (the whole writing is still replaced correctly in the code, because only the \code{\\} token is replaced).
+Reported: the lambdas written \code{\\(x)}, like \code{\\(x) x * 2}, \code{\\(x)\{ x \}} or \code{\\() base::mean(1:3)}, wherever they are written in the function. In the printed table, the symbol is \code{\\()} when the formals of the lambda span several lines.
 
-Not reported: the \code{function(x)} standard writing, and lambda writings of the past (e.g., \code{function(x) x}) reported by other functions. Strings, comments and backquoted names (like a backquoted backslash, the deprecated \code{function()} writing of R versions before 4.1.0) are ignored: a backslash followed by \code{(} inside a string, a raw string, a comment or a backquoted name is never reported nor modified, whatever the rest of the written text (the detection is token-based, not text-based). A lambda body itself is not modified: run \code{curly_bracket_check()} and \code{true_false_check()} afterwards to check the corrected function further.
+Not reported: the standard \code{function(x)} writing (an unbraced body like \code{function(x) x} is reported by \code{curly_bracket_check()}). A \code{\\(} inside a string, a comment or a backquoted name is ignored.
 
-Correction: each reported \code{\\} lambda writing is replaced by \code{function} (e.g., \code{\\(x) x * 2} becomes \code{function(x) x * 2}). The rest of the code is unchanged. The corrected code is checked by parsing it. Lines can become longer than 80 characters. The returned function keeps the environment of the submitted function.
-
-The comments and the indentation of the submitted function are kept, in the returned function and in the exported file, which contain the recovered code verbatim, only modified by the \code{\\} -> \code{function} replacements. Warning: comments are only available when the submitted function carries its source references (attribute srcref). Otherwise (e.g., compiled package functions, or functions created with \code{options(keep.source = FALSE)}, default of Rscript), the code is the deparsed one: no comments and standard indentation.
-
-Line numbers are indicative. They start at the \code{<- function} line (\code{#'} header lines not counted). Compiled functions, like \code{saferDev::colons_check}, have no comments: their line numbers differ from their source file.
+Correction: the \code{\\} of each reported lambda is replaced by \code{function} (e.g., \code{\\(x) x * 2} becomes \code{function(x) x * 2}). The rest of the code, comments, indentation and lambda bodies included, is unchanged.
 }
 \examples{
-# Warning: these examples may not work well when using the "Run examples" link
-# because of a particular environment. Please, copy-paste in a local environment.
 # See also https://safer-r.github.io/saferDev/articles/lambda_check.html
-# The \\(x) writing is only kept in a function carrying its source references,
-# hence the parse(keep.source = TRUE) writing used here:
+# The \\(x) writing is only kept in a function carrying its source references: hence
+# keep.source = TRUE, and srcfile left empty (srcfile = NULL would remove them).
 code1 <- "function(x){ base::sapply(X = 1:3, FUN = function(y){ y * 2 }) }"
-fun1 <- eval(parse(text = code1, keep.source = TRUE))
-saferDev::lambda_check(fun1) # everything fine: NULL returned
+fun1 <- base::eval(expr = base::parse(file = "", n = NULL, text = code1, prompt = "?",
+    keep.source = TRUE, srcfile = , encoding = "unknown"), envir = , enclos = )
+saferDev::lambda_check(x = fun1, export = FALSE, out_path = NULL, safer_check = TRUE,
+    lib_path = NULL, error_text = "") # nothing to correct: NULL returned, invisibly
 code2 <- "function(x){ base::sapply(X = 1:3, FUN = \\\\(y){ y * 2 }) }"
-fun2 <- eval(parse(text = code2, keep.source = TRUE))
-fun2_safer <- saferDev::lambda_check(fun2) # lambda writing reported
+fun2 <- base::eval(expr = base::parse(file = "", n = NULL, text = code2, prompt = "?",
+    keep.source = TRUE, srcfile = , encoding = "unknown"), envir = , enclos = )
+fun2_safer <- saferDev::lambda_check(x = fun2, export = FALSE, out_path = NULL,
+    safer_check = TRUE, lib_path = NULL, error_text = "") # lambda writing reported
 fun2_safer # corrected function
 # A backslash followed by ( in a string, a raw string, a comment or a backquoted name
-# is not a lambda writing (token-based detection): not reported, not modified.
-code3 <- paste0(
+# is not a lambda writing: not reported, not modified.
+code3 <- base::paste0(
     "function(x){ y <- \"the text \\\\\\\\(x) is inside a string\" ; ",
-    "z <- r\"(raw \\\\(x))\" ; # a \\\\(x) in a comment\n    base::`\\\\\\\\`(x) ; x }"
+    "z <- r\"(raw \\\\(x))\" ; # a \\\\(x) in a comment\n    `\\\\\\\\(w)` <- 1 ; x }",
+    collapse = NULL, recycle0 = FALSE
 )
-fun3 <- eval(parse(text = code3, keep.source = TRUE))
-saferDev::lambda_check(fun3) # everything fine: NULL returned
+fun3 <- base::eval(expr = base::parse(file = "", n = NULL, text = code3, prompt = "?",
+    keep.source = TRUE, srcfile = , encoding = "unknown"), envir = , enclos = )
+saferDev::lambda_check(x = fun3, export = FALSE, out_path = NULL, safer_check = TRUE,
+    lib_path = NULL, error_text = "") # nothing to correct: NULL returned, invisibly
 # Write the corrected function in the fun2_safer.R file of a new temporary folder:
-tempo_dir <- base::tempfile(pattern = "dir", tmpdir = base::tempdir(), fileext = "")
+tempo_dir <- base::tempfile(pattern = "dir", tmpdir = base::tempdir(check = FALSE), fileext = "")
 base::dir.create(path = tempo_dir, showWarnings = TRUE, recursive = FALSE, mode = "0777")
-saferDev::lambda_check(x = fun2, export = TRUE, out_path = tempo_dir)
+saferDev::lambda_check(x = fun2, export = TRUE, out_path = tempo_dir, safer_check = TRUE,
+    lib_path = NULL, error_text = "")
+base::unlink(x = tempo_dir, recursive = TRUE, force = FALSE, expand = TRUE) # folder removed
 
+}
+\seealso{
+The code checkers of saferDev, in the recommended order of use: \code{\link{super_assign_check}}, \code{\link{lambda_check}}, \code{\link{colons_check}}, \code{\link{all_args_here}}, \code{\link{curly_bracket_check}}, \code{\link{true_false_check}}, \code{\link{for_loop_nb_check}} (see \code{vignette("saferDev")}).
 }
 \author{
 \href{mailto:gael.millot@pasteur.fr}{Gael Millot}

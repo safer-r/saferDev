@@ -62,9 +62,9 @@ testthat::test_that("mandatory arg block of safer-r functions (internal function
     ## data argument values
     # full calls with all formals except the mandatory one to drop (lib_path for all these internals)
     intern_calls <- base::list(
-        .all_args_here_fill = base::quote(.all_args_here_fill(arg_full = base::list(), arg_full_names = "x", tempo_split = "x", three_dots_log = FALSE, i2 = 1L, col1_i2 = 1L, col2_i2 = "length", arg_user_setting_x = "x", warn = NULL, warn_count = 0L, error_text = "")),
+        .all_args_here_fill = base::quote(.all_args_here_fill(arg_full = base::list(), arg_full_names = "x", tempo_split = "x", three_dots_log = FALSE, pipe_log = FALSE, i2 = 1L, col1_i2 = 1L, col2_i2 = "length", arg_user_setting_x = "x", warn = NULL, warn_count = 0L, error_text = "")),
         .all_args_insert = base::quote(.all_args_insert(x = base::mean, out = base::list(code = "a"), output = base::data.frame(), error_text = "")),
-        .colons_check_message = base::quote(.colons_check_message(list_fun = base::list(), list_fun_pos = base::list(), line_nb = base::integer(), ini = base::character(), arg_user_setting2 = base::list(), text = "BASIC", internal_fun_names = base::character(), error_text = "")),
+        .colons_check_message = base::quote(.colons_check_message(list_fun = base::list(), list_fun_pos = base::list(), list_fun_internal = base::list(), line_nb = base::integer(), ini = base::character(), arg_user_setting2 = base::list(), text = "BASIC", internal_fun_names = base::character(), error_text = "")),
         .extract_all_fun_names = base::quote(.extract_all_fun_names(text = "a", pattern = "a", error_text = "")),
         .find_construct_body = base::quote(.find_construct_body(pd = base::data.frame(), kid = 1L, body_start = 1L, body_start_pos = 1L, term_rows = base::integer(), else_branch = FALSE, else_tok = NULL, error_text = "")),
         .functions_detect = base::quote(.functions_detect(x = "a", skipped_base = FALSE, arg_user_setting2 = base::list(), error_text = "")),

@@ -1,74 +1,67 @@
-#' @title Get Message
+#' @title Catch the Error, Warning or Message of an Instruction
 #' @description
-#' Evaluate an instruction written between \code{""} and return the first of the error message, or the last of the warning or standard (non error non warning) messages if ever exist.
-#' 
-#' Using argument \code{print_no = FALSE}, return \code{NULL} if nothing reported, which is convenient in some cases.
-#' @param data Single character string of an instruction to evaluate
-#' @param kind Single character string. Either \code{"error"} to get a potential error message, or \code{"warning"} to get a potential warning message, or \code{"message"} to get a potential standard (non error and non warning) message.
-#' @param header Single logical value. Add a header in the returned message?
-#' @param print_no Single logical value. Print a message saying that nothing (\code{NULL} output) has to be reported?
-#' @param text Single character string added to the header of the output message, even if nothing reported (\code{print_no} is \code{TRUE}). Ignored if the \code{header} argument is \code{FALSE}. Write \code{NULL} if not required.
-#' @param env An object corresponding to an existing environment. Then the \code{data} argument value is evaluated only in the indicated environment. Write \code{NULL} if not required (R scope is used). Example \code{env = .GlobalEnv}. Example \code{env = asNamespace("stats")}.
-#' @param safer_check Single logical value. Perform the "safer" checks? If \code{TRUE}, checkings are performed before main code running (see the \href{https://github.com/safer-r}{safer-r project}): 1) required functions and related packages effectively present in local R libraries and 2) R classical operators (like \code{"<-"}) not overwritten by another package because of the R scope. Warning: must be set to \code{FALSE} if this function is used inside another "safer" function to avoid pointless multiple checkings.
-#' @param lib_path Vector of characters specifying the absolute pathways of the directories containing the required packages for the function, if not in the default directories. Useful when R packages are not installed in the default directories because of lack of admin rights. More precisely, \code{lib_path} is passed through the \code{new} argument of \code{.libPaths()} so that the new library paths are \code{unique(c(new, .Library.site, .Library))}. Warning: \code{.libPaths()} is restored to the initial paths, after function execution. Ignored if \code{NULL} (default): only the pathways specified by the current \code{.libPaths()} are used for package calling.
-#' @param error_text Single character string used to add information in error messages returned by the function, notably if the function is inside other functions, which is practical for debugging. Example: \code{error_text = " INSIDE <PACKAGE_1>::<FUNCTION_1> INSIDE <PACKAGE_2>::<FUNCTION_2>."}. If \code{NULL}, converted into \code{""}.
+#' Evaluates an instruction written as a character string, and returns its error message, its last warning message or its standard messages (neither errors nor warnings), as a single character string.
+#' @param data Single character string: the instruction to evaluate.
+#' @param kind Single character string: the kind of message returned, either \code{"error"} (default), \code{"warning"} or \code{"message"} (standard messages).
+#' @param header Single logical value. Start the returned message with a header (\code{"ERROR MESSAGE REPORTED:"}, \code{"WARNING MESSAGE REPORTED:"} or \code{"STANDARD MESSAGE REPORTED:"})? If \code{FALSE}, errors and warnings are returned as formatted by R (e.g., \code{"simpleWarning in log(-1): NaNs produced"} instead of \code{"In log(-1): NaNs produced"}).
+#' @param print_no Single logical value. If \code{TRUE}, a \code{"NO ... REPORTED"} string is returned instead of \code{NULL} when nothing is caught (see the returned value).
+#' @param text Single character string inserted at the end of the header, before the colon (e.g., \code{"ERROR MESSAGE REPORTED IN A:"} with \code{text = "IN A"}), and added to the \code{"NO ... REPORTED"} strings whatever \code{header}. \code{NULL} (default) for no text.
+#' @param env Environment in which the instruction is evaluated (e.g., \code{.GlobalEnv} or \code{asNamespace("stats")}). If \code{NULL} (default), the environment from which \code{get_message()} is called.
+#' @inheritParams is_function_here
 #' @returns
-#' The function returns the error, warning, or standard message, as a single character string, depending on what has been selected using the \code{kind} argument and if such message exists.
-#' 
-#' \code{NULL} if no selected message returned and the \code{print_no} argument is \code{FALSE}.
-#' 
-#' The following message if no selected message returned and the \code{print_no} argument is \code{TRUE}: \code{"NO (ERROR|WARNING|STANDARD) MESSAGE REPORTED"}.
-#' 
-#' The following message if 1) the \code{kind} argument is \code{"warning"} or \code{"message"} while an error message is returned and 2) the \code{print_no} argument is \code{TRUE}: \code{"NO POTENTIAL (WARNING|STANDARD) MESSAGE BECAUSE OF ERROR MESSAGE REPORTED"}.
-#' @details 
-#' Warnings:
-#' \itemize{
-#'   \item Only the first error or last warning/standard message is returned.
-#'   \item Always use the \code{env} argument when \code{get_message()} is used inside functions.
-#'   \item The function does not prevent printing, for instance if \code{print()} or \code{show()} is used inside the instruction tested. To prevent that, use \code{tempo <- utils::capture.output(error <- get_message(data = "arg_check(data = 'a', class = mean, neg_values = FALSE, print = TRUE)"))}. The return of \code{get_message()} is assigned into \code{error} and the printed messages are captured by \code{utils::capture.output()} and assigned into \code{tempo}. See the examples.
-#' }
-#' 
-#' The \code{env} argument is used as value for the \code{envir} argument of the \code{base::eval()} function.
-#' 
+#' A single character string: the error message (\code{kind = "error"}), the last warning message (\code{kind = "warning"}), or all the standard messages, separated by line breaks (\code{kind = "message"}).
+#'
+#' If no such message is caught: \code{NULL} or, with \code{print_no = TRUE}, \code{"NO (ERROR|WARNING|STANDARD) MESSAGE REPORTED"}. If the instruction stops with an error while \code{kind} is \code{"warning"} or \code{"message"}, the warnings and messages emitted before the error are not returned: \code{NULL} or, with \code{print_no = TRUE}, \code{"NO POTENTIAL (WARNING|STANDARD) MESSAGE BECAUSE OF ERROR MESSAGE REPORTED"}.
+#' @details
+#' The instruction is evaluated once, whatever \code{kind}. Its warnings and standard messages are caught and not displayed. Its printed outputs (e.g., by \code{print()} or \code{show()}) are not caught: use \code{printed <- utils::capture.output(msg <- get_message(data = "print(1) ; log(-1)", kind = "warning"))} to get them in \code{printed}. Text written directly to the standard error (e.g., by \code{cat(file = stderr())}) is not caught either: use \code{utils::capture.output(type = "message")} to get it.
+#'
+#' Plots are drawn on a NULL pdf device (no file created), and the graphic devices left open by the instruction are closed. A ggplot2 object returned by the instruction is printed, to catch the errors, warnings and messages emitted when the plot is built.
 #' @seealso \code{\link{try}}.
 #' @author \href{mailto:gael.millot@pasteur.fr}{Gael Millot}
-#' @author Haiding Wang  
+#' @author Haiding Wang
 #' @author Yushi Han
 #' @examples
-#' # Warning: these examples may not work well when using the "Run examples" link 
-#' # because of a particular environment. Please, copy-paste in a local environment.
 #' # See also https://safer-r.github.io/saferDev/articles/get_message.html
-#' 
-#' # Report error message by default. Here no error to report:
-#' saferDev::get_message(data = "wilcox.test(c(1,1,3), c(1, 2, 4), paired = TRUE)")
-#' 
+#'
+#' # Error message returned by default. Here no error to report:
+#' saferDev::get_message(data = "base::log(-1)", kind = "error", header = TRUE, print_no = FALSE,
+#'     text = NULL, env = NULL, safer_check = TRUE, lib_path = NULL, error_text = "")
+#'
 #' # Warning message to report:
-#' saferDev::get_message(data = "wilcox.test(c(1,1,3), c(1, 2, 4), paired = TRUE)", kind = "warning")
-#' 
+#' saferDev::get_message(data = "base::log(-1)", kind = "warning", header = TRUE, print_no = FALSE,
+#'     text = NULL, env = NULL, safer_check = TRUE, lib_path = NULL, error_text = "")
+#'
 #' # No standard message to report:
-#' saferDev::get_message(data = "wilcox.test(c(1,1,3), c(1, 2, 4), paired = TRUE)", kind = "message", 
-#' print_no = TRUE, text = "IN A")
-#' 
-#' # Standard message cannot be caught because wilcox.test() returns an error message:
-#' saferDev::get_message(data = "wilcox.test()", kind = "message", print_no = TRUE, text = "IN A")
-#' 
-#' # Text added in warning message to report:
-#' saferDev::get_message(data = "wilcox.test()", kind = "error", print_no = TRUE, text = "IN A")
-#' 
-#' # No error message to report with text added:
-#' saferDev::get_message(data = "sum(1)", kind = "error", print_no = TRUE, text = "IN A")
-#' 
-#' # No error message to report with text added:
-#' saferDev::get_message(data = "message('ahah')", kind = "error", print_no = TRUE, text = "IN A")
-#' 
-#' # Standard message reported with text added:
-#' saferDev::get_message(data = "message('ahah')", kind = "message", print_no = TRUE, text = "IN A")
-#' 
-#' # Messages from ggplot2 functions caugth:
-#' saferDev::get_message(data = "ggplot2::ggplot(data = data.frame(X = 1:10, stringsAsFactors = TRUE), 
-#' mapping = ggplot2::aes(x = X)) + ggplot2::geom_histogram()", kind = "message", 
-#' print_no = TRUE, text = "IN INSTRUCTION 1")
-#' @importFrom ggplot2 ggplot_build
+#' saferDev::get_message(data = "base::log(-1)", kind = "message", header = TRUE, print_no = TRUE,
+#'     text = "IN A", env = NULL, safer_check = TRUE, lib_path = NULL, error_text = "")
+#'
+#' # No standard message returned, because wilcox.test() stops with an error:
+#' saferDev::get_message(data = "wilcox.test()", kind = "message", header = TRUE, print_no = TRUE,
+#'     text = "IN A", env = NULL, safer_check = TRUE, lib_path = NULL, error_text = "")
+#'
+#' # Error message to report, with text added:
+#' saferDev::get_message(data = "wilcox.test()", kind = "error", header = TRUE, print_no = TRUE,
+#'     text = "IN A", env = NULL, safer_check = TRUE, lib_path = NULL, error_text = "")
+#'
+#' # No error message to report, with text added:
+#' saferDev::get_message(data = "sum(1)", kind = "error", header = TRUE, print_no = TRUE,
+#'     text = "IN A", env = NULL, safer_check = TRUE, lib_path = NULL, error_text = "")
+#'
+#' # A standard message is not reported with kind = "error":
+#' saferDev::get_message(data = "message('ahah')", kind = "error", header = TRUE, print_no = TRUE,
+#'     text = "IN A", env = NULL, safer_check = TRUE, lib_path = NULL, error_text = "")
+#'
+#' # Standard message to report, with text added:
+#' saferDev::get_message(data = "message('ahah')", kind = "message", header = TRUE, print_no = TRUE,
+#'     text = "IN A", env = NULL, safer_check = TRUE, lib_path = NULL, error_text = "")
+#'
+#' # Messages of a ggplot2 plot caught:
+#' if(base::requireNamespace(package = "ggplot2", quietly = TRUE)){
+#'     saferDev::get_message(data = "ggplot2::ggplot(data = data.frame(X = 1:10,
+#'         stringsAsFactors = TRUE), mapping = ggplot2::aes(x = X)) + ggplot2::geom_histogram()",
+#'         kind = "message", header = TRUE, print_no = TRUE, text = "IN INSTRUCTION 1", env = NULL,
+#'         safer_check = TRUE, lib_path = NULL, error_text = "")
+#' }
 #' @export
 get_message <- function(
     data, 
@@ -82,7 +75,7 @@ get_message <- function(
     error_text = "" 
 ){  
     # DEBUGGING
-    # data = "wilcox.test(c(1,1,3), c(1, 2, 4), paired = TRUE)" ; kind = "warning" ; header = TRUE ; print_no = FALSE ; text = NULL ; env = NULL ; safer_check = TRUE ; lib_path = NULL ; error_text = ""
+    # data = "base::log(-1)" ; kind = "warning" ; header = TRUE ; print_no = FALSE ; text = NULL ; env = NULL ; safer_check = TRUE ; lib_path = NULL ; error_text = ""
     # function_name <- "get_message" ; arg_user_setting = base::list(x = as.name(x = "get_message"), kind = "warning", header = TRUE, print_no = FALSE, text = NULL, env = NULL, safer_check = TRUE, lib_path = NULL, error_text = "") ; arg_names <- c("data", "kind",  "header",  "print_no",  "text", "env", "safer_check", "lib_path", "error_text")
     # data = "sum(1)" ; kind = "warning" ; header = TRUE ; print_no = FALSE ; text = NULL ; env = NULL; safer_check = TRUE ; lib_path = NULL ; error_text = ""  
     # set.seed(1) ; obs1 <- data.frame(Time = c(rnorm(10), rnorm(10) + 2), Group1 = rep(c("G", "H"), each = 10), stringsAsFactors = TRUE) ; data = 'gg_boxplot(data1 = obs1, y = "Time", categ = "Group1")' ; kind = "warning" ; header = TRUE ; print_no = FALSE ; text = NULL ; env = NULL ; safer_check = TRUE ; lib_path = NULL ; error_text = ""  
@@ -108,8 +101,12 @@ get_message <- function(
     #### end internal error report link
 
     #### function name
-    tempo_settings <- base::as.list(x = base::match.call(definition = base::sys.function(which = base::sys.parent(n = 0)), call = base::sys.call(which = base::sys.parent(n = 0)), expand.dots = FALSE, envir = base::parent.frame(n = 2L))) # warning: I have written n = 0 to avoid error when a safer function is inside another functions. In addition, arguments values retrieved are not evaluated base::match.call, but this is solved with get() below
-    function_name <- base::paste0(tempo_settings[[1]], "()", collapse = NULL, recycle0 = FALSE) 
+    tempo_settings <- base::as.list(x = base::match.call(definition = base::sys.function(which = base::sys.parent(n = 0)), call = base::sys.call(which = base::sys.parent(n = 0)), expand.dots = FALSE, envir = )) # warning: I have written n = 0 to avoid error when a safer function is inside another functions. In addition, arguments values retrieved are not evaluated base::match.call, but this is solved with get() below. Warning: envir is left empty on purpose: its default parent.frame(2L), evaluated inside base::match.call(), is the frame that called this function, where the ... of the call are expanded (base::parent.frame(n = 2L) written here would be evaluated one frame too far, which breaks the calls through base::lapply(), base::vapply(), base::apply(), base::Filter() or a function forwarding ..., base::sapply() only working by coincidence)
+    if(base::is.name(x = tempo_settings[[1]]) | base::is.call(x = tempo_settings[[1]])){
+        function_name <- base::paste0(tempo_settings[[1]], "()", collapse = NULL, recycle0 = FALSE)
+    }else{
+        function_name <- "<anonymous function>()" # the function was called through its object (e.g., base::do.call(what = <function object>, args = ...)), so that its name is not in the call
+    }
     # function name with "()" paste, which split into a vector of three: c("::()", "package ()", "function ()") if "package::function()" is used.
     if(function_name[1] == "::()" | function_name[1] == ":::()"){
         function_name <- function_name[3]
@@ -266,7 +263,7 @@ get_message <- function(
         "header", 
         "print_no",
         "text",
-        "env", 
+        # "env", # inactivated because an environment can be empty (base::length() of an environment is its number of objects). Checked by arg_check() below
         "safer_check", 
         "lib_path"
         # "error_text" # inactivated because empty value converted to "" above
@@ -385,8 +382,8 @@ get_message <- function(
             base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL)
         }else{
             ini_lib_path <- base::.libPaths(new = , include.site = TRUE) # normal to have empty new argument
-            base::on.exit(expr = base::.libPaths(new = ini_lib_path, include.site = TRUE), add = TRUE, after = TRUE) # return to the previous libPaths()
-            base::.libPaths(new = base::sub(x = base::c(ini_lib_path, lib_path), pattern = "/$|\\\\$", replacement = "", ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE), include.site = TRUE) # base::.libPaths(new = ) add path to default path. BEWARE: base::.libPaths() does not support / at the end of a submitted path. The reason of the check and replacement of the last / or \\ in path
+            base::on.exit(expr = base::.libPaths(new = ini_lib_path, include.site = FALSE), add = TRUE, after = TRUE) # return to the previous libPaths(). include.site = FALSE: exact restore, since ini_lib_path already contains the site library if it was in use
+            base::.libPaths(new = base::sub(x = base::c(ini_lib_path, lib_path), pattern = "/$|\\\\$", replacement = "", ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE), include.site = FALSE) # base::.libPaths(new = ) add path to default path. BEWARE: base::.libPaths() does not support / at the end of a submitted path. The reason of the check and replacement of the last / or \\ in path
             lib_path <- base::.libPaths(new = , include.site = TRUE) # normal to have empty new argument
         }
     }else{
@@ -481,19 +478,16 @@ get_message <- function(
     ######## end warning initiation
 
     ######## graphic device checking
-    # check the number of graphic devices on exit
-    dev_list <- grDevices::dev.list()
-    # nocov start
-    # codecov inactivated because it is an internal control of code writing, impossible to cover with argument values.
-    base::on.exit(expr = if(base::length(x = dev_list) != base::length(x = grDevices::dev.list())){tempo_cat <- base::paste0("INTERNAL ERROR IN THE BACKBONE PART OF ", intern_error_text_start, "SOME GRAPHIC DEVICES WERE OPENED BY ", function_name, " BUT NOT CLOSED BEFORE END OF EXECUTION.\n\nIF IT IS EXPECTED, JUST REMOVE THE CODE DISPLAYING THIS MESSAGE INSIDE ", function_name, ".\n\nOTHERWISE, THE PROBLEM COMES FROM OPENED GRAPHIC DEVICES BEFORE RUNNING ", function_name, " (n = ", base::length(x = dev_list), ") AND AFTER (n = ", base::length(x = grDevices::dev.list()), ").", intern_error_text_end, collapse = NULL, recycle0 = FALSE) ; base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL)}, add = TRUE, after = TRUE)
-    # nocov end
-    # end check the number of graphic devices on exit
-    # restore the graphic parameters on exit
-    if(base::length(x = grDevices::dev.list()) > 0){
-        par_ini <- base::suppressWarnings(expr = graphics::par(no.readonly = TRUE), classes = "warning") # to recover the present graphical parameters
-        base::on.exit(expr = base::suppressWarnings(expr = graphics::par(par_ini, no.readonly = TRUE), classes = "warning"), add = TRUE, after = TRUE)
-    }
-    # end restore the graphic parameters on exit
+    # warning: personalized compared to backbone. The instruction is drawn on the NULL pdf device opened in the main code: on exit, this device and those left open by the instruction are closed (instead of an internal error), and the initial current device is restored
+    # no graphics::par() save and restore: the instruction does not draw on the devices of the user, and graphics::par() would reset their multi-panel layout (the next plot would start a new page)
+    dev_list <- grDevices::dev.list() # devices open before running the function (NULL if none)
+    dev_cur_ini <- grDevices::dev.cur() # current device before running the function (1, the null device, if none)
+    base::on.exit(expr = {
+        base::invisible(x = base::lapply(X = base::setdiff(x = grDevices::dev.list(), y = dev_list), FUN = function(x){grDevices::dev.off(which = x)})) # close the devices opened during the execution
+        if(dev_cur_ini %in% grDevices::dev.list()){ # FALSE if no device was open, or if the instruction has closed the initial current device
+            base::invisible(x = grDevices::dev.set(which = dev_cur_ini)) # dev.off() makes another device current
+        }
+    }, add = TRUE, after = TRUE)
     ######## end graphic device checking
 
     ######## other checkings
@@ -503,20 +497,9 @@ get_message <- function(
 
     #### main code
     output <- NULL
-    ggplot2_detect <- FALSE
-    # nocov start
-    # codecov inactivated because it is not testable in all OS
-    if(base::Sys.info()[["sysname"]] == "Linux") {
-        grDevices::pdf(file = NULL, width = , height = , onefile = , family = , title = , fonts = , version = , paper = , encoding = , bg = , fg = , pointsize = , pagecentre = , colormodel = , useDingbats = , useKerning = , fillOddEven = , compress = , timestamp = , producer = , author = ) # send plots into a NULL file, no pdf file created
-    }else{
-        grDevices::pdf(file = NULL, width = , height = , onefile = , family = , title = , fonts = , version = , paper = , encoding = , bg = , fg = , pointsize = , pagecentre = , colormodel = , useDingbats = , useKerning = , fillOddEven = , compress = , timestamp = , producer = , author = ) # send plots into a NULL file, no pdf file created
-    }
-    # nocov end
-    window_nb <- grDevices::dev.cur()
-    base::invisible(x = grDevices::dev.set(which = window_nb))
+    grDevices::pdf(file = NULL, width = , height = , onefile = , family = , title = , fonts = , version = , paper = , encoding = , bg = , fg = , pointsize = , pagecentre = , colormodel = , useDingbats = , useKerning = , fillOddEven = , compress = , timestamp = , producer = , author = ) # send plots into a NULL file, no pdf file created. Device closed on exit (see the graphic device checking section)
     tempo_error <- base::try(expr = base::suppressMessages(expr = base::suppressWarnings(expr = base::eval(expr = base::parse(text = base::is.null(x = data), file = "", n = NULL, prompt = "?", keep.source = base::getOption(x = "keep.source", default = NULL), srcfile = NULL, encoding = "unknown"), envir = if(base::is.null(x = env)){base::parent.frame(n = 1)}else{env}, enclos = base::environment(fun = NULL)), classes = "warning"), classes = "message"), silent = TRUE, outFile = base::getOption(x = "try.outFile", default = base::stderr())) # deal first with data = NULL: return NULL
     if(base::all(tempo_error == TRUE, na.rm = TRUE)){
-        base::invisible(x = grDevices::dev.off(which = window_nb)) # end send plots into a NULL file
         tempo_cat <- base::paste0(
             error_text_start, 
             "THE data ARGUMENT MUST BE A SINGLE CHARACTER STRING.", 
@@ -527,9 +510,34 @@ get_message <- function(
     }else{
         tempo_error <- base::try(expr = base::suppressMessages(expr = base::suppressWarnings(expr = base::eval(expr = base::parse(text = base::is.character(x = data), file = "", n = NULL, prompt = "?", keep.source = base::getOption(x = "keep.source", default = NULL), srcfile = NULL, encoding = "unknown"), envir = if(base::is.null(x = env)){base::parent.frame(n = 1)}else{env}, enclos = base::environment(fun = NULL)), classes = "warning"), classes = "message"), silent = TRUE, outFile = base::getOption(x = "try.outFile", default = base::stderr())) # deal first with data = NULL: return NULL
         if(base::all(tempo_error == TRUE, na.rm = TRUE)){
-            tempo_error <- base::try(expr = base::suppressMessages(expr = base::suppressWarnings(expr = base::eval(expr = base::parse(text = data, file = "", n = NULL, prompt = "?", keep.source = base::getOption(x = "keep.source", default = NULL), srcfile = NULL, encoding = "unknown"), envir = if(base::is.null(x = env)){base::parent.frame(n = 1)}else{env}, enclos = base::environment(fun = NULL)), classes = "warning"), classes = "message"), silent = TRUE, outFile = base::getOption(x = "try.outFile", default = base::stderr())) # get error message, not warning or messages # cannot prevent some printing, when data = "show(1)" for instance
+            # single evaluation of the instruction: base::try() catches the error, and the calling handlers below record and muffle the warnings and the standard messages. These handlers are the closest to the instruction, so that outer handlers (knitr, testthat, base::suppressMessages()) cannot catch the warnings and messages first
+            caught_env <- base::new.env(hash = TRUE, parent = base::emptyenv(), size = 29L) # environment receiving the caught warnings and messages: the handlers below modify it in place, so that no superassignment (<<-) is required
+            caught_env$warn <- NULL
+            caught_env$message <- NULL
+            w_handler <- function(w){ # warning handler
+                caught_env$warn <- base::as.character(x = w) # only the last warning is kept
+                base::tryInvokeRestart(r = "muffleWarning") # tryInvokeRestart(): no error if the warning is signaled without muffle restart (e.g., by base::signalCondition()), as in base::suppressWarnings()
+            }
+            m_handler <- function(m){ # standard message handler
+                caught_env$message <- base::c(caught_env$message, base::conditionMessage(c = m)) # all the standard messages are kept
+                base::tryInvokeRestart(r = "muffleMessage")
+            }
+            tempo_error <- base::try(
+                expr = base::withCallingHandlers(
+                    expr = {
+                        tempo_value <- base::eval(expr = base::parse(text = data, file = "", n = NULL, prompt = "?", keep.source = base::getOption(x = "keep.source", default = NULL), srcfile = NULL, encoding = "unknown"), envir = if(base::is.null(x = env)){base::parent.frame(n = 1)}else{env}, enclos = base::environment(fun = NULL)) # warning: keep this writing, which appears in the returned errors and warnings raised at the top level of the instruction (e.g., "In base::eval(expr = base::parse(text = data, file = "", n = NULL,  : "). Printing cannot be prevented, when data = "show(1)" for instance
+                        if(base::any(base::class(x = tempo_value) %in% base::c("gg", "ggplot"), na.rm = TRUE)){ # %in% never returns NA
+                            base::print(x = tempo_value) # a ggplot2 object emits its errors, warnings and messages when printed (here on the NULL pdf device)
+                        }
+                        NULL # the value of the instruction is not returned, so that only the try-error of base::try() means an error (an instruction that assigns the result of base::try() returns a try-error value without stopping)
+                    },
+                    warning = w_handler, # BEWARE: w_handler and m_handler are functions written without (), like in other functions with FUN argument
+                    message = m_handler
+                ),
+                silent = TRUE,
+                outFile = base::getOption(x = "try.outFile", default = base::stderr())
+            )
         }else{
-            base::invisible(x = grDevices::dev.off(which = window_nb)) # end send plots into a NULL file
             tempo_cat <- base::paste0(
                 error_text_start, 
                 "THE data ARGUMENT MUST BE A SINGLE CHARACTER STRING.", 
@@ -538,19 +546,11 @@ get_message <- function(
             )
             base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL)
         }
-        if(base::any(base::class(x = tempo_error) %in% base::c("gg", "ggplot"), na.rm = TRUE)){ # %in% never returns NA
-            ggplot2_detect <- TRUE
-            gg_obj <- tempo_error
-            tempo_error <- base::try(expr = base::suppressMessages(expr = base::suppressWarnings(expr = base::print(x = gg_obj), classes = "warning"), classes = "message"), silent = TRUE, outFile = base::getOption(x = "try.outFile", default = base::stderr()))[1]
-        }
-        # if(base::exists(x = "tempo_error", where = -1, envir = base::environment(fun = NULL), frame = , mode = "any", inherits = FALSE) == TRUE){ # inherits = FALSE avoid the portee lexical and thus the declared word #inactivated because tempo_error always exists
-        if(ggplot2_detect == TRUE){
-            if( ! base::any(base::grepl(x = tempo_error, pattern = "^Error i|^error i|^ERROR I", ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE), na.rm = TRUE)){
-                tempo_error <- NULL
-            }
-        }else if( ! base::all(base::class(x = tempo_error) == "try-error", na.rm = TRUE)){ # deal with S4 objects. Old code:  ! (base::all(base::class(tempo_error) == "try-error") & base::any(base::grepl(x = tempo_error, pattern = "^Error|^error|^ERROR"))) but problem with S4 objects. Old code : if((base::length(tempo_error) > 0 & ! base::any(base::grepl(x = tempo_error, pattern = "^Error|^error|^ERROR"))) | (base::length(tempo_error) == 0) ){ but problem when tempo_error is a list but added this did not work: | ! base::all(base::class(tempo_error) == "character") # no NA returned using base::class()
+        if( ! base::all(base::class(x = tempo_error) == "try-error", na.rm = TRUE)){ # no error: tempo_error is the NULL returned by the expression of base::withCallingHandlers() above, not the try-error object of base::try() # no NA returned using base::class()
             tempo_error <- NULL
         }
+        tempo_warn <- caught_env$warn # last warning, NULL if none
+        tempo_message <- caught_env$message # all the standard messages, NULL if none
         if(kind == "error" & ! base::is.null(x = tempo_error)){ # 
             if(header == TRUE){
                 tempo_error[1] <- base::gsub(x = tempo_error[1], pattern = "^Error i|^error i|^ERROR I", replacement = "I", ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE)
@@ -563,51 +563,11 @@ get_message <- function(
         }else if(kind != "error" & ( ! base::is.null(x = tempo_error)) & print_no == TRUE){
             output <- base::paste0("NO POTENTIAL ", base::ifelse(test = kind == "warning", yes = "WARNING", no = "STANDARD"), " MESSAGE BECAUSE OF ERROR MESSAGE REPORTED", base::ifelse(test = base::is.null(x = text), yes = "", no = " "), text, collapse = NULL, recycle0 = FALSE)
         }else if(base::is.null(x = tempo_error) & kind != "error"){ #is.null() TRUE means no error detected
-            # get message
-            tempo_message <- utils::capture.output({
-                if(ggplot2_detect == TRUE){ # %in% never returns NA
-                    tempo <- base::suppressWarnings(expr = base::print(x = gg_obj), classes = "warning")
-                }else{
-                    tempo <- base::suppressWarnings(expr = base::eval(expr = base::parse(text = data, file = "", n = NULL, prompt = "?", keep.source = base::getOption(x = "keep.source", default = NULL), srcfile = NULL, encoding = "unknown"), envir = if(base::is.null(x = env)){base::parent.frame(n = 1)}else{env}, enclos = base::environment(fun = NULL)), classes = "warning")
-                }
-            }, type = "message", file = NULL, append = FALSE, split = FALSE) # recover messages not warnings and not errors
-            # end get message
-            # get warning
-            fun_warning_capture <- function(expr){
-                # from demo(error.catching) typed in the R console, coming from ?tryCatch
-                # see also http://mazamascience.com/WorkingWithData/?p=912
-                # return a character string or NULL
-                # expr <- wilcox.test(c(1, 1, 3), c(1, 2, 4), paired = TRUE)
-                warn_env <- base::new.env(hash = TRUE, parent = base::emptyenv(), size = 29L) # environment receiving the caught warning: the w_handler() closure modifies it in place, so that no superassignment (<<-) is required
-                warn_env$W <- NULL
-                w_handler <- function(w){ # warning handler
-                    warn_env$W <- w # warn_env is an environment of fun_warning_capture(): modified in place, i.e., visible from fun_warning_capture()
-                    base::invokeRestart(r = "muffleWarning") # here w_handler() muffles all the warnings. See http://romainfrancois.blog.free.fr/index.php?post/2009/05/20/Disable-specific-warnings to muffle specific warnings and print others
-                }
-                # nocov start
-                # codecov inactivated because testthat::expect_no_error(get_message()) does not detect taht it is used. But is is
-                value <- base::suppressMessages(expr = base::withCallingHandlers(expr = base::tryCatch(expr = expr, error = function(e){e}, finally = ), warning = w_handler), classes = "message") # BEWARE: w_handler is a function written without (), like in other functions with FUN argument
-                # nocov end
-                output <- base::list(
-                    value = value,
-                    warning = warn_env$W # processed by w_handler()
-                )
-                base::return(if(base::is.null(x = output$warning)){NULL}else{base::as.character(x = output$warning)})
-            }
-            if(ggplot2_detect == FALSE){
-                tempo_warn <- fun_warning_capture(expr = base::eval(expr = base::parse(text = data, file = "", n = NULL, prompt = "?", keep.source = base::getOption(x = "keep.source", default = NULL), srcfile = NULL, encoding = "unknown"), envir = if(base::is.null(x = env)){base::parent.frame(n = 1)}else{env}, enclos = base::environment(fun = NULL)))
-            }else{
-                 # last warning cannot be used because suppressWarnings() does not modify last.warning present in the base evironment (created at first warning in a new R session), or warnings() # to reset the warning history : unlockBinding("last.warning", baseenv()) ; assign("last.warning", NULL, envir = baseenv())
-                tempo_warn <- fun_warning_capture(expr = base::print(x = gg_obj))
-            }
-            # end get warning
-            # warn.options.ini <- options()$warn ; options(warn = 1) ; tempo_warn <- utils::capture.output({tempo <- suppressMessages(eval(parse(text = data), envir = if(is.null(x = env)){parent.frame()}else{env}))}, type = "message") ; options(warn = warn.options.ini) # this recover warnings not messages and not errors but does not work in all enviroments
             if(kind == "warning" & base::length(x = tempo_warn) > 0){ # to avoid base::character(0)
                 # below can also be for ggplot2 
-                tempo_warn <- base::paste0(base::unique(x = tempo_warn, incomparables = FALSE), collapse = "\n", recycle0 = FALSE) # remove potential identical warnings
                 if(header == TRUE){
-                    if(base::any(base::grepl(x = tempo_warn[[1]], pattern = "^simpleWarning i|^Warning i", ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE), na.rm = TRUE)){
-                        tempo_warn[[1]] <- base::gsub(x = tempo_warn[[1]], pattern = "^simpleWarning i|^Warning i", replacement = "I", ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE)
+                    if(base::any(base::grepl(x = tempo_warn, pattern = "^simpleWarning i|^Warning i", ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE), na.rm = TRUE)){
+                        tempo_warn <- base::gsub(x = tempo_warn, pattern = "^simpleWarning i|^Warning i", replacement = "I", ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE)
                     }
                     output <- base::paste0("WARNING MESSAGE REPORTED", base::ifelse(test = base::is.null(x = text), yes = "", no = " "), text, ":\n", tempo_warn, collapse = NULL, recycle0 = FALSE) #
                 }else{
@@ -616,20 +576,17 @@ get_message <- function(
             }else if(kind == "warning" & base::length(x = tempo_warn) == 0 & print_no == TRUE){
                 output <- base::paste0("NO WARNING MESSAGE REPORTED", base::ifelse(test = base::is.null(x = text), yes = "", no = " "), text, collapse = NULL, recycle0 = FALSE)
             }else if(kind == "message" & base::length(x = tempo_message) > 0){ 
-                # nocov start
-                # codecov inactivated because standard messages are not caught inside testthat::expect_no_error(get_message()). But works locally and is reached by the test-get_message.R
+                tempo_message <- base::paste0(base::sub(pattern = "\n$", replacement = "", x = tempo_message, ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE), collapse = "\n", recycle0 = FALSE) # all the standard messages in a single string, one per line (final line break of each message removed)
                 if(header == TRUE){
                     output <- base::paste0("STANDARD MESSAGE REPORTED", base::ifelse(test = base::is.null(x = text), yes = "", no = " "), text, ":\n", tempo_message, collapse = NULL, recycle0 = FALSE) #
                 }else{
                     output <- tempo_message #
                 }
-                # nocov end
             }else if(kind == "message" & base::length(x = tempo_message) == 0 & print_no == TRUE){
                 output <- base::paste0("NO STANDARD MESSAGE REPORTED", base::ifelse(test = base::is.null(x = text), yes = "", no = " "), text, collapse = NULL, recycle0 = FALSE)
             } # no need else{} here because output is already NULL at first
         }
     }
-    base::invisible(x = grDevices::dev.off(which = window_nb)) # end send plots into a NULL file
     #### end main code
 
     #### warning output

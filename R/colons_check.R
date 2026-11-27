@@ -1,102 +1,75 @@
-#' @title Colons Check
+#' @title Check and Add Package Prefixes to Function Calls
 #' @description
-#' Verify that all the functions used inside a function are preceded by a package attribution. For instance: \code{base::mean()} and not \code{mean()}, or \code{saferDev:::.base_op_check()} and not \code{.base_op_check()}. Warning: does not check that the package is the good one. Use \code{all_args_here()} for that.
-#' @param x a function name, written without quotes and brackets.
-#' @param export Single logical value. Export the modified code into a \code{.R} file? If \code{TRUE}, the modified function is not returned but only exported. The name of the file is the name of the tested function, with \code{_safer} added at the end (e.g., \code{test_safer.R}). The written code is the code of the submitted function, with its comments and indentation, only modified by the added package attributions (see the \code{Details} section). An error is returned if the file already exists in \code{out_path}, and if the tested function is not designated by a function name (like \code{test} or \code{package::test}), i.e., written by an inline definition (like \code{function(x)\{x\}}) or by a component writing (like \code{FUN_LIST$fun}). If \code{FALSE} (default), the modified function is not written but returned. 
-#' @param out_path Single character string indicating the pathway of the folder where to export the modified code. \code{out_path = "."} (default) means the R working directory set by the user. A non-existing directory, \code{NULL} or an empty string (\code{""}) returns an error. Ignored if \code{export} is \code{FALSE}.
-#' @param safer_check Single logical value. Perform the "safer" checks? If \code{TRUE}, checkings are performed before main code running (see the \href{https://github.com/safer-r}{safer-r project}): 1) required functions and related packages effectively present in local R libraries and 2) R classical operators (like \code{"<-"}) not overwritten by another package because of the R scope. Warning: must be set to \code{FALSE} if this function is used inside another "safer" function to avoid pointless multiple checkings.
-#' @param lib_path Vector of characters specifying the absolute pathways of the directories containing the required packages for the function, if not in the default directories. Useful when R packages are not installed in the default directories because of lack of admin rights. More precisely, \code{lib_path} is passed through the \code{new} argument of \code{.libPaths()} so that the new library paths are \code{unique(c(new, .Library.site, .Library))}. Warning: \code{.libPaths()} is restored to the initial paths, after function execution. Ignored if \code{NULL} (default): only the pathways specified by the current \code{.libPaths()} are used for package calling.
-#' @param error_text Single character string used to add information in error messages returned by the function, notably if the function is inside other functions, which is practical for debugging. Example: \code{error_text = " INSIDE <PACKAGE_1>::<FUNCTION_1> INSIDE <PACKAGE_2>::<FUNCTION_2>."}. If \code{NULL}, converted into \code{""}.
-#' @returns 
-#' A table-like text message indicating the missing \code{::} or \code{:::} or a message saying that everything seems fine.
-#' 
-#' The message is always printed (see the \code{Details} section).
+#' Checks that the functions called inside a function are preceded by their package (e.g., \code{base::mean()} and not \code{mean()}), and adds the missing \code{<package>::} prefixes before the basic R functions (functions of the base, stats, graphics, grDevices, utils, datasets and methods packages).
+#' @param x Function to check, written without quotes and brackets (e.g., \code{fun1} or \code{pkg::fun1}).
+#' @param export Single logical value. If \code{TRUE}, the corrected function is written into the \code{<name>_safer.R} file of \code{out_path} instead of being returned (e.g., \code{fun1_safer.R} for \code{x = fun1} or \code{x = pkg::fun1}), as \code{fun1_safer <- function(...)}, which \code{base::source()} recreates. Nothing is written if nothing has to be corrected, but an error is returned if the file already exists, or if \code{x} is not a function name (e.g., \code{function(x)\{x\}} or \code{FUN_LIST$fun}).
+#' @param out_path Single character string: path of an existing folder where the file is written. Required when \code{export} is \code{TRUE}; otherwise not used, but a non-\code{NULL} value must still be a single non-empty character string. \code{NULL} by default.
+#' @inheritParams is_function_here
+#' @returns
+#' The corrected function, which keeps the environment of \code{x}: \code{x} with the \code{<package>::} prefixes added before its calls of basic R functions.
 #'
-#' A warning and \code{NULL} are returned if the submitted function is empty of function, or only made of comments, or only made of \code{function}, \code{if}, \code{for}, \code{while}, \code{repeat}, \code{else}.
+#' \code{NULL}, invisibly, if nothing has to be corrected, if \code{x} contains no function call, as a primitive function like \code{base::sum} (with a warning), or if \code{export} is \code{TRUE}.
 #'
-#' In addition, if the \code{export} argument is \code{FALSE} (default), the function returns \code{NULL} if no basic function required a package attribution, or the modified function if basic functions were modified (see the \code{Details} section).
-#' 
-#' If the \code{export} argument is \code{TRUE}, the modified code is exported in the \code{.R} file specified by the \code{out_path} argument, instead of being returned, and a message indicating where the modified code has been exported is printed.
-#' 
-#' Table-like: column 1, the line number in the function code (starting at the \code{"<- function"} line, i.e., without counting the \code{#'} header lines); column 2, the function name; column 3, the code preceding the function name.
-#' 
-#' With missing \code{::} or \code{:::}, the message also indicates if internal functions are created inside the checked function code, since these functions cannot have \code{::} or \code{:::}.
-#' 
+#' In addition, except when \code{x} contains no function call, a report is printed with \code{message()}: either a message saying that everything seems clean, or tables of the calls without prefix, one for the basic R functions and one for the other functions (column 1: line number; column 2: function name; column 3: code before the function name). The internal functions called (see the Details section) are then also listed.
 #' @details
-#' The result is used to modify the code inside the tested function like this: \code{<PACKAGE>::<FUNCTION>} (or \code{<PACKAGE>:::<FUNCTION>} for function names starting by a dot).
-#' 
-#' Since \code{saferDev} v3.0.0, the modified function is returned: the package attributions of the basic R functions, as indicated in the \code{"INSIDE test(), SOME :: OR ::: ARE MISSING BEFORE BASIC FUNCTIONS"} section of the returned message, are added to the submitted function code, and the modified function is returned using \code{return()}. The package attributions of the other functions, as indicated in the \code{"INSIDE test(), SOME :: OR ::: ARE MISSING BEFORE OTHER FUNCTIONS"} section of the returned message, are NOT added automatically, because the correct package cannot be determined reliably: a \code{base::warning()} is issued instead (in addition to the printed message). \code{NULL} is returned if no basic function required a package attribution.
-#' 
-#' The modification is only performed on the code lines indicated in the \code{"INSIDE test(), SOME :: OR ::: ARE MISSING BEFORE BASIC FUNCTIONS"} section of the message, which is the same analysis as the one performed by \code{colons_check()} itself: functions written between quotes or preceded by \code{$} are not modified, and internal functions (created inside the tested function) are not modified either. The analysis is performed on the code with comments removed and multiple spaces collapsed, but the package attributions are added to the code of the submitted function as printed: the returned (and exported) function therefore keeps the comments and the indentation of the submitted function. Warning: comments are only present when the submitted function carries its source references (attribute \code{srcref}, e.g., a function defined in the console or in a file loaded with \code{keep.source = TRUE}). Otherwise, as for compiled package functions, the code printed by \code{R} (without comments and reindented) is used. The modified function is returned with the environment of the submitted function, so that the functions used inside it still resolve the same way. If the modified code does not parse (a rare situation, e.g., a function name split across lines in a way the analyzer could not handle correctly), this is an internal bug: an internal error is returned when \code{export = TRUE}, and the submitted function is returned unchanged, with no error, when \code{export = FALSE}.
-#' 
-#' The name of the exported file (when \code{export = TRUE}) is the name of the submitted function, as written by the user, with \code{_safer} added at the end, e.g., \code{test_safer.R} for \code{colons_check(x = test)}. If the submitted function was written as \code{package::function}, like \code{colons_check(x = saferDev::test)}, the name is \code{test_safer.R} (the package name is not part of the file name). The exported file contains an assignment of the modified function: \code{test_safer <- function(...) ...}, so that \code{base::source()}ing it recreates the modified function. Warning: the tested function must be designated by a function name (like \code{test} or \code{package::test}) when \code{export = TRUE}: an inline definition (like \code{function(x)\{x\}}) or a component writing (like \code{FUN_LIST$fun}) returns an error, because the name of the exported file could not be determined reliably.
-#' 
-#' Pre-check: the submitted function is first checked by \code{lambda_check()}: if some lambda functions are written with the \code{\\(x)} shorthand, an error is returned asking to run \code{saferDev::lambda_check()} first, because the \code{\\} writings are not managed by the text-based detection of \code{colons_check()}. As in \code{lambda_check()}, the \code{\\(x)} writing is only detectable in a function carrying its source references (attribute \code{srcref}): a compiled or loaded package function prints \code{function(x)}, so that the pre-check silently passes in that case.
-#' 
-#' More precisely, \code{colons_check()} verifies that all the strings before an opening bracket \code{(} are preceded by \code{::}.
-#' 
-#' \code{:::} are not checked per se, because incorrect writing, like \code{saferDev::.colons_check_message()} returns an error when executing the tested function, and because \code{base:::sum()} is as ok as \code{base::sum()}. In the same manner, more than three colons are not checked because it returns an error when executing the tested function.
-#' 
-#' Warning: \code{colons_check()} cannot check function names written without brackets, like in the \code{FUN} argument of some functions, e.g., \code{sapply(1:3, FUN = as.character)}.
-#' 
-#' The Perl regex used to detect a function name is: \code{"([a-zA-Z]|\\.[a-zA-Z._])[a-zA-Z0-9._]*\\s*\\("}.
-#' 
-#' Currently, \code{colons_check()} cannot detect functions written between quotes, like \code{"+"()} or \code{"rownames<-"(x, "a")}.
-#' 
-#' Function names preceded by \code{$} are not considered.
-#'  
-#' The following R functions are skipped: \code{"function"}, \code{"if"}, \code{"for"}, \code{"while"}, \code{"repeat"} and \code{"else"}.
-#' 
-#' Most of the time, \code{colons_check()} does not check inside comments, but some unexpected writing could dupe \code{colons_check()}. Please, report \href{https://github.com/safer-r/saferDev/issues}{here} if it is the case.
-#' 
-#' The returned line numbers are indicative, depending on which source is checked. For instance, \code{saferDev::report} (compiled) has not the same line numbers as its source file (\href{https://github.com/safer-r/saferDev/blob/main/R/report.R}{source file}). Notably, compiled functions do not have comments anymore, compared to the same source function sourced into the working environment. In addition, the counting starts at the \code{"<- function"} line, i.e., without counting the \code{#'} header lines potentially present in source files.
-#' 
-#' Of note, during package creation, the \code{devtools::check()} command tells which functions where wrongly attributed to package. Example: 
-#' \preformatted{
-#' checking dependencies in R code ... WARNING
-#'   '::' or ':::' import not declared from: 'sbase'
-#'   Missing or unexported objects:
-#'     'base::dev.off' 'base::graphics.off' 'base::hcl' 'base::par' 'base::read.table' 'saferGG::report'
-#' }
+#' A call of a basic R function gets the prefix of its package (e.g., \code{mean()} becomes \code{base::mean()}) only if the function found by R when running \code{x}, from the environment of \code{x} (functions defined by the user, imported functions and attached packages), is this basic function. Otherwise, the name is masked (e.g., \code{filter()} with the dplyr package attached, or a \code{filter()} function defined in the global environment): the call is not modified and is reported with the other functions. Under \code{pkgload::load_all()} (\code{devtools::load_all()}), \code{system.file()}, \code{help()}, \code{library.dynam()} and \code{library.dynam.unload()} can thus be reported as masked by the pkgload shims. In code evaluated in another environment (e.g., \code{expr} of \code{with()}, or \code{.()} of \code{bquote()} with \code{where}), a function of that environment named like a basic function is not detected: its calls get the basic prefix. The stats, graphics, grDevices, utils, datasets and methods packages must be attached, as in a default R session, otherwise an error is returned.
+#'
+#' The calls of internal functions, written without \code{::} or \code{:::}, are not modified, nor reported as missing a prefix. The internal functions are the functions created inside \code{x} (names assigned a function definition or a \code{utils::getFromNamespace()} result), the arguments of \code{x} and of all the functions defined in \code{x}, anonymous ones included (e.g., \code{FUN} in \code{FUN(y)}), but not the arguments and local functions of those written in quoted code (e.g., \code{c} in \code{bquote(function(c) .(c(y)))}), and \code{x} itself when written as a name, like \code{fun1} or \code{pkg::fun1} (recursive calls). These names are recognized in the function that defines them (the whole code of \code{x} for its arguments, \code{x} itself and \code{<<-}): an argument \code{t} of a function defined in \code{x} does not prevent the check of \code{t()} outside this function. A name assigned another value is not an internal function: after \code{c <- 3}, \code{c(y)} calls \code{base::c()} and gets its prefix. A local name that holds a function obtained otherwise is not detected: after \code{rev <- base::get(x = "sort")}, \code{rev(y)} becomes \code{base::rev(y)}.
+#'
+#' The calls of the other functions are reported in the message and in a warning, but not modified, because their package cannot be determined reliably: add their prefixes manually.
+#'
+#' Not checked: function names written between quotes (like \code{"+"()}), preceded by \code{$} or \code{@}, or written without brackets (like \code{as.character} in \code{sapply(1:3, FUN = as.character)}), and \code{function}, \code{if}, \code{for}, \code{while}, \code{repeat} and \code{else}. Neither are the calls inside formulas, including the one-sided formulas used as lambdas (e.g., \code{log()} and \code{offset()} in \code{y ~ log(x) + offset(z)}, or \code{mean()} in \code{~ mean(.x)}), because modeling functions use their text, the calls inside \code{quote()}, \code{bquote()}, \code{expression()}, \code{alist()} and \code{substitute()}, whose arguments are code used as data (e.g., \code{paste()} in the plotmath label \code{expression(paste("Temp (", degree, "C)"))}), except the code that R evaluates (\code{.()} and spliced \code{..()} of \code{bquote()}, its \code{where} argument, and the \code{env} argument of \code{substitute()}), nor the function called by \code{.Internal()} (e.g., \code{toupper} in \code{.Internal(toupper(x))}). The other functions that use the code of their arguments get the corrected code (e.g., the default axis label of \code{ggplot2::aes(x = log(y))} becomes \code{base::log(y)}). Comments are not checked, but some unexpected writing could dupe \code{colons_check()}: please report it \href{https://github.com/safer-r/saferDev/issues}{here}.
+#'
+#' Names already preceded by \code{::} or \code{:::} are not checked (R CMD check reports the wrong ones, e.g., \code{base:::sum()} or \code{base::dev.off()}). The added prefixes are always \code{::}.
+#'
+#' Source references: line 1 is the line of the \code{function} keyword. Comments and indentation are kept only if \code{x} carries its source references (attribute \code{srcref}). Functions created with \code{options(keep.source = FALSE)} (default of Rscript) and functions of installed packages (e.g., \code{saferDev::colons_check}) have none: their deparsed code is analyzed, without comments and with line numbers that differ from the source file.
+#'
+#' If the corrected code does not parse (a writing that the analysis does not handle, e.g., a function name at the beginning of a line, after a \code{$} or \code{@} ending the previous line), \code{x} is returned unchanged with a warning, or an error is returned if \code{export} is \code{TRUE}.
+#'
+#' An error is returned if \code{x} contains \code{\\(x)} lambda functions (only detected with source references): run \code{lambda_check()} first.
+#' @seealso The code checkers of saferDev, in the recommended order of use: \code{\link{super_assign_check}}, \code{\link{lambda_check}}, \code{\link{colons_check}}, \code{\link{all_args_here}}, \code{\link{curly_bracket_check}}, \code{\link{true_false_check}}, \code{\link{for_loop_nb_check}} (see \code{vignette("saferDev")}).
 #' @author \href{mailto:gael.millot@pasteur.fr}{Gael Millot}
-#' @author Haiding Wang  
+#' @author Haiding Wang
 #' @author Yushi Han
 #' @examples
-#' # Warning: these examples may not work well when using the "Run examples" link 
-#' # because of a particular environment. Please, copy-paste in a local environment.
+#' # Without source references ("Run examples" link, Rscript), line numbers and comments differ.
 #' # See also https://safer-r.github.io/saferDev/articles/colons_check.html
 #' fun1 <- function(x){
 #'     y <- mean(x) # mean() written without base::
 #'     base::return(y)
 #' }
-#' fun1_safer <- saferDev::colons_check(fun1) # base:: added before mean()
+#' fun1_safer <- saferDev::colons_check(x = fun1, export = FALSE, out_path = NULL,
+#'     safer_check = TRUE, lib_path = NULL, error_text = "") # base:: added before mean()
 #' fun1_safer # corrected function
 #' # Write the corrected function in the fun1_safer.R file of a new temporary folder:
-#' tempo_dir <- base::tempfile(pattern = "dir", tmpdir = base::tempdir(), fileext = "")
+#' tempo_dir <- base::tempfile(pattern = "dir", tmpdir = base::tempdir(check = FALSE),
+#'     fileext = "")
 #' base::dir.create(path = tempo_dir, showWarnings = TRUE, recursive = FALSE, mode = "0777")
-#' saferDev::colons_check(x = fun1, export = TRUE, out_path = tempo_dir)
-#' 
+#' saferDev::colons_check(x = fun1, export = TRUE, out_path = tempo_dir, safer_check = TRUE,
+#'     lib_path = NULL, error_text = "")
+#' base::unlink(x = tempo_dir, recursive = TRUE, force = FALSE, expand = TRUE) # folder removed
+#'
 #' @export
 colons_check <- function(
     x, 
     export = FALSE, 
-    out_path = ".", 
+    out_path = NULL, 
     safer_check = TRUE, 
     lib_path = NULL, 
     error_text = ""
 ){
     # DEBUGGING
-    # x = mean ; export = FALSE ; out_path = "." ; lib_path = NULL ; safer_check = TRUE ; error_text = " INSIDE A"
-    # function_name <- "mean" ; arg_user_setting = base::list(x = as.name(x = "mean"), export = FALSE, out_path = ".", lib_path = NULL , safer_check = TRUE, error_text = " INSIDE A")
-    # x = .expand_R_libs_env_var ; export = FALSE ; out_path = "." ; lib_path = NULL ; safer_check = TRUE ; error_text = " INSIDE A"
-    # library(saferGraph) ; x = close2 ; export = FALSE ; out_path = "." ; lib_path = NULL ; safer_check = TRUE ; error_text = " INSIDE A" 
-    # source("C:\\Users\\gmillot\\Documents\\Git_projects\\safer-r\\saferDev\\R\\get_message.R") ; x = get_message ; export = FALSE ; out_path = "." ; lib_path = NULL ; safer_check = TRUE ; error_text = " INSIDE A" # Warning: x = saferDev::get_message does not return the same number of code lines
-    # library(saferDev) ; x = get_message ; export = FALSE ; out_path = "." ; lib_path = NULL ; safer_check = TRUE ; error_text = " INSIDE A" # Warning: does not return the same number of code lines than the previsou example
-    # source("C:\\Users\\gmillot\\Documents\\Git_projects\\safer-r\\saferDev\\R\\colons_check.R") ; x = colons_check ; export = FALSE ; out_path = "." ; lib_path = NULL ; safer_check = TRUE ; error_text = " INSIDE A" # Warning: x = saferDev::get_message does not return the same number of code lines
-    # source("https://raw.githubusercontent.com/safer-r/saferDev/main/dev/other/test.R") ; x = test ; export = FALSE ; out_path = "." ; lib_path = NULL ; safer_check = TRUE ; error_text = " INSIDE A" # Warning: x = saferDev::get_message does not return the same number of code lines
-    # function_name <- "colons_check" ; arg_user_setting = base::list(x = as.name(x = "test"), export = FALSE, out_path = ".", lib_path = NULL , safer_check = TRUE , error_text = " INSIDE A")
-    # FUN1 <- function(x, y){ifelse(base::is.null(x = warn), "", base::paste0("IN ADDITION\nWARNING", base::ifelse(test = warn_count > 1, yes = "S", no = ""), ":\n\n", warn, collapse = NULL, recycle0 = FALSE))} ; x = FUN1 ; export = FALSE ; out_path = "." ; lib_path = NULL ; safer_check = TRUE ; error_text = " INSIDE A"
-    # function_name <- "colons_check" ; arg_user_setting = base::list(x = as.name(x = "FUN1"), export = FALSE, out_path = ".", lib_path = NULL , safer_check = TRUE , error_text = " INSIDE A")
+    # x = mean ; export = FALSE ; out_path = NULL ; lib_path = NULL ; safer_check = TRUE ; error_text = " INSIDE A"
+    # function_name <- "mean" ; arg_user_setting = base::list(x = as.name(x = "mean"), export = FALSE, out_path = NULL, lib_path = NULL , safer_check = TRUE, error_text = " INSIDE A")
+    # x = .expand_R_libs_env_var ; export = FALSE ; out_path = NULL ; lib_path = NULL ; safer_check = TRUE ; error_text = " INSIDE A"
+    # library(saferGraph) ; x = close2 ; export = FALSE ; out_path = NULL ; lib_path = NULL ; safer_check = TRUE ; error_text = " INSIDE A" 
+    # source("C:\\Users\\gmillot\\Documents\\Git_projects\\safer-r\\saferDev\\R\\get_message.R") ; x = get_message ; export = FALSE ; out_path = NULL ; lib_path = NULL ; safer_check = TRUE ; error_text = " INSIDE A" # Warning: x = saferDev::get_message does not return the same number of code lines
+    # library(saferDev) ; x = get_message ; export = FALSE ; out_path = NULL ; lib_path = NULL ; safer_check = TRUE ; error_text = " INSIDE A" # Warning: does not return the same number of code lines than the previsou example
+    # source("C:\\Users\\gmillot\\Documents\\Git_projects\\safer-r\\saferDev\\R\\colons_check.R") ; x = colons_check ; export = FALSE ; out_path = NULL ; lib_path = NULL ; safer_check = TRUE ; error_text = " INSIDE A" # Warning: x = saferDev::get_message does not return the same number of code lines
+    # source("https://raw.githubusercontent.com/safer-r/saferDev/main/dev/other/test.R") ; x = test ; export = FALSE ; out_path = NULL ; lib_path = NULL ; safer_check = TRUE ; error_text = " INSIDE A" # Warning: x = saferDev::get_message does not return the same number of code lines
+    # function_name <- "colons_check" ; arg_user_setting = base::list(x = as.name(x = "test"), export = FALSE, out_path = NULL, lib_path = NULL , safer_check = TRUE , error_text = " INSIDE A")
+    # FUN1 <- function(x, y){ifelse(base::is.null(x = warn), "", base::paste0("IN ADDITION\nWARNING", base::ifelse(test = warn_count > 1, yes = "S", no = ""), ":\n\n", warn, collapse = NULL, recycle0 = FALSE))} ; x = FUN1 ; export = FALSE ; out_path = NULL ; lib_path = NULL ; safer_check = TRUE ; error_text = " INSIDE A"
+    # function_name <- "colons_check" ; arg_user_setting = base::list(x = as.name(x = "FUN1"), export = FALSE, out_path = NULL, lib_path = NULL , safer_check = TRUE , error_text = " INSIDE A")
 
     #### package name
     package_name <- "saferDev" # write NULL if the function developed is not in a package
@@ -107,8 +80,12 @@ colons_check <- function(
     #### end internal error report link
 
     #### function name
-    tempo_settings <- base::as.list(x = base::match.call(definition = base::sys.function(which = base::sys.parent(n = 0)), call = base::sys.call(which = base::sys.parent(n = 0)), expand.dots = FALSE, envir = base::parent.frame(n = 2L))) # warning: I have written n = 0 to avoid error when a safer function is inside another functions. In addition, arguments values retrieved are not evaluated base::match.call, but this is solved with get() below
-    function_name <- base::paste0(tempo_settings[[1]], "()", collapse = NULL, recycle0 = FALSE) 
+    tempo_settings <- base::as.list(x = base::match.call(definition = base::sys.function(which = base::sys.parent(n = 0)), call = base::sys.call(which = base::sys.parent(n = 0)), expand.dots = FALSE, envir = )) # warning: I have written n = 0 to avoid error when a safer function is inside another functions. In addition, arguments values retrieved are not evaluated base::match.call, but this is solved with get() below. Warning: envir is left empty on purpose: its default parent.frame(2L), evaluated inside base::match.call(), is the frame that called this function, where the ... of the call are expanded (base::parent.frame(n = 2L) written here would be evaluated one frame too far, which breaks the calls through base::lapply(), base::vapply(), base::apply(), base::Filter() or a function forwarding ..., base::sapply() only working by coincidence)
+    if(base::is.name(x = tempo_settings[[1]]) | base::is.call(x = tempo_settings[[1]])){
+        function_name <- base::paste0(tempo_settings[[1]], "()", collapse = NULL, recycle0 = FALSE)
+    }else{
+        function_name <- "<anonymous function>()" # the function was called through its object (e.g., base::do.call(what = <function object>, args = ...)), so that its name is not in the call
+    }
     # function name with "()" paste, which split into a vector of three: c("::()", "package ()", "function ()") if "package::function()" is used.
     if(function_name[1] == "::()" | function_name[1] == ":::()"){
         function_name <- function_name[3]
@@ -234,7 +211,7 @@ colons_check <- function(
     tempo_arg <-base::c(
         "x", 
         "export", 
-        "out_path", 
+        # "out_path", # inactivated because can be NULL
         # "lib_path", # inactivated because can be NULL
         "safer_check"
         # "error_text" # inactivated because NULL converted to "" above
@@ -377,8 +354,8 @@ colons_check <- function(
             base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL)
         }else{
             ini_lib_path <- base::.libPaths(new = , include.site = TRUE) # normal to have empty new argument
-            base::on.exit(expr = base::.libPaths(new = ini_lib_path, include.site = TRUE), add = TRUE, after = TRUE) # return to the previous libPaths()
-            base::.libPaths(new = base::sub(x = base::c(ini_lib_path, lib_path), pattern = "/$|\\\\$", replacement = "", ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE), include.site = TRUE) # base::.libPaths(new = ) add path to default path. BEWARE: base::.libPaths() does not support / at the end of a submitted path. The reason of the check and replacement of the last / or \\ in path
+            base::on.exit(expr = base::.libPaths(new = ini_lib_path, include.site = FALSE), add = TRUE, after = TRUE) # return to the previous libPaths(). include.site = FALSE: exact restore, since ini_lib_path already contains the site library if it was in use
+            base::.libPaths(new = base::sub(x = base::c(ini_lib_path, lib_path), pattern = "/$|\\\\$", replacement = "", ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE), include.site = FALSE) # base::.libPaths(new = ) add path to default path. BEWARE: base::.libPaths() does not support / at the end of a submitted path. The reason of the check and replacement of the last / or \\ in path
             lib_path <- base::.libPaths(new = , include.site = TRUE) # normal to have empty new argument
         }
     }else{
@@ -437,7 +414,9 @@ colons_check <- function(
     # add as many lines as below, for each of your arguments of your function in development
     tempo <- saferDev::arg_check(data = x, class = "function", typeof = NULL, mode = NULL, length = NULL, prop = FALSE, options = NULL, double_as_integer_allowed = FALSE, all_options_in_data = FALSE, na_contain = FALSE, neg_values = TRUE, inf_values = TRUE, print = FALSE, data_name = NULL, data_arg = TRUE, safer_check = FALSE, lib_path = lib_path, error_text = embed_error_text) ; base::eval(expr = ee, envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL))
     tempo <- saferDev::arg_check(data = export, class = NULL, typeof = "logical", mode = NULL, length = 1, prop = FALSE, options = NULL, double_as_integer_allowed = FALSE, all_options_in_data = FALSE, na_contain = FALSE, neg_values = TRUE, inf_values = TRUE, print = FALSE, data_name = NULL, data_arg = TRUE, safer_check = FALSE, lib_path = lib_path, error_text = embed_error_text) ; base::eval(expr = ee, envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL))
-    tempo <- saferDev::arg_check(data = out_path, class = NULL, typeof = "character", mode = NULL, length = 1, prop = FALSE, options = NULL, double_as_integer_allowed = FALSE, all_options_in_data = FALSE, na_contain = FALSE, neg_values = TRUE, inf_values = TRUE, print = FALSE, data_name = NULL, data_arg = TRUE, safer_check = FALSE, lib_path = lib_path, error_text = embed_error_text) ; base::eval(expr = ee, envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL))
+    if( ! base::is.null(x = out_path)){ # for all arguments that can be NULL, write like this:
+        tempo <- saferDev::arg_check(data = out_path, class = NULL, typeof = "character", mode = NULL, length = 1, prop = FALSE, options = NULL, double_as_integer_allowed = FALSE, all_options_in_data = FALSE, na_contain = FALSE, neg_values = TRUE, inf_values = TRUE, print = FALSE, data_name = NULL, data_arg = TRUE, safer_check = FALSE, lib_path = lib_path, error_text = embed_error_text) ; base::eval(expr = ee, envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL))
+    }
     # lib_path already checked above
     # safer_check already checked above
     # error_text converted to single string above
@@ -515,7 +494,20 @@ colons_check <- function(
     ######## end graphic device checking
 
     ######## other checkings
+    # x forwarded through the ... argument of another function (e.g., fun2 <- function(...){saferDev::colons_check(...)} called with x = fun1): base::match.call() writes x ..1 (or ..2, etc.) in arg_user_setting, instead of its writing in the call. This writing is recovered from the promise of x by base::substitute() (x is not reassigned before this line)
+    if(base::is.symbol(x = arg_user_setting$x) && base::grepl(x = base::as.character(x = arg_user_setting$x), pattern = "^\\.\\.[0-9]+$", ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE)){
+        arg_user_setting$x <- base::substitute(expr = x, env = base::environment(fun = NULL))
+    }
     if(export == TRUE){
+        if(base::is.null(x = out_path)){
+            tempo_cat <- base::paste0(
+                error_text_start,
+                "THE out_path ARGUMENT MUST BE THE PATHWAY OF AN EXISTING FOLDER WHEN export IS TRUE.",
+                collapse = NULL,
+                recycle0 = FALSE
+            )
+            base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL)
+        }
         # removal of trailing / or \\ in the path
         if(base::grepl(x = out_path, pattern = "/$", ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE)){
             out_path <- base::sub(pattern = "/$", replacement = "", x = out_path, ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE)
@@ -526,7 +518,7 @@ colons_check <- function(
         if( ! base::dir.exists(paths = out_path)){
             tempo_cat <- base::paste0(
                 error_text_start,
-                "DIRECTORY PATH INDICATED IN THE out_path ARGUMENT DOES NOT EXISTS:\n", 
+                "DIRECTORY PATH INDICATED IN THE out_path ARGUMENT DOES NOT EXIST:\n", 
                 out_path, 
                 collapse = NULL, 
                 recycle0 = FALSE
@@ -534,17 +526,22 @@ colons_check <- function(
             base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL)
         }
         # determination of the file name: name of the submitted function, as written by the user, with _safer added at the end
-        # arg_user_setting$x is a language object: as.name(x = "test") or the parsed call "saferDev::test". deparse() recovers the written form
-        if(base::as.character(x = arg_user_setting$x)[1] == "::" | base::as.character(x = arg_user_setting$x)[1] == ":::"){
+        # arg_user_setting$x is x as written in the call: a name (as.name(x = "test")), a call (like the parsed call "saferDev::test"), or a function object when the call holds the function itself (e.g., x = fun1 in the args argument of base::do.call()). The function object is tested first, because base::as.character() cannot convert it
+        if(( ! base::is.function(x = arg_user_setting$x)) && (base::as.character(x = arg_user_setting$x)[1] == "::" | base::as.character(x = arg_user_setting$x)[1] == ":::")){
             tempo_fun_name <- base::as.character(x = arg_user_setting$x)[3] # form "package::function" or "package:::function"
         }else if(base::is.symbol(x = arg_user_setting$x)){
             tempo_fun_name <- base::as.character(x = arg_user_setting$x)[1]
         }else{
-            # multi-component written name (like FUN_LIST$fun), or inline definition (like function(x){x}), or other unexpected writing: cannot determine a file name reliably. FUN_LIST$fun would give fun_safer.R, but a same name can designate different functions depending on the object browsed by $: the written form is not reliable for the file name
+            # multi-component written name (like FUN_LIST$fun), inline definition (like function(x){x}), function object, or other unexpected writing: cannot determine a file name reliably. FUN_LIST$fun would give fun_safer.R, but a same name can designate different functions depending on the object browsed by $: the written form is not reliable for the file name
+            if(base::is.function(x = arg_user_setting$x)){
+                tempo_x <- "A FUNCTION OBJECT, WITHOUT ITS NAME (E.G., x = fun1 IN THE args ARGUMENT OF base::do.call(): USE x = base::quote(expr = fun1) INSTEAD)"
+            }else{
+                tempo_x <- base::paste0(base::deparse(expr = arg_user_setting$x, width.cutoff = 60L, backtick = FALSE, control = base::c("keepNA", "keepInteger", "niceNames", "showAttributes"), nlines = -1L), collapse = "\n", recycle0 = FALSE)
+            }
             tempo_cat <- base::paste0(
                 error_text_start,
                 "THE x ARGUMENT MUST BE DESIGNATED BY A FUNCTION NAME (NOT BY AN INLINE FUNCTION DEFINITION, NOR BY A COMPONENT WRITING LIKE obj$fun) WHEN THE export ARGUMENT IS TRUE.\nHERE IT IS:\n",
-                base::paste0(base::deparse(expr = arg_user_setting$x, width.cutoff = 60L, backtick = FALSE, control = base::c("keepNA", "keepInteger", "niceNames", "showAttributes"), nlines = -1L), collapse = "\n", recycle0 = FALSE),
+                tempo_x,
                 collapse = NULL,
                 recycle0 = FALSE
             )
@@ -575,15 +572,14 @@ colons_check <- function(
     # the message is printed below, after the modification logic, because the modification does not change the analysis results
     # (the positions in the table-like message are the ones of the initial analysis, performed by .functions_detect() on the submitted function)
     skipped_base <- base::c("function", "if", "for", "while", "repeat", "else", "in") # skipped function and elements. in must be here because for(j in (n - 1L):2L) breaks the code
-    # bare name of the submitted function, as written by the user (without the "()" decoration added below), for the exclusion of the recursive calls in the modification logic below
-    if(base::as.character(x = arg_user_setting$x)[1] == "::" | base::as.character(x = arg_user_setting$x)[1] == ":::"){
-        fun_bare_name <- base::as.character(x = arg_user_setting$x)[3] # form "package::function" or "package:::function"
+    # pre-check of the lambda writings: lambda_check() must be run first, because the \\ writings are not managed by the text-based detection of colons_check(). Warning: out_path is not used here (export = FALSE: no file written)
+    # name of the submitted function as written by the user, for the error message below (recovered before the modification of arg_user_setting$x): x written as a name, pkg::name, pkg:::name or other expression (e.g., FUN_LIST$fun), deparsed on one line, or "x" for a function object, which has no name (e.g., x = fun1 in the args argument of base::do.call())
+    if(base::is.function(x = arg_user_setting$x)){
+        arg_user_setting_x_ini <- "x"
     }else{
-        fun_bare_name <- base::paste0(arg_user_setting$x, collapse = NULL, recycle0 = FALSE) # bare name of a single symbol
+        arg_user_setting_x_ini <- base::paste0(base::trimws(x = base::deparse(expr = arg_user_setting$x, width.cutoff = 500L, backtick = FALSE, control = base::c("keepNA", "keepInteger", "niceNames", "showAttributes"), nlines = -1L), which = "left", whitespace = "[ \\t]"), collapse = " ", recycle0 = FALSE)
     }
-    # pre-check of the lambda writings: lambda_check() must be run first, because the \\ writings are not managed by the text-based detection of colons_check(). Warning: out_path is inert here (export = FALSE: no file writing), so that the default "." writing is used
-    arg_user_setting_x_ini <- base::deparse(expr = arg_user_setting$x, width.cutoff = 60L, backtick = FALSE, control = base::c("keepNA", "keepInteger", "niceNames", "showAttributes"), nlines = -1L) # name of the submitted function as written by the user, for the error message below (recovered before the modification of arg_user_setting$x)
-    tempo_lambda <- base::suppressMessages(expr = saferDev::lambda_check(x = x, export = FALSE, out_path = ".", safer_check = FALSE, lib_path = lib_path, error_text = embed_error_text), classes = "message")
+    tempo_lambda <- base::suppressMessages(expr = saferDev::lambda_check(x = x, export = FALSE, out_path = base::tempdir(check = FALSE), safer_check = FALSE, lib_path = lib_path, error_text = embed_error_text), classes = "message")
     if( ! base::is.null(x = tempo_lambda)){
         tempo_cat <- base::paste0(
             error_text_start,
@@ -599,21 +595,30 @@ colons_check <- function(
         )
         base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL)
     }
-    # modification of arg_user_setting$x for clean messages
-    if(base::as.character(x = arg_user_setting$x)[1] == "::" | base::as.character(x = arg_user_setting$x)[1] == ":::"){
+    # modification of arg_user_setting$x for clean messages: a single string "<name>()", with <name> the writing of x in the call (name, pkg::name, pkg:::name, or other expression deparsed on one line, like dots[[1L]][[1L]] through base::Map()), or "x" for a function object, which has no name (e.g., x = fun1 in the args argument of base::do.call())
+    if(base::is.function(x = arg_user_setting$x)){
+        arg_user_setting$x <- "x()"
+    }else if(base::as.character(x = arg_user_setting$x)[1] == "::" | base::as.character(x = arg_user_setting$x)[1] == ":::"){
         arg_user_setting$x <- base::paste0(
-            base::as.character(x = arg_user_setting$x)[2], 
-            base::as.character(x = arg_user_setting$x)[1], 
-            base::as.character(x = arg_user_setting$x)[3], 
+            base::as.character(x = arg_user_setting$x)[2],
+            base::as.character(x = arg_user_setting$x)[1],
+            base::as.character(x = arg_user_setting$x)[3],
             "()",
-            collapse = NULL, 
+            collapse = NULL,
+            recycle0 = FALSE
+        )
+    }else if(base::is.symbol(x = arg_user_setting$x)){
+        arg_user_setting$x <- base::paste0(
+            arg_user_setting$x,
+            "()",
+            collapse = NULL,
             recycle0 = FALSE
         )
     }else{
         arg_user_setting$x <- base::paste0(
-            arg_user_setting$x, 
+            base::paste0(base::trimws(x = base::deparse(expr = arg_user_setting$x, width.cutoff = 500L, backtick = FALSE, control = base::c("keepNA", "keepInteger", "niceNames", "showAttributes"), nlines = -1L), which = "left", whitespace = "[ \\t]"), collapse = " ", recycle0 = FALSE),
             "()",
-            collapse = NULL, 
+            collapse = NULL,
             recycle0 = FALSE
         )
     }
@@ -626,7 +631,7 @@ colons_check <- function(
         error_text = embed_error_text
     )
     if(base::is.null(x = out)){
-        base::return(NULL) # tested function empty of function: warning already returned by .functions_detect()
+        base::return(base::invisible(x = NULL)) # tested function empty of function: warning already returned by .functions_detect()
     }
     if( ! (base::all(base::typeof(x = out$fun_names) == "list", na.rm = TRUE) & base::all(base::typeof(x = out$fun_names_pos) == "list", na.rm = TRUE))){
         # nocov start
@@ -634,17 +639,57 @@ colons_check <- function(
         tempo_cat <- base::paste0("INTERNAL ERROR 1 IN ", intern_error_text_start, "out$fun_names AND out$fun_names_pos MUST BE TYPE list\nout$fun_names:\n", out$fun_names, "\nout$fun_names_pos:\n", out$fun_names_pos, intern_error_text_end, collapse = NULL, recycle0 = FALSE) ; base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL)
         # nocov end
     }
+    # resolution of the names of basic objects called in x, as R does when running x (masking)
+    # a name gets the prefix of a basic package only if the function found from the environment of x (user definitions, imports, attached packages) is the function of this basic package. Otherwise (name masked, e.g., by an attached package, or name of a basic object that is not a function), the name is processed like the names of the other functions: not modified, and reported in the OTHER section of the message and in the warning
+    env_x <- base::environment(fun = x) # x is not a primitive function (.functions_detect() returns NULL for a primitive function), so that its environment is not NULL
+    basic_scopes <- base::c("package:stats", "package:graphics", "package:grDevices", "package:utils", "package:datasets", "package:methods", "package:base") # basic packages, in the default base::search() order
+    flagged_names <- base::unique(x = base::unlist(x = out$fun_names, recursive = TRUE, use.names = FALSE), incomparables = FALSE) # names of the functions called in x
+    flagged_names <- flagged_names[flagged_names %in% out$all_basic_funs] # names of basic objects called in x
+    flagged_package <- base::rep(x = "", times = base::length(x = flagged_names)) # package of each name ("" if the called function is not a basic function)
+    masked_names <- base::character(length = 0) # names of basic functions masked by another function, for the warning
+    for(i3 in base::seq_along(along.with = flagged_names)){
+        resolved_fun <- base::tryCatch(
+            expr = base::get0(x = flagged_names[i3], envir = env_x, mode = "function", inherits = TRUE, ifnotfound = NULL), # function found when running x (NULL if none)
+            error = function(e){NULL}, # an object of this name cannot be evaluated (e.g., a promise of an enclosing function that returns an error): the function called when running x cannot be determined
+            finally = 
+        )
+        basic_fun_log <- FALSE # becomes TRUE if a basic package contains a function of this name
+        for(i4 in base::seq_along(along.with = basic_scopes)){
+            basic_fun <- base::get0(x = flagged_names[i3], envir = base::as.environment(x = basic_scopes[i4]), mode = "function", inherits = FALSE, ifnotfound = NULL)
+            if( ! base::is.null(x = basic_fun)){
+                basic_fun_log <- TRUE
+                if(flagged_package[i3] == "" & base::identical(x = resolved_fun, y = basic_fun, num.eq = TRUE, single.NA = TRUE, attrib.as.set = TRUE, ignore.bytecode = TRUE, ignore.environment = FALSE, ignore.srcref = TRUE, extptr.as.ref = FALSE)){ # first basic package (base::search() order) holding the function found when running x (several basic packages can hold the same function, like base::plot and graphics::plot)
+                    flagged_package[i3] <- base::sub(pattern = "^package:", replacement = "", x = basic_scopes[i4], ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE)
+                }
+            }
+        }
+        if(basic_fun_log == TRUE & flagged_package[i3] == "" & ! base::is.null(x = resolved_fun)){ # another function of the same name is found when running x
+            masked_names <- base::c(masked_names, flagged_names[i3])
+        }
+    }
+    basic_names_ok <- flagged_names[flagged_package != ""] # names of the basic functions that can be prefixed
+    # end resolution of the names of basic objects called in x, as R does when running x (masking)
+    # names neither modified nor reported: names of the code that R does not evaluate as written (formulas, quoted code, see .functions_detect()) and name of the function called by .Internal() (out$fun_names_skip), and calls written without :: or ::: of the internal functions, inside their scope (out$fun_names_internal: functions created inside x, formal arguments of x and of the functions defined inside x, and x itself)
+    prefix_log <- base::mapply(FUN = function(x, y){base::substring(text = x, first = y - 2L, last = y - 1L) == "::"}, x = out$code[out$code_line_nb], y = out$fun_names_pos, MoreArgs = NULL, SIMPLIFY = FALSE, USE.NAMES = FALSE) # names preceded by :: or :::
+    internal_log <- base::mapply(FUN = function(x, y, z){x & ( ! y) & ( ! z)}, x = out$fun_names_internal, y = prefix_log, z = out$fun_names_skip, MoreArgs = NULL, SIMPLIFY = FALSE, USE.NAMES = TRUE) # calls of internal functions
+    internal_called <- base::unique(x = base::unlist(x = base::mapply(FUN = function(x, y){x[y]}, x = out$fun_names, y = internal_log, MoreArgs = NULL, SIMPLIFY = FALSE, USE.NAMES = TRUE), recursive = TRUE, use.names = FALSE), incomparables = FALSE) # internal functions called, listed in the message
+    if(base::length(x = internal_called) == 0){
+        internal_called <- NULL
+    }
     # basic function names in x
     # selection of basic functions
-    tempo_log <- base::lapply(X = out$fun_names, FUN = function(x){x %in% out$all_basic_funs}) #  are names basic functions used in x?
+    basic_log <- base::mapply(FUN = function(x, y, z){x %in% basic_names_ok & ( ! y) & ( ! z)}, x = out$fun_names, y = internal_log, z = out$fun_names_skip, MoreArgs = NULL, SIMPLIFY = FALSE, USE.NAMES = TRUE) #  are names basic functions used in x?
+    tempo_log <- basic_log
     in_basic_fun <- base::mapply(FUN = function(x, y){x[y]}, x = out$fun_names, y = tempo_log, MoreArgs = NULL, SIMPLIFY = FALSE, USE.NAMES = TRUE)
     in_basic_fun_names_pos <-  base::mapply(FUN = function(x, y){x[y]}, x = out$fun_names_pos, y = tempo_log, MoreArgs = NULL, SIMPLIFY = FALSE, USE.NAMES = TRUE)
+    in_basic_fun_internal <-  base::mapply(FUN = function(x, y){x[y]}, x = internal_log, y = tempo_log, MoreArgs = NULL, SIMPLIFY = FALSE, USE.NAMES = TRUE) # all FALSE: the calls of internal functions are not selected
     # end selection of basic functions
     if(base::length(x = base::unlist(x = in_basic_fun, recursive = TRUE, use.names = TRUE)) != 0){ # check if basic fun present
         # removal of string with empty function names
         tempo_log <- base::sapply(X = in_basic_fun, FUN = function(x){base::length(x = x) == 0}, simplify = TRUE, USE.NAMES = TRUE) # detection of string with empty function names
         in_basic_fun <- in_basic_fun[ ! tempo_log] # removal of empty string
         in_basic_fun_names_pos <- in_basic_fun_names_pos[ ! tempo_log]
+        in_basic_fun_internal <- in_basic_fun_internal[ ! tempo_log]
         in_basic_code_line_nb <- out$code_line_nb[ ! tempo_log]
         if( ! (base::length(x = in_basic_fun) == base::length(x = in_basic_fun_names_pos) & base::length(x = in_basic_fun) == base::length(x = in_basic_code_line_nb))){
             # nocov start
@@ -660,11 +705,12 @@ colons_check <- function(
             tempo <- .colons_check_message(
                 list_fun = in_basic_fun, 
                 list_fun_pos = in_basic_fun_names_pos, 
+                list_fun_internal = in_basic_fun_internal, 
                 line_nb = in_basic_code_line_nb, 
                 ini = out$code, 
                 arg_user_setting2 = out$arg_user_setting, 
                 text = "BASIC", 
-                internal_fun_names = out$internal_fun_names,
+                internal_fun_names = internal_called,
                 lib_path = lib_path, 
                 error_text = embed_error_text
             )
@@ -693,15 +739,17 @@ colons_check <- function(
     }
     # other function names in x
     # selection of other functions
-    tempo_log <- base::lapply(X = out$fun_names, FUN = function(x){ ! x %in% base::c(out$all_basic_funs, out$arg_user_setting$x)}) #  names of all the other functions used in x, except the one tested (arg_user_setting$x), because can be in error messages
+    tempo_log <- base::mapply(FUN = function(x, y){( ! x) & ( ! y)}, x = basic_log, y = out$fun_names_skip, MoreArgs = NULL, SIMPLIFY = FALSE, USE.NAMES = TRUE) #  names of all the other functions used in x, including the masked names of basic functions, and the calls of internal functions (removed from the report and listed by .colons_check_message())
     in_other_fun <- base::mapply(FUN = function(x, y){x[y]}, x = out$fun_names, y = tempo_log, MoreArgs = NULL, SIMPLIFY = FALSE, USE.NAMES = TRUE)
     in_other_fun_names_pos <-  base::mapply(FUN = function(x, y){x[y]}, x = out$fun_names_pos, y = tempo_log, MoreArgs = NULL, SIMPLIFY = FALSE, USE.NAMES = TRUE)
+    in_other_fun_internal <-  base::mapply(FUN = function(x, y){x[y]}, x = internal_log, y = tempo_log, MoreArgs = NULL, SIMPLIFY = FALSE, USE.NAMES = TRUE) # calls of internal functions, removed from the report by .colons_check_message()
     # end selection of other functions
     if(base::length(x = base::unlist(x = in_other_fun, recursive = TRUE, use.names = TRUE)) != 0){ # check if other fun present
         # removal of string with empty function names
         tempo_log <- base::sapply(X = in_other_fun, FUN = function(x){base::length(x = x) == 0}, simplify = TRUE, USE.NAMES = TRUE) # detection of string with empty function names
         in_other_fun <- in_other_fun[ ! tempo_log] # removal of empty string
         in_other_fun_names_pos <- in_other_fun_names_pos[ ! tempo_log]
+        in_other_fun_internal <- in_other_fun_internal[ ! tempo_log]
         in_other_code_line_nb <- out$code_line_nb[ ! tempo_log]
         if( ! (base::length(x = in_other_fun) == base::length(x = in_other_fun_names_pos) & base::length(x = in_other_fun) == base::length(x = in_other_code_line_nb))){
             # nocov start
@@ -717,11 +765,12 @@ colons_check <- function(
             tempo <- .colons_check_message(
                 list_fun = in_other_fun, 
                 list_fun_pos = in_other_fun_names_pos, 
+                list_fun_internal = in_other_fun_internal, 
                 line_nb = in_other_code_line_nb, 
                 ini = out$code, 
                 arg_user_setting2 = out$arg_user_setting, 
                 text = "OTHER", 
-                internal_fun_names = out$internal_fun_names,
+                internal_fun_names = internal_called,
                 lib_path = lib_path, 
                 error_text = embed_error_text
             )
@@ -795,7 +844,20 @@ colons_check <- function(
     # warning if functions other than basic R functions need a package attribution (manual modification required)
     if(base::length(x = other_col1) > 0){
         warn_count <- warn_count + 1
-        tempo_warn <- base::paste0("(", warn_count, ") INSIDE ", base::as.character(x = arg_user_setting$x), ", SOME :: OR ::: ARE MISSING BEFORE FUNCTIONS THAT ARE NOT R BASIC FUNCTIONS:\n\n", "LINE\tFUN\t\tSTRING_BEFORE\n", base::paste0(base::paste0(other_col1, "\t", other_col2, "\t\t", other_col3, collapse = NULL, recycle0 = FALSE), collapse = "\n", recycle0 = FALSE), "\n\nTHE PACKAGE ATTRIBUTIONS OF THESE FUNCTIONS CANNOT BE ADDED AUTOMATICALLY, BECAUSE THE CORRECT PACKAGE CANNOT BE DETERMINED RELIABLY.\nPLEASE, MODIFY THE CODE MANUALLY, WITH THE HELP OF THE MESSAGE PRINTED ABOVE.", collapse = NULL, recycle0 = FALSE)
+        masked_reported <- masked_names[masked_names %in% other_col2] # masked names of basic functions among the reported other functions
+        tempo_warn <- base::paste0(
+            "(", warn_count, ") INSIDE ", base::as.character(x = arg_user_setting$x), ", SOME :: OR ::: ARE MISSING BEFORE FUNCTIONS THAT ARE NOT R BASIC FUNCTIONS:\n\n",
+            "LINE\tFUN\t\tSTRING_BEFORE\n",
+            base::paste0(base::paste0(other_col1, "\t", other_col2, "\t\t", other_col3, collapse = NULL, recycle0 = FALSE), collapse = "\n", recycle0 = FALSE),
+            base::ifelse(
+                test = base::length(x = masked_reported) > 0,
+                yes = base::paste0("\n\nAMONG THEM, THESE NAMES OF R BASIC FUNCTIONS ARE MASKED: THE FUNCTION CALLED WHEN RUNNING ", base::as.character(x = arg_user_setting$x), " IS ANOTHER FUNCTION (ATTACHED PACKAGE, IMPORT OR USER DEFINITION):\n", base::paste0(masked_reported, collapse = "\n", recycle0 = FALSE), collapse = NULL, recycle0 = FALSE),
+                no = ""
+            ),
+            "\n\nTHE PACKAGE ATTRIBUTIONS OF THESE FUNCTIONS CANNOT BE ADDED AUTOMATICALLY, BECAUSE THE CORRECT PACKAGE CANNOT BE DETERMINED RELIABLY.\nPLEASE, MODIFY THE CODE MANUALLY, WITH THE HELP OF THE MESSAGE PRINTED ABOVE.",
+            collapse = NULL,
+            recycle0 = FALSE
+        )
         warn <- base::paste0(base::ifelse(test = base::is.null(x = warn), yes = tempo_warn, no = base::paste0(warn, "\n\n", tempo_warn, collapse = NULL, recycle0 = FALSE)), collapse = NULL, recycle0 = FALSE)
     }
     # modification of the basic functions, only when some basic functions require a package attribution
@@ -803,21 +865,10 @@ colons_check <- function(
     output <- NULL # NULL returned if no modification is done
     replaced_log <- FALSE # becomes TRUE as soon as at least one package attribution has been added
     if(base::length(x = basic_col1) > 0){
-        # retrieval of the package of each basic R function, from the basic R scopes (same scopes as in .functions_detect())
-        all_basic_funs <- base::unname(obj = out$all_basic_funs, force = FALSE) # names of all the basic R functions, with the scopes they belong to (unnamed, because the names of the vector are the scopes, which would break the indexing below)
-        fun_package <- base::character(length = base::length(x = all_basic_funs))
-        basic_scopes <- base::c("package:stats", "package:graphics", "package:grDevices", "package:utils", "package:datasets", "package:methods", "Autoloads", "package:base")
-        for(i3 in base::seq_along(along.with = basic_scopes)){
-            in_scope_log <- base::vapply(X = all_basic_funs, FUN = function(x){base::exists(x = x, where = basic_scopes[i3], envir = , frame = , mode = "any", inherits = FALSE)}, FUN.VALUE = base::logical(length = 1), USE.NAMES = FALSE) # vectorized base::exists(): the functions of the scope
-            fun_package[in_scope_log & fun_package == ""] <- basic_scopes[i3] # fun_package == "" to keep the first scope found, like the R scope order
-        }
-        fun_package <- base::sub(pattern = "^package:", replacement = "", x = fun_package, ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE) # removal of the "package:" prefix
-        package_of_flagged <- fun_package[base::match(x = basic_col2, table = all_basic_funs, nomatch = NA_integer_, incomparables = NULL)] # package of each flagged function (NA if not found: impossible since flagged functions are in all_basic_funs)
-        # exclusion of the flagged occurrences that must not be modified:
-        # - calls to internal functions created inside the tested function (a same name can be an internal function and a basic R function)
-        # - recursive calls to the tested function itself (a same name can be the tested function and a basic R function)
-        skip_log <- basic_col2 %in% out$internal_fun_names | basic_col2 == fun_bare_name # basic_col2 contains the bare function names (e.g. "mean"), so the comparison with fun_bare_name (bare name of the submitted function, as written by the user) excludes the recursive calls to the tested function itself (a same name can be the tested function and a basic R function)
-        # modification of the code lines: insert <PACKAGE>:: (or <PACKAGE>::: for names starting by a dot) just before the function name, from the end of each line to the beginning, so that the positions of the not yet modified occurrences remain valid
+        # package of each flagged basic function, determined above by the resolution of the names as R does when running x
+        package_of_flagged <- flagged_package[base::match(x = basic_col2, table = flagged_names, nomatch = NA_integer_, incomparables = NULL)] # package of each flagged function (NA or "" impossible since the flagged functions are in basic_names_ok)
+        # the calls of the internal functions (a same name can be an internal function and a basic R function) and the names inside a formula or a quoting call or called by .Internal() are not flagged: they have been excluded from the selection of the basic functions above
+        # modification of the code lines: insert <PACKAGE>:: just before the function name (always ::, also for the names starting by a dot, since all the basic functions are exported: R CMD check reports ::: before an exported function), from the end of each line to the beginning, so that the positions of the not yet modified occurrences remain valid
         # the strings of basic_col3 are the code before each function name in the analyzed code (out$code), i.e., the name of the i3-th flagged occurrence starts at the position base::nchar(x = basic_col3[i3]) + 1 of the line basic_col1[i3]
         # the package attributions are inserted in the code of the submitted function as printed (comments and indentation kept), and not in the analyzed code (out$code: comments removed and multiple spaces collapsed), so that the returned or exported function keeps the comments and the indentation of the submitted function
         # the line i of out$code is the line i of the printed code (same utils::capture.output() call as in .functions_detect(), which never removes lines), with the comments removed and the multiple spaces collapsed: the positions in out$code are converted below into positions in the printed code
@@ -833,9 +884,6 @@ colons_check <- function(
         ord_flagged <- base::order(basic_col1, -name_start_pos, na.last = TRUE, decreasing = FALSE, method = "auto") # lines first, then reversed positions within a line
         for(i4 in base::seq_along(along.with = ord_flagged)){
             i3 <- ord_flagged[i4]
-            if(skip_log[i3]){
-                next
-            }
             line_i3 <- basic_col1[i3]
             pos_i3 <- name_start_pos[i3]
             fun_i3 <- basic_col2[i3]
@@ -863,17 +911,16 @@ colons_check <- function(
             }
             ini_pos_i3 <- kept_pos_i3[pos_i3] # position of the function name in the printed line (the printed line is modified from the end to the beginning, so that this position, computed on the not modified line, remains valid)
             if(base::substr(x = out$code[line_i3], start = pos_i3, stop = pos_i3 + nchar_fun_i3 - 1L) == fun_i3 & base::substr(x = code_mod[line_i3], start = ini_pos_i3, stop = ini_pos_i3 + nchar_fun_i3 - 1L) == fun_i3){
-                colons_i3 <- base::ifelse(test = base::grepl(x = fun_i3, pattern = "^\\.", ignore.case = FALSE, perl = TRUE, fixed = FALSE, useBytes = FALSE), yes = ":::", no = "::")
                 if(base::is.na(x = package_of_flagged[i3]) | package_of_flagged[i3] == ""){
                     # nocov start
-                    # codecov inactivated because it is an internal control of code writing, impossible to cover with argument values, since all the basic functions are in the basic scopes
+                    # codecov inactivated because it is an internal control of code writing, impossible to cover with argument values, since the flagged basic functions are the ones of basic_names_ok, which all have a package
                     base::stop(base::paste0("\n\n================\n\n", intern_error_text_start, "THE PACKAGE OF THE BASIC FUNCTION ", fun_i3, " COULD NOT BE DETERMINED. PLEASE, REPORT THIS PROBLEM HERE: ", internal_error_report_link, ".", intern_error_text_end, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL)
                     # nocov end
                 }
                 code_mod[line_i3] <- base::paste0(
                     base::substr(x = code_mod[line_i3], start = 1, stop = ini_pos_i3 - 1L),
                     package_of_flagged[i3],
-                    colons_i3,
+                    "::",
                     base::substr(x = code_mod[line_i3], start = ini_pos_i3, stop = base::nchar(x = code_mod[line_i3], type = "chars", allowNA = FALSE, keepNA = NA)),
                     collapse = NULL,
                     recycle0 = FALSE
@@ -891,10 +938,8 @@ colons_check <- function(
         # warning: keep.source = TRUE and an explicit srcfile are required to keep the source references (attribute srcref) of the returned function, i.e., its comments and indentation when printed. With srcfile = NULL, or with keep.source = FALSE (default of Rscript), the returned function is printed deparsed: comments removed and code reindented
         code_mod_text <- base::paste0(code_mod, collapse = "\n", recycle0 = FALSE)
         tempo_parse <- base::try(expr = base::parse(text = code_mod_text, file = "", n = NULL, prompt = "?", keep.source = TRUE, srcfile = base::srcfilecopy(filename = "<text>", lines = code_mod_text, timestamp = base::Sys.time(), isFile = FALSE), encoding = "unknown"), silent = TRUE, outFile = base::getOption(x = "try.outFile", default = base::stderr()))
-        # nocov start
-        # codecov inactivated because it is an internal control of the modification, impossible to cover with argument values (a modified code that does not parse would indicate a replacement bug)
         if(base::inherits(x = tempo_parse, what = "try-error", which = FALSE) | base::length(x = tempo_parse) != 1){
-            # the modified code does not parse: rare situation (e.g., a function name split across lines in a way the analyzer could not handle correctly, see the Details section of the roxygen header)
+            # the modified code does not parse: rare writing that the analysis does not handle (e.g., a function name at the beginning of a line, after a $ or @ ending the previous line: x@\n    mean(1) becomes x@\n    base::mean(1)). See the Details section of the roxygen header
             if(export == TRUE){
                 tempo_cat <- base::paste0(
                     error_text_start, 
@@ -906,11 +951,21 @@ colons_check <- function(
                 )
                 base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL)
             }else{
-                # the submitted function is returned unchanged, with no error
+                # the submitted function is returned unchanged, with a warning
                 output <- x
+                warn_count <- warn_count + 1
+                tempo_warn <- base::paste0(
+                    "(", warn_count, ") THE CODE OF ",
+                    base::as.character(x = arg_user_setting$x),
+                    " MODIFIED BY THE ADDITION OF THE PACKAGE ATTRIBUTIONS DOES NOT PARSE: THE SUBMITTED FUNCTION IS RETURNED UNCHANGED.\nPLEASE, ADD THE PACKAGE ATTRIBUTIONS MANUALLY, WITH THE HELP OF THE MESSAGE PRINTED ABOVE, AND REPORT THIS PROBLEM HERE: ",
+                    internal_error_report_link,
+                    ".",
+                    collapse = NULL,
+                    recycle0 = FALSE
+                )
+                warn <- base::paste0(base::ifelse(test = base::is.null(x = warn), yes = tempo_warn, no = base::paste0(warn, "\n\n", tempo_warn, collapse = NULL, recycle0 = FALSE)), collapse = NULL, recycle0 = FALSE)
             }
         }else{
-        # nocov end
             output_fun <- base::eval(expr = tempo_parse[[1]], envir = base::environment(fun = x), enclos = base::environment(fun = x)) # environment of the submitted function, so that the functions used inside the modified function still resolve the same way
             if(export == TRUE){
                 # the file name is the name of the submitted function with _safer added at the end (already determined in the other checkings section)
@@ -943,17 +998,16 @@ colons_check <- function(
                     collapse = NULL,
                     recycle0 = FALSE
                 ), call. = FALSE, immediate. = FALSE, noBreaks. = FALSE, domain = NULL
-            ), add = TRUE, after = TRUE
+            ), add = TRUE, after = FALSE # after = FALSE: the warning is issued before the restoration of warning.length (on.exit() registered in the warning initiation section), so that it is not truncated
         )
     }
-    base::on.exit(expr = base::options(warning.length = ini_warning_length), add = TRUE, after = TRUE)
     #### end warning output
 
     #### output
-    if(export == TRUE & replaced_log == TRUE){
-        base::return(base::invisible(x = NULL)) # the modified code is not returned but saved (export argument)
+    if(base::is.null(x = output)){
+        base::return(base::invisible(x = NULL)) # nothing modified, or modified code exported (export = TRUE) instead of being returned
     }else{
-        base::return(output) # NULL if no modification done
+        base::return(output) # modified function
     }
     #### end output
 }

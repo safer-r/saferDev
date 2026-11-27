@@ -1,27 +1,34 @@
-#' @title Is Function Here
+#' @title Check That Functions Exist in Installed Packages
 #' @description
-#' Check if required functions are present in installed packages. This controls the potential modifications of package contents.
-#' @param fun Character vector of the names of the required functions, preceded by the name of the package they belong to and a double or triple colon. Example: \code{c("ggplot2::geom_point", "grid::gpar")}. Warning: do not write \code{"()"} at the end of each tested function.
-#' @param safer_check Single logical value. Perform the "safer" checks? If \code{TRUE}, checkings are performed before main code running (see the \href{https://github.com/safer-r}{safer-r project}): 1) required functions and related packages effectively present in local R libraries and 2) R classical operators (like \code{"<-"}) not overwritten by another package because of the R scope. Warning: must be set to \code{FALSE} if this function is used inside another "safer" function to avoid pointless multiple checkings.
-#' @param lib_path Vector of characters specifying the absolute pathways of the directories containing the required packages for the function, if not in the default directories. Useful when R packages are not installed in the default directories because of lack of admin rights. More precisely, \code{lib_path} is passed through the \code{new} argument of \code{.libPaths()} so that the new library paths are \code{unique(c(new, .Library.site, .Library))}. Warning: \code{.libPaths()} is restored to the initial paths, after function execution. Ignored if \code{NULL} (default): only the pathways specified by the current \code{.libPaths()} are used for package calling.
-#' @param error_text Single character string used to add information in error messages returned by the function, notably if the function is inside other functions, which is practical for debugging. Example: \code{error_text = " INSIDE <PACKAGE_1>::<FUNCTION_1> INSIDE <PACKAGE_2>::<FUNCTION_2>."}. If \code{NULL}, converted into \code{""}.
-#' @returns An error message if at least one of the checked packages is missing in \code{lib_path}, or if at least one of the checked functions is missing in the required package, nothing otherwise.
-#' @seealso \code{\link{exists}} and \code{\link{findFunction}}
+#' Checks that the required functions are present in the installed packages (e.g., not removed or renamed in another version of the package).
+#' @param fun Vector of character strings: the required functions, each preceded by its package and \code{"::"} or \code{":::"}, without final \code{"()"} (e.g., \code{c("stats::median", "grid::gpar")}). \code{"pkg::fun"} requires an object exported by the package, \code{"pkg:::fun"} accepts any object of the package namespace (internal functions included). The object can be of any kind (e.g., \code{"base::pi"}), except lazy-loaded datasets (e.g., \code{"datasets::iris"}), which are not found. Operators and other non-syntactic names can be written with or without backticks (e.g., \code{"base::+"}), except the names starting with \code{":"} (e.g., \code{:=}, \code{::}), which must be written with backticks (e.g., \code{"rlang::`:=`"}).
+#' @param safer_check Single logical value. If \code{TRUE} (default), checks before running that the required packages and functions are installed and that the classical R operators (like \code{<-}) are not masked by another package or by a user-defined object of the global environment. These checks take time at each call: set \code{FALSE} in loops and inside other safer-r functions, to avoid repeating them.
+#' @param lib_path Vector of character strings: paths of existing extra library folders containing the required packages (e.g., packages installed without admin rights). They are searched after the current \code{.libPaths()} during the call (the current libraries keep priority), and \code{.libPaths()} is restored on exit. If \code{NULL} (default), only the current \code{.libPaths()} are used.
+#' @param error_text Single character string added to the error messages (e.g., \code{" INSIDE pkg1::fun1()"}) to name the calling functions. \code{NULL} is converted into \code{""}.
+#' @returns Invisible \code{NULL} if all the functions are present, otherwise an error. The namespaces of the checked packages are loaded (not attached).
+#' @seealso \code{\link{is_package_here}}, \code{\link{exists}}, \code{\link{getNamespaceExports}}.
 #' @author \href{mailto:gael.millot@pasteur.fr}{Gael Millot}
-#' @author Haiding Wang  
+#' @author Haiding Wang
 #' @author Yushi Han
 #' @examples
-#' # Warning: these examples may not work well when using the "Run examples" link 
-#' # because of a particular environment. Please, copy-paste in a local environment.
 #' # See also https://safer-r.github.io/saferDev/articles/is_function_here.html
-#' \dontrun{
-#' # Example that returns an error
-#' saferDev::is_function_here(fun = "ggplot2::notgood", error_text = " INSIDE P1::F1")
-#' saferDev::is_function_here(fun = c("ggplot2::geom_point", "grid::gpar"))
-#' saferDev::is_function_here(fun = "c")
-#' }
-#' saferDev::is_function_here(fun = "base::c", error_text = " INSIDE P1::F1")
-#' 
+#' saferDev::is_function_here(fun = base::c("stats::median", "grid::gpar"), safer_check = TRUE,
+#'     lib_path = NULL, error_text = "")
+#' # Missing function: error
+#' base::try(expr = saferDev::is_function_here(fun = "stats::notgood", safer_check = TRUE,
+#'     lib_path = NULL, error_text = " INSIDE P1::F1"), silent = FALSE,
+#'     outFile = base::getOption(x = "try.outFile", default = base::stderr()))
+#' # Internal function (not exported): error with "::", no error with ":::"
+#' base::try(expr = saferDev::is_function_here(fun = "stats::Pillai", safer_check = TRUE,
+#'     lib_path = NULL, error_text = ""), silent = FALSE,
+#'     outFile = base::getOption(x = "try.outFile", default = base::stderr()))
+#' saferDev::is_function_here(fun = "stats:::Pillai", safer_check = TRUE, lib_path = NULL,
+#'     error_text = "")
+#' # Package not written: error
+#' base::try(expr = saferDev::is_function_here(fun = "c", safer_check = TRUE, lib_path = NULL,
+#'     error_text = ""), silent = FALSE,
+#'     outFile = base::getOption(x = "try.outFile", default = base::stderr()))
+#'
 #' @export
 is_function_here <- function(
     fun, 
@@ -42,8 +49,12 @@ is_function_here <- function(
     #### end internal error report link
 
     #### function name
-    tempo_settings <- base::as.list(x = base::match.call(definition = base::sys.function(which = base::sys.parent(n = 0)), call = base::sys.call(which = base::sys.parent(n = 0)), expand.dots = FALSE, envir = base::parent.frame(n = 2L))) # warning: I have written n = 0 to avoid error when a safer function is inside another functions. In addition, arguments values retrieved are not evaluated base::match.call, but this is solved with get() below
-    function_name <- base::paste0(tempo_settings[[1]], "()", collapse = NULL, recycle0 = FALSE) 
+    tempo_settings <- base::as.list(x = base::match.call(definition = base::sys.function(which = base::sys.parent(n = 0)), call = base::sys.call(which = base::sys.parent(n = 0)), expand.dots = FALSE, envir = )) # warning: I have written n = 0 to avoid error when a safer function is inside another functions. In addition, arguments values retrieved are not evaluated base::match.call, but this is solved with get() below. Warning: envir is left empty on purpose: its default parent.frame(2L), evaluated inside base::match.call(), is the frame that called this function, where the ... of the call are expanded (base::parent.frame(n = 2L) written here would be evaluated one frame too far, which breaks the calls through base::lapply(), base::vapply(), base::apply(), base::Filter() or a function forwarding ..., base::sapply() only working by coincidence)
+    if(base::is.name(x = tempo_settings[[1]]) | base::is.call(x = tempo_settings[[1]])){
+        function_name <- base::paste0(tempo_settings[[1]], "()", collapse = NULL, recycle0 = FALSE)
+    }else{
+        function_name <- "<anonymous function>()" # the function was called through its object (e.g., base::do.call(what = <function object>, args = ...)), so that its name is not in the call
+    }
     # function name with "()" paste, which split into a vector of three: c("::()", "package ()", "function ()") if "package::function()" is used.
     if(function_name[1] == "::()" | function_name[1] == ":::()"){
         function_name <- function_name[3]
@@ -308,8 +319,8 @@ is_function_here <- function(
             base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL)
         }else{
             ini_lib_path <- base::.libPaths(new = , include.site = TRUE) # normal to have empty new argument
-            base::on.exit(expr = base::.libPaths(new = ini_lib_path, include.site = TRUE), add = TRUE, after = TRUE) # return to the previous libPaths()
-            base::.libPaths(new = base::sub(x = base::c(ini_lib_path, lib_path), pattern = "/$|\\\\$", replacement = "", ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE), include.site = TRUE) # base::.libPaths(new = ) add path to default path. BEWARE: base::.libPaths() does not support / at the end of a submitted path. The reason of the check and replacement of the last / or \\ in path
+            base::on.exit(expr = base::.libPaths(new = ini_lib_path, include.site = FALSE), add = TRUE, after = TRUE) # return to the previous libPaths(). include.site = FALSE: exact restore, since ini_lib_path already contains the site library if it was in use
+            base::.libPaths(new = base::sub(x = base::c(ini_lib_path, lib_path), pattern = "/$|\\\\$", replacement = "", ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE), include.site = FALSE) # base::.libPaths(new = ) add path to default path. BEWARE: base::.libPaths() does not support / at the end of a submitted path. The reason of the check and replacement of the last / or \\ in path
             lib_path <- base::.libPaths(new = , include.site = TRUE) # normal to have empty new argument
         }
     }else{
@@ -446,22 +457,24 @@ is_function_here <- function(
         )
         base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL)
     }
-    tempo_log <- base::grepl(x = fun, pattern = "^[a-zA-Z][a-zA-Z0-9.]*(:{2}[a-zA-Z.]|:{3}[a-zA-Z._])[a-zA-Z0-9._]*$", ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE)
-    # [a-zA-Z][a-zA-Z0-9.]+ means any single alphabet character (package name cannot start by dot or underscore or num), then any alphanum and dots
-    # (:{2}[a-zA-Z.]|:{3}\\.[a-zA-Z._]) means either double colon and any single alphabet character or dot (for base::.libPaths), or triple colon followed by a dot and any single alphabet character or dot (because .. is ok for function name) or underscore (because ._ is ok for function name). Starting "dot and num" or underscore is not authorized for function name
-    # [a-zA-Z0-9._]* means any several of these characters or nothing
+    fun_pattern <- "^([a-zA-Z][a-zA-Z0-9.]*)(:{2,3})(.+)$"
+    # ([a-zA-Z][a-zA-Z0-9.]*) means a package name: any single alphabet character (package name cannot start by dot or underscore or num), then any alphanum and dots
+    # (:{2,3}) means a double or triple colon (greedy, so that ::: is taken whole)
+    # (.+) means a non empty object name, including non syntactic names (operators like + or %in%, replacement functions like names<-), with or without backticks. Names starting with a colon (like := or ::) must be written with backticks: otherwise the greedy :{2,3} takes their first colon (documented in @param fun)
+    tempo_log <- base::grepl(x = fun, pattern = fun_pattern, ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE)
     if( ! base::all(tempo_log, na.rm = TRUE)){
         tempo_cat <- base::paste0(
             error_text_start, 
-            "THE STRING IN fun ARGUMENT MUST CONTAIN \"::\" OR \":::\":\n", 
+            "THE STRING IN fun ARGUMENT MUST BE WRITTEN \"package::function\" OR \"package:::function\":\n", 
             base::paste0(fun[ ! tempo_log], collapse = "\n", recycle0 = FALSE), 
             collapse = NULL, 
             recycle0 = FALSE
         )
         base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL)
     }
-    pkg_fun_name_list <- base::strsplit(x = fun, split = ":{2,3}", fixed = FALSE, perl = FALSE, useBytes = FALSE) # package in 1 and function in 2
-    pkg_name <- base::sapply(X = pkg_fun_name_list, FUN = function(x){x[1]}, simplify = TRUE, USE.NAMES = TRUE)
+    pkg_name <- base::sub(pattern = fun_pattern, replacement = "\\1", x = fun, ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE)
+    colon_name <- base::sub(pattern = fun_pattern, replacement = "\\2", x = fun, ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE)
+    obj_name <- base::sub(pattern = "^`(.+)`$", replacement = "\\1", x = base::sub(pattern = fun_pattern, replacement = "\\3", x = fun, ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE), ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE) # backticks around the object name removed
     pkg_log <- pkg_name %in% base::gsub(x = base::find.package(package = pkg_name, lib.loc = lib_path, quiet = TRUE, verbose = FALSE), pattern = "^.*/", replacement = "", ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE)
     if( ! base::all(pkg_log, na.rm = TRUE)){
         tempo <- base::unique(x = pkg_name[ ! pkg_log], incomparables = FALSE)
@@ -478,7 +491,7 @@ is_function_here <- function(
         )
         base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL)
     }
-    fun_log <- base::sapply(X = pkg_fun_name_list, FUN = function(x){base::exists(x = x[2], envir = base::getNamespace(name = x[1]), where = -1, frame = NULL, mode = "any", inherits = FALSE)}, simplify = TRUE, USE.NAMES = TRUE)
+    fun_log <- base::mapply(FUN = function(x, y, z){base::exists(x = y, envir = base::getNamespace(name = x), where = -1, frame = NULL, mode = "any", inherits = FALSE) | (z == "::" & y %in% base::getNamespaceExports(ns = x))}, x = pkg_name, y = obj_name, z = colon_name, MoreArgs = NULL, SIMPLIFY = TRUE, USE.NAMES = FALSE) # any object of the namespace (getNamespace() loads the namespace), or, with "::", any exported object, including the objects that the package exports from another package (e.g., graphics::plot, defined in base), which are not in its namespace
     if( ! base::all(fun_log, na.rm = TRUE)){
         tempo <- fun[ ! fun_log]
         tempo_cat <- base::paste0(
@@ -492,6 +505,21 @@ is_function_here <- function(
             ":\n", 
             base::paste0(lib_path, collapse = "\n", recycle0 = FALSE),
             collapse = NULL, 
+            recycle0 = FALSE
+        )
+        base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL)
+    }
+    exp_log <- colon_name == ":::" | base::mapply(FUN = function(x, y){y %in% base::getNamespaceExports(ns = x)}, x = pkg_name, y = obj_name, MoreArgs = NULL, SIMPLIFY = TRUE, USE.NAMES = FALSE) # "pkg::fun" requires an object exported by the package, "pkg:::fun" accepts any object of the namespace
+    if( ! base::all(exp_log, na.rm = TRUE)){
+        tempo <- fun[ ! exp_log]
+        tempo_cat <- base::paste0(
+            error_text_start,
+            "REQUIRED FUNCTION",
+            base::ifelse(test = base::length(x = tempo) == 1L, yes = " IS ", no = "S ARE "),
+            "NOT EXPORTED BY THE INSTALLED PACKAGE",
+            base::ifelse(test = base::length(x = tempo) == 1L, yes = base::paste0(":\n", tempo, collapse = NULL, recycle0 = FALSE), no = base::paste0("S:\n", base::paste0(tempo, collapse = "\n", recycle0 = FALSE), collapse = NULL, recycle0 = FALSE)),
+            "\n\nWRITE \":::\" INSTEAD OF \"::\" TO CHECK A NON EXPORTED FUNCTION.",
+            collapse = NULL,
             recycle0 = FALSE
         )
         base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL)

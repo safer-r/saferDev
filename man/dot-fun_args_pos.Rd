@@ -7,31 +7,31 @@
 .fun_args_pos(text, pattern, lib_path, error_text)
 }
 \arguments{
-\item{text}{Single string.}
+\item{text}{Single string, whose brackets between quotes have been replaced (see \code{.in_quotes_replacement()}).}
 
-\item{pattern}{Single string of a Perl regex to extract function name and \code{()}, using generally \code{paste0(<FUNCTION_NAME>, "[\\s\\r\\n]*\\(")}.}
+\item{pattern}{Single string: Perl regex matching the function name and its opening bracket, generally \code{paste0(<FUNCTION_NAME>, "[\\\\s\\\\r\\\\n]*\\\\(")}.}
 
-\item{lib_path}{Vector of characters specifying the absolute pathways of the directories containing the required packages for the function, if not in the default directories. Useful when R packages are not installed in the default directories because of lack of admin rights. More precisely, \code{lib_path} is passed through the \code{new} argument of \code{.libPaths()} so that the new library paths are \code{unique(c(new, .Library.site, .Library))}. Warning: \code{.libPaths()} is restored to the initial paths, after function execution. Ignored if \code{NULL} (default): only the pathways specified by the current \code{.libPaths()} are used for package calling.}
+\item{lib_path}{Vector of character strings or \code{NULL}: the \code{lib_path} value of the calling exported function, only passed on to \code{arg_check()}. No default value.}
 
-\item{error_text}{Single character string used to add information in error messages returned by the function, notably if the function is inside other functions, which is practical for debugging. Example: \code{error_text = " INSIDE <PACKAGE_1>::<FUNCTION_1> INSIDE <PACKAGE_2>::<FUNCTION_2>."}. If \code{NULL}, converted into \code{""}.}
+\item{error_text}{Single character string added to the error messages to name the calling functions (\code{embed_error_text} of the calling function). \code{NULL} is converted into \code{""}. No default value.}
 }
 \value{
-A list containing positions:
+A list containing positions in \code{text}:
 \itemize{
-  \item \code{begin_fun}: position of the 1st letter of the first function name in the tested string.
-  \item \code{begin}: position of the opening \code{"("} of the first function.
-  \item \code{end}: position of the closing \code{")"} of the first function.
-  \item \code{middle_bracket_pos}: list of the positions of each couple of brackets in the middle of the \code{begin} and \code{end} positions. In each compartment, the first number is the position of \code{(} and the second the position of \code{)}. \code{NULL} if no inside brackets.
+  \item \code{begin_fun}: position of the first character of the first match of \code{pattern}.
+  \item \code{begin}: position of the opening bracket \code{(} of the function.
+  \item \code{end}: position of the closing bracket \code{)} of the function.
+  \item \code{middle_bracket_pos}: list of the positions of each pair of brackets between \code{begin} and \code{end}: in each compartment, the position of \code{(} and the position of the matching \code{)}. \code{NULL} if no bracket.
 }
 }
 \description{
-Return the positions of 1st letter of the first function name in a string, as well as its own opening and closing parenthesis, as well as positions of all the internal parenthesis (inside the own parenthesis).
+Return the positions of the first function name found in a string, of its opening and closing brackets, and of each pair of brackets between them.
 }
 \details{
+An internal error is returned if \code{pattern} is not found in \code{text}, if no \code{(} follows it, or if its closing bracket is not found (e.g., bracket between quotes not replaced). Its message contains an excerpt of \code{text}. No file is written.
+
 Warnings:
 \itemize{
-  \item The tested string must be cleaned form brackets between quotes. Use \code{.in_quotes_replacement()} for that.
-  \item Quotes in strings are escaped, so that position of \code{(} in \code{\"a(} is 3, not 4.
   \item requires \code{saferDev::arg_check}.
   \item In the safer Backbone section \code{"######## check of the required functions from the required packages"}, add also \code{saferDev::arg_check} when checking for the presence of \code{.fun_args_pos}.
 }

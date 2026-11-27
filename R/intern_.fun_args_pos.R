@@ -1,27 +1,27 @@
 #' @title Function Arguments Position
 #' @description
-#' Return the positions of 1st letter of the first function name in a string, as well as its own opening and closing parenthesis, as well as positions of all the internal parenthesis (inside the own parenthesis).
-#' @param text Single string.
-#' @param pattern Single string of a Perl regex to extract function name and \code{()}, using generally \code{paste0(<FUNCTION_NAME>, "[\\s\\r\\n]*\\(")}.
-#' @param lib_path Vector of characters specifying the absolute pathways of the directories containing the required packages for the function, if not in the default directories. Useful when R packages are not installed in the default directories because of lack of admin rights. More precisely, \code{lib_path} is passed through the \code{new} argument of \code{.libPaths()} so that the new library paths are \code{unique(c(new, .Library.site, .Library))}. Warning: \code{.libPaths()} is restored to the initial paths, after function execution. Ignored if \code{NULL} (default): only the pathways specified by the current \code{.libPaths()} are used for package calling.
-#' @param error_text Single character string used to add information in error messages returned by the function, notably if the function is inside other functions, which is practical for debugging. Example: \code{error_text = " INSIDE <PACKAGE_1>::<FUNCTION_1> INSIDE <PACKAGE_2>::<FUNCTION_2>."}. If \code{NULL}, converted into \code{""}.
-#' @returns A list containing positions:
+#' Return the positions of the first function name found in a string, of its opening and closing brackets, and of each pair of brackets between them.
+#' @param text Single string, whose brackets between quotes have been replaced (see \code{.in_quotes_replacement()}).
+#' @param pattern Single string: Perl regex matching the function name and its opening bracket, generally \code{paste0(<FUNCTION_NAME>, "[\\\\s\\\\r\\\\n]*\\\\(")}.
+#' @param lib_path Vector of character strings or \code{NULL}: the \code{lib_path} value of the calling exported function, only passed on to \code{arg_check()}. No default value.
+#' @param error_text Single character string added to the error messages to name the calling functions (\code{embed_error_text} of the calling function). \code{NULL} is converted into \code{""}. No default value.
+#' @returns A list containing positions in \code{text}:
 #' \itemize{
-#'   \item \code{begin_fun}: position of the 1st letter of the first function name in the tested string.
-#'   \item \code{begin}: position of the opening \code{"("} of the first function.
-#'   \item \code{end}: position of the closing \code{")"} of the first function.
-#'   \item \code{middle_bracket_pos}: list of the positions of each couple of brackets in the middle of the \code{begin} and \code{end} positions. In each compartment, the first number is the position of \code{(} and the second the position of \code{)}. \code{NULL} if no inside brackets.
+#'   \item \code{begin_fun}: position of the first character of the first match of \code{pattern}.
+#'   \item \code{begin}: position of the opening bracket \code{(} of the function.
+#'   \item \code{end}: position of the closing bracket \code{)} of the function.
+#'   \item \code{middle_bracket_pos}: list of the positions of each pair of brackets between \code{begin} and \code{end}: in each compartment, the position of \code{(} and the position of the matching \code{)}. \code{NULL} if no bracket.
 #' }
 #' @details
+#' An internal error is returned if \code{pattern} is not found in \code{text}, if no \code{(} follows it, or if its closing bracket is not found (e.g., bracket between quotes not replaced). Its message contains an excerpt of \code{text}. No file is written.
+#'
 #' Warnings:
 #' \itemize{
-#'   \item The tested string must be cleaned form brackets between quotes. Use \code{.in_quotes_replacement()} for that.
-#'   \item Quotes in strings are escaped, so that position of \code{(} in \code{\"a(} is 3, not 4.
 #'   \item requires \code{saferDev::arg_check}.
 #'   \item In the safer Backbone section \code{"######## check of the required functions from the required packages"}, add also \code{saferDev::arg_check} when checking for the presence of \code{.fun_args_pos}.
 #' }
 #' @author \href{mailto:gael.millot@pasteur.fr}{Gael Millot}
-#' @author Haiding Wang  
+#' @author Haiding Wang
 #' @author Yushi Han
 #' @keywords internal
 .fun_args_pos <- function(
@@ -50,8 +50,12 @@
     #### end internal error report link
 
     #### function name
-    tempo_settings <- base::as.list(x = base::match.call(definition = base::sys.function(which = base::sys.parent(n = 0)), call = base::sys.call(which = base::sys.parent(n = 0)), expand.dots = FALSE, envir = base::parent.frame(n = 2L))) # warning: I have written n = 0 to avoid error when a safer function is inside another functions. In addition, arguments values retrieved are not evaluated base::match.call, but this is solved with get() below
-        function_name <- base::paste0(tempo_settings[[1]], "()", collapse = NULL, recycle0 = FALSE) 
+    tempo_settings <- base::as.list(x = base::match.call(definition = base::sys.function(which = base::sys.parent(n = 0)), call = base::sys.call(which = base::sys.parent(n = 0)), expand.dots = FALSE, envir = )) # warning: I have written n = 0 to avoid error when a safer function is inside another functions. In addition, arguments values retrieved are not evaluated base::match.call, but this is solved with get() below. Warning: envir is left empty on purpose: its default parent.frame(2L), evaluated inside base::match.call(), is the frame that called this function, where the ... of the call are expanded (base::parent.frame(n = 2L) written here would be evaluated one frame too far, which breaks the calls through base::lapply(), base::vapply(), base::apply(), base::Filter() or a function forwarding ..., base::sapply() only working by coincidence)
+        if(base::is.name(x = tempo_settings[[1]]) | base::is.call(x = tempo_settings[[1]])){
+            function_name <- base::paste0(tempo_settings[[1]], "()", collapse = NULL, recycle0 = FALSE)
+        }else{
+            function_name <- "<anonymous function>()" # the function was called through its object (e.g., base::do.call(what = <function object>, args = ...)), so that its name is not in the call
+        }
     # function name with "()" paste, which split into a vector of three: c("::()", "package ()", "function ()") if "package::function()" is used.
     if(function_name[1] == "::()" | function_name[1] == ":::()"){
         function_name <- function_name[3]
@@ -380,6 +384,7 @@
     #### end second round of checking and data preparation
 
     #### main code
+    # the internal error messages of check_pos() and while_loop() contain an excerpt of text of at most 200 characters (no file written): from the first character of text in check_pos(), and from 50 characters before the opening bracket in while_loop()
     check_pos <- function(
         intern_error_nb,
         x, 
@@ -390,29 +395,32 @@
         intern_error_text_end
         ){
         if(base::length(x = x) != 1 | base::any(base::is.na(x = x), na.rm = TRUE) | base::is.null(x = x) | base::any(x < 0 , na.rm = TRUE)){
-            # nocov start
-            # codecov inactivated because it is an internal control of code writing, impossible to cover with argument values.
-            tempo_name <- base::paste0("check_pos_fun_args_pos_internal_error_", intern_error_nb, ".txt", collapse = NULL, recycle0 = FALSE)
-            base::cat(text, file = tempo_name, sep = "", fill = FALSE, labels = NULL, append = FALSE)
+            # happens when pattern is not found in text (intern_error_nb = 1), or when no ( follows the first match of pattern (intern_error_nb = 2)
+            text_nb_char <- base::nchar(x = text, type = "chars", allowNA = FALSE, keepNA = NA)
             tempo_cat <- base::paste0(
                 "INTERNAL ERROR ", 
                 intern_error_nb, 
                 " IN ",
                 intern_error_text_start, 
-                "INTERNAL FUNCTION DID NOT PROPERLY DETECT THE POSITION OF\n", 
-                x, 
-                "\ntext: ", 
-                # base::paste0(text, collapse = "\n", recycle0 = FALSE), 
+                "INTERNAL FUNCTION DID NOT PROPERLY DETECT THE POSITION OF THE ", 
+                base::ifelse(test = intern_error_nb == 1, yes = "FUNCTION NAME (pattern NOT FOUND IN text)", no = "OPENING BRACKET OF THE FUNCTION"), 
+                ".\nDETECTED POSITION: ", 
+                base::paste0(x, collapse = " ", recycle0 = FALSE), 
                 "\npattern: ", 
                 base::paste0(pattern, collapse = "\n", recycle0 = FALSE), 
                 "\nfun_pos: ", 
-                base::paste0(fun_pos, collapse = "\n", recycle0 = FALSE), 
+                base::paste0(fun_pos, collapse = " ", recycle0 = FALSE), 
+                "\ntext (CHARACTERS 1 TO ", 
+                base::min(200, text_nb_char, na.rm = TRUE), 
+                " OF ", 
+                text_nb_char, 
+                "):\n", 
+                base::substr(x = text, start = 1, stop = 200), 
                 intern_error_text_end, 
                 collapse = NULL, 
                 recycle0 = FALSE
             )
             base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL)
-            # nocov end
         }
     }
 
@@ -441,10 +449,33 @@
             loop_nb <- loop_nb + 1
         }
         if(count != 0){
-            # nocov start
-            # codecov inactivated because it is an internal control of code writing, impossible to cover with argument values.
-            tempo_name <- base::paste0("while_loop_fun_args_pos_internal_error_", intern_error_nb, ".txt", collapse = NULL, recycle0 = FALSE) ; base::cat(text, file = tempo_name, sep = "", fill = FALSE, labels = NULL, append = FALSE) ; tempo_cat <- base::paste0("INTERNAL ERROR ", intern_error_nb, " IN ", intern_error_text_start, "INTERNAL FUNCTION DID NOT PROPERLY DETECT THE POSITION OF THE CLOSING BRACKET.\n", "\nstart: ", start, "\nall_pos: ", all_pos, "\nopen_pos: ", open_pos, "\nclose_pos: ", close_pos, "\ntext:\nSEE THE FILE ", tempo_name, "\npattern: ", base::paste0(pattern, collapse = "\n", recycle0 = FALSE), "\ncount: ", base::paste0(count, collapse = "\n", recycle0 = FALSE), intern_error_text_end, collapse = NULL, recycle0 = FALSE) ; base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL)
-            # nocov end
+            # happens when the brackets of text are not balanced after the opening bracket start (e.g., bracket between quotes not removed from text)
+            text_nb_char <- base::nchar(x = text, type = "chars", allowNA = FALSE, keepNA = NA)
+            excerpt_start <- base::max(1, start - 50, na.rm = TRUE)
+            tempo_cat <- base::paste0(
+                "INTERNAL ERROR ", 
+                intern_error_nb, 
+                " IN ", 
+                intern_error_text_start, 
+                "INTERNAL FUNCTION DID NOT PROPERLY DETECT THE POSITION OF THE CLOSING BRACKET.\npattern: ", 
+                base::paste0(pattern, collapse = "\n", recycle0 = FALSE), 
+                "\nPOSITION OF THE OPENING BRACKET: ", 
+                start, 
+                "\nBRACKETS NOT CLOSED: ", 
+                count, 
+                "\ntext (CHARACTERS ", 
+                excerpt_start, 
+                " TO ", 
+                base::min(excerpt_start + 199, text_nb_char, na.rm = TRUE), 
+                " OF ", 
+                text_nb_char, 
+                "):\n", 
+                base::substr(x = text, start = excerpt_start, stop = excerpt_start + 199), 
+                intern_error_text_end, 
+                collapse = NULL, 
+                recycle0 = FALSE
+            )
+            base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL)
         }else{
             base::return(final_pos)
         }
@@ -496,10 +527,10 @@
         open_paren_pos_inside <- all_pos_inside[all_pos_inside %in% open_paren_pos]
         count_open_paren_pos_inside <- base::length(x = open_paren_pos_inside)
         close_paren_pos_inside <- all_pos_inside[all_pos_inside %in% close_paren_pos]
-        count_close_paren_pos_inside <- base::length(x = open_paren_pos_inside)
+        count_close_paren_pos_inside <- base::length(x = close_paren_pos_inside)
         if(count_open_paren_pos_inside != count_close_paren_pos_inside | count_open_paren_pos_inside == 0){ # count_open_paren_pos_inside == 0 because tempo_log above has some TRUE
             # nocov start
-            # codecov inactivated because it is an internal control of code writing, impossible to cover with argument values.
+            # codecov inactivated because impossible to cover: the closing bracket of the function is the first position where the count of the brackets not closed returns to zero, so that the brackets strictly inside the function brackets are balanced: they contain as many ( as ), and at least one ( if any bracket
             tempo_cat <- base::paste0("INTERNAL ERROR 4 IN ", intern_error_text_start, "THE ", function_name, " INTERNAL FUNCTION DID NOT PROPERLY DETECT THE POSITION OF ALL THE BRACKETS INSIDE THE FUN(    ) BRACKETS.", "\ntext: ", base::paste0(text, collapse = "\n", recycle0 = FALSE), "\npattern: ", base::paste0(pattern, collapse = "\n", recycle0 = FALSE), "\nCOUNT OF OPENED BRACKETS: ", count_open_paren_pos_inside, "\nCOUNT OF CLOSING BRACKETS: ", count_close_paren_pos_inside, "\nCHECK THAT THE STRING HAS ALL THE BRACKETS BETWEEN QUOTES REMOVED.", intern_error_text_end, collapse = NULL, recycle0 = FALSE) ; base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL)
             # nocov end
         }

@@ -2,13 +2,14 @@
 % Please edit documentation in R/intern_.all_args_here_fill.R
 \name{.all_args_here_fill}
 \alias{.all_args_here_fill}
-\title{Function for All Arguments Here}
+\title{Missing Arguments of a Function Call}
 \usage{
 .all_args_here_fill(
   arg_full,
   arg_full_names,
   tempo_split,
   three_dots_log,
+  pipe_log,
   i2,
   col1_i2,
   col2_i2,
@@ -20,29 +21,31 @@
 )
 }
 \arguments{
-\item{arg_full}{List of all arguments of the function with default value.}
+\item{arg_full}{List of the arguments of the called function, with their default values as copied into the call (empty value for the arguments without default value, or whose default value cannot be copied).}
 
-\item{arg_full_names}{Vector of strings of the names of the arguments of the function. Can be \code{NULL}.}
+\item{arg_full_names}{Vector of character strings: names of the arguments of the called function. Can be \code{NULL}.}
 
-\item{tempo_split}{Vector of strings of the observed argument writing of the function.}
+\item{tempo_split}{Vector of character strings: arguments written in the call.}
 
-\item{three_dots_log}{Vector of logical. Is \code{...} present among \code{arg_full_names}.}
+\item{three_dots_log}{Logical vector: is each element of \code{arg_full_names} the \code{...} argument?}
 
-\item{i2}{Single positive and non null integer value indicating the loop number.}
+\item{pipe_log}{Single logical value: is the call on the right side of a pipe (e.g., \code{x |> base::rep(3)})? If \code{TRUE}, the value of the pipe takes the first argument not written with its name and placed before \code{...} (except if the placeholder \code{_} or \code{.} is written as an argument), and the values written without name are kept without name in \code{$STATUS}.}
 
-\item{col1_i2}{Single positive and non null integer value indicating the code line number of the checked function.}
+\item{i2}{Single positive integer value: loop number in \code{all_args_here()}.}
 
-\item{col2_i2}{Single string indicating the name of the checked sub function.}
+\item{col1_i2}{Single positive integer value: code line number of the call.}
 
-\item{arg_user_setting_x}{Single string indicating the name of the checked function.}
+\item{col2_i2}{Single character string: name of the called function.}
 
-\item{warn}{Single warning string. Can be \code{NULL}.}
+\item{arg_user_setting_x}{Single character string: name of the checked function.}
 
-\item{warn_count}{Single positive integer value indicating the warning count.}
+\item{warn}{Single character string of the warnings already raised, added to the error messages. Can be \code{NULL}.}
 
-\item{lib_path}{Vector of characters specifying the absolute pathways of the directories containing the required packages for the function, if not in the default directories. Useful when R packages are not installed in the default directories because of lack of admin rights. More precisely, \code{lib_path} is passed through the \code{new} argument of \code{.libPaths()} so that the new library paths are \code{unique(c(new, .Library.site, .Library))}. Warning: \code{.libPaths()} is restored to the initial paths, after function execution. Ignored if \code{NULL} (default): only the pathways specified by the current \code{.libPaths()} are used for package calling.}
+\item{warn_count}{Single integer value (0 or more): number of warnings in \code{warn}.}
 
-\item{error_text}{Single character string used to add information in error messages returned by the function, notably if the function is inside other functions, which is practical for debugging. Example: \code{error_text = " INSIDE <PACKAGE_1>::<FUNCTION_1> INSIDE <PACKAGE_2>::<FUNCTION_2>."}. If \code{NULL}, converted into \code{""}.}
+\item{lib_path}{Vector of character strings or \code{NULL}: the \code{lib_path} value of the calling exported function, only passed on to \code{arg_check()}. No default value.}
+
+\item{error_text}{Single character string added to the error messages to name the calling functions (\code{embed_error_text} of the calling function). \code{NULL} is converted into \code{""}. No default value.}
 }
 \value{
 A list:
@@ -53,7 +56,7 @@ A list:
 }
 }
 \description{
-Get the \code{$MISSING_ARG_NAMES}, \code{$MISSING_ARGS} and \code{$NEW} of \code{all_args_here()}.
+Compute the \code{$MISSING_ARG_NAMES}, \code{$MISSING_ARGS} and \code{$STATUS} columns of the table of \code{all_args_here()} for one function call.
 }
 \details{
 Warnings:

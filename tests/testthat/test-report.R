@@ -3,7 +3,8 @@ testthat::test_that("report()", {
     ## data argument values
     data_1 <- data.frame(A = 1:8, B = letters[1:8])
     output_1 <- "results.txt"
-    path_1 <- "."
+    path_1 <- base::tempfile(pattern = "test_report_", tmpdir = base::tempdir(check = FALSE), fileext = "") # the tests write into a new folder of the temporary directory, never into the working directory
+    base::dir.create(path = path_1, showWarnings = TRUE, recursive = FALSE, mode = "0777")
 
     int1 <- 1
     str1 <- "FUN1"
@@ -311,19 +312,17 @@ testthat::test_that("report()", {
     result <- saferDev::get_message('report(data = data_1, output = output_1, path = path_1, append = TRUE, rownames_kept = FALSE, vector_cat = FALSE, noquote = FALSE, sep = 0, safer_check = TRUE, lib_path = NULL, error_text = "")')
     expected <- "ERROR MESSAGE REPORTED:\nError : \n\n================\n\nERROR IN saferDev::report().\n\nsep ARGUMENT CANNOT BE EQUAL TO ZERO.\n\n================\n\n\n"
     testthat::expect_equal(result, expected)
-    dir.create("test")
+    base::dir.create(path = base::file.path(path_1, "test", fsep = "/"), showWarnings = TRUE, recursive = FALSE, mode = "0777")
     testthat::expect_error(report(data = data_1, output = "test", path = path_1, append = FALSE, rownames_kept = FALSE, vector_cat = FALSE, noquote = FALSE, sep = 1, safer_check = TRUE, lib_path = NULL, error_text = ""))
-    result <- saferDev::get_message('report(data = data_1, output = "test", path = path_1, append = FALSE, rownames_kept = FALSE, vector_cat = FALSE, noquote = FALSE, sep = 1, safer_check = TRUE, lib_path = NULL, error_text = "")')
-    expected <- "ERROR MESSAGE REPORTED:\nError : \n\n================\n\nERROR IN saferDev::report().\n\nFILE DEFINED BY THE path AND output ARGUMENTS\n./test\nALREADY EXISTS AND CANNOT BE OVERWRITTEN.\nPLEASE:\nREMOVE THE FILE\nOR CHANGE THE NAME OF THE output ARGUMENT\nOR SET THE append ARGUMENT TO TRUE TO APPEND IN THE EXISTING FILE.\n\n\n================\n\n\n"
-    testthat::expect_equal(result, expected)
-    unlink("test", recursive = TRUE)
+    testthat::expect_error(object = saferDev::report(data = data_1, output = "test", path = path_1, append = FALSE, rownames_kept = FALSE, vector_cat = FALSE, noquote = FALSE, sep = 1, safer_check = TRUE, lib_path = NULL, error_text = ""), regexp = base::paste0("ERROR IN saferDev::report().\n\nFILE DEFINED BY THE path AND output ARGUMENTS\n", path_1, "/test\nALREADY EXISTS AND CANNOT BE OVERWRITTEN.\nPLEASE:\nREMOVE THE FILE\nOR CHANGE THE NAME OF THE output ARGUMENT\nOR SET THE append ARGUMENT TO TRUE TO APPEND IN THE EXISTING FILE.\n", collapse = NULL, recycle0 = FALSE), class = NULL, fixed = TRUE, inherit = TRUE, info = NULL, label = NULL)
+    base::unlink(x = base::file.path(path_1, "test", fsep = "/"), recursive = TRUE, force = TRUE, expand = TRUE)
     ######## end other checkings
     #### end second round of checking and data preparation
 
     #### main code
     # if( ! base::is.null(x = data)){
             # if(base::all(base::class(x = data) == "data.frame", na.rm = TRUE) | base::all(base::class(x = data) == "table", na.rm = TRUE) | base::all(base::class(x = data) %in% base::c("matrix", "array"), na.rm = TRUE)){
-                # if(rownames_kept == FALSE & base::all(base::class(x = data) == "data.frame", na.rm = TRUE) & base::nrow(x = data) != 0 & base::nrow(x = data) <= 4){ # for data frames with nrows <= 4
+                # if(rownames_kept == FALSE & base::all(base::class(x = data) == "data.frame", na.rm = TRUE)){ # data frames, whatever the number of rows (data_2; the matrix data_3 and the table data_4 go to the else part)
                     testthat::expect_no_error(report(data = data_2, output = output_1, path = path_1, append = TRUE, rownames_kept = FALSE, vector_cat = FALSE, noquote = FALSE, sep = 1, safer_check = TRUE, lib_path = NULL, error_text = ""))
                     testthat::expect_no_error(report(data = data_3, output = output_1, path = path_1, append = TRUE, rownames_kept = FALSE, vector_cat = FALSE, noquote = FALSE, sep = 1, safer_check = TRUE, lib_path = NULL, error_text = ""))
                     testthat::expect_no_error(report(data = data_4, output = output_1, path = path_1, append = TRUE, rownames_kept = FALSE, vector_cat = FALSE, noquote = FALSE, sep = 1, safer_check = TRUE, lib_path = NULL, error_text = ""))
@@ -332,7 +331,7 @@ testthat::test_that("report()", {
                     testthat::expect_no_error(report(data = data_3, output = output_1, path = path_1, append = TRUE, rownames_kept = FALSE, vector_cat = FALSE, noquote = TRUE, sep = 1, safer_check = TRUE, lib_path = NULL, error_text = ""))
                     testthat::expect_no_error(report(data = data_4, output = output_1, path = path_1, append = TRUE, rownames_kept = FALSE, vector_cat = FALSE, noquote = TRUE, sep = 1, safer_check = TRUE, lib_path = NULL, error_text = ""))
                     # end if(noquote == TRUE){
-                # end if(rownames_kept == FALSE & base::all(base::class(x = data) == "data.frame", na.rm = TRUE) & base::nrow(x = data) != 0 & base::nrow(x = data) <= 4){ # for data frames with nrows <= 4
+                # end if(rownames_kept == FALSE & base::all(base::class(x = data) == "data.frame", na.rm = TRUE)){
                 # }else if(base::is.vector(x = data, mode = "any") & base::all(base::class(x = data) != "list", na.rm = TRUE) & (base::length(x = data) == 1L | vector_cat == TRUE)){
                     testthat::expect_no_error(report(data = data_5, output = output_1, path = path_1, append = TRUE, rownames_kept = FALSE, vector_cat = FALSE, noquote = FALSE, sep = 1, safer_check = TRUE, lib_path = NULL, error_text = ""))
                     # if(noquote == TRUE){
@@ -350,9 +349,17 @@ testthat::test_that("report()", {
                     # end if(noquote == TRUE){
                 # end }else if(base::all(base::mode(x = data) == "character", na.rm = TRUE)){
             # end if(base::all(base::class(x = data) == "data.frame", na.rm = TRUE) | base::all(base::class(x = data) == "table", na.rm = TRUE) | base::all(base::class(x = data) %in% base::c("matrix", "array"), na.rm = TRUE)){
-            # if(base::all(base::class(x = data) == "list", na.rm = TRUE)){
+            # }else{ # other object (lists like data_7, factors, dates, S4 objects): written as printed in the console
             testthat::expect_no_error(report(data = data_7, output = output_1, path = path_1, append = TRUE, rownames_kept = FALSE, vector_cat = FALSE, noquote = FALSE, sep = 1, safer_check = TRUE, lib_path = NULL, error_text = ""))
-            # end if(base::all(base::class(x = data) == "list", na.rm = TRUE)){
+            # factors, dates and lists are written as printed in the console, whatever vector_cat (documented)
+            output_vec <- "results_vector_cat_test.txt"
+            testthat::expect_no_error(object = saferDev::report(data = base::factor(x = base::c("a", "b"), levels = base::c("a", "b"), labels = base::c("a", "b"), exclude = NA, ordered = FALSE, nmax = NA), output = output_vec, path = path_1, append = TRUE, rownames_kept = FALSE, vector_cat = TRUE, noquote = TRUE, sep = 1, safer_check = FALSE, lib_path = NULL, error_text = ""), message = NULL, class = NULL)
+            testthat::expect_no_error(object = saferDev::report(data = base::as.Date(x = "2026-11-25"), output = output_vec, path = path_1, append = TRUE, rownames_kept = FALSE, vector_cat = TRUE, noquote = TRUE, sep = 1, safer_check = FALSE, lib_path = NULL, error_text = ""), message = NULL, class = NULL)
+            testthat::expect_no_error(object = saferDev::report(data = base::list(1), output = output_vec, path = path_1, append = TRUE, rownames_kept = FALSE, vector_cat = TRUE, noquote = TRUE, sep = 1, safer_check = FALSE, lib_path = NULL, error_text = ""), message = NULL, class = NULL)
+            out_vec <- base::readLines(con = base::file.path(path_1, output_vec, fsep = "/"), n = -1L, ok = TRUE, warn = FALSE, encoding = "unknown", skipNul = FALSE)
+            testthat::expect_identical(object = out_vec, expected = base::c("[1] a b", "Levels: a b", "", "[1] \"2026-11-25\"", "", "[[1]]", "[1] 1", ""), info = NULL, label = NULL, expected.label = NULL)
+            base::unlink(x = base::file.path(path_1, output_vec, fsep = "/"), recursive = FALSE, force = TRUE, expand = TRUE)
+            # end }else{ # other object
 
             # rownames_kept = TRUE (untested half of the documented parameter): row names must be kept in 2D objects
             # dedicated output file, removed before each write because report() with append = FALSE refuses to overwrite an existing file
@@ -372,7 +379,7 @@ testthat::test_that("report()", {
             testthat::expect_true(object = base::any(base::grepl(x = out_with_rownames, pattern = "colA", ignore.case = FALSE, perl = FALSE, fixed = TRUE, useBytes = FALSE), na.rm = TRUE))
             testthat::expect_true(object = base::any(base::grepl(x = out_with_rownames, pattern = "rowB", ignore.case = FALSE, perl = FALSE, fixed = TRUE, useBytes = FALSE), na.rm = TRUE))
             testthat::expect_true(object = base::any(base::grepl(x = out_with_rownames, pattern = "colB", ignore.case = FALSE, perl = FALSE, fixed = TRUE, useBytes = FALSE), na.rm = TRUE))
-            # same on a data.frame with row names (nrow <= 4 branch: default FALSE replaces them by spaces)
+            # same on a data.frame with row names (default FALSE: written without row names, whatever the number of rows)
             df_rownames <- base::data.frame(A = 1:2, B = base::c("x", "y"), row.names = base::c("r1", "r2"), stringsAsFactors = TRUE)
             base::unlink(x = base::file.path(path_1, output_rownames), recursive = TRUE, force = TRUE)
             testthat::expect_no_error(report(data = df_rownames, output = output_rownames, path = path_1, append = FALSE, rownames_kept = TRUE, vector_cat = FALSE, noquote = FALSE, sep = 1, safer_check = TRUE, lib_path = NULL, error_text = ""))
@@ -383,6 +390,66 @@ testthat::test_that("report()", {
             out_df_false <- base::readLines(con = base::file.path(path_1, output_rownames), ok = TRUE, warn = FALSE, skipNul = FALSE)
             testthat::expect_false(object = base::any(base::grepl(x = out_df_false, pattern = "r1", ignore.case = FALSE, perl = FALSE, fixed = TRUE, useBytes = FALSE), na.rm = TRUE))
             base::unlink(x = base::file.path(path_1, output_rownames), recursive = TRUE, force = TRUE) # cleanup, same as the final unlink of output_1
+            # rownames_kept = FALSE also removes the row names of data frames of more than 4 rows (before: kept)
+            df_rownames_5 <- base::data.frame(A = 1:5, B = letters[1:5], row.names = base::paste0("row", 1:5, collapse = NULL, recycle0 = FALSE), check.rows = FALSE, check.names = TRUE, fix.empty.names = TRUE, stringsAsFactors = FALSE)
+            testthat::expect_no_error(object = saferDev::report(data = df_rownames_5, output = output_rownames, path = path_1, append = FALSE, rownames_kept = FALSE, vector_cat = FALSE, noquote = TRUE, sep = 1, safer_check = FALSE, lib_path = NULL, error_text = ""), message = NULL, class = NULL)
+            out_df_5 <- base::readLines(con = base::file.path(path_1, output_rownames, fsep = "/"), n = -1L, ok = TRUE, warn = FALSE, encoding = "unknown", skipNul = FALSE)
+            testthat::expect_identical(object = out_df_5, expected = base::c(" A B", " 1 a", " 2 b", " 3 c", " 4 d", " 5 e", ""), info = NULL, label = NULL, expected.label = NULL)
+            base::unlink(x = base::file.path(path_1, output_rownames, fsep = "/"), recursive = FALSE, force = TRUE, expand = TRUE)
+            testthat::expect_no_error(object = saferDev::report(data = df_rownames_5, output = output_rownames, path = path_1, append = FALSE, rownames_kept = TRUE, vector_cat = FALSE, noquote = TRUE, sep = 1, safer_check = FALSE, lib_path = NULL, error_text = ""), message = NULL, class = NULL)
+            out_df_5 <- base::readLines(con = base::file.path(path_1, output_rownames, fsep = "/"), n = -1L, ok = TRUE, warn = FALSE, encoding = "unknown", skipNul = FALSE)
+            testthat::expect_identical(object = out_df_5, expected = base::c("     A B", "row1 1 a", "row2 2 b", "row3 3 c", "row4 4 d", "row5 5 e", ""), info = NULL, label = NULL, expected.label = NULL)
+            base::unlink(x = base::file.path(path_1, output_rownames, fsep = "/"), recursive = FALSE, force = TRUE, expand = TRUE)
+            # deal with sep: exactly sep empty lines after data, whatever data (before: sep + 1 after single values, 2 after lists with sep = 1)
+            output_sep <- "results_sep_test.txt"
+            testthat::expect_no_error(object = saferDev::report(data = "TITLE", output = output_sep, path = path_1, append = TRUE, rownames_kept = FALSE, vector_cat = FALSE, noquote = TRUE, sep = 1, safer_check = FALSE, lib_path = NULL, error_text = ""), message = NULL, class = NULL)
+            testthat::expect_no_error(object = saferDev::report(data = 1:3, output = output_sep, path = path_1, append = TRUE, rownames_kept = FALSE, vector_cat = FALSE, noquote = TRUE, sep = 2, safer_check = FALSE, lib_path = NULL, error_text = ""), message = NULL, class = NULL)
+            testthat::expect_no_error(object = saferDev::report(data = base::c("a", "b"), output = output_sep, path = path_1, append = TRUE, rownames_kept = FALSE, vector_cat = TRUE, noquote = TRUE, sep = 1, safer_check = FALSE, lib_path = NULL, error_text = ""), message = NULL, class = NULL)
+            testthat::expect_no_error(object = saferDev::report(data = base::list(a = 1), output = output_sep, path = path_1, append = TRUE, rownames_kept = FALSE, vector_cat = FALSE, noquote = TRUE, sep = 1, safer_check = FALSE, lib_path = NULL, error_text = ""), message = NULL, class = NULL)
+            testthat::expect_no_error(object = saferDev::report(data = base::list(base::list(1)), output = output_sep, path = path_1, append = TRUE, rownames_kept = FALSE, vector_cat = FALSE, noquote = TRUE, sep = 2, safer_check = FALSE, lib_path = NULL, error_text = ""), message = NULL, class = NULL)
+            testthat::expect_no_error(object = saferDev::report(data = 5, output = output_sep, path = path_1, append = TRUE, rownames_kept = FALSE, vector_cat = FALSE, noquote = TRUE, sep = 3, safer_check = FALSE, lib_path = NULL, error_text = ""), message = NULL, class = NULL)
+            out_sep <- base::readLines(con = base::file.path(path_1, output_sep, fsep = "/"), n = -1L, ok = TRUE, warn = FALSE, encoding = "unknown", skipNul = FALSE)
+            testthat::expect_identical(object = out_sep, expected = base::c("TITLE", "", "[1] 1 2 3", "", "", "a b", "", "$a", "[1] 1", "", "[[1]]", "[[1]][[1]]", "[1] 1", "", "", "5", "", "", ""), info = NULL, label = NULL, expected.label = NULL)
+            # returned value: invisible NULL
+            result <- base::withVisible(x = saferDev::report(data = "abc", output = output_sep, path = path_1, append = TRUE, rownames_kept = FALSE, vector_cat = FALSE, noquote = TRUE, sep = 1, safer_check = FALSE, lib_path = NULL, error_text = ""))
+            testthat::expect_null(object = result$value, info = NULL, label = NULL)
+            testthat::expect_false(object = result$visible, info = NULL, label = NULL)
+            base::unlink(x = base::file.path(path_1, output_sep, fsep = "/"), recursive = FALSE, force = TRUE, expand = TRUE)
+            # string ending with a line break, written with cat(): this line break ends the written line, then exactly sep empty lines follow (before: one more empty line)
+            output_nl <- "results_newline_test.txt"
+            file_nl <- base::file.path(path_1, output_nl, fsep = "/")
+            testthat::expect_error(object = saferDev::report(data = "a\n", output = output_nl, path = path_1, append = FALSE, rownames_kept = FALSE, vector_cat = FALSE, noquote = TRUE, sep = 0, safer_check = FALSE, lib_path = NULL, error_text = ""), regexp = "sep ARGUMENT CANNOT BE EQUAL TO ZERO.", class = NULL, fixed = TRUE, inherit = TRUE, info = NULL, label = NULL)
+            testthat::expect_error(object = saferDev::report(data = "a\n\n", output = output_nl, path = path_1, append = FALSE, rownames_kept = FALSE, vector_cat = FALSE, noquote = TRUE, sep = 0, safer_check = FALSE, lib_path = NULL, error_text = ""), regexp = "sep ARGUMENT CANNOT BE EQUAL TO ZERO.", class = NULL, fixed = TRUE, inherit = TRUE, info = NULL, label = NULL)
+            testthat::expect_false(object = base::file.exists(file_nl), info = NULL, label = NULL) # nothing written
+            testthat::expect_no_error(object = saferDev::report(data = "a\n", output = output_nl, path = path_1, append = FALSE, rownames_kept = FALSE, vector_cat = FALSE, noquote = TRUE, sep = 1, safer_check = FALSE, lib_path = NULL, error_text = ""), message = NULL, class = NULL)
+            testthat::expect_identical(object = base::readLines(con = file_nl, n = -1L, ok = TRUE, warn = FALSE, encoding = "unknown", skipNul = FALSE), expected = base::c("a", ""), info = NULL, label = NULL, expected.label = NULL)
+            testthat::expect_no_error(object = saferDev::report(data = "a\n", output = output_nl, path = path_1, append = TRUE, rownames_kept = FALSE, vector_cat = FALSE, noquote = FALSE, sep = 2, safer_check = FALSE, lib_path = NULL, error_text = ""), message = NULL, class = NULL)
+            testthat::expect_identical(object = base::readLines(con = file_nl, n = -1L, ok = TRUE, warn = FALSE, encoding = "unknown", skipNul = FALSE), expected = base::c("a", "", "a", "", ""), info = NULL, label = NULL, expected.label = NULL)
+            testthat::expect_no_error(object = saferDev::report(data = "a\n\n", output = output_nl, path = path_1, append = TRUE, rownames_kept = FALSE, vector_cat = FALSE, noquote = TRUE, sep = 1, safer_check = FALSE, lib_path = NULL, error_text = ""), message = NULL, class = NULL)
+            testthat::expect_identical(object = base::readLines(con = file_nl, n = -1L, ok = TRUE, warn = FALSE, encoding = "unknown", skipNul = FALSE), expected = base::c("a", "", "a", "", "", "a", "", ""), info = NULL, label = NULL, expected.label = NULL) # "a", the empty line of the string, then 1 empty line
+            testthat::expect_no_error(object = saferDev::report(data = "a\n\n", output = output_nl, path = path_1, append = TRUE, rownames_kept = FALSE, vector_cat = FALSE, noquote = TRUE, sep = 2, safer_check = FALSE, lib_path = NULL, error_text = ""), message = NULL, class = NULL)
+            testthat::expect_identical(object = base::readLines(con = file_nl, n = -1L, ok = TRUE, warn = FALSE, encoding = "unknown", skipNul = FALSE), expected = base::c("a", "", "a", "", "", "a", "", "", "a", "", "", ""), info = NULL, label = NULL, expected.label = NULL)
+            base::unlink(x = file_nl, recursive = FALSE, force = TRUE, expand = TRUE)
+            # same with vector_cat = TRUE when the last string ends with a line break
+            testthat::expect_no_error(object = saferDev::report(data = base::c("x", "y\n"), output = output_nl, path = path_1, append = FALSE, rownames_kept = FALSE, vector_cat = TRUE, noquote = TRUE, sep = 1, safer_check = FALSE, lib_path = NULL, error_text = ""), message = NULL, class = NULL)
+            testthat::expect_no_error(object = saferDev::report(data = base::c("x", "y\n"), output = output_nl, path = path_1, append = TRUE, rownames_kept = FALSE, vector_cat = TRUE, noquote = FALSE, sep = 2, safer_check = FALSE, lib_path = NULL, error_text = ""), message = NULL, class = NULL)
+            testthat::expect_no_error(object = saferDev::report(data = base::c("x\n", "y"), output = output_nl, path = path_1, append = TRUE, rownames_kept = FALSE, vector_cat = TRUE, noquote = TRUE, sep = 1, safer_check = FALSE, lib_path = NULL, error_text = ""), message = NULL, class = NULL) # line break not at the end of the written text
+            str_bytes <- base::"Encoding<-"(x = base::rawToChar(x = base::as.raw(x = base::c(231, 10)), multiple = FALSE), value = "bytes") # non-ASCII string marked "bytes" and ending with a line break
+            testthat::expect_no_error(object = saferDev::report(data = str_bytes, output = output_nl, path = path_1, append = TRUE, rownames_kept = FALSE, vector_cat = FALSE, noquote = TRUE, sep = 1, safer_check = FALSE, lib_path = NULL, error_text = ""), message = NULL, class = NULL) # cat() writes its bytes as \xe7\x0a: the written text does not end with a line break
+            testthat::expect_identical(object = base::readLines(con = file_nl, n = -1L, ok = TRUE, warn = FALSE, encoding = "unknown", skipNul = FALSE), expected = base::c("x y", "", "x y", "", "", "x", " y", "", "\\xe7\\x0a", ""), info = NULL, label = NULL, expected.label = NULL)
+            base::unlink(x = file_nl, recursive = FALSE, force = TRUE, expand = TRUE)
+            # object printed as nothing: no line of data, only the sep empty lines (before: one more empty line). Here, S3 print methods writing nothing, or only empty lines (removed as trailing empty lines of the printing)
+            base::registerS3method(genname = "print", class = "report_test_silent", method = function(x, ...){base::invisible(x = x)}, envir = base::environment(fun = NULL)) # registered in the S3 methods table of the base namespace, removed below
+            base::registerS3method(genname = "print", class = "report_test_empty_lines", method = function(x, ...){base::cat("\n\n", file = "", sep = " ", fill = FALSE, labels = NULL, append = FALSE) ; base::invisible(x = x)}, envir = base::environment(fun = NULL))
+            testthat::expect_no_error(object = saferDev::report(data = base::structure(.Data = base::list(1), class = "report_test_silent"), output = output_nl, path = path_1, append = FALSE, rownames_kept = FALSE, vector_cat = FALSE, noquote = TRUE, sep = 2, safer_check = FALSE, lib_path = NULL, error_text = ""), message = NULL, class = NULL)
+            testthat::expect_identical(object = base::readLines(con = file_nl, n = -1L, ok = TRUE, warn = FALSE, encoding = "unknown", skipNul = FALSE), expected = base::c("", ""), info = NULL, label = NULL, expected.label = NULL)
+            base::unlink(x = file_nl, recursive = FALSE, force = TRUE, expand = TRUE)
+            testthat::expect_no_error(object = saferDev::report(data = "TITLE", output = output_nl, path = path_1, append = FALSE, rownames_kept = FALSE, vector_cat = FALSE, noquote = TRUE, sep = 1, safer_check = FALSE, lib_path = NULL, error_text = ""), message = NULL, class = NULL)
+            testthat::expect_no_error(object = saferDev::report(data = base::structure(.Data = base::list(1), class = "report_test_empty_lines"), output = output_nl, path = path_1, append = TRUE, rownames_kept = FALSE, vector_cat = FALSE, noquote = TRUE, sep = 1, safer_check = FALSE, lib_path = NULL, error_text = ""), message = NULL, class = NULL)
+            testthat::expect_no_error(object = saferDev::report(data = "END", output = output_nl, path = path_1, append = TRUE, rownames_kept = FALSE, vector_cat = FALSE, noquote = TRUE, sep = 1, safer_check = FALSE, lib_path = NULL, error_text = ""), message = NULL, class = NULL)
+            testthat::expect_identical(object = base::readLines(con = file_nl, n = -1L, ok = TRUE, warn = FALSE, encoding = "unknown", skipNul = FALSE), expected = base::c("TITLE", "", "", "END", ""), info = NULL, label = NULL, expected.label = NULL) # 1 empty line after TITLE, then 1 after the object printed as empty lines
+            base::rm(list = base::c("print.report_test_silent", "print.report_test_empty_lines"), pos = -1, envir = base::get(x = ".__S3MethodsTable__.", pos = -1L, envir = base::environment(fun = base::print), mode = "environment", inherits = FALSE), inherits = FALSE) # registered methods removed
+            base::unlink(x = file_nl, recursive = FALSE, force = TRUE, expand = TRUE)
 
 
     #### end main code
@@ -393,5 +460,6 @@ testthat::test_that("report()", {
 
 
     ## end other tests
-    unlink(file.path(".", output_1), recursive = TRUE, force = TRUE) # to avoid a warning that block CRAN tests
+    base::unlink(x = path_1, recursive = TRUE, force = TRUE, expand = TRUE) # removes the folder of the files written by the tests
+    base::rm(list = base::ls()) # to avoid a warning that block CRAN tests
 })

@@ -2,7 +2,7 @@
 % Please edit documentation in R/get_message.R
 \name{get_message}
 \alias{get_message}
-\title{Get Message}
+\title{Catch the Error, Warning or Message of an Instruction}
 \usage{
 get_message(
   data,
@@ -17,82 +17,79 @@ get_message(
 )
 }
 \arguments{
-\item{data}{Single character string of an instruction to evaluate}
+\item{data}{Single character string: the instruction to evaluate.}
 
-\item{kind}{Single character string. Either \code{"error"} to get a potential error message, or \code{"warning"} to get a potential warning message, or \code{"message"} to get a potential standard (non error and non warning) message.}
+\item{kind}{Single character string: the kind of message returned, either \code{"error"} (default), \code{"warning"} or \code{"message"} (standard messages).}
 
-\item{header}{Single logical value. Add a header in the returned message?}
+\item{header}{Single logical value. Start the returned message with a header (\code{"ERROR MESSAGE REPORTED:"}, \code{"WARNING MESSAGE REPORTED:"} or \code{"STANDARD MESSAGE REPORTED:"})? If \code{FALSE}, errors and warnings are returned as formatted by R (e.g., \code{"simpleWarning in log(-1): NaNs produced"} instead of \code{"In log(-1): NaNs produced"}).}
 
-\item{print_no}{Single logical value. Print a message saying that nothing (\code{NULL} output) has to be reported?}
+\item{print_no}{Single logical value. If \code{TRUE}, a \code{"NO ... REPORTED"} string is returned instead of \code{NULL} when nothing is caught (see the returned value).}
 
-\item{text}{Single character string added to the header of the output message, even if nothing reported (\code{print_no} is \code{TRUE}). Ignored if the \code{header} argument is \code{FALSE}. Write \code{NULL} if not required.}
+\item{text}{Single character string inserted at the end of the header, before the colon (e.g., \code{"ERROR MESSAGE REPORTED IN A:"} with \code{text = "IN A"}), and added to the \code{"NO ... REPORTED"} strings whatever \code{header}. \code{NULL} (default) for no text.}
 
-\item{env}{An object corresponding to an existing environment. Then the \code{data} argument value is evaluated only in the indicated environment. Write \code{NULL} if not required (R scope is used). Example \code{env = .GlobalEnv}. Example \code{env = asNamespace("stats")}.}
+\item{env}{Environment in which the instruction is evaluated (e.g., \code{.GlobalEnv} or \code{asNamespace("stats")}). If \code{NULL} (default), the environment from which \code{get_message()} is called.}
 
-\item{safer_check}{Single logical value. Perform the "safer" checks? If \code{TRUE}, checkings are performed before main code running (see the \href{https://github.com/safer-r}{safer-r project}): 1) required functions and related packages effectively present in local R libraries and 2) R classical operators (like \code{"<-"}) not overwritten by another package because of the R scope. Warning: must be set to \code{FALSE} if this function is used inside another "safer" function to avoid pointless multiple checkings.}
+\item{safer_check}{Single logical value. If \code{TRUE} (default), checks before running that the required packages and functions are installed and that the classical R operators (like \code{<-}) are not masked by another package or by a user-defined object of the global environment. These checks take time at each call: set \code{FALSE} in loops and inside other safer-r functions, to avoid repeating them.}
 
-\item{lib_path}{Vector of characters specifying the absolute pathways of the directories containing the required packages for the function, if not in the default directories. Useful when R packages are not installed in the default directories because of lack of admin rights. More precisely, \code{lib_path} is passed through the \code{new} argument of \code{.libPaths()} so that the new library paths are \code{unique(c(new, .Library.site, .Library))}. Warning: \code{.libPaths()} is restored to the initial paths, after function execution. Ignored if \code{NULL} (default): only the pathways specified by the current \code{.libPaths()} are used for package calling.}
+\item{lib_path}{Vector of character strings: paths of existing extra library folders containing the required packages (e.g., packages installed without admin rights). They are searched after the current \code{.libPaths()} during the call (the current libraries keep priority), and \code{.libPaths()} is restored on exit. If \code{NULL} (default), only the current \code{.libPaths()} are used.}
 
-\item{error_text}{Single character string used to add information in error messages returned by the function, notably if the function is inside other functions, which is practical for debugging. Example: \code{error_text = " INSIDE <PACKAGE_1>::<FUNCTION_1> INSIDE <PACKAGE_2>::<FUNCTION_2>."}. If \code{NULL}, converted into \code{""}.}
+\item{error_text}{Single character string added to the error messages (e.g., \code{" INSIDE pkg1::fun1()"}) to name the calling functions. \code{NULL} is converted into \code{""}.}
 }
 \value{
-The function returns the error, warning, or standard message, as a single character string, depending on what has been selected using the \code{kind} argument and if such message exists.
+A single character string: the error message (\code{kind = "error"}), the last warning message (\code{kind = "warning"}), or all the standard messages, separated by line breaks (\code{kind = "message"}).
 
-\code{NULL} if no selected message returned and the \code{print_no} argument is \code{FALSE}.
-
-The following message if no selected message returned and the \code{print_no} argument is \code{TRUE}: \code{"NO (ERROR|WARNING|STANDARD) MESSAGE REPORTED"}.
-
-The following message if 1) the \code{kind} argument is \code{"warning"} or \code{"message"} while an error message is returned and 2) the \code{print_no} argument is \code{TRUE}: \code{"NO POTENTIAL (WARNING|STANDARD) MESSAGE BECAUSE OF ERROR MESSAGE REPORTED"}.
+If no such message is caught: \code{NULL} or, with \code{print_no = TRUE}, \code{"NO (ERROR|WARNING|STANDARD) MESSAGE REPORTED"}. If the instruction stops with an error while \code{kind} is \code{"warning"} or \code{"message"}, the warnings and messages emitted before the error are not returned: \code{NULL} or, with \code{print_no = TRUE}, \code{"NO POTENTIAL (WARNING|STANDARD) MESSAGE BECAUSE OF ERROR MESSAGE REPORTED"}.
 }
 \description{
-Evaluate an instruction written between \code{""} and return the first of the error message, or the last of the warning or standard (non error non warning) messages if ever exist.
-
-Using argument \code{print_no = FALSE}, return \code{NULL} if nothing reported, which is convenient in some cases.
+Evaluates an instruction written as a character string, and returns its error message, its last warning message or its standard messages (neither errors nor warnings), as a single character string.
 }
 \details{
-Warnings:
-\itemize{
-  \item Only the first error or last warning/standard message is returned.
-  \item Always use the \code{env} argument when \code{get_message()} is used inside functions.
-  \item The function does not prevent printing, for instance if \code{print()} or \code{show()} is used inside the instruction tested. To prevent that, use \code{tempo <- utils::capture.output(error <- get_message(data = "arg_check(data = 'a', class = mean, neg_values = FALSE, print = TRUE)"))}. The return of \code{get_message()} is assigned into \code{error} and the printed messages are captured by \code{utils::capture.output()} and assigned into \code{tempo}. See the examples.
-}
+The instruction is evaluated once, whatever \code{kind}. Its warnings and standard messages are caught and not displayed. Its printed outputs (e.g., by \code{print()} or \code{show()}) are not caught: use \code{printed <- utils::capture.output(msg <- get_message(data = "print(1) ; log(-1)", kind = "warning"))} to get them in \code{printed}. Text written directly to the standard error (e.g., by \code{cat(file = stderr())}) is not caught either: use \code{utils::capture.output(type = "message")} to get it.
 
-The \code{env} argument is used as value for the \code{envir} argument of the \code{base::eval()} function.
+Plots are drawn on a NULL pdf device (no file created), and the graphic devices left open by the instruction are closed. A ggplot2 object returned by the instruction is printed, to catch the errors, warnings and messages emitted when the plot is built.
 }
 \examples{
-# Warning: these examples may not work well when using the "Run examples" link 
-# because of a particular environment. Please, copy-paste in a local environment.
 # See also https://safer-r.github.io/saferDev/articles/get_message.html
 
-# Report error message by default. Here no error to report:
-saferDev::get_message(data = "wilcox.test(c(1,1,3), c(1, 2, 4), paired = TRUE)")
+# Error message returned by default. Here no error to report:
+saferDev::get_message(data = "base::log(-1)", kind = "error", header = TRUE, print_no = FALSE,
+    text = NULL, env = NULL, safer_check = TRUE, lib_path = NULL, error_text = "")
 
 # Warning message to report:
-saferDev::get_message(data = "wilcox.test(c(1,1,3), c(1, 2, 4), paired = TRUE)", kind = "warning")
+saferDev::get_message(data = "base::log(-1)", kind = "warning", header = TRUE, print_no = FALSE,
+    text = NULL, env = NULL, safer_check = TRUE, lib_path = NULL, error_text = "")
 
 # No standard message to report:
-saferDev::get_message(data = "wilcox.test(c(1,1,3), c(1, 2, 4), paired = TRUE)", kind = "message", 
-print_no = TRUE, text = "IN A")
+saferDev::get_message(data = "base::log(-1)", kind = "message", header = TRUE, print_no = TRUE,
+    text = "IN A", env = NULL, safer_check = TRUE, lib_path = NULL, error_text = "")
 
-# Standard message cannot be caught because wilcox.test() returns an error message:
-saferDev::get_message(data = "wilcox.test()", kind = "message", print_no = TRUE, text = "IN A")
+# No standard message returned, because wilcox.test() stops with an error:
+saferDev::get_message(data = "wilcox.test()", kind = "message", header = TRUE, print_no = TRUE,
+    text = "IN A", env = NULL, safer_check = TRUE, lib_path = NULL, error_text = "")
 
-# Text added in warning message to report:
-saferDev::get_message(data = "wilcox.test()", kind = "error", print_no = TRUE, text = "IN A")
+# Error message to report, with text added:
+saferDev::get_message(data = "wilcox.test()", kind = "error", header = TRUE, print_no = TRUE,
+    text = "IN A", env = NULL, safer_check = TRUE, lib_path = NULL, error_text = "")
 
-# No error message to report with text added:
-saferDev::get_message(data = "sum(1)", kind = "error", print_no = TRUE, text = "IN A")
+# No error message to report, with text added:
+saferDev::get_message(data = "sum(1)", kind = "error", header = TRUE, print_no = TRUE,
+    text = "IN A", env = NULL, safer_check = TRUE, lib_path = NULL, error_text = "")
 
-# No error message to report with text added:
-saferDev::get_message(data = "message('ahah')", kind = "error", print_no = TRUE, text = "IN A")
+# A standard message is not reported with kind = "error":
+saferDev::get_message(data = "message('ahah')", kind = "error", header = TRUE, print_no = TRUE,
+    text = "IN A", env = NULL, safer_check = TRUE, lib_path = NULL, error_text = "")
 
-# Standard message reported with text added:
-saferDev::get_message(data = "message('ahah')", kind = "message", print_no = TRUE, text = "IN A")
+# Standard message to report, with text added:
+saferDev::get_message(data = "message('ahah')", kind = "message", header = TRUE, print_no = TRUE,
+    text = "IN A", env = NULL, safer_check = TRUE, lib_path = NULL, error_text = "")
 
-# Messages from ggplot2 functions caugth:
-saferDev::get_message(data = "ggplot2::ggplot(data = data.frame(X = 1:10, stringsAsFactors = TRUE), 
-mapping = ggplot2::aes(x = X)) + ggplot2::geom_histogram()", kind = "message", 
-print_no = TRUE, text = "IN INSTRUCTION 1")
+# Messages of a ggplot2 plot caught:
+if(base::requireNamespace(package = "ggplot2", quietly = TRUE)){
+    saferDev::get_message(data = "ggplot2::ggplot(data = data.frame(X = 1:10,
+        stringsAsFactors = TRUE), mapping = ggplot2::aes(x = X)) + ggplot2::geom_histogram()",
+        kind = "message", header = TRUE, print_no = TRUE, text = "IN INSTRUCTION 1", env = NULL,
+        safer_check = TRUE, lib_path = NULL, error_text = "")
+}
 }
 \seealso{
 \code{\link{try}}.

@@ -7,13 +7,13 @@
 .base_op_check(error_text)
 }
 \arguments{
-\item{error_text}{Single character string used to add information in error messages returned by the function, notably if the function is inside other functions, which is practical for debugging. Example: \code{error_text = " INSIDE <PACKAGE_1>::<FUNCTION_1> INSIDE <PACKAGE_2>::<FUNCTION_2>."}. If \code{NULL}, converted into \code{""}.}
+\item{error_text}{Single character string added to the error messages to name the calling functions (\code{embed_error_text} of the calling function). \code{NULL} is converted into \code{""}. No default value.}
 }
 \value{
-An error message if at least one of the checked operator is present in the R scope, nothing otherwise.
+\code{NULL}, invisibly. An error if at least one of the checked objects is present in another environment of the search path.
 }
 \description{
-Check if critical operators of R are not present in other packages or in the global env.
+Check that the critical operators and reserved words of R listed in the error message (like \code{<-}, \code{[}, \code{+} or \code{if}) are not present in another environment of the search path (\code{search()}: global environment, attached packages and objects) than \code{package:base}.
 }
 \author{
 \href{mailto:gael.millot@pasteur.fr}{Gael Millot}

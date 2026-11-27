@@ -2,7 +2,7 @@
 % Please edit documentation in R/env_check.R
 \name{env_check}
 \alias{env_check}
-\title{Environment Check}
+\title{Check Object Names Against the Calling Frames and the Search Path}
 \usage{
 env_check(
   pos = 1,
@@ -13,47 +13,61 @@ env_check(
 )
 }
 \arguments{
-\item{pos}{Single non null positive integer indicating the position of the environment checked (argument \code{n} of the \code{parent.frame()} function). Value \code{1} means one step above the \code{env_check()} local environment (by default). This means that when \code{env_check(pos = 1)} is used inside a function A, it checks if the name of any object in the local environment of this function A is also present in above environments, following R Scope, starting by the just above environment. When \code{env_check(pos = 1)} is used in the working (Global) environment (named \code{.GlobalEnv}), it checks the object names of this \code{.GlobalEnv} environment, in the above environments. See the examples below.}
+\item{pos}{Single positive integer: position of the checked environment in the call stack, counted from \code{env_check()}, then in the search path. \code{1} (default) checks the environment that calls \code{env_check()}: the frame of a function, or the global environment at top level. \code{2} checks the environment one step further up, etc., up to \code{package:base}, the last environment of the search path.}
 
-\item{name}{Single character string of the name of the checked environment (used in the output string only, where the name of the ckecked env is replaced by the name value). Can be used when \code{env_check()} is used inside a function "A" to specify that the environment of "A" is checked.}
+\item{name}{Single character string: name of the checked environment in the returned message (e.g., the name of the function calling \code{env_check()}). If \code{NULL} (default), \code{"UNNAMED"} for the frame of a function, or the name of an environment of the search path (e.g., \code{".GlobalEnv"}).}
 
-\item{safer_check}{Single logical value. Perform the "safer" checks? If \code{TRUE}, checkings are performed before main code running (see the \href{https://github.com/safer-r}{safer-r project}): 1) required functions and related packages effectively present in local R libraries and 2) R classical operators (like \code{"<-"}) not overwritten by another package because of the R scope. Warning: must be set to \code{FALSE} if this function is used inside another "safer" function to avoid pointless multiple checkings.}
+\item{safer_check}{Single logical value. If \code{TRUE} (default), checks before running that the required packages and functions are installed and that the classical R operators (like \code{<-}) are not masked by another package or by a user-defined object of the global environment. These checks take time at each call: set \code{FALSE} in loops and inside other safer-r functions, to avoid repeating them.}
 
-\item{lib_path}{Vector of characters specifying the absolute pathways of the directories containing the required packages for the function, if not in the default directories. Useful when R packages are not installed in the default directories because of lack of admin rights. More precisely, \code{lib_path} is passed through the \code{new} argument of \code{.libPaths()} so that the new library paths are \code{unique(c(new, .Library.site, .Library))}. Warning: \code{.libPaths()} is restored to the initial paths, after function execution. Ignored if \code{NULL} (default): only the pathways specified by the current \code{.libPaths()} are used for package calling.}
+\item{lib_path}{Vector of character strings: paths of existing extra library folders containing the required packages (e.g., packages installed without admin rights). They are searched after the current \code{.libPaths()} during the call (the current libraries keep priority), and \code{.libPaths()} is restored on exit. If \code{NULL} (default), only the current \code{.libPaths()} are used.}
 
-\item{error_text}{Single character string used to add information in error messages returned by the function, notably if the function is inside other functions, which is practical for debugging. Example: \code{error_text = " INSIDE <PACKAGE_1>::<FUNCTION_1> INSIDE <PACKAGE_2>::<FUNCTION_2>."}. If \code{NULL}, converted into \code{""}.}
+\item{error_text}{Single character string added to the error messages (e.g., \code{" INSIDE pkg1::fun1()"}) to name the calling functions. \code{NULL} is converted into \code{""}.}
 }
 \value{
-A character string indicating the object names of the tested environment that match object names in the above environments, following the R scope, or \code{NULL} if no match.
+A character string listing, for each environment above the checked one, the object names it shares with the checked environment, followed by the environments checked (frames written \code{<environment>}). \code{NULL} if no name is shared.
 }
 \description{
-Verify that object names in the environment defined by the \code{pos} parameter are identical or not to object names in the above environments (following R Scope). This can be used to verify that names used for objects inside a function or in the working environment do not override names of objects already present in the above R environments, following the R scope.
+Checks whether the object names of an environment are also used in the environments above it: the frames of the call stack (\code{sys.frames()}: the calling functions, not the environments where the functions are defined), then the search path (\code{search()}). Useful to detect object names of a function, or of the global environment, that mask or are masked by other objects.
+}
+\details{
+Call \code{env_check()} directly (e.g., \code{res <- env_check()}), not inside another call like \code{print(env_check())} or \code{cat(env_check())}, which would check the frame of \code{print()} or \code{cat()} instead. At the top level of code run by \code{source()} or knitr, the frames of the functions running the code are also checked.
 }
 \examples{
-# Warning: these examples may not work well when using the "Run examples" link 
-# because of a particular environment. Please, copy-paste in a local environment.
+# Warning: the "Run examples" link also checks the frames of the code running the examples.
 # See also https://safer-r.github.io/saferDev/articles/env_check.html
 # Inside a function: the names t.test and mean, created inside fun1(),
 # also exist in the stats and base environments located above:
 fun1 <- function(){
     t.test <- 0
     mean <- 5
-    saferDev::env_check(pos = 1, name = "fun1")
+    saferDev::env_check(pos = 1, name = "fun1", safer_check = TRUE, lib_path = NULL,
+        error_text = "")
 }
 a <- fun1()
-base::cat(a)
+base::cat(a, file = "", sep = " ", fill = FALSE, labels = NULL, append = FALSE)
 # NULL returned when no name is also present in the environments above:
 fun2 <- function(){
     tempo_name_used_nowhere_else <- 0
-    saferDev::env_check(pos = 1, name = "fun2")
+    saferDev::env_check(pos = 1, name = "fun2", safer_check = TRUE, lib_path = NULL,
+        error_text = "")
 }
 fun2()
-# pos = 2 checks the environment one step above the function (here, the calling environment).
-# See the env_check() article of the website for more examples.
+# The frames of the calling functions are checked (call stack), here the frame of fun3():
+fun3 <- function(){
+    min <- 1
+    fun4()
+}
+fun4 <- function(){
+    min <- 2
+    saferDev::env_check(pos = 1, name = "fun4", safer_check = TRUE, lib_path = NULL,
+        error_text = "")
+}
+a <- fun3()
+base::cat(a, file = "", sep = " ", fill = FALSE, labels = NULL, append = FALSE)
 
 }
 \seealso{
-\code{\link{exists}}.
+\code{\link{sys.frames}}, \code{\link{search}}.
 }
 \author{
 \href{mailto:gael.millot@pasteur.fr}{Gael Millot}

@@ -1,39 +1,43 @@
-#' @title Report
+#' @title Write an Object or a Text Into a Log File
 #' @description
-#' Print a character string or a data object into a same output file. Convenient for log file generation.
-#' @param data Object to print in the output file. If \code{NULL}, nothing is done, with no warning.
-#' @param output Single character string. Name of the output file.
-#' @param path Single character string indicating the path where to write the output file.
-#' @param append Single logical value. If the output file already exists and \code{append} is \code{FALSE}, an error message is returned (no overwrite of existing file). Otherwise, the printing is appended (and the output file is created if it does not exist yet).
-#' @param rownames_kept Single logical value. Defines whether row names have to be removed or not in 2D objects. Warning: in 1D tables, names over the values are taken as row names, and are thus removed if \code{rownames_kept} is \code{FALSE}.
-#' @param vector_cat Single logical value. If \code{TRUE}, print a vector of length > 1 using \code{cat()} instead of \code{capture.output()}. Otherwise (default \code{FALSE}) print a vector of length > 1 using \code{capture.output()}. Names of values are not printed when \code{TRUE}.
-#' @param noquote Single logical value. If \code{TRUE} no quote are added to the returned character strings.
-#' @param sep Single non null and positive integer representing the number of empty lines added in the output file after the printed data.
-#' @param safer_check Single logical value. Perform the "safer" checks? If \code{TRUE}, checkings are performed before main code running (see the \href{https://github.com/safer-r}{safer-r project}): 1) required functions and related packages effectively present in local R libraries and 2) R classical operators (like \code{"<-"}) not overwritten by another package because of the R scope. Warning: must be set to \code{FALSE} if this function is used inside another "safer" function to avoid pointless multiple checkings.
-#' @param lib_path Vector of characters specifying the absolute pathways of the directories containing the required packages for the function, if not in the default directories. Useful when R packages are not installed in the default directories because of lack of admin rights. More precisely, \code{lib_path} is passed through the \code{new} argument of \code{.libPaths()} so that the new library paths are \code{unique(c(new, .Library.site, .Library))}. Warning: \code{.libPaths()} is restored to the initial paths, after function execution. Ignored if \code{NULL} (default): only the pathways specified by the current \code{.libPaths()} are used for package calling.
-#' @param error_text Single character string used to add information in error messages returned by the function, notably if the function is inside other functions, which is practical for debugging. Example: \code{error_text = " INSIDE <PACKAGE_1>::<FUNCTION_1> INSIDE <PACKAGE_2>::<FUNCTION_2>."}. If \code{NULL}, converted into \code{""}.
-#' @returns Nothing (implementation of an existing file) or a text file.
-#' @seealso \code{\link{capture.output}}.
+#' Writes a character string or a data object into a text file, after its previous content if required. Convenient to build log files.
+#' @param data Object to write (single value, vector, factor, matrix, table, data frame, list, ...). If \code{NULL}, nothing is done, with no warning.
+#' @param output Single character string: name of the output file.
+#' @param path Single character string: path of the existing folder of the output file. No default value.
+#' @param append Single logical value. If \code{TRUE}, \code{data} is written after the content of the output file (created if it does not exist). If \code{FALSE} (default), the output file must not exist: an existing file is never overwritten (error).
+#' @param rownames_kept Single logical value. Keep the row names of matrices, tables and data frames? Warning: the names above the values of 1D tables are row names, removed if \code{FALSE}.
+#' @param vector_cat Single logical value. If \code{TRUE}, vectors of length > 1 are written with \code{cat()} (values separated by a space, names not written), otherwise as printed in the console. Vectors of length 1 are always written with \code{cat()}. Here, vectors are atomic vectors with no attribute other than names: factors, dates and lists are always written as printed in the console.
+#' @param noquote Single logical value. If \code{TRUE}, character vectors (of length > 1, with \code{vector_cat = FALSE}), character matrices and character arrays are written without quotes. No effect on the other objects.
+#' @param sep Single positive integer: number of empty lines written after \code{data}.
+#' @inheritParams is_function_here
+#' @returns No return value (invisible \code{NULL}), called for its side effect: \code{data} is written into the \code{output} file of the \code{path} folder.
+#' @seealso \code{\link{capture.output}}, \code{\link{cat}}.
 #' @author \href{mailto:gael.millot@pasteur.fr}{Gael Millot}
-#' @author Haiding Wang  
+#' @author Haiding Wang
 #' @author Yushi Han
 #' @examples
-#' # Warning: these examples may not work well when using the "Run examples" link 
-#' # because of a particular environment. Please, copy-paste in a local environment.
 #' # See also https://safer-r.github.io/saferDev/articles/report.html
 #' # Write in the results.txt file of a new temporary folder:
-#' tempo_dir <- base::tempfile(pattern = "dir", tmpdir = base::tempdir(), fileext = "")
+#' tempo_dir <- base::tempfile(pattern = "dir", tmpdir = base::tempdir(check = FALSE), fileext = "")
 #' base::dir.create(path = tempo_dir, showWarnings = TRUE, recursive = FALSE, mode = "0777")
-#' saferDev::report(data = "THE FOLLOWING VECTOR IS:\n", output = "results.txt", path = tempo_dir,
-#'     append = TRUE, sep = 1)
+#' saferDev::report(data = "THE FOLLOWING VECTOR IS:", output = "results.txt", path = tempo_dir,
+#'     append = TRUE, rownames_kept = FALSE, vector_cat = FALSE, noquote = TRUE, sep = 1,
+#'     safer_check = TRUE, lib_path = NULL, error_text = "")
 #' saferDev::report(data = 1:3, output = "results.txt", path = tempo_dir, append = TRUE,
-#'     rownames_kept = FALSE, vector_cat = FALSE, noquote = FALSE, sep = 2)
-#' saferDev::report(data = "THE FOLLOWING DATA FRAME IS:\n", output = "results.txt",
-#'     path = tempo_dir, append = TRUE, sep = 1)
-#' saferDev::report(data = base::data.frame(A = 1:3, B = letters[1:3]), output = "results.txt",
-#'     path = tempo_dir, append = TRUE, rownames_kept = FALSE, vector_cat = FALSE,
-#'     noquote = FALSE, sep = 1)
-#' base::cat(base::readLines(con = base::file.path(tempo_dir, "results.txt")), sep = "\n")
+#'     rownames_kept = FALSE, vector_cat = FALSE, noquote = FALSE, sep = 2, safer_check = TRUE,
+#'     lib_path = NULL, error_text = "")
+#' saferDev::report(data = "THE FOLLOWING DATA FRAME IS:", output = "results.txt",
+#'     path = tempo_dir, append = TRUE, rownames_kept = FALSE, vector_cat = FALSE, noquote = TRUE,
+#'     sep = 1, safer_check = TRUE, lib_path = NULL, error_text = "")
+#' saferDev::report(data = base::data.frame(A = 1:3, B = base::letters[1:3], row.names = NULL,
+#'     check.rows = FALSE, check.names = TRUE, fix.empty.names = TRUE, stringsAsFactors = FALSE),
+#'     output = "results.txt", path = tempo_dir, append = TRUE, rownames_kept = FALSE,
+#'     vector_cat = FALSE, noquote = FALSE, sep = 1, safer_check = TRUE, lib_path = NULL,
+#'     error_text = "")
+#' base::cat(base::readLines(con = base::file.path(tempo_dir, "results.txt", fsep = "/"), n = -1L,
+#'     ok = TRUE, warn = TRUE, encoding = "unknown", skipNul = FALSE), file = "", sep = "\n",
+#'     fill = FALSE, labels = NULL, append = FALSE)
+#' base::unlink(x = tempo_dir, recursive = TRUE, force = FALSE, expand = TRUE) # folder removed
 #' @export
 report <- function(
     data, 
@@ -59,8 +63,12 @@ report <- function(
     #### end internal error report link
 
     #### function name
-    tempo_settings <- base::as.list(x = base::match.call(definition = base::sys.function(which = base::sys.parent(n = 0)), call = base::sys.call(which = base::sys.parent(n = 0)), expand.dots = FALSE, envir = base::parent.frame(n = 2L))) # warning: I have written n = 0 to avoid error when a safer function is inside another functions. In addition, arguments values retrieved are not evaluated base::match.call, but this is solved with get() below
-    function_name <- base::paste0(tempo_settings[[1]], "()", collapse = NULL, recycle0 = FALSE) 
+    tempo_settings <- base::as.list(x = base::match.call(definition = base::sys.function(which = base::sys.parent(n = 0)), call = base::sys.call(which = base::sys.parent(n = 0)), expand.dots = FALSE, envir = )) # warning: I have written n = 0 to avoid error when a safer function is inside another functions. In addition, arguments values retrieved are not evaluated base::match.call, but this is solved with get() below. Warning: envir is left empty on purpose: its default parent.frame(2L), evaluated inside base::match.call(), is the frame that called this function, where the ... of the call are expanded (base::parent.frame(n = 2L) written here would be evaluated one frame too far, which breaks the calls through base::lapply(), base::vapply(), base::apply(), base::Filter() or a function forwarding ..., base::sapply() only working by coincidence)
+    if(base::is.name(x = tempo_settings[[1]]) | base::is.call(x = tempo_settings[[1]])){
+        function_name <- base::paste0(tempo_settings[[1]], "()", collapse = NULL, recycle0 = FALSE)
+    }else{
+        function_name <- "<anonymous function>()" # the function was called through its object (e.g., base::do.call(what = <function object>, args = ...)), so that its name is not in the call
+    }
     # function name with "()" paste, which split into a vector of three: c("::()", "package ()", "function ()") if "package::function()" is used.
     if(function_name[1] == "::()" | function_name[1] == ":::()"){
         function_name <- function_name[3]
@@ -340,8 +348,8 @@ report <- function(
             base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL)
         }else{
             ini_lib_path <- base::.libPaths(new = , include.site = TRUE) # normal to have empty new argument
-            base::on.exit(expr = base::.libPaths(new = ini_lib_path, include.site = TRUE), add = TRUE, after = TRUE) # return to the previous libPaths()
-            base::.libPaths(new = base::sub(x = base::c(ini_lib_path, lib_path), pattern = "/$|\\\\$", replacement = "", ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE), include.site = TRUE) # base::.libPaths(new = ) add path to default path. BEWARE: base::.libPaths() does not support / at the end of a submitted path. The reason of the check and replacement of the last / or \\ in path
+            base::on.exit(expr = base::.libPaths(new = ini_lib_path, include.site = FALSE), add = TRUE, after = TRUE) # return to the previous libPaths(). include.site = FALSE: exact restore, since ini_lib_path already contains the site library if it was in use
+            base::.libPaths(new = base::sub(x = base::c(ini_lib_path, lib_path), pattern = "/$|\\\\$", replacement = "", ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE), include.site = FALSE) # base::.libPaths(new = ) add path to default path. BEWARE: base::.libPaths() does not support / at the end of a submitted path. The reason of the check and replacement of the last / or \\ in path
             lib_path <- base::.libPaths(new = , include.site = TRUE) # normal to have empty new argument
         }
     }else{
@@ -489,55 +497,47 @@ report <- function(
         if(base::all(base::class(x = data) == "expression", na.rm = TRUE)){
             data <- base::as.character(x = data)
         }
+        tempo_print <- NULL # lines of data as printed in the console (stays NULL if data is written with cat())
+        newline_end <- FALSE # TRUE when no line break is needed to end the written data (text written with cat() already ending with one, or nothing printed)
         if(base::all(base::class(x = data) == "data.frame", na.rm = TRUE) | base::all(base::class(x = data) == "table", na.rm = TRUE) | base::all(base::class(x = data) %in% base::c("matrix", "array"), na.rm = TRUE)){ # before R4.0.0, it was  base::all(base::class(data) %in% c("matrix", "data.frame", "table")) # base::class() never returns NA
-            if(rownames_kept == FALSE & base::all(base::class(x = data) == "data.frame", na.rm = TRUE) & base::nrow(x = data) != 0 & base::nrow(x = data) <= 4){ # for data frames with nrows <= 4
-                rownames_output_tables <- ""
-                length_rows <- base::nrow(x = data)
-                for(i in base::seq_len(length.out = length_rows)){ # replace the rownames of the first 4 rows by increasing number of spaces (because identical row names not allowed in data frames). This method cannot be extended to more rows as the printed data frame is shifted on the right because of "big empty rownames"
-                    rownames_output_tables <- base::c(rownames_output_tables, base::paste0(rownames_output_tables[i]," ", collapse = "", recycle0 = FALSE))
-                }
-                data <- base::"rownames<-"(x = data, value = rownames_output_tables[1:length_rows])
-            }else if(rownames_kept == FALSE & (base::all(base::class(x = data) == "table", na.rm = TRUE) | base::all(base::class(x = data) %in% base::c("matrix", "array"), na.rm = TRUE))){ # before R4.0.0, it was  & base::all(base::class(data) %in% base::c("matrix", "table"))
-                data <- base::"rownames<-"(x = data, value = base::rep(x = "", times = base::nrow(x = data))) # identical row names allowed in matrices and tables
-            }
-            if(noquote == TRUE){
-                utils::capture.output(base::noquote(obj = data, right = FALSE), file = out_path, append = append, type = NULL, split = FALSE)
+            if(rownames_kept == FALSE & base::all(base::class(x = data) == "data.frame", na.rm = TRUE)){ # data frames, whatever the number of rows: row names not printed (identical row names not allowed in data frames)
+                tempo_print <- utils::capture.output(base::print(x = data, row.names = FALSE), file = NULL, append = FALSE, type = NULL, split = FALSE)
             }else{
-                utils::capture.output(data, file = out_path, append = append, type = NULL, split = FALSE)
+                if(rownames_kept == FALSE){ # tables and matrices
+                    data <- base::"rownames<-"(x = data, value = base::rep(x = "", times = base::nrow(x = data))) # identical row names allowed in matrices and tables
+                }
+                if(noquote == TRUE){
+                    tempo_print <- utils::capture.output(base::noquote(obj = data, right = FALSE), file = NULL, append = FALSE, type = NULL, split = FALSE)
+                }else{
+                    tempo_print <- utils::capture.output(data, file = NULL, append = FALSE, type = NULL, split = FALSE)
+                }
             }
         }else if(base::is.vector(x = data, mode = "any") & base::all(base::class(x = data) != "list", na.rm = TRUE) & (base::length(x = data) == 1L | vector_cat == TRUE)){
             if(noquote == TRUE){
-                base::cat(base::noquote(obj = data, right = FALSE), file= out_path, append = append, sep = " ", fill = FALSE, labels = NULL)
-                sep <- base::ifelse(test = sep == 0, yes = 0, no = sep + 1) # because with cat(), no carriage return
+                base::cat(base::noquote(obj = data, right = FALSE), file= out_path, append = append, sep = " ", fill = FALSE, labels = NULL) # no newline added at the end
             }else{
-                base::cat(data, file= out_path, append = append, sep = " ", fill = FALSE, labels = NULL)
-                sep <- base::ifelse(test = sep == 0, yes = 0, no = sep + 1) # because with cat(), no carriage return
+                base::cat(data, file= out_path, append = append, sep = " ", fill = FALSE, labels = NULL) # no newline added at the end
+            }
+            if(base::is.character(x = data)){ # the written text ends with the last string of data
+                newline_end <- base::Encoding(x = data[base::length(x = data)]) != "bytes" & base::grepl(x = data[base::length(x = data)], pattern = "\n$", ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = TRUE) # TRUE if this string ends with a line break ("\n", also the end of "\r\n"), except if marked "bytes" (cat() then writes its line breaks as \x0a). useBytes = TRUE: no warning with strings invalid in the locale
             }
         }else if(base::all(base::mode(x = data) == "character", na.rm = TRUE)){ # characters (array, list, factor or vector with vector_cat = FALSE)
             if(noquote == TRUE){
-                utils::capture.output(base::noquote(obj = data, right = FALSE), file=out_path, append = append, type = NULL, split = FALSE)
+                tempo_print <- utils::capture.output(base::noquote(obj = data, right = FALSE), file = NULL, append = FALSE, type = NULL, split = FALSE)
             }else{
-                utils::capture.output(data, file=out_path, append = append, type = NULL, split = FALSE)
+                tempo_print <- utils::capture.output(data, file = NULL, append = FALSE, type = NULL, split = FALSE)
             }
         }else{ # other object (S4 for instance, which do not like base::noquote()
-            utils::capture.output(data, file=out_path, append = append, type = NULL, split = FALSE)
+            tempo_print <- utils::capture.output(data, file = NULL, append = FALSE, type = NULL, split = FALSE)
+        }
+        if( ! base::is.null(x = tempo_print)){
+            tempo_print <- tempo_print[base::seq_len(length.out = base::max(base::c(0L, base::which(x = tempo_print != "", arr.ind = FALSE, useNames = TRUE)), na.rm = FALSE))] # trailing empty lines of the printing removed (lists for instance), so that exactly sep empty lines follow data
+            base::cat(base::paste0(tempo_print, collapse = "\n", recycle0 = FALSE), file = out_path, append = append, sep = "", fill = FALSE, labels = NULL) # no newline at the end, as with cat() above
+            newline_end <- base::length(x = tempo_print) == 0L # nothing printed (e.g., print method writing nothing or only empty lines): no line of data to end, only the sep empty lines are written
         }
         # deal with sep
-        if( ! (
-            base::length(x = data) == 1 & (
-                base::all(base::class(x = data) == "logical", na.rm = TRUE) | 
-                base::all(base::class(x = data) == "integer", na.rm = TRUE) | 
-                base::all(base::class(x = data) == "numeric", na.rm = TRUE) | 
-                base::all(base::class(x = data) == "character", na.rm = TRUE)
-            )
-        )){
-            sep <- base::ifelse(test = sep == 0, yes = 0, no = sep - 1) # because in these cases (matrix, data frame, list, etc.), R add an additionnal space
-        }
-        if(base::all(base::class(x = data) == "list", na.rm = TRUE)){
-            sep <- base::ifelse(test = sep == 0, yes = 0, no = sep - 1) # because with lists, R add another additionnal space
-        }
-        sep_final <- base::paste0(base::rep(x = "\n", times = sep), collapse = "", recycle0 = FALSE)
-        base::write(x = sep_final, file = out_path, ncolumns = 1, append = TRUE, sep = "") # add a sep
+        sep_final <- base::paste0(base::rep(x = "\n", times = base::ifelse(test = newline_end, yes = sep - 1, no = sep)), collapse = "", recycle0 = FALSE) # one newline less when no line of data has to be ended (written text already ending with a line break, or nothing printed)
+        base::write(x = sep_final, file = out_path, ncolumns = 1, append = TRUE, sep = "") # write() adds a newline after sep_final: the last line of data is ended (unless already ended, or nothing printed), then sep empty lines are added, whatever data
     }
     #### end main code
 

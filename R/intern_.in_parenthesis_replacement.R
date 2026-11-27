@@ -1,29 +1,29 @@
 #' @title Replacement Inside Parenthesis
 #' @description
-#' Parse a string and replace any pattern present between brackets \code{()} by another pattern.
+#' Replace each match of a pattern located between two given brackets of a string by a replacement character, and return the positions of the replacements.
 #' @param string Single string.
-#' @param pattern Single string indicating the pattern to detect. Warning: must be very simple pattern, like \code{","}.
-#' @param no_regex_pattern Same as \code{pattern} without escape characters or list, etc. Used for messages.
-#' @param replacement Single string for \code{pattern} replacement. Is not regex.
-#' @param perl Single logical value. Use Perl regex in \code{pattern} ?
-#' @param open_pos Single positive and non zero integer indicating the position of the opening parenthesis.
-#' @param close_pos Single positive and non zero integer indicating the position of the closing parenthesis.
-#' @param lib_path Vector of characters specifying the absolute pathways of the directories containing the required packages for the function, if not in the default directories. Useful when R packages are not installed in the default directories because of lack of admin rights. More precisely, \code{lib_path} is passed through the \code{new} argument of \code{.libPaths()} so that the new library paths are \code{unique(c(new, .Library.site, .Library))}. Warning: \code{.libPaths()} is restored to the initial paths, after function execution. Ignored if \code{NULL} (default): only the pathways specified by the current \code{.libPaths()} are used for package calling.
-#' @param error_text Single character string used to add information in error messages returned by the function, notably if the function is inside other functions, which is practical for debugging. Example: \code{error_text = " INSIDE <PACKAGE_1>::<FUNCTION_1> INSIDE <PACKAGE_2>::<FUNCTION_2>."}. If \code{NULL}, converted into \code{""}.
+#' @param pattern Single string: regex matching a single character, like \code{","}.
+#' @param no_regex_pattern Single string: the character matched by \code{pattern}, without regex escape. Used to check the replaced characters.
+#' @param replacement Single character replacing each match of \code{pattern}. Not a regex.
+#' @param perl Single logical value. Use Perl regex in \code{pattern}?
+#' @param open_pos Single integer: position of an opening bracket \code{(} in \code{string}.
+#' @param close_pos Single integer: position of a closing bracket \code{)} in \code{string}.
+#' @param lib_path Vector of character strings or \code{NULL}: the \code{lib_path} value of the calling exported function, only passed on to \code{arg_check()}. No default value.
+#' @param error_text Single character string added to the error messages to name the calling functions (\code{embed_error_text} of the calling function). \code{NULL} is converted into \code{""}. No default value.
 #' @returns A list containing:
 #' \itemize{
-#'   \item \code{string}: the input string with all pattern replaced by the replacement pattern.
-#'   \item \code{pos}: the positions of the 1st character of the replaced pattern. \code{NULL} if no replaced pattern. In that case, \code{string} is identical to the input string
+#'   \item \code{string}: \code{string} with the matches of \code{pattern} between the positions \code{open_pos} and \code{close_pos} replaced by \code{replacement}.
+#'   \item \code{pos}: vector of the positions of the replaced matches in \code{string}. \code{NULL} if no match. In that case, \code{string} is identical to the input string.
 #' }
 #' @details
 #' Warnings:
 #' \itemize{
-#'   \item Must be very simple pattern, like \code{"\\("}.
+#'   \item \code{pattern} must match a single character.
 #'   \item requires \code{saferDev::arg_check}.
 #'   \item In the safer Backbone section \code{"######## check of the required functions from the required packages"}, add also \code{saferDev::arg_check} when checking for the presence of \code{.in_parenthesis_replacement}.
 #' }
 #' @author \href{mailto:gael.millot@pasteur.fr}{Gael Millot}
-#' @author Haiding Wang  
+#' @author Haiding Wang
 #' @author Yushi Han
 #' @keywords internal
 .in_parenthesis_replacement <- function(
@@ -51,8 +51,12 @@
     #### end internal error report link
 
     #### function name
-    tempo_settings <- base::as.list(x = base::match.call(definition = base::sys.function(which = base::sys.parent(n = 0)), call = base::sys.call(which = base::sys.parent(n = 0)), expand.dots = FALSE, envir = base::parent.frame(n = 2L))) # warning: I have written n = 0 to avoid error when a safer function is inside another functions. In addition, arguments values retrieved are not evaluated base::match.call, but this is solved with get() below
-    function_name <- base::paste0(tempo_settings[[1]], "()", collapse = NULL, recycle0 = FALSE) 
+    tempo_settings <- base::as.list(x = base::match.call(definition = base::sys.function(which = base::sys.parent(n = 0)), call = base::sys.call(which = base::sys.parent(n = 0)), expand.dots = FALSE, envir = )) # warning: I have written n = 0 to avoid error when a safer function is inside another functions. In addition, arguments values retrieved are not evaluated base::match.call, but this is solved with get() below. Warning: envir is left empty on purpose: its default parent.frame(2L), evaluated inside base::match.call(), is the frame that called this function, where the ... of the call are expanded (base::parent.frame(n = 2L) written here would be evaluated one frame too far, which breaks the calls through base::lapply(), base::vapply(), base::apply(), base::Filter() or a function forwarding ..., base::sapply() only working by coincidence)
+    if(base::is.name(x = tempo_settings[[1]]) | base::is.call(x = tempo_settings[[1]])){
+        function_name <- base::paste0(tempo_settings[[1]], "()", collapse = NULL, recycle0 = FALSE)
+    }else{
+        function_name <- "<anonymous function>()" # the function was called through its object (e.g., base::do.call(what = <function object>, args = ...)), so that its name is not in the call
+    }
     # function name with "()" paste, which split into a vector of three: c("::()", "package ()", "function ()") if "package::function()" is used.
     if(function_name[1] == "::()" | function_name[1] == ":::()"){
         function_name <- function_name[3]
@@ -436,7 +440,7 @@
     # Extract the substring between the given open and close parentheses
     substring_in_parentheses <- base::substr(x = string_out, start =  open_pos, stop =  close_pos)
     # Find the position of comma within that substring
-    comma_position_in_substring <- base::gregexpr(pattern = pattern, text =  substring_in_parentheses, ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE)[[1]]
+    comma_position_in_substring <- base::gregexpr(pattern = pattern, text =  substring_in_parentheses, ignore.case = FALSE, perl = perl, fixed = FALSE, useBytes = FALSE)[[1]]
     # Initialize a vector to store global positions of the replaced commas
     pos <- NULL
     if(comma_position_in_substring[1] != -1){

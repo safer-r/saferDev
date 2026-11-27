@@ -2,7 +2,7 @@
 % Please edit documentation in R/is_package_here.R
 \name{is_package_here}
 \alias{is_package_here}
-\title{Is Package Here}
+\title{Check That Packages Are Installed}
 \usage{
 is_package_here(
   req_package,
@@ -12,35 +12,36 @@ is_package_here(
 )
 }
 \arguments{
-\item{req_package}{Character vector of package names to check.}
+\item{req_package}{Vector of character strings: names of the packages to check (e.g., \code{c("stats", "utils")}).}
 
-\item{safer_check}{Single logical value. Perform the "safer" checks? If \code{TRUE}, checkings are performed before main code running (see the \href{https://github.com/safer-r}{safer-r project}): 1) required functions and related packages effectively present in local R libraries and 2) R classical operators (like \code{"<-"}) not overwritten by another package because of the R scope. Warning: must be set to \code{FALSE} if this function is used inside another "safer" function to avoid pointless multiple checkings.}
+\item{safer_check}{Single logical value. If \code{TRUE} (default), checks before running that the required packages and functions are installed and that the classical R operators (like \code{<-}) are not masked by another package or by a user-defined object of the global environment. These checks take time at each call: set \code{FALSE} in loops and inside other safer-r functions, to avoid repeating them.}
 
-\item{lib_path}{Vector of characters specifying the absolute pathways of the directories containing the required packages for the function, if not in the default directories. Useful when R packages are not installed in the default directories because of lack of admin rights. More precisely, \code{lib_path} is passed through the \code{new} argument of \code{.libPaths()} so that the new library paths are \code{unique(c(lib_path, .libPaths()))}. Warning: \code{.libPaths()} is restored to the initial paths, after function execution. Ignored if \code{NULL} (default): only the pathways specified by the current \code{.libPaths()} are used for package calling.}
+\item{lib_path}{Vector of character strings: paths of existing extra library folders containing the required packages (e.g., packages installed without admin rights). They are searched after the current \code{.libPaths()} during the call (the current libraries keep priority), and \code{.libPaths()} is restored on exit. If \code{NULL} (default), only the current \code{.libPaths()} are used.}
 
-\item{error_text}{Single character string used to add information in error messages returned by the function, notably if the function is inside other functions, which is practical for debugging. Example: \code{error_text = " INSIDE <PACKAGE_1>::<FUNCTION_1> INSIDE <PACKAGE_2>::<FUNCTION_2>."}. If \code{NULL}, converted into \code{""}.}
+\item{error_text}{Single character string added to the error messages (e.g., \code{" INSIDE pkg1::fun1()"}) to name the calling functions. \code{NULL} is converted into \code{""}.}
 }
 \value{
-An error message if at least one of the checked packages is missing in \code{lib_path}, nothing otherwise.
+Invisible \code{NULL} if all the packages are installed, otherwise an error.
 }
 \description{
-Check if required packages are installed locally.
+Checks that the required packages are installed, without loading them.
 }
 \examples{
-# Warning: these examples may not work well when using the "Run examples" link 
-# because of a particular environment. Please, copy-paste in a local environment.
 # See also https://safer-r.github.io/saferDev/articles/is_package_here.html
-\dontrun{
-# Example that returns an error
-saferDev::is_package_here(req_package = "nopackage", error_text = " INSIDE P1::F1")
-# Example that returns an error
-saferDev::is_package_here(req_package = "ggplot2", lib_path = "NOTGOOD")
-}
-saferDev::is_package_here(req_package = "ggplot2")
+saferDev::is_package_here(req_package = base::c("stats", "utils"), safer_check = TRUE,
+    lib_path = NULL, error_text = "")
+# Missing package: error
+base::try(expr = saferDev::is_package_here(req_package = "nopackage", safer_check = TRUE,
+    lib_path = NULL, error_text = " INSIDE P1::F1"), silent = FALSE,
+    outFile = base::getOption(x = "try.outFile", default = base::stderr()))
+# Folder of lib_path that does not exist: error
+base::try(expr = saferDev::is_package_here(req_package = "stats", safer_check = TRUE,
+    lib_path = "NOTGOOD", error_text = ""), silent = FALSE,
+    outFile = base::getOption(x = "try.outFile", default = base::stderr()))
 
 }
 \seealso{
-\code{\link{require}}.
+\code{\link{is_function_here}}, \code{\link{find.package}}.
 }
 \author{
 \href{mailto:gael.millot@pasteur.fr}{Gael Millot}

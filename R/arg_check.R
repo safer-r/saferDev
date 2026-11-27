@@ -1,58 +1,37 @@
-#' @title Argument Check
+#' @title Check the Expected Features of an Argument
 #' @description
-#' Check expected values of an argument of functions: class, type, mode, length, restricted values panel, kind of numeric values (in addition to the distinction between \code{'integer'} and \code{'double'})? Proportion only? Inf values authorized? negative values authorized? Integers of type \code{'double'}?
-#' @param data Object to test.
-#' @param class Character string or vector of character strings, tested exactly (same values, in the same order) against \code{class(data)}. Thus, \code{class = c("matrix", "array")} is required for matrices since R 4.0.0 and \code{class = c("ordered", "factor")} for ordered factors (see the details below). Write NULL to do not test the class.
-#' @param typeof Character string or vector of character strings, tested exactly (same values, in the same order) against \code{typeof(data)}. Since \code{typeof(data)} always returns a single string, a vector of more than one value in the \code{typeof} argument always returns a problem. Write NULL to do not test the type.
-#' @param mode Character string or vector of character strings, tested exactly (same values, in the same order) against \code{mode(data)}. Since \code{mode(data)} always returns a single string, a vector of more than one value in the \code{mode} argument always returns a problem. Write NULL to do not test the mode.
-#' @param length Single numeric value indicating the length of the object. Not considered if \code{NULL}.
-#' @param prop Single logical value. Are the numeric values between 0 and 1 (proportion)? If \code{TRUE}, the tested object must be of type \code{"double"} with all its values between -1 and 1 if \code{neg_values} is \code{TRUE} (default), or between 0 and 1 if \code{neg_values} is \code{FALSE}, and the \code{class}, \code{typeof} and \code{mode} arguments must be \code{NULL}. To check the class of a proportion object (a matrix for instance), use a second \code{arg_check()} call with \code{prop = FALSE}.
-#' @param options Vector of character strings or integers indicating all the possible option values for the \code{data} argument, or \code{NULL}. Numbers of type \code{"double"} are accepted if they have a 0 modulo (i.e., are integer like).
-#' @param double_as_integer_allowed Single logical value. If \code{TRUE}, no error is reported in the checking message if the \code{typeof} argument is set to \code{"integer"}, while the reality is type \code{"double"} but with zero as modulo (reminder of a division). This means that \code{i <- 1}, which is \code{typeof(i) == "double"} is considered as an integer when setting \code{double_as_integer_allowed = TRUE}. The same rescue is performed when the \code{class} argument is set to \code{"integer"} and the tested object is of type \code{"double"} with a zero as modulo (because \code{class()} of such objects is \code{"numeric"}, not \code{"integer"}). Warning: \code{double_as_integer_allowed = TRUE} uses \code{data \%\% 1 == 0L} but not \code{isTRUE(all.equal(data \%\% 1, 0))} is used here because the argument checks for integers stored as double (does not check for decimal numbers that are approximate integers).
-#' @param all_options_in_data Single logical value. If \code{FALSE}, the tested object must be made of at least one of the options and nothing else. Example returning no error: \code{data = c(1, 1, 2)} and \code{options = c(1, 2, 3)}. Example returning an error: \code{data = c(1, 4)} and \code{options = c(1, 2, 3)}. If \code{TRUE}, the tested object must contain all of the options, at least once, and nothing else. Example returning no error: \code{data = c(1, 1, 2, 3} and \code{options = c(1, 2, 3)}. Example returning an error (missing 3): \code{data = c(1, 1, 2} and \code{options = c(1, 2, 3)}. Example returning an error (unwanted 4): \code{data = c(1, 1, 4} and \code{options = c(1, 2, 3)}. Ignored if the \code{options} argument is \code{NULL}.
-#' @param na_contain Single logical value. Can the \code{data} argument contain \code{NA}?
-#' @param neg_values Single logical value. Are negative numeric values authorized? Warning: the default setting is \code{TRUE}, meaning that, in that case, no check is performed for the presence of negative values. The checking is activated only when set to \code{FALSE}. In addition, \code{FALSE} can only be used when the \code{typeof} argument is set to \code{"double"} or \code{"integer"}, or the \code{mode} argument to \code{"numeric"}, or the \code{prop} argument to \code{TRUE} (values between 0 and 1 instead of -1 and 1). Otherwise an error message is returned. Finally, the presence of negative values is not checked with \code{FALSE} if the tested object is a factor and a message is returned: \code{"OBJECT MUST BE MADE OF NON NEGATIVE VALUES BUT IS A FACTOR"}.
-#' @param inf_values Single logical value. Are infinite \code{Inf} or \code{-Inf} values authorized? Warning: the default setting is \code{TRUE}, meaning that, in that case, no check is performed for the presence of infinite values. The checking is activated only when set to \code{FALSE}. In addition, \code{FALSE} can only be used when the \code{typeof} argument is set to \code{"double"}, or the \code{mode} argument to \code{"numeric"}. Otherwise an error message is returned. Finally, the presence of infinite values is not checked with \code{FALSE} if the tested object is a factor and a message is returned: \code{"OBJECT MUST BE MADE OF NON NEGATIVE VALUES BUT IS A FACTOR"}.
-#' @param print Single logical value. Print the message if the \code{$problem} output is \code{TRUE}? Warning: set by default to \code{FALSE}, which facilitates the control of the checking message output when using \code{arg_check()} inside functions. See the example section.
-#' @param data_name Single character string indicating the name of the object to test. If \code{NULL}, use what is assigned to the \code{data} argument for the returned message.
-#' @param data_arg Single logical value. Is the tested object a function argument? If \code{TRUE} (default), \code{"ARGUMENT"} is written in output messages, otherwise \code{"OBJECT"}.
-#' @param safer_check Single logical value. Perform the "safer" checks? If \code{TRUE}, checkings are performed before main code running (see the \href{https://github.com/safer-r}{safer-r project}): 1) correct \code{lib_path} argument value 2) required functions and related packages effectively present in local R libraries and 3) R classical operators (like \code{"<-"}) not overwritten by another package because of the R scope. Warning: must be set to \code{FALSE} if this function is used inside another "safer" function to avoid pointless multiple checkings.
-#' @param lib_path Vector of characters specifying the absolute pathways of the directories containing the required packages for the function, if not in the default directories. Useful when R packages are not installed in the default directories because of lack of admin rights. More precisely, \code{lib_path} is passed through the \code{new} argument of \code{.libPaths()} so that the new library paths are \code{unique(c(new, .Library.site, .Library))}. Warning: \code{.libPaths()} is restored to the initial paths, after function execution. Ignored if \code{NULL} (default) or if the \code{safer_check} argument is \code{FALSE}: only the pathways specified by the current \code{.libPaths()} are used for package calling.
-#' @param error_text Single character string used to add information in error messages returned by the function, notably if the function is inside other functions, which is practical for debugging. Example: \code{error_text = " INSIDE <PACKAGE_1>::<FUNCTION_1> INSIDE <PACKAGE_2>::<FUNCTION_2>."}. If \code{NULL}, converted into \code{""}. Of note, in \code{arg_check()}, \code{error_text} is also used at the end of the string returned when no problem is detected.
-#' @returns 
-#' A list containing:
+#' Checks the expected features of an object, typically an argument of a function: class, type, mode, length, allowed values, and for numeric data, proportions, negative values, infinite values and integers stored as double. The problems detected are returned, not raised as errors (except for \code{data} made of \code{NA} only).
+#' @param data Object to test. It cannot be made of \code{NA} only (error, as for every argument of the safer-r functions), whatever \code{na_contain}.
+#' @param class Vector of character strings, compared exactly (same values, in the same order) to \code{class(data)}: e.g., \code{class = c("matrix", "array")} for matrices and \code{class = c("ordered", "factor")} for ordered factors. \code{NULL}: class not tested.
+#' @param typeof Single character string, compared to \code{typeof(data)}. Several values always give a problem, since \code{typeof(data)} is a single string. \code{NULL}: type not tested.
+#' @param mode Single character string, compared to \code{mode(data)}. Several values always give a problem, since \code{mode(data)} is a single string. \code{NULL}: mode not tested.
+#' @param length Single integer value, compared to \code{length(data)}. \code{NULL}: length not tested.
+#' @param prop Single logical value. If \code{TRUE}, \code{data} must be of type \code{"double"}, with all its values in [-1, 1], or in [0, 1] with \code{neg_values = FALSE}. To also check the class of a proportion object (a matrix for instance), use a second \code{arg_check()} call with \code{prop = FALSE}.
+#' @param options Vector of character strings or integers: the allowed values of \code{data}. Numbers of type \code{"double"} (in \code{options} or \code{data}) are accepted if they are integer values, up to a tolerance of about 1.5e-8 (e.g., \code{0.57 * 100}, slightly below 57). \code{NULL}: values not tested.
+#' @param double_as_integer_allowed Single logical value. If \code{TRUE}, \code{class = "integer"} and \code{typeof = "integer"} also accept a \code{data} of type \code{"double"} made of integer values (e.g., \code{data = 1}). See the details for approximate integers and dates.
+#' @param all_options_in_data Single logical value. If \code{FALSE}, \code{data} must be made of some of the \code{options} elements and nothing else (e.g., \code{data = c(1, 1, 2)} with \code{options = c(1, 2, 3)}). If \code{TRUE}, \code{data} must contain all the \code{options} elements at least once, and nothing else (e.g., \code{data = c(1, 1, 2, 3)}). Ignored if \code{options} is \code{NULL}.
+#' @param na_contain Single logical value. Can \code{data} contain \code{NA}?
+#' @param neg_values Single logical value. Are negative values authorized? Warning: \code{TRUE} (default) means that no check is performed. \code{FALSE} requires the \code{typeof} argument set to \code{"double"} or \code{"integer"}, the \code{mode} argument set to \code{"numeric"}, or \code{prop = TRUE} (error otherwise). A factor tested with \code{typeof} or \code{mode} then gives the problem \code{"... MUST BE MADE OF NON NEGATIVE VALUES BUT IS A FACTOR"}.
+#' @param inf_values Single logical value. Are infinite values (\code{Inf}, \code{-Inf}) authorized? Warning: \code{TRUE} (default) means that no check is performed. \code{FALSE} requires the \code{typeof} argument set to \code{"double"} or the \code{mode} argument set to \code{"numeric"} (error otherwise). A factor then gives the problem \code{"... MUST BE MADE OF NON INFINITE VALUES BUT IS A FACTOR"}.
+#' @param print Single logical value. If \code{TRUE}, the text of the problems is also displayed (with \code{message()}) when \code{$problem} is \code{TRUE}. \code{FALSE} by default, to let the calling function handle the problems (see the examples).
+#' @param data_name Single character string: name of the tested object in the returned text. If \code{NULL}, the expression passed to \code{data} is used.
+#' @param data_arg Single logical value. Is the tested object an argument of a function? \code{"ARGUMENT"} (\code{TRUE}, default) or \code{"OBJECT"} is written in the returned text.
+#' @param safer_check Single logical value. If \code{TRUE} (default), checks before running that the required packages and functions are installed and that the classical R operators (like \code{<-}) are not masked by another package or by a user-defined object of the global environment. These checks take time at each call: set \code{FALSE} in loops and inside other safer-r functions, to avoid repeating them.
+#' @param lib_path Vector of character strings: paths of existing extra library folders containing the required packages (e.g., packages installed without admin rights). They are searched after the current \code{.libPaths()} during the call (the current libraries keep priority), and \code{.libPaths()} is restored on exit. If \code{NULL} (default), only the current \code{.libPaths()} are used. Only checked and used when \code{safer_check} is \code{TRUE}.
+#' @param error_text Single character string added to the error messages and to the returned text (e.g., \code{" INSIDE pkg1::fun1()"}) to name the calling functions. \code{NULL} is converted into \code{""}.
+#' @returns A list:
 #' \itemize{
-#'   \item \code{problem}: logical. Is there any problem detected?
-#'   \item \code{text}: message indicating the details of the problem, or the absence of problem.
-#'   \item \code{object_name}: value of the \code{data_name} argument (i.e., name of the checked object if provided, \code{NULL} otherwise).
+#'   \item \code{problem}: single logical value, \code{TRUE} if a problem is detected.
+#'   \item \code{text}: the problems detected (text starting with \code{"ERROR"}), or a text saying that no problem is detected.
+#'   \item \code{object_name}: \code{data_name} if provided, otherwise the expression passed to \code{data} as a string (e.g., \code{"vec1"}).
 #' }
 #' @details
-#' At least one of the \code{class}, \code{type}, \code{mode}, \code{length}, \code{prop} or \code{options} must be set by the user.
-#' 
-#' If \code{options == NULL}, then at least \code{class} or \code{type} or \code{mode} or \code{length} argument must be non-null.
-#'  
-#' If \code{options} is non-null, then \code{class}, \code{type} and \code{mode} must be \code{NULL}, and \code{length} can be \code{NULL} or specified.
+#' At least one of \code{class}, \code{typeof}, \code{mode}, \code{length}, \code{options} and \code{prop = TRUE} must be set. \code{options} and \code{prop = TRUE} exclude each other, and require \code{class}, \code{typeof} and \code{mode} to be \code{NULL}. \code{length} can be combined with all of them. Wrong argument values or combinations raise an error.
 #'
-#' If \code{prop} is \code{TRUE}, then \code{class}, \code{type} and \code{mode} must be \code{NULL}, and \code{length} can be \code{NULL} or specified. The values must be between -1 and 1 with \code{neg_values = TRUE} (default), and between 0 and 1 with \code{neg_values = FALSE}. Consequently, \code{inf_values} must stay \code{TRUE} (pointless anyway, since proportions are not infinite).
+#' The function tests what is written, even if incoherent: \code{arg_check(data = factor(1), class = "factor", mode = "character")} returns a problem, since factors are of mode \code{"numeric"}.
 #'
-#' The function tests what is written in its arguments, even if what is written is incoherent. For instance with \code{arg_check(data = factor(1), class = "factor", mode = "character")}, the function tests that data is class \code{"factor"} and mode \code{"character"}, even if no factor object can be class \code{"factor"} and mode \code{"character"} (factors are class \code{"factor"} and mode \code{"numeric"}). Thus, \code{arg_check(data = factor(1), class = "factor", mode = "character")} will return a problem.
-#' 
-#' If the tested object is \code{NULL}, then the function will always return a checking problem.
-#'  
-#' The \code{class}, \code{typeof} and \code{mode} arguments are compared to \code{class(data)}, \code{typeof(data)} and \code{mode(data)} exactly: the written values must be identical, element per element, in the same order. Since \code{typeof(data)} and \code{mode(data)} return a single string, passing several values in the \code{typeof} or \code{mode} arguments always returns a problem. In addition, since \code{class(data)} of objects of class \code{"matrix"} is \code{c("matrix", "array")} since R 4.0.0, \code{class = "matrix"} alone always returns a problem for matrices (use \code{class = c("matrix", "array")}). Similarly, \code{class = "factor"} alone always returns a problem for ordered factors (use \code{class = c("ordered", "factor")}), and \code{class = "vector"} is no longer a shortcut for the classes \code{"numeric"}, \code{"integer"}, \code{"character"}, \code{"logical"}, \code{"complex"} or \code{"expression"}: write the exact class instead, or nothing.
-#'  
-#' Example of code that overcomes the problem of R versions, with a matrix object:
-#' 
-#' \preformatted{
-#' tempo1 <- saferDev::arg_check(data = data, class = "matrix") # before R 4.0.0
-#' tempo2 <- saferDev::arg_check(data = data, class = c("matrix", "array")) # since R 4.0.0
-#' if(tempo1$problem == TRUE & tempo2$problem == TRUE)\{
-#'     print("data ARGUMENT MUST BE A MATRIX")
-#' \}
-#' }
-#' 
-#' To test several possibilities for the tested object:
-#' 
+#' To accept several possibilities for the tested object, combine several \code{arg_check()} calls:
+#'
 #' \preformatted{
 #' tempo1 <- saferDev::arg_check(data = data, mode = "character")
 #' tempo2 <- saferDev::arg_check(data = data, class = "factor")
@@ -61,33 +40,47 @@
 #'     print("data ARGUMENT MUST BE A VECTOR OF (1) STRINGS, (2) FACTORS OR (3) INTEGERS")
 #' \}
 #' }
-#' 
-#' Of note, the length of object of class \code{"environment"} is always 0.
-#' 
-#' @seealso \code{\link{class}}.
+#'
+#' Warning: \code{double_as_integer_allowed = TRUE} only accepts exact integer values stored as double: approximate integers (e.g., \code{1 + 1e-10} or \code{3 - 1e-10}) are problems. Objects of type \code{"double"} that are not numeric (e.g., dates) are problems when tested with \code{options}, and are not accepted as integers by \code{double_as_integer_allowed = TRUE}.
+#' @seealso \code{\link{class}}, \code{\link{typeof}}, \code{\link{mode}}.
 #' @author \href{mailto:gael.millot@pasteur.fr}{Gael Millot}
-#' @author Haiding Wang  
+#' @author Haiding Wang
 #' @author Yushi Han
 #' @examples
-#' # Warning: these examples may not work well when using the "Run examples" link 
-#' # because of a particular environment. Please, copy-paste in a local environment.
 #' # See also https://safer-r.github.io/saferDev/articles/arg_check.html
-#' test <- matrix(1:3)
-#' \dontrun{
-#' # Example that returns an error (since R 4.0.0, class(matrix(1:3)) is c("matrix", "array"))
-#' saferDev::arg_check(data = test, print = TRUE, class = "vector", mode = "numeric")
-#' # Example that returns an error as well, because class = "matrix" must match class(data) exactly
-#' saferDev::arg_check(data = test, print = TRUE, class = "matrix", mode = "numeric")
+#' test <- base::matrix(data = 1:3, nrow = 3, ncol = 1, byrow = FALSE, dimnames = NULL)
+#' # $problem is TRUE: class(test) is c("matrix", "array"), compared exactly to the class argument
+#' saferDev::arg_check(data = test, class = "vector", typeof = NULL, mode = "numeric", length = NULL,
+#'     prop = FALSE, options = NULL, double_as_integer_allowed = FALSE, all_options_in_data = FALSE,
+#'     na_contain = FALSE, neg_values = TRUE, inf_values = TRUE, print = TRUE, data_name = NULL,
+#'     data_arg = TRUE, safer_check = TRUE, lib_path = NULL, error_text = "")
+#' # $problem is TRUE as well, for the same reason
+#' saferDev::arg_check(data = test, class = "matrix", typeof = NULL, mode = "numeric", length = NULL,
+#'     prop = FALSE, options = NULL, double_as_integer_allowed = FALSE, all_options_in_data = FALSE,
+#'     na_contain = FALSE, neg_values = TRUE, inf_values = TRUE, print = TRUE, data_name = NULL,
+#'     data_arg = TRUE, safer_check = TRUE, lib_path = NULL, error_text = "")
+#' # $problem is FALSE (error_text is added to the returned text)
+#' saferDev::arg_check(data = test, class = base::c("matrix", "array"), typeof = NULL,
+#'     mode = "numeric", length = NULL, prop = FALSE, options = NULL,
+#'     double_as_integer_allowed = FALSE, all_options_in_data = FALSE, na_contain = FALSE,
+#'     neg_values = TRUE, inf_values = TRUE, print = TRUE, data_name = NULL, data_arg = TRUE,
+#'     safer_check = TRUE, lib_path = NULL, error_text = " using saferDev::arg_check()")
+#' # Inside a function, with print = FALSE (default): the function stops with the returned text
+#' fun1 <- function(x){
+#'     tempo <- saferDev::arg_check(data = x, class = NULL, typeof = "double", mode = NULL,
+#'         length = 1, prop = FALSE, options = NULL, double_as_integer_allowed = FALSE,
+#'         all_options_in_data = FALSE, na_contain = FALSE, neg_values = FALSE, inf_values = TRUE,
+#'         print = FALSE, data_name = NULL, data_arg = TRUE, safer_check = TRUE, lib_path = NULL,
+#'         error_text = "")
+#'     if(tempo$problem == TRUE){
+#'         base::stop(tempo$text, call. = FALSE, domain = NULL)
+#'     }
+#'     base::return(x)
 #' }
-#' saferDev::arg_check(data = test, print = TRUE, class = c("matrix", "array"), mode = "numeric")
-#' saferDev::arg_check(
-#'     data = test, 
-#'     print = TRUE, 
-#'     class = c("matrix", "array"), 
-#'     mode = "numeric", 
-#'     error_text = " using saferDev::arg_check()"
-#' )
-#' 
+#' fun1(x = 2)
+#' base::try(expr = fun1(x = -2), silent = FALSE,
+#'     outFile = base::getOption(x = "try.outFile", default = base::stderr()))
+#'
 #' @export
 arg_check <- function(
     data, 
@@ -122,8 +115,12 @@ arg_check <- function(
     #### end internal error report link
 
     #### function name
-    tempo_settings <- base::as.list(x = base::match.call(definition = base::sys.function(which = base::sys.parent(n = 0)), call = base::sys.call(which = base::sys.parent(n = 0)), expand.dots = FALSE, envir = base::parent.frame(n = 2L))) # warning: I have written n = 0 to avoid error when a safer function is inside another functions. In addition, arguments values retrieved are not evaluated base::match.call, but this is solved with get() below
-    function_name <- base::paste0(tempo_settings[[1]], "()", collapse = NULL, recycle0 = FALSE) 
+    tempo_settings <- base::as.list(x = base::match.call(definition = base::sys.function(which = base::sys.parent(n = 0)), call = base::sys.call(which = base::sys.parent(n = 0)), expand.dots = FALSE, envir = )) # warning: I have written n = 0 to avoid error when a safer function is inside another functions. In addition, arguments values retrieved are not evaluated base::match.call, but this is solved with get() below. Warning: envir is left empty on purpose: its default parent.frame(2L), evaluated inside base::match.call(), is the frame that called this function, where the ... of the call are expanded (base::parent.frame(n = 2L) written here would be evaluated one frame too far, which breaks the calls through base::lapply(), base::vapply(), base::apply(), base::Filter() or a function forwarding ..., base::sapply() only working by coincidence)
+    if(base::is.name(x = tempo_settings[[1]]) | base::is.call(x = tempo_settings[[1]])){
+        function_name <- base::paste0(tempo_settings[[1]], "()", collapse = NULL, recycle0 = FALSE)
+    }else{
+        function_name <- "<anonymous function>()" # the function was called through its object (e.g., base::do.call(what = <function object>, args = ...)), so that its name is not in the call
+    }
     # function name with "()" paste, which split into a vector of three: c("::()", "package ()", "function ()") if "package::function()" is used.
     if(function_name[1] == "::()" | function_name[1] == ":::()"){
         function_name <- function_name[3]
@@ -411,8 +408,8 @@ arg_check <- function(
                 base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL)
             }else{
                 ini_lib_path <- base::.libPaths(new = , include.site = TRUE) # normal to have empty new argument
-                base::on.exit(expr = base::.libPaths(new = ini_lib_path, include.site = TRUE), add = TRUE, after = TRUE) # return to the previous libPaths()
-                base::.libPaths(new = base::sub(x = base::c(ini_lib_path, lib_path), pattern = "/$|\\\\$", replacement = "", ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE), include.site = TRUE) # base::.libPaths(new = ) add path to default path. BEWARE: base::.libPaths() does not support / at the end of a submitted path. The reason of the check and replacement of the last / or \\ in path
+                base::on.exit(expr = base::.libPaths(new = ini_lib_path, include.site = FALSE), add = TRUE, after = TRUE) # return to the previous libPaths(). include.site = FALSE: exact restore, since ini_lib_path already contains the site library if it was in use
+                base::.libPaths(new = base::sub(x = base::c(ini_lib_path, lib_path), pattern = "/$|\\\\$", replacement = "", ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE), include.site = FALSE) # base::.libPaths(new = ) add path to default path. BEWARE: base::.libPaths() does not support / at the end of a submitted path. The reason of the check and replacement of the last / or \\ in path
                 lib_path <- base::.libPaths(new = , include.site = TRUE) # normal to have empty new argument
             }
         }else{
@@ -670,16 +667,26 @@ arg_check <- function(
             base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL)
         }
         if(base::all(base::typeof(x = options) == "double", na.rm = TRUE)){
+            if( ! base::is.numeric(x = options)){ # base::is.numeric() is FALSE for the objects of type double that do not support %% (Date, POSIXct, difftime)
+                tempo_cat <- base::paste0(
+                    error_text_start,
+                    "IF THE options ARGUMENT IS TYPE \"double\", IT MUST BE NUMERIC (NOT DATES, DATE-TIMES OR TIME DIFFERENCES).",
+                    collapse = NULL,
+                    recycle0 = FALSE
+                )
+                base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL)
+            }
+            tempo_modulo <- base::suppressWarnings(expr = options[ ! (base::is.na(x = options) & ! base::is.nan(x = options))] %% 1, classes = "warning") # modulo of the values of options, NA excluded: NA can be an allowed value of data, as in the options of type character or integer (NaN is kept, because it is not an integer value). Warning: base::suppressWarnings() removes the warning "probable complete loss of accuracy in modulus" of R for the very large values (e.g., 1e20), whose modulo 0 is exact, every double value beyond 2^52 being an integer value
             if( ! base::isTRUE(
                 x = base::all.equal.numeric(
-                    target = base::rep(x = 0L, times = base::length(x = options)), 
-                    current = options %% 1, 
+                    target = base::rep(x = 0L, times = base::length(x = tempo_modulo)), 
+                    current = base::pmin(tempo_modulo, 1 - tempo_modulo, na.rm = FALSE), # distance to the nearest integer: the values slightly below an integer (e.g., 3 - 1e-10) are accepted, as those slightly above
                     tolerance = base::sqrt(x = base::.Machine$double.eps), 
                     scale = NULL, 
                     countEQ = FALSE, 
                     formatFUN = , 
-                    check.attributes = TRUE, 
-                    check.class = TRUE, 
+                    check.attributes = FALSE, # only the values are compared, not the attributes of options (e.g., names, dim or class)
+                    check.class = FALSE, 
                     giveErr = FALSE
                 )
             )){
@@ -690,8 +697,10 @@ arg_check <- function(
                     recycle0 = FALSE
                 )
                 base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL)
+            }else if(base::any(base::abs(x = options) > base::.Machine$integer.max, na.rm = TRUE)){
+                options <- base::round(x = base::as.vector(x = options, mode = "double"), digits = 0) # integer values outside the integer range of R (e.g., 3e9): kept as double values (attributes removed, as by base::as.integer() below), because base::as.integer() would convert them into NA, which would match the NA of data. base::round(): see below
             }else{
-                options <- base::as.integer(x = options)
+                options <- base::as.integer(x = base::round(x = options, digits = 0)) # base::round() because the modulo test above accepts the values close to an integer value (e.g., -2 + 1e-10 or 3 - 1e-10), while base::as.integer() truncates toward 0 (-1 instead of -2, 2 instead of 3)
             }
         }
     }
@@ -717,7 +726,7 @@ arg_check <- function(
         if( ! (base::all(typeof %in% base::c("double", "integer"), na.rm = TRUE) & base::length(x = typeof) == 1L)){
             tempo_cat <- base::paste0(
                 error_text_start, 
-                "THE typeof ARGUMENT MUST BE A SINGLE \"double\" OR \"integer\" VALUE IF ABSENCE OF NEGATIVE VALUES IS CONTROLED BY SWITCHING THE neg_values ARGUMENT FROM TRUE (DEFAULT VALUE) TO FALSE.",
+                "THE typeof ARGUMENT MUST BE A SINGLE \"double\" OR \"integer\" VALUE IF ABSENCE OF NEGATIVE VALUES IS CONTROLLED BY SWITCHING THE neg_values ARGUMENT FROM TRUE (DEFAULT VALUE) TO FALSE.",
                 collapse = NULL, 
                 recycle0 = FALSE
             )
@@ -728,7 +737,7 @@ arg_check <- function(
         if( ! (base::all(typeof %in% "double", na.rm = TRUE) & base::length(x = typeof) == 1L)){
             tempo_cat <- base::paste0(
                 error_text_start, 
-                "THE typeof ARGUMENT MUST BE A SINGLE \"double\" VALUE IF ABSENCE OF INFINITE VALUES IS CONTROLED BY SWITCHING THE inf_values ARGUMENT FROM TRUE (DEFAULT VALUE) TO FALSE.\n\"integer\" IS NOT ALLOWED BECAUSE OBJECTS WITH INFINITE VALUES ARE NOT INTEGERS.",
+                "THE typeof ARGUMENT MUST BE A SINGLE \"double\" VALUE IF ABSENCE OF INFINITE VALUES IS CONTROLLED BY SWITCHING THE inf_values ARGUMENT FROM TRUE (DEFAULT VALUE) TO FALSE.\n\"integer\" IS NOT ALLOWED BECAUSE OBJECTS WITH INFINITE VALUES ARE NOT INTEGERS.",
                 collapse = NULL, 
                 recycle0 = FALSE
             )
@@ -739,7 +748,7 @@ arg_check <- function(
         if( ! (base::all(mode %in% "numeric", na.rm = TRUE) & base::length(x = mode) == 1L)){
             tempo_cat <- base::paste0(
                 error_text_start, 
-                "THE mode ARGUMENT MUST BE A SINGLE \"numeric\" VALUE IF ABSENCE OF NEGATIVE VALUES IS CONTROLED BY SWITCHING THE neg_values ARGUMENT FROM TRUE (DEFAULT VALUE) TO FALSE.",
+                "THE mode ARGUMENT MUST BE A SINGLE \"numeric\" VALUE IF ABSENCE OF NEGATIVE VALUES IS CONTROLLED BY SWITCHING THE neg_values ARGUMENT FROM TRUE (DEFAULT VALUE) TO FALSE.",
                 collapse = NULL, 
                 recycle0 = FALSE
             )
@@ -750,7 +759,7 @@ arg_check <- function(
         if( ! (base::all(mode %in% "numeric", na.rm = TRUE) & base::length(x = mode) == 1L)){
             tempo_cat <- base::paste0(
                 error_text_start, 
-                "THE mode ARGUMENT MUST BE A SINGLE \"numeric\" VALUE IF ABSENCE OF INFINITE VALUES IS CONTROLED BY SWITCHING THE inf_values ARGUMENT FROM TRUE (DEFAULT VALUE) TO FALSE.\nOTHER VALUES ARE NOT ALLOWED BECAUSE OBJECTS WITH INFINITE VALUES ARE ONLY \"numeric\".",
+                "THE mode ARGUMENT MUST BE A SINGLE \"numeric\" VALUE IF ABSENCE OF INFINITE VALUES IS CONTROLLED BY SWITCHING THE inf_values ARGUMENT FROM TRUE (DEFAULT VALUE) TO FALSE.\nOTHER VALUES ARE NOT ALLOWED BECAUSE OBJECTS WITH INFINITE VALUES ARE ONLY \"numeric\".",
                 collapse = NULL, 
                 recycle0 = FALSE
             )
@@ -777,25 +786,26 @@ arg_check <- function(
 
     #### main code
     if(base::is.null(x = data_name)){
-        data_name <- base::deparse(expr = base::substitute(expr = data, env = base::environment(fun = NULL)), width.cutoff = 60L, backtick = FALSE, control = base::c("keepNA", "keepInteger", "niceNames", "showAttributes"), nlines = -1L)
+        data_name <- base::deparse1(expr = base::substitute(expr = data, env = base::environment(fun = NULL)), collapse = " ", width.cutoff = 500L, backtick = FALSE, control = base::c("keepNA", "keepInteger", "niceNames", "showAttributes"), nlines = -1L) # base::deparse1(): single string, even for an expression longer than the width.cutoff limit
     }
     problem <- FALSE
     text_ok <- base::paste0("NO PROBLEM DETECTED FOR THE ", data_name, base::ifelse(test = base::is.null(x = data_name), yes = "", no = " "), base::ifelse(test = data_arg, yes = "ARGUMENT", no = "OBJECT"), base::ifelse(test = error_text == "", yes = ".", no = error_text), collapse = NULL, recycle0 = FALSE)
     text <- text_ok
-    if(( ! base::is.null(x = options)) & (base::all(base::typeof(x = data) == "character", na.rm = TRUE) | base::all(base::typeof(x = data) == "integer", na.rm = TRUE) | base::all(base::typeof(x = data) == "double", na.rm = TRUE))){ # base::all() without na.rm -> ok because base::typeof() never returns NA
+    if(( ! base::is.null(x = options)) & (base::all(base::typeof(x = data) == "character", na.rm = TRUE) | base::all(base::typeof(x = data) == "integer", na.rm = TRUE) | (base::all(base::typeof(x = data) == "double", na.rm = TRUE) & base::is.numeric(x = data)))){ # base::all() without na.rm -> ok because base::typeof() never returns NA. base::is.numeric() is FALSE for the objects of type double that do not support %% (Date, POSIXct, difftime): problem returned below instead of an R error
         test_log <- TRUE
         tempo_data_opt <- data # for the options argument only
         if(base::all(base::typeof(x = tempo_data_opt) == "double", na.rm = TRUE)){
+            tempo_modulo <- base::suppressWarnings(expr = tempo_data_opt[ ! (base::is.na(x = tempo_data_opt) & ! base::is.nan(x = tempo_data_opt))] %% 1, classes = "warning") # modulo of the values of data, NA excluded, as in data of type integer: NA values are then tested by the na_contain argument, and against the options below (NaN is kept, because it is not an integer value). base::suppressWarnings(): see the options argument above
             if( ! base::isTRUE(
                 x = base::all.equal.numeric(
-                    target = base::rep(x = 0L, times = base::length(x = tempo_data_opt)), 
-                    current = tempo_data_opt %% 1, 
+                    target = base::rep(x = 0L, times = base::length(x = tempo_modulo)), 
+                    current = base::pmin(tempo_modulo, 1 - tempo_modulo, na.rm = FALSE), # distance to the nearest integer: the values slightly below an integer (e.g., 3 - 1e-10) are accepted, as those slightly above
                     tolerance = base::sqrt(x = base::.Machine$double.eps), 
                     scale = NULL, 
                     countEQ = FALSE, 
                     formatFUN = , 
-                    check.attributes = TRUE, 
-                    check.class = TRUE, 
+                    check.attributes = FALSE, # only the values are compared, not the attributes of data (e.g., names, dim or class)
+                    check.class = FALSE, 
                     giveErr = FALSE
                 )
             )){
@@ -816,8 +826,10 @@ arg_check <- function(
                     recycle0 = FALSE
                 )
                 test_log <- FALSE
+            }else if(base::any(base::abs(x = tempo_data_opt) > base::.Machine$integer.max, na.rm = TRUE)){
+                tempo_data_opt <- base::round(x = base::as.vector(x = tempo_data_opt, mode = "double"), digits = 0) # integer values outside the integer range of R (e.g., 3e9): kept as double values (attributes removed, as by base::as.integer() below), because base::as.integer() would convert them into NA, which would match the NA of the options. base::round(): see below
             }else{
-                tempo_data_opt <- base::as.integer(x = tempo_data_opt)
+                tempo_data_opt <- base::as.integer(x = base::round(x = tempo_data_opt, digits = 0)) # base::round() because the modulo test above accepts the values close to an integer value (e.g., -2 + 1e-10 or 3 - 1e-10), while base::as.integer() truncates toward 0 (-1 instead of -2, 2 instead of 3)
             }
         }
         if(test_log == TRUE){
@@ -897,7 +909,7 @@ arg_check <- function(
         }
     }else if( ! base::is.null(x = options)){
         problem <- TRUE
-        text <- base::paste0("ERROR", base::ifelse(test = error_text == "", yes = "", no = error_text), "\n\nTHE ", data_name, " ", base::ifelse(test = data_arg, yes = "ARGUMENT", no = "OBJECT"), " MUST BE SOME OF THESE OPTIONS:\n", base::paste0(options, collapse = "\n", recycle0 = FALSE), "\nBUT IS NOT EVEN TYPE CHARACTER OR INTEGER, OR TYPE DOUBLE WITH A 0 MODULO.", collapse = NULL, recycle0 = FALSE)
+        text <- base::paste0("ERROR", base::ifelse(test = error_text == "", yes = "", no = error_text), "\n\nTHE ", data_name, " ", base::ifelse(test = data_arg, yes = "ARGUMENT", no = "OBJECT"), " MUST BE SOME OF THESE OPTIONS:\n", base::paste0(options, collapse = "\n", recycle0 = FALSE), base::ifelse(test = base::all(base::typeof(x = data) == "double", na.rm = TRUE), yes = "\nBUT IS TYPE DOUBLE AND NOT NUMERIC (E.G., A DATE, A DATE-TIME OR A TIME DIFFERENCE).", no = "\nBUT IS NOT EVEN TYPE CHARACTER OR INTEGER, OR TYPE DOUBLE WITH A 0 MODULO."), collapse = NULL, recycle0 = FALSE) # only the objects of type double that are not numeric (Date, POSIXct, difftime) reach this branch with type double: the numeric ones are handled above
     }
     arg_names <- base::c("class", "typeof", "mode", "length")
     if(base::is.null(x = options)){
@@ -922,8 +934,8 @@ arg_check <- function(
                 '
                 # no need of na.rm = TRUE for base::all() because %in% does not output NA
                 # end script to execute
-                if(base::typeof(x = data) == "double" & double_as_integer_allowed == TRUE & ((arg_names[i2] == "class" & base::all(base::get(x = arg_names[i2], pos = -1L, envir = base::as.environment(x = -1), mode = "any", inherits = FALSE) == "integer", na.rm = TRUE)) | (arg_names[i2] == "typeof" & base::all(base::get(x = arg_names[i2], pos = -1L, envir = base::as.environment(x = -1), mode = "any", inherits = FALSE) == "integer", na.rm = TRUE)))){ # data of type double & double_as_integer_allowed == TRUE and (class = "integer" | typeof = "integer") # no need of na.rm = TRUE for base::all() because == does not output NA if no NA in left of ==, which is the case for arg_names # base::typeof(data) == "double" means no factor allowed
-                    if( ! base::all(data %% 1 == 0L, na.rm = TRUE)){ # to check integers (use %%, meaning the remaining of a division): see the precedent line. base::isTRUE(base::all.equal(data%%1, base::rep(0, base::length(data)))) not used because we strictly need zero as a result. Warning: na.rm = TRUE required here for base::all()
+                if(base::typeof(x = data) == "double" & base::is.numeric(x = data) & double_as_integer_allowed == TRUE & ((arg_names[i2] == "class" & base::all(base::get(x = arg_names[i2], pos = -1L, envir = base::as.environment(x = -1), mode = "any", inherits = FALSE) == "integer", na.rm = TRUE)) | (arg_names[i2] == "typeof" & base::all(base::get(x = arg_names[i2], pos = -1L, envir = base::as.environment(x = -1), mode = "any", inherits = FALSE) == "integer", na.rm = TRUE)))){ # data of type double & double_as_integer_allowed == TRUE and (class = "integer" | typeof = "integer") # no need of na.rm = TRUE for base::all() because == does not output NA if no NA in left of ==, which is the case for arg_names # base::typeof(data) == "double" means no factor allowed # base::is.numeric(x = data) excludes the objects of type double that do not support %% (Date, POSIXct, difftime)
+                    if( ! base::all(base::suppressWarnings(expr = data %% 1, classes = "warning") == 0L, na.rm = TRUE)){ # to check integers (use %%, meaning the remaining of a division): see the precedent line. base::isTRUE(base::all.equal(data%%1, base::rep(0, base::length(data)))) not used because we strictly need zero as a result. Warning: na.rm = TRUE required here for base::all(). base::suppressWarnings(): see the options argument above
                         base::eval(expr = base::parse(text = tempo_script, file = "", n = NULL, prompt = "?", keep.source = base::getOption(x = "keep.source", default = NULL), srcfile = NULL, encoding = "unknown"), envir = base::environment(fun = NULL), enclos = base::environment(fun = NULL)) # execute tempo.script
                     }
                 }else if(arg_names[i2] == "length"){

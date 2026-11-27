@@ -1,64 +1,64 @@
 
-# saferDev <a href="https://safer-r.github.io/saferDev">[<img src="man/figures/saferDev.png" align="right" height="140" />](https://safer-r.github.io/saferDev/)</a>
+# saferDev <a href="https://safer-r.github.io/saferDev/">[<img src="man/figures/saferDev.png" align="right" height="140" />](https://safer-r.github.io/saferDev/)</a>
 
 <br />
 
 <!-- badges: start -->
 
 [![CRAN status](https://img.shields.io/cran/v/saferDev.svg)](https://cran.r-project.org/package=saferDev)
-[![R Version](https://img.shields.io/badge/R-%3E%3D%204.6.0-blue?logo=R)](https://cran.r-project.org/)
+[![R Version](https://img.shields.io/badge/R-%3E%3D%204.5.0-blue?logo=R)](https://cran.r-project.org/)
 [![Downloads](https://cranlogs.r-pkg.org/badges/saferDev)](https://r-pkg.org/pkg/saferDev)<br />
 [![Rworkflows](https://github.com/safer-r/saferDev/actions/workflows/rworkflows.yml/badge.svg)](https://github.com/safer-r/saferDev/actions/workflows/rworkflows.yml)
-[![Codecov](https://codecov.io/github/safer-r/saferDev/coverage.svg?branch=master)](https://app.codecov.io/github/safer-r/saferDev?branch=master)
+[![Codecov](https://codecov.io/github/safer-r/saferDev/coverage.svg?branch=main)](https://app.codecov.io/github/safer-r/saferDev?branch=main)
 [![safer-R Status](https://img.shields.io/badge/Safer--R%20status-backbone%20v21.2-brightgreen)](https://github.com/safer-r/saferMake/tree/main/inst)<br />
 [![](https://img.shields.io/badge/license-GPL3.0-lightgrey.svg)](https://opensource.org/license/gpl-3.0)
 <!-- badges: end -->
 
 <br />
 
-## Table of content
+## Table of contents
 
    - [Description](#description)
    - [Content](#content)
    - [Versions](#versions)
    - [Installation](#installation)
-   - [Docker](#docker-image)
-   - [Licence](#licence)
-   - [Citations](#citations)
+   - [Docker images](#docker-images)
+   - [License](#license)
+   - [Citation](#citation)
    - [Credits](#credits)
-   - [acknowledgments](#acknowledgments)
+   - [Acknowledgments](#acknowledgments)
 
 <br />
 
 
 ## Description
 
-Set of functions for the development of R functions and pipelines, written according to the [safer-R project](https://github.com/safer-r) specifications.
+Set of functions for the development of R functions and pipelines, written according to the [safer-r project](https://github.com/safer-r) specifications.
 
 <br />
 
 ## Content
 <br />
 
-Read this [webpage](https://safer-r.github.io/saferDev) for more details.
+Read this [webpage](https://safer-r.github.io/saferDev/) for more details.
 
 <br />
 
 | Function | Description |
 | :--- | :--- |
-| **all_args_here()** | Check that all the functions used inside a function are written with all their arguments. For instance: `base::paste0(letters[1:2], collapse = NULL, recycle0 = FALSE)` and not `base::paste0(letters[1:2])`. Return table message of the line with problems and a corrected version of the submitted function. |
-| **arg_check()** | Check expected values of arguments of functions: class, type, mode, length (each tested exactly, same values, in the same order), restricted values panel, kind of numeric values in addition to the distinction between 'integer' and 'double' (proportion only? Inf values authorized? negative values authorized? Integers of type 'double'?). |
-| **colons_check()** | Check that all the functions used inside a function are all referenced by their package attribution. For instance: `base::mean()` and not `mean()`, or `saferDev:::.base_op_check()` and not `.base_op_check()`. Return table message of the line with problems and a corrected version of the submitted function. |
-| **curly_bracket_check()** | Verify that all the bodies of the `if`, `else`, `for`, `while`, `repeat` and `function` are delimited by curly brackets `{ }`. Return table message of the line with problems and a corrected version of the submitted function. |
-| **for_loop_nb_check()** | Check the sequence expression of every `for` loop of a function. If the number of iterations is not fixed by the writing itself (e.g., `1:length(x)`), a checking line is added before the loop, issuing a warning at execution if the sequence is empty, contains `NA` or infinite values, has a single value, or is decreasing. Return a table-like message of the problematic lines and a corrected version of the submitted function. |
-| **lambda_check()** | Verify that the lambda functions written with the shorthand `\(x)` (like `\(x) x * 2`) are all written with the standard `function(x)` writing. Return table message of the line with problems and a corrected version of the submitted function. Warning: the `\(x)` writing is only kept in the code of a function carrying its source references (attribute `srcref`). |
-| **env_check()** | Verify that object names in the environment defined by the `pos` argument are identical or not to object names in the above environments (following R Scope). This can be used to verify that names used for objects inside a function or in the working environment do not override names of objects already present in the above R environments, following the R scope. |
-| **get_message()** | Return the error, warning or simple (non error non warning) message if ever exist of an instruction written between quotes. |
-| **is_function_here()** | Check if required functions are present in installed packages. This controls for instance modifications of function names depending on package versions. |
-| **is_package_here()** | Check if required packages are installed locally. |
-| **report()** | Print a character string or a data object into a same log file. |
-| **super_assign_check()** | Verify that the superassignment operators `<<-` and `->>` are not used in a function. Return an error with a table of the lines with problems if any, since these operators are not allowed in safer-r functions. |
-| **true_false_check()** | Verify that the `TRUE` and `FALSE` logical constants are always written in full when used as values (argument values, conditions, comparisons, indexing) and never abbreviated as `T` or `F`, which can be overwritten by the user. Return table message of the line with problems and a corrected version of the submitted function. |
+| **all_args_here()** | Check that all the functions used inside a function are written with all their arguments. For instance: `base::paste0(letters[1:2], collapse = NULL, recycle0 = FALSE)` and not `base::paste0(letters[1:2])`. Print a table-like message of the detected function calls with their missing arguments, and return a corrected version of the submitted function, if any. |
+| **arg_check()** | Check the expected features of an argument: class (compared exactly, e.g., `c("matrix", "array")` for a matrix), type, mode, length, allowed values, and for numeric values: proportions, negative values, infinite values and integers stored as double. The problems are returned as a text, not raised as errors (except for an argument made of `NA` only). |
+| **colons_check()** | Check that the functions called inside a function are preceded by their package (e.g., `base::mean()` and not `mean()`). Print a table-like message of the calls without prefix, if any, and return a corrected version of the submitted function, where `<package>::` is added before the basic R functions (base, stats, graphics, grDevices, utils, datasets and methods packages); the other calls are only reported. |
+| **curly_bracket_check()** | Check that the bodies of the `if`/`else`, `for`, `while`, `repeat` and `function` constructs are delimited by curly brackets `{ }`. Print a table-like message of the problematic lines, if any, and return a corrected version of the submitted function. |
+| **env_check()** | Check whether the object names of an environment (by default, the one calling `env_check()`) are also present in the frames of the calling functions and in the environments of the search path (global environment, attached packages), where objects of the same name could be confused. |
+| **for_loop_nb_check()** | Check the sequence expression of every `for` loop of a function. If the number of iterations is not fixed by the writing itself (e.g., `1:length(x)`), a checking line is added before the loop, which issues a warning at execution if the sequence is empty, contains `NA` or infinite values, has a single value, has only negative values, or starts decreasing (first value greater than the second). Print a table-like message of the problematic lines, if any, and return a corrected version of the submitted function. |
+| **get_message()** | Catch the error, the last warning or the standard messages of an instruction written as a character string, which is evaluated once. |
+| **is_function_here()** | Check that the required functions are present in the installed packages (e.g., not removed or renamed in another version of the package). |
+| **is_package_here()** | Check that the required packages are installed, without loading them. |
+| **lambda_check()** | Check that no lambda function is written with the `\(x)` shorthand (like `\(x) x * 2`), and replace it by the standard `function(x)` writing. Print a table-like message of the problematic lines, if any, and return a corrected version of the submitted function. Warning: the `\(x)` writing can only be seen in a function that carries its source references (attribute `srcref`). |
+| **report()** | Write a character string or a data object into a log file (added at the end of the file with `append = TRUE`). |
+| **super_assign_check()** | Check that the superassignment operators `<<-` and `->>` are not used in a function. Return an error with a table of the problematic lines, if any, since these operators are not allowed in safer-r functions. |
+| **true_false_check()** | Check that the `TRUE` and `FALSE` logical constants are written in full, and not abbreviated as `T` or `F`, which can be overwritten by the user. Print a table-like message of the problematic lines, if any, and return a corrected version of the submitted function. |
 
 <br />
 
@@ -74,27 +74,26 @@ The different *saferDev* releases are tagged [here](https://github.com/safer-r/s
 install.packages("saferDev")
 ```
 
-Older versions can be installed like this:
+Older versions can be installed from their GitHub [tag](https://github.com/safer-r/saferDev/tags), like this:
 
 ```r
-v <- "v1.0.0" # desired tag version
-remotes::install_github(paste0("https://github.com/safer-r/saferDev@CRAN_/", v))
+remotes::install_github(repo = "safer-r/saferDev@CRAN_v2.0.0") # CRAN version 2.0.0
 ```
 
 ## Docker images
 
-SaferDev v1.0.0 alone in R 4.6.0: [gmillot/r_v4.6.0_safer_v1.0:gitlab_v11.7](https://hub.docker.com/repository/docker/gmillot/r_v4.6.0_safer_v1.0/general)
+saferDev v1.0.0 alone in R 4.6.0: [gmillot/r_v4.6.0_safer_v1.0:gitlab_v11.7](https://hub.docker.com/repository/docker/gmillot/r_v4.6.0_safer_v1.0/general)
 
 
-SaferDev v1.0.0 and [295 other packages](https://gitlab.pasteur.fr/gmillot/dockerfiles/-/blob/master/R/v4.6.0/extended/v1.0/installed_r_packages.csv) in R 4.6.0: [gmillot/r_v4.6.0_extended_v1.0:gitlab_v11.7](https://hub.docker.com/repository/docker/gmillot/r_v4.6.0_extended_v1.0/general)
+saferDev v1.0.0 and [295 other packages](https://gitlab.pasteur.fr/gmillot/dockerfiles/-/blob/master/R/v4.6.0/extended/v1.0/installed_r_packages.csv) in R 4.6.0: [gmillot/r_v4.6.0_extended_v1.0:gitlab_v11.7](https://hub.docker.com/repository/docker/gmillot/r_v4.6.0_extended_v1.0/general)
 
 <br />
 
-## Licence
+## License
 
-This package can be redistributed and/or modified under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+This package can be redistributed and/or modified under the terms of the GNU General Public License version 3, as published by the Free Software Foundation.
 Distributed in the hope that it will be useful, but without any warranty; without even the implied warranty of merchantability or fitness for a particular purpose.
-See the GNU General Public License for more details at https://www.gnu.org/licenses or in the Licence.txt attached file.
+See the GNU General Public License for more details at https://www.gnu.org/licenses or in the attached Licence.txt file.
 
 <br />
 
@@ -102,7 +101,7 @@ See the GNU General Public License for more details at https://www.gnu.org/licen
 
 If you are using functions of *saferDev*, please cite: 
 
-> Wang H, Han Y, Legras M, Serizay J, Millot GA (2026). _The R saferDev package_.
+> Wang H, Han Y, Legras M, Millot GA (2026). _The R saferDev package_.
 > <https://github.com/safer-r/saferDev/>.
 
 <br />
@@ -117,7 +116,7 @@ If you are using functions of *saferDev*, please cite:
 
 [Jacques Serizay](https://github.com/js2264), Spatial Regulation of Genomes team, Institut Pasteur, Paris, France
 
-[GLM-5.3](https://docs.z.ai/guides/llm/glm-5.3), hosted to Institut Pasteur, Paris, France
+[GLM-5.3](https://docs.z.ai/guides/llm/glm-5.3), hosted at Institut Pasteur, Paris, France
 
 [Gael A. Millot](https://github.com/gael-millot), Bioinformatics and Biostatistics Hub, Institut Pasteur, Paris, France
 
@@ -125,13 +124,13 @@ If you are using functions of *saferDev*, please cite:
 
 ## Acknowledgments
 
-The developers & maintainers of the mentioned softwares and packages, including:
+The developers & maintainers of the mentioned software and packages, including:
 
 - [R](https://www.r-project.org/)
 - [Git](https://git-scm.com/)
 - [GitHub](https://github.com/)
 - [rworkflows](https://github.com/neurogenomics/rworkflows)
-- [tidyverse](https://ggplot2.tidyverse.org/)
+- [ggplot2](https://ggplot2.tidyverse.org/)
 - [opencode](https://opencode.ai/)
 - [GLM-5.3](https://docs.z.ai/guides/llm/glm-5.3)
 

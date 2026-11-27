@@ -158,8 +158,19 @@ testthat::test_that(".fun_args_pos()", {
     #### end second round of checking and data preparation
 
     #### main code
+    files_before <- base::list.files(path = ".", pattern = NULL, all.files = TRUE, full.names = FALSE, recursive = FALSE, ignore.case = FALSE, include.dirs = TRUE, no.. = TRUE) # the internal errors below must not write any file
+    # check_pos(): pattern not found (internal error 1) and no ( after the match of pattern (internal error 2)
+    testthat::expect_error(object = saferDev:::.fun_args_pos(text = str1, pattern = "nofun[\\s\\r\\n]*\\(", lib_path = NULL, error_text = ""), regexp = "INTERNAL ERROR 1 IN saferDev:::.fun_args_pos().\n\nINTERNAL FUNCTION DID NOT PROPERLY DETECT THE POSITION OF THE FUNCTION NAME (pattern NOT FOUND IN text).\nDETECTED POSITION: -1\npattern: nofun[\\s\\r\\n]*\\(\nfun_pos: -1\ntext (CHARACTERS 1 TO 72 OF 72):\n \"a\" ; paste0(", fixed = TRUE)
+    testthat::expect_error(object = saferDev:::.fun_args_pos(text = "a b", pattern = "b", lib_path = NULL, error_text = ""), regexp = "INTERNAL ERROR 2 IN saferDev:::.fun_args_pos().\n\nINTERNAL FUNCTION DID NOT PROPERLY DETECT THE POSITION OF THE OPENING BRACKET OF THE FUNCTION.\nDETECTED POSITION: NA\npattern: b\nfun_pos: 3\ntext (CHARACTERS 1 TO 3 OF 3):\na b", fixed = TRUE)
+    # end check_pos()
+    # while_loop(): closing bracket not found (internal error 3), with an excerpt of 200 characters of text, starting 50 characters before the opening bracket
+    testthat::expect_error(object = saferDev:::.fun_args_pos(text = base::paste0(base::strrep(x = "a", times = 100), " paste0(1, sum(2) ", base::strrep(x = "b", times = 300), collapse = NULL, recycle0 = FALSE), pattern = pattern1, lib_path = NULL, error_text = " INSIDE P1::F1"), regexp = base::paste0("INTERNAL ERROR 3 IN saferDev:::.fun_args_pos() INSIDE P1::F1\n\nINTERNAL FUNCTION DID NOT PROPERLY DETECT THE POSITION OF THE CLOSING BRACKET.\npattern: paste0[\\s\\r\\n]*\\(\nPOSITION OF THE OPENING BRACKET: 108\nBRACKETS NOT CLOSED: 1\ntext (CHARACTERS 58 TO 257 OF 418):\n", base::strrep(x = "a", times = 43), " paste0(1, sum(2) ", base::strrep(x = "b", times = 139), "\n\nPLEASE, REPORT THIS ERROR HERE", collapse = NULL, recycle0 = FALSE), fixed = TRUE)
+    # end while_loop()
+    testthat::expect_identical(object = base::list.files(path = ".", pattern = NULL, all.files = TRUE, full.names = FALSE, recursive = FALSE, ignore.case = FALSE, include.dirs = TRUE, no.. = TRUE), expected = files_before)
     # middle brackets
     testthat::expect_no_error(.fun_args_pos(text = str2, pattern = pattern1, lib_path = NULL, error_text = ""))
+    testthat::expect_equal(object = saferDev:::.fun_args_pos(text = str2, pattern = pattern1, lib_path = NULL, error_text = ""), expected = base::list(begin_fun = 1L, begin = 7L, end = 16L, middle_bracket_pos = NULL))
+    testthat::expect_equal(object = saferDev:::.fun_args_pos(text = str1, pattern = pattern1, lib_path = NULL, error_text = ""), expected = base::list(begin_fun = 8L, begin = 14L, end = 61L, middle_bracket_pos = base::list(base::c(26L, 51L), base::c(30L, 34L), base::c(57L, 59L))))
     # end middle brackets
     #### end main code
 

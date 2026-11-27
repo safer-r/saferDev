@@ -1,29 +1,31 @@
 #' @title Replacement Inside Quotes
 #' @description
-#' Parse a string and replace any pattern inside simple or double quotes by another replacement pattern and get the position of replacements.
-#' @param string Single string.
-#' @param pattern Single string indicating the pattern to detect. Warning: must be very simple pattern, like \code{"\\("}.
-#' @param no_regex_pattern Same as \code{pattern} without escape characters or list, etc. Used for messages.
-#' @param replacement Single string for \code{pattern} replacement. Must have the same number of character than \code{no_regex_pattern}. Is not regex.
-#' @param perl Single logical value. Use Perl regex in \code{pattern} ?
-#' @param lib_path Vector of characters specifying the absolute pathways of the directories containing the required packages for the function, if not in the default directories. Useful when R packages are not installed in the default directories because of lack of admin rights. More precisely, \code{lib_path} is passed through the \code{new} argument of \code{.libPaths()} so that the new library paths are \code{unique(c(new, .Library.site, .Library))}. Warning: \code{.libPaths()} is restored to the initial paths, after function execution. Ignored if \code{NULL} (default): only the pathways specified by the current \code{.libPaths()} are used for package calling.
-#' @param error_text Single character string used to add information in error messages returned by the function, notably if the function is inside other functions, which is practical for debugging. Example: \code{error_text = " INSIDE <PACKAGE_1>::<FUNCTION_1> INSIDE <PACKAGE_2>::<FUNCTION_2>."}. If \code{NULL}, converted into \code{""}.
+#' Replace each match of a pattern located between quotes (string literals and backquoted names of R code) by a replacement of the same length, and return the positions of the replacements.
+#' @param string Single string, for instance R code, with lines separated by \code{"\\n"}.
+#' @param pattern Single string: regex matching a single character, like \code{"\\\\("}.
+#' @param no_regex_pattern Single string: the character matched by \code{pattern}, without regex escape, like \code{"("}. Used to check the replaced characters.
+#' @param replacement Single string replacing each match of \code{pattern} between quotes. Must have the same number of characters as \code{no_regex_pattern}. Not a regex.
+#' @param perl Single logical value. Use Perl regex in \code{pattern}?
+#' @param lib_path Vector of character strings or \code{NULL}: the \code{lib_path} value of the calling exported function, only passed on to \code{arg_check()}. No default value.
+#' @param error_text Single character string added to the error messages to name the calling functions (\code{embed_error_text} of the calling function). \code{NULL} is converted into \code{""}. No default value.
 #' @returns A list containing:
 #' \itemize{
-#'   \item \code{string}: The input string with all pattern replaced by the replacement pattern.
-#'   \item \code{pos}: vector of the positions of the 1st character of the replaced pattern. \code{NULL} if no replaced pattern. In that case, \code{string} is identical to the input string.
+#'   \item \code{string}: \code{string} with the matches of \code{pattern} between quotes replaced by \code{replacement}.
+#'   \item \code{pos}: vector of the positions of the replaced matches. \code{NULL} if no match is between quotes. In that case, \code{string} is identical to the input string.
 #' }
 #' @details
-#' The function works first by replacing in the code: 1) the three consecutive characters \code{'"'} or \code{'"'} by three spaces, 2) \code{"\"'"} and \code{'\'"'} by four spaces and 3) escape quotes like \code{\"} or \code{\'} by two spaces, before looking for the pattern inside quotes.
+#' \code{string} is read from left to right, as the R parser reads code: a quote (\verb{"}, \verb{'} or \verb{`}) opens a quoted part that only the same quote closes, a backslash inside quotes escapes the next character (e.g., \verb{\"} or \verb{\\\\}), a raw string (e.g., \code{r"(...)"} or \code{R"--[...]--"}) is only closed by its own closing delimiter, \code{#} outside quotes starts a comment, up to the end of the line, and the \code{\%...\%} operators are skipped. Thus, an apostrophe inside double quotes (\code{"it's"}), or a double quote inside simple quotes, opens nothing. A quoted part that is not closed goes up to the end of \code{string}. The matches inside comments are not replaced.
+#'
+#' Only the content of a quoted part is replaced, never its quotes or the delimiters of a raw string, so that the output string can be passed again to the function (e.g., to replace \code{(} after \code{)}).
 #'
 #' Warnings:
 #' \itemize{
-#'   \item Must be very simple pattern, like \code{"\\("}.
-#'   \item requires \code{saferDev::arg_check}, \code{.has_odd_number_of_quotes}.
-#'   \item In the safer Backbone section \code{"######## check of the required functions from the required packages"}, add also these 2 functions when checking for the presence of \code{.in_quotes_replacement}.
+#'   \item \code{pattern} must match a single character.
+#'   \item requires \code{saferDev::arg_check}.
+#'   \item In the safer Backbone section \code{"######## check of the required functions from the required packages"}, add also \code{saferDev::arg_check} when checking for the presence of \code{.in_quotes_replacement}.
 #' }
 #' @author \href{mailto:gael.millot@pasteur.fr}{Gael Millot}
-#' @author Haiding Wang  
+#' @author Haiding Wang
 #' @author Yushi Han
 #' @keywords internal
 .in_quotes_replacement <- function(
@@ -55,8 +57,12 @@
     #### end internal error report link
 
     #### function name
-    tempo_settings <- base::as.list(x = base::match.call(definition = base::sys.function(which = base::sys.parent(n = 0)), call = base::sys.call(which = base::sys.parent(n = 0)), expand.dots = FALSE, envir = base::parent.frame(n = 2L))) # warning: I have written n = 0 to avoid error when a safer function is inside another functions. In addition, arguments values retrieved are not evaluated base::match.call, but this is solved with get() below
-    function_name <- base::paste0(tempo_settings[[1]], "()", collapse = NULL, recycle0 = FALSE) 
+    tempo_settings <- base::as.list(x = base::match.call(definition = base::sys.function(which = base::sys.parent(n = 0)), call = base::sys.call(which = base::sys.parent(n = 0)), expand.dots = FALSE, envir = )) # warning: I have written n = 0 to avoid error when a safer function is inside another functions. In addition, arguments values retrieved are not evaluated base::match.call, but this is solved with get() below. Warning: envir is left empty on purpose: its default parent.frame(2L), evaluated inside base::match.call(), is the frame that called this function, where the ... of the call are expanded (base::parent.frame(n = 2L) written here would be evaluated one frame too far, which breaks the calls through base::lapply(), base::vapply(), base::apply(), base::Filter() or a function forwarding ..., base::sapply() only working by coincidence)
+    if(base::is.name(x = tempo_settings[[1]]) | base::is.call(x = tempo_settings[[1]])){
+        function_name <- base::paste0(tempo_settings[[1]], "()", collapse = NULL, recycle0 = FALSE)
+    }else{
+        function_name <- "<anonymous function>()" # the function was called through its object (e.g., base::do.call(what = <function object>, args = ...)), so that its name is not in the call
+    }
     # function name with "()" paste, which split into a vector of three: c("::()", "package ()", "function ()") if "package::function()" is used.
     if(function_name[1] == "::()" | function_name[1] == ":::()"){
         function_name <- function_name[3]
@@ -293,14 +299,11 @@
 
     ######## check of the required functions from the required packages
     # saferDev::arg_check is required here
-    # saferDev::has_odd_number_of_quotes is required here
     # but check already done in the main safer function
     ######## end check of the required functions from the required packages
 
     ######## escaping CRAN submission NOTE for internal functions
-
-    .has_odd_number_of_quotes <- utils::getFromNamespace(x = ".has_odd_number_of_quotes", ns = "saferDev", pos = -1, envir = )
-
+    # not used here: no internal function called
     ######## end escaping CRAN submission NOTE for internal functions
 
     ######## critical operator checking
@@ -430,92 +433,138 @@
         )
         base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL)
     }
-    # dealing with quotes (warning: the order is important)
-    # warning: in R, already escaped character are not over escaped when displayed While classical " are escaped. However, they are over escaped when captured by capture.output. . Example:
-    # string = 'c("\\") "\"a\""'
-    # > string
-    # [1] "c(\"\\\") \"\"a\"\""
-    # > capture.output(string)
-    # [1] "[1] \"c(\\\"\\\\\\\") \\\"\\\"a\\\"\\\"\""
-    # removal of the escaped backslashes \\ (two backslash characters, replaced by two spaces, so that the positions are kept). Warning: must be done first, because a backslash preceded by another backslash does not escape the next character: in the code "\\\\" (a string made of two backslashes), the last \" is not an escaped quote but the closing quote. Without this removal, the closing quote was removed below as an escaped quote, so that the rest of the line was considered as inside quotes
-    string <- base::gsub( x = string, pattern = "\\\\\\\\", replacement = '  ', ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE)
-    # end removal of the escaped backslashes
-    # removal of "\"'" and '\'"'
-    # test with base::gsub( x = "a\"\\\"'\"a", pattern = '"\\\\"\'"', replacement = '     ')
-    string <- base::gsub( x = string, pattern = '"\\\\"\'"', replacement = '     ', ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE)
-    string <- base::gsub( x = string, pattern = "'\\\\'\"'", replacement = '     ', ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE)
-    # end removal of "\"'" and '\'"'
-    # removal of "'" and '"'
-    string <- base::gsub( x = string, pattern = '"\'"', replacement = '   ', ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE)
-    string <- base::gsub( x = string, pattern = "'\"'", replacement = '   ', ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE)
-    # end removal of "'" and '"'
-    # removal of escape quotes \' and \"
-    string <- base::gsub( x = string, pattern = "\\\\'", replacement = '  ', ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE)
-    string <- base::gsub( x = string, pattern = '\\\\"', replacement = '  ', ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE)
-    # end removal of escape  \' and \"
-    # end dealing with quotes (warning: the order is important)
-    string_split <- base::strsplit(x = string, split = pattern, perl = perl, fixed = FALSE, useBytes = FALSE)[[1]]
-    string_out <- string_split[1]
-    pos <- NULL
-    if(base::length(x = string_split) > 1){
-        count <- 1
-        while(count < base::length(x = string_split)){
-            count <- count + 1
-            # if odds number of quotes, it means that # has broken the string in the middle of a quoted part
-            double_quote_test <- .has_odd_number_of_quotes(
-                input_string = string_out, 
-                pattern = '"', 
-                lib_path = lib_path, 
-                error_text = embed_error_text
-            ) # here FALSE means even number of quotes, thus that ")" is not between quotes, thus has to be kept. TRUE means that ")" is between quotes, thus has to be removed
-            simple_quote_test <- .has_odd_number_of_quotes(
-                input_string = string_out, 
-                pattern = "'", 
-                lib_path = lib_path, 
-                error_text = embed_error_text
-            ) # idem
-            odds_quotes_log <- double_quote_test |  simple_quote_test # remove ")" ?
-            if(odds_quotes_log == TRUE){
-                pos <- base::c(pos, base::nchar(x = string_out, type = "chars", allowNA = FALSE, keepNA = NA) + 1)
-                string_out <- base::paste0(string_out, replacement, string_split[count], collapse = NULL, recycle0 = FALSE) # to keep the same length of the tested function on a single string output_1_line
-            }else{
-                string_out <- base::paste0(string_out, no_regex_pattern, string_split[count], collapse = NULL, recycle0 = FALSE)
-                pos <- base::c(pos, NA)
+    # detection of the characters of string that are between quotes
+    # string is read from left to right, as the R parser does, so that each character is interpreted according to what precedes it:
+    # - outside quotes, a quote (double, simple or backquote) opens a quoted part (string literal or backquoted name), which is only closed by the same quote. Thus, an apostrophe inside double quotes, or a double quote inside simple quotes, opens nothing
+    # - inside quotes, a backslash escapes the next character, which therefore cannot close the quoted part. The escaped backslashes are thus correctly read: in the code "\\" (a string made of one backslash), the first backslash escapes the second one, and the last double quote closes the string
+    # - outside quotes, r or R just before a double or simple quote opens a raw string, like r"(...)" or R"--[...]--", which is only closed by its own closing delimiter, like )" or ]--" (no escape inside raw strings)
+    # only the content of a quoted part is between quotes, not its quotes or the delimiters of a raw string. Thus, the replacements never modify the quotes and the delimiters, and the output string is read in the same way as string when it is passed again to this function, to replace another pattern (e.g., ( after ) in all_args_here(): if the ) of the closing delimiter of r"(a)" was replaced, the raw string would not be closed anymore in the next reading)
+    # - outside quotes, # opens a comment, up to the end of the line: quotes inside comments are not read
+    # - outside quotes, % opens a special operator, like %in% or %%, closed by the next % of the line: quotes inside such operators are not read
+    # a quoted part that is not closed goes up to the end of string
+    # the quote characters and the backslash are written below with their unicode code points, so that the code of this function has no apostrophe and no escaped double quote
+    double_quote <- "\u0022"
+    simple_quote <- "\u0027"
+    back_quote <- "\u0060"
+    backslash <- "\u005c"
+    chars <- base::strsplit(x = string, split = "", fixed = TRUE, perl = FALSE, useBytes = FALSE)[[1]] # characters of string
+    nb_chars <- base::length(x = chars)
+    in_quotes_log <- base::logical(length = nb_chars) # TRUE for the characters between quotes (content of the quoted parts, without their quotes and the delimiters of raw strings)
+    # positions of the only characters that can change the reading of string (the other characters are not read one by one)
+    event_pos <- base::which(x = chars %in% base::c(double_quote, simple_quote, back_quote, backslash, "#", "%", "\n"), arr.ind = FALSE, useNames = TRUE)
+    newline_pos <- base::which(x = chars == "\n", arr.ind = FALSE, useNames = TRUE)
+    percent_pos <- base::which(x = chars == "%", arr.ind = FALSE, useNames = TRUE)
+    quote_char <- "" # "" outside quotes, otherwise the quote that has opened the quoted part
+    quote_start <- 0 # position of the opening quote
+    skip_to <- 0 # the characters at positions lower or equal to skip_to are already read (escaped character, comment, raw string or special operator)
+    for(i3 in base::seq_along(along.with = event_pos)){
+        tempo_pos <- event_pos[i3]
+        if(tempo_pos <= skip_to){
+            next
+        }
+        tempo_char <- chars[tempo_pos]
+        if(quote_char != ""){
+            # inside quotes
+            if(tempo_char == backslash){
+                skip_to <- tempo_pos + 1 # escaped character
+            }else if(tempo_char == quote_char){
+                if(tempo_pos > quote_start + 1){
+                    in_quotes_log[(quote_start + 1):(tempo_pos - 1)] <- TRUE # content of the quoted part, without its quotes
+                }
+                quote_char <- ""
             }
+            # end inside quotes
+        }else if(tempo_char == "#"){
+            # comment, up to the end of the line
+            tempo_end <- newline_pos[newline_pos > tempo_pos]
+            if(base::length(x = tempo_end) == 0){
+                skip_to <- nb_chars
+            }else{
+                skip_to <- tempo_end[1] - 1
+            }
+            # end comment
+        }else if(tempo_char == "%"){
+            # special operator, closed by the next % of the line
+            tempo_end <- percent_pos[percent_pos > tempo_pos]
+            tempo_newline <- newline_pos[newline_pos > tempo_pos]
+            if(base::length(x = tempo_end) > 0){
+                if(base::length(x = tempo_newline) == 0){
+                    skip_to <- tempo_end[1]
+                }else if(tempo_end[1] < tempo_newline[1]){
+                    skip_to <- tempo_end[1]
+                }
+            }
+            # end special operator
+        }else if(tempo_char %in% base::c(double_quote, simple_quote, back_quote)){
+            # opening quote or raw string
+            raw_end <- 0 # position of the last character of the raw string. 0 if not a raw string
+            raw_content_end <- 0 # position of the last character of the content of the raw string
+            if(tempo_char != back_quote & tempo_pos > 1){
+                if(chars[tempo_pos - 1] %in% base::c("r", "R")){
+                    raw_log <- TRUE
+                    if(tempo_pos > 2){
+                        raw_log <- ! base::grepl(x = chars[tempo_pos - 2], pattern = "[[:alnum:]._]", ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE) # r or R must not be the end of a longer name
+                    }
+                    if(raw_log == TRUE){
+                        string_after <- base::substring(text = string, first = tempo_pos + 1, last = 1000000L)
+                        open_delim <- base::regmatches(x = string_after, m = base::regexpr(pattern = "^-*[\\(\\[\\{]", text = string_after, ignore.case = FALSE, perl = TRUE, fixed = FALSE, useBytes = FALSE), invert = FALSE) # opening delimiter: dashes, if any, and an opening bracket
+                        if(base::length(x = open_delim) == 1){
+                            nb_dashes <- base::nchar(x = open_delim, type = "chars", allowNA = FALSE, keepNA = NA) - 1
+                            close_delim <- base::paste0(
+                                base::c(")", "]", "}")[base::match(x = base::substr(x = open_delim, start = nb_dashes + 1, stop = nb_dashes + 1), table = base::c("(", "[", "{"), nomatch = NA_integer_, incomparables = NULL)], 
+                                base::strrep(x = "-", times = nb_dashes), 
+                                tempo_char, 
+                                collapse = NULL, 
+                                recycle0 = FALSE
+                            ) # closing delimiter, like )" or ]--"
+                            content_start <- tempo_pos + nb_dashes + 2 # position of the first character after the opening delimiter
+                            tempo_close <- base::as.vector(x = base::regexpr(pattern = close_delim, text = base::substring(text = string, first = content_start, last = 1000000L), ignore.case = FALSE, perl = FALSE, fixed = TRUE, useBytes = FALSE), mode = "any") # position of the closing delimiter after the opening one, -1 if absent
+                            if(tempo_close == -1){
+                                raw_end <- nb_chars # raw string not closed
+                                raw_content_end <- nb_chars
+                            }else{
+                                raw_end <- content_start + tempo_close + base::nchar(x = close_delim, type = "chars", allowNA = FALSE, keepNA = NA) - 2
+                                raw_content_end <- content_start + tempo_close - 2 # last character before the closing delimiter
+                            }
+                        }
+                    }
+                }
+            }
+            if(raw_end > 0){
+                if(raw_content_end >= content_start){
+                    in_quotes_log[content_start:raw_content_end] <- TRUE # content of the raw string, without its delimiters
+                }
+                skip_to <- raw_end
+            }else{
+                quote_char <- tempo_char
+                quote_start <- tempo_pos
+            }
+            # end opening quote or raw string
+        }
+        # a backslash or a new line outside quotes changes nothing
+    }
+    if(quote_char != ""){
+        if(quote_start < nb_chars){
+            in_quotes_log[(quote_start + 1):nb_chars] <- TRUE # quoted part not closed: content up to the end of string
         }
     }
-    if(base::nchar(x = string, type = "chars", allowNA = FALSE, keepNA = NA) == base::nchar(x = string_out, type = "chars", allowNA = FALSE, keepNA = NA) + 1){ # this is when the pattern is the last character of string. strsplit("a)", split = "\\)") gives "a". Should also deal when while loop has run, i.e., when several pattern in string including the last one: "a)vb)"
-        double_quote_test <- .has_odd_number_of_quotes(
-            input_string = string_out, 
-            pattern = '"', 
-            lib_path = lib_path, 
-            error_text = embed_error_text
-        ) # here FALSE means even number of quotes, thus that ")" is not between quotes, thus has to be kept. TRUE means that ")" is between quotes, thus has to be removed
-        simple_quote_test <- .has_odd_number_of_quotes(
-            input_string = string_out, 
-            pattern = "'", 
-            lib_path = lib_path, 
-            error_text = embed_error_text
-        ) # idem
-        odds_quotes_log <- double_quote_test |  simple_quote_test # remove ")" ?
-        if(odds_quotes_log == TRUE){
-            pos <- base::c(pos, base::nchar(x = string_out, type = "chars", allowNA = FALSE, keepNA = NA) + 1)
-            string_out <- base::paste0(string_out, replacement, collapse = NULL, recycle0 = FALSE) # to keep the same length of the tested function on a single string output_1_line
-        }else{
-            string_out <- base::paste0(string_out, no_regex_pattern, collapse = NULL, recycle0 = FALSE)
-            pos <- base::c(pos, NA)
-        }
-    } # no need of else: string_out == string_split == string and pos is NULL
-    if(base::all(base::is.na(x = pos), na.rm = TRUE)){
+    # end detection of the characters of string that are between quotes
+    # replacement of the matches of pattern between quotes
+    string_out <- string
+    tempo_match <- base::as.vector(x = base::gregexpr(pattern = pattern, text = string, ignore.case = FALSE, perl = perl, fixed = FALSE, useBytes = FALSE)[[1]], mode = "any") # position of the first character of each match of pattern in string, -1 if no match
+    tempo_match <- tempo_match[tempo_match > 0]
+    pos <- base::as.numeric(x = tempo_match[in_quotes_log[tempo_match]]) # matches between quotes
+    for(i3 in base::seq_along(along.with = pos)){
+        base::substr(x = string_out, start = pos[i3], stop = pos[i3] + base::nchar(x = replacement, type = "chars", allowNA = FALSE, keepNA = NA) - 1) <- replacement
+    }
+    if(base::length(x = pos) == 0){
         pos <- NULL
-    }else if(base::any(base::is.na(x = pos), na.rm = TRUE)){
-        pos <- pos[ ! base::is.na(x = pos)]
     }
+    # end replacement of the matches of pattern between quotes
     if( ! base::is.null(x = pos)){
         tempo <- base::substring(text = string, first =  pos, last =  pos)
         if( ! base::all(base::unique(x = tempo, incomparables = FALSE) == no_regex_pattern, na.rm = TRUE)){
-            # nocov start
-            # codecov inactivated because it is an internal control of code writing, impossible to cover with argument values.
+            # possible only if pattern and no_regex_pattern do not describe the same character
             tempo_cat <- base::paste0(
                 "INTERNAL ERROR 1 IN ", 
                 intern_error_text_start, 
@@ -529,7 +578,6 @@
                 recycle0 = FALSE
             )
             base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL)
-            # nocov end
         }
     }
     #### end main code

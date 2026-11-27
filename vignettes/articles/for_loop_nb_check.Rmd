@@ -54,7 +54,7 @@ fun2 <- function(x){
     for(i in 1:(3 - 1)){ # parenthesized constant expression: reported (purely syntactic rule)
         base::print(i)
     }
-    for(i in 1:3 - 1){ # gives c(-2, -1) at execution
+    for(i in 1:3 - 1){ # gives c(0, 1, 2) at execution (: is evaluated before -)
         base::print(i)
     }
     for(i in seq_along(along.with = x) - 1){ # gives c(0, 1) when x has 2 elements
@@ -66,7 +66,7 @@ fun2 <- function(x){
     for(i in 1:NA){ # error at execution
         base::print(i)
     }
-    for(i in 1:Inf){ # runs for a very long time
+    for(i in 1:Inf){ # error at execution: result would be too long a vector
         base::print(i)
     }
     for(i in 1:TRUE){ # TRUE is not a numeric literal
@@ -109,7 +109,7 @@ for_loop_nb_check(x = fun2)
 
 ### Argument <code>safer_check</code> 
 ```{r, echo = TRUE, error = TRUE}
-# Safer checkings are performed before main code running.
+# Safer checks are performed before running the main code.
 for_loop_nb_check(
     x = fun1, 
     safer_check = TRUE
@@ -119,7 +119,7 @@ for_loop_nb_check(
 
 ### Argument <code>lib_path</code>
 ```{r}
-# The "NOTGOOD" path does not exists.
+# The "NOTGOOD" path does not exist.
 for_loop_nb_check(
     x = fun1,  
     lib_path = "NOTGOOD"
@@ -143,7 +143,7 @@ for_loop_nb_check(
 for_loop_nb_check(
     x = fun1, # function name to test.
     export = FALSE, # write the corrected function into a .R file instead of returning it?
-    out_path = ".", # folder where to write the file (used only if export = TRUE).
+    out_path = NULL, # folder where to write the file (required if export = TRUE).
     safer_check = TRUE, # perform some "safer" checks (see https://github.com/safer-r)?
     lib_path = NULL, # where the required packages are if not in the default directories.
     error_text = "" # add information in error messages returned by the function.
@@ -153,16 +153,16 @@ for_loop_nb_check(
 
 ### Arguments <code>export</code> and <code>out_path</code>: return or export the corrected function
 ```{r, echo = TRUE, error = TRUE}
-# The corrected function is returned (NULL if nothing has to be corrected).
+# The corrected function is returned (NULL, invisibly, if nothing is corrected).
 fun9 <- function(x){ for(i in 1:length(x)){ y <- i } ; y }
 fun9_safer <- for_loop_nb_check(x = fun9)
 fun9_safer # a checking line is added before the loop.
 
-# The corrected function warns when x is empty, because 1:length(x) is then c(1, 0), a decreasing sequence.
+# The corrected function warns when x is empty, because 1:length(x) is then c(1, 0), a sequence that starts decreasing.
 fun9_safer(x = base::character())
 
 # Export the corrected function into the fun9_safer.R file, here in a new temporary folder.
-# out_path = "." (default) is the R working directory.
+# out_path is required when export = TRUE (NULL by default).
 # An existing file is never overwritten (an error is returned instead).
 tempo_dir <- base::tempfile(pattern = "dir", tmpdir = base::tempdir(), fileext = "")
 base::dir.create(path = tempo_dir, showWarnings = TRUE, recursive = FALSE, mode = "0777")
@@ -202,8 +202,26 @@ for_loop_nb_check(x = fun5)
 fun6 <- function(f = function(y) for(i in y){ base::print(i) }) f(1)
 for_loop_nb_check(x = fun6)
 
+# The { } are also added around a loop written on several lines, whose lines are kept.
+fun10 <- function(x){
+    out <- 0
+    if(base::length(x = x) > 0) for(i in 1:length(x)){
+        out <- out + i
+        base::print(x = out)
+    }
+    out
+}
+fun10_safer <- for_loop_nb_check(x = fun10)
+fun10_safer
+fun10_safer(x = 1:3) # same result as fun10(x = 1:3)
+
 # Only the writing is analyzed: 1:n is reported as a variable, whatever n.
 fun7 <- function(x){ n <- base::length(x = x) ; for(i in 1:n){ y <- i } ; y }
 for_loop_nb_check(x = fun7)
+
+# A reported loop that cannot be modified safely is left unchanged and listed in the message.
+# Here, the name tempo_for_seq1 is already used in the function.
+fun8 <- function(x){ tempo_for_seq1 <- 0 ; for(i in 1:length(x)){ y <- i } ; y }
+for_loop_nb_check(x = fun8)
 ```
 <br>

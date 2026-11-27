@@ -206,6 +206,61 @@ testthat::test_that(".all_args_insert()", {
     testthat::expect_no_error(tempo_out11 <- .all_args_insert(x = FUN1, out = out_fun1, output = tempo_output, lib_path = NULL, error_text = ""))
     testthat::expect_true(object = base::is.null(x = tempo_out11$fun))
     testthat::expect_true(object = base::any(base::grepl(x = tempo_out11$left, pattern = "\n    REASON: the corrected call does not match the proposal of the STATUS column", fixed = TRUE, ignore.case = FALSE, perl = FALSE, useBytes = FALSE), na.rm = FALSE))
+    # optional NO_INSERT column (set by all_args_here()): proposals not inserted, with their reason
+    tempo_output <- output_fun1
+    tempo_output$NO_INSERT <- base::c("nargs", "builtin_empty")
+    testthat::expect_no_error(tempo_out12 <- .all_args_insert(x = FUN1, out = out_fun1, output = tempo_output, lib_path = NULL, error_text = ""))
+    testthat::expect_true(object = base::is.null(x = tempo_out12$fun))
+    testthat::expect_true(object = base::grepl(x = tempo_out12$left[1], pattern = "\n    REASON: the called function counts its arguments with nargs()", fixed = TRUE, ignore.case = FALSE, perl = FALSE, useBytes = FALSE))
+    testthat::expect_true(object = base::grepl(x = tempo_out12$left[2], pattern = "\n    REASON: an argument is proposed with an empty value, but the called function is a builtin primitive function", fixed = TRUE, ignore.case = FALSE, perl = FALSE, useBytes = FALSE))
+    tempo_output$NO_INSERT <- base::c("", "")
+    testthat::expect_no_error(tempo_out13 <- .all_args_insert(x = FUN1, out = out_fun1, output = tempo_output, lib_path = NULL, error_text = ""))
+    testthat::expect_true(object = base::length(x = tempo_out13$inserted) == 1) # same as without the NO_INSERT column
+    # other NO_INSERT values: call on the right side of a pipe, call forwarding ..., call with an empty argument, first argument written without name while a method of the S3 generic names it differently, and argument added that a method of the S3 generic does not have but matches partially
+    tempo_reasons <- base::c(
+        pipe = "\n    REASON: the call receives a value from a pipe (|>, %>%, %<>%, %T>% or %!>%)",
+        dots = "\n    REASON: the call forwards ..., whose content can match the added arguments",
+        empty_arg = "\n    REASON: the call has an empty argument",
+        generic_first_arg = "\n    REASON: the first argument is written without its name, and a method of this S3 generic names it differently",
+        method_partial = "\n    REASON: a method of the called function (S3 generic) lacks an argument added by the proposal, but has arguments whose names start with its name, which R matches partially"
+    )
+    for(i1 in base::seq_along(along.with = tempo_reasons)){
+        tempo_output$NO_INSERT <- base::c(base::names(x = tempo_reasons)[i1], "")
+        testthat::expect_no_error(tempo_out_reason <- .all_args_insert(x = FUN1, out = out_fun1, output = tempo_output, lib_path = NULL, error_text = ""))
+        testthat::expect_true(object = base::grepl(x = tempo_out_reason$left[1], pattern = tempo_reasons[[i1]], fixed = TRUE, ignore.case = FALSE, perl = FALSE, useBytes = FALSE))
+        testthat::expect_true(object = base::length(x = tempo_out_reason$inserted) == 1) # the other correction (paste0) is applied
+    }
+    # assignment targets (here the object of [): left unchanged. The other calls are corrected: in the right side of an assignment, in the index of [, positional strings with spaces (compared after parsing, the STATUS proposals coming from the code with collapsed spaces) and positional bare symbol named like an argument written with its name (collapse)
+    txt_target <- base::c(
+        "function(x, y, collapse){",
+        "    base::names(x)[1] <- \"z\"",
+        "    y <- base::sum(base::rev(x))",
+        "    x[base::which(y)] <- base::grepl(\"a  b\", x)",
+        "    base::paste0(collapse, collapse = \",\")",
+        "}"
+    )
+    FUN_TARGET <- mk_fun(txt = txt_target)
+    out_target <- fd_fun(f = FUN_TARGET, name = "FUN_TARGET")
+    tempo_output <- base::rbind(
+        mk_row(out = out_target, line_start = "base::names", fun_name = "names", def_args = "x", missing_args = "x = x", status = "names(x = x)"),
+        mk_row(out = out_target, line_start = "y <-", fun_name = "sum", def_args = "..., na.rm = FALSE", missing_args = "na.rm = FALSE", status = "sum(base::rev(x), na.rm = FALSE)"),
+        mk_row(out = out_target, line_start = "y <-", fun_name = "rev", def_args = "x", missing_args = "x = x", status = "rev(x = x)"),
+        mk_row(out = out_target, line_start = "x.base::which", fun_name = "which", def_args = "x, arr.ind = FALSE, useNames = TRUE", missing_args = "x = y, arr.ind = FALSE, useNames = TRUE", status = "which(x = y, arr.ind = FALSE, useNames = TRUE)"),
+        mk_row(out = out_target, line_start = "x.base::which", fun_name = "grepl", def_args = "pattern, x, ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE", missing_args = "pattern = \"a b\", x = x, ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE", status = "grepl(pattern = \"a b\", x = x, ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE)"),
+        mk_row(out = out_target, line_start = "base::paste0", fun_name = "paste0", def_args = "..., collapse = NULL, recycle0 = FALSE", missing_args = "recycle0 = FALSE", status = "paste0(collapse, collapse = \",\", recycle0 = FALSE)"),
+        make.row.names = FALSE, stringsAsFactors = FALSE
+    )
+    testthat::expect_no_error(tempo_out14 <- .all_args_insert(x = FUN_TARGET, out = out_target, output = tempo_output, lib_path = NULL, error_text = ""))
+    testthat::expect_true(object = base::length(x = tempo_out14$left) == 1)
+    testthat::expect_true(object = base::grepl(x = tempo_out14$left, pattern = "\n    REASON: the call is the target of an assignment", fixed = TRUE, ignore.case = FALSE, perl = FALSE, useBytes = FALSE))
+    testthat::expect_equal(object = base::strsplit(x = tempo_out14$fun_txt, split = "\n", fixed = TRUE, perl = FALSE, useBytes = FALSE)[[1]], expected = base::c(
+        "function(x, y, collapse){",
+        "    base::names(x)[1] <- \"z\"",
+        "    y <- base::sum(base::rev(x = x), na.rm = FALSE)",
+        "    x[base::which(x = y, arr.ind = FALSE, useNames = TRUE)] <- base::grepl(pattern = \"a  b\", x = x, ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE)",
+        "    base::paste0(collapse, collapse = \",\", recycle0 = FALSE)",
+        "}"
+    ))
     ######## end main code: corrections not applied
 
     ## end tests

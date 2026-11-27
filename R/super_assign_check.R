@@ -1,34 +1,39 @@
-#' @title Superassignment Check
+#' @title Check That No Superassignment Is Used
 #' @description
-#' Verify that the superassignment operators \code{<<-} and \code{->>} are not used in a function. Return an error with a table of the lines with problems if any, since these operators are not allowed in safer-r functions.
-#' @param x A function name, written without quotes and brackets.
-#' @param safer_check Single logical value. Perform the "safer" checks? If \code{TRUE}, checkings are performed before main code running (see the \href{https://github.com/safer-r}{safer-r project}): 1) required functions and related packages effectively present in local R libraries and 2) R classical operators (like \code{"<-"}) not overwritten by another package because of the R scope. Warning: must be set to \code{FALSE} if this function is used inside another "safer" function to avoid pointless multiple checkings.
-#' @param lib_path Vector of characters specifying the absolute pathways of the directories containing the required packages for the function, if not in the default directories. Useful when R packages are not installed in the default directories because of lack of admin rights. More precisely, \code{lib_path} is passed through the \code{new} argument of \code{.libPaths()} so that the new library paths are \code{unique(c(new, .Library.site, .Library))}. Warning: \code{.libPaths()} is restored to the initial paths, after function execution. Ignored if \code{NULL} (default): only the pathways specified by the current \code{.libPaths()} are used for package calling.
-#' @param error_text Single character string used to add information in error messages returned by the function, notably if the function is inside other functions, which is practical for debugging. Example: \code{error_text = " INSIDE <PACKAGE_1>::<FUNCTION_1> INSIDE <PACKAGE_2>::<FUNCTION_2>."}. If \code{NULL}, converted into \code{""}.
+#' Checks that the superassignment operators \code{<<-} and \code{->>} are not used in a function. Returns an error with a table of the lines to rewrite if any, since these operators are not allowed in safer-r functions.
+#' @param x Function to check, written without quotes and brackets (e.g., \code{fun1} or \code{pkg::fun1}).
+#' @inheritParams is_function_here
 #' @returns
-#' If no superassignment operator is detected: a message saying that everything seems fine, and \code{NULL} returned invisibly.
+#' If no superassignment operator is detected: a message saying that everything seems clean, and \code{NULL}, invisibly.
 #'
 #' Otherwise: an error, with a table-like message made of one row per reported operator (column 1: line number; column 2: symbol; column 3: code of the line).
 #' @details
-#' Why an error: the superassignment operators \code{<<-} and \code{->>} assign in the first environment, among the parent environments of the evaluation environment, where the name already exists, and in the global environment if the name exists nowhere. What is modified thus depends on the environments where the function is defined and called, not on the code of the function itself: it is difficult to guess what the writer had in mind, and nothing can be corrected automatically. The code must be rewritten, for instance by returning the value, or by using \code{base::assign()} with an explicit \code{envir} argument.
+#' Why an error: \code{<<-} and \code{->>} assign into the first enclosing environment of the function where the name exists, or into the global environment. What they modify thus depends on where the function is defined, not on its code, and cannot be corrected automatically: rewrite the code, for instance by returning the value, or by using \code{base::assign()} with an explicit \code{envir} argument.
 #'
-#' Reported: every \code{<<-} and \code{->>} operator written in the submitted function, including inside the functions defined in the submitted function (e.g., a \code{FUN} argument of \code{base::lapply()} or the handlers of \code{base::tryCatch()}).
+#' Reported: every \code{<<-} and \code{->>} operator written in the submitted function, also when called as a function (e.g., \code{`<<-`(y, 1)} or \code{base::`<<-`(y, 1)}), including inside the functions defined in the submitted function (e.g., a \code{FUN} argument of \code{base::lapply()} or the handlers of \code{base::tryCatch()}).
 #'
-#' Not reported: the \code{<-}, \code{->} and \code{=} assignment operators, and the \code{<<-} or \code{->>} writings inside strings, comments or backquoted names (the detection is token-based, not text-based).
+#' Not reported: the \code{<-}, \code{->} and \code{=} assignment operators, and the \code{<<-} or \code{->>} writings inside strings, comments or backquoted names (e.g., \code{c("<<-")} or \code{`a<<-b`}), apart from the calls above.
 #'
-#' Line numbers are indicative. They start at the \code{<- function} line (\code{#'} header lines not counted). Compiled functions, like \code{saferDev::colons_check}, have no comments: their line numbers differ from their source file. A \code{->>} operator is printed \code{<<-} in the code of a function without source references (attribute \code{srcref}).
+#' Source references: line 1 is the line of the \code{function} keyword. Functions created with \code{options(keep.source = FALSE)} (default of Rscript) and functions of installed packages (e.g., \code{saferDev::colons_check}) have no source references (attribute \code{srcref}): their deparsed code is analyzed, without comments, with line numbers that differ from the source file, and with \code{->>} reported as \code{<<-}.
+#' @seealso The code checkers of saferDev, in the recommended order of use: \code{\link{super_assign_check}}, \code{\link{lambda_check}}, \code{\link{colons_check}}, \code{\link{all_args_here}}, \code{\link{curly_bracket_check}}, \code{\link{true_false_check}}, \code{\link{for_loop_nb_check}} (see \code{vignette("saferDev")}).
 #' @author \href{mailto:gael.millot@pasteur.fr}{Gael Millot}
 #' @examples
-#' # Warning: these examples may not work well when using the "Run examples" link
-#' # because of a particular environment. Please, copy-paste in a local environment.
+#' # Without source references ("Run examples" link, Rscript), line numbers and comments differ.
 #' # See also https://safer-r.github.io/saferDev/articles/super_assign_check.html
 #' fun1 <- function(x){ y <- x ; base::return(y) }
-#' saferDev::super_assign_check(fun1) # everything fine: NULL returned
+#' saferDev::super_assign_check(x = fun1, safer_check = TRUE, lib_path = NULL,
+#'     error_text = "") # no superassignment: NULL returned, invisibly
 #' fun2 <- function(x){ y <<- x ; base::return(y) }
-#' try(saferDev::super_assign_check(fun2)) # error: <<- reported
+#' base::try(expr = saferDev::super_assign_check(x = fun2, safer_check = TRUE, lib_path = NULL,
+#'     error_text = ""), silent = FALSE,
+#'     outFile = base::getOption(x = "try.outFile", default = base::stderr())) # error: <<- reported
 #' # A <<- written in a string or in a comment is not an operator: not reported.
-#' fun3 <- function(x){ y <- "the <<- writing is just a string" ; x } # a <<- in a comment
-#' saferDev::super_assign_check(fun3) # everything fine: NULL returned
+#' fun3 <- function(x){
+#'     y <- "the <<- writing is just a string" # a <<- in a comment
+#'     x
+#' }
+#' saferDev::super_assign_check(x = fun3, safer_check = TRUE, lib_path = NULL,
+#'     error_text = "") # no superassignment: NULL returned, invisibly
 #'
 #' @export
 super_assign_check <- function(
@@ -51,8 +56,12 @@ super_assign_check <- function(
     #### end internal error report link
 
     #### function name
-    tempo_settings <- base::as.list(x = base::match.call(definition = base::sys.function(which = base::sys.parent(n = 0)), call = base::sys.call(which = base::sys.parent(n = 0)), expand.dots = FALSE, envir = base::parent.frame(n = 2L))) # warning: I have written n = 0 to avoid error when a safer function is inside another functions. In addition, arguments values retrieved are not evaluated base::match.call, but this is solved with get() below
-    function_name <- base::paste0(tempo_settings[[1]], "()", collapse = NULL, recycle0 = FALSE)
+    tempo_settings <- base::as.list(x = base::match.call(definition = base::sys.function(which = base::sys.parent(n = 0)), call = base::sys.call(which = base::sys.parent(n = 0)), expand.dots = FALSE, envir = )) # warning: I have written n = 0 to avoid error when a safer function is inside another functions. In addition, arguments values retrieved are not evaluated base::match.call, but this is solved with get() below. Warning: envir is left empty on purpose: its default parent.frame(2L), evaluated inside base::match.call(), is the frame that called this function, where the ... of the call are expanded (base::parent.frame(n = 2L) written here would be evaluated one frame too far, which breaks the calls through base::lapply(), base::vapply(), base::apply(), base::Filter() or a function forwarding ..., base::sapply() only working by coincidence)
+    if(base::is.name(x = tempo_settings[[1]]) | base::is.call(x = tempo_settings[[1]])){
+        function_name <- base::paste0(tempo_settings[[1]], "()", collapse = NULL, recycle0 = FALSE)
+    }else{
+        function_name <- "<anonymous function>()" # the function was called through its object (e.g., base::do.call(what = <function object>, args = ...)), so that its name is not in the call
+    }
     # function name with "()" paste, which split into a vector of three: c("::()", "package ()", "function ()") if "package::function()" is used.
     if(function_name[1] == "::()" | function_name[1] == ":::()"){
         function_name <- function_name[3]
@@ -317,8 +326,8 @@ super_assign_check <- function(
             base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL)
         }else{
             ini_lib_path <- base::.libPaths(new = , include.site = TRUE) # normal to have empty new argument
-            base::on.exit(expr = base::.libPaths(new = ini_lib_path, include.site = TRUE), add = TRUE, after = TRUE) # return to the previous libPaths()
-            base::.libPaths(new = base::sub(x = base::c(ini_lib_path, lib_path), pattern = "/$|\\\\$", replacement = "", ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE), include.site = TRUE) # base::.libPaths(new = ) add path to default path. BEWARE: base::.libPaths() does not support / at the end of a submitted path. The reason of the check and replacement of the last / or \\ in path
+            base::on.exit(expr = base::.libPaths(new = ini_lib_path, include.site = FALSE), add = TRUE, after = TRUE) # return to the previous libPaths(). include.site = FALSE: exact restore, since ini_lib_path already contains the site library if it was in use
+            base::.libPaths(new = base::sub(x = base::c(ini_lib_path, lib_path), pattern = "/$|\\\\$", replacement = "", ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE), include.site = FALSE) # base::.libPaths(new = ) add path to default path. BEWARE: base::.libPaths() does not support / at the end of a submitted path. The reason of the check and replacement of the last / or \\ in path
             lib_path <- base::.libPaths(new = , include.site = TRUE) # normal to have empty new argument
         }
     }else{
@@ -404,11 +413,27 @@ super_assign_check <- function(
     ######## end graphic device checking
 
     ######## other checkings
+    # x forwarded through the ... argument of another function (e.g., fun2 <- function(...){saferDev::super_assign_check(...)} called with x = fun1): base::match.call() writes x ..1 (or ..2, etc.) in arg_user_setting, instead of its writing in the call. This writing is recovered from the promise of x by base::substitute() (x is not reassigned before this line)
+    if(base::is.symbol(x = arg_user_setting$x) && base::grepl(x = base::as.character(x = arg_user_setting$x), pattern = "^\\.\\.[0-9]+$", ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE)){
+        arg_user_setting$x <- base::substitute(expr = x, env = base::environment(fun = NULL))
+    }
     ######## end other checkings
 
     #### end second round of checking and data preparation
 
     #### main code
+    # attributes of x printed by R after its code (all the attributes except srcref, srcfile, wholeSrcref and comment, which print() does not show): the code of x is recovered below as printed, so that the printed attribute values would be analyzed as code of x, silently when they parse (e.g., a formula, a function or a call, which could even be run), or with the parse error below. Same message in super_assign_check(), lambda_check(), curly_bracket_check(), true_false_check() and for_loop_nb_check()
+    tempo_attr <- base::setdiff(x = base::names(x = base::attributes(x = x)), y = base::c("srcref", "srcfile", "wholeSrcref", "comment"))
+    if(base::length(x = tempo_attr) > 0){
+        tempo_cat <- base::paste0(
+            error_text_start,
+            "THE FUNCTION OF THE x ARGUMENT CANNOT BE CHECKED: ITS ATTRIBUTES, PRINTED BY R AFTER ITS CODE, WOULD BE ANALYZED AS CODE.\nATTRIBUTES TO REMOVE BEFORE THE CHECK (E.G., base::attr(x = fun, which = \"note\") <- NULL):\n",
+            base::paste0(tempo_attr, collapse = "\n", recycle0 = FALSE),
+            collapse = NULL,
+            recycle0 = FALSE
+        )
+        base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL)
+    }
     # recover the code of the checked function
     code <- utils::capture.output(x, file = NULL, append = FALSE, type = NULL, split = FALSE)
     # removal of the attribute lines printed for compiled functions (e.g., "<bytecode: 0x...>", "<environment: ...>", "<srcref: ...>"). Warning: the pattern cannot be simply a line starting by "<", because a valid R code line can start by "<" (binary operator continuation)
@@ -417,15 +442,46 @@ super_assign_check <- function(
     oop <- base::options(keep.parse.data = TRUE)
     base::on.exit(expr = base::options(oop), add = TRUE, after = TRUE)
     code_text <- base::paste0(code, collapse = "\n", recycle0 = FALSE)
-    pd <- utils::getParseData(x = base::parse(file = "", n = NULL, text = code_text, prompt = "?", keep.source = TRUE, srcfile = base::srcfilecopy(filename = "<text>", lines = code_text, timestamp = base::Sys.time(), isFile = FALSE), encoding = "unknown"), includeText = NA) # warning: an explicit srcfile is required, because srcfile = NULL removes the source references of the parsed code, so that utils::getParseData() returns NULL (same writing as in lambda_check())
+    pd <- base::tryCatch(
+        expr = utils::getParseData(x = base::parse(file = "", n = NULL, text = code_text, prompt = "?", keep.source = TRUE, srcfile = base::srcfilecopy(filename = "<text>", lines = code_text, timestamp = base::Sys.time(), isFile = FALSE), encoding = "unknown"), includeText = NA), # warning: an explicit srcfile is required, because srcfile = NULL removes the source references of the parsed code, so that utils::getParseData() returns NULL (same writing as in lambda_check())
+        error = function(e){e}, # code of x, as printed by R, that does not parse: error below
+        finally =
+    )
+    if(base::inherits(x = pd, what = "error", which = FALSE)){
+        # the printed code of x, without attributes (checked above), does not parse when an object that is not printed as R code is inserted in its body (e.g., an environment, printed <environment>). Same message in super_assign_check(), lambda_check(), curly_bracket_check(), true_false_check() and for_loop_nb_check()
+        tempo_cat <- base::paste0(
+            error_text_start,
+            "THE FUNCTION OF THE x ARGUMENT CANNOT BE CHECKED: ITS CODE, AS PRINTED BY R, DOES NOT PARSE (E.G., AN OBJECT INSERTED IN ITS BODY THAT IS NOT PRINTED AS R CODE, LIKE AN ENVIRONMENT, PRINTED <environment>).\n\nERROR MESSAGE OF THE R PARSER:\n",
+            base::conditionMessage(c = pd),
+            collapse = NULL,
+            recycle0 = FALSE
+        )
+        base::stop(base::paste0("\n\n================\n\n", tempo_cat, "\n\n================\n\n", collapse = NULL, recycle0 = FALSE), call. = FALSE, domain = NULL)
+    }
     # tokens of the superassignment operators, sorted by source position. Strings, comments and backquoted names are other tokens (STR_CONST, COMMENT, SYMBOL), so that a <<- written inside them is never reported
     sa_rows <- base::which(x = (pd$token == "LEFT_ASSIGN" & pd$text == "<<-") | (pd$token == "RIGHT_ASSIGN" & pd$text == "->>"), arr.ind = FALSE, useNames = TRUE)
+    # calls of the operator written as a function name, backquoted or between quotes (e.g., `<<-`(y, 1), base::`<<-`(y, 1) or "<<-"(y, 1)): the same superassignment, printed y <<- 1 when x has no source references (except after base::). Warning: the name must be the function of its call: followed by the ( of this call, i.e., a ( whose parent is the call expression, which is the parent of the expression of the name (not a string elsewhere, e.g., in c("<<-")), and not preceded by $ (not a component of a list, e.g., x$`<<-`(1))
+    call_rows <- base::which(x = pd$token %in% base::c("SYMBOL_FUNCTION_CALL", "STR_CONST") & pd$text %in% base::c("\x60<<-\x60", "\"<<-\"", "\x27<<-\x27"), arr.ind = FALSE, useNames = TRUE)
+    if(base::length(x = call_rows) > 0){
+        term_rows <- base::which(x = pd$terminal == TRUE & pd$token != "COMMENT", arr.ind = FALSE, useNames = TRUE)
+        term_rows <- term_rows[base::order(pd$line1[term_rows], pd$col1[term_rows], method = "radix", na.last = TRUE, decreasing = FALSE)] # terminal tokens in the order of the code
+        call_log <- base::logical(length = base::length(x = call_rows))
+        for(i1 in base::seq_along(along.with = call_rows)){
+            tempo_pos <- base::match(x = call_rows[i1], table = term_rows, nomatch = NA_integer_, incomparables = NULL) # position of the name among the terminal tokens, never the first one (function keyword)
+            tempo_next <- term_rows[tempo_pos + 1L] # NA if the name is the last token (e.g., function(x) "<<-")
+            call_log[i1] <- base::isTRUE(x = pd$text[tempo_next] == "(" & pd$parent[tempo_next] == pd$parent[pd$id == pd$parent[call_rows[i1]]] & pd$text[term_rows[tempo_pos - 1L]] != "$")
+        }
+        sa_rows <- base::c(sa_rows, call_rows[call_log], recursive = FALSE, use.names = FALSE)
+    }
     sa_rows <- sa_rows[base::order(pd$line1[sa_rows], pd$col1[sa_rows], method = "radix", na.last = TRUE, decreasing = FALSE)]
     findings_line <- pd$line1[sa_rows]
     findings_symbol <- pd$text[sa_rows]
+    findings_symbol[pd$token[sa_rows] %in% base::c("SYMBOL_FUNCTION_CALL", "STR_CONST")] <- "<<-" # operator called as a function: symbol shown without its backquotes or quotes
     findings_code <- base::trimws(x = code[findings_line], which = "left", whitespace = "[ \\t]")
-    # modification of arg_user_setting$x for clean messages
-    if(base::as.character(x = arg_user_setting$x)[1] == "::" | base::as.character(x = arg_user_setting$x)[1] == ":::"){
+    # modification of arg_user_setting$x for clean messages: a single string "<name>()", with <name> the writing of x in the call (name, pkg::name, pkg:::name, or other expression deparsed on one line, like dots[[1L]][[1L]] through base::Map()), or "x" for a function object, which has no name (e.g., x = fun1 in the args argument of base::do.call())
+    if(base::is.function(x = arg_user_setting$x)){
+        arg_user_setting$x <- "x()"
+    }else if(base::as.character(x = arg_user_setting$x)[1] == "::" | base::as.character(x = arg_user_setting$x)[1] == ":::"){
         arg_user_setting$x <- base::paste0(
             base::as.character(x = arg_user_setting$x)[2],
             base::as.character(x = arg_user_setting$x)[1],
@@ -434,9 +490,16 @@ super_assign_check <- function(
             collapse = NULL,
             recycle0 = FALSE
         )
-    }else{
+    }else if(base::is.symbol(x = arg_user_setting$x)){
         arg_user_setting$x <- base::paste0(
             arg_user_setting$x,
+            "()",
+            collapse = NULL,
+            recycle0 = FALSE
+        )
+    }else{
+        arg_user_setting$x <- base::paste0(
+            base::paste0(base::trimws(x = base::deparse(expr = arg_user_setting$x, width.cutoff = 500L, backtick = FALSE, control = base::c("keepNA", "keepInteger", "niceNames", "showAttributes"), nlines = -1L), which = "left", whitespace = "[ \\t]"), collapse = " ", recycle0 = FALSE),
             "()",
             collapse = NULL,
             recycle0 = FALSE
